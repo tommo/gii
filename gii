@@ -1,0 +1,4 @@
+#! /usr/bin/env python-32
+
+import gii_bin
+gii_bin.main()

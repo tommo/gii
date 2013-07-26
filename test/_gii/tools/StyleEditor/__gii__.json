@@ -1,0 +1,5 @@
+{
+	"name" : "style",
+	"help" : "MOAI text style sheet editor",
+	"autoload" : false
+}

@@ -1,0 +1,291 @@
+import logging
+
+from PyQt4 import QtGui, QtCore
+from PyQt4.QtGui import QMenu, QMenuBar, QAction
+
+from gii.core import signals
+
+class MenuNode(object):
+	"""docstring for MenuNode"""
+	def __init__(self, option, parent, menubar=None):
+		if isinstance(option ,(str,unicode)):
+			blobs=option.split('|')
+			_option={
+				'label':blobs[0]
+			}
+			l=len(blobs)
+			if l>1:	_option['shortcut']=blobs[1]
+			if l>2:	_option['help']=blobs[2]
+			option=_option
+
+		self.qtmenubar=menubar
+		self.qtaction=None
+		self.qtmenu=None
+
+		# self.qtaction=None
+		self.module=None
+
+		self.parent=parent
+		signal=option.get('signal',None)
+		self.setSignal(signal)
+
+		self.mgr=parent and parent.mgr
+		self.module=parent and parent.module
+		
+		self.children=[]
+		
+		self.label=option.get('label', 'UNNAMED')
+		self.name=option.get('name',self.label.replace('&','').replace(' ','_'))
+		self.name=self.name.lower()
+
+		self.shortcut=option.get('shortcut',False)
+		self.help=option.get('help','')
+		self.priority=option.get('priority',0)
+		self.itemType=option.get('type',False)
+		self.link=None
+		self.onClick=option.get('onClick',None)
+
+		self.menuType=self.qtmenubar and 'menubar' or 'item'
+
+		children=option.get('children',None)
+		link=option.get('link',None)
+
+		if children or self.itemType=='menu':
+			if self.menuType!='menubar':
+				self.menuType='menu'
+				self.itemType=False
+
+		elif link:
+			self.link=link
+			if self.menuType!='menubar':
+				self.menuType='link'
+
+		elif parent and parent.menuType=='menubar':
+			self.menuType='menu'
+
+		if self.menuType=='menu' :
+			self.qtmenu=QMenu(self.label)
+
+		if not parent or parent.menuType=='root': return 
+
+		parent.addChildControl(self)
+		if self.itemType=='check':
+			checked=option.get('checked',False)
+			self.setValue(checked or False)
+		if children:
+			for data in children:
+				self.addChild(data)
+		# self.mgr.addNodeIndex(self)
+
+	def getFullName(self):
+		if parent:
+			return parent.getFullName()+'/'+self.name
+		return self.name
+		
+	def addChild(self,option, module=None):
+		if option=='----':
+			if self.qtmenu:
+				self.qtmenu.addSeparator()
+		elif isinstance(option, list):
+			output=[]
+			for data in option:
+				n=self.addChild(data)
+				if n :
+					output.append(n)
+					if module: n.module=module
+			return output
+		else:
+			node=MenuNode(option, self)
+			if module: node.module=module
+			self.children.append(node)
+			return node
+
+	def addChildControl(self, child):
+		childType=child.menuType
+		selfType=self.menuType
+
+		if selfType=='menu':
+			if childType=='menu':
+				child.qtaction=self.qtmenu.addMenu(child.qtmenu)
+
+			elif child.link:
+				qtmenu=child.link.qtmenu
+				child.qtaction=self.qtmenu.addMenu(qtmenu)
+
+			else:
+				
+				action=QtGui.QAction(child.label, None, 
+					shortcut = child.shortcut,
+					statusTip = child.help,
+					checkable = child.itemType=='check',
+					triggered = child.handleEvent
+					)
+				
+				self.qtmenu.addAction(action)
+				child.qtaction=action
+
+		elif selfType=='menubar':
+			if childType=='menu':
+				self.qtmenubar.addMenu(child.qtmenu)
+				child.qtaction=child.qtmenu.menuAction()
+			else:
+				logging.warning('attempt to add menuitem/link to a menubar')
+				return
+		else:
+			logging.warning('menuitem has no child')	
+
+	def setEnabled(self, enabled):
+		#todo: set state of linked item
+		selfType=self.menuType
+		if selfType=='menubar':
+			self.qtmenubar.setEnable(enabled)
+			return
+
+		if self.qtmenu:
+			self.qtmenu.setEnabled(enabled)
+		else:
+			self.qtaction.setEnabled(enabled)
+
+	def remove(self):
+		for node in self.children:
+			node.remove()
+		#todo: remove qtmenu item
+		self.parent.children.remove(self)
+		selfType=self.menuType
+		
+		if not self.parent: return
+
+		if selfType=='menubar':
+			return
+
+		parentType=self.parent.menuType
+
+		if parentType=='menu':
+			self.parent.qtmenu.removeAction(self.qtaction)
+		elif parentType=='menubar':
+			self.parent.qtmenubar.removeAction(self.qtaction)
+
+
+		
+	def findChild(self,name):
+		name=name.lower()
+		for c in self.children:
+			if c.name==name: return c
+		return None
+
+	def getValue(self):
+		if self.itemType in ('check','radio'):
+			return self.qtaction.isChecked()
+		return True
+
+	def setValue(self, v):
+		if self.itemType in ('check','radio'):
+			self.qtaction.setChecked(v and True or False)
+	
+	def setSignal(self, signal):
+		if isinstance(signal, (str, unicode)):
+			signal=signals.get(signal)
+		self.signal=signal
+
+	def popUp(self):
+		if self.qtmenu:
+			self.qtmenu.exec_(QtGui.QCursor.pos())
+
+	def setOnClick(self, onClick):
+		self.onClick=onClick
+
+	def handleEvent(self):
+		itemtype=self.itemType
+		value=self.getValue()
+		if self.module:
+			self.module.onMenu(self)
+		if self.signal:
+			self.signal(value)
+		if self.onClick !=None:			
+			self.onClick(value)
+
+class MenuManager(object):
+	"""docstring for MenuManager"""
+	_singleton=None
+
+	@staticmethod
+	def get():
+		return MenuManager._singleton
+
+	def __init__(self):
+		assert(not MenuManager._singleton)
+		MenuManager._singleton=self
+		super(MenuManager, self).__init__()
+		
+		self.rootNode=MenuNode({}, None)
+		self.rootNode.mgr=self		
+		self.rootNode.menuType='root'
+
+		self.menuNodes={}
+
+	# def removeNodeIndex(self, node):
+	# 	id = node.qtaction
+	# 	if id:
+	# 		del self.menuNodes[id]
+
+	# def addNodeIndex(self, node):
+	# 	id = node.qtaction
+	# 	if id:
+	# 		self.menuNodes[id]=node
+
+	# def getNodeByIndex(self, id):
+	# 	return self.menuNodes.get(id, None)
+	
+	def find(self,path):
+		blobs=path.split('/')
+		result=self.rootNode
+		for b in blobs:
+			result=result.findChild(b)
+			if not result: return None
+
+		if result!=self.rootNode:
+			return result
+		else:
+			return None
+
+	def addMenuBar(self, name, menubar, module=None):
+		node=MenuNode({
+				'name':name
+			}, self.rootNode, menubar)
+		self.rootNode.children.append(node)
+		if module: node.module=module
+		return node
+
+	def addMenu(self, path, option=None, module=None): #menu for link or popup
+		blobs=path.split('/')
+		upperPath="/".join(blobs[:-1])
+		name=blobs[-1]
+		parent=self.find(upperPath) 
+		if not parent: parent=self.rootNode
+		if not option: option={}
+		if isinstance(option, dict) and not option.get('label',None):
+			option['label']=name
+		option['type']='menu'
+		return parent.addChild(option, module)
+
+	def addMenuItem(self, path, option=None, module=None):
+		blobs=path.split('/')
+		upperPath="/".join(blobs[:-1])
+		name=blobs[-1]
+		parent=self.find(upperPath) 
+		
+		if not parent: raise Exception('menu parent not found:%s'%upperPath)
+		
+		if isinstance(option, dict) and not option.get('label',None):
+			option['label']=name
+		return parent.addChild(option or name, module)
+
+	def enableMenuItem(self, path, enabled=True):
+		node=self.find(path)
+		if node: node.setEnabled(enabled)
+	
+	def disableMenuItem(self, path, disabled=True):
+		self.enableMenuItem(path, not disabled)
+
+
+MenuManager()

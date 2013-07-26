@@ -1,0 +1,15 @@
+Thumbs.db
+.DS_Store
+.moei
+*.so
+*.pyc
+*.pyo
+*.dll
+*.yo
+*.o
+*.gdata
+*.log
+*.dylib
+BUILD_RESULT
+packer
+host/ios/content
