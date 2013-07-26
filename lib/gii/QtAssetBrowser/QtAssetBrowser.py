@@ -1,10 +1,11 @@
 import random
-from PyQt4 import QtCore, QtGui, uic
-from PyQt4.QtCore import Qt
+from PyQt4            import QtCore, QtGui, uic
+from PyQt4.QtCore     import Qt
 
-from gii.core import *
-from gii.qt   import QtEditorModule
+from gii.core         import *
+from gii.qt           import QtEditorModule
 
+from gii.qt.IconCache                  import getIcon
 from gii.qt.controls.PropertyGrid      import PropertyGrid
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 
@@ -55,7 +56,7 @@ class FolderCreator(AssetCreator):
 				nodepath = contextNode.getChildPath(name)
 			else:
 				nodepath=contextNode.getSiblingPath(name)
-			fullpath = AssetLibrary.get().getAbsPath(nodepath)
+			fullpath = app.getAssetLibrary().getAbsPath(nodepath)
 			try:
 				os.mkdir(fullpath)
 			except Exception,e :
@@ -115,8 +116,7 @@ class QtAssetBrowser( QtEditorModule ):
 
 		self.nullPreviewer = self.registerPreviewer( NullAssetPreviewer() )
 
-		signals.connect( 'module.loaded',        self.onModuleLoaded )
-		signals.connect( 'project.load',         self.onProjectLoad )
+		signals.connect( 'module.loaded',        self.onModuleLoaded )		
 		signals.connect( 'asset.deploy.changed', self.onAssetDeployChanged )
 	
 		signals.connect( 'selection.changed',    self.onSelectionChanged)
@@ -143,6 +143,12 @@ class QtAssetBrowser( QtEditorModule ):
 			])
 
 		self.registerAssetCreator('folder', FolderCreator(), label='Folder')
+
+	def onStart( self ):
+		signals.connect( 'asset.register',   self.onAssetRegister )
+		signals.connect( 'asset.unregister', self.onAssetUnregister )
+		signals.connect( 'asset.moved',      self.onAssetMoved )
+		self.treeView.rebuild()
 
 	def onUnload(self):
 		#persist expand state
@@ -171,15 +177,18 @@ class QtAssetBrowser( QtEditorModule ):
 			self._loadCreator( setting )
 
 	def _loadCreator(self, setting):
-		label=setting['label']
-		assetType=setting['assetType']
-		creator=setting['creator']
+		label     = setting['label']
+		assetType = setting['assetType']
+		creator   = setting['creator']
+
 		def creatorFunc(value=None):
-			contextNode=SelectionManager.get().getSingleSelection()
+			contextNode = app.getSelectionManager().getSingleSelection()
 			if not isinstance(contextNode, AssetNode):
-				contextNode=AssetLibrary.get().getRootNode()				
-			name=requestString('Create Asset <%s>' % assetType, 'Enter asset name' )
+				contextNode = app.getAssetLibrary().getRootNode()				
+
+			name = requestString('Create Asset <%s>' % assetType, 'Enter asset name' )
 			if not name: return
+
 			try:
 				finalpath=creator.createAsset(name, contextNode, assetType)
 				self.newCreateNodePath=finalpath
@@ -244,19 +253,7 @@ class QtAssetBrowser( QtEditorModule ):
 		self.previewerContainer.setCurrentIndex(idx)
 		self.activePreviewer=previewer		
 		previewer.onStart(selection)
-
-
-	def onProjectLoad(self, project):
-		signals.connect( 'asset.register',   self.onAssetRegister )
-		signals.connect( 'asset.unregister', self.onAssetUnregister )
-		signals.connect( 'asset.moved',      self.onAssetMoved )
-		self.treeView.rebuild()
-
-	def onProjectUnload(self):		
-		signals.disconnect( 'asset.register',   self.onAssetRegister )
-		signals.disconnect( 'asset.unregister', self.onAssetUnregister )
-		signals.disconnect( 'asset.moved',      self.onAssetMoved )
-
+	
 	def onAssetRegister(self, node):
 		pnode = node.getParent()
 		if pnode:
@@ -281,7 +278,7 @@ class QtAssetBrowser( QtEditorModule ):
 				basic=False, deploy=True, 
 				updateChildren=True, updateDependency=True
 			)
-		AssetLibrary.get().saveAssetTable()
+		app.getAssetLibrary().saveAssetTable()
 
 	def onMenu(self, menuNode):
 		name=menuNode.name
@@ -289,36 +286,36 @@ class QtAssetBrowser( QtEditorModule ):
 			if name   == 'deploy_set':      newstate = True
 			elif name == 'deploy_disallow': newstate = False
 			elif name == 'deploy_unset':    newstate = None
-			s = SelectionManager.get().getSelection()
+			s = app.getSelectionManager().getSelection()
 			for n in s:
 				if isinstance(n,AssetNode):
 					n.setDeployState(newstate)
 					
 		if name == 'reimport':
-			s = SelectionManager.get().getSelection()
+			s = app.getSelectionManager().getSelection()
 			for n in s:
 				if isinstance( n, AssetNode ):
 					n.forceReimport()
-			AssetLibrary.get().scanProjectPath()
+			app.getAssetLibrary().scanProjectPath()
 
 		if name == 'show_in_browser':
-			if not SelectionManager.get().getSelection():
+			if not app.getSelectionManager().getSelection():
 				return AssetUtils.showFileInBrowser( getProjectPath() )
 				
-			for n in SelectionManager.get().getSelection():
+			for n in app.getSelectionManager().getSelection():
 				if isinstance( n, AssetNode ):
 					n.showInBrowser()
 					break
 
 		if name == 'open_in_system':
-			for n in SelectionManager.get().getSelection():
+			for n in app.getSelectionManager().getSelection():
 				if isinstance( n, AssetNode ):
 					n.openInSystem()
 					break
 
 		if name == 'copy_node_path':
 			text = ''
-			for n in SelectionManager.get().getSelection():
+			for n in app.getSelectionManager().getSelection():
 				text += n.getNodePath() + '\n'
 				setClipboardText( text )
 
@@ -335,7 +332,7 @@ class AssetTreeView( GenericTreeWidget ):
 				item.setExpanded( True )
 
 	def getRootNode( self ):
-		return AssetLibrary.get().getRootNode()
+		return app.getAssetLibrary().getRootNode()
 
 	def getNodeParent( self, node ): # reimplemnt for target node
 		return node.getParent()
@@ -382,9 +379,9 @@ class AssetTreeView( GenericTreeWidget ):
 		items = self.selectedItems()
 		if items:
 			selections = [item.node for item in items]
-			SelectionManager.get().changeSelection(selections)
+			app.getSelectionManager().changeSelection(selections)
 		else:
-			SelectionManager.get().changeSelection(None)
+			app.getSelectionManager().changeSelection(None)
 
 	def doUpdateItem(self, node, updateLog=None, **option):
 		super( AssetTreeView, self ).doUpdateItem( node, updateLog, **option )

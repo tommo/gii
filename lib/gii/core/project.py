@@ -3,11 +3,12 @@ import sys
 import imp
 import os
 import os.path
+
 import signals
-
 import jsonHelper
-from cache import CacheManager
-
+##----------------------------------------------------------------##
+from cache   import CacheManager
+from asset   import AssetLibrary
 ##----------------------------------------------------------------##
 _GII_INTERNAL_PATH = '_gii'
 _GII_META_PATH     = 'meta'
@@ -54,6 +55,7 @@ class Project(object):
 		self.metaPath  = None
 
 		self.cacheManager = CacheManager() 
+		self.assetLibrary = AssetLibrary()
 
 		self.info = {
 			'name'    : 'Name',
@@ -97,9 +99,11 @@ class Project(object):
 
 	def load(self, path):
 		path = os.path.realpath(path)
-		self._initPath( path )		
-		
+		self._initPath( path )
+
+		#load cache & assetlib
 		self.cacheManager.load( self.metaPath )
+		self.assetLibrary.load( self.path, self.metaPath )
 
 		#will trigger other module
 		signals.emitNow('project.preload', self)
@@ -114,8 +118,11 @@ class Project(object):
 		jsonHelper.trySaveJSON( self.info,   self.getMetaPath( _GII_INFO_PATH ) )
 		jsonHelper.trySaveJSON( self.config, self.getMetaPath( _GII_CONFIG_PATH ) )
 
+		#save asset & cache
+		self.assetLibrary.save()
 		self.cacheManager.clearFreeCacheFiles()
 		self.cacheManager.save()
+
 		signals.emitNow( 'project.save', self ) #post save
 		logging.info( 'project saved' )
 		return True
@@ -160,5 +167,11 @@ class Project(object):
 
 	def setConfig( self, key, value ):
 		self.config[ key ] = value
+
+	def getAssetLibrary( self ):
+		return self.assetLibrary
+
+	def getCacheManager( self ):
+		return self.cacheManager
 
 Project()

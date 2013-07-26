@@ -8,6 +8,7 @@ def main( argv ):
 		#DO_THE_UPDATE_JOBS()
 		return True
 	#start GUI editor
+	from gii import FileWatcher
 	from gii import QtAssetBrowser
 	import QtTextureManager
 	gii.app.run()

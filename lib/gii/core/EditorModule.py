@@ -25,6 +25,15 @@ class EditorModule( object ):
 
 	def getApp( self ):
 		return self._app
+
+	def getProject( self ):
+		return Project.get()
+
+	def getAssetLibrary( self ):
+		return self.getProject().getAssetLibrary()
+
+	def getSelectionManager( self ):
+		return self.getApp().getSelectionManager()
 	
 	def getManager(self):
 		return self._manager
@@ -75,10 +84,10 @@ class EditorModule( object ):
 		self.onUnload()
 
 	def start( self ):
-		pass
+		self.onStart()
 
 	def update( self ):
-		pass
+		self.onUpdate()
 
 	#Callbacks
 	def onLoad(self):
@@ -98,6 +107,10 @@ class EditorModule( object ):
 
 	def onSetFocus(self):
 		pass
+
+	def onStart( self ):
+		pass
+
 
 
 ##----------------------------------------------------------------##

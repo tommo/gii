@@ -17,7 +17,16 @@ def _makeMangledFilePath( path ):
 
 ##----------------------------------------------------------------##
 class CacheManager(object):
+	_singleton = None
+	
+	@staticmethod
+	def get():
+		return CacheManager._singleton
+
 	def __init__( self ):
+		assert not CacheManager._singleton
+		CacheManager._singleton = self
+
 		super(CacheManager, self).__init__()
 		self.cachePath      = None
 		self.cacheIndexPath = None

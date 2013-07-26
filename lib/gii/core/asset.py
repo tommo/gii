@@ -5,10 +5,11 @@ import logging
 import os.path
 import weakref
 
+import jsonHelper
 import signals
 import AssetUtils
 
-from project import Project
+from cache import CacheManager
 
 GII_ASSET_INDEX_PATH = 'asset_table.json'
 GII_ASSET_META_DIR   = '.assetmeta'
@@ -228,7 +229,7 @@ class AssetNode(object):
 	def getCacheFile(self, name):
 		cacheFile = self.cacheFiles.get( name, None )
 		if cacheFile: return cacheFile
-		cacheFile = Project.get().getCacheFile( self.getPath(), name )
+		cacheFile = CacheManager.get().getCacheFile( self.getPath(), name )
 		self.cacheFiles[ name ] = cacheFile
 		return cacheFile
 
@@ -342,17 +343,15 @@ class AssetLibrary(object):
 			'\.assetmeta',
 			'^\..*',
 			'.*\.pyo$',
-			'.*\.pyc$'
+			'.*\.pyc$',
+			'_gii'
 		]
 
-		signals.connect( 'project.preload', self.onProjectPreload )
-		signals.connect( 'project.presave', self.onProjectPresave )
 	
-	
-	def onProjectPreload( self, prj ):
+	def load( self, path, metaPath ):
 		#load asset
-		path = prj.path
-		self.rootPath = rootpath
+		self.rootPath = path
+		self.assetIndexPath = metaPath + '/' +GII_ASSET_INDEX_PATH
 		self.rootNode = AssetNode( '', 'folder' )
 		self.loadAssetTable()		
 		self.scanProjectPath()
@@ -360,7 +359,7 @@ class AssetLibrary(object):
 		#TODO: should use a explicit command to trigger this
 		AssetLibrary.get().clearFreeMetaData()
 
-	def onProjectPresave( self, prj ):
+	def save( self ):
 		self.saveAssetTable()
 
 	def getRootNode(self):
@@ -562,13 +561,10 @@ class AssetLibrary(object):
 
 	def loadAssetTable(self):
 		logging.info( 'loading asset table' )
-		try:
-			fp=open(self.rootPath+'/.gii/'+GII_ASSET_INDEX_PATH, 'r')
-			dataTable=json.load(fp)
-		except Exception, e:
-			logging.warning( 'failed to load asset table:%s' % repr(e) )
-			return False
-		fp.close()
+		
+		dataTable = jsonHelper.tryLoadJSON( self.assetIndexPath )
+		if not dataTable: return False
+		
 		assetTable={}
 
 		for path,data in dataTable.items():
@@ -633,17 +629,12 @@ class AssetLibrary(object):
 			table[path]=item
 			#mark cache files
 			for name, cacheFile in node.cacheFiles.items():
-				Project.get().touchCacheFile( cacheFile )
+				CacheManager.get().touchCacheFile( cacheFile )
 			if node.metadata:
 				node.saveMetaData()
-		try:
-			output=json.dumps(table, indent=2, sort_keys=True, ensure_ascii=False)
-			fp=open(self.rootPath+'/.gii/'+GII_ASSET_INDEX_PATH,'w')
-			fp.write(output.encode('utf-8'))			
-		except Exception, e:
-			logging.warning( 'failed to save asset table: %s' % repr(e) )
+
+		if not jsonHelper.trySaveJSON( table, self.assetIndexPath ):
 			return False
-		fp.close()
 		logging.info( 'asset table saved' )
 		return True	
 
@@ -674,10 +665,8 @@ class AssetLibrary(object):
 			pass
 
 
-
 ##----------------------------------------------------------------##
 def registerAssetManager(manager):
 	return AssetLibrary.get().registerAssetManager(manager)
 
 ##----------------------------------------------------------------##
-AssetLibrary()

@@ -4,6 +4,12 @@ import os
 import os.path
 import sys
 
+try:
+	import faulthandler
+	faulthandler.enable()
+except Exception, e:
+	pass
+
 def isPythonFrozen():
 	return hasattr(sys, "frozen")
 

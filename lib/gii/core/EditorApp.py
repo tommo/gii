@@ -9,6 +9,7 @@ import globalSignals
 from EditorModule   import EditorModule, EditorModuleManager
 from project        import Project
 from MainModulePath import getMainModulePath
+from selection      import SelectionManager
 
 class EditorApp(object):
 	_singleton = None
@@ -30,6 +31,7 @@ class EditorApp(object):
 		self.basePath      = getMainModulePath()
 
 		self.config        = {}
+		self.selectionManager = SelectionManager()
 
 		signals.connect( 'module.register', self.onModuleRegister )
 
@@ -89,6 +91,10 @@ class EditorApp(object):
 			raise Exception( 'no valid gii project found' )
 		Project.get().load( path )
 
+	def getAssetLibrary( self ):
+		return self.getProject().getAssetLibrary()
 
+	def getSelectionManager( self ):
+		return self.selectionManager
 
 app = EditorApp()
