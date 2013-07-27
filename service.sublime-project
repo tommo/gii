@@ -12,7 +12,7 @@
 		},
 
 		{
-			"cmd": ["/Users/tommo/dev/shared/python-32","-u", "$file"],
+			"cmd": ["python","-u", "$file"],
 			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
 			"selector": "source.python",
 			"name": "Python32",

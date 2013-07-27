@@ -331,28 +331,27 @@ class AssetLibrary(object):
 	def __init__(self):
 		assert not AssetLibrary._singleton
 		AssetLibrary._singleton=self
-		self.assetTable={}
-		self.assetManagers=[]
-		self.rawAssetManager=RawAssetManager()
-		
-		self.rootPath=None
 
-		self.ignoreFilePattern=[
-			'\.gii',
+		self.assetTable      = {}
+		self.assetManagers   = []
+		self.rawAssetManager = RawAssetManager()
+		
+		self.rootPath        = None
+
+		self.ignoreFilePattern = [
 			'\.git',
 			'\.assetmeta',
 			'^\..*',
 			'.*\.pyo$',
-			'.*\.pyc$',
-			'_gii'
+			'.*\.pyc$'
 		]
 
 	
-	def load( self, path, metaPath ):
+	def load( self, assetPath, configPath ):
 		#load asset
-		self.rootPath = path
-		self.assetIndexPath = metaPath + '/' +GII_ASSET_INDEX_PATH
-		self.rootNode = AssetNode( '', 'folder' )
+		self.rootPath       = assetPath
+		self.assetIndexPath = configPath + '/' +GII_ASSET_INDEX_PATH
+		self.rootNode       = AssetNode( '', 'folder' )
 		self.loadAssetTable()		
 		self.scanProjectPath()
 
@@ -562,7 +561,9 @@ class AssetLibrary(object):
 	def loadAssetTable(self):
 		logging.info( 'loading asset table' )
 		
+		if not os.path.exists( self.assetIndexPath ): return
 		dataTable = jsonHelper.tryLoadJSON( self.assetIndexPath )
+
 		if not dataTable: return False
 		
 		assetTable={}

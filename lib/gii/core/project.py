@@ -10,11 +10,21 @@ import jsonHelper
 from cache   import CacheManager
 from asset   import AssetLibrary
 ##----------------------------------------------------------------##
-_GII_INTERNAL_PATH = '_gii'
-_GII_META_PATH     = 'meta'
-_GII_TOOLS_PATH    = 'tools'
-_GII_INFO_PATH     = 'gii_project_info.json'
-_GII_CONFIG_PATH   = 'gii_project_config.json'
+_GII_ENV_DIR            = 'env'
+_GII_BINARY_DIR         = 'bin'
+_GII_GAME_DIR           = 'game'
+_GII_SCRIPT_DIR         = _GII_GAME_DIR + '/script'
+_GII_ASSET_DIR          = _GII_GAME_DIR + '/asset'
+_GII_SRC_DIR            = _GII_GAME_DIR + '/src'
+_GII_SRC_HOST_DIR       = _GII_SRC_DIR  + '/host'
+_GII_SRC_EXTENSION_DIR  = _GII_SRC_DIR  + '/extension'
+_GII_ENV_PACKAGE_DIR    = _GII_ENV_DIR  + '/packages'
+_GII_ENV_LIB_DIR        = _GII_ENV_DIR  + '/lib'
+_GII_ENV_CONFIG_DIR     = _GII_ENV_DIR  + '/config'
+
+_GII_INFO_FILE          = 'project.json'
+_GII_CONFIG_FILE        = 'config.json'
+
 ##----------------------------------------------------------------##
 def _mkdir( path ):
 	if os.path.exists( path ): return
@@ -35,25 +45,19 @@ class Project(object):
 	def findProject( path = None ):
 		#TODO: return project info dict instead of path?
 		path = os.path.abspath( path or '' )
-		while path and not ( path in ( '', '/','\\' ) ):
-			internalPath = path + '/' + _GII_INTERNAL_PATH
-			if os.path.exists( internalPath ):
-				metaPath = internalPath + '/' + _GII_META_PATH
-				if os.path.exists( metaPath ):
-					infoPath = metaPath + '/' + _GII_INFO_PATH
-					if os.path.exists( infoPath ):
-						return ( path, internalPath, metaPath )
+		while path and not ( path in ( '', '/','\\' ) ):			
+			if   os.path.exists( path + '/' + _GII_ENV_CONFIG_DIR ) \
+			and  os.path.exists( path + '/' + _GII_INFO_FILE ) :
+				return path
+			#go up level
 			path = os.path.dirname( path )
-		return ( None, None, None )
+		return None
 
 	def __init__(self):
 		assert not Project._singleton
 		Project._singleton = self
 
 		self.path      = None
-		self.toolPath  = None
-		self.metaPath  = None
-
 		self.cacheManager = CacheManager() 
 		self.assetLibrary = AssetLibrary()
 
@@ -65,14 +69,47 @@ class Project(object):
 
 		self.config = {}
 
-	def _initPath( self, path ):
-		self.path         = path
-		self.internalPath = path + '/' + _GII_INTERNAL_PATH
-		self.toolPath     = self.internalPath + '/' + _GII_TOOLS_PATH
-		self.metaPath     = self.internalPath + '/' + _GII_META_PATH		
+	def isLoaded( self ):
+		return self.path != None
 
+	def _initPath( self, path ):
+		self.path = path
+
+		self.binaryPath        = path + '/' + _GII_BINARY_DIR
+		self.gamePath          = path + '/' + _GII_GAME_DIR
+
+		self.envPath           = path + '/' + _GII_ENV_DIR
+		self.envPackagePath    = path + '/' + _GII_ENV_PACKAGE_DIR
+		self.envConfigPath     = path + '/' + _GII_ENV_CONFIG_DIR
+		self.envLibPath        = path + '/' + _GII_ENV_LIB_DIR
+
+		self.assetPath         = path + '/' + _GII_ASSET_DIR
+
+		self.scriptPath        = path + '/' + _GII_SCRIPT_DIR
+
+		self.srcPath           = path + '/' + _GII_SRC_DIR
+		self.srcExtensionPath  = path + '/' + _GII_SRC_EXTENSION_DIR
+		self.srcHostPath       = path + '/' + _GII_SRC_HOST_DIR
+
+
+	def _affirmDirectories( self ):
+		#mkdir - lv1
+		_mkdir( self.binaryPath )
+
+		_mkdir( self.envPath )
+		_mkdir( self.envPackagePath )
+		_mkdir( self.envLibPath )
+		_mkdir( self.envConfigPath )
+
+		_mkdir( self.gamePath )
+		_mkdir( self.assetPath )
+		_mkdir( self.scriptPath )
+		_mkdir( self.srcPath )
+		_mkdir( self.srcExtensionPath )
+		_mkdir( self.srcHostPath )
+		
 	def init( self, path ):
-		prjPath, prjInternalPath, prjMetaPath = Project.findProject( path )
+		prjPath = Project.findProject( path )
 		if prjPath:
 			raise ProjectException( 'Gii project already initialized:' + prjPath )
 
@@ -80,16 +117,14 @@ class Project(object):
 		if not os.path.isdir(path):
 			raise ProjectException('%s is not a valid path' % path)
 		self._initPath( path )
-
-		#mkdir
-		_mkdir( self.internalPath )
-		_mkdir( self.metaPath )
-		_mkdir( self.toolPath )
+		self._affirmDirectories()
 
 		try:
-			self.cacheManager.init( self.metaPath )
+			self.cacheManager.init( self.envConfigPath )
 		except OSError,e:
 			raise ProjectException('error creating cache folder:%s' % e)
+
+		self.assetLibrary.load( self.assetPath, self.envConfigPath )
 
 		signals.emitNow('project.init', self)
 		logging.info( 'project initialized: %s' % path )
@@ -99,11 +134,15 @@ class Project(object):
 
 	def load(self, path):
 		path = os.path.realpath(path)
+		
 		self._initPath( path )
+		self._affirmDirectories()
 
+		self.info   = jsonHelper.tryLoadJSON( self.getBasePath( _GII_INFO_FILE ) ) or {}
+		self.config = jsonHelper.tryLoadJSON( self.getConfigPath( _GII_CONFIG_FILE ) ) or {}
 		#load cache & assetlib
-		self.cacheManager.load( self.metaPath )
-		self.assetLibrary.load( self.path, self.metaPath )
+		self.cacheManager.load( self.envConfigPath )
+		self.assetLibrary.load( self.assetPath, self.envConfigPath )
 
 		#will trigger other module
 		signals.emitNow('project.preload', self)
@@ -115,8 +154,8 @@ class Project(object):
 	def save( self ):
 		signals.emitNow('project.presave', self)
 		#save project info & config
-		jsonHelper.trySaveJSON( self.info,   self.getMetaPath( _GII_INFO_PATH ) )
-		jsonHelper.trySaveJSON( self.config, self.getMetaPath( _GII_CONFIG_PATH ) )
+		jsonHelper.trySaveJSON( self.info,   self.getBasePath( _GII_INFO_FILE ) )
+		jsonHelper.trySaveJSON( self.config, self.getConfigPath( _GII_CONFIG_FILE ) )
 
 		#save asset & cache
 		self.assetLibrary.save()
@@ -127,12 +166,12 @@ class Project(object):
 		logging.info( 'project saved' )
 		return True
 
-	def getRelativePath(self, path):
-		return os.path.relpath(path,self.path)
+	def getRelativePath( self, path ):
+		return os.path.relpath( path, self.path )
 
-	def getPath(self, path=None):
+	def getBasePath( self, path=None ):
 		if path:
-			return os.path.abspath(self.path+'/'+path)
+			return os.path.abspath( self.path + '/' + path )
 		else:
 			return self.path
 
@@ -142,20 +181,26 @@ class Project(object):
 		else:
 			return self.internalPath
 
-	def getToolPath(self, path=None):
+	def getPackagePath(self, path=None):
 		if path:
-			return os.path.abspath(self.toolPath+'/'+path)
+			return os.path.abspath(self.envPackagePath+'/'+path)
 		else:
-			return self.toolPath
+			return self.envPackagePath
 
-	def getMetaPath(self, path=None):
+	def getConfigPath(self, path=None):
 		if path:
-			return os.path.abspath(self.metaPath+'/'+path)
+			return os.path.abspath( self.envConfigPath + '/' + path )
 		else:
-			return self.metaPath	
+			return self.envConfigPath	
+
+	def getAssetPath(self, path=None):
+		if path:
+			return os.path.abspath( self.assetPath + '/' + path )
+		else:
+			return self.assetPath	
 
 	def isProjectFile(self, path):
-		path = os.path.abspath( path )
+		path    = os.path.abspath( path )
 		relpath = os.path.relpath( path, self.path )
 		return not (relpath.startswith('..') or relpath.startswith('/'))
 

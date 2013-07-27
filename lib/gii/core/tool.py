@@ -84,7 +84,9 @@ def printHeader():
 	print '---------------------------'
 
 def printToolInfo( info ):
-	print '    %s \t %s' % ( info.get('name', '???'), info.get('help','') )
+	output = '    %s \t %s' % ( info.get('name', '???') , info.get('help','') )
+	output = output.expandtabs( 16 )
+	print output
 
 def printAvailTools():	
 	print '  available tool(s):'

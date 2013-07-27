@@ -1,6 +1,0 @@
-{
-	"name"     : "build",
-	"priority" : 1,
-	"help"     : "build or run current project",
-	"autoload" : false
-}

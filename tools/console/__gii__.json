@@ -1,6 +1,0 @@
-{
-	"name" : "console",
-	"priority" : 4,
-	"help" : "start the development console",
-	"autoload" : false
-}

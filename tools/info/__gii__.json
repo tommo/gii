@@ -1,6 +1,0 @@
-{
-	"name" : "info",
-	"priority" : 2,
-	"help" : "show information of current project",
-	"autoload" : false
-}

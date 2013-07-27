@@ -8,8 +8,11 @@ import signals
 import globalSignals
 from EditorModule   import EditorModule, EditorModuleManager
 from project        import Project
+from package        import PackageManager
 from MainModulePath import getMainModulePath
 from selection      import SelectionManager
+
+_GII_BUILTIN_PACKAGES_PATH = 'packages'
 
 class EditorApp(object):
 	_singleton = None
@@ -23,7 +26,6 @@ class EditorApp(object):
 		EditorApp._singleton = self
 		EditorModuleManager.get()._app = self
 
-		self.project       = None
 		self.initialized   = False
 		self.flagModified  = False
 		self.debugging     = False
@@ -32,6 +34,7 @@ class EditorApp(object):
 
 		self.config        = {}
 		self.selectionManager = SelectionManager()
+		self.packageManager   = PackageManager()
 
 		signals.connect( 'module.register', self.onModuleRegister )
 
@@ -42,9 +45,18 @@ class EditorApp(object):
 
 	def init( self ):
 		if self.initialized: return
+		
+		#packages
+		self.packageManager.addPackagePath( self.getPath( _GII_BUILTIN_PACKAGES_PATH ) )
+		if self.getProject().isLoaded():
+			self.packageManager.addPackagePath( self.getProject().envPackagePath )
+		self.packageManager.scanPackages()
+
+		#modules
 		EditorModuleManager.get().loadAllModules()
 		signals.emitNow('module.loaded') #some pre app-ready activities
 		signals.dispatchAll()
+
 		self.initialized = True
 		self.running     = True
 
@@ -86,7 +98,7 @@ class EditorApp(object):
 		return Project.get()
 
 	def openProject( self ):
-		path, internalPath, metaPath = Project.findProject()
+		path = Project.findProject()
 		if not path:
 			raise Exception( 'no valid gii project found' )
 		Project.get().load( path )
