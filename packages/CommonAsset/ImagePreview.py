@@ -1,15 +1,15 @@
 from gii.core                 import *
-from gii.moai.MOAIEditCanvas  import MOAIEditCanvas
-from gii.AssetBrowser         import AssetPreviewer
-from gii.qt.helpers           import addWidgetWithLayout
-
-from PyQt4 import uic
-from PyQt4 import QtGui
 
 ##----------------------------------------------------------------##
 if app.getModule('asset_browser'): 
+	from gii.moai.MOAIEditCanvas  import MOAIEditCanvas
+	from gii.qt.helpers           import addWidgetWithLayout
 
-	from gii.AssetBrowser import AssetPreviewer
+	from PyQt4 import uic
+	from PyQt4 import QtGui
+
+
+	from gii.AssetEditor import AssetPreviewer
 	from PyQt4 import QtGui, QtCore
 	
 	class ImagePreviewer( AssetPreviewer ):

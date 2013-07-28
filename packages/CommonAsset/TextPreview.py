@@ -2,7 +2,7 @@ from gii import app
 
 if app.getModule('asset_browser'): 
 
-	from gii.AssetBrowser import AssetPreviewer
+	from gii.AssetEditor import AssetPreviewer
 	from PyQt4 import QtGui, QtCore
 	
 	class TextPreviewer( AssetPreviewer ):

@@ -21,7 +21,6 @@ class AssetException(Exception):
 ##----------------------------------------------------------------##
 class AssetNode(object):
 	def __init__(self, nodePath, assetType='file', **kwargs):	
-		self.manager = kwargs.get('manager',None)
 		if isinstance(nodePath, str):
 			nodePath = nodePath.decode('utf-8')
 		
@@ -46,6 +45,12 @@ class AssetNode(object):
 
 		self.filePath = kwargs.get( 'filePath', nodePath )
 		self.fileTime = kwargs.get( 'fileTime', 0 )
+		manager = kwargs.get( 'manager', None )
+		if isinstance( manager, AssetManager ):
+			self.managerName = manager.getName()
+		else:
+			self.managerName = manager
+
 
 		self.accessPriority=0
 
@@ -63,8 +68,8 @@ class AssetNode(object):
 		else:
 			return self.assetType == typeName
 
-	def getManager(sefl):
-		return self.manager
+	def getManager(self):
+		return AssetLibrary._singleton.getAssetManager( self.managerName, True )
 
 	def getName(self):
 		return self.name
@@ -136,7 +141,7 @@ class AssetNode(object):
 		return node
 
 	def setManager(self, assetManager, forceReimport=False):
-		self.manager=assetManager
+		self.managerName = assetManager.getName()
 		#TODO: validation? reimport?
 
 	def removeChild(self, node):
@@ -240,7 +245,7 @@ class AssetNode(object):
 		self.objectFiles[ name ] = path
 
 	def edit(self):
-		self.manager.editAsset(self)
+		self.getManager().editAsset(self)
 
 	def getProperty(self, name, defaultValue=None ):
 		return self.properties.get(name, defaultValue)
@@ -249,7 +254,7 @@ class AssetNode(object):
 		self.properties[ name ] = value
 
 	def forceReimport(self):
-		self.manager.reimportAsset(self)
+		self.getManager().reimportAsset(self)
 		signals.emitNow('asset.modified', self)
 		self.saveMetaData()
 
@@ -392,11 +397,11 @@ class AssetLibrary(object):
 		self.assetManagers.append(manager)
 		return manager
 
-	def getAssetManager(self, name):
+	def getAssetManager(self, name, allowRawManager = False ):
 		for mgr in self.assetManagers:
 			if mgr.getName()==name:
 				return mgr
-		return None
+		return allowRawManager and self.rawAssetManager or None
 
 	def registerAssetNode(self, node):		
 		path=node.getNodePath()
@@ -462,11 +467,11 @@ class AssetLibrary(object):
 					manager.reimportAsset(node, option)
 				else:
 					manager.importAsset(node, option)
-				node.manager = manager
+				node.setManager( manager )
 				break
 
-		if not node.manager:
-			node.manager = self.rawAssetManager
+		if not node.managerName:
+			node.setManager ( self.rawAssetManager )
 		
 		if not oldnode:
 			self.registerAssetNode(node)
@@ -581,15 +586,11 @@ class AssetLibrary(object):
 			node.objectFiles  = data.get('objectFiles', {})
 			node.properties   = data.get('properties', {})
 			
-			assetTable[path]=node
-			mgrName=data.get('manager')
-			if mgrName=='raw':
-				node.manager=self.rawAssetManager
-			else:
-				node.manager=self.getAssetManager(mgrName) or self.rawAssetManager
-
+			assetTable[path]  = node
+			node.managerName  = data.get('manager')
+			
 		#relink parent/dependency
-		for path,node in assetTable.items():
+		for path, node in assetTable.items():
 			ppath=os.path.dirname(path)
 			if not ppath:
 				pnode=self.rootNode
@@ -620,7 +621,7 @@ class AssetLibrary(object):
 				'type'        : node.getType(),
 				'filePath'    : node.getFilePath() or False,
 				'fileTime'    : node.getFileTime(),
-				'manager'     : node.manager.getName(),
+				'manager'     : node.managerName,
 				'deploy'      : node.deployState,
 				'pDep'        : [ dnode.getNodePath() for dnode in node.pDep ],
 				'rDep'        : [ dnode.getNodePath() for dnode in node.rDep ],

@@ -7,6 +7,6 @@ def main( argv ):
 	app.openProject()
 	
 	# import gii.moai.MOAIGameView
-	import gii.AssetBrowser
+	import gii.AssetEditor
 
 	app.run()

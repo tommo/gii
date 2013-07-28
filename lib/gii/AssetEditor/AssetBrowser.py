@@ -4,18 +4,16 @@ from abc import ABCMeta, abstractmethod
 import gii.FileWatcher
 
 from gii.core         import *
-from gii.qt           import QtEditorModule
-
 from gii.qt.dialogs   import requestString, alertMessage
 from gii.qt.controls.AssetTreeView import AssetTreeView
+
+from AssetEditor      import AssetEditorModule
 
 from PyQt4            import QtCore, QtGui, uic
 from PyQt4.QtCore     import Qt
 
-from AssetCreator     import AssetCreator
-
 ##----------------------------------------------------------------##
-class AssetBrowser( QtEditorModule ):
+class AssetBrowser( AssetEditorModule ):
 	"""docstring for AssetBrowser"""
 	def __init__(self):
 		super(AssetBrowser, self).__init__()
