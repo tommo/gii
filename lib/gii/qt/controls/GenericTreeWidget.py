@@ -79,7 +79,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			self.addNode( node )
 
 	def doUpdateItem(self, node, updateLog=None, **option):
-		item=self.getItemByNode(node)
+		item = self.getItemByNode(node)
 		if not item: return False
 		if not updateLog: updateLog={} #for avoiding duplicated updates
 		if updateLog.has_key(node): return False

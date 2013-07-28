@@ -6,78 +6,21 @@ import gii.FileWatcher
 from gii.core         import *
 from gii.qt           import QtEditorModule
 
-from gii.qt.dialogs   import requestString
+from gii.qt.dialogs   import requestString, alertMessage
 from gii.qt.controls.AssetTreeView import AssetTreeView
 
 from PyQt4            import QtCore, QtGui, uic
 from PyQt4.QtCore     import Qt
 
-##----------------------------------------------------------------##
-SortUserRole=QtCore.Qt.UserRole
-##----------------------------------------------------------------##
-class AssetPreviewer(object):
-	def register( self ):
-		return app.getModule('asset_browser').registerPreviewer( self )
-
-	def accept(self, selection):
-		return False
-
-	def createWidget(self):
-		return None
-
-	def onStart(self, selection):
-		pass
-
-	def onStop(self):
-		pass
-
-##----------------------------------------------------------------##		
-class NullAssetPreviewer(AssetPreviewer):
-	def createWidget(self,container):
-		self.label = QtGui.QLabel(container)
-		self.label.setAlignment(QtCore.Qt.AlignHCenter)
-		self.label.setText('NO PREVIEW')
-		self.label.setSizePolicy(
-				QtGui.QSizePolicy.Expanding,
-				QtGui.QSizePolicy.Expanding
-				)
-		return self.label
-
-	def onStart(self, selection):
-		pass
-		# self.label.setParent(container)
-
-	def onStop(self):
-		pass
-
-##----------------------------------------------------------------##
-class AssetCreator(object):
-	__metaclass__ = ABCMeta
-
-	@abstractmethod
-	def getAssetType( self ):
-		return 'name'
-
-	@abstractmethod
-	def getLabel( self ):
-		return 'Label'
-
-	def register( self ):
-		return app.getModule('asset_browser').registerAssetCreator( self )
-
-	def createAsset(self, name, contextNode, assetType):
-		return False
-
+from AssetCreator     import AssetCreator
 
 ##----------------------------------------------------------------##
 class AssetBrowser( QtEditorModule ):
 	"""docstring for AssetBrowser"""
 	def __init__(self):
 		super(AssetBrowser, self).__init__()
-		self.previewers        = []
-		self.creators          = []
 
-		self.activePreviewer   = None		
+		self.creators          = []
 		self.newCreateNodePath = None
 
 	def getName(self):
@@ -99,20 +42,10 @@ class AssetBrowser( QtEditorModule ):
 			)
 		self.treeView  = self.container.addWidget(AssetTreeView())
 
-		self.previewerContainer = QtGui.QStackedWidget()
-		self.previewerContainer.setSizePolicy(
-				QtGui.QSizePolicy.Expanding, 
-				QtGui.QSizePolicy.Fixed
-			)
-		self.previewerContainer.setMinimumSize(100,250)
-		self.container.addWidget( self.previewerContainer, expanding=False )
-
-		self.nullPreviewer = self.registerPreviewer( NullAssetPreviewer() )
 
 		signals.connect( 'module.loaded',        self.onModuleLoaded )		
 		signals.connect( 'asset.deploy.changed', self.onAssetDeployChanged )
-	
-		signals.connect( 'selection.changed',    self.onSelectionChanged)
+		# signals.connect( 'selection.changed',    self.onSelectionChanged)
 
 		self.treeView.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
 		self.treeView.customContextMenuRequested.connect( self.onTreeViewContextMenu)
@@ -150,10 +83,7 @@ class AssetBrowser( QtEditorModule ):
 		#persist expand state
 		self.treeView.saveTreeStates()
 
-	def onModuleLoaded(self):
-		for previewer in self.previewers:
-			self._loadPreviewer(previewer)
-
+	def onModuleLoaded(self):		
 		for setting in self.creators:
 			self._loadCreator(setting)
 
@@ -181,7 +111,8 @@ class AssetBrowser( QtEditorModule ):
 				finalpath=creator.createAsset(name, contextNode, assetType)
 				self.newCreateNodePath=finalpath
 			except Exception,e:
-				alertMessage('Asset Creation Error',repr(e))
+				logging.exception( e )
+				alertMessage( 'Asset Creation Error', repr(e) )
 				return
 		#insert into toolbar box?
 		#insert into create menu
@@ -190,19 +121,6 @@ class AssetBrowser( QtEditorModule ):
 				'label':label,
 				'onClick':creatorFunc
 			})
-
-			
-	def registerPreviewer(self, previewer):
-		self.previewers.insert(0, previewer) #TODO: use some dict?
-		if self.alive: self._loadPreviewer(previewer)		
-		return previewer
-
-	def _loadPreviewer(self, previewer):
-		widget=previewer.createWidget(self.previewerContainer)
-		assert isinstance(widget,QtGui.QWidget), 'widget expected from previewer'
-		idx=self.previewerContainer.addWidget(widget)
-		previewer._stackedId=idx
-		previewer._widget=widget
 
 	def onTreeViewContextMenu(self, point):
 		item = self.treeView.itemAt(point)
@@ -223,25 +141,6 @@ class AssetBrowser( QtEditorModule ):
 			self.enableMenu( 'asset_context/deploy_disallow',False )
 			self.findMenu('asset_context').popUp()
 
-	def onSelectionChanged(self, selection):
-		if self.activePreviewer:
-			self.activePreviewer.onStop()
-
-		if selection and isinstance(selection[0], AssetNode) :
-			target=selection[0]
-			for previewer in self.previewers:
-				if previewer.accept(target):
-					self._startPreview(previewer, target)
-					return
-
-		self._startPreview(self.nullPreviewer, None)
-
-	def _startPreview(self, previewer, selection):
-		idx=previewer._stackedId
-		self.previewerContainer.setCurrentIndex(idx)
-		self.activePreviewer=previewer		
-		previewer.onStart(selection)
-	
 	def onAssetRegister(self, node):
 		pnode = node.getParent()
 		if pnode:
@@ -262,9 +161,11 @@ class AssetBrowser( QtEditorModule ):
 		pass
 
 	def onAssetDeployChanged(self, node):
-		self.treeView.updateItemContent(node, 
-				basic=False, deploy=True, 
-				updateChildren=True, updateDependency=True
+		self.treeView.doUpdateItem( node, 
+				basic            = False,
+				deploy           = True, 
+				updateChildren   = True,
+				updateDependency = True
 			)
 		app.getAssetLibrary().saveAssetTable()
 

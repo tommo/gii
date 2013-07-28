@@ -36,7 +36,7 @@ class CacheManager(object):
 	def init( self, basePath, absBasePath ):
 		self.cachePath      = basePath + '/' + _GII_CACHE_PATH
 		self.cacheAbsPath   = absBasePath + '/' + _GII_CACHE_PATH
-		self.cacheIndexPath = basePath + '/' + _GII_CACHE_INDEX_PATH
+		self.cacheIndexPath = absBasePath + '/' + _GII_CACHE_INDEX_PATH
 		if not os.path.exists( self.cacheAbsPath ):
 			os.mkdir( self.cacheAbsPath )
 		return True
@@ -44,7 +44,7 @@ class CacheManager(object):
 	def load( self, basePath, absBasePath ):
 		self.cachePath      = basePath + '/' + _GII_CACHE_PATH
 		self.cacheAbsPath   = absBasePath + '/' + _GII_CACHE_PATH
-		self.cacheIndexPath = basePath + '/' + _GII_CACHE_INDEX_PATH
+		self.cacheIndexPath = absBasePath + '/' + _GII_CACHE_INDEX_PATH
 		#check and create cache path exists ( for safety )
 		if not os.path.exists( self.cacheAbsPath ):
 			os.mkdir( self.cacheAbsPath )
@@ -54,7 +54,7 @@ class CacheManager(object):
 
 	def save( self ):
 		#save cache index
-		jsonHelper.trySaveJSON( self.cacheFileTable, self.cacheIndexPath )		
+		jsonHelper.trySaveJSON( self.cacheFileTable, self.cacheIndexPath, 'cache index' )		
 
 	def touchCacheFile( self, cacheFile ):
 		node = self.cacheFileTable.get( cacheFile, None )

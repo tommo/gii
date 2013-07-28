@@ -21,18 +21,18 @@ class LuaModuleContainer(Module):
 	def __init__(self, setting):
 		super(LuaModuleContainer, self).__init__()
 
-		self.name=setting['name']
-		self.dependency=setting['dependency'] or ['moai']
+		self.name       = setting['name']
+		self.dependency = setting['dependency'] or ['moai']
 		
-		self._onLoad=wrapLuaFunc(setting['onLoad'])
-		self._onUnload=wrapLuaFunc(setting['onUnload'])
-		self._onSerialize=wrapLuaFunc(setting['onSerialize'])
-		self._onDeserialize=wrapLuaFunc(setting['onDeserialize'])
+		self._onLoad        = wrapLuaFunc(setting['onLoad'])
+		self._onUnload      = wrapLuaFunc(setting['onUnload'])
+		self._onSerialize   = wrapLuaFunc(setting['onSerialize'])
+		self._onDeserialize = wrapLuaFunc(setting['onDeserialize'])
 
-		self._onGUI=wrapLuaFunc(setting['onGUI'])
-		self._onMenu=wrapLuaFunc(setting['onMenu'])
+		self._onGUI         = wrapLuaFunc(setting['onGUI'])
+		self._onMenu        = wrapLuaFunc(setting['onMenu'])
 
-		self.useIMGUI=setting['IMGUI'] and self._onGUI
+		self.useIMGUI       = setting['IMGUI'] and self._onGUI
 		self.usingIMGUI=False
 
 	def getName(self):
@@ -66,10 +66,10 @@ class LuaModuleContainer(Module):
 			self.usingIMGUI=False
 			self.imguiWidget.destroy()
 			self.container.destroy()
-		self._onLoad=None
-		self._onUnload=None
-		self._onSerialize=None
-		self._onDeserialize=None
+		self._onLoad        = None
+		self._onUnload      = None
+		self._onSerialize   = None
+		self._onDeserialize = None
 
 		self._onGUI=None
 		self._onMenu=None

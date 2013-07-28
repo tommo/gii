@@ -1,3 +1,5 @@
+from gii.core import signals
+
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import Qt
 
@@ -46,22 +48,23 @@ def ensureWindowVisible(window, border=0): #TODO
 
 	window.move(x,y)
 
-
+##----------------------------------------------------------------##
 class MainWindow(QtGui.QMainWindow):
 	"""docstring for MainWindow"""
 	def __init__(self, parent):
 		super(MainWindow, self).__init__(parent)
 		self.setDocumentMode(True)
 		self.setUnifiedTitleAndToolBarOnMac(True)
-		self.setDockOptions(QtGui.QMainWindow.AllowNestedDocks|QtGui.QMainWindow.AllowTabbedDocks)
+		self.setDockOptions(
+			QtGui.QMainWindow.AllowNestedDocks | QtGui.QMainWindow.AllowTabbedDocks )
 		font=QtGui.QFont()
 		font.setPointSize(11)
 		self.setFont(font)
-		# self.centerArea=QtGui.QTabWidget(self)
-		# self.setCentralWidget(self.centerArea)
-		# self.centerArea.setDocumentMode(True)
-		# self.centerArea.setMovable(True)
-		# self.centerArea.setTabsClosable(True)
+		self.centerArea = QtGui.QTabWidget(self)
+		self.setCentralWidget(self.centerArea)
+		self.centerArea.setDocumentMode(True)
+		self.centerArea.setMovable(True)
+		self.centerArea.setTabsClosable(True)
 
 	def moveToCenter(self):
 		moveWindowToCenter(self)
@@ -82,10 +85,14 @@ class MainWindow(QtGui.QMainWindow):
 		return widget
 
 	def requestSubWindow(self, id, windowOption={}):
-		title=windowOption.get('title',id)
+		title = windowOption.get('title',id)
 		
-		window=SubWindow(self)
+		window = SubWindow(self)
 		window.setWindowTitle(title)
+
+		window.windowMode = 'sub'
+		window.windowTitle = title
+
 
 		minSize=windowOption.get('minSize',None)
 		if minSize:
@@ -99,30 +106,33 @@ class MainWindow(QtGui.QMainWindow):
 		window.show()
 		return window
 
-	# def requestDocuemntWindow(self, id, windowOption={}):
-	# 	title=windowOption.get('title',id)
+	def requestDocuemntWindow(self, id, windowOption={}):
+		title  = windowOption.get('title',id)
 		
-	# 	window=SubWindow(self.centerArea)
-	# 	window.setWindowTitle(title)
-	# 	self.centerArea.addTab(window,title)
+		window = SubWindow( self.centerArea )
+		window.setWindowTitle( title )
+		self.centerArea.addTab( window, title )
 
-	# 	minSize=windowOption.get('minSize',None)
-	# 	if minSize:
-	# 		window.setMinimumSize(*minSize)
-	# 	else:
-	# 		window.setMinimumSize(20,20)
+		window.windowMode = 'document'
+		window.windowTitle = title
 
-	# 	size=windowOption.get('size',None)
-	# 	if size:
-	# 		window.resize(*size)
-	# 	window.show()
-	# 	return window
+
+		minSize = windowOption.get('minSize',None)
+		if minSize:
+			window.setMinimumSize(*minSize)
+		else:
+			window.setMinimumSize(20,20)
+
+		size = windowOption.get('size',None)
+		if size:
+			window.resize(*size)
+		window.show()
+		return window
 
 
 	def requestDockWindow(self, id, dockOptions={}):
-		title=dockOptions.get('title',None)
-		if title is None:
-			title=id
+		title=dockOptions.get( 'title', id )
+
 
 		dockArea=dockOptions.get('dock','left')
 
@@ -144,6 +154,9 @@ class MainWindow(QtGui.QMainWindow):
 			window.setWindowTitle(title)
 		window.setObjectName('_dock_'+id)
 		
+		window.windowMode = 'dock'
+		window.windowTitle = title
+
 		if dockOptions.get('allowDock',True):
 			window.setAllowedAreas(Qt.AllDockWidgetAreas)
 		else:
@@ -178,10 +191,19 @@ class MainWindow(QtGui.QMainWindow):
 		return window
 
 class SubWindowMixin:	
+	def setDocumentName( self, name ):
+		self.documentName = name
+		title = '%s - %s' % ( self.documentName, self.windowTitle )
+		self.setWindowTitle( title )
+		if self.windowMode == 'document':
+			tabParent = self.parent().parent()
+			idx = tabParent.indexOf( self )
+			tabParent.setTabText( idx, title )
+
 	def setupUi(self):
-		self.container=self.createContainer()
+		self.container = self.createContainer()
 		
-		self.mainLayout=QtGui.QVBoxLayout(self.container)
+		self.mainLayout = QtGui.QVBoxLayout(self.container)
 		self.mainLayout.setSpacing(0)
 		self.mainLayout.setMargin(0)
 		self.mainLayout.setObjectName('MainLayout')
@@ -223,6 +245,7 @@ class SubWindowMixin:
 		ensureWindowVisible(self)
 
 	
+##----------------------------------------------------------------##
 				
 class SubWindow(QtGui.QMainWindow, SubWindowMixin):
 	"""docstring for DockWindow"""
@@ -256,11 +279,7 @@ class SubWindow(QtGui.QMainWindow, SubWindowMixin):
 		pass
 
 
-		
-
-
-
-class DockWindowTitleBar(QtGui.QWidget):
+class DockWindowTitleBar( QtGui.QWidget ):
 	"""docstring for DockWindowTitleBar"""
 	def __init__(self, *args):
 		super(DockWindowTitleBar, self).__init__(*args)
@@ -271,7 +290,6 @@ class DockWindowTitleBar(QtGui.QWidget):
 	def minimumSizeHint(self):
 		return QtCore.QSize(20,20)
 
-
 		
 class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 	"""docstring for DockWindow"""	
@@ -279,39 +297,54 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 		super(DockWindow, self).__init__(parent)
 		self.setupUi()
 		self.setupCustomTitleBar()
-		self.topLevelChanged.connect(self.onTopLevelChanged)
-		font=QtGui.QFont()
+		self.topLevelChanged.connect( self.onTopLevelChanged )
+		font = QtGui.QFont()
 		font.setPointSize(11)
 		self.setFont(font)
+		signals.connect( 'app.activate', self.onAppActivate )
+		signals.connect( 'app.deactivate', self.onAppDeactivate )
+		self.topLevel = False
+
 
 	def setupCustomTitleBar(self):
-		self.originTitleBar=self.titleBarWidget()
-		self.customTitleBar=DockWindowTitleBar(self)
-		self.customTitleBar=self.originTitleBar
-		self.setTitleBarWidget(self.customTitleBar)
+		self.originTitleBar = self.titleBarWidget()
+		self.customTitleBar = DockWindowTitleBar( self )
+		self.customTitleBar = self.originTitleBar
+		self.setTitleBarWidget( self.customTitleBar )
 		pass
 
 	def _useWindowFlags(self):
 		pass
 		
 	def hideTitleBar(self):
-		emptyTitle=QtGui.QWidget()
+		emptyTitle = QtGui.QWidget()
 		self.setTitleBarWidget(emptyTitle)
 
 	def startTimer(self, interval, trigger):
 		assert(hasattr(trigger,'__call__'))
-		timer=QtCore.QTimer(self)
+		timer = QtCore.QTimer(self)
 		timer.timeout.connect(trigger)
 		timer.start(interval)
 		return timer
 
+	def onAppActivate( self ):
+		if self.topLevel:
+			self.setWindowFlags( Qt.Window | Qt.WindowStaysOnTopHint )
+			self.show()
+
+	def onAppDeactivate( self ):
+		if self.topLevel:
+			self.setWindowFlags( Qt.Window )
+			self.show()
+
 	def onTopLevelChanged(self, toplevel):
+		self.topLevel = toplevel
 		if toplevel:
-			self.setTitleBarWidget(self.originTitleBar)
-			self.setWindowFlags(Qt.Window)
+			self.setTitleBarWidget( self.originTitleBar )
+			self.setWindowFlags( Qt.Window | Qt.WindowStaysOnTopHint )
 			self.show()
 		else:
-			self.setTitleBarWidget(self.customTitleBar)
+			self.setTitleBarWidget( self.customTitleBar )
 			pass
 
 

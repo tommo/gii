@@ -15,10 +15,10 @@ from QtEditorModule         import QtEditorModule
 class QtSupportEventFilter(QObject):
 	def eventFilter(self, obj, event):
 		e=event.type()
-		if e==QEvent.ApplicationActivate:			
-			signals.emit('app.activate')
-		elif e==QEvent.ApplicationDeactivate:
-			signals.emit('app.deactivate')
+		if   e == QEvent.ApplicationActivate:			
+			signals.emitNow('app.activate')
+		elif e == QEvent.ApplicationDeactivate:
+			signals.emitNow('app.deactivate')		
 		return QObject.eventFilter(self, obj,event)
 
 ##----------------------------------------------------------------##
@@ -38,7 +38,7 @@ class QtSupport( QtEditorModule ):
 		try:
 			styleSheetName = 'dark1.qss'
 			self.qtApp.setStyleSheet(
-					open( getAppPath( 'data/' + styleSheetName ) ).read() 
+					open( self.getApp().getPath( 'data/' + styleSheetName ) ).read() 
 				)
 		except Exception, e:
 			# logging.info('style sheet not load',e)
@@ -57,7 +57,7 @@ class QtSupport( QtEditorModule ):
 	def setupMainWindow( self ):
 		self.mainWindow = QtMainWindow(None)
 		self.mainWindow.setBaseSize( 800, 600 )
-		self.mainWindow.resize( 800, 600 )
+		self.mainWindow.resize( 1000, 600 )
 		self.mainWindow.setWindowTitle( 'GII' )
 		self.mainWindow.app = self
 
@@ -69,6 +69,14 @@ class QtSupport( QtEditorModule ):
 			'Open','E&xit'
 			]
 		)
+
+		self.mainToolBar = QtGui.QToolBar()
+		self.mainToolBar.setFloatable(False)
+		self.mainToolBar.setMovable(True)
+		self.mainWindow.addToolBar(self.mainToolBar)
+
+		self.statusBar = QtGui.QStatusBar()
+		self.mainWindow.setStatusBar(self.statusBar)
 
 	def onLoad( self ):
 		self.qtApp   = QtGui.QApplication(sys.argv)

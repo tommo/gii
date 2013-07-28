@@ -26,19 +26,6 @@ def addWidgetWithLayout(child, parent, **option):
 	return child
 
 
-def fixDuplicatedName( names, name, id = None ):
-	if id:
-		testName = name + '_%d' % id
-	else:
-		id = 0
-		testName = name
-	#find duplicated name
-	if testName in names:
-		return fixDuplicatedName( names, name, id + 1)
-	else:
-		return testName
-
-
 def setClipboardText( text ):
 	QtGui.QApplication.clipboard().setText( text )
 

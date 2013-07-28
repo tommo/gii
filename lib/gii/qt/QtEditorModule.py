@@ -25,7 +25,7 @@ class QtEditorModule( EditorModule ):
 
 	def requestDocumentWindow( self, id, **windowOption ):
 		qt = self.getModule( 'qt' )
-		container = qt.requestDocuemntWindow( id, windowOption )
+		container = qt.requestDocumentWindow( id, windowOption )
 		# self.containers[id] = container
 		return container
 

@@ -12,6 +12,8 @@ from package        import PackageManager
 from MainModulePath import getMainModulePath
 from selection      import SelectionManager
 
+from InstanceHelper import checkSingleInstance
+
 _GII_BUILTIN_PACKAGES_PATH = 'packages'
 
 class EditorApp(object):
@@ -44,6 +46,9 @@ class EditorApp(object):
 			EditorModuleManager.get().loadModule(m)
 
 	def init( self ):
+		if not checkSingleInstance():
+			raise Exception('running instance detected')
+
 		if self.initialized: return
 		
 		#packages

@@ -50,10 +50,13 @@
    </item>
    <item>
     <widget class="QScrollArea" name="scrollArea">
+     <property name="styleSheet">
+      <string notr="true">background-color:rgb(89, 89, 89)</string>
+     </property>
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
+     <widget class="QWidget" name="scrollInner">
       <property name="geometry">
        <rect>
         <x>0</x>

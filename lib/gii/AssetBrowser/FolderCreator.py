@@ -3,7 +3,6 @@ import os.path
 
 from gii.core         import *
 from AssetBrowser     import AssetCreator
-from gii.qt.helpers   import addWidgetWithLayout
 ##----------------------------------------------------------------##
 class FolderCreator(AssetCreator):
 	def getAssetType( self ):
@@ -18,7 +17,7 @@ class FolderCreator(AssetCreator):
 				nodepath = contextNode.getChildPath(name)
 			else:
 				nodepath = contextNode.getSiblingPath(name)
-			fullpath = app.getAssetLibrary().getAbsPath(nodepath)
+			fullpath = app.getAssetLibrary().getAbsPath( nodepath )
 			try:
 				os.mkdir( fullpath )
 			except Exception,e :

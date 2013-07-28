@@ -74,7 +74,7 @@ class MOAIGameView( QtEditorModule ):
 		self.setFocus()
 
 	def onLoad(self):
-		self.container = self.requestDockWindow('MOAIGameView',
+		self.container = self.requestDocumentWindow('MOAIGameView',
 			title   = "Game",
 			minSize = (100,100),			
 			size    = (300,300),
@@ -162,8 +162,7 @@ class MOAIGameView( QtEditorModule ):
 		# src = os.path.abspath(src)
 		self.runningScript=src
 
-		runtime.changeRenderContext('game')
-		runtime.setWorkingDirectory(os.path.dirname(src))
+		runtime.changeRenderContext('game')	
 		
 		logging.info( 'running script:%s' % src )
 		runtime.runScript( src )

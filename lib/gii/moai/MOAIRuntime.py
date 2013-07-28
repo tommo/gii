@@ -182,6 +182,7 @@ class MOAIRuntime( EditorModule ):
 
 	#General Control
 	def setWorkingDirectory(self, path):
+		logging.info('change moai working path:' + path )
 		getAKU().setWorkingDirectory(path)
 
 	def pause(self, paused=True):
@@ -266,18 +267,17 @@ class MOAIRuntime( EditorModule ):
 	#----------
 	def onLoad(self):
 		self.AKUReady = False
-		signals.connect ( 'project.preload', self.onProjectPreload )
 		signals.tryConnect ( 'console.exec', self.execConsole )
 		self.initContext()
+
+	def onStart( self ):
+		self.setWorkingDirectory( self.getProject().getPath() )
 
 	def onUnload(self):
 		self.cleanLuaReferences()
 		self.luaRuntime = None
 		self.AKUReady   = False
 		pass
-
-	def onProjectPreload(self, prj):
-		self.setWorkingDirectory(prj.getPath())
 
 
 

@@ -144,6 +144,7 @@ class Project(object):
 		
 		self._initPath( path )
 		self._affirmDirectories()
+		os.chdir( path )
 
 		sys.path.insert( 0, self.envLibPath )
 
@@ -164,8 +165,8 @@ class Project(object):
 	def save( self ):
 		signals.emitNow('project.presave', self)
 		#save project info & config
-		jsonHelper.trySaveJSON( self.info,   self.getBasePath( _GII_INFO_FILE ) )
-		jsonHelper.trySaveJSON( self.config, self.getConfigPath( _GII_CONFIG_FILE ) )
+		jsonHelper.trySaveJSON( self.info,   self.getBasePath( _GII_INFO_FILE ), 'project info' )
+		jsonHelper.trySaveJSON( self.config, self.getConfigPath( _GII_CONFIG_FILE ), 'project config')
 
 		#save asset & cache
 		self.assetLibrary.save()

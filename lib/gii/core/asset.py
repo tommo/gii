@@ -89,7 +89,7 @@ class AssetNode(object):
 			return name
 
 	def getChildPath(self, name):
-		path=self.getPath()
+		path = self.getPath()
 		if path:
 			return path + '/' + name
 		else:
@@ -362,7 +362,7 @@ class AssetLibrary(object):
 		self.rootAbsPath    = rootAbsPath
 		self.projectAbsPath = projectAbsPath
 		self.assetIndexPath = configPath + '/' +GII_ASSET_INDEX_PATH
-		self.rootNode       = AssetNode( self.rootPath, 'folder' )
+		self.rootNode       = AssetNode( '', 'folder', filePath = self.rootPath )
 		self.loadAssetTable()		
 
 	def save( self ):
@@ -512,12 +512,9 @@ class AssetLibrary(object):
 
 
 	def scanProjectPath(self): #scan 
-		logging.info('** scan project')
-		path=self.rootPath
-		
+		logging.info('scan project in:' + self.rootAbsPath )
 		#scan meta files first ( will be used in asset importing )
 		#TODO
-
 		#check missing asset
 		for assetPath, node in self.assetTable.copy().items():
 			if not self.assetTable.has_key(assetPath): #already removed(as child of removed node)
@@ -531,9 +528,9 @@ class AssetLibrary(object):
 			if node.isVirtual(): #don't check virtual node's file
 				continue
 
-			filePath=self.getAbsPath(node.getFilePath())
+			filePath = node.getAbsFilePath()
 			#file deleted
-			if not os.path.exists(filePath):
+			if not os.path.exists( filePath ):
 				self.unregisterAssetNode(node)
 				continue
 			#file become ignored
@@ -543,27 +540,28 @@ class AssetLibrary(object):
 
 			
 		#check new asset
-		for currentDir, dirs, files in os.walk(unicode(path)):
-			relDir=os.path.relpath(currentDir, self.rootPath)
+		for currentDir, dirs, files in os.walk(unicode(self.rootAbsPath)):
+			relDir=os.path.relpath(currentDir, self.rootAbsPath)
 
 			for filename in files:
 				if self.checkFileIgnorable(filename):
 					continue
-				fullpath=relDir+'/'+filename				
+				fullpath = relDir+'/'+filename				
 				self.importAsset(fullpath, forced=False)
 
-			dirs2=dirs[:]
+			dirs2 = dirs[:]
 			for dirname in dirs2:
 				if self.checkFileIgnorable(dirname):
 					dirs.pop(dirs.index(dirname)) #skip walk this
 					continue
-				fullpath=relDir+'/'+dirname
-				node=self.importAsset(fullpath, forced=False)
+				fullpath = relDir+'/'+dirname
+				node     = self.importAsset(fullpath, forced=False)
 
 		self.saveAssetTable()
 
 	def loadAssetTable(self):
-		logging.info( 'loading asset table' )
+
+		logging.info( 'loading asset table from:' + self.assetIndexPath )
 		
 		if not os.path.exists( self.assetIndexPath ): return
 		dataTable = jsonHelper.tryLoadJSON( self.assetIndexPath )
@@ -638,7 +636,7 @@ class AssetLibrary(object):
 			if node.metadata:
 				node.saveMetaData()
 
-		if not jsonHelper.trySaveJSON( table, self.assetIndexPath ):
+		if not jsonHelper.trySaveJSON( table, self.assetIndexPath, 'asset index' ):
 			return False
 		logging.info( 'asset table saved' )
 		return True	

@@ -14,7 +14,10 @@ if app.getModule('asset_browser'):
 	
 	class ImagePreviewer( AssetPreviewer ):
 		def createWidget(self, container):
+			self.image = None
 			self.scale = 1.0
+			self.state = 'fit'
+
 			self.container = uic.loadUi( app.getPath( 'data/ui/ImagePreview.ui' ) )			
 			self.container.scrollArea.setStyleSheet('''
 				background-color: rgb( 30, 30, 30 );
@@ -23,7 +26,11 @@ if app.getModule('asset_browser'):
 			self.container.labelImage.setBackgroundRole( QtGui.QPalette.Base )
 			self.container.labelImage.setSizePolicy( QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Ignored )
 			self.container.labelImage.setScaledContents( True )
-			self.container.scrollArea.resizeEvent = self.onContainerResize
+			self.container.scrollArea.resizeEvent = self.onContainerResize			
+
+			self.container.buttonFit.clicked.connect( self.fitSize )
+			self.container.buttonActual.clicked.connect( self.actualSize )
+
 
 			return self.container
 
@@ -37,13 +44,15 @@ if app.getModule('asset_browser'):
 				return
 			self.container.labelImage.setPixmap( QtGui.QPixmap.fromImage(image) )
 			self.image = image
-			self.state = 'fit'
+			
 			self.fitSize()
 
 		def onStop(self):
 			pass
 
 		def fitSize( self ):
+			if not self.image: return
+
 			areaSize = self.container.scrollArea.size()
 			aw = areaSize.width()
 			ah = areaSize.height()
@@ -57,12 +66,16 @@ if app.getModule('asset_browser'):
 			else:
 				w = aw	
 				h = aw * ih/iw
-
-			self.container.labelImage.setGeometry( (aw - w)/2, (ah - h)/2,  w, h )
+			x = (aw - w)/2
+			y = (ah - h)/2
+			self.container.scrollInner.resize( x+w, y+h )
+			self.container.labelImage.setGeometry( x, y,  w, h )
 			self.state = 'fit'
 			self.scale = w/iw
 
 		def actualSize( self ):
+			if not self.image: return
+			
 			areaSize = self.container.scrollArea.size()
 			aw = areaSize.width()
 			ah = areaSize.height()
@@ -71,12 +84,27 @@ if app.getModule('asset_browser'):
 			ih = imgSize.height()
 			w = iw
 			h = ih
-			self.container.labelImage.setGeometry( (aw - w)/2, (ah - h)/2,  w, h )
+			if iw > aw:
+				x = 0
+			else:
+				x = (aw - w)/2
+
+			if ih > ah:
+				y = 0
+			else:
+				y = (ah - h)/2
+
+			self.container.labelImage.setGeometry( x, y,  w, h )
+			self.container.scrollInner.resize( x + w, y + h )
+
 			self.scale = 1.0
 			self.state = 'actual'
 
 		def onContainerResize( self, size ):
-			self.fitSize()
+			if self.state=='actual':
+				self.actualSize()
+			else:
+				self.fitSize()
 
 
 	ImagePreviewer().register()
