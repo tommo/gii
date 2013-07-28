@@ -1,22 +1,28 @@
 import logging
 
+loggingLevel = logging.WARNING
+# loggingLevel = logging.INFO
+
+logging.basicConfig(
+	format = '[%(levelname)s]\t%(message)s',
+	level  = loggingLevel
+	)
+
+##----------------------------------------------------------------##
 import signals
 import globalSignals
-
+##----------------------------------------------------------------##
 from model          import *
 from cli            import CLICommand, parseCLI
 from tool           import ToolBase, startupTool
 from project        import Project
-from asset          import AssetException, AssetNode, AssetManager
+from asset          import AssetLibrary, AssetException, AssetNode, AssetManager
 from MainModulePath import getMainModulePath
 
 ##----------------------------------------------------------------##
 from EditorModule   import EditorModule
 from EditorApp      import app
 ##----------------------------------------------------------------##
-loggingLevel = logging.INFO
-# loggingLevel = logging.WARNING
-logging.basicConfig(
-	format = '[%(levelname)s]\t%(message)s',
-	level  = loggingLevel
-	)
+
+def getProjectPath( path ):
+	return Project.get().getBasePath( path )

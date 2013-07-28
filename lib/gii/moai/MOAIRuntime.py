@@ -16,7 +16,6 @@ _G = LuaTableProxy( None )
 signals.register( 'lua.msg' )
 signals.register( 'moai.clean' )
 signals.register( 'moai.reset' )
-signals.register( 'moai.context.init' )
 
 ##----------------------------------------------------------------##
 import bridge
@@ -46,7 +45,7 @@ class MOAIRuntime( EditorModule ):
 		self.lastInputDeviceId = 0
 
 	def getName(self):
-		return 'moai.runtime'
+		return 'moai'
 
 	def getDependency(self):
 		return []	
@@ -68,8 +67,9 @@ class MOAIRuntime( EditorModule ):
 		#inject python env
 		lua = aku.getLuaRuntime()
 		_G._setTarget( lua.globals() )
-		_G['GII_PYTHON_BRIDGE']  = bridge
-		_G['GII_DATA_PATH']      = self.getApp().getPath('data')
+		_G['GII_PYTHON_BRIDGE']        = bridge
+		_G['GII_DATA_PATH']            = self.getApp().getPath('data')
+		_G['GII_PROJECT_SCRIPT_PATH']  = self.getProject().getScriptPath()
 		logging.info( 'loading gii lua runtime' )
 		aku.runScript(
 			self.getApp().getPath( 'data/lua/runtime.lua' )
@@ -81,14 +81,26 @@ class MOAIRuntime( EditorModule ):
 		self.AKUReady      = True
 		self.RunningScript = False
 		self.paused        = False
+		self.GLContextInitializer = None
 		
 		getAKU().setFuncOpenWindow( self.onOpenWindow )
 
 	def initGLContext( self ):
-		if self.GLContextReady: return
-		signals.emitNow( 'moai.context.init' )
+		if self.GLContextReady: return True
+		from gii.qt.controls.GLWidget import GLWidget
+		GLWidget.getSharedWidget().makeCurrent()
+		# if not self.GLContextInitializer: 
+		# 	logging.warn( 'no GL initializer found' )
+		# 	return False
+		# logging.info( 'initialize GL context' )
+		# self.GLContextInitializer()
+		# signals.emitNow( 'moai.context.init' )
 		getAKU().detectGfxContext()
 		self.GLContextReady = True
+		return True
+
+	# def setGLContextInitializer( self, func ):
+	# 	self.GLContextInitializer = func
 
 	def start( self ):
 		self.initGLContext()
@@ -116,6 +128,7 @@ class MOAIRuntime( EditorModule ):
 		self.luaRuntime.setBufferSize(w,h) 
 
 	def manualRenderAll(self):
+		if not self.GLContextReady: return
 		self.luaRuntime.manualRenderAll()
 
 	def changeRenderContext(self, s):

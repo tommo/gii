@@ -1,6 +1,7 @@
 import sys
 import os
 
+
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
@@ -61,12 +62,13 @@ class QtSupport( QtEditorModule ):
 		self.mainWindow.app = self
 
 		self.mainWindow.module = self
-		self.menu = MenuManager.get().addMenuBar( 'main', self.mainWindow.menuBar(), self )
 
-		# self.menu.addChild('&File').addChild([
-		# 	'Open','E&xit'
-		# 	]
-		# )
+		self.menu = self.addMenuBar( 'main', self.mainWindow.menuBar() )
+
+		self.menu.addChild('&File').addChild([
+			'Open','E&xit'
+			]
+		)
 
 	def onLoad( self ):
 		self.qtApp   = QtGui.QApplication(sys.argv)
@@ -91,7 +93,7 @@ class QtSupport( QtEditorModule ):
 		self.running     = False
 		return True
 
-	def start( self ):
+	def onStart( self ):
 		self.mainWindow.show()
 		self.mainWindow.raise_()
 
@@ -122,6 +124,11 @@ class QtSupport( QtEditorModule ):
 
 	def getMainWindow( self ):
 		return self.mainWindow
+
+	def onMenu(self, node):
+		name = node.name
+		if name == 'exit':
+			self.getApp().stop()
 
 
 QtSupport().register()

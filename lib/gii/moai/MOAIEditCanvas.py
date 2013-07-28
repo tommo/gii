@@ -179,12 +179,12 @@ class MOAIEditCanvasLuaDelegate(MOAILuaDelegate):
 		if self._onResize: self._onResize(w,h)
 
 
-class MOAIEditCanvas(GLWidget):
+class MOAIEditCanvas( GLWidget ):
 	_id=0
 	def __init__(self, *args):
-		MOAIEditCanvas._id+=1
+		MOAIEditCanvas._id += 1
 		super(MOAIEditCanvas, self).__init__(*args)
-		self.runtime     = app.affirmModule( 'moai.runtime' )
+		self.runtime     = app.affirmModule( 'moai' )
 		self.contextName = 'EditCanvas-%d' % MOAIEditCanvas._id
 		self.delegate    = MOAIEditCanvasLuaDelegate( self )
 		self.updateTimer = QtCore.QTimer(self)
@@ -259,12 +259,12 @@ class MOAIEditCanvas(GLWidget):
 
 	def resizeGL(self, width, height):
 		self.delegate.onResize(width,height)
-		self.viewWidth=width
-		self.viewHeight=height
+		self.viewWidth  = width
+		self.viewHeight = height
 		self.updateGL()
 
 	def onDraw(self):
-		runtime=self.runtime
+		runtime = self.runtime
 		runtime.setBufferSize(self.viewWidth,self.viewHeight)
 		runtime.changeRenderContext(self.contextName)
 		runtime.manualRenderAll()
@@ -273,10 +273,10 @@ class MOAIEditCanvas(GLWidget):
 	def updateCanvas( self, forced=True ):
 		step    = self.updateStep
 		runtime = self.runtime
-		runtime.setBufferSize(self.viewWidth,self.viewHeight)
-		runtime.changeRenderContext(self.contextName)
-		runtime.stepSim(step)
-		self.delegate.onUpdate(step)
+		runtime.setBufferSize( self.viewWidth, self.viewHeight )
+		runtime.changeRenderContext( self.contextName )
+		runtime.stepSim( step )
+		self.delegate.onUpdate( step )
 		if forced:
 			self.forceUpdateGL()
 		else:

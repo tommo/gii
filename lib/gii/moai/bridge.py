@@ -1,10 +1,10 @@
 import logging
 import json
 
-from gii.core import *
+from gii.core   import *
 from exceptions import *
-from AKU import _LuaTable, _LuaThread, _LuaObject, _LuaFunction
-from time import time as getTime
+from AKU        import _LuaTable, _LuaThread, _LuaObject, _LuaFunction
+from time       import time as getTime
 
 
 def wrapLuaCaller(func):
@@ -69,8 +69,7 @@ def changeSelection(targets=None):
 ####################################
 #todo
 def GUIYield():
-	App.get().GUIYield()
-
+	app.doMainLoop()
 
 
 ####################################

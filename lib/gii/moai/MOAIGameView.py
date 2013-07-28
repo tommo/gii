@@ -29,10 +29,10 @@ class MOAIGameView( QtEditorModule ):
 		return 'moai.game'
 
 	def getDependency(self):
-		return [ 'qt', 'moai.runtime' ]
+		return [ 'qt', 'moai' ]
 
 	def getRuntime(self):
-		return self.getManager().affirmModule('moai.runtime')
+		return self.getManager().affirmModule('moai')
 
 	def tryResizeContainer(self, w,h):
 		self.getQtSupport().getMainWindow().resize(w,h)

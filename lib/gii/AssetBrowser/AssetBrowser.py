@@ -1,16 +1,24 @@
 import random
-from PyQt4            import QtCore, QtGui, uic
-from PyQt4.QtCore     import Qt
+from abc import ABCMeta, abstractmethod
+
+import gii.FileWatcher
 
 from gii.core         import *
 from gii.qt           import QtEditorModule
 
+from gii.qt.dialogs   import requestString
 from gii.qt.controls.AssetTreeView import AssetTreeView
+
+from PyQt4            import QtCore, QtGui, uic
+from PyQt4.QtCore     import Qt
 
 ##----------------------------------------------------------------##
 SortUserRole=QtCore.Qt.UserRole
 ##----------------------------------------------------------------##
 class AssetPreviewer(object):
+	def register( self ):
+		return app.getModule('asset_browser').registerPreviewer( self )
+
 	def accept(self, selection):
 		return False
 
@@ -22,7 +30,8 @@ class AssetPreviewer(object):
 
 	def onStop(self):
 		pass
-		
+
+##----------------------------------------------------------------##		
 class NullAssetPreviewer(AssetPreviewer):
 	def createWidget(self,container):
 		self.label = QtGui.QLabel(container)
@@ -41,38 +50,25 @@ class NullAssetPreviewer(AssetPreviewer):
 	def onStop(self):
 		pass
 
-
+##----------------------------------------------------------------##
 class AssetCreator(object):
+	__metaclass__ = ABCMeta
+
+	@abstractmethod
+	def getAssetType( self ):
+		return 'name'
+
+	@abstractmethod
+	def getLabel( self ):
+		return 'Label'
+
+	def register( self ):
+		return app.getModule('asset_browser').registerAssetCreator( self )
+
 	def createAsset(self, name, contextNode, assetType):
 		return False
 
 
-class FolderCreator(AssetCreator):
-	def createAsset(self, name, contextNode, assetType):
-		if assetType == 'folder':
-			if contextNode.isType('folder'):
-				nodepath = contextNode.getChildPath(name)
-			else:
-				nodepath=contextNode.getSiblingPath(name)
-			fullpath = app.getAssetLibrary().getAbsPath(nodepath)
-			try:
-				os.mkdir(fullpath)
-			except Exception,e :
-				print( 'failed create folder', e )
-				return False
-			return nodepath
-		else:
-			return False
-
-def registerAssetPreviewer(previewer):
-	return App.get().getModule('asset_browser').registerPreviewer(previewer)
-
-def registerAssetCreator(assetType, creator, **kwargs):
-	return App.get().getModule('asset_browser').registerAssetCreator(assetType,creator,**kwargs)
-
-def setAssetIcon( assetType, iconName ):
-	return App.get().getModule('asset_browser').setAssetIcon( assetType, iconName )
-	
 ##----------------------------------------------------------------##
 class AssetBrowser( QtEditorModule ):
 	"""docstring for AssetBrowser"""
@@ -80,7 +76,6 @@ class AssetBrowser( QtEditorModule ):
 		super(AssetBrowser, self).__init__()
 		self.previewers        = []
 		self.creators          = []
-		self.assetIconMap      = {}
 
 		self.activePreviewer   = None		
 		self.newCreateNodePath = None
@@ -121,7 +116,6 @@ class AssetBrowser( QtEditorModule ):
 
 		self.treeView.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
 		self.treeView.customContextMenuRequested.connect( self.onTreeViewContextMenu)
-		self.treeView.setAssetIconMap( self.assetIconMap )
 
 		self.assetMenu=self.addMenu('main/asset', {'label':'&Asset'})
 		self.creatorMenu=self.addMenu('main/asset/asset_create',{'label':'Create'})
@@ -141,19 +135,21 @@ class AssetBrowser( QtEditorModule ):
 				{'name':'create', 'label':'Create', 'link':self.creatorMenu},
 			])
 
-		self.registerAssetCreator('folder', FolderCreator(), label='Folder')
 
 	def onStart( self ):
+		self.getAssetLibrary().scanProjectPath()
+		self.getAssetLibrary().clearFreeMetaData()
+
 		signals.connect( 'asset.register',   self.onAssetRegister )
 		signals.connect( 'asset.unregister', self.onAssetUnregister )
 		signals.connect( 'asset.moved',      self.onAssetMoved )
+
 		self.treeView.rebuild()
 
 	def onUnload(self):
 		#persist expand state
 		self.treeView.saveTreeStates()
 
-				
 	def onModuleLoaded(self):
 		for previewer in self.previewers:
 			self._loadPreviewer(previewer)
@@ -164,21 +160,14 @@ class AssetBrowser( QtEditorModule ):
 	def setAssetIcon(self, assetType, iconName):
 		self.assetIconMap[assetType] = iconName
 
-	def registerAssetCreator(self, assetType, creator, **kwargs):
-		label=kwargs.get( 'label', assetType )
-		setting={
-			'assetType':assetType,
-			'creator':creator,
-			'label':label
-			}
-		self.creators.append( setting )
+	def registerAssetCreator( self, creator ):		
+		self.creators.append( creator )
 		if self.alive:
 			self._loadCreator( setting )
 
-	def _loadCreator(self, setting):
-		label     = setting['label']
-		assetType = setting['assetType']
-		creator   = setting['creator']
+	def _loadCreator(self, creator):
+		label     = creator.getLabel()
+		assetType = creator.getAssetType()		
 
 		def creatorFunc(value=None):
 			contextNode = app.getSelectionManager().getSingleSelection()

@@ -29,36 +29,33 @@ class CacheManager(object):
 
 		super(CacheManager, self).__init__()
 		self.cachePath      = None
+		self.cacheAbsPath   = None
 		self.cacheIndexPath = None
 		self.cacheFileTable = {} 
 
-	def init( self, basePath ):
+	def init( self, basePath, absBasePath ):
 		self.cachePath      = basePath + '/' + _GII_CACHE_PATH
+		self.cacheAbsPath   = absBasePath + '/' + _GII_CACHE_PATH
 		self.cacheIndexPath = basePath + '/' + _GII_CACHE_INDEX_PATH
-		if not os.path.exists( self.cachePath ):
-			os.mkdir( self.cachePath )
+		if not os.path.exists( self.cacheAbsPath ):
+			os.mkdir( self.cacheAbsPath )
 		return True
 		
-	def load( self, basePath ):
+	def load( self, basePath, absBasePath ):
 		self.cachePath      = basePath + '/' + _GII_CACHE_PATH
+		self.cacheAbsPath   = absBasePath + '/' + _GII_CACHE_PATH
 		self.cacheIndexPath = basePath + '/' + _GII_CACHE_INDEX_PATH
 		#check and create cache path exists ( for safety )
-		if not os.path.exists( self.cachePath ):
-			os.mkdir( self.cachePath )
+		if not os.path.exists( self.cacheAbsPath ):
+			os.mkdir( self.cacheAbsPath )
 		#load cache file index
-		self.cacheFileTable = jsonHelper.tryLoadJSON( self.cacheIndexPath )
+		self.cacheFileTable = jsonHelper.tryLoadJSON( self.cacheIndexPath ) or {}
 		return True
 
 	def save( self ):
 		#save cache index
 		jsonHelper.trySaveJSON( self.cacheFileTable, self.cacheIndexPath )		
 
-	def getCachePath( self, path ):
-		if not path:
-			return self.cachePath
-		else:
-			return os.path.abspath( self.cachePath + '/' + path )
-		
 	def touchCacheFile( self, cacheFile ):
 		node = self.cacheFileTable.get( cacheFile, None )
 		# assert node
@@ -67,30 +64,23 @@ class CacheManager(object):
 
 	def getCacheFile( self, srcPath, name = None ):
 		#make a name for cachefile { hash of srcPath }	
-		baseName = name and srcPath + '@' + name or srcPath
+		baseName    = name and ( srcPath + '@' + name ) or srcPath
 		mangledName = _makeMangledFilePath( baseName )
-		
-		relPath = self.getCachePath( mangledName )
-		
-		filePath = self.getPath( relPath )
-
-		#already created
-		if os.path.exists(filePath) :
-			return filePath
+		relPath     = self.cachePath + '/' + mangledName
+		filePath    = self.cacheAbsPath + '/' + mangledName
 
 		#make an new cache file
-		self.cacheFileTable[relPath] = {
-				# 'path'   : relPath,
-				'src'    : srcPath,
-				'name'   : name,
-				'file'   : mangledName,
-				'touched' : True
+		self.cacheFileTable[ relPath ] = {
+				'src'    :srcPath,
+				'name'   :name,
+				'file'   :mangledName,
+				'touched':True
 			}
 
-		#create empty placeholder
-		fp = open( filePath, 'w' ) 
-		fp.close()
-
+		#create empty placeholder if not ready
+		if not os.path.exists(filePath):
+			fp = open( filePath, 'w' ) 
+			fp.close()
 		return relPath
 
 	def clearFreeCacheFiles( self ):
@@ -101,7 +91,7 @@ class CacheManager(object):
 				toRemove.append( path )
 				try:
 					logging.info( 'remove cache file:' + path )
-					os.remove( self.getPath( path ) )
+					os.remove( path )
 				except Exception, e:
 					pass
 

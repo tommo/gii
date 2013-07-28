@@ -22,7 +22,7 @@ class LuaModuleContainer(Module):
 		super(LuaModuleContainer, self).__init__()
 
 		self.name=setting['name']
-		self.dependency=setting['dependency'] or ['moai.runtime']
+		self.dependency=setting['dependency'] or ['moai']
 		
 		self._onLoad=wrapLuaFunc(setting['onLoad'])
 		self._onUnload=wrapLuaFunc(setting['onUnload'])

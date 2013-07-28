@@ -65,16 +65,22 @@ class EditorApp(object):
 		sleepTime = kwargs.get( 'sleep', 0.002 )
 		EditorModuleManager.get().startAllModules()
 		signals.emitNow('app.start')
-		while self.running:
-			signals.dispatchAll()
-			EditorModuleManager.get().updateAllModules()
-			time.sleep( sleepTime )
 
-	def stop( self ):
+		while self.running:
+			self.doMainLoop( sleepTime )
+
 		signals.emitNow('app.close')
 		signals.dispatchAll()
+		self.getProject().save()
 		EditorModuleManager.get().unloadAllModules()
-		self.running     = False
+
+	def doMainLoop( self, sleepTime = 0.002 ):
+		signals.dispatchAll()
+		EditorModuleManager.get().updateAllModules()
+		time.sleep( sleepTime )
+
+	def stop( self ):
+		self.running = False
 
 	def setConfig( self, name, value ):
 		self.config[name] = value

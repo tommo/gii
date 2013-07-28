@@ -31,7 +31,7 @@ class AssetNode(object):
 
 		self.metadata   = None
 
-		self.name = os.path.basename(nodePath)
+		self.name = os.path.basename( nodePath )
 		
 		self.children = []
 		self.rDep     = {}     #runtime level dependency
@@ -44,8 +44,8 @@ class AssetNode(object):
 
 		self.deployState = None
 
-		self.filePath = kwargs.get('filePath',nodePath)
-		self.fileTime = kwargs.get('fileTime',0)
+		self.filePath = kwargs.get( 'filePath', nodePath )
+		self.fileTime = kwargs.get( 'fileTime', 0 )
 
 		self.accessPriority=0
 
@@ -84,14 +84,14 @@ class AssetNode(object):
 
 	def getSiblingPath(self,name):
 		if self.getDir():
-			return self.getDir()+'/'+name
+			return self.getDir() + '/' + name
 		else:
 			return name
 
 	def getChildPath(self, name):
 		path=self.getPath()
 		if path:
-			return path+'/'+name
+			return path + '/' + name
 		else:
 			return name
 
@@ -183,7 +183,7 @@ class AssetNode(object):
 
 	def getAbsFilePath(self):
 		if self.filePath:
-			return AssetLibrary.get().getAbsPath(self.filePath)
+			return AssetLibrary.get().projectAbsPath + '/' + self.filePath
 		else:
 			return ''
 
@@ -254,12 +254,12 @@ class AssetNode(object):
 		self.saveMetaData()
 
 	def showInBrowser(self):
-		path=self.getAbsFilePath()
+		path = self.getAbsFilePath()
 		if path:
 			AssetUtils.showFileInBrowser(path)
 
 	def openInSystem(self):
-		path=self.getAbsFilePath()
+		path = self.getAbsFilePath()
 		if path:
 			AssetUtils.openFileInOS(path)
 
@@ -267,19 +267,23 @@ class AssetNode(object):
 	def loadAsJson(self):
 		if self.isVirtual(): return None
 		filepath = self.getAbsFilePath()
+
 		fp = open(filepath , 'r')
 		text = fp.read()
 		fp.close()
 		data = json.loads(text)
+
 		return data
 
 	def saveAsJson(self, data):
 		if self.isVirtual(): return False
 		filepath = self.getAbsFilePath()
+
 		text = json.dumps( data, indent = 2, sort_keys = True )
 		fp = open(filepath , 'w')
 		fp.write(text)
 		fp.close()
+
 		return True
 
 ##----------------------------------------------------------------##
@@ -288,7 +292,10 @@ class AssetManager(object):
 		return 'asset_manager'
 
 	def __lt__(self, other):
-		return other.getPriority()<self.getPriority()
+		return other.getPriority() < self.getPriority()
+
+	def register( self ):
+		AssetLibrary.get().registerAssetManager( self )
 
 	def getPriority(self):
 		return 0
@@ -296,11 +303,11 @@ class AssetManager(object):
 	def acceptAssetFile(self, filepath):
 		return False
 
-	def importAsset(self, assetNode, option=None):
+	def importAsset(self, assetNode, option = None):
 		return None
 
-	def reimportAsset(self, assetNode, option=None):
-		lib=AssetLibrary.get()
+	def reimportAsset(self, assetNode, option = None):
+		lib = AssetLibrary.get()
 		for n in assetNode.getChildren()[:]:
 			lib.unregisterAssetNode(n)
 		return self.importAsset(assetNode, option)
@@ -338,6 +345,8 @@ class AssetLibrary(object):
 		
 		self.rootPath        = None
 
+		self.assetIconMap    = {}
+
 		self.ignoreFilePattern = [
 			'\.git',
 			'\.assetmeta',
@@ -347,16 +356,14 @@ class AssetLibrary(object):
 		]
 
 	
-	def load( self, assetPath, configPath ):
+	def load( self, rootPath, rootAbsPath, projectAbsPath, configPath ):
 		#load asset
-		self.rootPath       = assetPath
+		self.rootPath       = rootPath
+		self.rootAbsPath    = rootAbsPath
+		self.projectAbsPath = projectAbsPath
 		self.assetIndexPath = configPath + '/' +GII_ASSET_INDEX_PATH
-		self.rootNode       = AssetNode( '', 'folder' )
+		self.rootNode       = AssetNode( self.rootPath, 'folder' )
 		self.loadAssetTable()		
-		self.scanProjectPath()
-
-		#TODO: should use a explicit command to trigger this
-		AssetLibrary.get().clearFreeMetaData()
 
 	def save( self ):
 		self.saveAssetTable()
@@ -364,16 +371,12 @@ class AssetLibrary(object):
 	def getRootNode(self):
 		return self.rootNode
 
-	def getAbsPath(self, path):
-		if not path:
-			return self.rootPath
-		return os.path.abspath( self.rootPath + '/' + path )
+	def getAbsPath( self, path ):
+		return self.rootAbsPath + '/' + path
 
-	def getRelPath(self,path):
-		rootPath = os.path.abspath( self.rootPath )
-		path     = os.path.abspath( path )
-		return os.path.relpath( path, rootPath )
-
+	def getRelPath( self, path ):
+		path = os.path.abspath( path )
+		return os.path.relpath( path, self.rootAbsPath )
 
 	def registerAssetManager(self, manager):
 		logging.info( 'registering asset manager:'+manager.getName() )
@@ -428,27 +431,28 @@ class AssetLibrary(object):
 		'''find an asset manager capable of processing given file'''
 		path = path.replace( '\\', '/' ) #for windows
 		if path.startswith('./'): path=path[2:]
-		fullpath=os.path.abspath(self.rootPath+'/'+path)
-		oldnode=self.getAssetNode(path)
+		fullpath = os.path.abspath( self.rootAbsPath + '/' + path )
+		oldnode  = self.getAssetNode(path)
+
 		if oldnode and \
-				os.path.getmtime(fullpath)<=oldnode.getFileTime() and \
+				os.path.getmtime(fullpath) <= oldnode.getFileTime() and \
 				(not kwarg.get('forced', False)):
 			return oldnode
-		# print('import',oldnode,path)
-		ppath=os.path.dirname(path)
-		parentNode=self.getAssetNode(ppath)			
 
-		if not os.path.exists(fullpath):
-			raise AssetException('file not exist:%s'%fullpath)
+		ppath      = os.path.dirname(path)
+		parentNode = self.getAssetNode(ppath)			
+
+		if not os.path.exists( fullpath ):
+			raise AssetException( 'file not exist: %s' % fullpath )
 		
 		node = oldnode
 
 		if not node: 
-			node=AssetNode(
+			node = AssetNode(
 					path, 
 					os.path.isfile(fullpath) and 'file' or 'folder' , 
-					fileTime=os.path.getmtime(fullpath),
-					filePath=path
+					fileTime = os.path.getmtime(fullpath),
+					filePath = self.rootPath + '/' + path
 				)
 			parentNode.addChild(node)	
 
@@ -458,7 +462,7 @@ class AssetLibrary(object):
 					manager.reimportAsset(node, option)
 				else:
 					manager.importAsset(node, option)
-				node.manager=manager
+				node.manager = manager
 				break
 
 		if not node.manager:
@@ -468,7 +472,7 @@ class AssetLibrary(object):
 			self.registerAssetNode(node)
 
 		if oldnode:
-			oldnode.fileTime=os.path.getmtime(fullpath)
+			oldnode.fileTime = os.path.getmtime(fullpath)
 			signals.emitNow('asset.modified', node)
 			logging.info( 'reimport: %s' % repr(node) )
 		else:
@@ -648,7 +652,7 @@ class AssetLibrary(object):
 					dirs.pop(dirs.index(dirname)) #skip ignored files
 					continue
 
-			relDir=os.path.relpath(currentDir, self.rootPath)
+			relDir  = os.path.relpath(currentDir, self.rootPath)
 			metaDir = currentDir + '/' + GII_ASSET_META_DIR
 			if os.path.exists( metaDir ):
 				for filename in os.listdir( metaDir ):
@@ -665,9 +669,9 @@ class AssetLibrary(object):
 		for path, node in self.assetTable.items():
 			pass
 
+	def getAssetIcon( self, assetType ):
+		return self.assetIconMap.get( assetType, assetType )
 
-##----------------------------------------------------------------##
-def registerAssetManager(manager):
-	return AssetLibrary.get().registerAssetManager(manager)
+	def setAssetIcon( self, assetType, iconName ):
+		self.assetIconMap[ assetType ] = iconName
 
-##----------------------------------------------------------------##

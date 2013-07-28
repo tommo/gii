@@ -1,5 +1,8 @@
 from abc import ABCMeta, abstractmethod
 import logging
+import inspect
+import sys
+import os.path
 
 import signals
 from project import Project
@@ -19,6 +22,16 @@ class EditorModule( object ):
 	@abstractmethod
 	def getName(self):
 		raise Exception('getName not implemented')	
+
+	def getModulePath( self, path = None ):
+		modName = self.__class__.__module__		
+		m = sys.modules.get( modName, None )
+		if m:			
+			dirname = os.path.dirname( m.__file__ )
+			if path:
+				return dirname + '/' + path
+			else:
+				return dirname
 
 	def register( self ):
 		EditorModuleManager.get().registerModule( self )
@@ -80,8 +93,11 @@ class EditorModule( object ):
 		logging.info('unloading module:%s' % self.getName())
 		self.active = False
 		self.alive  = False
-		self.releaseAllRes()
+		self.releaseResource()
 		self.onUnload()
+
+	def releaseResource( self ):
+		pass
 
 	def start( self ):
 		self.onStart()

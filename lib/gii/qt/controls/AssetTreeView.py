@@ -13,10 +13,6 @@ from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 class AssetTreeView( GenericTreeWidget ):
 	def __init__( self, *args, **kwargs ):
 		super( AssetTreeView, self ).__init__( *args, **kwargs )
-		self.assetIconMap = {}
-
-	def setAssetIconMap( self, assetIconMap ):
-		self.assetIconMap = assetIconMap
 
 	def saveTreeStates( self ):
 		for node, item in self.nodeDict.items():
@@ -46,7 +42,7 @@ class AssetTreeView( GenericTreeWidget ):
 			item.setText( 2, node.getType() )
 			assetType=node.getType()
 
-			iconName = self.assetIconMap.get( assetType, assetType )
+			iconName = app.getAssetLibrary().getAssetIcon( assetType )
 			item.setIcon(0, getIcon(iconName,'normal'))
 
 		if option.get('deploy', True):

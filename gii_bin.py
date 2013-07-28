@@ -11,7 +11,7 @@ except Exception, e:
 	pass
 
 def isPythonFrozen():
-	return hasattr(sys, "frozen")
+	return hasattr( sys, "frozen" )
 
 def getMainModulePath():
 		if isPythonFrozen():

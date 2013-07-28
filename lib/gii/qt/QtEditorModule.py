@@ -47,12 +47,16 @@ class QtEditorModule( EditorModule ):
 		pass
 
 	#MENU CONTROL
-	def addMenu(self, path, opiton=None):
-		node=MenuManager.get().addMenu(path, opiton, self)		
+	def addMenuBar( self, name, menubar ):
+		node = MenuManager.get().addMenuBar(name, menubar, self)		
 		return node
 
-	def addMenuItem(self, path, option=None):
-		node=MenuManager.get().addMenuItem(path, option, self)		
+	def addMenu(self, path, opiton = None):
+		node = MenuManager.get().addMenu(path, opiton, self)		
+		return node
+
+	def addMenuItem(self, path, option = None):
+		node = MenuManager.get().addMenuItem(path, option, self)		
 		if type(node) is list:
 			for n in node:
 				self.markRes(n)

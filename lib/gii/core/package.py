@@ -62,6 +62,7 @@ class Package(object):
 		self.load()
 
 	def load( self ):
+		logging.info( 'loading package:' + self.name )
 		self.loadedModule = imp.load_module( self.moduleName, None, self.path, ('', '', 5) )
 
 	def unload( self ):

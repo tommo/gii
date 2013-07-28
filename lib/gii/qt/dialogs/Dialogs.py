@@ -1,5 +1,5 @@
 import logging
-from tmpfile import TempDir
+from gii.core.tmpfile import TempDir
 
 from PyQt4 import QtGui,QtCore
 from PyQt4.QtCore import Qt

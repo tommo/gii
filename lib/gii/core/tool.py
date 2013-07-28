@@ -41,7 +41,7 @@ _prjTools = []
 def loadToolSetting( path ):
 	infoFilePath = path + '/' + _INFO_FILE_NAME
 	if not os.path.exists( infoFilePath ): return False
-	logging.info( 'try loading tool: %s ' % path )
+	logging.debug( 'try loading tool: %s ' % path )
 	try:
 		data = json.load( file( infoFilePath, 'r' ) )
 		if not data.get( 'active', True ): return False
@@ -60,12 +60,12 @@ def scanToolsInPath( path ):
 			if data: toolList.append( data )
 	return toolList
 
-def scanTools( projectMetaPath ):
+def scanTools( path ):
 	global _libTools, _prjTools
 	mainPath  = getMainModulePath()
 	_libTools = scanToolsInPath( mainPath + '/' + _DEFAULT_TOOL_PATH )
-	if projectMetaPath:
-		_prjTools = scanToolsInPath( projectMetaPath + '/' + _DEFAULT_TOOL_PATH )
+	if path:
+		_prjTools = scanToolsInPath( path + '/' + _DEFAULT_TOOL_PATH )
 	return ( _libTools, _prjTools )
 
 def startTool( toolInfo ):
@@ -116,8 +116,8 @@ def printMissingCommand( cmd ):
 	printAvailTools( )
 	
 ##----------------------------------------------------------------##
-def startupTool( projectMetaPath ):	
-	scanTools( projectMetaPath )
+def startupTool( path ):	
+	scanTools( path )
 	argv = sys.argv
 	if len( argv ) < 2:
 		printUsage()

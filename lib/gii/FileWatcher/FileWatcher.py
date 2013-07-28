@@ -23,7 +23,7 @@ class ModuleFileWatcher( EditorModule ):
 		self.observer.start()
 
 		self.assetWatcher=self.startWatch(
-			self.getProject().getPath(),
+			self.getProject().getAssetPath(),
 			ignorePatterns=['*/.git','*/.*','*/_gii']
 		)
 

@@ -1,5 +1,6 @@
 from dispatch import Signal
 from dispatch.idle_queue import idle_loop,idle_add
+import logging
 
 SIGNALS={}
 
@@ -42,7 +43,7 @@ def emitNow(name,*args, **kwargs):
 
 def register(name, description=False):
 	if not SIGNALS.get(name,None) is None :raise Exception('SIGNAL duplicated: %s '%name)
-	# print('register signal: %s ' % name)
+	logging.debug( 'register signal: %s ' % name )
 	sig=Signal(name=name)
 	# sig=Signal()
 	# sig.description = description

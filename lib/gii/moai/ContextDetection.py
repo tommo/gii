@@ -1,7 +1,9 @@
 from gii.qt.controls.GLWidget import GLWidget
-from gii.core import signals
+from gii.core import app
 
-def GLContextInit():
-	GLWidget.getSharedWidget().makeCurrent()
+# def GLContextInit():
+# 	GLWidget.getSharedWidget().makeCurrent()
 
-signals.connect( 'moai.context.init', GLContextInit )
+# moai = app.getModule( 'moai' )
+# if moai:
+# 	moai.setGLContextInitializer( GLContextInit )
