@@ -21,6 +21,9 @@ class AssetEditor( QtEditorModule ):
 	def getDependency( self ):
 		return ['qt']
 
+	def getMainWindow( self ):
+		return self.mainWindow
+
 	def setupMainWindow( self ):
 		self.mainWindow = QtMainWindow(None)
 		self.mainWindow.setBaseSize( 800, 600 )
@@ -91,3 +94,7 @@ class QtMainWindow( MainWindow ):
 		else:
 			pass
 
+##----------------------------------------------------------------##
+class AssetEditorModule( QtEditorModule ):
+	def getMainWindow( self ):
+		return self.getModule('asset_editor').getMainWindow()

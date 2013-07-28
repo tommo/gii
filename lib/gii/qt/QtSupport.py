@@ -54,29 +54,6 @@ class QtSupport( QtEditorModule ):
 				}
 				''')
 
-	def setupMainWindow( self ):
-		self.mainWindow = QtMainWindow(None)
-		self.mainWindow.setBaseSize( 800, 600 )
-		self.mainWindow.resize( 1000, 600 )
-		self.mainWindow.setWindowTitle( 'GII' )
-		self.mainWindow.app = self
-
-		self.mainWindow.module = self
-
-		self.menu = self.addMenuBar( 'main', self.mainWindow.menuBar() )
-
-		self.menu.addChild('&File').addChild([
-			'Open','E&xit'
-			]
-		)
-
-		self.mainToolBar = QtGui.QToolBar()
-		self.mainToolBar.setFloatable(False)
-		self.mainToolBar.setMovable(True)
-		self.mainWindow.addToolBar(self.mainToolBar)
-
-		self.statusBar = QtGui.QStatusBar()
-		self.mainWindow.setStatusBar(self.statusBar)
 
 	def onLoad( self ):
 		self.qtApp   = QtGui.QApplication(sys.argv)
@@ -87,51 +64,35 @@ class QtSupport( QtEditorModule ):
 
 		self.setupStyle()
 		
-		self.setupMainWindow()
+		# self.setupMainWindow()
 		
-		# self.rootWindow = QtGui.QMainWindow()
-		# self.rootWindow.setFixedSize(0,0)
-		# self.rootWindow.show()
-		# self.rootWindow.raise_() #bring app to front
-		# self.rootWindow.hide()
-		# self.rootWindow.app = self
+		self.rootWindow = QtGui.QMainWindow()
+		self.rootWindow.setFixedSize(0,0)
+		self.rootWindow.show()
+		self.rootWindow.raise_() #bring app to front
+		self.rootWindow.hide()
+		self.rootWindow.app = self
 
 		self.containers  = {}
 		self.initialized = True
 		self.running     = False
 		return True
 
-	def onStart( self ):
-		self.mainWindow.show()
-		self.mainWindow.raise_()
-
 	def update( self ):
 		self.qtApp.processEvents( QEventLoop.AllEvents )
 
-	#controls
-	def setFocus(self):
-		self.mainWindow.show()
-		self.mainWindow.raise_()
-		self.mainWindow.setFocus()
+	# #resource provider
+	# def requestDockWindow( self, id, **dockOptions ):
+	# 	pass
 
-	#resource provider
-	def requestDockWindow( self, id, dockOptions ):
-		container = self.mainWindow.requestDockWindow(id, dockOptions)		
-		self.containers[id] = container
-		return container
+	# def requestSubWindow( self, id, **windowOption ):
+	# 	pass
 
-	def requestSubWindow( self, id, windowOption ):
-		container = self.mainWindow.requestSubWindow(id, windowOption)		
-		self.containers[id] = container
-		return container
-
-	def requestDocumentWindow( self, id, windowOption ):
-		container = self.mainWindow.requestDocuemntWindow(id, windowOption)
-		self.containers[id] = container
-		return container
+	# def requestDocumentWindow( self, id, **windowOption ):
+	# 	pass
 
 	def getMainWindow( self ):
-		return self.mainWindow
+		return self.rootWindow
 
 	def onMenu(self, node):
 		name = node.name

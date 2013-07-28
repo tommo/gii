@@ -80,11 +80,11 @@ class MainWindow(QtGui.QMainWindow):
 		return timer
 
 	def addChildWidget(self, widget, id, **dockOptions):
-		window=self.requestDockWindow(id, dockOptions)
+		window=self.requestDockWindow(id, **dockOptions)
 		window.setWidget(widget)
 		return widget
 
-	def requestSubWindow(self, id, windowOption={}):
+	def requestSubWindow(self, id, **windowOption ):
 		title = windowOption.get('title',id)
 		
 		window = SubWindow(self)
@@ -106,7 +106,7 @@ class MainWindow(QtGui.QMainWindow):
 		window.show()
 		return window
 
-	def requestDocuemntWindow(self, id, windowOption={}):
+	def requestDocumentWindow(self, id, **windowOption ):
 		title  = windowOption.get('title',id)
 		
 		window = SubWindow( self.centerArea )
@@ -130,7 +130,7 @@ class MainWindow(QtGui.QMainWindow):
 		return window
 
 
-	def requestDockWindow(self, id, dockOptions={}):
+	def requestDockWindow(self, id, **dockOptions ):
 		title=dockOptions.get( 'title', id )
 
 

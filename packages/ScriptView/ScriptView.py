@@ -25,6 +25,9 @@ class ScriptView( QtEditorModule ):
 	def getDependency(self):
 		return []
 
+	def getMainWindow( self ):
+		return self.window
+
 	def onLoad(self):	
 		#init gui	
 		self.window = window = ScriptViewWindow(None)

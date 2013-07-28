@@ -1,3 +1,5 @@
+from abc        import ABCMeta, abstractmethod
+
 from gii.core   import EditorModule
 
 from gii.qt.controls.Window import MainWindow
@@ -5,27 +7,33 @@ from gii.qt.controls.Menu   import MenuManager
 
 ##----------------------------------------------------------------##
 class QtEditorModule( EditorModule ):
+	__metaclass__ = ABCMeta
+
+	@abstractmethod
+	def getMainWindow( self ):
+		return None
+
 	def getDependency( self ):
 		return [ 'qt' ]
 
 	def getQtSupport( self ):
 		return self.getModule( 'qt' )
-	
+
 	def requestDockWindow( self, id, **windowOption ):
-		qt = self.getModule( 'qt' )
-		container = qt.requestDockWindow( id, windowOption )
+		mainWindow = self.getMainWindow()
+		container = mainWindow.requestDockWindow( id, **windowOption )
 		# self.containers[id] = container
 		return container
 
 	def requestSubWindow( self, id, **windowOption ):
-		qt = self.getModule( 'qt' )
-		container = qt.requestSubWindow( id, windowOption )
+		mainWindow = self.getMainWindow()
+		container = mainWindow.requestSubWindow( id, **windowOption )
 		# self.containers[id] = container
 		return container
 
 	def requestDocumentWindow( self, id, **windowOption ):
-		qt = self.getModule( 'qt' )
-		container = qt.requestDocumentWindow( id, windowOption )
+		mainWindow = self.getMainWindow()
+		container = mainWindow.requestDocumentWindow( id, **windowOption )
 		# self.containers[id] = container
 		return container
 

@@ -7,6 +7,7 @@ from PyQt4.QtCore import Qt
 
 from gii.qt       import QtEditorModule
 from gii.core     import signals, app
+from gii.qt.controls.Window import MainWindow
 
 from MOAIRuntime  import getAKU
 from canvas       import MOAICanvasBase
@@ -31,25 +32,46 @@ class MOAIGameView( QtEditorModule ):
 	def getDependency(self):
 		return [ 'qt', 'moai' ]
 
+	def getMainWindow( self ):
+		return self.mainWindow
+
+	def setupMainWindow( self ):
+		self.mainWindow = MainWindow(None)
+		self.mainWindow.setBaseSize( 800, 600 )
+		self.mainWindow.resize( 800, 600 )
+		self.mainWindow.setWindowTitle( 'GAME' )
+
+		self.mainWindow.module = self
+
+		self.menu = self.addMenuBar( 'game', self.mainWindow.menuBar() )
+		self.menu.addChild('&File').addChild([
+			]
+		)
+
+		self.mainToolBar = QtGui.QToolBar()
+		self.mainToolBar.setFloatable(False)
+		self.mainToolBar.setMovable(True)
+		self.mainWindow.addToolBar(self.mainToolBar)
+
+		self.statusBar = QtGui.QStatusBar()
+		self.mainWindow.setStatusBar(self.statusBar)
+		self.mainWindow.show()
+
 	def getRuntime(self):
 		return self.getManager().affirmModule('moai')
 
 	def tryResizeContainer(self, w,h):
-		self.getQtSupport().getMainWindow().resize(w,h)
-		return True
-		# if self.container.isFloating():
-		# 	self.container.resize(w,h)
-		# 	return True
-		# else:
-		# 	return False
+		self.getMainWindow().resize(w,h)
+		#TODO:client area
+		return True		
 
 	def setOrientationPortrait( self ):
-		if self.container.isFloating():
+		if self.mainWindow.isFloating():
 			pass #TODO
 		getAKU().setOrientationPortrait()
 
 	def setOrientationLandscape( self ):
-		if self.container.isFloating():
+		if self.mainWindow.isFloating():
 			pass #TODO
 		getAKU().setOrientationLandscape()
 
@@ -70,26 +92,21 @@ class MOAIGameView( QtEditorModule ):
 		getAKU().setScreenSize(w,h)
 		getAKU().setViewSize(w,h)
 
-		self.container.show()
+		self.mainWindow.show()
 		self.setFocus()
 
 	def onLoad(self):
-		self.container = self.requestDocumentWindow('MOAIGameView',
-			title   = "Game",
-			minSize = (100,100),			
-			size    = (300,300),
-			dock    = 'main'
-			)
-
+		self.setupMainWindow()
 		fps = 60
-		self.canvas = self.container.addWidget(MOAIGameViewCanvas(self.container))
+		self.canvas = MOAIGameViewCanvas(self.mainWindow) 
 		self.canvas.startRefreshTimer(fps)
 		self.paused = True
+		self.mainWindow.setCentralWidget( self.canvas )
 		
 		self.canvas.module = self
 
-		self.updateTimer = self.container.startTimer(1000/fps, self.updateView)
-		self.container.setFocusPolicy(Qt.StrongFocus)
+		self.updateTimer = self.mainWindow.startTimer(1000/fps, self.updateView)
+		self.mainWindow.setFocusPolicy(Qt.StrongFocus)
 		
 		signals.connect( 'app.command',    self.onAppCommand )
 		signals.connect( 'app.activate',   self.onAppActivate )
@@ -103,8 +120,7 @@ class MOAIGameView( QtEditorModule ):
 		signals.connect( 'game.resume',    self.onGameResume )
 		signals.connect( 'moai.reset',     self.onMoaiReset )
 
-		self.addMenu( 'main/game' )
-		self.findMenu( 'main/game' ).addChild([
+		self.menu.addChild([
 				'----',
 				{'name':'orient_landscape', 'label':'Landscape'  },
 				{'name':'orient_portrait', 'label':'Portrait'  },
@@ -117,10 +133,12 @@ class MOAIGameView( QtEditorModule ):
 				{'name':'reset_moai','label':'RESET MOAI', 'shortcut':'Ctrl+Shift+R'}
 			], self)
 
-		# self.restoreWindowState(self.container)
+		# self.restoreWindowState(self.mainWindow)
 		self.onMoaiReset() #moai is already ready...
 		
-
+	def onStart( self ):
+		print 'gameview start!'
+		self.mainWindow.show()
 
 	def updateView(self):
 		if self.paused: return
@@ -166,7 +184,7 @@ class MOAIGameView( QtEditorModule ):
 		
 		logging.info( 'running script:%s' % src )
 		runtime.runScript( src )
-		self.container.setWindowTitle( 'Game<%s>' % relpath )
+		self.mainWindow.setWindowTitle( 'Game<%s>' % relpath )
 
 		self.restartPending=False
 
@@ -195,19 +213,19 @@ class MOAIGameView( QtEditorModule ):
 			self.restartScript( script )
 	
 	def onUnload(self):
-		# self.saveWindowState(self.container)
+		# self.saveWindowState(self.mainWindow)
 		self.updateTimer.stop()
-		self.container.destroy()
+		self.mainWindow.destroy()
 
 	def onDebugEnter(self):
 		self.paused=True
 		self.getRuntime().pause()
-		self.container.setFocusPolicy(Qt.NoFocus)
+		self.mainWindow.setFocusPolicy(Qt.NoFocus)
 
 	def onDebugExit(self, cmd=None):
 		self.paused=False
 		self.getRuntime().resume()
-		self.container.setFocusPolicy(Qt.StrongFocus)
+		self.mainWindow.setFocusPolicy(Qt.StrongFocus)
 		if self.pendingScript:
 			script=self.pendingScript
 			self.pendingScript=False
@@ -219,12 +237,12 @@ class MOAIGameView( QtEditorModule ):
 
 	def setFocus(self):
 		# getModule('main').setFocus()
-		self.container.show()
-		self.container.raise_()
-		self.container.setFocus()
+		self.mainWindow.show()
+		self.mainWindow.raise_()
+		self.mainWindow.setFocus()
 		self.canvas.setFocus()
 		self.canvas.activateWindow()
-		self.setActiveWindow(self.container)
+		self.setActiveWindow(self.mainWindow)
 
 	def onGamePause(self):
 		self.getRuntime().pause()
