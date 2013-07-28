@@ -52,12 +52,15 @@ class Project(object):
 	def findProject( path = None ):
 		#TODO: return project info dict instead of path?
 		path = os.path.abspath( path or '' )
-		while path and not ( path in ( '', '/','\\' ) ):			
+		opath = None
+		while path and not ( path in ( '', '/','\\' ) ):
 			if   os.path.exists( path + '/' + _GII_ENV_CONFIG_DIR ) \
 			and  os.path.exists( path + '/' + _GII_INFO_FILE ) :
 				return path
 			#go up level
+			opath = path
 			path = os.path.dirname( path )
+			if path == opath: break
 		return None
 
 	def __init__(self):
