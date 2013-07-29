@@ -27,7 +27,7 @@ class MOAIGameView( QtEditorModule ):
 		self.viewHeight     = 0
 
 	def getName(self):
-		return 'moai.game'
+		return 'game'
 
 	def getDependency(self):
 		return [ 'qt', 'moai' ]
@@ -51,7 +51,6 @@ class MOAIGameView( QtEditorModule ):
 
 		self.statusBar = QtGui.QStatusBar()
 		self.mainWindow.setStatusBar(self.statusBar)
-		self.mainWindow.show()
 
 	def getRuntime(self):
 		return self.getManager().affirmModule('moai')
@@ -131,12 +130,18 @@ class MOAIGameView( QtEditorModule ):
 				{'name':'reset_moai','label':'RESET MOAI', 'shortcut':'Ctrl+Shift+R'}
 			], self)
 
-		# self.restoreWindowState(self.mainWindow)
 		self.onMoaiReset() #moai is already ready...
 		
 	def onStart( self ):
-		print 'gameview start!'
+		self.restoreWindowState(self.mainWindow)
 		self.mainWindow.show()
+		self.paused=False
+		script = self.getApp().getConfig( 'start_script', None )
+		if script:
+			self.restartScript( script )
+
+	def onStop( self ):
+		self.saveWindowState( self.mainWindow )
 
 	def updateView(self):
 		if self.paused: return
@@ -204,11 +209,6 @@ class MOAIGameView( QtEditorModule ):
 			else:
 				signals.callAfter( self.restartScript, src )
 
-	def start(self):
-		self.paused=False
-		script = self.getApp().getConfig( 'start_script', None )
-		if script:
-			self.restartScript( script )
 	
 	def onUnload(self):
 		# self.saveWindowState(self.mainWindow)

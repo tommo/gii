@@ -62,13 +62,11 @@ class QtEditorModule( EditorModule ):
 	def setGlobalQtSetting( self, name, value, **kwarg ):		
 		setting = self.getQtSettingObject()
 		setting.setValue(name, value)
+		setting.sync()
 
 	def getGlobalQtSetting( self, name, default = None, **kwarg ):
-		setting = self.getQtSettingObject()
-		# group = kwarg.get( 'group', None )
-		# if group:
-		# 	setting.beginGroup( group )
-		v = setting.getValue(name)
+		setting = self.getQtSettingObject()		
+		v = setting.value(name)
 		if v is None: return default
 		return v
 
@@ -115,9 +113,9 @@ class QtEditorModule( EditorModule ):
 			name  = window.objectName() or 'window'
 		geodata = self.getQtSetting('geom_'+name)
 		if geodata:
-			window.restoreGeometry(geodata)
-		if hasattr(window,'restoreState'):
-			statedata=self.getQtSetting('state_'+name)
+			window.restoreGeometry( geodata )
+		if hasattr( window, 'restoreState' ):
+			statedata = self.getQtSetting('state_'+name)
 			if statedata:
 				window.restoreState(statedata)
 

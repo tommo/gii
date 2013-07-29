@@ -40,9 +40,9 @@ class AssetEditor( QtEditorModule ):
 		return True
 
 	def onStart( self ):
+		self.restoreWindowState( self.mainWindow )
 		self.mainWindow.show()
 		self.mainWindow.raise_()
-		# self.restoreWindowState( self.mainWindow )
 
 	def onStop( self ):
 		self.saveWindowState( self.mainWindow )

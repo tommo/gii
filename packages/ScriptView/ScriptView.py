@@ -76,7 +76,8 @@ class ScriptView( QtEditorModule ):
 		signals.connect('app.command', self.onAppCommand)
 
 	def onStart( self ):
-		# self.show()
+		self.restoreWindowState( self.getMainWindow() )
+		self.hide()
 		pass
 
 	def show(self):
