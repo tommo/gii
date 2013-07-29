@@ -60,6 +60,7 @@ class QtSupport( QtEditorModule ):
 				}
 				''')
 
+<<<<<<< HEAD
 	def setupMainWindow( self ):
 		self.mainWindow = QtMainWindow(None)
 		self.mainWindow.setBaseSize( 800, 600 )
@@ -84,6 +85,8 @@ class QtSupport( QtEditorModule ):
 
 	def getSharedMenubar( self ):
 		return self.sharedMenuBar
+=======
+>>>>>>> be2a9cf9d9cedce852a9937c9a908f21f3cd7cb7
 
 	def onLoad( self ):
 		self.qtApp   = QtGui.QApplication(sys.argv)
@@ -93,8 +96,17 @@ class QtSupport( QtEditorModule ):
 		self.qtApp.installEventFilter(eventFilter)
 		self.setupStyle()
 		
-		self.setupMainWindow()
+		# self.setupMainWindow()
 		
+		self.rootWindow = QtGui.QMainWindow()
+		self.rootWindow.setFixedSize(0,0)
+		self.rootWindow.show()
+		self.rootWindow.raise_() #bring app to front
+		self.rootWindow.hide()
+		self.rootWindow.app = self
+
+		self.containers  = {}
+
 		self.initialized = True
 		self.running     = False
 		return True
@@ -113,7 +125,7 @@ class QtSupport( QtEditorModule ):
 	# 	pass
 
 	def getMainWindow( self ):
-		return self.mainWindow
+		return self.rootWindow
 
 	def getQtSettingObject( self ):
 		return self.qtSetting
