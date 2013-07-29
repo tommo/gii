@@ -96,7 +96,6 @@ class MOAIGameView( QtEditorModule ):
 
 		fps = 60
 		self.canvas = MOAIGameViewCanvas( self.mainWindow ) 
-
 		self.canvas.startRefreshTimer(fps)
 		self.paused = True
 		self.mainWindow.setCentralWidget( self.canvas )
