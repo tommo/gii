@@ -373,6 +373,12 @@ class AssetLibrary(object):
 	def save( self ):
 		self.saveAssetTable()
 
+	def reset( self ):
+		signals.emit( 'asset.reset' )
+		self.unregisterAssetNode( self.rootNode )
+		self.scanProjectPath()
+
+
 	def getRootNode(self):
 		return self.rootNode
 
@@ -421,16 +427,18 @@ class AssetLibrary(object):
 	def unregisterAssetNode(self, oldnode):
 		assert oldnode
 		logging.info( 'unregister: %s' % repr(oldnode) )
+
 		for child in oldnode.getChildren()[:]:
 			self.unregisterAssetNode(child)
-		signals.emitNow('asset.unregister', oldnode)
 
-		if oldnode.parentNode: 
-			oldnode.parentNode.removeChild(oldnode)
-			oldnode.parentNode=None
-		path=oldnode.getNodePath()
-		del self.assetTable[path]
-		assert not self.assetTable.has_key(path)
+		if oldnode != self.rootNode:
+			signals.emitNow('asset.unregister', oldnode)
+			if oldnode.parentNode: 
+				oldnode.parentNode.removeChild(oldnode)
+				oldnode.parentNode=None
+			path = oldnode.getNodePath()
+			del self.assetTable[path]
+			assert not self.assetTable.has_key(path)
 
 	def importAsset(self, path, option=None ,**kwarg):
 		'''find an asset manager capable of processing given file'''

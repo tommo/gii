@@ -2,7 +2,7 @@ import logging
 
 loggingLevel = logging.WARNING
 loggingLevel = logging.INFO
-loggingLevel = logging.DEBUG
+# loggingLevel = logging.DEBUG
 
 logging.basicConfig(
 	format = '[%(levelname)s]\t%(message)s',

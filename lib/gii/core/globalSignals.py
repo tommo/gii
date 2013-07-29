@@ -41,6 +41,7 @@ register('project.presave')
 register('project.load')
 register('project.save')
 
+register('asset.reset')
 register('asset.added')
 register('asset.removed')
 register('asset.modified')

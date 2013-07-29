@@ -79,9 +79,8 @@ class AssetEditor( QtEditorModule ):
 	def onMenu(self, node):
 		name = node.name
 		if name == 'reset_all_asset':
-			print 'reset'
+			self.getAssetLibrary().reset()
 		
-
 AssetEditor().register()
 
 
