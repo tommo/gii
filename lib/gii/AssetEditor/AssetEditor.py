@@ -29,14 +29,10 @@ class AssetEditor( QtEditorModule ):
 		self.mainWindow.setBaseSize( 800, 600 )
 		self.mainWindow.resize( 800, 600 )
 		self.mainWindow.setWindowTitle( 'GII - Asset Editor' )
+		self.mainWindow.setMenuWidget( self.getQtSupport().getSharedMenubar() )
 
 		self.mainWindow.module = self
-		
-		self.menu = self.addMenuBar( 'asset', self.mainWindow.menuBar() )
-		self.menu.addChild('&File').addChild([
-			'Open','E&xit'
-			]
-		)
+				
 
 	def onLoad( self ):
 		self.setupMainWindow()
@@ -46,7 +42,11 @@ class AssetEditor( QtEditorModule ):
 	def onStart( self ):
 		self.mainWindow.show()
 		self.mainWindow.raise_()
-	
+		# self.restoreWindowState( self.mainWindow )
+
+	def onStop( self ):
+		self.saveWindowState( self.mainWindow )
+
 	#controls
 	def setFocus(self):
 		self.mainWindow.show()
@@ -74,9 +74,7 @@ class AssetEditor( QtEditorModule ):
 
 	def onMenu(self, node):
 		name = node.name
-		if name == 'exit':
-			self.getApp().stop()
-
+		
 
 AssetEditor().register()
 

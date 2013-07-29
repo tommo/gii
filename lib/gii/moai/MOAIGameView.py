@@ -36,17 +36,13 @@ class MOAIGameView( QtEditorModule ):
 		return self.mainWindow
 
 	def setupMainWindow( self ):
-		self.mainWindow = MainWindow(None)
+		self.mainWindow = QtMainWindow( None )
 		self.mainWindow.setBaseSize( 800, 600 )
 		self.mainWindow.resize( 800, 600 )
 		self.mainWindow.setWindowTitle( 'GAME' )
+		self.mainWindow.setMenuWidget( self.getQtSupport().getSharedMenubar() )
 
 		self.mainWindow.module = self
-
-		self.menu = self.addMenuBar( 'game', self.mainWindow.menuBar() )
-		self.menu.addChild('&File').addChild([
-			]
-		)
 
 		self.mainToolBar = QtGui.QToolBar()
 		self.mainToolBar.setFloatable(False)
@@ -97,8 +93,9 @@ class MOAIGameView( QtEditorModule ):
 
 	def onLoad(self):
 		self.setupMainWindow()
+
 		fps = 60
-		self.canvas = MOAIGameViewCanvas(self.mainWindow) 
+		self.canvas = MOAIGameViewCanvas( self.mainWindow ) 
 		self.canvas.startRefreshTimer(fps)
 		self.paused = True
 		self.mainWindow.setCentralWidget( self.canvas )
@@ -120,6 +117,7 @@ class MOAIGameView( QtEditorModule ):
 		signals.connect( 'game.resume',    self.onGameResume )
 		signals.connect( 'moai.reset',     self.onMoaiReset )
 
+		self.menu = self.addMenu( 'main/game', dict( label = 'Game' ) )
 		self.menu.addChild([
 				'----',
 				{'name':'orient_landscape', 'label':'Landscape'  },
@@ -296,3 +294,18 @@ class MOAIGameViewCanvas(MOAICanvasBase):
 		
 ##----------------------------------------------------------------##
 MOAIGameView().register()
+##----------------------------------------------------------------##
+
+
+##----------------------------------------------------------------##
+class QtMainWindow( MainWindow ):
+	"""docstring for QtMainWindow"""
+	def __init__(self, parent,*args):
+		super(QtMainWindow, self).__init__(parent, *args)
+	
+	def closeEvent(self,event):
+		if self.module.alive:
+			self.hide()
+			event.ignore()
+		else:
+			pass

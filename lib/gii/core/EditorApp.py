@@ -76,6 +76,7 @@ class EditorApp(object):
 
 		signals.emitNow('app.close')
 		signals.dispatchAll()
+		EditorModuleManager.get().stopAllModules()
 		self.getProject().save()
 		EditorModuleManager.get().unloadAllModules()
 

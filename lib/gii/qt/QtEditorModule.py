@@ -6,6 +6,9 @@ from gii.qt.controls.Window import MainWindow
 from gii.qt.controls.Menu   import MenuManager
 
 ##----------------------------------------------------------------##
+_QT_SETTING_FILE = 'qt.ini'
+
+##----------------------------------------------------------------##
 class QtEditorModule( EditorModule ):
 	__metaclass__ = ABCMeta
 
@@ -40,19 +43,34 @@ class QtEditorModule( EditorModule ):
 	def setFocus(self):
 		pass
 
-
-	def setActiveWindow(self, window):
+	def setActiveWindow( self, window ):
 		qt = self.getQtSupport()
 		qt.qtApp.setActiveWindow(window)
 
 	#CONFIG
-	def getQtSetting( self, name, default = None ):
-		#TODO: fix this
-		pass
+	def getQtSettingObject( self ):
+		return self.getQtSupport().getQtSettingObject()		
 
 	def setQtSetting( self, name, value ):
-		#TODO: fix this
-		pass
+		name = 'modules/%s/%s' % (self.getName(), name)
+		self.setGlobalQtSetting( name, value )
+
+	def getQtSetting( self, name, default = None ):
+		name = 'modules/%s/%s' % (self.getName(), name)
+		return self.getGlobalQtSetting( name, default )
+		
+	def setGlobalQtSetting( self, name, value, **kwarg ):		
+		setting = self.getQtSettingObject()
+		setting.setValue(name, value)
+
+	def getGlobalQtSetting( self, name, default = None, **kwarg ):
+		setting = self.getQtSettingObject()
+		# group = kwarg.get( 'group', None )
+		# if group:
+		# 	setting.beginGroup( group )
+		v = setting.getValue(name)
+		if v is None: return default
+		return v
 
 	#MENU CONTROL
 	def addMenuBar( self, name, menubar ):
@@ -94,8 +112,8 @@ class QtEditorModule( EditorModule ):
 	#WINDOW STATE
 	def restoreWindowState(self, window, name=None):
 		if not name:
-			name=window.objectName() or 'window'
-		geodata=self.getQtSetting('geom_'+name)
+			name  = window.objectName() or 'window'
+		geodata = self.getQtSetting('geom_'+name)
 		if geodata:
 			window.restoreGeometry(geodata)
 		if hasattr(window,'restoreState'):
@@ -105,10 +123,10 @@ class QtEditorModule( EditorModule ):
 
 	def saveWindowState(self, window, name=None):
 		if not name:
-			name=window.objectName() or 'window'
-		self.setQtSetting('geom_'+name, window.saveGeometry())
+			name = window.objectName() or 'window'
+		self.setQtSetting( 'geom_' + name, window.saveGeometry())
 		if hasattr(window,'saveState'):
-			self.setQtSetting('state_'+name, window.saveState())
+			self.setQtSetting( 'state_' + name, window.saveState())
 			
 	def onMenu(self, menuItem):
 		pass

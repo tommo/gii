@@ -11,6 +11,9 @@ from gii.qt.controls.Window import MainWindow
 from gii.qt.controls.Menu   import MenuManager
 from QtEditorModule         import QtEditorModule
 
+
+_QT_SETTING_FILE = 'qt.ini'
+
 ##----------------------------------------------------------------##
 class QtSupportEventFilter(QObject):
 	def eventFilter(self, obj, event):
@@ -24,7 +27,10 @@ class QtSupportEventFilter(QObject):
 ##----------------------------------------------------------------##
 class QtSupport( QtEditorModule ):
 	def __init__( self ):
-		pass
+		self.qtSetting = QtCore.QSettings(
+					self.getProject().getConfigPath( _QT_SETTING_FILE ),
+					QtCore.QSettings.IniFormat
+				)
 
 	def getName( self ):
 		return 'qt'
@@ -54,6 +60,30 @@ class QtSupport( QtEditorModule ):
 				}
 				''')
 
+	def setupMainWindow( self ):
+		self.mainWindow = QtMainWindow(None)
+		self.mainWindow.setBaseSize( 800, 600 )
+		self.mainWindow.resize( 800, 600 )
+		self.mainWindow.setWindowTitle( 'GII - Asset Editor' )
+
+		self.mainWindow.setFixedSize(0,0)
+		self.mainWindow.show()
+		self.mainWindow.raise_() #bring app to front
+		self.mainWindow.hide()
+		self.mainWindow.module = self
+
+		self.sharedMenuBar = QtGui.QMenuBar( None )
+		self.mainWindow.setMenuWidget( self.sharedMenuBar )
+		
+		self.menu = self.addMenuBar( 'main', self.sharedMenuBar )
+		self.menu.addChild('&File').addChild([
+			'Open',
+			'E&xit'
+			]
+		)	
+
+	def getSharedMenubar( self ):
+		return self.sharedMenuBar
 
 	def onLoad( self ):
 		self.qtApp   = QtGui.QApplication(sys.argv)
@@ -61,19 +91,10 @@ class QtSupport( QtEditorModule ):
 		eventFilter = QtSupportEventFilter( self.qtApp )
 		eventFilter.app = self
 		self.qtApp.installEventFilter(eventFilter)
-
 		self.setupStyle()
 		
-		# self.setupMainWindow()
+		self.setupMainWindow()
 		
-		self.rootWindow = QtGui.QMainWindow()
-		self.rootWindow.setFixedSize(0,0)
-		self.rootWindow.show()
-		self.rootWindow.raise_() #bring app to front
-		self.rootWindow.hide()
-		self.rootWindow.app = self
-
-		self.containers  = {}
 		self.initialized = True
 		self.running     = False
 		return True
@@ -92,15 +113,19 @@ class QtSupport( QtEditorModule ):
 	# 	pass
 
 	def getMainWindow( self ):
-		return self.rootWindow
+		return self.mainWindow
+
+	def getQtSettingObject( self ):
+		return self.qtSetting
 
 	def onMenu(self, node):
 		name = node.name
 		if name == 'exit':
 			self.getApp().stop()
 
-
 QtSupport().register()
+
+
 
 
 ##----------------------------------------------------------------##
@@ -115,4 +140,3 @@ class QtMainWindow( MainWindow ):
 			event.ignore()
 		else:
 			pass
-

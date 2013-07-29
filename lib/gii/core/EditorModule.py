@@ -86,12 +86,12 @@ class EditorModule( object ):
 	def load(self):
 		logging.info('loading module:%s' % self.getName())
 		self.onLoad()
-		self.active = True
 		self.alive  = True
 		
 	def unload(self):
 		logging.info('unloading module:%s' % self.getName())
-		self.active = False
+		if self.active:
+			self.stop()
 		self.alive  = False
 		self.releaseResource()
 		self.onUnload()
@@ -100,7 +100,12 @@ class EditorModule( object ):
 		pass
 
 	def start( self ):
+		self.active = True
 		self.onStart()
+
+	def stop( self ):
+		self.active = False
+		self.onStop()
 
 	def update( self ):
 		self.onUpdate()
@@ -125,6 +130,9 @@ class EditorModule( object ):
 		pass
 
 	def onStart( self ):
+		pass
+
+	def onStop( self ):
 		pass
 
 
@@ -185,6 +193,10 @@ class EditorModuleManager(object):
 		for m in self.moduleQueue:
 			if m.alive: m.start()
 			
+	def stopAllModules( self ):
+		for m in self.moduleQueue:
+			if m.alive: m.stop()
+
 	def _loadModules(self):
 		while True:
 			loaded   = False

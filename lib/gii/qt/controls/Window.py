@@ -57,14 +57,18 @@ class MainWindow(QtGui.QMainWindow):
 		self.setUnifiedTitleAndToolBarOnMac(True)
 		self.setDockOptions(
 			QtGui.QMainWindow.AllowNestedDocks | QtGui.QMainWindow.AllowTabbedDocks )
+
 		font=QtGui.QFont()
 		font.setPointSize(11)
 		self.setFont(font)
+		
 		self.centerArea = QtGui.QTabWidget(self)
 		self.setCentralWidget(self.centerArea)
+
 		self.centerArea.setDocumentMode(True)
 		self.centerArea.setMovable(True)
-		self.centerArea.setTabsClosable(True)
+		# self.centerArea.setTabsClosable(True)
+		self.centerArea.tabCloseRequested.connect( self.onTabCloseRequested )
 
 	def moveToCenter(self):
 		moveWindowToCenter(self)
@@ -109,11 +113,11 @@ class MainWindow(QtGui.QMainWindow):
 	def requestDocumentWindow(self, id, **windowOption ):
 		title  = windowOption.get('title',id)
 		
-		window = SubWindow( self.centerArea )
+		window = DocumentWindow( self.centerArea )
 		window.setWindowTitle( title )
 		self.centerArea.addTab( window, title )
 
-		window.windowMode = 'document'
+		window.windowMode = 'tab'
 		window.windowTitle = title
 
 
@@ -129,10 +133,8 @@ class MainWindow(QtGui.QMainWindow):
 		window.show()
 		return window
 
-
 	def requestDockWindow(self, id, **dockOptions ):
 		title=dockOptions.get( 'title', id )
-
 
 		dockArea=dockOptions.get('dock','left')
 
@@ -190,12 +192,18 @@ class MainWindow(QtGui.QMainWindow):
 
 		return window
 
+	def onTabCloseRequested( self, idx ):
+		tab = self.centerArea.widget( idx )
+		pass
+
+
+##----------------------------------------------------------------##
 class SubWindowMixin:	
 	def setDocumentName( self, name ):
 		self.documentName = name
 		title = '%s - %s' % ( self.documentName, self.windowTitle )
 		self.setWindowTitle( title )
-		if self.windowMode == 'document':
+		if self.windowMode == 'tab':
 			tabParent = self.parent().parent()
 			idx = tabParent.indexOf( self )
 			tabParent.setTabText( idx, title )
@@ -244,6 +252,8 @@ class SubWindowMixin:
 	def ensureVisible(self):
 		ensureWindowVisible(self)
 
+
+
 	
 ##----------------------------------------------------------------##
 				
@@ -278,7 +288,11 @@ class SubWindow(QtGui.QMainWindow, SubWindowMixin):
 	def focusInEvent(self, event):
 		pass
 
+##----------------------------------------------------------------##
+class DocumentWindow( SubWindow ):
+	pass	
 
+##----------------------------------------------------------------##
 class DockWindowTitleBar( QtGui.QWidget ):
 	"""docstring for DockWindowTitleBar"""
 	def __init__(self, *args):
@@ -290,7 +304,7 @@ class DockWindowTitleBar( QtGui.QWidget ):
 	def minimumSizeHint(self):
 		return QtCore.QSize(20,20)
 
-		
+##----------------------------------------------------------------##
 class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 	"""docstring for DockWindow"""	
 	def __init__(self, parent):
@@ -304,7 +318,6 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 		signals.connect( 'app.activate', self.onAppActivate )
 		signals.connect( 'app.deactivate', self.onAppDeactivate )
 		self.topLevel = False
-
 
 	def setupCustomTitleBar(self):
 		self.originTitleBar = self.titleBarWidget()

@@ -323,8 +323,6 @@ class ScriptNoteBook(QtGui.QTabWidget):
 		self.defaultSetting=json.load(
 				file( app.getPath('data/script_settings.json'), 'r' )
 			)
-		# self.Bind(aui.EVT_AUINOTEBOOK_PAGE_CLOSE, self.onClosePage)
-		# self.Bind(aui.EVT_AUINOTEBOOK_TAB_MIDDLE_DOWN, self.onTabMiddleDown)
 
 	def getPageByFile(self, path, createIfNotFound=True):
 		path=path.encode('utf-8')
@@ -371,8 +369,6 @@ class ScriptNoteBook(QtGui.QTabWidget):
 			p=self.pages[k]
 			p.markerDeleteAll(_hilight)
 
-	def onClosePage(self, event):
-		pageId=event.GetInt()
 		page=self.widget(pageId)
 		del self.pages[page.path]
 
