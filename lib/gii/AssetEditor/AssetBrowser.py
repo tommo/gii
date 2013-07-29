@@ -48,7 +48,6 @@ class AssetBrowser( AssetEditorModule ):
 		self.treeView.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
 		self.treeView.customContextMenuRequested.connect( self.onTreeViewContextMenu)
 
-		self.assetMenu=self.addMenu('main/asset', {'label':'&Asset'})
 		self.creatorMenu=self.addMenu('main/asset/asset_create',{'label':'Create'})
 
 		self.assetContextMenu=self.addMenu('asset_context')

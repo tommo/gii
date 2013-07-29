@@ -205,8 +205,8 @@ class AssetNode(object):
 	def getMetaData( self ):
 		if self.isVirtual(): return None
 		if self.metadata: return self.metadata
-		dirname = self.getAbsDir()
-		metaDir = dirname + '/' +GII_ASSET_META_DIR
+		dirname  = self.getAbsDir()
+		metaDir  = dirname + '/' +GII_ASSET_META_DIR
 		metaPath = metaDir + '/' + self.getName() + '.meta'
 		if os.path.exists( metaPath ):
 			fp = open( metaPath, 'r' )

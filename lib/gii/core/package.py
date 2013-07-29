@@ -41,9 +41,11 @@ class PackageManager( object ):
 	def scanPackages( self ):
 		for path in self.packagePaths:
 			if not os.path.exists( path ): continue
-			logging.info( 'scanning package in:' + path )
+			logging.info( 'scanning package in:' + path )			
 			for currentDir, dirs, files in os.walk( unicode(path) ):
 				for dirname in dirs:
+					if dirname.startswith('-'): continue
+
 					fullpath = currentDir + '/' + dirname
 					if os.path.exists( fullpath + '/__init__.py' ) \
 					or os.path.exists( fullpath + '/__init__.pyc' ):

@@ -1,7 +1,7 @@
 from PyQt4 import QtCore, QtGui, QtOpenGL
 
 class GLWidget(QtOpenGL.QGLWidget):
-	sharedWidget=None
+	sharedWidget = None
 	@staticmethod
 	def getSharedWidget():
 		if not GLWidget.sharedWidget:
@@ -13,13 +13,15 @@ class GLWidget(QtOpenGL.QGLWidget):
 			fmt.setSwapInterval(1)
 			QtOpenGL.QGLFormat.setDefaultFormat(fmt)
 			
-			hiddenWindow=QtOpenGL.QGLWidget(QtOpenGL.QGLContext(fmt, None))
-			GLWidget.sharedWidget=hiddenWindow
+			hiddenWindow = QtOpenGL.QGLWidget(QtOpenGL.QGLContext(fmt, None))
+			GLWidget.sharedWidget = hiddenWindow
+			hiddenWindow.makeCurrent()
 
 		return GLWidget.sharedWidget
 
 	def __init__(self,parent=None):
-		sharedWidget=GLWidget.getSharedWidget()
+		sharedWidget = GLWidget.getSharedWidget()
+
 		QtOpenGL.QGLWidget.__init__(self, parent, sharedWidget)
 		self.setFocusPolicy(QtCore.Qt.StrongFocus)
 		

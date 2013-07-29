@@ -32,7 +32,11 @@ class AssetEditor( QtEditorModule ):
 		self.mainWindow.setMenuWidget( self.getQtSupport().getSharedMenubar() )
 
 		self.mainWindow.module = self
-				
+
+		self.addMenu('main/asset', {'label':'&Asset'})
+		self.addMenuItem('main/asset/reset_all_asset', 
+			{ 'label' : 'Reset Asset' }
+		)
 
 	def onLoad( self ):
 		self.setupMainWindow()
@@ -74,6 +78,8 @@ class AssetEditor( QtEditorModule ):
 
 	def onMenu(self, node):
 		name = node.name
+		if name == 'reset_all_asset':
+			print 'reset'
 		
 
 AssetEditor().register()

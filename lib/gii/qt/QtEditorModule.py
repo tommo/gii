@@ -80,12 +80,7 @@ class QtEditorModule( EditorModule ):
 		return node
 
 	def addMenuItem(self, path, option = None):
-		node = MenuManager.get().addMenuItem(path, option, self)		
-		if type(node) is list:
-			for n in node:
-				self.markRes(n)
-		else:
-			self.markRes(node)
+		node = MenuManager.get().addMenuItem( path, option, self )
 		return node
 
 	def findMenu(self, path):

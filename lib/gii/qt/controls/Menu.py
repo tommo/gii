@@ -34,9 +34,9 @@ class MenuNode(object):
 		
 		self.children=[]
 		
-		self.label=option.get('label', 'UNNAMED')
-		self.name=option.get('name',self.label.replace('&','').replace(' ','_'))
-		self.name=self.name.lower()
+		self.label = option.get('label', 'UNNAMED')
+		self.name  = option.get('name',self.label.replace('&','').replace(' ','_'))
+		self.name  = self.name.lower()
 
 		self.shortcut=option.get('shortcut',False)
 		self.help=option.get('help','')
@@ -195,8 +195,9 @@ class MenuNode(object):
 		self.onClick=onClick
 
 	def handleEvent(self):
-		itemtype=self.itemType
-		value=self.getValue()
+		itemtype = self.itemType
+		value    = self.getValue()
+		logging.debug( 'menu event:' + self.name )
 		if self.module:
 			self.module.onMenu(self)
 		if self.signal:
@@ -261,24 +262,34 @@ class MenuManager(object):
 		upperPath="/".join(blobs[:-1])
 		name=blobs[-1]
 		parent=self.find(upperPath) 
+		
 		if not parent: parent=self.rootNode
 		if not option: option={}
-		if isinstance(option, dict) and not option.get('label',None):
-			option['label']=name
+
+		if isinstance(option, dict):
+			if not option.get('label',None):
+				option['label'] = name
+			if not option.get('name'):
+				option['name']  = name
+
 		option['type']='menu'
 		return parent.addChild(option, module)
 
-	def addMenuItem(self, path, option=None, module=None):
-		blobs=path.split('/')
-		upperPath="/".join(blobs[:-1])
-		name=blobs[-1]
-		parent=self.find(upperPath) 
+	def addMenuItem(self, path, option = None, module=None):
+		blobs     = path.split('/')
+		upperPath = "/".join(blobs[:-1])
+		name      = blobs[-1]
+		parent    = self.find(upperPath) 
 		
 		if not parent: raise Exception('menu parent not found:%s'%upperPath)
 		
-		if isinstance(option, dict) and not option.get('label',None):
-			option['label']=name
-		return parent.addChild(option or name, module)
+		if isinstance(option, dict):
+			if not option.get('label',None):
+				option['label'] = name
+			if not option.get('name'):
+				option['name']  = name
+
+		return parent.addChild( option or name, module)
 
 	def enableMenuItem(self, path, enabled=True):
 		node=self.find(path)

@@ -251,8 +251,8 @@ class MOAIEditCanvas( GLWidget ):
 		self.setDelegateEnv('getCanvasSize', self.getCanvasSize, False)
 
 		self.delegate.safeCall('onLoad')
-		self.startRefreshTimer(60)
 		self.resizeGL(self.width(), self.height())
+		self.startRefreshTimer(60)
 
 	def safeCall(self, method, *args):		 
 		return self.delegate.safeCall(method, *args)
