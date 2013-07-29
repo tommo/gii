@@ -93,14 +93,10 @@ class MOAIGameView( QtEditorModule ):
 
 	def onLoad(self):
 		self.setupMainWindow()
-<<<<<<< HEAD
 
 		fps = 60
 		self.canvas = MOAIGameViewCanvas( self.mainWindow ) 
-=======
-		fps = 60
-		self.canvas = MOAIGameViewCanvas(self.mainWindow) 
->>>>>>> be2a9cf9d9cedce852a9937c9a908f21f3cd7cb7
+
 		self.canvas.startRefreshTimer(fps)
 		self.paused = True
 		self.mainWindow.setCentralWidget( self.canvas )
@@ -122,10 +118,7 @@ class MOAIGameView( QtEditorModule ):
 		signals.connect( 'game.resume',    self.onGameResume )
 		signals.connect( 'moai.reset',     self.onMoaiReset )
 
-<<<<<<< HEAD
 		self.menu = self.addMenu( 'main/game', dict( label = 'Game' ) )
-=======
->>>>>>> be2a9cf9d9cedce852a9937c9a908f21f3cd7cb7
 		self.menu.addChild([
 				'----',
 				{'name':'orient_landscape', 'label':'Landscape'  },
