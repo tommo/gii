@@ -369,12 +369,4 @@ class ScriptNoteBook(QtGui.QTabWidget):
 			p=self.pages[k]
 			p.markerDeleteAll(_hilight)
 
-		page=self.widget(pageId)
-		del self.pages[page.path]
-
-	def onTabMiddleDown(self, event):
-		pageId=event.GetInt()
-		self.DeletePage(pageId)
-
-	
-
+		

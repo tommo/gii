@@ -183,6 +183,9 @@ class Project(object):
 	def getRelativePath( self, path ):
 		return os.path.relpath( path, self.path )
 
+	def getPath( self, path = None ):
+		return self.getBasePath( path )
+		
 	def getBasePath( self, path=None ):
 		return _makePath( self.path, path)
 

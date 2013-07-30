@@ -131,17 +131,21 @@ class MOAIGameView( QtEditorModule ):
 			], self)
 
 		self.onMoaiReset() #moai is already ready...
-		
+		signals.connect( 'app.start',  self.startScript )
+
 	def onStart( self ):
 		self.restoreWindowState(self.mainWindow)
-		self.mainWindow.show()
-		self.paused=False
-		script = self.getApp().getConfig( 'start_script', None )
-		if script:
-			self.restartScript( script )
+		self.mainWindow.show()		
 
 	def onStop( self ):
 		self.saveWindowState( self.mainWindow )
+
+	def startScript( self, script = None ):
+		self.paused = False
+		if not script:
+			script = self.getApp().getConfig( 'start_script', 'game/script/main.lua' )
+		if script:
+			self.restartScript( script )
 
 	def updateView(self):
 		if self.paused: return
@@ -171,12 +175,12 @@ class MOAIGameView( QtEditorModule ):
 			used=time.clock()-before
 
 	def onFileModified(self, path):
-		if path==self.runningScript:
+		if path == self.runningScript:
 			self.restartPending=True
 			self.restartScript(path)
 
 	def restartScript(self,src):
-		runtime=self.getRuntime()
+		runtime = self.getRuntime()
 		if self.runningScript: runtime.reset()
 		
 		relpath = src #AssetLibrary.get().getRelPath(src)
@@ -191,8 +195,8 @@ class MOAIGameView( QtEditorModule ):
 
 		self.restartPending=False
 
-	def onMoaiReset(self):
-		runtime=self.getRuntime()
+	def onMoaiReset( self ):
+		runtime = self.getRuntime()
 		runtime.createRenderContext( 'game' )
 		self.canvas.setInputDevice(
 			runtime.addDefaultInputDevice()

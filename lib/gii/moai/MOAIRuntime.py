@@ -116,7 +116,7 @@ class MOAIRuntime( EditorModule ):
 		if not self.AKUReady: return
 		self.cleanLuaReferences()
 		self.initContext()
-		self.setWorkingDirectory( Project.get().getPath() )
+		self.setWorkingDirectory( self.getProject().getPath() )
 		signals.emitNow('moai.reset')
 
 	def onOpenWindow( self, title, w, h ):

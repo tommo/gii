@@ -71,12 +71,14 @@ class EditorApp(object):
 		if not self.initialized: self.init()
 		sleepTime = kwargs.get( 'sleep', 0.002 )
 		EditorModuleManager.get().startAllModules()
+
 		signals.emitNow('app.start')
 
 		while self.running:
 			self.doMainLoop( sleepTime )
 
 		signals.emitNow('app.close')
+		
 		signals.dispatchAll()
 		EditorModuleManager.get().stopAllModules()
 		self.getProject().save()
