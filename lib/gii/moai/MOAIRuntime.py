@@ -50,6 +50,13 @@ class MOAIRuntime( EditorModule ):
 	def getDependency(self):
 		return []	
 
+	##----------------------------------------------------------------##
+	def getLuaEnv( self ):
+		return _G
+
+	def getRuntimeEnv( self ):
+		return self.luaRuntime
+
 	#-------Context Control
 	def initContext(self):
 		global _G
@@ -75,7 +82,7 @@ class MOAIRuntime( EditorModule ):
 			self.getApp().getPath( 'data/lua/runtime.lua' )
 			)
 		self.luaRuntime = lua.eval('gii')
-		assert self.luaRuntime, "Failed loading Moei Lua Runtime!"
+		assert self.luaRuntime, "Failed loading Gii Lua Runtime!"
 		#finish loading lua bridge
 		
 		self.AKUReady      = True
@@ -332,5 +339,7 @@ class MOAILuaDelegate(object):
 
 	def clearLua(self):
 		self.luaEnv=None
+
+
 
 MOAIRuntime().register()

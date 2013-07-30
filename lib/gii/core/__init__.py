@@ -23,6 +23,7 @@ from cli            import CLICommand, parseCLI
 from tool           import ToolBase, startupTool
 from project        import Project
 from asset          import AssetLibrary, AssetException, AssetNode, AssetManager
+from cache          import CacheManager
 from target         import Target, DeployManager
 
 from MainModulePath import getMainModulePath

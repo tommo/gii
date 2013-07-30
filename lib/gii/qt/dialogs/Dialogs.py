@@ -72,17 +72,32 @@ def requestString(title, prompt):
 	else:
 		return None
 
-def requestColor(prompt, initCol = None):
-	col = None
-	if initCol: 
-		col = QtGui.QColor(initCol)
-	else:
-		col = QtCore.Qt.white
-	col = QtGui.QColorDialog.getColor( 
-		col, 
-		None,
-		prompt,
-		QtGui.QColorDialog.ShowAlphaChannel
-		)
-	if col.isValid(): return col
-	return None
+def requestColor(prompt, initColor = None, **kwargs):
+	dialog = QtGui.QColorDialog( initColor or QtCore.Qt.white )
+	dialog.move( QtGui.QCursor.pos() )
+	dialog.setWindowTitle( prompt )
+	onColorChanged = kwargs.get( 'onColorChanged', None )
+	if onColorChanged:
+		dialog.currentColorChanged.connect( onColorChanged )
+	if dialog.exec_() == 1:
+		col = dialog.currentColor()
+		dialog.destroy()
+		if col.isValid(): return col
+	print 'cacnel', initColor
+	return initColor
+
+	# col = None
+	# if initCol: 
+	# 	col = QtGui.QColor(initCol)
+	# else:
+	# 	col = QtCore.Qt.white
+	# 	if onColorChanged:
+	# 		currentColorChanged
+	# col = QtGui.QColorDialog.getColor( 
+	# 	col, 
+	# 	None,
+	# 	prompt,
+	# 	QtGui.QColorDialog.ShowAlphaChannel
+	# 	)
+	# if col.isValid(): return col
+	# return None

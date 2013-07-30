@@ -633,8 +633,8 @@ class AssetLibrary(object):
 				'deploy'      : node.deployState,
 				'pDep'        : [ dnode.getNodePath() for dnode in node.pDep ],
 				'rDep'        : [ dnode.getNodePath() for dnode in node.rDep ],
-				'objectFiles' :  node.objectFiles,
-				'cacheFiles'  :  node.cacheFiles,
+				'objectFiles' : node.objectFiles,
+				'cacheFiles'  : node.cacheFiles,
 				'properties'  : node.properties,
 				# 'parent':node.getParent().getPath()
 			}				
@@ -642,6 +642,7 @@ class AssetLibrary(object):
 			#mark cache files
 			for name, cacheFile in node.cacheFiles.items():
 				CacheManager.get().touchCacheFile( cacheFile )
+				
 			if node.metadata:
 				node.saveMetaData()
 

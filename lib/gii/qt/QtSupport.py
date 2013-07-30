@@ -27,10 +27,7 @@ class QtSupportEventFilter(QObject):
 ##----------------------------------------------------------------##
 class QtSupport( QtEditorModule ):
 	def __init__( self ):
-		self.qtSetting = QtCore.QSettings(
-					self.getProject().getConfigPath( _QT_SETTING_FILE ),
-					QtCore.QSettings.IniFormat
-				)
+		pass
 
 	def getName( self ):
 		return 'qt'
@@ -42,7 +39,7 @@ class QtSupport( QtEditorModule ):
 		# setup styles
 		# QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
 		try:
-			styleSheetName = 'dark1.qss'
+			styleSheetName = 'dark.qss'
 			self.qtApp.setStyleSheet(
 					open( self.getApp().getPath( 'data/' + styleSheetName ) ).read() 
 				)
@@ -86,6 +83,10 @@ class QtSupport( QtEditorModule ):
 
 	def onLoad( self ):
 		self.qtApp   = QtGui.QApplication(sys.argv)
+		self.qtSetting = QtCore.QSettings(
+					self.getProject().getConfigPath( _QT_SETTING_FILE ),
+					QtCore.QSettings.IniFormat
+				)
 
 		eventFilter = QtSupportEventFilter( self.qtApp )
 		eventFilter.app = self

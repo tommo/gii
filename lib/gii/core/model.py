@@ -23,8 +23,8 @@ class DataType(object):
 ##----------------------------------------------------------------##
 class PythonValueType(DataType):
 	def __init__(self ,t, defaultValue):
-		self._type=t
-		name=repr(t)
+		self._type = t
+		name = repr(t)
 		self._defaultValue=defaultValue
 
 	def getName(self):
@@ -34,6 +34,52 @@ class PythonValueType(DataType):
 		if value is self._type:
 			return value
 		return None
+
+##----------------------------------------------------------------##
+class EnumType( DataType ):
+	def __init__( self, name, enum, defaultValue = None ):
+		#validation
+		self.name = name
+		itemDict = {}
+
+		self.itemDict = itemDict
+		for item in enum:
+			( name, value ) = item
+			itemDict[ name ] = value
+		self._defaultValue = defaultValue
+		self.itemList = enum[:]
+
+	def getName( self ):
+		return self.name
+
+	def repr( self, value ):
+		return '<%s> %s' %( self.name, repr( value ) )
+
+	def fromIndex( self, idx ):
+		if idx < 0 or idx >= len( self.itemList ):
+			return None
+		( name, value ) = self.itemList[ idx ]
+		return value
+
+	def toIndex( self, value ):
+		for i, item in enumerate( self.itemList ):
+			( k, v ) = item
+			if value == v: return i
+		return None
+
+
+# class StringEnumValueType(object):	
+# 	def __init__(self, arg):
+# 		super(IntEnumValueType, self).__init__()
+# 		self.arg = arg
+		
+
+##----------------------------------------------------------------##
+class FlagsValueType( DataType ):
+	def __init__( self, flags, defaultValue ):
+		super(FlagsValueType, self).__init__()
+		self.arg = arg
+
 
 ##----------------------------------------------------------------##
 class ObjectModel(DataType):

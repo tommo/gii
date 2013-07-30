@@ -190,10 +190,12 @@ class EditorModuleManager(object):
 			if m.alive: m.update()
 
 	def startAllModules( self ):
+		logging.info( 'start all modules' )
 		for m in self.moduleQueue:
 			if m.alive: m.start()
 			
 	def stopAllModules( self ):
+		logging.info( 'stop all modules' )
 		for m in self.moduleQueue:
 			if m.alive: m.stop()
 

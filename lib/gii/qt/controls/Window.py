@@ -62,13 +62,13 @@ class MainWindow(QtGui.QMainWindow):
 		font.setPointSize(11)
 		self.setFont(font)
 		
-		self.centerArea = QtGui.QTabWidget(self)
-		self.setCentralWidget(self.centerArea)
+		self.centerTabWidget = QtGui.QTabWidget(self)
+		self.setCentralWidget(self.centerTabWidget)
 
-		self.centerArea.setDocumentMode(True)
-		self.centerArea.setMovable(True)
-		# self.centerArea.setTabsClosable(True)
-		self.centerArea.tabCloseRequested.connect( self.onTabCloseRequested )
+		self.centerTabWidget.setDocumentMode(True)
+		self.centerTabWidget.setMovable(True)
+		self.centerTabWidget.setTabsClosable(True)
+		self.centerTabWidget.tabCloseRequested.connect( self.onTabCloseRequested )
 
 	def moveToCenter(self):
 		moveWindowToCenter(self)
@@ -95,7 +95,7 @@ class MainWindow(QtGui.QMainWindow):
 		window.setWindowTitle(title)
 
 		window.windowMode = 'sub'
-		window.windowTitle = title
+		window.titleBase = title
 
 
 		minSize=windowOption.get('minSize',None)
@@ -107,18 +107,18 @@ class MainWindow(QtGui.QMainWindow):
 		size=windowOption.get('size',None)
 		if size:
 			window.resize(*size)
-		window.show()
 		return window
 
 	def requestDocumentWindow(self, id, **windowOption ):
 		title  = windowOption.get('title',id)
 		
-		window = DocumentWindow( self.centerArea )
+		window = DocumentWindow( self.centerTabWidget )
+		window.parentWindow = self
 		window.setWindowTitle( title )
-		self.centerArea.addTab( window, title )
+		# self.centerTabWidget.addTab( window, title )
 
 		window.windowMode = 'tab'
-		window.windowTitle = title
+		window.titleBase = title
 
 
 		minSize = windowOption.get('minSize',None)
@@ -130,7 +130,6 @@ class MainWindow(QtGui.QMainWindow):
 		size = windowOption.get('size',None)
 		if size:
 			window.resize(*size)
-		window.show()
 		return window
 
 	def requestDockWindow(self, id, **dockOptions ):
@@ -157,7 +156,7 @@ class MainWindow(QtGui.QMainWindow):
 		window.setObjectName('_dock_'+id)
 		
 		window.windowMode = 'dock'
-		window.windowTitle = title
+		window.titleBase = title
 
 		if dockOptions.get('allowDock',True):
 			window.setAllowedAreas(Qt.AllDockWidgetAreas)
@@ -193,15 +192,16 @@ class MainWindow(QtGui.QMainWindow):
 		return window
 
 	def onTabCloseRequested( self, idx ):
-		tab = self.centerArea.widget( idx )
-		pass
+		subwindow = self.centerTabWidget.widget( idx )
+		if subwindow.close():
+			self.centerTabWidget.removeTab( idx )
 
 
 ##----------------------------------------------------------------##
 class SubWindowMixin:	
 	def setDocumentName( self, name ):
 		self.documentName = name
-		title = '%s - %s' % ( self.documentName, self.windowTitle )
+		title = '%s - %s' % ( self.documentName, self.titleBase )
 		self.setWindowTitle( title )
 		if self.windowMode == 'tab':
 			tabParent = self.parent().parent()
@@ -290,8 +290,15 @@ class SubWindow(QtGui.QMainWindow, SubWindowMixin):
 
 ##----------------------------------------------------------------##
 class DocumentWindow( SubWindow ):
-	pass	
+	def show( self, *args ):
+		tab = self.parentWindow.centerTabWidget
+		idx = tab.indexOf( self )
+		if idx < 0:
+			idx = tab.addTab( self, self.windowTitle() )
+		super( DocumentWindow, self ).show( *args )
+		tab.setCurrentIndex( idx )
 
+	
 ##----------------------------------------------------------------##
 class DockWindowTitleBar( QtGui.QWidget ):
 	"""docstring for DockWindowTitleBar"""

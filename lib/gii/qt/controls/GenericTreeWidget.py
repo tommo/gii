@@ -45,7 +45,8 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def addNode( self, node, addChildren = True ):
 		if self.nodeDict.has_key( node ): return
 		pnode = self.getNodeParent( node )
-		if not pnode:
+		assert pnode != node, 'parent is item itself'
+		if not pnode :
 			item = self.rootItem
 		else:
 			pitem = self.getItemByNode( pnode )
@@ -84,7 +85,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		if not updateLog: updateLog={} #for avoiding duplicated updates
 		if updateLog.has_key(node): return False
 		updateLog[node]=True
-
+		
 		self.updateItem( item, node, **option )
 
 		if option.get('updateChildren',False):

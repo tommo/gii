@@ -86,7 +86,7 @@ class CustomPropertyManager(object):
 				subProp.setValue(value)
 
 	def onValueChanged(self, prop, value):
-		parent=self.subPropertieToProp.get(prop)
+		parent = self.subPropertieToProp.get(prop)
 		if parent:
 			if self.onSubValueChanged(parent, prop ,value): #update?
 				self.parent.propertyChanged.emit(parent)
@@ -108,13 +108,13 @@ class PropertyManager(QtVariantPropertyManager):
 		QtVariantPropertyManager.clear(self)
 
 	def getCustomPropertyManager(self, prop):
-		propTypeId=self.propertyType(prop)
-		mgr=self.customManagers.get(propTypeId)
+		propTypeId = self.propertyType(prop)
+		mgr        = self.customManagers.get(propTypeId)
 		if mgr:
 			return mgr
-		clas=CustomPropertyManagerRegistry.get(propTypeId,None)
+		clas = CustomPropertyManagerRegistry.get(propTypeId,None)
 		if clas:
-			mgr=clas(self)
+			mgr = clas(self)
 			self.customManagers[propTypeId]=mgr
 			return mgr
 		return None
@@ -124,30 +124,30 @@ class PropertyManager(QtVariantPropertyManager):
 		return CustomPropertyManagerRegistry.has_key(typeId)
 
 	def postInitializeProperty(self, prop):
-		customManager=self.getCustomPropertyManager(prop)
+		customManager = self.getCustomPropertyManager(prop)
 		if customManager:
 			customManager.initializeProperty(prop)
 
 	def uninitializeProperty(self, prop):
-		customManager=self.getCustomPropertyManager(prop)
+		customManager = self.getCustomPropertyManager(prop)
 		if customManager:
 			customManager.uninitializeProperty(prop)
 		return QtVariantPropertyManager.uninitializeProperty(self, prop)
 
 	def valueText(self, prop):
-		customManager=self.getCustomPropertyManager(prop)
+		customManager = self.getCustomPropertyManager(prop)
 		if customManager:
 			return customManager.valueText(prop)		
 		return QtVariantPropertyManager.valueText(self, prop)
 
 	def value(self, prop):
-		customManager=self.getCustomPropertyManager(prop)
+		customManager = self.getCustomPropertyManager(prop)
 		if customManager:
 			return customManager.value(prop)
 		return QtVariantPropertyManager.value(self, prop)
 
 	def setValue(self, prop, value):
-		customManager=self.getCustomPropertyManager(prop)
+		customManager = self.getCustomPropertyManager(prop)
 		if customManager:
 			customManager.setValue(prop, value)
 			self.propertyChanged.emit(prop)
@@ -192,9 +192,6 @@ class PropertyGrid(QtGui.QWidget):
 		self.factory= factory =EditorFactory()
 		self.browser= browser =TreePropertyBrowser(self)
 
-		# self.rootProp = manager.addProperty(QtVariantPropertyManager.groupTypeId(), "")
-		# self.browser.addProperty(self.rootProp)
-
 		self.option=option or {}
 
 		self.refreshing = False
@@ -202,7 +199,7 @@ class PropertyGrid(QtGui.QWidget):
 		browser.setFactoryForManager(manager, factory)
 		browser.setPropertiesWithoutValueMarked(True)
 		browser.setAlternatingRowColors(False)
-		browser.setHeaderVisible(False)
+		browser.setHeaderVisible( option.get('header', True) )
 		# browser.setRootIsDecorated(False)
 
 		#TODO: build
@@ -222,9 +219,6 @@ class PropertyGrid(QtGui.QWidget):
 		self.manager.clear()
 		self.propMap.clear()
 		self.target=None
-		#recreate root property
-		# self.rootProp = self.manager.addProperty(QtVariantPropertyManager.groupTypeId(), "")
-		# self.browser.addProperty(self.rootProp)
 
 
 	def setTarget(self, target, **kwargs ):
@@ -238,7 +232,7 @@ class PropertyGrid(QtGui.QWidget):
 
 		self.model = model
 		self.target = target
-		# self.rootProp.setPropertyName(model.getName())
+
 		assert(model)
 		readonlyColor = QtGui.QColor('#ff0000')
 		readonlyColor.setAlphaF(0.05)
@@ -247,13 +241,18 @@ class PropertyGrid(QtGui.QWidget):
 		for field in model.fieldList:
 			label = field.label
 			ft    = field._type
-			ptype = PyTypeToPropertyType.get( ft, None )
-			if not ptype: #not supported, skip
-				continue
-			# if field.readonly:
-			# 	prop.setEnabled(False)
-			#item configuration
-			prop = self.manager.addProperty( ptype, label )
+			prop  = None
+			if isinstance( ft, EnumType ):
+				prop = self.manager.addProperty( QtVariantPropertyManager.enumTypeId(), label )
+				enumNames = [ x[0] for x in ft.itemList ]
+				prop.setAttribute( 'enumNames', enumNames )
+				prop.enumType = ft 
+			else:
+				ptype = PyTypeToPropertyType.get( ft, None )
+				if not ptype: #not supported, skip
+					continue
+				prop = self.manager.addProperty( ptype, label )
+
 			if prop:
 				prop.readonly = field.readonly
 				self.browser.addProperty( prop )
@@ -275,8 +274,10 @@ class PropertyGrid(QtGui.QWidget):
 
 	def onPropertyChanged(self, prop):
 		if self.refreshing: return  #pulling from target, don't update target
-		if hasattr(prop,'fieldId'):
-			v=prop.value()
+		if hasattr( prop, 'fieldId' ):
+			v = prop.value()
+			if hasattr( prop, 'enumType' ):
+				v = prop.enumType.fromIndex( v )
 			self.model.setFieldValue( self.target, prop.fieldId, v )
 			self.propertyChanged.emit( self.target, prop.fieldId, v )
 
@@ -285,7 +286,7 @@ class PropertyGrid(QtGui.QWidget):
 		if not target: return
 		prop = self.propMap.get( id, None ) 
 		if prop:
-			v=self.model.getFieldValue( target, id )
+			v = self.model.getFieldValue( target, id )
 			self.refreshing = True #avoid duplicated update
 			prop.setValue(v)
 			self.refreshing = False
@@ -295,3 +296,4 @@ class PropertyGrid(QtGui.QWidget):
 		if not target: return
 		for field in self.model.fieldList: #todo: just use propMap to iter?
 			self.refreshField( field.id )
+

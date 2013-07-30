@@ -50,6 +50,8 @@ class EditorApp(object):
 			raise Exception('running instance detected')
 
 		if self.initialized: return
+		self.openProject()
+
 		
 		#packages
 		self.packageManager.addPackagePath( self.getPath( _GII_BUILTIN_PACKAGES_PATH ) )
