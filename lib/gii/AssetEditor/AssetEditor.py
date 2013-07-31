@@ -10,6 +10,8 @@ from gii.qt.controls.Window import MainWindow
 from gii.qt.controls.Menu   import MenuManager
 from gii.qt.QtEditorModule  import QtEditorModule
 
+import gii.FileWatcher
+
 ##----------------------------------------------------------------##
 class AssetEditor( QtEditorModule ):
 	def __init__( self ):

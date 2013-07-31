@@ -1,8 +1,6 @@
 import random
 from abc import ABCMeta, abstractmethod
 
-import gii.FileWatcher
-
 from gii.core         import *
 from gii.qt.dialogs   import requestString, alertMessage
 from gii.qt.controls.AssetTreeView import AssetTreeView

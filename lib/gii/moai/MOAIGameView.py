@@ -87,7 +87,6 @@ class MOAIGameView( QtEditorModule ):
 		getAKU().setScreenSize(w,h)
 		getAKU().setViewSize(w,h)
 
-		self.mainWindow.show()
 		self.setFocus()
 
 	def onLoad(self):
@@ -101,7 +100,7 @@ class MOAIGameView( QtEditorModule ):
 		
 		self.canvas.module = self
 
-		self.updateTimer = self.mainWindow.startTimer(1000/fps, self.updateView)
+		self.updateTimer = None
 		self.mainWindow.setFocusPolicy(Qt.StrongFocus)
 		
 		signals.connect( 'app.command',    self.onAppCommand )
@@ -131,20 +130,28 @@ class MOAIGameView( QtEditorModule ):
 			], self)
 
 		self.onMoaiReset() #moai is already ready...
-		signals.connect( 'app.start',  self.startScript )
 
 	def onStart( self ):
 		self.restoreWindowState(self.mainWindow)
-		self.mainWindow.show()		
 
 	def onStop( self ):
+		if self.updateTimer:
+			self.updateTimer.stop()
 		self.saveWindowState( self.mainWindow )
+
+	def show( self ):
+		self.mainWindow.show()
+
+	def hide( self ):
+		self.mainWindow.hide()
 
 	def startScript( self, script = None ):
 		self.paused = False
+		self.updateTimer = self.mainWindow.startTimer(1000/fps, self.updateView)
 		if not script:
 			script = self.getApp().getConfig( 'start_script', 'game/script/main.lua' )
 		if script:
+			self.show()		
 			self.restartScript( script )
 
 	def updateView(self):
@@ -213,10 +220,7 @@ class MOAIGameView( QtEditorModule ):
 			else:
 				signals.callAfter( self.restartScript, src )
 
-	
 	def onUnload(self):
-		# self.saveWindowState(self.mainWindow)
-		self.updateTimer.stop()
 		self.mainWindow.destroy()
 
 	def onDebugEnter(self):

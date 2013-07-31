@@ -39,7 +39,7 @@ class QtSupport( QtEditorModule ):
 		# setup styles
 		# QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
 		try:
-			styleSheetName = 'dark.qss'
+			styleSheetName = 'dark1.qss'
 			self.qtApp.setStyleSheet(
 					open( self.getApp().getPath( 'data/' + styleSheetName ) ).read() 
 				)
@@ -100,7 +100,7 @@ class QtSupport( QtEditorModule ):
 		return True
 
 	def update( self ):
-		self.qtApp.processEvents( QEventLoop.AllEvents )
+		self.qtApp.processEvents( QEventLoop.AllEvents, 1 )
 
 	# #resource provider
 	# def requestDockWindow( self, id, **dockOptions ):

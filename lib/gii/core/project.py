@@ -189,8 +189,8 @@ class Project(object):
 	def getBasePath( self, path=None ):
 		return _makePath( self.path, path)
 
-	def getInternalPath( self, path=None ):
-		return _makePath( self.internalPath, path)
+	def getEnvPath( self, path=None ):
+		return _makePath( self.envPath, path)
 
 	def getPackagePath(self, path=None):
 		return _makePath( self.envPackagePath, path)

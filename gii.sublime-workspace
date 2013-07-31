@@ -1,0 +1,2394 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"Fa",
+				"False"
+			],
+			[
+				"spri",
+				"sprite"
+			],
+			[
+				"conta",
+				"container"
+			],
+			[
+				"atlas",
+				"atlases"
+			],
+			[
+				"attach",
+				"_attachTransform"
+			],
+			[
+				"MOAISc",
+				"MOAIScissorRect"
+			],
+			[
+				"pron",
+				"propertyName"
+			],
+			[
+				"shr",
+				"shrink"
+			],
+			[
+				"TILEB",
+				"TILEBIT_VISITED"
+			],
+			[
+				"clas",
+				"class"
+			],
+			[
+				"Creatu",
+				"Creature"
+			],
+			[
+				"Cre",
+				"CreatureManager"
+			],
+			[
+				"Crea",
+				"CreatureClass"
+			],
+			[
+				"cons",
+				"constructor"
+			],
+			[
+				"Facli",
+				"FacilityClass"
+			],
+			[
+				"Facil",
+				"FacilityClass"
+			],
+			[
+				"class",
+				"classes"
+			],
+			[
+				"faci",
+				"facilities"
+			],
+			[
+				"creatu",
+				"creature"
+			],
+			[
+				"creaturem",
+				"creatureManager"
+			],
+			[
+				"import",
+				"importance"
+			],
+			[
+				"impor",
+				"importance"
+			],
+			[
+				"Obj",
+				"ObjectHistory"
+			],
+			[
+				"Glo",
+				"GlobalEntity"
+			],
+			[
+				"pop",
+				"pop  (function)"
+			],
+			[
+				"modepro",
+				"buildLuaObjectModelProvider  (function)"
+			],
+			[
+				"CLA",
+				"CLASS"
+			],
+			[
+				"isSub",
+				"issubclass"
+			],
+			[
+				"CL",
+				"CLASS"
+			],
+			[
+				"Dunm",
+				"DungeonMap"
+			],
+			[
+				"ST",
+				"STATIC"
+			],
+			[
+				"_LU",
+				"_LuaObject"
+			],
+			[
+				"Win",
+				"Window"
+			],
+			[
+				"registermo",
+				"registerModelProvier"
+			],
+			[
+				"provi",
+				"provider"
+			],
+			[
+				"Luaob",
+				"LuaObjectModelProvider"
+			],
+			[
+				"getMod",
+				"getModelFromObject"
+			],
+			[
+				"fieldn",
+				"fieldName"
+			],
+			[
+				"Mod",
+				"Model"
+			],
+			[
+				"Fieldb",
+				"FieldBase"
+			],
+			[
+				"Fie",
+				"Field"
+			],
+			[
+				"__defaul",
+				"__default"
+			],
+			[
+				"num",
+				"number"
+			],
+			[
+				"spa",
+				"spawnHero"
+			],
+			[
+				"getCell",
+				"getCellCoord"
+			],
+			[
+				"Que",
+				"Quest"
+			],
+			[
+				"cre",
+				"Creature.lua"
+			],
+			[
+				"Enti",
+				"Entity"
+			],
+			[
+				"entit",
+				"entity"
+			],
+			[
+				"En",
+				"Entity:show"
+			],
+			[
+				"refe",
+				"refreshAll  (function)"
+			],
+			[
+				"typemap",
+				"typeMapV  (variable)"
+			],
+			[
+				"addEn",
+				"addEntity"
+			],
+			[
+				"sig",
+				"signals"
+			],
+			[
+				"lua_isuser",
+				"lua_islightuserdata"
+			],
+			[
+				"push",
+				"push_lua_object"
+			],
+			[
+				"isins",
+				"isinstance"
+			],
+			[
+				"_LuaT",
+				"_LuaTable"
+			],
+			[
+				"global",
+				"globals"
+			],
+			[
+				"globas",
+				"globals"
+			],
+			[
+				"Luaobj",
+				"LuaObjectProxy"
+			],
+			[
+				"entt",
+				"entities"
+			],
+			[
+				"stat",
+				"status"
+			],
+			[
+				"func",
+				"function"
+			],
+			[
+				"que",
+				"quest"
+			],
+			[
+				"UIWq",
+				"UIWindowQuestItem"
+			],
+			[
+				"Wind",
+				"Window:subclass"
+			],
+			[
+				"QB",
+				"QuestBase"
+			],
+			[
+				"QUb",
+				"QuestBase"
+			],
+			[
+				"Ques",
+				"QuestBase"
+			],
+			[
+				"Ent",
+				"Entity"
+			],
+			[
+				"EVENT_",
+				"EVENT_TIMER_END_SPAN"
+			],
+			[
+				"Atr",
+				"AttributeContainer"
+			],
+			[
+				"Attr",
+				"AttributeContainer"
+			],
+			[
+				"defaultv",
+				"defaultValues"
+			],
+			[
+				"dev",
+				"defaultValues"
+			],
+			[
+				"AC",
+				"AttributeContainer"
+			],
+			[
+				"Te",
+				"TestEntity"
+			],
+			[
+				"addB2",
+				"addB2Shape"
+			],
+			[
+				"addB",
+				"addB2Body"
+			],
+			[
+				"shp",
+				"shapes"
+			],
+			[
+				"b2bo",
+				"Box2DBody"
+			],
+			[
+				"positio",
+				"positionIterations"
+			],
+			[
+				"norm",
+				"normpath  (function)"
+			],
+			[
+				"no",
+				"normpath  (function)"
+			],
+			[
+				"Port",
+				"Portrait"
+			],
+			[
+				"deve",
+				"deviceHeight"
+			],
+			[
+				"setOr",
+				"setOrientationPortrait"
+			],
+			[
+				"TEf",
+				"TestFull"
+			],
+			[
+				"compn",
+				"components"
+			],
+			[
+				"schedu",
+				"scheduleUpdateBehavior"
+			],
+			[
+				"Creat",
+				"Creature"
+			],
+			[
+				"list",
+				"listener"
+			],
+			[
+				"setColli",
+				"setCollisionListener"
+			],
+			[
+				"resul",
+				"result"
+			],
+			[
+				"Push",
+				"PushLuaUserdata"
+			],
+			[
+				"mColli",
+				"mCollisionListener"
+			],
+			[
+				"mcoli",
+				"mCollisionListener"
+			],
+			[
+				"camro",
+				"camRot,0,0,1"
+			],
+			[
+				"moaic",
+				"moaicam:setRot"
+			],
+			[
+				"ground",
+				"groundCode"
+			],
+			[
+				"eve",
+				"eventName"
+			],
+			[
+				"even",
+				"eventName"
+			],
+			[
+				"playEve",
+				"playEvent3D"
+			],
+			[
+				"getLoc",
+				"getWorldLoc"
+			],
+			[
+				"evetn",
+				"eventNamePrefix"
+			],
+			[
+				"evena",
+				"eventNamePrefix"
+			],
+			[
+				"Sound",
+				"SoundSource"
+			],
+			[
+				"Sl",
+				"SoundListener"
+			],
+			[
+				"creat",
+				"creature:destroy"
+			],
+			[
+				"crea",
+				"creature"
+			],
+			[
+				"MOAIFmodev",
+				"MOAIFmodEventMgr"
+			],
+			[
+				"fac_hou",
+				"fac_house"
+			],
+			[
+				"fac",
+				"fac_house"
+			],
+			[
+				"getWor",
+				"getWorldLoc"
+			],
+			[
+				"fac_",
+				"fac_temple"
+			],
+			[
+				"emitt",
+				"emitters"
+			],
+			[
+				"prebuil",
+				"prebuiltScripts"
+			],
+			[
+				"partil",
+				"particles"
+			],
+			[
+				"script",
+				"scripts"
+			],
+			[
+				"MOAIParti",
+				"MOAIParticleSystem"
+			],
+			[
+				"makePart",
+				"makeParticleScript"
+			],
+			[
+				"Pas",
+				"ParticleSystemConfig"
+			],
+			[
+				"PS",
+				"ParticleSystemConfig"
+			],
+			[
+				"Parti",
+				"ParticleSystem"
+			],
+			[
+				"regis",
+				"registerAssetLoader"
+			],
+			[
+				"addParticl",
+				"addParticleEmitter"
+			],
+			[
+				"MOAIGfx",
+				"MOAIGfxDevice"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "gii_bin.py",
+			"settings":
+			{
+				"buffer_size": 893,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "packages/CommonAsset/TextAsset.py",
+			"settings":
+			{
+				"buffer_size": 467,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "packages/CommonAsset/ImageAsset.py",
+			"settings":
+			{
+				"buffer_size": 444,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/moai/LuaModule.py",
+			"settings":
+			{
+				"buffer_size": 2151,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "Initializing Chipmunk v5.3.4 (Debug Enabled)\nCompile with -DNDEBUG defined to disable debug mode and runtime assertion checks\nGII\n[STATUS]	loading library from	/Volumes/prj/gii/test/env/config/asset_table.json	\n\n[Finished in 2.7s]\n",
+			"file": "BUILD_RESULT",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 231,
+				"line_ending": "Unix",
+				"scratch": true
+			}
+		},
+		{
+			"file": "gii.sublime-project",
+			"settings":
+			{
+				"buffer_size": 1379,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Run",
+	"command_palette":
+	{
+		"height": 82.0,
+		"selected_items":
+		[
+			[
+				"package",
+				"Preferences: Browse Packages"
+			],
+			[
+				"forma",
+				"Format Code"
+			],
+			[
+				"pci",
+				"Package Control: Install Package"
+			],
+			[
+				"brop	",
+				"Preferences: Browse Packages"
+			],
+			[
+				"git log",
+				"Git: Log Current File"
+			],
+			[
+				"tab",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"browpa",
+				"Preferences: Browse Packages"
+			],
+			[
+				"gitdif",
+				"Git: Diff Current File"
+			],
+			[
+				"diffcu",
+				"Git: Diff Current File"
+			],
+			[
+				"git diff",
+				"Git: Diff Current File"
+			],
+			[
+				"session",
+				"SublimeGDB: Open Session View"
+			],
+			[
+				"glsl",
+				"Set Syntax: GLSL"
+			],
+			[
+				"actions",
+				"Set Syntax: ActionScript"
+			],
+			[
+				"act",
+				"Set Syntax: ActionScript"
+			],
+			[
+				"asc",
+				"Set Syntax: ActionScript"
+			],
+			[
+				"acsc",
+				"Set Syntax: ActionScript"
+			],
+			[
+				"break",
+				"SublimeGDB: Open Breakpoint View"
+			],
+			[
+				"gdb session",
+				"SublimeGDB: Open Session View"
+			],
+			[
+				"gdb",
+				"SublimeGDB: Show Input Field"
+			],
+			[
+				"brop",
+				"Preferences: Browse Packages"
+			],
+			[
+				"brows",
+				"Preferences: Browse Packages"
+			],
+			[
+				"pce",
+				"Package Control: Enable Package"
+			],
+			[
+				"brow",
+				"Preferences: Browse Packages"
+			],
+			[
+				"pcd",
+				"Package Control: Disable Package"
+			],
+			[
+				"dif",
+				"Git: Diff Current File"
+			],
+			[
+				"git ad",
+				"Git: Add Current File"
+			],
+			[
+				"git add",
+				"Git: Add Current File"
+			],
+			[
+				"openurl",
+				"Open URL"
+			],
+			[
+				"diff ",
+				"Git: Diff Current File"
+			],
+			[
+				"git addc",
+				"Git: Add Current File"
+			],
+			[
+				"git ddc",
+				"Git: Add Current File"
+			],
+			[
+				"qui",
+				"Git: Quick Commit"
+			],
+			[
+				"gitcom",
+				"Git: Commit"
+			],
+			[
+				"comit",
+				"Git: Commit"
+			],
+			[
+				"com",
+				"Git: Commit"
+			],
+			[
+				"log",
+				"Git: Log Current File"
+			],
+			[
+				"diff",
+				"Git: Diff Current File"
+			],
+			[
+				"preview",
+				"Markdown Preview: preview in Browser"
+			],
+			[
+				"marked",
+				"Marked"
+			],
+			[
+				"previe",
+				"Markdown Preview: preview in Browser"
+			],
+			[
+				"previ",
+				"Markdown Preview: preview in Browser"
+			],
+			[
+				"makred",
+				"Markdown Preview: copy to clipboard"
+			],
+			[
+				"markdown",
+				"Markdown Preview: open Markdown Cheat sheet"
+			],
+			[
+				"pcdi",
+				"Package Control: Disable Package"
+			],
+			[
+				"mark preview",
+				"Markdown Preview: open Markdown Cheat sheet"
+			],
+			[
+				"bropackage",
+				"Preferences: Browse Packages"
+			],
+			[
+				"pac",
+				"Package Control: Install Package"
+			],
+			[
+				"xml",
+				"Set Syntax: XML"
+			],
+			[
+				"ind",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"pack",
+				"Preferences: Browse Packages"
+			],
+			[
+				"pcu",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"python",
+				"Set Syntax: Python"
+			],
+			[
+				"sessin",
+				"SublimeGDB: Open Session View"
+			],
+			[
+				"sess",
+				"Set Syntax: GDB Session"
+			],
+			[
+				"brea",
+				"SublimeGDB: Open Breakpoint View"
+			],
+			[
+				"form",
+				"Format: Javascript"
+			],
+			[
+				"ftp",
+				"FTPSync: Browse"
+			],
+			[
+				"pcr",
+				"Package Control: Remove Package"
+			],
+			[
+				"min",
+				"View: Toggle Minimap"
+			],
+			[
+				"mini",
+				"View: Toggle Minimap"
+			],
+			[
+				"slimegdb",
+				"Preferences: SublimeGDB Settings – Default"
+			],
+			[
+				"defaul",
+				"Preferences: Settings - Default"
+			],
+			[
+				"brek",
+				"SublimeGDB: Open Breakpoint View"
+			],
+			[
+				"user",
+				"Preferences: SublimeGDB Settings – User"
+			],
+			[
+				"gdb user",
+				"Preferences: SublimeGDB Settings – User"
+			],
+			[
+				"gdbcon",
+				"SublimeGDB: Open Console View"
+			],
+			[
+				"vari",
+				"SublimeGDB: Open Variables View"
+			],
+			[
+				"varia",
+				"SublimeGDB: Open Variables View"
+			],
+			[
+				"open",
+				"SublimeGDB: Open Register View"
+			],
+			[
+				"breka",
+				"Preferences: Browse Packages"
+			],
+			[
+				"run",
+				"Run Window Command"
+			],
+			[
+				"pci ",
+				"Package Control: Install Package"
+			],
+			[
+				"PACKAGE",
+				"Preferences: Browse Packages"
+			],
+			[
+				"PACKA",
+				"Preferences: Browse Packages"
+			],
+			[
+				"browse",
+				"Preferences: Browse Packages"
+			],
+			[
+				"clang",
+				"Preferences: SublimeClang Settings – Default"
+			],
+			[
+				"key",
+				"Preferences: Key Bindings - User"
+			],
+			[
+				"build",
+				"Build: Build"
+			],
+			[
+				"def",
+				"Preferences: Settings - Default"
+			],
+			[
+				"prefer",
+				"Preferences: Browse Packages"
+			],
+			[
+				"pre",
+				"Preferences: Browse Packages"
+			],
+			[
+				"Lua",
+				"SublimeREPL: Lua"
+			],
+			[
+				"lua",
+				"SublimeREPL: Lua"
+			],
+			[
+				"brpackag",
+				"Preferences: Browse Packages"
+			],
+			[
+				"defa",
+				"Preferences: Settings - Default"
+			],
+			[
+				"brow pa",
+				"Preferences: Browse Packages"
+			],
+			[
+				"git",
+				"Git: Toggle Annotations"
+			],
+			[
+				"xm",
+				"Set Syntax: XML"
+			],
+			[
+				"pcin",
+				"Package Control: Install Package"
+			],
+			[
+				"yu",
+				"Set Syntax: Yua"
+			],
+			[
+				"fold",
+				"Code Folding: Fold Tag Attributes"
+			],
+			[
+				"UPP",
+				"Convert Case: Upper Case"
+			],
+			[
+				"todo",
+				"Show TODOs in project and open files"
+			],
+			[
+				"upp",
+				"Convert Case: Upper Case"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"packag",
+				"Package Control: Install Package"
+			],
+			[
+				"",
+				"About"
+			],
+			[
+				"show",
+				"Show TODOs in project and open files"
+			],
+			[
+				"pa",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Create Binary Package File"
+			],
+			[
+				"package con",
+				"Package Control: List Packages"
+			]
+		],
+		"width": 516.0
+	},
+	"console":
+	{
+		"height": 247.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": true,
+		"show_tabs": true,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Volumes/prj/gii/gii.sublime-project",
+		"/Volumes/prj/gii/test/game/script/mock/core/MOAIHelpers.lua",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/base/project.py",
+		"/Users/tommo/prj/moai/MDD/lua/main.lua",
+		"/Volumes/prj/gii/testproject/testproject.sublime-project",
+		"/Volumes/prj/loom/test/loom.config",
+		"/Volumes/prj/loom/test/src/Test.ls",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/common/TexturePacker.py",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/common/StyleSheetEditor.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/editor/ModMain.py",
+		"/Volumes/prj/moai/MDD/host/moei/moei/editor/ModAssetEditor.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/moai/MOAIGameView.py",
+		"/Users/tommo/prj/moai/MDD/lua/creature/Hero.lua",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/common/TexturePreview.lua",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/common/TexturePackAsset.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/moai/MOAIRuntime.py",
+		"/Users/tommo/prj/moai/MDD/audio 替身",
+		"/Users/tommo/prj/moai/MDD/BUILD_RESULT",
+		"/Volumes/prj/design/mdd/new/anim/psd/test.py",
+		"/Volumes/prj/design/mdd/new/anim/psd/explorer/test.py",
+		"/Volumes/prj/design/mdd/new/anim/psd/explorer/explorer.sprite",
+		"/Volumes/prj/design/mdd/new/anim/psd/explorer/output.sprite",
+		"/Users/tommo/prj/moai/MDD/lua/ui/Window.lua",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/base/asset.py",
+		"/Users/tommo/prj/moai/MDD/runmoei",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/base/__init__.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/test/moei/common/Deck2DAsset.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/test/moei/common/__init__.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/editor/propertyGrid.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/base/module.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/base/app.py",
+		"/Users/tommo/prj/moai/MDD/lua/mock/core/Game.lua",
+		"/Users/tommo/prj/moai/MDD/lua/mock/core/Scene.lua",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/SceneEditor/__init__.py",
+		"/Users/tommo/prj/moai/MDD/host/osx/GlutHost.cpp",
+		"/Users/tommo/prj/moai/MDD/host/moei/aku-build/AKU.pyx",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/__init__.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/base/cli.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/test/moei/common/SceneAsset.py",
+		"/Users/tommo/prj/moai/MDD/lua/mock/asset/Deck2D.lua",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/editor/controls/GLWidget.py",
+		"/Volumes/prj/moai/MDD/lua/mock/asset/Texture.lua",
+		"/Users/tommo/prj/moai/MDD/lua/mock/asset/Common.lua",
+		"/Users/tommo/prj/moai/MDD/lua/mock/asset/all.lua",
+		"/Users/tommo/prj/moai/MDD/host/moei/test/moei/common/AnimPreview.lua",
+		"/Users/tommo/Library/Caches/TemporaryItems/BetterZip Temporary Folder (c42c032fe5cc, 2013-07-25 13:04:37 +0000)/BetterZip Temporary Folder (c42c032fe5cc, )/Text/IndieSFX-S045C.txt",
+		"/Users/tommo/prj/moai/MDD/start",
+		"/Users/tommo/prj/moai/MDD/lua/mock/core/AssetLibrary.lua",
+		"/Users/tommo/prj/moai/MDD/MDD.sublime-project",
+		"/Volumes/prj/moai/MDD/lua/tex_raw/common.texpack",
+		"/Volumes/prj/moai/MDD/lua/mock/asset/AuroraSprite.lua",
+		"/Volumes/prj/moai/MDD/lua/mock/asset/Deck2D.lua",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/common/Deck2DEditor.py",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/common/Deck2DEditor.lua",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/common/TextureAsset.py",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/mock/MockBridge.lua",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/common/TextAsset.py",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/mock/MockBridge.py",
+		"/Users/tommo/prj/moai/MDD/lua/creature/CreatureFSM.lua",
+		"/Users/tommo/prj/moai/MDD/lua/creature/Creature.lua",
+		"/Users/tommo/prj/moai/MDD/lua/scenes/GlobalScene.lua",
+		"/Users/tommo/prj/moai/MDD/lua/mock/env.lua",
+		"/Users/tommo/prj/moai/MDD/host/moei/test/moei/common/ScriptAsset.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/moai/LuaModule.py",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/common/SceneAsset.py",
+		"/Users/tommo/prj/moai/MDD/lua/init.lua",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/moai/LuaObjectProxy.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/moai/LuaUtils.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/moai/LuaMapping.py",
+		"/Users/tommo/dev/Python/qt-solutions/qtpropertybrowser/src/qtbuttonpropertybrowser.cpp",
+		"/Users/tommo/dev/Python/qt-solutions/qtpropertybrowser/src/qttreepropertybrowser.h",
+		"/Users/tommo/dev/Python/qt-solutions/qtpropertybrowser/src/qttreepropertybrowser.cpp",
+		"/Users/tommo/dev/Python/qt-solutions/qtpropertybrowser/src/QtTreePropertyBrowser",
+		"/Users/tommo/prj/moai/MDD/lua/scenes/main.mock_scene",
+		"/Users/tommo/prj/moai/MDD/lua/startup.lua",
+		"/Users/tommo/prj/moai/MDD/lua/scenes/main.moei_scene",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/common/StyleSheetPreview.lua",
+		"/Users/tommo/prj/moai/MDD/sim/simfight.sublime-project",
+		"/Volumes/prj/moai/MDD/host/moei/moei/base/cli.py",
+		"/Users/tommo/dev/Python/qtexamples/examples/layouts/basiclayouts.py",
+		"/Volumes/prj/moai/MDD/host/moei/aku-build/moaiAKU.py",
+		"/Users/tommo/dev/Python/qtexamples/examples/opengl/2dpainting.py",
+		"/Volumes/prj/moai/MDD/lua/moei_ext/common/TextureAsset.py",
+		"/Volumes/prj/moai/MDD/lua/objects/DungeonMap.lua",
+		"/Volumes/prj/moai/MDD/host/moei/data/lua/runtime.lua",
+		"/Volumes/prj/moai/MDD/host/moei/moei/base/GenericTreeWidget.py",
+		"/Volumes/prj/moai/MDD/MDD.sublime-project",
+		"/Volumes/prj/moai/MDD/lua/mock/env.lua",
+		"/Volumes/prj/moai/MDD/lua/init.lua",
+		"/Volumes/prj/moai/MDD/lua/mock/core/Scene.lua",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/editor/ModAssetBrowser.py",
+		"/Volumes/prj/moai/MDD/lua/scenes/test.moei_scene",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/base/AssetUtils.py",
+		"/Users/tommo/prj/moai/MDD/lua/mock/component/DrawScript.lua",
+		"/Users/tommo/prj/moai/MDD/lua/creature/CreatureManager.lua",
+		"/Users/tommo/prj/moai/MDD/lua/scenes/TestLogic.lua",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/editor/__init__.py",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/modules.py",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/SceneEditor/SceneGraphBrowser.lua",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/SceneEditor/ModSceneGraphBrowser.py",
+		"/Volumes/prj/moai/MDD/lua/startup.lua",
+		"/Users/tommo/prj/moai/MDD/lua/scenes/MainGame.lua",
+		"/Users/tommo/prj/moai/MDD/host/moei/test/moei/common/Deck2DEditor.lua",
+		"/Users/tommo/prj/moai/MDD/lua/mock/core/BehaviorTree.lua",
+		"/Users/tommo/prj/moai/MDD/lua/ui/MainUI.lua",
+		"/Users/tommo/prj/moai/MDD/lua/moei_ext/SceneEditor/EntityProxy.pyc",
+		"/Volumes/prj/moai/MDD/host/moei/test/moei/common/TexturePacker.py",
+		"/Volumes/prj/moai/MDD/host/moei/test/moei/common/AuroraAsset.py",
+		"/Users/tommo/prj/moai/MDD/lua/objects/CreatureClass.lua",
+		"/Users/tommo/dev/moai-dev/samples/graphics/scissor-rect/main.lua",
+		"/Users/tommo/prj/moai/MDD/host/moei/moei/editor/ModIntrospector.py",
+		"/Users/tommo/prj/moai/MDD/lua/objects/MapCamera.lua",
+		"/Users/tommo/prj/moai/MDD/lua/mock/core/Class.lua",
+		"/Users/tommo/prj/moai/MDD/host/extension/MDDMapObject.cpp",
+		"/Users/tommo/prj/moai/MDD/lua/scenes/testscene/ts_dungeon_style.lua",
+		"/Users/tommo/prj/moai/MDD/lua/res/res_shaders.lua",
+		"/Volumes/prj/moai/MDD/lua/task/TaskEntertainment.lua",
+		"/Volumes/prj/moai/MDD/lua/creature/Creature.lua",
+		"/Volumes/prj/moai/MDD/lua/facility/Facility.lua",
+		"/Volumes/prj/moai/MDD/lua/objects/MapObject.lua",
+		"/Volumes/prj/moai/MDD/lua/scenes/TestLogic.lua",
+		"/Volumes/prj/moai/MDD/lua/scenes/testscene/ts_ui_build.lua",
+		"/Volumes/prj/moai/MDD/lua/creature/HeroManager.lua",
+		"/Volumes/prj/moai/MDD/lua/objects/Dungeon.lua",
+		"/Volumes/prj/moai/MDD/lua/moei_ext/SceneEditor/ModSceneGraphBrowser.py",
+		"/Volumes/prj/moai/MDD/lua/objects/MapCamera.lua",
+		"/Volumes/prj/moai/MDD/lua/mock/asset/resloader.lua",
+		"/Volumes/prj/ging/gii gui.mm"
+	],
+	"find":
+	{
+		"height": 37.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			"*.lua",
+			"*.cpp",
+			"*.lua",
+			"*.py",
+			"*.lua",
+			"/Volumes/prj/moai/MDD/lua/",
+			"/Volumes/prj/moai/MDD/lua/facility",
+			"/Volumes/prj/moai/MDD/lua/creature",
+			"/Volumes/prj/moai/MDD/lua/quest",
+			"/Volumes/prj/moai/MDD/lua/actions",
+			"/Volumes/prj/moai/MDD/lua/test",
+			"/Volumes/prj/moai/MDD/lua/task",
+			"/Volumes/prj/moai/MDD/lua/ui",
+			"/Volumes/prj/moai/MDD/lua/",
+			"/Volumes/prj/moai/MDD/lua/moei_ext",
+			"/Volumes/prj/moai/MDD/lua/scenes",
+			"/Volumes/prj/moai/MDD/lua/objects",
+			"/Volumes/prj/moai/MDD/lua/mock",
+			"*.lua",
+			"*.l",
+			"*.lua",
+			"*.py",
+			"*.lua",
+			"*.py",
+			"*.lua",
+			"*.py",
+			"*.lua",
+			"*.py",
+			"*.lua",
+			"*.py",
+			"*.lua",
+			"*.py",
+			"*.lua",
+			"*.py",
+			"*.lua",
+			"*.py",
+			"*.lua",
+			"*.py",
+			"*.lua",
+			"*.py",
+			"*.cpp",
+			"*.lua",
+			"*.py",
+			"*.lua",
+			"/Users/tommo/prj/moai/MDD/lua/ui,/Users/tommo/prj/moai/MDD/lua/object,/Users/tommo/prj/moai/MDD/lua/objects,/Users/tommo/prj/moai/MDD/lua/scenes,/Users/tommo/prj/moai/MDD/lua/task,/Users/tommo/prj/moai/MDD/lua/test,/Users/tommo/prj/moai/MDD/lua/creature,/Users/tommo/prj/moai/MDD/lua/facility",
+			"*.lua",
+			"*.py",
+			"*.lua",
+			"",
+			"*.lua",
+			"",
+			"di",
+			"",
+			"Object:subclass",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"txt",
+			"text",
+			"requestSubWindow",
+			"buffer",
+			"ModMain",
+			"wgeom",
+			"=",
+			"AllowNestedDocks",
+			"QtGui",
+			"QMainWindow",
+			"QDockWidget",
+			"setFeatures",
+			"dock",
+			"window",
+			"Qt",
+			"dockArea=Qt.",
+			"dockArea",
+			"==",
+			"=",
+			"main",
+			"center",
+			"right",
+			"left",
+			"right",
+			"die",
+			"fall",
+			"CreatureWorker",
+			"Hero",
+			"idle",
+			"prop",
+			"sprite",
+			"output",
+			"idle",
+			"AtlasGenerator",
+			"prefix",
+			"path",
+			"( ",
+			"prefix",
+			"path",
+			"basename",
+			"read_fmt",
+			"import",
+			"prefix",
+			"path",
+			"generateAtlases",
+			"output",
+			"fall",
+			"shout",
+			"loadPSD",
+			"load",
+			"window",
+			"self.windo",
+			"onWindowStateLoad",
+			"save",
+			"onWindowStateSave",
+			"asset",
+			"save",
+			"window_state",
+			"save",
+			"main",
+			"save",
+			"main",
+			"onAppClose",
+			"onAssetModified",
+			"close",
+			"modified",
+			"asset",
+			"container",
+			"window",
+			"contain",
+			"open",
+			"import",
+			"framebuff",
+			"run",
+			"runningscr",
+			"resetartScript",
+			"moai",
+			"containers",
+			"MenuManager",
+			"onlo",
+			"onModule",
+			"debugging",
+			"Deck2D",
+			"loadAssetDataTable",
+			"basicLoaders",
+			")\n",
+			"basicLoaders",
+			"loadTexPack",
+			"loader",
+			"assetType",
+			"print",
+			"fromUnicode",
+			"=",
+			"lua",
+			"onAssetUnregister",
+			"onAssetModified",
+			"=",
+			"prop",
+			"factory",
+			"=",
+			"backgroundcolor",
+			"background",
+			",",
+			"readonlyColor",
+			"=",
+			"moei_scene",
+			"Lorem",
+			"MOAIEditCanvas",
+			"==",
+			"newstate",
+			"connect",
+			"self",
+			"=='",
+			"AssetNode",
+			"removeAssetNode",
+			"selectAssetNode",
+			"addnode",
+			"addAssetNode",
+			"Deck2DCreator",
+			"SceneCreator",
+			"deck2d",
+			"nodepath",
+			"=",
+			"pack",
+			"deck2d",
+			"Deck2D",
+			"deck2d",
+			"registerAssetCreator"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+			",\\n",
+			"allowType",
+			"s_",
+			"CLASS: \\1 ( \\2 )",
+			"CLASS: \\1 ( \\2 )\\n\\t:MEMBER\\{ --<<",
+			"CLASS: \\1 ( \\2 )\\n\\t:MEMBER\\{",
+			"CLASS: \\1 ( \\2 )",
+			"CLASS: \\1 ()",
+			"TILEBIT_OCCUPIED",
+			"TILEBIT_VISITED",
+			"_owner:updateCanvas",
+			"#",
+			"setCollisionFlags",
+			"settings",
+			"playAnim",
+			"flagGrid",
+			"MapCamera",
+			"Action\\1",
+			"getCellCoord",
+			"BTDecoratorNot",
+			"BTConcurrentOrSelector",
+			"BTConcurrentAndSelector",
+			"BTShuffledSequenceSelector",
+			"BTRandomSelector",
+			"BTSequenceSelector",
+			"BTPrioritySelector",
+			"BTRandomSelectorNode",
+			"BTSequenceSelectorNode",
+			"BTPrioritySelectorNode",
+			"BTConditionNotNode",
+			"BTConditionNode",
+			"BTActionNode",
+			"addNode",
+			":start",
+			"addCoroutine",
+			"Actor",
+			"ProjectileObject",
+			"MovableObject",
+			"Entity",
+			"MapObject",
+			"Entity:subclass",
+			"Engity:subclass",
+			"GlobalEntity",
+			"facility",
+			"	for i,d facilityFactories\nconstructor=f,",
+			"constructor",
+			"creator=f",
+			"UIWindowBuildList",
+			"UIBuildList",
+			"inputDevice",
+			".",
+			"TaskConsume",
+			"addToEntityCell",
+			"removeFromEntityCell",
+			"FacConstruction",
+			"MovableObject:",
+			"tileSize",
+			"mPassMask",
+			"Pass",
+			"pass",
+			"3",
+			"2",
+			"1",
+			"TMTileDeck2D",
+			"TMBlockProp",
+			"this",
+			"TMBlockGrid",
+			"Push",
+			"self->",
+			"MOAI_LUA_SETUP(TMBlockTileDeck, ",
+			"0",
+			"{}",
+			"code",
+			"fsm.common.wander",
+			".__msgbox",
+			"\\t",
+			"exit",
+			"enter",
+			"\\n</",
+			"vy",
+			"vx",
+			"\\.",
+			"CFG['\\1']",
+			".",
+			"\\n</",
+			"\\n<",
+			"visibilityExpandQueue",
+			"#include <float.h>\nvisibilityExpandQueue",
+			"bitVisited",
+			"return",
+			"MOAICoroutine",
+			"TaskFacility",
+			"type",
+			"connectCheckSeq",
+			"mSectionGrid->",
+			"block",
+			"Block",
+			"block",
+			"blockFlag",
+			"TILE(\\1,\\2)",
+			"u32",
+			"fullTasks",
+			"res.tex",
+			"windowMap",
+			"UIWindowMap",
+			"TestManualGrid",
+			"map",
+			"mainGame",
+			"yield()",
+			"digTasks",
+			"Observer",
+			"AttrObject",
+			"setTile(\\1,",
+			"getTile(\\1,",
+			"getCellAddr",
+			"coordToCellAddr",
+			"$(SRCROOT)/../../../lib/",
+			"../../../lib/",
+			"~/moai-dev/3rdparty",
+			"TMOFFSETGRIDDECK_H",
+			"OBJC_SRC",
+			"CPP_SRC",
+			"TMOffsetGridDeck",
+			"TMGridDeckBrush",
+			"Object:subclass",
+			"UIMapWindow",
+			"res.gameui['gamecenter",
+			"bronze"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "gii_bin.py",
+					"settings":
+					{
+						"buffer_size": 893,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								491,
+								491
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "packages/CommonAsset/TextAsset.py",
+					"settings":
+					{
+						"buffer_size": 467,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								467
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "packages/CommonAsset/ImageAsset.py",
+					"settings":
+					{
+						"buffer_size": 444,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								444,
+								444
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 3,
+					"file": "lib/gii/moai/LuaModule.py",
+					"settings":
+					{
+						"buffer_size": 2151,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								308,
+								308
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 833.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 4,
+					"file": "BUILD_RESULT",
+					"settings":
+					{
+						"buffer_size": 231,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								231,
+								231
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"result_base_dir": "/Volumes/prj/gii",
+							"result_file_regex": "",
+							"result_line_regex": "",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "gii.sublime-project",
+					"settings":
+					{
+						"buffer_size": 1379,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1326,
+								1326
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1036.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 32.0
+	},
+	"input":
+	{
+		"height": 35.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				2
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			],
+			[
+				1,
+				1,
+				2,
+				2
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.5,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			0.5,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.aaa_package_dev":
+	{
+		"height": 110.0
+	},
+	"output.clang":
+	{
+		"height": 110.0
+	},
+	"output.exec":
+	{
+		"height": 91.0
+	},
+	"output.git":
+	{
+		"height": 112.0
+	},
+	"output.package_control":
+	{
+		"height": 0.0
+	},
+	"output.unsaved_changes":
+	{
+		"height": 110.0
+	},
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"",
+				"lib/gii/moai/LuaModule.py"
+			],
+			[
+				"modma",
+				"host/moei/moei/editor/ModMain.py"
+			],
+			[
+				"base",
+				"host/moei/moei/base/__init__.py"
+			],
+			[
+				"modul",
+				"host/moei/moei/base/module.py"
+			],
+			[
+				".proje",
+				"MDD.sublime-project"
+			],
+			[
+				"proj",
+				"host/moei/moei/base/project.py"
+			],
+			[
+				"main",
+				"lua/main.lua"
+			],
+			[
+				"gamev",
+				"host/moei/moei/moai/MOAIGameView.py"
+			],
+			[
+				"iwndow.py",
+				"host/moei/moei/base/window.py"
+			],
+			[
+				"dec",
+				"lua/moei_ext/common/Deck2DEditor.lua"
+			],
+			[
+				"sty",
+				"lua/moei_ext/common/StyleSheetEditor.py"
+			],
+			[
+				"texpac",
+				"lua/moei_ext/common/TexturePacker.py"
+			],
+			[
+				"textpa",
+				"lua/moei_ext/common/TexturePackAsset.py"
+			],
+			[
+				"testlo",
+				"lua/scenes/TestLogic.lua"
+			],
+			[
+				"worker.lu",
+				"lua/creature/CreatureWorker.lua"
+			],
+			[
+				"hero",
+				"lua/creature/Hero.lua"
+			],
+			[
+				"windwpy",
+				"host/moei/moei/base/window.py"
+			],
+			[
+				"windo",
+				"lua/ui/Window.lua"
+			],
+			[
+				"app",
+				"host/moei/moei/base/app.py"
+			],
+			[
+				"texturepa",
+				"lua/moei_ext/common/TexturePacker.py"
+			],
+			[
+				"style",
+				"lua/moei_ext/common/StyleSheetEditor.py"
+			],
+			[
+				"deck",
+				"lua/moei_ext/common/Deck2DEditor.lua"
+			],
+			[
+				"texpack",
+				"lua/moei_ext/common/TexturePacker.py"
+			],
+			[
+				"run",
+				"runmoei"
+			],
+			[
+				"gam",
+				"lua/mock/core/Game.lua"
+			],
+			[
+				"scen",
+				"lua/mock/core/Scene.lua"
+			],
+			[
+				"prog",
+				"host/moei/moei/editor/propertyGrid.py"
+			],
+			[
+				"base/init",
+				"host/moei/moei/base/__init__.py"
+			],
+			[
+				"aseini",
+				"lua/moei_ext/SceneEditor/__init__.py"
+			],
+			[
+				"modm",
+				"host/moei/moei/editor/ModMain.py"
+			],
+			[
+				"moaiga",
+				"host/moei/moei/moai/MOAIGameView.py"
+			],
+			[
+				"glu",
+				"host/osx/GlutHost.cpp"
+			],
+			[
+				"modu",
+				"host/moei/moei/base/module.py"
+			],
+			[
+				"akupyx",
+				"host/moei/aku-build/AKU.pyx"
+			],
+			[
+				"moairun",
+				"host/moei/moei/moai/MOAIRuntime.py"
+			],
+			[
+				"module",
+				"host/moei/moei/base/module.py"
+			],
+			[
+				"cli",
+				"host/moei/moei/base/cli.py"
+			],
+			[
+				"glwi",
+				"host/moei/moei/editor/controls/GLWidget.py"
+			],
+			[
+				"proje",
+				"host/moei/moei/base/project.py"
+			],
+			[
+				"start",
+				"start"
+			],
+			[
+				"asset.py",
+				"host/moei/moei/base/asset.py"
+			],
+			[
+				"texturepac",
+				"lua/moei_ext/common/TexturePacker.py"
+			],
+			[
+				"stat",
+				"start"
+			],
+			[
+				"deck2d",
+				"lua/moei_ext/common/Deck2DEditor.lua"
+			],
+			[
+				"assetli",
+				"lua/mock/core/AssetLibrary.lua"
+			],
+			[
+				"asset.lua",
+				"lua/mock/asset/all.lua"
+			],
+			[
+				"asset",
+				"lua/moei_ext/common/TextAsset.py"
+			],
+			[
+				"txtureasset",
+				"lua/moei_ext/common/TextureAsset.py"
+			],
+			[
+				"deck2de",
+				"lua/moei_ext/common/Deck2DEditor.lua"
+			],
+			[
+				"runmo",
+				"runmoei"
+			],
+			[
+				"env",
+				"lua/mock/env.lua"
+			],
+			[
+				"luama",
+				"host/moei/moei/moai/LuaMapping.py"
+			],
+			[
+				"propg",
+				"host/moei/moei/editor/propertyGrid.py"
+			],
+			[
+				"init",
+				"lua/init.lua"
+			],
+			[
+				"startu",
+				"lua/startup.lua"
+			],
+			[
+				"mock",
+				"lua/moei_ext/mock/MockBridge.lua"
+			],
+			[
+				"deck2ded",
+				"lua/moei_ext/common/Deck2DEditor.lua"
+			],
+			[
+				"sceneas",
+				"lua/moei_ext/common/SceneAsset.py"
+			],
+			[
+				"scene",
+				"lua/mock/core/Scene.lua"
+			],
+			[
+				"globa",
+				"lua/scenes/GlobalScene.lua"
+			],
+			[
+				"styleshe",
+				"lua/moei_ext/common/StyleSheetEditor.py"
+			],
+			[
+				"runm",
+				"runmoei"
+			],
+			[
+				"project",
+				"MDD.sublime-project"
+			],
+			[
+				"moairu",
+				"host/moei/moei/moai/MOAIRuntime.py"
+			],
+			[
+				"aku",
+				"host/moei/aku-build/moaiAKU.py"
+			],
+			[
+				"generi",
+				"host/moei/moei/base/GenericTreeWidget.py"
+			],
+			[
+				"modassetbro",
+				"host/moei/moei/editor/ModAssetBrowser.py"
+			],
+			[
+				"textureas",
+				"lua/moei_ext/common/TextureAsset.py"
+			],
+			[
+				"textas",
+				"lua/moei_ext/common/TextAsset.py"
+			],
+			[
+				"assetty",
+				"host/moei/moei/base/AssetUtils.py"
+			],
+			[
+				"mockb",
+				"lua/moei_ext/mock/MockBridge.lua"
+			],
+			[
+				"editor/ini",
+				"host/moei/moei/editor/__init__.py"
+			],
+			[
+				"moei/init",
+				"host/moei/moei/__init__.py"
+			],
+			[
+				"propgr",
+				"host/moei/moei/editor/propertyGrid.py"
+			],
+			[
+				"main.lu",
+				"lua/main.lua"
+			],
+			[
+				"sceneg",
+				"lua/moei_ext/SceneEditor/ModSceneGraphBrowser.py"
+			],
+			[
+				"projectpy",
+				"host/moei/moei/base/project.py"
+			],
+			[
+				"mapc",
+				"lua/objects/MapCamera.lua"
+			],
+			[
+				"modin",
+				"host/moei/moei/editor/ModIntrospector.py"
+			],
+			[
+				"map",
+				"lua/objects/MapCamera.lua"
+			],
+			[
+				"shader",
+				"lua/res/res_shaders.lua"
+			],
+			[
+				"testlog",
+				"lua/scenes/TestLogic.lua"
+			],
+			[
+				"clas",
+				"lua/mock/core/Class.lua"
+			],
+			[
+				"creatu",
+				"lua/creature/Creature.lua"
+			],
+			[
+				"faci",
+				"lua/facility/Facility.lua"
+			],
+			[
+				"mapo",
+				"lua/objects/MapObject.lua"
+			],
+			[
+				"creama",
+				"lua/creature/CreatureManager.lua"
+			],
+			[
+				"tsuib",
+				"lua/scenes/testscene/ts_ui_build.lua"
+			],
+			[
+				"dungem",
+				"lua/objects/DungeonMap.lua"
+			],
+			[
+				"creau",
+				"lua/creature/Creature.lua"
+			],
+			[
+				"mddobj",
+				"host/extension/MDDMapObject.cpp"
+			],
+			[
+				"dung",
+				"lua/objects/Dungeon.lua"
+			],
+			[
+				"ma",
+				"lua/objects/MapCamera.lua"
+			],
+			[
+				"reslo",
+				"lua/mock/asset/resloader.lua"
+			],
+			[
+				"runtime",
+				"host/moei/data/lua/runtime.lua"
+			],
+			[
+				"scengra",
+				"lua/moei_ext/SceneEditor/ModSceneGraphBrowser.py"
+			],
+			[
+				"mapcam",
+				"lua/objects/MapCamera.lua"
+			],
+			[
+				"creaturecl",
+				"lua/objects/CreatureClass.lua"
+			],
+			[
+				"gluth",
+				"host/osx/GlutHost.cpp"
+			],
+			[
+				"debughe",
+				"lua/mock/tools/DebugHelper.lua"
+			],
+			[
+				"uique",
+				"lua/ui/UIWindowQuestList.lua"
+			],
+			[
+				"draws",
+				"lua/mock/component/DrawScript.lua"
+			],
+			[
+				"ent",
+				"lua/mock/core/Entity.lua"
+			],
+			[
+				"uiwin",
+				"lua/ui/UIWindowMap.lua"
+			],
+			[
+				"mapca",
+				"lua/objects/MapCamera.lua"
+			],
+			[
+				"came",
+				"lua/mock/component/Camera.lua"
+			],
+			[
+				"uimap",
+				"lua/ui/UIWindowMap.lua"
+			],
+			[
+				"dunm",
+				"lua/objects/DungeonMap.lua"
+			],
+			[
+				"uiscro",
+				"lua/ui/ScrollList.lua"
+			],
+			[
+				"entity",
+				"lua/mock/core/Entity.lua"
+			],
+			[
+				"quest",
+				"lua/objects/Quest.lua"
+			],
+			[
+				"creature",
+				"lua/creature/Creature.lua"
+			],
+			[
+				".proj",
+				"MDD.sublime-project"
+			],
+			[
+				"clashe",
+				"lua/mock/core/ClassHelpers.lua"
+			],
+			[
+				"clash",
+				"lua/mock/core/ClassHelpers.lua"
+			],
+			[
+				"moaiprop",
+				"lua/mock/core/MOAIPropHelpers.lua"
+			],
+			[
+				"magic",
+				"lua/objects/Magic.lua"
+			],
+			[
+				"creatru",
+				"lua/creature/Creature.lua"
+			],
+			[
+				"facil",
+				"lua/facility/Facility.lua"
+			],
+			[
+				"facili",
+				"lua/facility/Facility.lua"
+			],
+			[
+				"mapbuil",
+				"lua/ui/MapToolBuild.lua"
+			],
+			[
+				"facicon",
+				"lua/facility/FacConstruction.lua"
+			],
+			[
+				"casi",
+				"lua/facility/FacCasino.lua"
+			],
+			[
+				"res",
+				"lua/res/res.lua"
+			],
+			[
+				"facho",
+				"lua/facility/FacHouse.lua"
+			],
+			[
+				"makefil",
+				"host/osx/Makefile"
+			],
+			[
+				"mddm",
+				"host/extension/MDDMapObject.cpp"
+			],
+			[
+				"mddhe",
+				"host/extension/MDDHelper.cpp"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"gii",
+				"/Volumes/prj/ging/gii.sublime-project"
+			],
+			[
+				"",
+				"/Users/tommo/prj/moai/MDD/sim/simfight.sublime-project"
+			],
+			[
+				"spel",
+				"/Users/tommo/prj/moai/spell/lua/spell.sublime-project"
+			],
+			[
+				"moaide",
+				"/Users/tommo/dev/moai-dev/moaidev.sublime-project"
+			],
+			[
+				"ld26",
+				"/Users/tommo/prj/moai/ld/ld26/ld26.sublime-project"
+			],
+			[
+				"yu",
+				"/Users/tommo/prj/yu/yu.sublime-project"
+			],
+			[
+				"ld",
+				"/Users/tommo/prj/moai/ld/ld26/ld26.sublime-project"
+			],
+			[
+				"spell",
+				"/Users/tommo/prj/moai/spell/lua/spell.sublime-project"
+			],
+			[
+				"pymo",
+				"/Users/tommo/prj/moai/pythonhost/pymoai.sublime-project"
+			],
+			[
+				"pym",
+				"/Users/tommo/prj/moai/pythonhost/pymoai.sublime-project"
+			],
+			[
+				"mock",
+				"/Users/tommo/prj/moai/mock/mock.sublime-project"
+			],
+			[
+				"pymoai",
+				"/Users/tommo/prj/moai/pythonhost/pymoai.sublime-project"
+			],
+			[
+				"pymoa",
+				"/Users/tommo/prj/moai/pythonhost/pymoai.sublime-project"
+			],
+			[
+				"parti",
+				"/Users/tommo/prj/moai/particle/particledesign.sublime-project"
+			],
+			[
+				"particl",
+				"/Users/tommo/prj/moai/particle/particle.sublime-project"
+			],
+			[
+				"ytm",
+				"/Users/tommo/prj/moai/pythonhost/pymoai.sublime-project"
+			],
+			[
+				"py",
+				"/Users/tommo/prj/moai/pythonhost/pymoai.sublime-project"
+			],
+			[
+				"ld2",
+				"/Users/tommo/prj/moai/ld/ld26/ld26.sublime-project"
+			],
+			[
+				"pyo",
+				"/Users/tommo/prj/moai/pythonhost/pymoai.sublime-project"
+			],
+			[
+				"apr",
+				"/Users/tommo/prj/moai/1gam/april/gam-april.sublime-project"
+			],
+			[
+				"ga",
+				"/Users/tommo/prj/moai/1gam/april/gam-april.sublime-project"
+			],
+			[
+				"stone",
+				"/Users/tommo/prj/moai/silentstone/ss.sublime-project"
+			],
+			[
+				"moaipy",
+				"/Users/tommo/prj/moai/moaipy/moaipy.sublime-project"
+			],
+			[
+				"test",
+				"/Users/tommo/prj/moai/test/moaitest.sublime-project"
+			],
+			[
+				"spe",
+				"/Users/tommo/prj/moai/spell/lua/spell.sublime-project"
+			],
+			[
+				"par",
+				"/Users/tommo/prj/moai/particle/particledesign.sublime-project"
+			],
+			[
+				"c",
+				"/Users/tommo/prj/moai/cardgame/cardgame.sublime-project"
+			],
+			[
+				"pati",
+				"/Users/tommo/prj/moai/particle/particle.sublime-project"
+			],
+			[
+				"op",
+				"/Users/tommo/prj/moai/pongfu/pongfu.sublime-project"
+			],
+			[
+				"part",
+				"/Users/tommo/prj/moai/particle/particle.sublime-project"
+			],
+			[
+				"pon",
+				"/Users/tommo/prj/moai/pongfu/pongfu.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": false,
+	"side_bar_width": 207.0,
+	"status_bar_visible": true
+}

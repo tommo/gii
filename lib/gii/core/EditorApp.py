@@ -69,7 +69,7 @@ class EditorApp(object):
 
 	def run( self, **kwargs ):
 		if not self.initialized: self.init()
-		sleepTime = kwargs.get( 'sleep', 0.002 )
+		sleepTime = kwargs.get( 'sleep', 0.005 )
 		EditorModuleManager.get().startAllModules()
 
 		signals.emitNow('app.start')
@@ -84,7 +84,7 @@ class EditorApp(object):
 		self.getProject().save()
 		EditorModuleManager.get().unloadAllModules()
 
-	def doMainLoop( self, sleepTime = 0.002 ):
+	def doMainLoop( self, sleepTime = 0.01 ):
 		signals.dispatchAll()
 		EditorModuleManager.get().updateAllModules()
 		time.sleep( sleepTime )

@@ -221,8 +221,9 @@ class MOAIRuntime( EditorModule ):
 			return False
 		return True
 
-	def runScript(self,src):
-		self.RunningScript=src
+	def runScript(self,src):		
+		self.RunningScript = src
+		if not src: return
 		try:
 			getAKU().runScript(src)
 		except MOAIException as e:
@@ -239,10 +240,10 @@ class MOAIRuntime( EditorModule ):
 		return True
 
 	def handleException(self,e):
-		code=e.code
+		code = e.code
 		if code=='TERMINATE':
-			self.AKUReady=False
-			self.RunningScript=False
+			self.AKUReady      = False
+			self.RunningScript = False
 		else:
 			logging.error( 'error loading lua:\n' + str(e) )
 

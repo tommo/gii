@@ -65,6 +65,7 @@ def checkSingleInstance(PORT=61957):
         send_to_server(HOST, PORT, ' '.join(argv))
         sys.exit()
     except socket.error:
+        pass
         server = start_server(HOST, PORT)
     return True
 

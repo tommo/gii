@@ -29,5 +29,8 @@ from EditorModule   import EditorModule
 from EditorApp      import app
 ##----------------------------------------------------------------##
 
+##----------------------------------------------------------------##
+import CommonAsset
+
 def getProjectPath( path ):
 	return Project.get().getBasePath( path )
