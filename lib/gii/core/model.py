@@ -19,6 +19,9 @@ class DataType(object):
 	def deserialize(self, data):
 		raise 'not implemented'
 
+	def register( self ):
+		raise 'not implemented'
+
 
 ##----------------------------------------------------------------##
 class PythonValueType(DataType):
@@ -34,6 +37,11 @@ class PythonValueType(DataType):
 		if value is self._type:
 			return value
 		return None
+
+	def register( self, typeId ):
+		ModelManager.get().registerPythonModel( typeId, self )
+		return self
+
 
 ##----------------------------------------------------------------##
 class EnumType( DataType ):
@@ -66,6 +74,10 @@ class EnumType( DataType ):
 			( k, v ) = item
 			if value == v: return i
 		return None
+
+	def register( self, typeId ):
+		ModelManager.get().registerPythonModel( typeId, self )
+		return self
 
 
 # class StringEnumValueType(object):	

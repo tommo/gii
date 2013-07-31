@@ -59,7 +59,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.nodeDict[ node ]=item
 
 		# if pnode:
-		self.doUpdateItem( node )
+		self.updateItem( node )
 		if addChildren:
 			children = self.getNodeChildren( node )
 			if children:
@@ -70,6 +70,11 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def getItemByNode(self, node):
 		return self.nodeDict.get( node, None )
 
+	def getNodeByItem( self, item ):
+		if hasattr( item, 'node' ):
+			return item.node
+		return None
+
 	def refreshNode(self, node):
 		item=self.getItemByNode( node )
 		if item:
@@ -79,20 +84,20 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			self.removeNode( node )
 			self.addNode( node )
 
-	def doUpdateItem(self, node, updateLog=None, **option):
+	def updateItem(self, node, updateLog=None, **option):
 		item = self.getItemByNode(node)
 		if not item: return False
 		if not updateLog: updateLog={} #for avoiding duplicated updates
 		if updateLog.has_key(node): return False
 		updateLog[node]=True
 		
-		self.updateItem( item, node, **option )
+		self.updateItemContent( item, node, **option )
 
 		if option.get('updateChildren',False):
 			children = self.getNodeChildren( node )
 			if children:
 				for child in children:
-					self.doUpdateItem(child, updateLog, **option)
+					self.updateItem(child, updateLog, **option)
 
 		return True
 
@@ -139,7 +144,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def createItem( self, node ):
 		return QtGui.QTreeWidgetItem( )
 
-	def updateItem( self, item, node, **option ):
+	def updateItemContent( self, item, node, **option ):
 		pass
 
 	def getHeaderInfo( self ):

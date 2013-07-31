@@ -156,7 +156,7 @@ class AssetBrowser( AssetEditorModule ):
 		pass
 
 	def onAssetDeployChanged(self, node):
-		self.treeView.doUpdateItem( node, 
+		self.treeView.updateItem( node, 
 				basic            = False,
 				deploy           = True, 
 				updateChildren   = True,

@@ -21,9 +21,16 @@ class PackageManager( object ):
 	def __init__( self ):
 		self.packagePaths = []
 		self.packages = {}
+		self.excludedPackages = []
 
 	def addPackagePath( self, path ):
 		self.packagePaths.append( path )
+
+	def addExcludedPackage( self, excluded ):
+		if isinstance( excluded, list ):
+			self.excludedPackages += excluded
+		else:
+			self.excludedPackages.append( excluded )
 
 	def loadPackage( self, name, path ):
 		prev = self.getPackage( name )
@@ -45,7 +52,7 @@ class PackageManager( object ):
 			for currentDir, dirs, files in os.walk( unicode(path) ):
 				for dirname in dirs:
 					if dirname.startswith('-'): continue
-
+					if dirname in self.excludedPackages: continue
 					fullpath = currentDir + '/' + dirname
 					if os.path.exists( fullpath + '/__init__.py' ) \
 					or os.path.exists( fullpath + '/__init__.pyc' ):

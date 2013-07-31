@@ -35,7 +35,7 @@ class AssetTreeView( GenericTreeWidget ):
 	def createItem( self, node ):
 		return AssetTreeItem()
 
-	def updateItem( self, item, node, **option ):
+	def updateItemContent( self, item, node, **option ):
 		if option.get('basic', True):
 			item.setText( 0, node.getName() )
 			item.setText( 1, '' )
@@ -75,12 +75,12 @@ class AssetTreeView( GenericTreeWidget ):
 		else:
 			app.getSelectionManager().changeSelection(None)
 
-	def doUpdateItem(self, node, updateLog=None, **option):
-		super( AssetTreeView, self ).doUpdateItem( node, updateLog, **option )
+	def updateItem(self, node, updateLog=None, **option):
+		super( AssetTreeView, self ).updateItem( node, updateLog, **option )
 
 		if option.get('updateDependency',False):
 			for dep in node.rDep:
-				self.doUpdateItem(dep, updateLog, **option)
+				self.updateItem(dep, updateLog, **option)
 	
 ##----------------------------------------------------------------##
 #TODO: allow sort by other column

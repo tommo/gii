@@ -288,6 +288,8 @@ class PropertyGrid(QtGui.QWidget):
 		if prop:
 			v = self.model.getFieldValue( target, id )
 			self.refreshing = True #avoid duplicated update
+			if hasattr( prop, 'enumType' ):
+				v = prop.enumType.toIndex( v )
 			prop.setValue(v)
 			self.refreshing = False
 

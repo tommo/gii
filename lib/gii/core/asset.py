@@ -51,8 +51,8 @@ class AssetNode(object):
 		else:
 			self.managerName = manager
 
-
 		self.accessPriority=0
+		self.modified  = False
 
 		self.properties={}		
 
@@ -180,6 +180,9 @@ class AssetNode(object):
 		self.deployState = state
 		signals.emit('asset.deploy.changed', self)
 
+	def markModified( self ):
+		self.modified = True
+
 	def getFilePath(self):
 		return self.filePath
 
@@ -236,11 +239,12 @@ class AssetNode(object):
 		if not isinstance( t, dict ): return defaultValue
 		return t.get( key, defaultValue )
 
-	def setMetaData( self, key, value, saveNow = True ):
+	def setMetaData( self, key, value, **option ):
 		t = self.getMetaDataTable()
 		if not isinstance( t, dict ): return
 		t[ key ] = value
-		if saveNow: self.saveMetaDataTable()
+		if option.get( 'save', False ): self.saveMetaDataTable()
+		if option.get( 'mark_modify', True ): self.markModified()
 
 	def getCacheFile(self, name):
 		cacheFile = self.cacheFiles.get( name, None )
@@ -254,6 +258,11 @@ class AssetNode(object):
 
 	def setObjectFile(self, name, path):
 		self.objectFiles[ name ] = path
+
+	def getAbsObjectFile( self, name ):
+		path = self.getObjectFile( name )
+		if not path: return None
+		return Project.get().getAbsPath( path )
 
 	def edit(self):
 		self.getManager().editAsset(self)
@@ -326,7 +335,12 @@ class AssetManager(object):
 		lib = AssetLibrary.get()
 		for n in assetNode.getChildren()[:]:
 			lib.unregisterAssetNode(n)
-		return self.importAsset(assetNode, option)
+		result = self.importAsset(assetNode, option)
+		if result:
+			assetNode.modified = False
+			return True
+		else:
+			return False
 
 	#Process asset for deployment. eg.  Filepath replace, Extern file collection
 	def deployAsset( self, assetNode ):
@@ -603,6 +617,7 @@ class AssetLibrary(object):
 			node.cacheFiles   = data.get('cacheFiles', {})
 			node.objectFiles  = data.get('objectFiles', {})
 			node.properties   = data.get('properties', {})
+			node.modified     =	data.get('modified', False )
 			
 			assetTable[path]  = node
 			node.managerName  = data.get('manager')
@@ -646,6 +661,7 @@ class AssetLibrary(object):
 				'objectFiles' : node.objectFiles,
 				'cacheFiles'  : node.cacheFiles,
 				'properties'  : node.properties,
+				'modified'    : node.modified
 				# 'parent':node.getParent().getPath()
 			}				
 			table[path]=item
@@ -693,4 +709,12 @@ class AssetLibrary(object):
 
 	def setAssetIcon( self, assetType, iconName ):
 		self.assetIconMap[ assetType ] = iconName
+
+	def collectAssets( self, assetType ):		
+		result = []
+		for node in self.assetTable.values():
+			if node.getType() == assetType:
+				result.append( node )
+		return result
+		
 

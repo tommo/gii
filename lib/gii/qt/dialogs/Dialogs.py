@@ -54,10 +54,8 @@ def alertMessage(title, msg, level='warning'):
 		logging.error( msg )
 
 	else:
-		f=QMessageBox.queston
-	print title
-	print msg
-	res=f(None, title, msg	)
+		f = QMessageBox.queston
+	res = f( None, title, msg	)
 
 def requestString(title, prompt):
 	text, ok = QtGui.QInputDialog.getText(None, title, prompt)

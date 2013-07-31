@@ -51,9 +51,10 @@ class EditorApp(object):
 
 		if self.initialized: return
 		self.openProject()
-
 		
 		#packages
+		excludePackages = self.getProject().getConfig( 'excluded_packages' )
+		self.packageManager.addExcludedPackage( excludePackages )
 		self.packageManager.addPackagePath( self.getPath( _GII_BUILTIN_PACKAGES_PATH ) )
 		if self.getProject().isLoaded():
 			self.packageManager.addPackagePath( self.getProject().envPackagePath )
@@ -117,7 +118,7 @@ class EditorApp(object):
 		path = Project.findProject()
 		if not path:
 			raise Exception( 'no valid gii project found' )
-		Project.get().load( path )
+		Project.get().load( path )		
 
 	def getAssetLibrary( self ):
 		return self.getProject().getAssetLibrary()
