@@ -6,6 +6,7 @@ from gii.core import *
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
+from gii.qt.IconCache       import getIcon
 from gii.qt.controls.Window import MainWindow
 from gii.qt.controls.Menu   import MenuManager
 from gii.qt.QtEditorModule  import QtEditorModule
@@ -35,10 +36,26 @@ class AssetEditor( QtEditorModule ):
 
 		self.mainWindow.module = self
 
+		self.statusBar = QtGui.QStatusBar()
+		self.mainWindow.setStatusBar(self.statusBar)
+
+		self.mainToolBar = self.mainWindow.requestToolBar( 'main' )
+
+		####
 		self.addMenu('main/asset', {'label':'&Asset'})
-		self.addMenuItem('main/asset/reset_all_asset', 
-			{ 'label' : 'Reset Asset' }
+		self.addMenuItem(
+			'main/asset/reset_all_asset', 
+			{ 'label' : 'Reset Asset Library' }
 		)
+		self.addMenuItem(
+			'main/asset/clear_free_meta', 
+			{ 'label' : 'Clear Metadata' }
+		)
+
+		##
+
+
+
 
 	def onLoad( self ):
 		self.setupMainWindow()
@@ -82,6 +99,8 @@ class AssetEditor( QtEditorModule ):
 		name = node.name
 		if name == 'reset_all_asset':
 			self.getAssetLibrary().reset()
+		elif name == 'clear_free_meta':
+			self.getAssetLibrary().clearFreeMetaData()
 		
 AssetEditor().register()
 

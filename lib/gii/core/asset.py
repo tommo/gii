@@ -202,7 +202,7 @@ class AssetNode(object):
 		return len(self.children)
 
 	#TODO: add metadata support for virtual node ?
-	def getMetaData( self ):
+	def getMetaDataTable( self ):
 		if self.isVirtual(): return None
 		if self.metadata: return self.metadata
 		dirname  = self.getAbsDir()
@@ -218,7 +218,7 @@ class AssetNode(object):
 			self.metadata = {}
 		return self.metadata
 
-	def saveMetaData( self ):
+	def saveMetaDataTable( self ):
 		if not self.metadata: return False
 		dirname  = self.getAbsDir()
 		metaDir  = dirname + '/' + GII_ASSET_META_DIR
@@ -230,6 +230,17 @@ class AssetNode(object):
 		fp.write( text )
 		fp.close()
 		return True
+
+	def getMetaData( self, key, defaultValue = None ):
+		t = self.getMetaDataTable()
+		if not isinstance( t, dict ): return defaultValue
+		return t.get( key, defaultValue )
+
+	def setMetaData( self, key, value, saveNow = True ):
+		t = self.getMetaDataTable()
+		if not isinstance( t, dict ): return
+		t[ key ] = value
+		if saveNow: self.saveMetaDataTable()
 
 	def getCacheFile(self, name):
 		cacheFile = self.cacheFiles.get( name, None )
@@ -256,7 +267,7 @@ class AssetNode(object):
 	def forceReimport(self):
 		self.getManager().reimportAsset(self)
 		signals.emitNow('asset.modified', self)
-		self.saveMetaData()
+		self.saveMetaDataTable()
 
 	def showInBrowser(self):
 		path = self.getAbsFilePath()
@@ -491,7 +502,7 @@ class AssetLibrary(object):
 		else:
 			signals.emitNow('asset.added', node)
 
-		node.saveMetaData()
+		node.saveMetaDataTable()
 		
 		return node
 
@@ -589,7 +600,6 @@ class AssetLibrary(object):
 					fileTime=data.get('fileTime',0),
 				)
 			node.deployState  = data.get('deploy', None)
-			node.properties   = data.get('properties', {})
 			node.cacheFiles   = data.get('cacheFiles', {})
 			node.objectFiles  = data.get('objectFiles', {})
 			node.properties   = data.get('properties', {})
@@ -643,8 +653,7 @@ class AssetLibrary(object):
 			for name, cacheFile in node.cacheFiles.items():
 				CacheManager.get().touchCacheFile( cacheFile )
 				
-			if node.metadata:
-				node.saveMetaData()
+			node.saveMetaDataTable()	
 
 		if not jsonHelper.trySaveJSON( table, self.assetIndexPath, 'asset index' ):
 			return False
@@ -662,6 +671,7 @@ class AssetLibrary(object):
 
 			relDir  = os.path.relpath(currentDir, self.rootPath)
 			metaDir = currentDir + '/' + GII_ASSET_META_DIR
+
 			if os.path.exists( metaDir ):
 				for filename in os.listdir( metaDir ):
 					if not filename.endswith('.meta'): continue
@@ -671,6 +681,7 @@ class AssetLibrary(object):
 						metaPath = metaDir + '/' +filename
 						logging.info( 'remove metadata: %s' % metaPath )
 						os.remove( metaPath )
+				#TODO: remove meta folder if it's empty
 
 
 	def compileAssetTable(self):

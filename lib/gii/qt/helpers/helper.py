@@ -30,3 +30,10 @@ def addWidgetWithLayout(child, parent = None, **option):
 def setClipboardText( text ):
 	QtGui.QApplication.clipboard().setText( text )
 
+def getClipboardText( default = None ):
+	t = QtGui.QApplication.clipboard().text()
+	if not t: return default
+	return t
+
+
+

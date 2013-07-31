@@ -6,6 +6,7 @@ LOG_LEVEL = logging.WARNING
 
 ##----------------------------------------------------------------##
 ##APPLY CONFIG
+logging.addLevelName( logging.INFO, 'STATUS' )
 
 logging.basicConfig(
 	format = '[%(levelname)s]\t%(message)s',

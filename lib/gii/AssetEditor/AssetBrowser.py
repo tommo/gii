@@ -4,6 +4,7 @@ from abc import ABCMeta, abstractmethod
 from gii.core         import *
 from gii.qt.dialogs   import requestString, alertMessage
 from gii.qt.controls.AssetTreeView import AssetTreeView
+from gii.qt.helpers   import setClipboardText
 
 from AssetEditor      import AssetEditorModule
 
@@ -66,7 +67,6 @@ class AssetBrowser( AssetEditorModule ):
 
 	def onStart( self ):
 		self.getAssetLibrary().scanProjectPath()
-		self.getAssetLibrary().clearFreeMetaData()
 
 		signals.connect( 'asset.register',   self.onAssetRegister )
 		signals.connect( 'asset.unregister', self.onAssetUnregister )

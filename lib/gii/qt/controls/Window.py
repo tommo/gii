@@ -54,13 +54,14 @@ class MainWindow(QtGui.QMainWindow):
 	def __init__(self, parent):
 		super(MainWindow, self).__init__(parent)
 		self.setDocumentMode(True)
-		self.setUnifiedTitleAndToolBarOnMac(True)
+		self.setUnifiedTitleAndToolBarOnMac( False )
 		self.setDockOptions(
 			QtGui.QMainWindow.AllowNestedDocks | QtGui.QMainWindow.AllowTabbedDocks )
 
 		font=QtGui.QFont()
 		font.setPointSize(11)
 		self.setFont(font)
+		self.setIconSize( QtCore.QSize( 16, 16 ) )
 		
 		self.centerTabWidget = QtGui.QTabWidget(self)
 		self.setCentralWidget(self.centerTabWidget)
@@ -195,6 +196,15 @@ class MainWindow(QtGui.QMainWindow):
 		subwindow = self.centerTabWidget.widget( idx )
 		if subwindow.close():
 			self.centerTabWidget.removeTab( idx )
+
+	def requestToolBar( self, name, **options ):
+		toolbar = QtGui.QToolBar()
+		toolbar.setFloatable( options.get( 'floatable', False ) )
+		toolbar.setMovable(   options.get( 'movable',   True ) )		
+		toolbar.setObjectName( 'toolbar-%s' % name )
+		self.addToolBar( toolbar )
+		return toolbar
+		
 
 
 ##----------------------------------------------------------------##

@@ -44,10 +44,7 @@ class MOAIGameView( QtEditorModule ):
 
 		self.mainWindow.module = self
 
-		self.mainToolBar = QtGui.QToolBar()
-		self.mainToolBar.setFloatable(False)
-		self.mainToolBar.setMovable(True)
-		self.mainWindow.addToolBar(self.mainToolBar)
+		self.mainToolBar = self.mainWindow.requestToolBar( 'main' )
 
 		self.statusBar = QtGui.QStatusBar()
 		self.mainWindow.setStatusBar(self.statusBar)

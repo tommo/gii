@@ -50,11 +50,11 @@ class ModuleFileWatcher( EditorModule ):
 		return watch
 
 	def stopWatch(self, path):
-		path=os.path.realpath(path)
-		watch=self.watches.get(path, None)
+		path  = os.path.realpath(path)
+		watch = self.watches.get(path, None)
 		if not watch: return
 		self.observer.unschedule(watch)
-		self.watches[path]=None
+		self.watches[path] = None
 
 	def stopAllWatches(self):
 		for path in self.watches:

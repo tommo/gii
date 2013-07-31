@@ -344,7 +344,7 @@ QMainWindow::separator:hover
 }
 
 QToolBar {
-     background-color: #555555;
+     /*background-color: #555555;*/
      border: 1px solid black;
      spacing: 3px; /* spacing between items in the tool bar */
  }
