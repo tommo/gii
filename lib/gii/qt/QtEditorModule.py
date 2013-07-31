@@ -41,7 +41,7 @@ class QtEditorModule( EditorModule ):
 		return container
 
 	def setFocus(self):
-		pass
+		self.onSetFocus()
 
 	def setActiveWindow( self, window ):
 		qt = self.getQtSupport()
@@ -123,3 +123,7 @@ class QtEditorModule( EditorModule ):
 			
 	def onMenu(self, menuItem):
 		pass
+
+	def onSetFocus(self):
+		pass
+

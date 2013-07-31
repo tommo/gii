@@ -77,8 +77,8 @@ class EditorModule( object ):
 			if not getattr(m,'alive'): return False
 		return True
 	
-	def isDependentUnloaded(self): #FIXME: use a clear name
-		dependent=self.dependent #added by manager
+	def isDependentUnloaded(self): #FIXME: use a clear name		
+		dependent = self.dependent #added by manager
 		for m in dependent:
 			if m.alive: return False
 		return True
@@ -125,10 +125,7 @@ class EditorModule( object ):
 
 	def onUpdate(self):
 		pass
-
-	def onSetFocus(self):
-		pass
-
+	
 	def onStart( self ):
 		pass
 
@@ -156,19 +153,19 @@ class EditorModuleManager(object):
 	def getAllModules(self):
 		return self.modules
 
-	def loadModule(self, m, loadDep=True):
+	def loadModule( self, m, loadDep=True ):
 		if m.alive: return True
-		m.loading=True
+		m.loading = True
 		for n in m.getDependency():
-			m1=self.affirmModule(n)
+			m1 = self.affirmModule(n)
 			if not m1.alive:
 				if not loadDep:
-					m.loading=False
+					m.loading = False
 					return False
 				if m1.loading: 
 					raise Exception('cyclic dependency:%s -> %s'%(n.getName(), m1.getName()) )
-				self.loadModule(m1)
-
+				self.loadModule( m1 )
+			m.dependent.append( m1 )
 		m.load()
 		m.loading=False
 		signals.emit('module.load',m)
@@ -205,11 +202,11 @@ class EditorModuleManager(object):
 			needload = False
 			for m in self.moduleQueue:
 				if not m.alive:
-					needload=True
+					needload = True
 					if m.isDependencyReady():
 						m.load()
 						signals.emit('module.load',m)
-						loaded=True
+						loaded = True
 			if not needload:
 				return True
 			if not loaded:
@@ -241,6 +238,7 @@ class EditorModuleManager(object):
 	def registerModule(self, module):
 		if not isinstance(module, EditorModule):
 			raise Exception('Module expected, given:%s' % type(module))
+
 		name = module.getName()
 		if self.getModule(name): raise Exception('Module name duplicated:%s' % name)
 
@@ -255,13 +253,7 @@ class EditorModuleManager(object):
 		module.loading   = False
 		module.dependent = []
 
-		#validate dep
-		dep=module.getDependency()
-		for depName in dep:
-			m=self.affirmModule(depName)
-			m.dependent.append(module)
-
-		signals.emit('module.register',module)
+		signals.emit( 'module.register', module )
 
 	def unregisterModule(self, m):
 		if m.alive:
@@ -269,7 +261,7 @@ class EditorModuleManager(object):
 				m.unload()
 				del self.modules[m.getName()]
 				self.moduleQueue.remove(m)
-				signals.emit('module.unregister',m)
+				signals.emit( 'module.unregister', m )
 			else:
 				return False
 		

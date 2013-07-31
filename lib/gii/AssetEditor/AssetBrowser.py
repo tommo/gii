@@ -85,6 +85,13 @@ class AssetBrowser( AssetEditorModule ):
 	def setAssetIcon(self, assetType, iconName):
 		self.assetIconMap[assetType] = iconName
 
+	def locateAsset( self, assetNode ):
+		item = self.treeView.getItemByNode( assetNode )
+		if item:
+			self.treeView.clearSelection()
+			item.setSelected( True )
+			self.treeView.scrollToItem( item )
+
 	def registerAssetCreator( self, creator ):		
 		self.creators.append( creator )
 		if self.alive:

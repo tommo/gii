@@ -122,3 +122,7 @@ class QtMainWindow( MainWindow ):
 class AssetEditorModule( QtEditorModule ):
 	def getMainWindow( self ):
 		return self.getModule('asset_editor').getMainWindow()
+
+	def getAssetSelection( self ):
+		#TODO: use selection manager for asset editor
+		return SelectionManager.get().getSelection()

@@ -213,11 +213,7 @@ class SubWindowMixin:
 		self.documentName = name
 		title = '%s - %s' % ( self.documentName, self.titleBase )
 		self.setWindowTitle( title )
-		if self.windowMode == 'tab':
-			tabParent = self.parent().parent()
-			idx = tabParent.indexOf( self )
-			tabParent.setTabText( idx, title )
-
+		
 	def setupUi(self):
 		self.container = self.createContainer()
 		
@@ -227,7 +223,7 @@ class SubWindowMixin:
 		self.mainLayout.setObjectName('MainLayout')
 
 	def createContainer(self):
-		container=QtGui.QWidget(self)
+		container = QtGui.QWidget(self)
 		self.setWidget(container)
 		return container
 
@@ -261,8 +257,6 @@ class SubWindowMixin:
 
 	def ensureVisible(self):
 		ensureWindowVisible(self)
-
-
 
 	
 ##----------------------------------------------------------------##
@@ -308,7 +302,13 @@ class DocumentWindow( SubWindow ):
 		super( DocumentWindow, self ).show( *args )
 		tab.setCurrentIndex( idx )
 
-	
+	def setWindowTitle( self, title ):
+		super( DocumentWindow, self ).setWindowTitle( title )
+		tabParent = self.parentWindow.centerTabWidget
+		idx = tabParent.indexOf( self )
+		tabParent.setTabText( idx, title )
+		
+
 ##----------------------------------------------------------------##
 class DockWindowTitleBar( QtGui.QWidget ):
 	"""docstring for DockWindowTitleBar"""

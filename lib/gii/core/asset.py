@@ -69,7 +69,7 @@ class AssetNode(object):
 			return self.assetType == typeName
 
 	def getManager(self):
-		return AssetLibrary._singleton.getAssetManager( self.managerName, True )
+		return AssetLibrary.get().getAssetManager( self.managerName, True )
 
 	def getName(self):
 		return self.name
@@ -242,9 +242,16 @@ class AssetNode(object):
 	def setMetaData( self, key, value, **option ):
 		t = self.getMetaDataTable()
 		if not isinstance( t, dict ): return
+		if option.get( 'no_overwrite', True ) and t.has_key( key ):
+			return
 		t[ key ] = value
 		if option.get( 'save', False ): self.saveMetaDataTable()
 		if option.get( 'mark_modify', True ): self.markModified()
+
+	def setNewMetaData( self, key, value, **option ):
+		option[ 'no_overwrite' ] = True
+		return self.setMetaData( key, value, **option )
+		
 
 	def getCacheFile(self, name):
 		cacheFile = self.cacheFiles.get( name, None )
@@ -262,7 +269,7 @@ class AssetNode(object):
 	def getAbsObjectFile( self, name ):
 		path = self.getObjectFile( name )
 		if not path: return None
-		return Project.get().getAbsPath( path )
+		return AssetLibrary.get().getAbsProjectPath( path )
 
 	def edit(self):
 		self.getManager().editAsset(self)
@@ -409,6 +416,9 @@ class AssetLibrary(object):
 
 	def getAbsPath( self, path ):
 		return self.rootAbsPath + '/' + path
+
+	def getAbsProjectPath( self, path ):
+		return self.projectAbsPath + '/' + path
 
 	def getRelPath( self, path ):
 		path = os.path.abspath( path )
