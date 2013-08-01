@@ -161,7 +161,7 @@ class PropertyManager(QtVariantPropertyManager):
 class EditorFactory(QtVariantEditorFactory):
 	def createEditor( self, prop, parent=None ):
 		if prop.readonly:
-			return True
+			return None
 		manager = self.propertyManager( prop )
 		return QtVariantEditorFactory.createEditor(self, manager, prop, parent)
 		

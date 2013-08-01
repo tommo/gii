@@ -62,7 +62,7 @@ class EditorApp(object):
 
 		#modules
 		EditorModuleManager.get().loadAllModules()
-		signals.emitNow('module.loaded') #some pre app-ready activities
+		signals.emitNow( 'module.loaded' ) #some pre app-ready activities
 		signals.dispatchAll()
 
 		self.initialized = True

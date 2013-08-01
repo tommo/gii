@@ -141,7 +141,10 @@ class AssetNode(object):
 		return node
 
 	def setManager(self, assetManager, forceReimport=False):
-		self.managerName = assetManager.getName()
+		prevManager = self.getManager()
+		if prevManager != assetManager:
+			prevManager.forgetAsset( self )
+			self.managerName = assetManager.getName()
 		#TODO: validation? reimport?
 
 	def removeChild(self, node):
@@ -205,7 +208,7 @@ class AssetNode(object):
 		return len(self.children)
 
 	#TODO: add metadata support for virtual node ?
-	def getMetaDataTable( self ):
+	def getMetaDataTable( self, createIfEmpty = True ):
 		if self.isVirtual(): return None
 		if self.metadata: return self.metadata
 		dirname  = self.getAbsDir()
@@ -217,9 +220,11 @@ class AssetNode(object):
 			fp.close()
 			data = json.loads( text )
 			self.metadata = data
-		else:
+			return self.metadata
+		elif  createIfEmpty:
 			self.metadata = {}
-		return self.metadata
+			return self.metadata
+		return None
 
 	def saveMetaDataTable( self ):
 		if not self.metadata: return False
@@ -235,14 +240,14 @@ class AssetNode(object):
 		return True
 
 	def getMetaData( self, key, defaultValue = None ):
-		t = self.getMetaDataTable()
+		t = self.getMetaDataTable( False )
 		if not isinstance( t, dict ): return defaultValue
 		return t.get( key, defaultValue )
 
 	def setMetaData( self, key, value, **option ):
 		t = self.getMetaDataTable()
 		if not isinstance( t, dict ): return
-		if option.get( 'no_overwrite', True ) and t.has_key( key ):
+		if option.get( 'no_overwrite', False ) and t.has_key( key ):
 			return
 		t[ key ] = value
 		if option.get( 'save', False ): self.saveMetaDataTable()
@@ -253,7 +258,7 @@ class AssetNode(object):
 		return self.setMetaData( key, value, **option )
 		
 
-	def getCacheFile(self, name):
+	def getCacheFile( self, name ):
 		cacheFile = self.cacheFiles.get( name, None )
 		if cacheFile: return cacheFile
 		cacheFile = CacheManager.get().getCacheFile( self.getPath(), name )
@@ -349,6 +354,9 @@ class AssetManager(object):
 		else:
 			return False
 
+	def forgetAsset( self, assetNode ):
+		pass
+
 	#Process asset for deployment. eg.  Filepath replace, Extern file collection
 	def deployAsset( self, assetNode ):
 		#TODO:!!!!
@@ -359,9 +367,23 @@ class AssetManager(object):
 
 
 ##----------------------------------------------------------------##
-class RawAssetManager(AssetManager):
+class RawAssetManager(AssetManager):	
 	def getName(self):
 		return 'raw'
+
+	def getPriority( self ):
+		return -1
+
+	def acceptAssetFile(self, filepath):
+		return True
+
+	def importAsset(self, assetNode, option = None):
+		path = os.path.realpath( assetNode.getAbsFilePath() )
+		if os.path.isfile( path ): 
+			assetNode.assetType = 'file'
+		elif os.path.isdir( path ):
+			assetNode.assetType = 'folder'
+		return True
 
 ##----------------------------------------------------------------##
 class AssetLibrary(object):
@@ -378,6 +400,7 @@ class AssetLibrary(object):
 
 		self.assetTable      = {}
 		self.assetManagers   = []
+
 		self.rawAssetManager = RawAssetManager()
 		
 		self.rootPath        = None
@@ -412,6 +435,7 @@ class AssetLibrary(object):
 	def getRootNode(self):
 		return self.rootNode
 
+	#Path
 	def getAbsPath( self, path ):
 		return self.rootAbsPath + '/' + path
 
@@ -422,6 +446,38 @@ class AssetLibrary(object):
 		path = os.path.abspath( path )
 		return os.path.relpath( path, self.rootAbsPath )
 
+	#access
+	def hasAssetNode(self, nodePath):
+		if not nodePath: return False
+		return not self.getAssetNode( nodePath ) is None
+
+	def getAssetNode(self, nodePath):
+		if not nodePath: return self.rootNode
+		return self.assetTable.get(nodePath, None)
+
+	def enumerateAsset( self, assetTypes, **options ):
+		noVirtualNode = options.get( 'no_virtual', False )
+		result = []
+		if isinstance( assetTypes, str ): assetTypes = ( assetTypes )
+		for path, node in self.assetTable.items():
+			if node.getType() in assetTypes and \
+				not ( noVirtualNode and node.isVirtual() ):
+				result.append(node)
+		return result
+
+	#tools
+	def checkFileIgnorable(self, name):
+		for pattern in self.ignoreFilePattern:
+			if re.match(pattern, name):
+				return True
+		return False
+
+	def fixPath( self, path ):
+		path = path.replace( '\\', '/' ) #for windows
+		if path.startswith('./'): path = path[2:]
+		return path
+
+	#Assetmanagers
 	def registerAssetManager(self, manager):
 		logging.info( 'registering asset manager:'+manager.getName() )
 		for p in self.assetManagers:
@@ -442,15 +498,20 @@ class AssetLibrary(object):
 				return mgr
 		return allowRawManager and self.rawAssetManager or None
 
-	def registerAssetNode(self, node):		
-		path=node.getNodePath()
+	def getAssetIcon( self, assetType ):
+		return self.assetIconMap.get( assetType, assetType )
+
+	def setAssetIcon( self, assetType, iconName ):
+		self.assetIconMap[ assetType ] = iconName
+
+	def registerAssetNode( self, node ):
+		path = node.getNodePath()
 		logging.info( 'register: %s' % repr(node) )
 		if self.assetTable.has_key(path):
-			print( path, self.assetTable[path] )
-			raise Exception('unclean path')
+			raise Exception( 'unclean path: %s', path)
 		self.assetTable[path]=node
 
-		signals.emitNow('asset.register', node)
+		signals.emit( 'asset.register', node )
 
 		for child in node.getChildren():
 			self.registerAssetNode(child)
@@ -471,86 +532,35 @@ class AssetLibrary(object):
 				oldnode.parentNode=None
 			path = oldnode.getNodePath()
 			del self.assetTable[path]
-			assert not self.assetTable.has_key(path)
+			assert not self.assetTable.has_key(path)	
 
-	def importAsset(self, path, option=None ,**kwarg):
-		'''find an asset manager capable of processing given file'''
-		path = path.replace( '\\', '/' ) #for windows
-		if path.startswith('./'): path=path[2:]
-		fullpath = os.path.abspath( self.rootAbsPath + '/' + path )
-		oldnode  = self.getAssetNode(path)
+	def tryInitAssetNode( self, path, option = None, **kwargs ):
+		#fix path
+		absFilePath = os.path.abspath( self.rootAbsPath + '/' + path )
+		fileTime = os.path.getmtime(absFilePath),
+		filePath = self.rootPath + '/' + path
 
-		if oldnode and \
-				os.path.getmtime(fullpath) <= oldnode.getFileTime() and \
-				(not kwarg.get('forced', False)):
-			return oldnode
+		node = self.getAssetNode(path)
+		#create a common asset node first
+		if not node:
+			ppath      = os.path.dirname(path)
+			parentNode = self.getAssetNode(ppath)			
 
-		ppath      = os.path.dirname(path)
-		parentNode = self.getAssetNode(ppath)			
-
-		if not os.path.exists( fullpath ):
-			raise AssetException( 'file not exist: %s' % fullpath )
-		
-		node = oldnode
-
-		if not node: 
-			node = AssetNode(
-					path, 
-					os.path.isfile(fullpath) and 'file' or 'folder' , 
-					fileTime = os.path.getmtime(fullpath),
-					filePath = self.rootPath + '/' + path
-				)
+			node = AssetNode( 
+				path,
+				os.path.isfile(absFilePath) and 'file' or 'folder', 
+				fileTime = fileTime,
+				filePath = filePath,
+				**kwargs )
+			node.setManager( self.rawAssetManager )
+			self.registerAssetNode( node )
 			parentNode.addChild(node)	
+			node.markModified()
 
-		for manager in self.assetManagers:
-			if manager.acceptAssetFile(fullpath):
-				if oldnode: #reimport
-					manager.reimportAsset(node, option)
-				else:
-					manager.importAsset(node, option)
-				node.setManager( manager )
-				break
+		elif os.path.getmtime( absFilePath ) >= node.getFileTime():
+			node.markModified()
 
-		if not node.managerName:
-			node.setManager ( self.rawAssetManager )
-		
-		if not oldnode:
-			self.registerAssetNode(node)
-
-		if oldnode:
-			oldnode.fileTime = os.path.getmtime(fullpath)
-			signals.emitNow('asset.modified', node)
-			logging.info( 'reimport: %s' % repr(node) )
-		else:
-			signals.emitNow('asset.added', node)
-
-		node.saveMetaDataTable()
-		
 		return node
-
-	def hasAssetNode(self, nodePath):
-		if not nodePath: return False
-		return not self.getAssetNode( nodePath ) is None
-
-	def getAssetNode(self, nodePath):
-		if not nodePath: return self.rootNode
-		return self.assetTable.get(nodePath, None)
-
-	def enumerateAsset( self, assetTypes, **options ):
-		allowVirtualNode = options.get('allowVirtualNode', True)
-		result = []
-		if isinstance( assetTypes, str ): assetTypes = ( assetTypes )
-		for path, node in self.assetTable.items():
-			if node.getType() in assetTypes and \
-				not ( not allowVirtualNode and node.isVirtual() ):
-				result.append(node)
-		return result
-
-	def checkFileIgnorable(self, name):
-		for pattern in self.ignoreFilePattern:
-			if re.match(pattern, name):
-				return True
-		return False
 
 	def reimportAll(self):
 		#TODO:should this be done by a asset index rebuilding (by restarting editor)?
@@ -560,32 +570,39 @@ class AssetLibrary(object):
 		#collect 'modified'	asset
 		modifiedAssets = {}
 		for node in self.assetTable.values():
-			if node.modified:
+			if node.modified: #TODO: virtual node?
 				modifiedAssets[ node ] = True
 		#try importing with each asset manager, in priority order
 		for manager in self.assetManagers:
 			if not modifiedAssets: break
 			done = []
 			for node in modifiedAssets:
-				if not node.modified: done.append( node ) #might get imported as a sub asset
+				if not node.modified: #might get imported as a sub asset 
+					done.append( node )
+					continue
+				if not manager.acceptAssetFile( node.getAbsFilePath() ):
+					continue
+				node.setManager( manager )
 				if manager.importAsset( node ):
 					node.modified = False
 					done.append( node )
+					#TODO: add failed state to node
 			for node in done:
 				del modifiedAssets[ node ]			
+		signals.emitNow( 'asset.post_import_all' )
 
+	#Library
 	def scanProjectPath(self): #scan 
 		logging.info('scan project in:' + self.rootAbsPath )
 		#scan meta files first ( will be used in asset importing )
 		#TODO
 		#check missing asset
 		for assetPath, node in self.assetTable.copy().items():
-			if not self.assetTable.has_key(assetPath): #already removed(as child of removed node)
-				# print('skip:',assetPath)
+			if not self.assetTable.has_key( assetPath ): #already removed(as child of removed node)
 				continue
 			#check parentnode
 			if not node.getParent():
-				self.unregisterAssetNode(node)
+				self.unregisterAssetNode( node )
 				continue
 
 			if node.isVirtual(): #don't check virtual node's file
@@ -594,23 +611,22 @@ class AssetLibrary(object):
 			filePath = node.getAbsFilePath()
 			#file deleted
 			if not os.path.exists( filePath ):
-				self.unregisterAssetNode(node)
+				self.unregisterAssetNode( node )
 				continue
 			#file become ignored
-			if self.checkFileIgnorable(filePath):
-				self.unregisterAssetNode(node)
+			if self.checkFileIgnorable( filePath ):
+				self.unregisterAssetNode( node )
 				continue
 
-			
 		#check new asset
 		for currentDir, dirs, files in os.walk(unicode(self.rootAbsPath)):
-			relDir=os.path.relpath(currentDir, self.rootAbsPath)
+			relDir = os.path.relpath(currentDir, self.rootAbsPath)
 
 			for filename in files:
 				if self.checkFileIgnorable(filename):
 					continue
-				fullpath = relDir+'/'+filename				
-				self.importAsset(fullpath, forced=False)
+				fullpath = relDir+'/'+filename
+				self.tryInitAssetNode( self.fixPath( fullpath ) )
 
 			dirs2 = dirs[:]
 			for dirname in dirs2:
@@ -618,7 +634,9 @@ class AssetLibrary(object):
 					dirs.pop(dirs.index(dirname)) #skip walk this
 					continue
 				fullpath = relDir+'/'+dirname
-				node     = self.importAsset(fullpath, forced=False)
+				self.tryInitAssetNode( self.fixPath( fullpath ) )
+
+		self.importModifiedAssets()
 
 		self.saveAssetTable()
 
@@ -635,8 +653,8 @@ class AssetLibrary(object):
 
 		for path,data in dataTable.items():
 			node=AssetNode(path, data.get('type').encode('utf-8'), 
-					filePath=data.get('filePath',path),
-					fileTime=data.get('fileTime',0),
+					filePath = data.get( 'filePath', path ),
+					fileTime = data.get( 'fileTime', 0 ),
 				)
 			node.deployState  = data.get('deploy', None)
 			node.cacheFiles   = data.get('cacheFiles', {})
@@ -649,23 +667,23 @@ class AssetLibrary(object):
 			
 		#relink parent/dependency
 		for path, node in assetTable.items():
-			ppath=os.path.dirname(path)
+			ppath = os.path.dirname(path)
 			if not ppath:
-				pnode=self.rootNode
+				pnode = self.rootNode
 			else:
-				pnode=assetTable.get(ppath,None)
+				pnode = assetTable.get(ppath,None)
 			if not pnode:
 				continue
 			pnode.addChild(node)
-			data=dataTable[path]
+			data = dataTable[path]
 
 			for dpath in data.get('rDep',[]):
-				dnode=assetTable[dpath]
+				dnode = assetTable[dpath]
 				assert dnode
 				node.addDependencyR(dnode)
 
 			for dpath in data.get('pDep',[]):
-				dnode=assetTable[dpath]
+				dnode = assetTable[dpath]
 				assert dnode
 				node.addDependencyP(dnode)
 
@@ -723,18 +741,3 @@ class AssetLibrary(object):
 						logging.info( 'remove metadata: %s' % metaPath )
 						os.remove( metaPath )
 				#TODO: remove meta folder if it's empty
-
-	def getAssetIcon( self, assetType ):
-		return self.assetIconMap.get( assetType, assetType )
-
-	def setAssetIcon( self, assetType, iconName ):
-		self.assetIconMap[ assetType ] = iconName
-
-	def collectAssets( self, assetType ):		
-		result = []
-		for node in self.assetTable.values():
-			if node.getType() == assetType:
-				result.append( node )
-		return result
-		
-

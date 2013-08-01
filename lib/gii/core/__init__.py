@@ -32,5 +32,5 @@ from EditorApp      import app
 ##----------------------------------------------------------------##
 import CommonAsset
 
-def getProjectPath( path ):
+def getProjectPath( path = None ):
 	return Project.get().getBasePath( path )

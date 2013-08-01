@@ -58,12 +58,12 @@ class GLWidget(QtOpenGL.QGLWidget):
 	# def sizeHint(self):
 	# 	return QtCore.QSize(400, 400)
 		
-	def paintGL(self):
+	def paintGL( self ):
 		if not self.allowRefresh:
-			self.pendingRefresh=True
+			self.pendingRefresh = True
 			return
-		self.allowRefresh=False
-		self.pendingRefresh=False
+		self.allowRefresh     = False
+		self.pendingRefresh   = False
 		self.onDraw()
 
 	def onDraw(self):

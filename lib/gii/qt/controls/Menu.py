@@ -38,39 +38,39 @@ class MenuNode(object):
 		self.name  = option.get('name',self.label.replace('&','').replace(' ','_'))
 		self.name  = self.name.lower()
 
-		self.shortcut=option.get('shortcut',False)
-		self.help=option.get('help','')
-		self.priority=option.get('priority',0)
-		self.itemType=option.get('type',False)
-		self.link=None
-		self.onClick=option.get('onClick',None)
+		self.shortcut = option.get('shortcut',False)
+		self.help     = option.get('help','')
+		self.priority = option.get('priority',0)
+		self.itemType = option.get('type',False)
+		self.onClick  = option.get('on_click',None)
+		self.link     = None
 
-		self.menuType=self.qtmenubar and 'menubar' or 'item'
+		self.menuType = self.qtmenubar and 'menubar' or 'item'
 
-		children=option.get('children',None)
-		link=option.get('link',None)
+		children = option.get('children',None)
+		link     = option.get('link',None)
 
-		if children or self.itemType=='menu':
-			if self.menuType!='menubar':
-				self.menuType='menu'
-				self.itemType=False
+		if children or self.itemType == 'menu':
+			if self.menuType != 'menubar':
+				self.menuType = 'menu'
+				self.itemType = False
 
 		elif link:
-			self.link=link
-			if self.menuType!='menubar':
-				self.menuType='link'
+			self.link = link
+			if self.menuType != 'menubar':
+				self.menuType = 'link'
 
-		elif parent and parent.menuType=='menubar':
-			self.menuType='menu'
+		elif parent and parent.menuType == 'menubar':
+			self.menuType = 'menu'
 
-		if self.menuType=='menu' :
-			self.qtmenu=QMenu(self.label)
+		if self.menuType == 'menu' :
+			self.qtmenu = QMenu(self.label)
 
-		if not parent or parent.menuType=='root': return 
+		if not parent or parent.menuType == 'root': return 
 
 		parent.addChildControl(self)
-		if self.itemType=='check':
-			checked=option.get('checked',False)
+		if self.itemType == 'check':
+			checked = option.get('checked',False)
 			self.setValue(checked or False)
 		if children:
 			for data in children:

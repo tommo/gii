@@ -166,6 +166,7 @@ class Project(object):
 		return True
 
 	def save( self ):
+		logging.info( 'saving current project' )
 		signals.emitNow('project.presave', self)
 		#save project info & config
 		jsonHelper.trySaveJSON( self.info,   self.getBasePath( _GII_INFO_FILE ), 'project info' )

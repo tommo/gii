@@ -42,6 +42,7 @@ register('project.load')
 register('project.save')
 
 register('asset.reset')
+register('asset.post_import_all')
 register('asset.added')
 register('asset.removed')
 register('asset.modified')
