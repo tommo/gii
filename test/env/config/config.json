@@ -1,0 +1,6 @@
+{
+  "excluded_packages": [
+    "GameView", 
+    "SceneEditor"
+  ]
+}

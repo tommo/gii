@@ -1,0 +1,52 @@
+{
+  "groups": {
+    "default": {
+      "atlas_allowed": true, 
+      "atlas_force_single": false, 
+      "atlas_max_height": 1024, 
+      "atlas_max_width": 1024, 
+      "cache": "env/config/cache/default_a3f94954a4bf5116ade898aa561563dd", 
+      "compression": null, 
+      "filter": "nearest", 
+      "mipmap": false, 
+      "name": "default", 
+      "wrapmode": "clamp"
+    }, 
+    "duke": {
+      "atlas_allowed": true, 
+      "atlas_force_single": false, 
+      "atlas_max_height": 1024, 
+      "atlas_max_width": 1024, 
+      "cache": null, 
+      "compression": null, 
+      "filter": "nearest", 
+      "mipmap": false, 
+      "name": "duke", 
+      "wrapmode": "clamp"
+    }, 
+    "raw": {
+      "atlas_allowed": false, 
+      "atlas_force_single": false, 
+      "atlas_max_height": 1024, 
+      "atlas_max_width": 1024, 
+      "cache": null, 
+      "compression": null, 
+      "filter": "nearest", 
+      "mipmap": false, 
+      "name": "raw", 
+      "wrapmode": "clamp"
+    }, 
+    "sprite": {
+      "atlas_allowed": true, 
+      "atlas_force_single": false, 
+      "atlas_max_height": 1024, 
+      "atlas_max_width": 1024, 
+      "cache": "env/config/cache/sprite_971d278f51bce48c0690c6901757a8af", 
+      "compression": null, 
+      "filter": "nearest", 
+      "mipmap": false, 
+      "name": "sprite", 
+      "wrapmode": "clamp"
+    }
+  }
+}

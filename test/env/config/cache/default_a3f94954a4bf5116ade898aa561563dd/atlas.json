@@ -1,0 +1,81 @@
+{
+  "atlases": [
+    "atlas_default0.png"
+  ], 
+  "items": [
+    {
+      "atlas": 0, 
+      "name": "tmp/BOSS_1.png", 
+      "rect": [
+        0, 
+        0, 
+        256, 
+        512
+      ], 
+      "source": "tmp/BOSS_1.png"
+    }, 
+    {
+      "atlas": 0, 
+      "name": "\u6469\u827e\u541b.png", 
+      "rect": [
+        0, 
+        512, 
+        256, 
+        256
+      ], 
+      "source": "\u6469\u827e\u541b.png"
+    }, 
+    {
+      "atlas": 0, 
+      "name": "test/sprite1.psd", 
+      "rect": [
+        0, 
+        768, 
+        241, 
+        191
+      ], 
+      "source": "test/sprite1.psd"
+    }, 
+    {
+      "atlas": 0, 
+      "name": "tmp/BOSS_2.png", 
+      "rect": [
+        256, 
+        0, 
+        176, 
+        324
+      ], 
+      "source": "tmp/BOSS_2.png"
+    }, 
+    {
+      "atlas": 0, 
+      "name": "tmp/BOSS_3.png", 
+      "rect": [
+        432, 
+        0, 
+        150, 
+        284
+      ], 
+      "source": "tmp/BOSS_3.png"
+    }, 
+    {
+      "atlas": 0, 
+      "name": "\u597d\u7684.psd", 
+      "rect": [
+        582, 
+        0, 
+        185, 
+        161
+      ], 
+      "source": "\u597d\u7684.psd"
+    }
+  ], 
+  "sources": [
+    "/Volumes/prj/gii/test/game/asset/\u597d\u7684.psd", 
+    "/Volumes/prj/gii/test/game/asset/tmp/BOSS_1.png", 
+    "/Volumes/prj/gii/test/game/asset/\u6469\u827e\u541b.png", 
+    "/Volumes/prj/gii/test/game/asset/test/sprite1.psd", 
+    "/Volumes/prj/gii/test/game/asset/tmp/BOSS_2.png", 
+    "/Volumes/prj/gii/test/game/asset/tmp/BOSS_3.png"
+  ]
+}

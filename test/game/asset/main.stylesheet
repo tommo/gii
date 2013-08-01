@@ -1,0 +1,29 @@
+{
+  "_assetType": "stylesheet", 
+  "styles": [
+    {
+      "allowScale": true, 
+      "color": [
+        1.0, 
+        0.7568627450980392, 
+        0.058823529411764705, 
+        1.0
+      ], 
+      "font": "misaki_gothic.ttf", 
+      "name": "a2", 
+      "size": 16
+    }, 
+    {
+      "allowScale": true, 
+      "color": [
+        0.8941176470588236, 
+        0.7475394827191577, 
+        0.360341802090486, 
+        1.0
+      ], 
+      "font": "font/04b03.fnt", 
+      "name": "default", 
+      "size": 32
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "atlases": [
+    "atlas_sprite0.png"
+  ], 
+  "items": [
+    {
+      "atlas": 0, 
+      "name": "anim/explorer_atlas.png", 
+      "rect": [
+        0, 
+        0, 
+        120, 
+        120
+      ], 
+      "source": "anim/explorer_atlas.png"
+    }, 
+    {
+      "atlas": 0, 
+      "name": "anim/output_atlas.png", 
+      "rect": [
+        120, 
+        0, 
+        90, 
+        90
+      ], 
+      "source": "anim/output_atlas.png"
+    }
+  ], 
+  "sources": [
+    "/Volumes/prj/gii/test/game/asset/anim/explorer_atlas.png", 
+    "/Volumes/prj/gii/test/game/asset/anim/output_atlas.png"
+  ]
+}

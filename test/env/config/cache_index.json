@@ -1,0 +1,121 @@
+{
+  "env/config/cache/04b03_af3ba0de3cf660e0d8b6c1fad56ceac2": {
+    "file": "04b03_af3ba0de3cf660e0d8b6c1fad56ceac2", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "font/04b03.png", 
+    "touched": true
+  }, 
+  "env/config/cache/04b03_fb0273c0ca3bbe1011547654429add5d": {
+    "file": "04b03_fb0273c0ca3bbe1011547654429add5d", 
+    "is_dir": false, 
+    "name": "pixmap", 
+    "src": "font/04b03.png", 
+    "touched": true
+  }, 
+  "env/config/cache/BOSS_1_1bddda1cb2406152b2d1e60c346cdbf7": {
+    "file": "BOSS_1_1bddda1cb2406152b2d1e60c346cdbf7", 
+    "is_dir": false, 
+    "name": "def", 
+    "src": "tmp/BOSS_1.sprite", 
+    "touched": true
+  }, 
+  "env/config/cache/BOSS_1_a2047d34da86260e21a1b801521a8a4f": {
+    "file": "BOSS_1_a2047d34da86260e21a1b801521a8a4f", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "tmp/BOSS_1.png", 
+    "touched": true
+  }, 
+  "env/config/cache/BOSS_2_a5a32fb2770706738933650b21703d1a": {
+    "file": "BOSS_2_a5a32fb2770706738933650b21703d1a", 
+    "is_dir": false, 
+    "name": "def", 
+    "src": "tmp/BOSS_2.sprite", 
+    "touched": true
+  }, 
+  "env/config/cache/BOSS_2_ea86a77ffb96c3d6fcc693ca7c96d0a4": {
+    "file": "BOSS_2_ea86a77ffb96c3d6fcc693ca7c96d0a4", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "tmp/BOSS_2.png", 
+    "touched": true
+  }, 
+  "env/config/cache/BOSS_3_678ca4004c5fc6635e320a1a1e9f1509": {
+    "file": "BOSS_3_678ca4004c5fc6635e320a1a1e9f1509", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "tmp/BOSS_3.png", 
+    "touched": true
+  }, 
+  "env/config/cache/BOSS_3_c7dd582f8e03a34d5f8a1556a2874d17": {
+    "file": "BOSS_3_c7dd582f8e03a34d5f8a1556a2874d17", 
+    "is_dir": false, 
+    "name": "def", 
+    "src": "tmp/BOSS_3.sprite", 
+    "touched": true
+  }, 
+  "env/config/cache/default_a3f94954a4bf5116ade898aa561563dd": {
+    "file": "default_a3f94954a4bf5116ade898aa561563dd", 
+    "is_dir": true, 
+    "name": null, 
+    "src": "<texture_group>/default", 
+    "touched": true
+  }, 
+  "env/config/cache/explorer_af873fef31f9a23bc58ba7349b7d526b": {
+    "file": "explorer_af873fef31f9a23bc58ba7349b7d526b", 
+    "is_dir": false, 
+    "name": "def", 
+    "src": "anim/explorer.sprite", 
+    "touched": true
+  }, 
+  "env/config/cache/explorer_atlas_df5e36215fb038340e6923da151bbf30": {
+    "file": "explorer_atlas_df5e36215fb038340e6923da151bbf30", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "anim/explorer_atlas.png", 
+    "touched": true
+  }, 
+  "env/config/cache/output_9184274f5b920d3b7bb3cd9010047e4b": {
+    "file": "output_9184274f5b920d3b7bb3cd9010047e4b", 
+    "is_dir": false, 
+    "name": "def", 
+    "src": "anim/output.sprite", 
+    "touched": true
+  }, 
+  "env/config/cache/output_atlas_fd5ffa486516c4649c9cb205a2f9a3ac": {
+    "file": "output_atlas_fd5ffa486516c4649c9cb205a2f9a3ac", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "anim/output_atlas.png", 
+    "touched": true
+  }, 
+  "env/config/cache/sprite1_994ed28dab925963c1dc608036cf0681": {
+    "file": "sprite1_994ed28dab925963c1dc608036cf0681", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "test/sprite1.psd", 
+    "touched": true
+  }, 
+  "env/config/cache/sprite_971d278f51bce48c0690c6901757a8af": {
+    "file": "sprite_971d278f51bce48c0690c6901757a8af", 
+    "is_dir": true, 
+    "name": null, 
+    "src": "<texture_group>/sprite", 
+    "touched": true
+  }, 
+  "env/config/cache/好的_98ab98229399392eef482493c133d534": {
+    "file": "好的_98ab98229399392eef482493c133d534", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "好的.psd", 
+    "touched": true
+  }, 
+  "env/config/cache/摩艾君_09f70059f3a22fcbd4f6aeced9320844": {
+    "file": "摩艾君_09f70059f3a22fcbd4f6aeced9320844", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "摩艾君.png", 
+    "touched": true
+  }
+}
