@@ -392,7 +392,6 @@ class AssetLibrary(object):
 			'.*\.pyc$'
 		]
 
-	
 	def load( self, rootPath, rootAbsPath, projectAbsPath, configPath ):
 		#load asset
 		self.rootPath       = rootPath
@@ -410,7 +409,6 @@ class AssetLibrary(object):
 		self.unregisterAssetNode( self.rootNode )
 		self.scanProjectPath()
 
-
 	def getRootNode(self):
 		return self.rootNode
 
@@ -427,11 +425,11 @@ class AssetLibrary(object):
 	def registerAssetManager(self, manager):
 		logging.info( 'registering asset manager:'+manager.getName() )
 		for p in self.assetManagers:
-			if p==manager:
+			if p == manager:
 				raise AssetException('Duplicated AssetManager %s'%manager.getName())
 
-			if p.getPriority()<=manager.getPriority():
-				idx=self.assetManagers.index(p)
+			if p.getPriority() <= manager.getPriority():
+				idx = self.assetManagers.index(p)
 				self.assetManagers.insert(idx, manager)
 				return manager
 
@@ -558,6 +556,23 @@ class AssetLibrary(object):
 		#TODO:should this be done by a asset index rebuilding (by restarting editor)?
 		pass
 
+	def importModifiedAssets( self ):
+		#collect 'modified'	asset
+		modifiedAssets = {}
+		for node in self.assetTable.values():
+			if node.modified:
+				modifiedAssets[ node ] = True
+		#try importing with each asset manager, in priority order
+		for manager in self.assetManagers:
+			if not modifiedAssets: break
+			done = []
+			for node in modifiedAssets:
+				if not node.modified: done.append( node ) #might get imported as a sub asset
+				if manager.importAsset( node ):
+					node.modified = False
+					done.append( node )
+			for node in done:
+				del modifiedAssets[ node ]			
 
 	def scanProjectPath(self): #scan 
 		logging.info('scan project in:' + self.rootAbsPath )
@@ -708,11 +723,6 @@ class AssetLibrary(object):
 						logging.info( 'remove metadata: %s' % metaPath )
 						os.remove( metaPath )
 				#TODO: remove meta folder if it's empty
-
-
-	def compileAssetTable(self):
-		for path, node in self.assetTable.items():
-			pass
 
 	def getAssetIcon( self, assetType ):
 		return self.assetIconMap.get( assetType, assetType )
