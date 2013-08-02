@@ -81,7 +81,7 @@ app = bridge.app
 -- PYTHON-LUA DELEGATION CREATION
 --------------------------------------------------------------------
 function loadLuaWithEnv(file, env, ...)
-	local env=setmetatable(env or {}, 
+	local env = setmetatable(env or {}, 
 			{__index=function(t,k) return rawget(_G,k) end}
 		)
 	local func, err=loadfile(file)
@@ -89,9 +89,20 @@ function loadLuaWithEnv(file, env, ...)
 		error('Failed load script:'..file..'\n'..err, 2)
 	end
 	setfenv(func, env)
-	local succ, err = pcall(func,...)
+	local args = {...}
+	
+	local function _f()
+		return func( unpack( args ))
+	end
+	local function _onError( ... )
+		print ( ... )
+		print( debug.traceback( 2 ) )
+		return ...
+	end
+
+	local succ, err = xpcall( _f, _onError )
 	if not succ then
-		error('Failed start script:'..file..'\n'..err, 2)
+		error('Failed start script:'.. file, 2)
 	end
 	return env
 end

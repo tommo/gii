@@ -280,7 +280,8 @@ class MOAIGameView( QtEditorModule ):
 
 		elif name=='reset_moai':
 			#TODO: dont simply reset in debug
-			self.restartScript(self.runningScript)
+			# self.restartScript( self.runningScript )
+			self.getRuntime().reset()
 
 		elif name=='orient_portrait':
 			self.setOrientationPortrait()

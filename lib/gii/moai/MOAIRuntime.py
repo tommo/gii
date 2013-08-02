@@ -299,7 +299,7 @@ class MOAILuaDelegate(object):
 		self.extraSymbols = {}
 		self.clearLua()
 		signals.connect('moai.clean', self.clearLua)
-		if option.get('autoReload',True):
+		if option.get( 'autoReload', True ):
 			signals.connect('moai.reset', self.reload)
 
 	def load(self, scriptPath):

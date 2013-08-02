@@ -1,56 +1,56 @@
 module('gii')
 
 
-local renderContextTable={}
+local renderContextTable = {}
 --[[
-RenderContext incluces:
-	1. an action root
-	2. a render table
-shares:
-	layer information
-	prop
-	assets
+	RenderContext incluces:
+		1. an action root
+		2. a render table
+	shares:
+		layer information
+		prop
+		assets
 ]]
 
-local currentContext=false
+local currentContext = false
 
 function createRenderContext(key)
-	local context={
-		key=key,
-		w=false,
-		h=false,
-		clearColor={0,0,0,0}
+	local context = {
+		key         =  key,
+		w           =  false,
+		h           =  false,
+		clearColor  =  { 0,0,0,0 }
 	}
-	renderContextTable[key]=context
-	local root=MOAICoroutine.new()
-	root:run(function() local dt=coroutine.yield() end)
+	renderContextTable[key] = context
+	local root = MOAICoroutine.new()
+	root:run( function() local dt = coroutine.yield() end )
 	context.actionRoot=root
 end
 
 
 function changeRenderContext(key, w, h)	
-	local context=renderContextTable[key]
+	local context = renderContextTable[key]
 	assert (context, 'no render context for:'..tostring(key))
 
-	if currentContext==context then return end	
+	if currentContext == context then return end	
 	
 	if currentContext then --persist context
-		currentContext.actionRoot=MOAIActionMgr.getRoot()
-		local fb=MOAIGfxDevice.getFrameBuffer()
-		currentContext.renderTable=fb:getRenderTable()
-		currentContext.bufferTable=MOAIRenderMgr.getBufferTable()
+		local fb = MOAIGfxDevice.getFrameBuffer()
+		currentContext.actionRoot  = MOAIActionMgr.getRoot()
+		currentContext.renderTable = fb:getRenderTable()
+		currentContext.bufferTable = MOAIRenderMgr.getBufferTable()
 		-- local res = gii.bridge.GLHelper.getClearColor()
 		-- currentContext.clearColor=gii.listToTable(res)
 	end
 
 	--TODO: persist clear depth& color flag(need to modify moai)
 	
-	currentContext=context
-	MOAIGfxDevice.getFrameBuffer():setRenderTable(currentContext.renderTable)
+	currentContext = context
+	MOAIGfxDevice.getFrameBuffer():setRenderTable( currentContext.renderTable )
 	-- local r,g,b,a=unpack(currentContext.clearColor)
 	-- MOAIGfxDevice.getFrameBuffer():setClearColor(r,g,b,a)
-	MOAIRenderMgr.setBufferTable(currentContext.bufferTable)	
-	MOAIActionMgr.setRoot(currentContext.actionRoot)
+	MOAIRenderMgr.setBufferTable( currentContext.bufferTable )	
+	MOAIActionMgr.setRoot( currentContext.actionRoot )
 end
 
 
@@ -161,9 +161,9 @@ local keymap_GII={
 
 }
 
-local keyname={}
+local keyname = {}
 for k,v in pairs(keymap_GII) do
-	keyname[v]=k
+	keyname[v] = k
 end
 
 function getKeyName(code)

@@ -22,19 +22,22 @@ class QtEditorModule( EditorModule ):
 	def getQtSupport( self ):
 		return self.getModule( 'qt' )
 
-	def requestDockWindow( self, id, **windowOption ):
+	def requestDockWindow( self, id = None, **windowOption ):
+		if not id: id = self.getName()
 		mainWindow = self.getMainWindow()
 		container = mainWindow.requestDockWindow( id, **windowOption )
 		# self.containers[id] = container
 		return container
 
-	def requestSubWindow( self, id, **windowOption ):
+	def requestSubWindow( self, id = None, **windowOption ):
+		if not id: id = self.getName()
 		mainWindow = self.getMainWindow()
 		container = mainWindow.requestSubWindow( id, **windowOption )
 		# self.containers[id] = container
 		return container
 
-	def requestDocumentWindow( self, id, **windowOption ):
+	def requestDocumentWindow( self, id = None, **windowOption ):
+		if not id: id = self.getName()
 		mainWindow = self.getMainWindow()
 		container = mainWindow.requestDocumentWindow( id, **windowOption )
 		# self.containers[id] = container

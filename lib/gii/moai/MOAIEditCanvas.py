@@ -127,10 +127,10 @@ class MOAIEditCanvasLuaDelegate(MOAILuaDelegate):
 		self._onUpdate     = None
 
 	def load(self, scriptPath):
-		super(MOAIEditCanvasLuaDelegate, self).load(scriptPath)
-		env=self.luaEnv
+		super( MOAIEditCanvasLuaDelegate, self ).load( scriptPath )
+		env = self.luaEnv
 		if not env:
-			raise Exception('failed loading editcanvas script:%s'%scriptPath)
+			raise Exception( 'failed loading editcanvas script:%s' % scriptPath )
 		self._onMouseDown  = env.onMouseDown
 		self._onMouseUp    = env.onMouseUp
 		self._onMouseMove  = env.onMouseMove
@@ -224,13 +224,13 @@ class MOAIEditCanvas( GLWidget ):
 		self.stopUpdateTimer()
 		self.stopRefreshTimer()
 
-	def loadScript(self, scriptPath):
+	def loadScript( self, scriptPath, **kwargs ):
 		self.delegate.load(scriptPath)
 		self.setupContext()
 
 	def setDelegateEnv(self, key, value, autoReload=True):
 		#convert bound method to closure
-		if isBoundMethod(value):
+		if isBoundMethod( value ):
 			func = value
 			value = lambda *args: func(*args)
 		self.delegate.setEnv(key, value, autoReload)
@@ -270,7 +270,7 @@ class MOAIEditCanvas( GLWidget ):
 		runtime.manualRenderAll()
 		self.delegate.postDraw()
 
-	def updateCanvas( self, forced=True ):
+	def updateCanvas( self, forced = True ):
 		step    = self.updateStep
 		runtime = self.runtime
 		runtime.setBufferSize( self.viewWidth, self.viewHeight )

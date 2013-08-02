@@ -76,7 +76,7 @@ function Camera:__init( option )
 
 	--TODO: add support for fixed viewport
 	self.fixedViewport = option.fixedViewport or false
-	self.viewportSize = {0,0,1,1}
+	self.viewportSize  = {0,0,1,1}
 	self._camera    = cam
 	self.zoom       = 1
 	self.moaiLayers = {}
@@ -205,6 +205,14 @@ end
 
 function Camera:worldToWnd( x, y, z )
 	return self.dummyLayer:worldToWnd( x, y, z )
+end
+
+function Camera:setRenderContext( context )
+	self.renderContext = context
+end
+
+function Camera:getRenderContext()
+	return self.renderContext or game.gfx
 end
 
 function Camera:updateViewport()

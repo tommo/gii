@@ -73,13 +73,29 @@ class QtSupport( QtEditorModule ):
 		
 		self.menu = self.addMenuBar( 'main', self.sharedMenuBar )
 		self.menu.addChild('&File').addChild([
+			'System Status',
+			'----',
 			'E&xit',
 			]
 		)	
 		
+		self.statusWindow = None
 
 	def getSharedMenubar( self ):
 		return self.sharedMenuBar
+
+	def showSystemStatusWindow( self ):
+		if not self.statusWindow:
+			self.statusWindow = self.requestSubWindow( 'SystemStatus',
+					title     = 'System Status',
+					size      = (200,200),
+					minSize   = (200,200)
+				)
+			self.statusWindow.body = self.statusWindow.addWidgetFromFile(
+					self.getApp().getPath( 'data/ui/SystemStatus.ui' )
+				)
+		self.statusWindow.show()
+		self.statusWindow.raise_()
 
 	def onLoad( self ):
 		self.qtApp   = QtGui.QApplication(sys.argv)
@@ -101,19 +117,9 @@ class QtSupport( QtEditorModule ):
 
 	def update( self ):
 		self.qtApp.processEvents( QEventLoop.AllEvents, 1 )
-
-	# #resource provider
-	# def requestDockWindow( self, id, **dockOptions ):
-	# 	pass
-
-	# def requestSubWindow( self, id, **windowOption ):
-	# 	pass
-
-	# def requestDocumentWindow( self, id, **windowOption ):
-	# 	pass
-
+	
 	def getMainWindow( self ):
-		return self.rootWindow
+		return self.mainWindow
 
 	def getQtSettingObject( self ):
 		return self.qtSetting
@@ -122,6 +128,8 @@ class QtSupport( QtEditorModule ):
 		name = node.name
 		if name == 'exit':
 			self.getApp().stop()
+		elif name == 'system_status':
+			self.showSystemStatusWindow()
 
 QtSupport().register()
 

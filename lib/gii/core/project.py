@@ -24,6 +24,10 @@ _GII_ENV_CONFIG_DIR     = _GII_ENV_DIR  + '/config'
 
 _GII_INFO_FILE          = 'project.json'
 _GII_CONFIG_FILE        = 'config.json'
+####----------------------------------------------------------------##
+_default_config = {
+	"excluded_packages" : []
+}
 
 ##----------------------------------------------------------------##
 def _makePath( base, path ):
@@ -170,7 +174,6 @@ class Project(object):
 		signals.emitNow('project.presave', self)
 		#save project info & config
 		jsonHelper.trySaveJSON( self.info,   self.getBasePath( _GII_INFO_FILE ), 'project info' )
-		jsonHelper.trySaveJSON( self.config, self.getConfigPath( _GII_CONFIG_FILE ), 'project config')
 
 		#save asset & cache
 		self.assetLibrary.save()
@@ -180,6 +183,10 @@ class Project(object):
 		signals.emitNow( 'project.save', self ) #post save
 		logging.info( 'project saved' )
 		return True
+
+	def saveConfig( self ):
+		jsonHelper.trySaveJSON( self.config, self.getConfigPath( _GII_CONFIG_FILE ), 'project config')
+
 
 	def getRelativePath( self, path ):
 		return os.path.relpath( path, self.path )
@@ -218,6 +225,7 @@ class Project(object):
 
 	def setConfig( self, key, value ):
 		self.config[ key ] = value
+		self.saveConfig()
 
 	def getAssetLibrary( self ):
 		return self.assetLibrary
