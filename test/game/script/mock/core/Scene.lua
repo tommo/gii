@@ -54,9 +54,13 @@ function Scene:init()
 		return self:threadMain()
 	end
 	)
-	self.timer:attach( game.actionRoot )
+	self.timer:attach( self:getActionRoot() )
 	self.timer:start()
 
+end
+
+function Scene:getActionRoot( root )
+	return game.actionRoot
 end
 
 function Scene:threadMain( dt )
@@ -169,7 +173,7 @@ end
 --------------------------------------------------------------------
 function Scene:enter(option)
 	_codemark( 'Entering Scene: %s', self.name )
-	self:init()
+	self:init( self.option and self.option.actionRoot )
 	self:addLayer( 'main', self.option and self.option.layer )
 	self.active = true
 	--callback onenter

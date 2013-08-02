@@ -180,13 +180,13 @@ class MOAIEditCanvasLuaDelegate(MOAILuaDelegate):
 
 
 class MOAIEditCanvas( GLWidget ):
-	_id=0
+	_id = 0
 	def __init__(self, *args):
 		MOAIEditCanvas._id += 1
 		super(MOAIEditCanvas, self).__init__(*args)
 		self.runtime     = app.affirmModule( 'moai' )
 		self.contextName = 'EditCanvas-%d' % MOAIEditCanvas._id
-		self.delegate    = MOAIEditCanvasLuaDelegate( self )
+		self.delegate    = MOAIEditCanvasLuaDelegate( self, autoReload = False )
 		self.updateTimer = QtCore.QTimer(self)
 		self.viewWidth   = 0
 		self.viewHeight  = 0
@@ -216,16 +216,15 @@ class MOAIEditCanvas( GLWidget ):
 	def stopUpdateTimer(self):
 		self.updateTimer.stop()
 
-	def onMoaiReset(self):
+	def onMoaiReset( self ):
 		self.setupContext()
-		self.updateCanvas()
 
 	def onMoaiClean(self):
 		self.stopUpdateTimer()
 		self.stopRefreshTimer()
 
 	def loadScript( self, scriptPath, **kwargs ):
-		self.delegate.load(scriptPath)
+		self.scriptPath = scriptPath
 		self.setupContext()
 
 	def setDelegateEnv(self, key, value, autoReload=True):
@@ -242,17 +241,21 @@ class MOAIEditCanvas( GLWidget ):
 		self.runtime.createRenderContext(self.contextName)
 		self.runtime.changeRenderContext(self.contextName)
 
-		self.setDelegateEnv('updateCanvas', self.updateCanvas, False)
-		
-		self.setDelegateEnv('hideCursor', self.hideCursor, False)
-		self.setDelegateEnv('showCursor', self.showCursor, False)
-		self.setDelegateEnv('setCursorPos', self.setCursorPos, False)
-		
-		self.setDelegateEnv('getCanvasSize', self.getCanvasSize, False)
+		if self.scriptPath:
+			self.delegate.load( self.scriptPath )
 
-		self.delegate.safeCall('onLoad')
-		self.resizeGL(self.width(), self.height())
-		self.startRefreshTimer(60)
+			self.setDelegateEnv('updateCanvas', self.updateCanvas, False)
+			
+			self.setDelegateEnv('hideCursor', self.hideCursor, False)
+			self.setDelegateEnv('showCursor', self.showCursor, False)
+			self.setDelegateEnv('setCursorPos', self.setCursorPos, False)
+			
+			self.setDelegateEnv('getCanvasSize', self.getCanvasSize, False)
+
+			self.delegate.safeCall('onLoad')
+			self.resizeGL(self.width(), self.height())
+			self.startRefreshTimer(60)
+			self.updateCanvas()
 
 	def safeCall(self, method, *args):		 
 		return self.delegate.safeCall(method, *args)
@@ -266,7 +269,7 @@ class MOAIEditCanvas( GLWidget ):
 	def onDraw(self):
 		runtime = self.runtime
 		runtime.setBufferSize(self.viewWidth,self.viewHeight)
-		runtime.changeRenderContext(self.contextName)
+		runtime.changeRenderContext( self.contextName )
 		runtime.manualRenderAll()
 		self.delegate.postDraw()
 

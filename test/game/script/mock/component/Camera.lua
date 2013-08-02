@@ -23,26 +23,30 @@ local function findMainCameraForScene( scene )
 end
 
 local function updateRenderStack()
-
+	local context = game.currentRenderContext
 	local renderTableMap = {}
 	local bufferTable    = {}
 	local deviceBuffer   = MOAIGfxDevice.getFrameBuffer()
 	local count = 0
+
 	table.sort( globalCameraList, prioritySortFunc )
+
 	for _, cam in ipairs( globalCameraList ) do
-		local fb = cam:getFrameBuffer()
-		local rt = renderTableMap[ fb ]
-		if not rt then
-			rt = {}
-			renderTableMap[ fb ] = rt
-			fb:setRenderTable( rt )
-			if fb ~= deviceBuffer then --add framebuffer by camera order
-				insert( bufferTable, fb )
+		if cam.context == context then
+			local fb = cam:getFrameBuffer()
+			local rt = renderTableMap[ fb ]
+			if not rt then
+				rt = {}
+				renderTableMap[ fb ] = rt
+				fb:setRenderTable( rt )
+				if fb ~= deviceBuffer then --add framebuffer by camera order
+					insert( bufferTable, fb )
+				end
 			end
-		end
-		for i, layer in ipairs( cam.moaiLayers ) do
-			count = count + 1
-			insert( rt, layer )
+			for i, layer in ipairs( cam.moaiLayers ) do
+				count = count + 1
+				insert( rt, layer )
+			end
 		end
 	end
 
@@ -57,7 +61,7 @@ local function _onScreenResize( w, h )
 	end
 end
 
-connectSignalFunc( 'game.update', _onScreenResize )
+connectSignalFunc( 'gfx.resize', _onScreenResize )
 -------------
 CLASS: Camera ( Actor )
 wrapWithMoaiTransformMethods( Camera, '_camera' )
@@ -91,6 +95,8 @@ function Camera:__init( option )
 	self.includedLayers = option.included or 'all'
 	self.excludedLayers = option.excluded or ( option.included and 'all' or false )
 	self:setFrameBuffer()
+
+	self.context = 'game'
 end
 
 function Camera:onAttach( entity )
@@ -175,15 +181,18 @@ function Camera:updateLayers()
 			layer:setPartition( sceneLayer:getPartition() )
 			layer:setViewport( self.viewport )
 			layer:setCamera( self._camera )
+			
 			--TODO: should be moved to debug facility
 			layer:showDebugLines( true )
-			layer:setBox2DWorld( game:getBox2DWorld() )
+			local world = game:getBox2DWorld()
+			if world then layer:setBox2DWorld( world ) end
 
 			if sceneLayer.sortMode then
 				layer:setSortMode( sceneLayer.sortMode )
 			end
 			inheritVisible( layer, sceneLayer )
 			insert( layers, layer )
+			layer._mock_camera = self
 		end
 	end
 	
@@ -207,37 +216,38 @@ function Camera:worldToWnd( x, y, z )
 	return self.dummyLayer:worldToWnd( x, y, z )
 end
 
-function Camera:setRenderContext( context )
-	self.renderContext = context
+function Camera:getGameViewRect()
+	local rect
+	local fb = self.frameBuffer
+	if fb == MOAIGfxDevice.getFrameBuffer() then		
+		return unpack( game.gfx.viewportRect )
+	else
+		local vw,vh = fb:getSize()
+		return 0, 0, vw, vh
+	end
 end
 
-function Camera:getRenderContext()
-	return self.renderContext or game.gfx
+function Camera:getGameViewScale()
+	local gfx = game.gfx
+	return gfx.w, gfx.h
 end
 
 function Camera:updateViewport()
 	local zoom = self.zoom or 1
 	if zoom <= 0 then zoom = 0.00001 end
-	local	x0, y0, x1, y1 = unpack( self.viewportSize )
-	local gfx  = game.gfx
-	local fb = self.frameBuffer
-	local rect 
-	if fb == MOAIGfxDevice.getFrameBuffer() then
-		rect = gfx.viewportRect
-	else
-		local vw,vh  = fb:getSize()
-		rect = {0, 0, vw, vh}
-	end
-	local vx0, vy0, vx1, vy1 = unpack(rect)
-	local vw, vh = vx1-vx0, vy1-vy0
+	local	x0, y0, x1, y1 = unpack( self.viewportSize ) -- ratio ( 0 - 1 )
 	local w, h = x1-x0, y1-y0	
+	local gw, gh = self:getGameViewScale() --scale
+
+	local vx0, vy0, vx1, vy1 = self:getGameViewRect()
+	local vw, vh = vx1-vx0, vy1-vy0
 	do
-		local sclW, sclH = gfx.w * w / zoom , gfx.h * h / zoom
+		local sclW, sclH = gw * w / zoom , gh * h / zoom
 		local x0, y0, x1, y1 = vx0+vw*x0, vy0+vh*y0, vx0+vw*x1, vy0+vh*y1
 		self.viewport:setScale( sclW, sclH )
 		self.viewport:setSize( x0, y0, x1, y1 )
 		self.viewportWorldSize = { sclW, sclH }
-		self.viewportWndRect = { x0, y0, x1, y1	}
+		self.viewportWndRect   = { x0, y0, x1, y1	}
 	end
 end
 
@@ -309,7 +319,6 @@ function Camera:setViewport( x0, y0, x1, y1 )
 		x0, y0, x1, y1 =0, 0, 1, 1
 	end
 	self.viewportSize = {x0,y0,x1,y1}
-
 	self:updateViewport()
 end
 

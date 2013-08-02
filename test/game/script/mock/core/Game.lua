@@ -53,7 +53,13 @@ CLASS: Game ()
 			version = "",
 
 			scenes        = {},
-			developing = false,
+			gfx           = { w = 640, h = 480, viewportRect = {0,0,640,480} },
+			time          = 0,
+
+			developing    = false,
+
+			currentRenderContext = 'game',    -- for editor integration
+
 		}
 
 	}
@@ -563,5 +569,9 @@ function Game:pauseBox2DWorld( paused )
 	self.b2world:pause( paused )
 end
 
+
+function Game:addRenderContext( context )
+
+end
 
 game = Game()
