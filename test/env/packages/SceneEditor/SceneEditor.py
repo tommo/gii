@@ -32,42 +32,29 @@ class SceneEditor( QtEditorModule ):
 		self.mainWindow.resize( 800, 600 )
 		self.mainWindow.setWindowTitle( 'GII - Scene Editor' )
 		self.mainWindow.setMenuWidget( self.getQtSupport().getSharedMenubar() )
-
 		self.mainWindow.module = self
 		
-		# self.menu = self.addMenuBar( 'scene', self.mainWindow.menuBar() )
-		# self.menu.addChild('&File').addChild([			
-		# 	'Open',
-		# 	'E&xit'
-		# 	]
-		# )
-
-
-		self.mainToolBar = self.mainWindow.requestToolBar( 'main' )
-		
-		# self.mainToolBar.addAction( 'RUN' )
-		button = QtGui.QPushButton()
-		button.setText( 'RUN' )
-		self.mainToolBar.addWidget( button )
-
+		self.mainToolBar = self.addToolBar( 'scene', self.mainWindow.requestToolBar( 'main' ) )		
 		self.statusBar = QtGui.QStatusBar()
 		self.mainWindow.setStatusBar(self.statusBar)
 
 	def onLoad( self ):
 		self.setupMainWindow()
 		self.containers  = {}
+
+		self.addTool( 'scene/run', label = 'Run' )
+
 		return True
 
 	def onStart( self ):
+		self.setFocus()
 		self.restoreWindowState( self.mainWindow )
-		self.mainWindow.show()
-		self.mainWindow.raise_()
 	
 	def onStop( self ):
 		self.saveWindowState( self.mainWindow )
 
 	#controls
-	def setFocus(self):
+	def onSetFocus(self):
 		self.mainWindow.show()
 		self.mainWindow.raise_()
 		self.mainWindow.setFocus()
@@ -93,10 +80,6 @@ class SceneEditor( QtEditorModule ):
 
 	def onMenu(self, node):
 		name = node.name
-		
-
-SceneEditor().register()
-
 
 ##----------------------------------------------------------------##
 class QtMainWindow( MainWindow ):
@@ -115,3 +98,6 @@ class QtMainWindow( MainWindow ):
 class SceneEditorModule( QtEditorModule ):
 	def getMainWindow( self ):
 		return self.getModule('scene_editor').getMainWindow()
+
+##----------------------------------------------------------------##
+SceneEditor().register()

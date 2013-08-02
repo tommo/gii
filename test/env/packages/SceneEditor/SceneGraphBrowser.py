@@ -52,7 +52,6 @@ class ModSceneGraphBrowser( SceneEditorModule ):
 	def onStart( self ):
 		self.tree.rebuild()
 
-
 	def addEntity( self, entity, scene ):
 		self.tree.addNode( entity )
 
@@ -113,7 +112,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 	def createItem( self, node ):
 		return SceneGraphTreeItem()
 
-	def updateItem( self, item, node, **option ):
+	def updateItemContent( self, item, node, **option ):
 		name = None
 		if isMockInstance( node,'Scene' ):
 			item.setText( 0, '%s <%s>' % ( node.name or '', node.getClassName( node ) ) )

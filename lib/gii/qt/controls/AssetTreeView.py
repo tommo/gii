@@ -75,12 +75,12 @@ class AssetTreeView( GenericTreeWidget ):
 		else:
 			app.getSelectionManager().changeSelection(None)
 
-	def updateItem(self, node, updateLog=None, **option):
-		super( AssetTreeView, self ).updateItem( node, updateLog, **option )
+	def _updateItem(self, node, updateLog=None, **option):
+		super( AssetTreeView, self )._updateItem( node, updateLog, **option )
 
 		if option.get('updateDependency',False):
 			for dep in node.rDep:
-				self.updateItem(dep, updateLog, **option)
+				self._updateItem(dep, updateLog, **option)
 	
 ##----------------------------------------------------------------##
 #TODO: allow sort by other column

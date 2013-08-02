@@ -73,9 +73,10 @@ class QtSupport( QtEditorModule ):
 		
 		self.menu = self.addMenuBar( 'main', self.sharedMenuBar )
 		self.menu.addChild('&File').addChild([
-			'E&xit'
+			'E&xit',
 			]
 		)	
+		
 
 	def getSharedMenubar( self ):
 		return self.sharedMenuBar

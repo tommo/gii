@@ -72,6 +72,9 @@ class ToolBarNode(object):
 		self.qtToolbar.addAction( item.qtaction )
 		return item
 
+	def addWidget( self, widget ):
+		return self.qtToolbar.addWidget( widget )
+
 	def getTool( self, name ):
 		return self.items.get( name, None )
 
