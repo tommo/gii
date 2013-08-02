@@ -100,11 +100,19 @@ class EditorModule( object ):
 		pass
 
 	def start( self ):
+		if self.active: return
 		self.active = True
+		for dep in self.getDependency():
+			m = self.getModule( dep )
+			if m: m.start()
+
 		self.onStart()
 
 	def stop( self ):
+		if not self.active: return
 		self.active = False
+		for depModule in self.dependent:
+			depModule.stop()
 		self.onStop()
 
 	def update( self ):

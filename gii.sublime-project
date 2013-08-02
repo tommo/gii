@@ -54,7 +54,8 @@
 			[
 				"host/ios/build",
 				"host/ios/content",
-				"audio"
+				"audio",
+				"cache"
 			],
 			"path": "./"
 		}

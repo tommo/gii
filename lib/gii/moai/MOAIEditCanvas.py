@@ -239,18 +239,21 @@ class MOAIEditCanvas( GLWidget ):
 		
 	def setupContext(self):
 		self.runtime.createRenderContext(self.contextName)
-		self.runtime.changeRenderContext(self.contextName)
 
 		if self.scriptPath:
+			self.makeCurrent()
 			self.delegate.load( self.scriptPath )
 
-			self.setDelegateEnv('updateCanvas', self.updateCanvas, False)
+			self.setDelegateEnv( 'updateCanvas',     self.updateCanvas,  False )
 			
-			self.setDelegateEnv('hideCursor', self.hideCursor, False)
-			self.setDelegateEnv('showCursor', self.showCursor, False)
-			self.setDelegateEnv('setCursorPos', self.setCursorPos, False)
+			self.setDelegateEnv( 'hideCursor',       self.hideCursor,    False )
+			self.setDelegateEnv( 'showCursor',       self.showCursor,    False )
+			self.setDelegateEnv( 'setCursorPos',     self.setCursorPos,  False )
 			
-			self.setDelegateEnv('getCanvasSize', self.getCanvasSize, False)
+			self.setDelegateEnv( 'getCanvasSize',    self.getCanvasSize, False )
+
+			self.setDelegateEnv( 'startUpdateTimer', self.startUpdateTimer, False )
+			self.setDelegateEnv( 'stopUpdateTimer',  self.stopUpdateTimer,  False )
 
 			self.delegate.safeCall('onLoad')
 			self.resizeGL(self.width(), self.height())
@@ -266,10 +269,13 @@ class MOAIEditCanvas( GLWidget ):
 		self.viewHeight = height
 		self.updateGL()
 
+	def makeCurrent( self ):
+		self.runtime.changeRenderContext( self.contextName )
+
 	def onDraw(self):
 		runtime = self.runtime
 		runtime.setBufferSize(self.viewWidth,self.viewHeight)
-		runtime.changeRenderContext( self.contextName )
+		self.makeCurrent()
 		runtime.manualRenderAll()
 		self.delegate.postDraw()
 
@@ -277,7 +283,7 @@ class MOAIEditCanvas( GLWidget ):
 		step    = self.updateStep
 		runtime = self.runtime
 		runtime.setBufferSize( self.viewWidth, self.viewHeight )
-		runtime.changeRenderContext( self.contextName )
+		self.makeCurrent()
 		runtime.stepSim( step )
 		self.delegate.onUpdate( step )
 		if forced:

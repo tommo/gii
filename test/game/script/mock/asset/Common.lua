@@ -5,7 +5,7 @@ function loadAssetDataTable(filename) --lua or json?
 	-- local f=loadfile(filename)
 	-- if f then return f() end
 	--json
-	local f = io.open( filename,'r')
+	local f = io.open( filename, 'r' )
 	if not f then return nil end
 	local text=f:read('*a')
 	f:close()

@@ -344,7 +344,6 @@ class ScriptNoteBook(QtGui.QTabWidget):
 
 	def selectPage(self, page):
 		idx=self.indexOf(page)
-		print(idx)
 		if idx>=0:
 			self.setCurrentIndex(idx)
 

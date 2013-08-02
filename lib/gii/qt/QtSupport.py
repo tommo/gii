@@ -97,6 +97,9 @@ class QtSupport( QtEditorModule ):
 		self.statusWindow.show()
 		self.statusWindow.raise_()
 
+	def setActiveWindow(self, window):
+		self.qtApp.setActiveWindow(window)
+
 	def onLoad( self ):
 		self.qtApp   = QtGui.QApplication(sys.argv)
 		self.qtSetting = QtCore.QSettings(

@@ -37,7 +37,7 @@ class MockBridge( EditorModule ):
 		
 
 	def onStart( self ):
-		_MOCK.loadAssetLibrary()		
+		_MOCK.loadAssetLibrary()
 
 	def syncAssetLibrary(self):
 		self.delegate.safeCall( 'syncAssetLibrary' )

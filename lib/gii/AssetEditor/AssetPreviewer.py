@@ -29,7 +29,7 @@ class ModAssetPreviewer( AssetEditorModule ):
 		self.container = self.requestDockWindow('AssetPreview',
 				title   = 'Asset Preview',
 				dock    = 'left',
-				minSize = (200,200)
+				minSize = (100,100)
 			)
 
 		self.previewerContainer = QtGui.QStackedWidget()

@@ -145,7 +145,7 @@ class ScriptView( QtEditorModule ):
 	def onSetFocus(self):
 		self.window.raise_()
 		self.window.setFocus()
-		App.get().setActiveWindow(self.window)
+		self.getQtSupport().setActiveWindow( self.window )
 
 ##----------------------------------------------------------------##
 class ScriptViewWindow( MainWindow ):

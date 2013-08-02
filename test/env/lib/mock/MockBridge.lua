@@ -92,5 +92,5 @@ end
 gii.addContextChangeListeners( onContextChange )
 
 --------------------------------------------------------------------
--- mock.setLogLevel( 'status' )
+mock.setLogLevel( 'status' )
 

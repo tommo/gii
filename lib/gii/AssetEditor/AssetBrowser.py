@@ -30,7 +30,7 @@ class AssetBrowser( AssetEditorModule ):
 		self.container = self.requestDockWindow('AssetBrowser',
 				title='Asset Browser',
 				dock='left',
-				minSize=(250,400)
+				minSize=(250,250)
 			)
 
 		self.searchBox = self.container.addWidgetFromFile(

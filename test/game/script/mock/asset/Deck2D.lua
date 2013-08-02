@@ -120,4 +120,4 @@ function spritePackLoader( node )
 	return result
 end
 
-registerAssetLoader ( 'deck2d' )
+registerAssetLoader ( 'deck2d', spritePackLoader )
