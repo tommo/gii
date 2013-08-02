@@ -4,7 +4,7 @@
     "deploy": null, 
     "filePath": "game/asset/anim", 
     "fileTime": [
-      1375277208.0
+      1375370516.0
     ], 
     "manager": null, 
     "modified": true, 
@@ -21,7 +21,7 @@
     "deploy": null, 
     "filePath": "game/asset/anim/explorer.sprite", 
     "fileTime": [
-      1374833775.0
+      1375370516.0
     ], 
     "manager": "asset_manager.aurora_sprite", 
     "modified": false, 
@@ -53,7 +53,7 @@
     "deploy": null, 
     "filePath": "game/asset/anim/explorer_atlas.png", 
     "fileTime": [
-      1374833775.0
+      1375370516.0
     ], 
     "manager": "asset_manager.texture", 
     "modified": false, 
@@ -72,7 +72,7 @@
     "deploy": null, 
     "filePath": "game/asset/anim/output.sprite", 
     "fileTime": [
-      1371890044.0
+      1375370516.0
     ], 
     "manager": "asset_manager.aurora_sprite", 
     "modified": false, 
@@ -104,7 +104,7 @@
     "deploy": null, 
     "filePath": "game/asset/anim/output_atlas.png", 
     "fileTime": [
-      1371890043.0
+      1375370516.0
     ], 
     "manager": "asset_manager.texture", 
     "modified": false, 
@@ -121,7 +121,7 @@
     "deploy": null, 
     "filePath": "game/asset/font", 
     "fileTime": [
-      1375277208.0
+      1375370516.0
     ], 
     "manager": null, 
     "modified": true, 
@@ -136,7 +136,7 @@
     "deploy": null, 
     "filePath": "game/asset/font/04b03.fnt", 
     "fileTime": [
-      1355678694.0
+      1375370516.0
     ], 
     "manager": "asset_manager.font", 
     "modified": false, 
@@ -156,7 +156,7 @@
     "deploy": null, 
     "filePath": "game/asset/font/04b03.png", 
     "fileTime": [
-      1355678658.0
+      1375370516.0
     ], 
     "manager": "asset_manager.texture", 
     "modified": false, 
@@ -174,7 +174,7 @@
     "deploy": null, 
     "filePath": "game/asset/good.deck2d", 
     "fileTime": [
-      1375370184.0
+      1375374554.0
     ], 
     "manager": "asset_manager.deck2d", 
     "modified": false, 
@@ -189,7 +189,7 @@
     "deploy": null, 
     "filePath": "game/asset/main.stylesheet", 
     "fileTime": [
-      1375362349.0
+      1375370516.0
     ], 
     "manager": "asset_manager.stylesheet", 
     "modified": false, 
@@ -219,7 +219,7 @@
     "deploy": null, 
     "filePath": "game/asset/misaki_gothic.ttf", 
     "fileTime": [
-      1338649200.0
+      1375370516.0
     ], 
     "manager": "asset_manager.font", 
     "modified": false, 
@@ -236,7 +236,7 @@
     "deploy": null, 
     "filePath": "game/asset/test", 
     "fileTime": [
-      1375370384.0
+      1375370516.0
     ], 
     "manager": null, 
     "modified": true, 
@@ -248,17 +248,19 @@
   }, 
   "test/sprite1.psd": {
     "cacheFiles": {
-      "config": "env/config/cache/sprite1_994ed28dab925963c1dc608036cf0681"
+      "config": "env/config/cache/sprite1_994ed28dab925963c1dc608036cf0681", 
+      "pixmap": "env/config/cache/sprite1_62214c5098efb58342b604046e779131"
     }, 
     "deploy": null, 
     "filePath": "game/asset/test/sprite1.psd", 
     "fileTime": [
-      1368277526.0
+      1375370516.0
     ], 
     "manager": "asset_manager.texture", 
     "modified": false, 
     "objectFiles": {
-      "config": "env/config/cache/sprite1_994ed28dab925963c1dc608036cf0681"
+      "config": "env/config/cache/sprite1_994ed28dab925963c1dc608036cf0681", 
+      "pixmap": "env/config/cache/sprite1_62214c5098efb58342b604046e779131"
     }, 
     "pDep": [], 
     "properties": {}, 
@@ -270,7 +272,7 @@
     "deploy": null, 
     "filePath": "game/asset/tmp", 
     "fileTime": [
-      1375369392.0
+      1375370516.0
     ], 
     "manager": null, 
     "modified": true, 
@@ -287,7 +289,7 @@
     "deploy": null, 
     "filePath": "game/asset/tmp/BOSS_1.png", 
     "fileTime": [
-      1368173654.0
+      1375370516.0
     ], 
     "manager": "asset_manager.texture", 
     "modified": false, 
@@ -306,7 +308,7 @@
     "deploy": null, 
     "filePath": "game/asset/tmp/BOSS_1.sprite", 
     "fileTime": [
-      1331112265.0
+      1375370516.0
     ], 
     "manager": "asset_manager.aurora_sprite", 
     "modified": false, 
@@ -338,7 +340,7 @@
     "deploy": null, 
     "filePath": "game/asset/tmp/BOSS_2.png", 
     "fileTime": [
-      1368177150.0
+      1375370516.0
     ], 
     "manager": "asset_manager.texture", 
     "modified": false, 
@@ -357,7 +359,7 @@
     "deploy": null, 
     "filePath": "game/asset/tmp/BOSS_2.sprite", 
     "fileTime": [
-      1331112265.0
+      1375370516.0
     ], 
     "manager": "asset_manager.aurora_sprite", 
     "modified": false, 
@@ -389,7 +391,7 @@
     "deploy": null, 
     "filePath": "game/asset/tmp/BOSS_3.png", 
     "fileTime": [
-      1368179330.0
+      1375370516.0
     ], 
     "manager": "asset_manager.texture", 
     "modified": false, 
@@ -408,7 +410,7 @@
     "deploy": null, 
     "filePath": "game/asset/tmp/BOSS_3.sprite", 
     "fileTime": [
-      1331112265.0
+      1375370516.0
     ], 
     "manager": "asset_manager.aurora_sprite", 
     "modified": false, 
@@ -435,17 +437,19 @@
   }, 
   "好的.psd": {
     "cacheFiles": {
-      "config": "env/config/cache/好的_98ab98229399392eef482493c133d534"
+      "config": "env/config/cache/好的_98ab98229399392eef482493c133d534", 
+      "pixmap": "env/config/cache/好的_1d31489e6081db2698fcce4b5db51a44"
     }, 
     "deploy": null, 
     "filePath": "game/asset/好的.psd", 
     "fileTime": [
-      1358830192.0
+      1375370516.0
     ], 
     "manager": "asset_manager.texture", 
     "modified": false, 
     "objectFiles": {
-      "config": "env/config/cache/好的_98ab98229399392eef482493c133d534"
+      "config": "env/config/cache/好的_98ab98229399392eef482493c133d534", 
+      "pixmap": "env/config/cache/好的_1d31489e6081db2698fcce4b5db51a44"
     }, 
     "pDep": [], 
     "properties": {}, 
@@ -454,17 +458,19 @@
   }, 
   "摩艾君.png": {
     "cacheFiles": {
-      "config": "env/config/cache/摩艾君_09f70059f3a22fcbd4f6aeced9320844"
+      "config": "env/config/cache/摩艾君_09f70059f3a22fcbd4f6aeced9320844", 
+      "pixmap": "env/config/cache/摩艾君_f4568ccc091a4656112b3643fb154675"
     }, 
     "deploy": null, 
     "filePath": "game/asset/摩艾君.png", 
     "fileTime": [
-      1362749409.0
+      1375370516.0
     ], 
     "manager": "asset_manager.texture", 
     "modified": false, 
     "objectFiles": {
-      "config": "env/config/cache/摩艾君_09f70059f3a22fcbd4f6aeced9320844"
+      "config": "env/config/cache/摩艾君_09f70059f3a22fcbd4f6aeced9320844", 
+      "pixmap": "env/config/cache/摩艾君_f4568ccc091a4656112b3643fb154675"
     }, 
     "pDep": [], 
     "properties": {}, 

@@ -14,3 +14,4 @@ BUILD_RESULT
 packer
 host/ios/content
 test/game/assset
+test/env/cache

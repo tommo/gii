@@ -39,7 +39,7 @@ class AssetEditor( QtEditorModule ):
 		self.statusBar = QtGui.QStatusBar()
 		self.mainWindow.setStatusBar(self.statusBar)
 
-		self.mainToolBar = self.mainWindow.requestToolBar( 'main' )
+		self.mainToolBar = self.addToolBar( 'asset', self.mainWindow.requestToolBar( 'main' ) )
 
 		####
 		self.addMenu('main/asset', {'label':'&Asset'})
@@ -51,11 +51,7 @@ class AssetEditor( QtEditorModule ):
 			'main/asset/clear_free_meta', 
 			{ 'label' : 'Clear Metadata' }
 		)
-
-		##
-
-
-
+		
 
 	def onLoad( self ):
 		self.setupMainWindow()
@@ -101,6 +97,9 @@ class AssetEditor( QtEditorModule ):
 			self.getAssetLibrary().reset()
 		elif name == 'clear_free_meta':
 			self.getAssetLibrary().clearFreeMetaData()
+
+	def onTool( self, tool ):
+		print tool.name
 		
 AssetEditor().register()
 

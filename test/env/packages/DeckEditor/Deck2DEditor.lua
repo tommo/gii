@@ -53,7 +53,6 @@ function selectItem( item )
 	local deckType  = item.type
 	local srcPath   = item.src
 	local tex, node = mock.loadAsset( srcPath )
-	print( srcPath, tex, node )
 	if not tex then tex = mock.getTexturePlaceHolder() end
 
 	targetType = deckType
@@ -64,6 +63,10 @@ function selectItem( item )
 	end
 
 	prop = MOAIProp.new()
+	prop:setBlendMode( 
+		MOAIProp.GL_SRC_ALPHA, 
+		MOAIProp.GL_ONE_MINUS_SRC_ALPHA
+		) 
 	context:insertProp(prop)
 	local sub = tex.type == 'sub_texture'
 	local uv = false

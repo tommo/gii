@@ -7,9 +7,8 @@ from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
 from gii.core import *
 
-from gii.qt.controls.Window import MainWindow
-from gii.qt.controls.Menu   import MenuManager
-from QtEditorModule         import QtEditorModule
+from gii.qt.controls.Window    import MainWindow
+from QtEditorModule            import QtEditorModule
 
 
 _QT_SETTING_FILE = 'qt.ini'

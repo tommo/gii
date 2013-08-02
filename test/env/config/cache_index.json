@@ -55,13 +55,6 @@
     "src": "tmp/BOSS_3.sprite", 
     "touched": true
   }, 
-  "env/config/cache/default_a3f94954a4bf5116ade898aa561563dd": {
-    "file": "default_a3f94954a4bf5116ade898aa561563dd", 
-    "is_dir": true, 
-    "name": null, 
-    "src": "<texture_group>/default", 
-    "touched": true
-  }, 
   "env/config/cache/explorer_af873fef31f9a23bc58ba7349b7d526b": {
     "file": "explorer_af873fef31f9a23bc58ba7349b7d526b", 
     "is_dir": false, 
@@ -90,6 +83,13 @@
     "src": "anim/output_atlas.png", 
     "touched": true
   }, 
+  "env/config/cache/sprite1_62214c5098efb58342b604046e779131": {
+    "file": "sprite1_62214c5098efb58342b604046e779131", 
+    "is_dir": false, 
+    "name": "pixmap", 
+    "src": "test/sprite1.psd", 
+    "touched": true
+  }, 
   "env/config/cache/sprite1_994ed28dab925963c1dc608036cf0681": {
     "file": "sprite1_994ed28dab925963c1dc608036cf0681", 
     "is_dir": false, 
@@ -104,6 +104,13 @@
     "src": "<texture_group>/sprite", 
     "touched": true
   }, 
+  "env/config/cache/好的_1d31489e6081db2698fcce4b5db51a44": {
+    "file": "好的_1d31489e6081db2698fcce4b5db51a44", 
+    "is_dir": false, 
+    "name": "pixmap", 
+    "src": "好的.psd", 
+    "touched": true
+  }, 
   "env/config/cache/好的_98ab98229399392eef482493c133d534": {
     "file": "好的_98ab98229399392eef482493c133d534", 
     "is_dir": false, 
@@ -115,6 +122,13 @@
     "file": "摩艾君_09f70059f3a22fcbd4f6aeced9320844", 
     "is_dir": false, 
     "name": "config", 
+    "src": "摩艾君.png", 
+    "touched": true
+  }, 
+  "env/config/cache/摩艾君_f4568ccc091a4656112b3643fb154675": {
+    "file": "摩艾君_f4568ccc091a4656112b3643fb154675", 
+    "is_dir": false, 
+    "name": "pixmap", 
     "src": "摩艾君.png", 
     "touched": true
   }

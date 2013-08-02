@@ -86,4 +86,4 @@ gii.registerModelProvier{
 }
 
 --------------------------------------------------------------------
-mock.setLogLevel( 'status' )
+-- mock.setLogLevel( 'status' )

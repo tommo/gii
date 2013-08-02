@@ -2,8 +2,8 @@ from abc        import ABCMeta, abstractmethod
 
 from gii.core   import EditorModule
 
-from gii.qt.controls.Window import MainWindow
-from gii.qt.controls.Menu   import MenuManager
+from gii.qt.controls.Menu      import MenuManager
+from gii.qt.controls.ToolBar   import ToolBarManager
 
 ##----------------------------------------------------------------##
 _QT_SETTING_FILE = 'qt.ini'
@@ -102,6 +102,35 @@ class QtEditorModule( EditorModule ):
 			raise Exception('Menuitem not found:'+path)
 		node.setValue(checked)
 
+	#TOOLBar control
+	def addToolBar( self, name, toolbar ):
+		node = ToolBarManager.get().addToolBar(name, toolbar, self)		
+		return node
+
+	def addTool(self, path, **opiton ):
+		node = ToolBarManager.get().addTool(path, opiton, self)
+		return node
+
+	def findTool(self, path):
+		node = ToolBarManager.get().find(path)
+		return node
+
+	def disableTool(self,path):
+		self.enableTool(path, False)
+
+	def enableTool(self,path, enabled=True):
+		node = self.findTool(path)
+		if not node:
+			raise Exception('tool/toolbar not found:'+path)
+		node.setEnabled(enabled)
+
+	def checkTool(self,path,checked=True):
+		node=self.findTool(path)
+		if not node:
+			raise Exception('tool/toolbar not found:'+path)
+		node.setValue(checked)
+
+
 	#WINDOW STATE
 	def restoreWindowState(self, window, name=None):
 		if not name:
@@ -122,6 +151,9 @@ class QtEditorModule( EditorModule ):
 			self.setQtSetting( 'state_' + name, window.saveState())
 			
 	def onMenu(self, menuItem):
+		pass
+
+	def onTool(self, toolItem):
 		pass
 
 	def onSetFocus(self):

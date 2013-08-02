@@ -63,7 +63,10 @@ class TextureGroup( object ):
 		self.atlas_max_width    = gdata[ 'atlas_max_width' ]
 		self.atlas_max_height   = gdata[ 'atlas_max_height' ]
 		self.atlas_force_single = gdata[ 'atlas_force_single' ]
-		self.cache              = gdata.get( 'cache', None )
+		if not self.atlas_allowed:
+			self.cache = None
+		else:
+			self.cache = gdata.get( 'cache', None )
 
 
 ##----------------------------------------------------------------##

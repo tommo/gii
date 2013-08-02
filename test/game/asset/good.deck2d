@@ -3,10 +3,22 @@
   "items": [
     {
       "name": "\u597d\u7684", 
-      "ox": 38.97833251953125, 
-      "oy": 56.691650390625, 
+      "ox": 0, 
+      "oy": 0, 
       "src": "\u597d\u7684.psd", 
       "type": "quad"
+    }, 
+    {
+      "gutter": 0, 
+      "height": 26, 
+      "name": "sprite1_1", 
+      "offsetX": 0, 
+      "offsetY": 32, 
+      "ox": 0, 
+      "oy": 0, 
+      "src": "test/sprite1.psd", 
+      "type": "tileset", 
+      "width": 26
     }
   ]
 }

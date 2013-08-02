@@ -132,6 +132,12 @@ class TextureManager( AssetEditorModule ):
 				}
 			)
 
+		self.addTool( 
+			'asset/show_texture_manager',
+			label = 'Texture Manager',			
+			on_click = lambda item: self.setFocus()
+			)
+
 
 	def onStart( self ):
 		library = self.getModule( 'texture_library' )
@@ -190,7 +196,7 @@ class TextureManager( AssetEditorModule ):
 		for item in self.treeTextures.selectedItems():
 			node = item.node
 
-			node.setMetaData( 'group', group )
+			node.setMetaData( 'group', group, save = True )
 			self.treeTextures.updateItem( node )
 
 TextureManager().register()
