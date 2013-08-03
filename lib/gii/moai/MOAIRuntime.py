@@ -1,5 +1,5 @@
 import logging
-
+import os.path
 from gii.core import signals, EditorModule
 
 # from gii.core import Module, signals, getAppPath, unregisterModule, registerModule, App, Project
@@ -66,8 +66,9 @@ class MOAIRuntime( EditorModule ):
 		self.lastInputDeviceId = 0
 		
 		aku = getAKU()
-		self.luaRuntime = None
+		self.luaRuntime     = None
 		self.GLContextReady = False
+
 		aku.resetContext()
 		aku.setInputConfigurationName('GII')
 
@@ -77,6 +78,7 @@ class MOAIRuntime( EditorModule ):
 		_G['GII_PYTHON_BRIDGE']        = bridge
 		_G['GII_DATA_PATH']            = self.getApp().getPath('data')
 		_G['GII_PROJECT_SCRIPT_PATH']  = self.getProject().getScriptPath()
+		_G['GII_PROJECT_SCRIPT_LIB_PATH']  = self.getProject().getScriptLibPath()
 		logging.info( 'loading gii lua runtime' )
 		aku.runScript(
 			self.getApp().getPath( 'data/lua/runtime.lua' )
@@ -90,7 +92,7 @@ class MOAIRuntime( EditorModule ):
 		self.paused        = False
 		self.GLContextInitializer = None
 		
-		getAKU().setFuncOpenWindow( self.onOpenWindow )
+		getAKU().setFuncOpenWindow( self.onOpenWindow )		
 
 	def initGLContext( self ):
 		if self.GLContextReady: return True
@@ -109,8 +111,11 @@ class MOAIRuntime( EditorModule ):
 	# def setGLContextInitializer( self, func ):
 	# 	self.GLContextInitializer = func
 
-	def start( self ):
+	def onStart( self ):
 		self.initGLContext()
+		scriptInit = self.getProject().getScriptPath( 'init.lua' )
+		if os.path.exists( scriptInit ):
+			getAKU().runScript( scriptInit )
 
 	def reset(self):
 		if not self.AKUReady: return
@@ -277,8 +282,6 @@ class MOAIRuntime( EditorModule ):
 		self.AKUReady = False
 		signals.tryConnect ( 'console.exec', self.execConsole )
 		self.initContext()
-
-	def onStart( self ):
 		self.setWorkingDirectory( self.getProject().getPath() )
 
 	def onUnload(self):

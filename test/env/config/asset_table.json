@@ -169,21 +169,6 @@
     "rDep": [], 
     "type": "texture"
   }, 
-  "good.deck2d": {
-    "cacheFiles": {}, 
-    "deploy": null, 
-    "filePath": "game/asset/good.deck2d", 
-    "fileTime": [
-      1375374554.0
-    ], 
-    "manager": "asset_manager.deck2d", 
-    "modified": false, 
-    "objectFiles": {}, 
-    "pDep": [], 
-    "properties": {}, 
-    "rDep": [], 
-    "type": "deck2d"
-  }, 
   "main.stylesheet": {
     "cacheFiles": {}, 
     "deploy": null, 
@@ -245,6 +230,60 @@
     "properties": {}, 
     "rDep": [], 
     "type": "folder"
+  }, 
+  "test.deck2d": {
+    "cacheFiles": {}, 
+    "deploy": null, 
+    "filePath": "game/asset/test.deck2d", 
+    "fileTime": [
+      1375541546.0
+    ], 
+    "manager": "asset_manager.deck2d", 
+    "modified": false, 
+    "objectFiles": {}, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "deck2d"
+  }, 
+  "test.deck2d/sprite1": {
+    "cacheFiles": {}, 
+    "deploy": null, 
+    "filePath": false, 
+    "fileTime": 0, 
+    "manager": "asset_manager.deck2d", 
+    "modified": false, 
+    "objectFiles": {}, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "deck2d.quad"
+  }, 
+  "test.deck2d/好的": {
+    "cacheFiles": {}, 
+    "deploy": null, 
+    "filePath": false, 
+    "fileTime": 0, 
+    "manager": "asset_manager.deck2d", 
+    "modified": false, 
+    "objectFiles": {}, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "deck2d.quad"
+  }, 
+  "test.deck2d/摩艾君": {
+    "cacheFiles": {}, 
+    "deploy": null, 
+    "filePath": false, 
+    "fileTime": 0, 
+    "manager": "asset_manager.deck2d", 
+    "modified": false, 
+    "objectFiles": {}, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "deck2d.quad"
   }, 
   "test/sprite1.psd": {
     "cacheFiles": {

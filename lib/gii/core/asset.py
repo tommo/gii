@@ -21,7 +21,7 @@ class AssetException(Exception):
 ##----------------------------------------------------------------##
 class AssetNode(object):
 	def __init__(self, nodePath, assetType='file', **kwargs):	
-		if isinstance(nodePath, str):
+		if isinstance( nodePath, str ):
 			nodePath = nodePath.decode('utf-8')
 		
 		self.nodePath   = nodePath
@@ -57,7 +57,14 @@ class AssetNode(object):
 		self.properties={}		
 
 	def __repr__(self):	
-		return '<%s>%s'%(self.getType(),self.getNodePath().encode('utf-8'))
+		return u'<{0}>{1}'.format( self.getType(), self.getNodePath() ).encode('utf-8')
+		# p = self.getNodePath()
+		# t = self.getType()
+		# if isinstance( p, unicode ):
+		# 	p = p.encode('utf-8')
+		# if isinstance( t, unicode ):
+		# 	t = t.encode('utf-8')
+		# return '<%s>%s'%( t, p )
 
 	def getType(self):
 		return self.assetType

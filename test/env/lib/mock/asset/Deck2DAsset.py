@@ -23,7 +23,14 @@ class Deck2DAssetManager(AssetManager):
 
 	def importAsset(self, node, option=None):
 		node.assetType = 'deck2d'
+		data = jsonHelper.tryLoadJSON( node.getAbsFilePath() )
+		if data:
+			for item in data.get( 'items', [] ):
+				deckType = 'deck2d.' + item['type']
+				name  =  item['name']
+				node.createChildNode( name ,  deckType, manager = self )
 		return True
+
 
 	def editAsset(self, node):	
 		editor = app.getModule( 'deck2d_editor' )

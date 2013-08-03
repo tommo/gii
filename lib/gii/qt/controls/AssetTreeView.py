@@ -59,22 +59,6 @@ class AssetTreeView( GenericTreeWidget ):
 	def getHeaderInfo( self ):
 		return [('Name',200), ('Deploy',30), ('Type',60)]
 
-	def onClicked(self, item, col):
-		pass
-
-	def onDClicked(self, item, col):
-		node=item.node
-		if node:
-			node.edit()
-
-	def onItemSelectionChanged(self):
-		items = self.selectedItems()
-		if items:
-			selections = [item.node for item in items]
-			app.getSelectionManager().changeSelection(selections)
-		else:
-			app.getSelectionManager().changeSelection(None)
-
 	def _updateItem(self, node, updateLog=None, **option):
 		super( AssetTreeView, self )._updateItem( node, updateLog, **option )
 

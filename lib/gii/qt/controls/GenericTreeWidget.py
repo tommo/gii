@@ -27,6 +27,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.itemDoubleClicked    .connect( self.onDClicked )
 		self.itemClicked          .connect( self.onClicked )
 		self.itemSelectionChanged .connect( self.onItemSelectionChanged )
+		self.itemActivated        .connect( self.onItemActivated)
 
 		self.setIndentation( 15 )
 
@@ -119,16 +120,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		
 	##----------------------------------------------------------------##
 	## VIRTUAL Functions
-	##----------------------------------------------------------------##
-	def onClicked(self, item, col):
-		pass
-
-	def onDClicked(self, item, col):
-		pass
-		
-	def onItemSelectionChanged(self):
-		pass
-	
+	##----------------------------------------------------------------##	
 	def saveTreeStates( self ):
 		pass
 
@@ -153,5 +145,19 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def getHeaderInfo( self ):
 		return [('Name',100), ('State',30)]
 
+	##----------------------------------------------------------------##
+	# Event Callback
+	##----------------------------------------------------------------##
+	def onClicked(self, item, col):
+		pass
 
+	def onDClicked(self, item, col):
+		pass
+		
+	def onItemSelectionChanged(self):
+		pass
+
+	def onItemActivated(self, item, col):
+		pass
+	
 		

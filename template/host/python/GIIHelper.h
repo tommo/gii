@@ -1,5 +1,5 @@
-#ifndef	MOEIHELPER_H
-#define	MOEIHELPER_H
+#ifndef	GIIHELPER_H
+#define	GIIHELPER_H
 #include <pch.h>
 #include <moaicore/MOAIActionMgr.h>
 #include <moaicore/MOAIDebugLines.h>
@@ -13,8 +13,8 @@
 #include <moaicore/MOAITextureBase.h>
 
 
-class MOEIHelper:
-	public MOAIGlobalClass < MOEIHelper, MOAILuaObject > 
+class GIIHelper:
+	public MOAIGlobalClass < GIIHelper, MOAILuaObject > 
 {
 private:
 	
@@ -24,20 +24,20 @@ private:
 	static int _renderFrameBuffer   ( lua_State* L );
 public:
 	
-	DECL_LUA_SINGLETON ( MOEIHelper )
+	DECL_LUA_SINGLETON ( GIIHelper )
 
 	//
 	void stepSim( double step );
 
 	//----------------------------------------------------------------//
-	MOEIHelper();
-	~MOEIHelper();
+	GIIHelper();
+	~GIIHelper();
 	
 	void			RegisterLuaClass	( MOAILuaState& state );
 };
 
 extern "C"{
-	void registerMOEIHelper();
+	void registerGIIHelper();
 }
 
 

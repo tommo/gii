@@ -1,14 +1,14 @@
-#include <MOEIHelper.h>
+#include <GIIHelper.h>
 
-int MOEIHelper::_stepSim( lua_State *L){
+int GIIHelper::_stepSim( lua_State *L){
 	MOAILuaState state (L);
 	if ( !state.CheckParams ( 1, "N" )) return 0;
 	double step=state.GetValue<double>(1, 0);
-	MOEIHelper::Get().stepSim(step);
+	GIIHelper::Get().stepSim(step);
 	return 0;
 }
 
-int MOEIHelper::_setBufferSize( lua_State *L){
+int GIIHelper::_setBufferSize( lua_State *L){
 	MOAILuaState state (L);
 	if ( !state.CheckParams ( 1, "NN" )) return 0;
 	u32 width=state.GetValue<u32>(1, 0);
@@ -17,7 +17,7 @@ int MOEIHelper::_setBufferSize( lua_State *L){
 	return 0;
 }
 
-int MOEIHelper::_renderFrameBuffer( lua_State *L ){
+int GIIHelper::_renderFrameBuffer( lua_State *L ){
 	MOAILuaState state (L);
 	if ( !state.CheckParams ( 1, "U" )) return 0;
 	MOAIFrameBuffer* frameBuffer = state.GetLuaObject < MOAIFrameBuffer >( 1, false );
@@ -27,22 +27,22 @@ int MOEIHelper::_renderFrameBuffer( lua_State *L ){
 	return 0;
 }
 
-void MOEIHelper::stepSim( double step ){
+void GIIHelper::stepSim( double step ){
 	MOAIInputMgr::Get ().Update ();
 	MOAIActionMgr::Get ().Update (( float )step );		
 	MOAINodeMgr::Get ().Update ();
 }
 
 
-MOEIHelper::MOEIHelper(){
+GIIHelper::GIIHelper(){
 	RTTI_BEGIN
 		RTTI_SINGLE(MOAILuaObject)
 	RTTI_END
 }
 
-MOEIHelper::~MOEIHelper(){}
+GIIHelper::~GIIHelper(){}
 
-void MOEIHelper::RegisterLuaClass(MOAILuaState &state){
+void GIIHelper::RegisterLuaClass(MOAILuaState &state){
 	luaL_Reg regTable [] = {
 		{ "stepSim",             _stepSim },
 		{ "setBufferSize",       _setBufferSize },

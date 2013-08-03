@@ -46,6 +46,7 @@ class MockBridge( EditorModule ):
 		self.syncAssetLibrary()
 
 	def onMoaiReset(self):		
+		_MOCK.loadAssetLibrary()
 		_MOCK._setTarget( _G['mock'] )
 
 	def getMockEnv( self ):

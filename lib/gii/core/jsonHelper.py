@@ -11,7 +11,7 @@ def saveJSON( data, path ):
 
 def loadJSON( path ):
 	fp = file(path)
-	data = json.load(fp)
+	data = json.load( fp, 'utf-8' )
 	fp.close()
 	return data
 

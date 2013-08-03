@@ -20,11 +20,8 @@ class SceneEditor( QtEditorModule ):
 	def __init__( self ):
 		pass
 
-	def getName( self ):
-		return 'scene_editor'
-
 	def getDependency( self ):
-		return [ 'qt', 'mock' ]
+		return [ 'qt' ]
 
 	def setupMainWindow( self ):
 		self.mainWindow = QtMainWindow(None)

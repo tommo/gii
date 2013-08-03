@@ -6,7 +6,7 @@ from PyQt4 import QtCore,QtGui
 from PyQt4.QtCore import Qt, QEvent, QObject
 
 from gii    import signals
-from gii.qt import QtEditorModule
+from gii.SceneEditor import SceneEditorModule
 
 import ui_console
 
@@ -45,14 +45,14 @@ class StdouCapture():
 				if not output: output=''
 				output+=line
 		
-class Console( QtEditorModule ):
+class Console( SceneEditorModule ):
 	"""docstring for Console"""
 
 	def getName(self):
 		return 'console'
 
 	def getDependency(self):
-		return ['qt']
+		return ['qt', 'scene_editor']
 
 	def write(self,text):
 		self.panel.appendText(text)		
@@ -61,8 +61,8 @@ class Console( QtEditorModule ):
 
 		self.container = self.requestDockWindow('Console',
 				title   = 'Console',
-				dock    = 'bottom',
-				minSize = (100,100)
+				minSize = (100,100),
+				dock    = 'bottom'
 			)
 		self.panel = self.container.addWidget(
 				ConsoleWindow()
@@ -76,6 +76,9 @@ class Console( QtEditorModule ):
 	def doRefresh(self):
 		if self.alive:
 			self.panel.appendText(self.stdoutCapture.read())
+
+	def onStart( self ):
+		self.container.show()
 
 	def onUnload(self):
 		# self.refreshTimer.stop()

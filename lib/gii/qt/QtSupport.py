@@ -126,6 +126,14 @@ class QtSupport( QtEditorModule ):
 
 	def getQtSettingObject( self ):
 		return self.qtSetting
+	
+	def onStart( self ):
+		self.restoreWindowState( self.mainWindow )
+		# from gii.qt.dialogs import requestColor
+		# requestColor( '???' )
+
+	def onStop( self ):
+		self.saveWindowState( self.mainWindow )
 
 	def onMenu(self, node):
 		name = node.name
@@ -150,3 +158,24 @@ class QtMainWindow( MainWindow ):
 			event.ignore()
 		else:
 			pass
+
+##----------------------------------------------------------------##
+class QtGlobalModule( QtEditorModule ):
+	"""docstring for QtGlobalModule"""
+	def getMainWindow( self ):
+		qt = self.getQtSupport()
+		return qt.getMainWindow()
+
+	def requestDockWindow( self, id = None, **windowOption ):
+		raise Exception( 'only subwindow supported for globalModule' )
+
+	def requestDocumentWindow( self, id = None, **windowOption ):
+		raise Exception( 'only subwindow supported for globalModule' )
+
+	def requestSubWindow( self, id = None, **windowOption ):
+		if not id: id = self.getName()
+		mainWindow = self.getMainWindow()
+		container = mainWindow.requestSubWindow( id, **windowOption )
+		# self.containers[id] = container
+		return container
+		

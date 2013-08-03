@@ -37,7 +37,7 @@ class AssetBrowser( AssetEditorModule ):
 				self.getApp().getPath( 'data/ui/search.ui' ),
 				expanding = False
 			)
-		self.treeView  = self.container.addWidget(AssetTreeView())
+		self.treeView  = self.container.addWidget(AssetBrowserTreeView())
 
 
 		signals.connect( 'module.loaded',        self.onModuleLoaded )		
@@ -47,7 +47,10 @@ class AssetBrowser( AssetEditorModule ):
 		self.treeView.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
 		self.treeView.customContextMenuRequested.connect( self.onTreeViewContextMenu)
 
-		self.creatorMenu=self.addMenu('main/asset/asset_create',{'label':'Create'})
+		self.creatorMenu=self.addMenu(
+			'main/asset/asset_create',
+			{ 'label':'Create' }
+			)
 
 		self.assetContextMenu=self.addMenu('asset_context')
 		self.assetContextMenu.addChild([
@@ -104,7 +107,7 @@ class AssetBrowser( AssetEditorModule ):
 		def creatorFunc(value=None):
 			contextNode = app.getSelectionManager().getSingleSelection()
 			if not isinstance(contextNode, AssetNode):
-				contextNode = app.getAssetLibrary().getRootNode()				
+				contextNode = app.getAssetLibrary().getRootNode()
 
 			name = requestString('Create Asset <%s>' % assetType, 'Enter asset name' )
 			if not name: return
@@ -119,9 +122,9 @@ class AssetBrowser( AssetEditorModule ):
 		#insert into toolbar box?
 		#insert into create menu
 		self.creatorMenu.addChild({
-				'name':'create_'+assetType,
-				'label':label,
-				'onClick':creatorFunc
+				'name'     : 'create_'+assetType,
+				'label'    : label,
+				'on_click' : creatorFunc
 			})
 
 	def onTreeViewContextMenu(self, point):
@@ -209,6 +212,25 @@ class AssetBrowser( AssetEditorModule ):
 			for n in app.getSelectionManager().getSelection():
 				text += n.getNodePath() + '\n'
 				setClipboardText( text )
+
+##----------------------------------------------------------------##
+class AssetBrowserTreeView( AssetTreeView ):
+	def onClicked(self, item, col):
+		pass
+
+	def onItemActivated(self, item, col):
+		node=item.node
+		if node:
+			node.edit()
+
+	def onItemSelectionChanged(self):
+		items = self.selectedItems()
+		if items:
+			selections = [item.node for item in items]
+			app.getSelectionManager().changeSelection(selections)
+		else:
+			app.getSelectionManager().changeSelection(None)
+##----------------------------------------------------------------##
 
 
 AssetBrowser().register()

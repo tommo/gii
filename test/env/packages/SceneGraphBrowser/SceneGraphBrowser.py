@@ -6,12 +6,12 @@ from gii.qt          import QtEditorModule
 from gii.qt.IconCache                  import getIcon
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.moai.MOAIRuntime import MOAILuaDelegate
+from gii.SceneEditor      import SceneEditorModule
 
 ##----------------------------------------------------------------##
 from PyQt4           import QtCore, QtGui, uic
 from PyQt4.QtCore    import Qt
 
-from SceneEditor     import SceneEditorModule
 ##----------------------------------------------------------------##
 from mock import _MOCK, isMockInstance
 ##----------------------------------------------------------------##

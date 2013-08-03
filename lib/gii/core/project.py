@@ -11,13 +11,16 @@ from cache   import CacheManager
 from asset   import AssetLibrary
 ##----------------------------------------------------------------##
 _GII_ENV_DIR            = 'env'
-_GII_BINARY_DIR         = 'bin'
 _GII_GAME_DIR           = 'game'
-_GII_SCRIPT_DIR         = _GII_GAME_DIR + '/script'
+_GII_HOST_DIR           = 'host'
+_GII_BINARY_DIR         = 'bin'
+
 _GII_ASSET_DIR          = _GII_GAME_DIR + '/asset'
-_GII_SRC_DIR            = _GII_GAME_DIR + '/src'
-_GII_SRC_HOST_DIR       = _GII_SRC_DIR  + '/host'
-_GII_SRC_EXTENSION_DIR  = _GII_SRC_DIR  + '/extension'
+_GII_SCRIPT_DIR         = _GII_GAME_DIR + '/script'
+_GII_SCRIPT_LIB_DIR     = _GII_GAME_DIR + '/lib'
+
+_GII_HOST_EXTENSION_DIR = _GII_HOST_DIR  + '/extension'
+
 _GII_ENV_PACKAGE_DIR    = _GII_ENV_DIR  + '/packages'
 _GII_ENV_LIB_DIR        = _GII_ENV_DIR  + '/lib'
 _GII_ENV_CONFIG_DIR     = _GII_ENV_DIR  + '/config'
@@ -100,11 +103,10 @@ class Project(object):
 		self.assetPath         = path + '/' + _GII_ASSET_DIR
 
 		self.scriptPath        = path + '/' + _GII_SCRIPT_DIR
+		self.scriptLibPath     = path + '/' + _GII_SCRIPT_LIB_DIR
 
-		self.srcPath           = path + '/' + _GII_SRC_DIR
-		self.srcExtensionPath  = path + '/' + _GII_SRC_EXTENSION_DIR
-		self.srcHostPath       = path + '/' + _GII_SRC_HOST_DIR
-
+		self.hostPath          = path + '/' + _GII_HOST_DIR
+		self.hostExtensionPath = path + '/' + _GII_HOST_EXTENSION_DIR
 
 	def _affirmDirectories( self ):
 		#mkdir - lv1
@@ -118,9 +120,10 @@ class Project(object):
 		_mkdir( self.gamePath )
 		_mkdir( self.assetPath )
 		_mkdir( self.scriptPath )
-		_mkdir( self.srcPath )
-		_mkdir( self.srcExtensionPath )
-		_mkdir( self.srcHostPath )
+		_mkdir( self.scriptLibPath )
+		
+		_mkdir( self.hostPath )
+		_mkdir( self.hostExtensionPath )
 		
 	def init( self, path ):
 		prjPath = Project.findProject( path )
@@ -211,6 +214,9 @@ class Project(object):
 
 	def getScriptPath(self, path=None):
 		return _makePath( self.scriptPath, path)
+
+	def getScriptLibPath(self, path=None):
+		return _makePath( self.scriptLibPath, path)
 
 	def isProjectFile(self, path):
 		path    = os.path.abspath( path )

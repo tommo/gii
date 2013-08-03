@@ -44,9 +44,11 @@ deckModels={
 		'Quad',
 		[
 			( 'name', unicode,  dict(label = 'Name', readonly = True) ),
-			( 'src',  unicode,  dict(label = 'Source', readonly = True) ),
+			( 'tex',  unicode,  dict(label = 'Texture', readonly = True) ),
 			( 'ox',   int,      dict(label = 'Origin X')),
 			( 'oy',   int,      dict(label = 'Origin Y')),
+			( 'w',    float,    dict(label = 'Width')),
+			( 'h',    float,    dict(label = 'Height')),
 		]
 	),
 
@@ -54,7 +56,7 @@ deckModels={
 		'Stretch Patch',
 		[
 			( 'name', unicode,  dict(label = 'Name', readonly = True) ),
-			( 'src',  unicode,  dict(label = 'Source', readonly = True) ),
+			( 'tex',  unicode,  dict(label = 'Texture', readonly = True) ),
 			( 'ox',   int,      dict(label = 'Origin X')),
 			( 'oy',   int,      dict(label = 'Origin Y')),
 			( 'row1', float ),
@@ -70,7 +72,7 @@ deckModels={
 		'Tile Set',
 		[
 			( 'name',    unicode,  dict(label = 'Name', readonly = True) ),
-			( 'src',     unicode,  dict(label = 'Source', readonly = True) ),
+			( 'tex',     unicode,  dict(label = 'Texture', readonly = True) ),
 			( 'ox',      int,      dict(label = 'Origin X')),
 			( 'oy',      int,      dict(label = 'Origin Y')),
 			( 'width',   int ),
@@ -246,7 +248,7 @@ class MockStyleSheetEditor( AssetEditorModule ):
 			#create item
 			item = { 
 				'name' : n.getBaseName(),
-				'src'  : n.getPath(),
+				'tex'  : n.getPath(),
 				'type' : atype
 				}
 			newItems.append( item )

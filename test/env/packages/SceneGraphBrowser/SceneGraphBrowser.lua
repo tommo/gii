@@ -16,7 +16,6 @@ end
 
 function onSceneEnter( scn )
 	_owner:addScene( scn )
-	print('adding scene', scn)
 	scn:setEntityListener( onEntityEvent )	
 end
 

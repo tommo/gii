@@ -81,7 +81,6 @@ def requestColor(prompt, initColor = None, **kwargs):
 		col = dialog.currentColor()
 		dialog.destroy()
 		if col.isValid(): return col
-	print 'cacnel', initColor
 	return initColor
 
 	# col = None

@@ -51,8 +51,8 @@ end
 
 function selectItem( item )
 	local deckType  = item.type
-	local srcPath   = item.src
-	local tex, node = mock.loadAsset( srcPath )
+	local texPath   = item.tex
+	local tex, node = mock.loadAsset( texPath )
 	if not tex then tex = mock.getTexturePlaceHolder() end
 
 	targetType = deckType
@@ -214,7 +214,11 @@ function updateItemFromEditor( item, key, value )
 	originX = getDict( item, 'ox', 0 )
 	originY = getDict( item, 'oy', 0 )
 
-	if targetType =='tileset' then
+	if targetType == 'quad' then
+		width = getDict( item, 'width',  -1 )
+		height = getDict( item, 'height', -1 )
+
+	elseif targetType =='tileset' then
 		tileWidth  = getDict( item, 'width',  32 )
 		tileHeight = getDict( item, 'height', 32 )
 		gutter     = getDict( item, 'gutter',  0 )

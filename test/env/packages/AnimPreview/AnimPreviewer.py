@@ -35,6 +35,7 @@ class AnimPreviewer(AssetPreviewer):
 		atype = assetNode.getType()
 		self.listAnim.clear()
 		if atype=='aurora_sprite':
+			self.canvas.makeCurrent()
 			self.canvas.safeCall( 'showAuroraSprite', assetNode.getPath() )
 			self.canvas.startUpdateTimer( 60 )
 			animNames = self.canvas.getDelegateEnv( 'animClipNames' ) 
