@@ -205,7 +205,7 @@ function Game:init( option )
 	end
 
 	----make inputs work
-	initInputEventHandlers()
+	initDefaultInputEventHandlers()
 
 	----audio
 	initFmodDesigner()

@@ -2,15 +2,15 @@ import os.path
 import time
 import logging
 
-from PyQt4        import QtCore, QtGui, QtOpenGL
-from PyQt4.QtCore import Qt
-
-from gii.qt       import QtEditorModule
-from gii.core     import signals, app
+from gii.qt                 import QtEditorModule
+from gii.core               import signals, app
 from gii.qt.controls.Window import MainWindow
 
-from MOAIRuntime  import getAKU
-from canvas       import MOAICanvasBase
+from MOAIRuntime            import getAKU
+from MOAICanvasBase         import MOAICanvasBase
+
+from PyQt4                  import QtCore, QtGui, QtOpenGL
+from PyQt4.QtCore           import Qt
 
 ##----------------------------------------------------------------##
 class MOAIGameView( QtEditorModule ):

@@ -27,50 +27,87 @@ module 'mock'
 
 require 'mock.core.keymaps'
 
-----------States
-local inputDeviceName = 'device'
+CLASS: InputManager()
+function InputManager:__init( deviceName )
+	self.inputDeviceName = assert( deviceName )
+	self.allowTouchSimulation = true
+	self.enabled = true
+	---TOUCH
+	self.touchListeners = {}
+	self.touchCount  = 16
+	self.touches     = {}
+	self.touchStates = {}
 
-local allowTouchSimulation = true
+	---KEY
+	self.keyboardListeners = {}
+	self.keyStates   = {}
 
-local touchCount  = 16
-local touches     = {}
-local touchStates    = {}
+	---MOUSE
+	self.mouseListeners  = {}
+	self.mouseRandomness = false
+	self.mouseState  = {
+		x       = 0,
+		y       = 0,
+		scrollX = 0,
+		scrollY = 0,
+		--button states
+		left      = false,
+		right     = false,
+		middle    = false,
+		leftHit   = 0,
+		rightHit  = 0,
+		middleHit = 0,
+	}
 
-local keyStates   = {}
+	--MOTION
+	self.motionAccuracy  = 1
+	self.motionListeners = {}
+	self.motionState = {
+			x = 0,
+			y = 0,
+			z = 0,
+		}
 
-local mouseState  = {
-	x       = 0,
-	y       = 0,
-	scrollX = 0,
-	scrollY = 0,
-	--button states
-	left      = false,
-	right     = false,
-	middle    = false,
-	leftHit   = 0,
-	rightHit  = 0,
-	middleHit = 0,
-}
+	--LEVEL
+	self.levelState = {
+		x = 0,
+		y = 0,
+		z = 0,
+	}
+
+	--COMPASS
+	self.compassHeading = 0
+	self.compassListeners = {}
+
+end
+
+function InputManager:getSensor( name )
+	local dev = MOAIInputMgr[ self.inputDeviceName ]
+	if dev then
+		return dev[name]
+	else
+		_error( 'no input device found:', self.inputDeviceName )
+		return nil
+	end
+end
 
 -----Common Control
-local userInputEnabled = true
 
-function disableUserInput()
-	userInputEnabled=false
+function InputManager:disable()
+	self.enabled=false
 end
 
-function enableUserInput()
-	userInputEnabled=true
+function InputManager:enable()
+	self.enabled=true
 end
 
-function isUserInputEnabled()
-	return userInputEnabled
+function InputManager:isEnabled()
+	return self.enabled
 end
 
 -------Touch Event Listener
-
-function getTouchState(id)
-	local s = touchStates[ id ]
+function InputManager:getTouchState( id )
+	local s = self.touchStates[ id ]
 	if not s then
 		s = {
 			id   = id,
@@ -78,32 +115,31 @@ function getTouchState(id)
 			x = 0,
 			y = 0
 		}
-		touchStates[ id ] = s
+		self.touchStates[ id ] = s
 	end
 	return s
 end
 
-for i = 0, 16 do
-	getTouchState( i )
+function InputManager:addTouchListener( func )
+	self.touchListeners[ func ] = true
 end
 
-local touchListeners={}
-function addTouchListener( func )
-	touchListeners[ func ] = true
-end
-
-function removeTouchListener( func )
-	touchListeners[ func ] = nil
+function InputManager:removeTouchListener( func )
+	self.touchListeners[ func ] = nil
 end
 
 local function sendTouchEvent( evtype, id, x, y, mockup )
-	for func in pairs( touchListeners ) do
+	for func in pairs( self.touchListeners ) do
 		func( evtype, id, x, y, mockup )
 	end
 end
 
-function initTouchEventHandler()
-	local sensor = MOAIInputMgr[ inputDeviceName ][ 'touch' ]
+function InputManager:initTouchEventHandler()
+	for i = 0, 16 do
+		self:getTouchState( i ) --prebuild touch states
+	end
+
+	local sensor = self:getSensor( 'touch' )
 	if not sensor then return end
 
 	local TOUCH_DOWN   = MOAITouchSensor. TOUCH_DOWN
@@ -112,21 +148,21 @@ function initTouchEventHandler()
 	local TOUCH_CANCEL = MOAITouchSensor. TOUCH_CANCEL
 
 	local function onTouchEvent ( eventType, idx, x, y, tapCount )
-		if not userInputEnabled then return end
-		local touchState = getTouchState( idx )
+		if not self.enabled then return end
+		local touchState = self:getTouchState( idx )
 		touchState.x = x
 		touchState.y = y
 
 		if eventType == TOUCH_DOWN then
 			touchState.down = true
-			sendTouchEvent( 'down', idx, x, y, false )
+			self:sendTouchEvent( 'down', idx, x, y, false )
 		elseif eventType == TOUCH_UP then
 			touchState.down = false
-			sendTouchEvent( 'up',   idx, x, y, false )
+			self:sendTouchEvent( 'up',   idx, x, y, false )
 		elseif eventType == TOUCH_MOVE then				
-			sendTouchEvent( 'move', idx, x, y, false )
+			self:sendTouchEvent( 'move', idx, x, y, false )
 		elseif eventType == TOUCH_CANCEL then
-			sendTouchEvent( 'cancel' )
+			self:sendTouchEvent( 'cancel' )
 		end
 	end
 
@@ -135,15 +171,16 @@ function initTouchEventHandler()
 end
 
 -------Mouse Event Listener
-function isMouseDown( btn )
-	return mouseState[ btn ]
+function InputManager:isMouseDown( btn )
+	return self.mouseState[ btn ]
 end
 
-function isMouseUp( btn )
-	return not mouseState[ btn ]
+function InputManager:isMouseUp( btn )
+	return not self.mouseState[ btn ]
 end
 
-function pollMouseHit( btn )
+function InputManager:pollMouseHit( btn )
+	local mouseState = self.mouseState
 	if btn == 'left' then
 		local count = mouseState.leftHit
 		mouseState.leftHit = 0
@@ -160,31 +197,29 @@ function pollMouseHit( btn )
 	return 0 
 end
 
-
-function getMouseLoc()
+function InputManager:getMouseLoc()
+	local mouseState = self.mouseState
 	return mouseState.x, mouseState.y
 end
 
-local mouseListeners={}
-function addMouseListener( func )
-	mouseListeners[func] = true
+function InputManager:addMouseListener( func )
+	self.mouseListeners[func] = true
 end
 
-function removeMouseListener( func )
-	mouseListeners[func] = nil
+function InputManager:removeMouseListener( func )
+	self.mouseListeners[func] = nil
 end
 
-local mouseRandomness = false
-function setMouseRandomness( func )
-	mouseRandomness = func or false
+function InputManager:setMouseRandomness( func )
+	self.mouseRandomness = func or false
 end
 
-local function sendMouseEvent( evtype, x, y, btn, mockup )
-	for func in pairs(mouseListeners) do
+function InputManager:sendMouseEvent( evtype, x, y, btn, mockup )
+	for func in pairs( self.mouseListeners ) do
 		func( evtype, x, y, btn, mockup )
 	end
 	if allowTouchSimulation then
-		local down = mouseState.left		
+		local down = self.mouseState.left
 		local simTouchId = 1
 		if evtype == 'move' then
 			if down then
@@ -198,27 +233,28 @@ local function sendMouseEvent( evtype, x, y, btn, mockup )
 	end
 end
 
-function initMouseEventHandler()
-	local pointerSensor = MOAIInputMgr[ inputDeviceName ][ 'pointer' ]
+function InputManager:initMouseEventHandler()
+	local pointerSensor = self:getSensor( 'pointer' )
 	if pointerSensor then
 		pointerSensor:setCallback(
 			function( x, y )
-				if not userInputEnabled then return end
+				if not self.enabled then return end
+				local mouseState = self.mouseState
 				mouseState.x, mouseState.y = x, y
-				return sendMouseEvent( 'move', x, y, false, false)
+				return self:sendMouseEvent( 'move', x, y, false, false)
 			end)
 	end
 
 	local function setupMouseButtonCallback( sensorName, btnName )
-		local buttonSensor = MOAIInputMgr[ inputDeviceName ][ sensorName ]
+		local buttonSensor = self:getSensor( sensorName )
 		if buttonSensor then
 			buttonSensor:setCallback ( 
 				function( down ) 
-					if not userInputEnabled then return end
+					if not self.enabled then return end
 					mouseState[ btnName ] = down
 					local x, y = mouseState.x, mouseState.y
 					local ev = down and 'down' or 'up'
-					return sendMouseEvent( ev, x, y, btnName, false )
+					return self:sendMouseEvent( ev, x, y, btnName, false )
 				end 
 			)
 		end
@@ -232,61 +268,61 @@ end
 
 
 -------Keyboard Event Listener
-local keyCodeMap = getKeyMap()
-local keyNames   = {}
-for k,v in pairs( keyCodeMap ) do
-	keyNames[ v ] = k
-	keyStates[ k ] = { down = false, hit = 0 }
-end
 
-function isKeyDown(key)
-	local state = keyStates[ key ]
+function InputManager:isKeyDown(key)
+	local state = self.keyStates[ key ]
 	return state and state.down
 end
 
-function isKeyUp(key)
-	local state = keyStates[ key ]
+function InputManager:isKeyUp(key)
+	local state = self.keyStates[ key ]
 	return state and ( not state.down )
 end
 
 
-function pollKeyHit(key) --get key hit counts since last polling
+function InputManager:pollKeyHit(key) --get key hit counts since last polling
+	local keyStates = self.keyStates
+
 	local state = keyStates[ key ]
 	if not state then return 0 end
-
 	local count = keyStates[ key ].hit
 	keyStates[ key ].hit = 0
 	return count
 end
 
-local keyboardListeners={}
 
-function addKeyboardListener( func )
-	keyboardListeners[ func ] = true
+function InputManager:addKeyboardListener( func )
+	self.keyboardListeners[ func ] = true
 end
 
-function removeKeyboardListener( func )
-	keyboardListeners[ func ] = nil
+function InputManager:removeKeyboardListener( func )
+	self.keyboardListeners[ func ] = nil
 end
 
-local function sendKeyEvent( key, down, mockup )
-	local state = keyStates[ key ]
+function InputManager:sendKeyEvent( key, down, mockup )
+	local state = self.keyStates[ key ]
 	if state then 
 		state.down = down
 		state.hit  = state.hit + 1
 	end
-	for func in pairs(keyboardListeners) do
+	for func in pairs( self.keyboardListeners ) do
 		func( key, down, mockup )
 	end
 end
 
-function initKeyboardEventHandler()
-	local sensor = MOAIInputMgr[ inputDeviceName ][ 'keyboard' ]
+function InputManager:initKeyboardEventHandler()
+	local keyStates = self.keyStates
+	local keyCodeMap = getKeyMap()
+	local keyNames   = {}
+	for k,v in pairs( keyCodeMap ) do
+		keyNames[ v ] = k
+		keyStates[ k ] = { down = false, hit = 0 }
+	end
+	local sensor = self:getSensor( 'keyboard' )
 	if not sensor then return end
-
 	local function onKeyboardEvent ( key, down )
-		if not userInputEnabled then return end
-		local name= keyNames[key] or key
+		if not self.enabled then return end
+		local name = keyNames[key] or key
 		return sendKeyEvent( name, down, false )
 	end
 	
@@ -294,71 +330,109 @@ function initKeyboardEventHandler()
 end
 
 -------JOYSTICK Event Listener
-function initJoystickEventHandler()
-	--TODO
+function InputManager:sendJoystickEvent( ev, x, y, z )
+	--TODO:
+end
+
+function InputManager:initJoystickEventHandler()
+	--TODO:
 end
 
 -------Acceleratemeter Event Listener
-local motionAccuracy=1
-local lx,ly,lz
+function InputManager:setMotionAccuracy(f)
+	self.motionAccuracy = 10^(-f)
+end
+
+function InputManager:addMotionListener(func)
+	self.motionListeners[func] = true
+end
+
+function InputManager:removeMotionListener(func)
+	self.motionListeners[func] = nil
+end
 
 local floor=math.floor
-local function reduceAccuracy(v)
+local function reduceAccuracy( v ,motionAccuracy )
 	return floor(v*1000000*motionAccuracy)/motionAccuracy/1000000
 end
 
-function setMotionAccuracy(f)
-	motionAccuracy=10^(-f)
-end
-
-
-local motionListeners={}
-function addMotionListener(func)
-	motionListeners[func]=true
-end
-
-function removeMotionListener(func)
-	motionListeners[func]=nil
-end
-
-local function sendMotionEvent(x,y,z)
-	x,y,z=reduceAccuracy(x),reduceAccuracy(y),reduceAccuracy(z)
-	if lx~=x or ly~=y or lz~=z then
-		lx=x
-		ly=y
-		lz=z
-		for listener in pairs(motionListeners) do
-			listener(x,y,z)
-		end
+function InputManager:sendMotionEvent(x,y,z)
+	local acc = self.motionAccuracy
+	local x, y, z = 
+		reduceAccuracy( x, acc ), reduceAccuracy( y, acc ), reduceAccuracy( z, acc )
+	local state = self.motionState
+	for listener in pairs( self.motionListeners ) do
+		listener( x, y, z )
+	end
+	if state.x~=x or state.y~=y or state.z~=z then
+		state.x = x
+		state.y = y
+		state.z = z
 	end
 end
 
-local function onMotionEvent(...)
-	return sendMotionEvent(...)
-end
-
-function initMotionEventHandler()
-	setMotionAccuracy(2)
+function InputManager:initMotionEventHandler()
+	self:setMotionAccuracy(2)
 	--TODO
 end
 
--------Level Event Listener
-function getLevelData()
+---Gyrosopce
+function InputManager:getLevelData()
 	if level then
 		return level:getLevel()
 	end
 end	
-
-function initLevelEventHandler()
+-- 
+function InputManager:initLevelEventHandler()
 	--TODO
-	local level = MOAIInputMgr.device.level
-
+	local level = self:getSensor( 'level' )
 	if level then
-		MOAIInputMgr.device.level:setCallback(onMotionEvent)
+		MOAIInputMgr.device.level:setCallback( onMotionEvent )
 	end
-
 end
 
+----Compass
+function InputManager:addCompassListener( func )
+	self.compassListeners[ func ] = true
+end
+
+function InputManager:removeCompassListener( func )
+	self.compassListeners[ func ] = nil
+end
+
+function InputManager:sendCompassEvent( heading, mockup )
+	self.compassHeading = compassHeading
+	for func in pairs( self.compassListeners ) do
+		func( heading, mockup )
+	end
+end
+
+function InputManager:getCompassHeading()
+	return self.compassHeading
+end
+
+function InputManager:initCompassEventHandler()
+	local sensor = self:getSensor('compass')
+	if not sensor then return end
+	sensor:setCallBack( function( heading )
+		return self:sendCompassEvent( heading )
+	end)
+end 
+
+----Location
+function InputManager:getLocation()
+	local sensor = self:getSensor('location')
+	if not sensor then return nil end
+	local lng, lat, ha, alt, va, speed = sensor:getLocation()
+	return {
+		longitude = lng,
+		latitude  = lat,
+		haccuracy = ha,
+		altitude  = alt,
+		vaccuracy = va,
+		speed     = speed
+	}
+end
 
 ------------Expose Event Sender for input mockup
 _sendTouchEvent  = sendTouchEvent
@@ -369,12 +443,143 @@ _sendLevelEvent  = sendLevelEvent
 
 
 -----------ENTRY
-function initInputEventHandlers()
-	initTouchEventHandler    ()
-	initKeyboardEventHandler ()
-	initMouseEventHandler    ()
+function InputManager:initInputEventHandlers()
+	self:initTouchEventHandler    ()
+	self:initKeyboardEventHandler ()
+	self:initMouseEventHandler    ()
 	-- TODO: implement belows
-	initJoystickEventHandler ()
-	initMotionEventHandler   ()
-	initLevelEventHandler    ()
+	self:initJoystickEventHandler ()
+	-- self:initMotionEventHandler   ()
+	self:initLevelEventHandler    ()
+	self:initCompassEventHandler  ()
+end
+
+--------------------------------------------------------------------
+---default input manager
+--------------------------------------------------------------------
+
+_defaultInputManger = InputManager( 'game' )
+
+function initDefaultInputEventHandlers()
+	return _defaultInputManger:init()
+end
+
+
+function disableUserInput()
+	_defaultInputManger:disable()
+end
+
+function enableUserInput()
+	_defaultInputManger:enable()	
+end
+
+function isUserInputEnabled()
+	return _defaultInputManger:isEnabled()
+end
+
+---touch
+function getTouchState(id)
+	return _defaultInputManger:getTouchState( id )
+end
+
+function addTouchListener( func )
+	_defaultInputManger:addTouchListener( func )
+end
+
+function removeTouchListener( func )
+	_defaultInputManger:removeTouchListener( func )
+end
+
+--mouse
+function isMouseDown( btn )
+	return _defaultInputManger:isMouseDown( btn )
+end
+
+function isMouseUp( btn )
+	return _defaultInputManger:isMouseUp( btn )
+end
+
+function pollMouseHit( btn )
+	return _defaultInputManger:pollMouseHit( btn )
+end
+
+function getMouseLoc()
+	return _defaultInputManger:getMouseLoc()
+end
+
+function addMouseListener( func )
+	return _defaultInputManger:addMouseListener( func )
+end
+
+function removeMouseListener( func )
+	return _defaultInputManger:removeMouseListener( func )
+end
+
+function setMouseRandomness( f )
+	return _defaultInputManger:setMouseRandomness( f )
+end
+
+---KEY
+
+function isKeyDown(key)
+	return _defaultInputManger:isKeyDown(key)	
+end
+
+function isKeyUp(key)
+	return _defaultInputManger:isKeyUp(key)	
+end
+
+function pollKeyHit(key) --get key hit counts since last polling
+	return _defaultInputManger:pollKeyHit(key)	
+end
+
+function addKeyboardListener( func )
+	return _defaultInputManger:addKeyboardListener( func )
+end
+
+function removeKeyboardListener( func )
+	return _defaultInputManger:removeKeyboardListener( func )
+end
+
+--JOYSTICK
+
+--MOTION
+--GYROSCOPE
+
+--COMPASS
+function addCompassListener( func )
+	return _defaultInputManger:addCompassListener( func )
+end
+
+function removeCompassListener( func )
+	return _defaultInputManger:removeCompassListener( func )
+end
+
+function getCompassHeading()
+	return _defaultInputManger:getCompassHeading()
+end
+
+--LOCATION
+function getLocation()
+	return _defaultInputManger:getLocation()
+end
+
+----FAKE INPUT
+function _sendTouchEvent( ... )
+	return _defaultInputManger:sendTouchEvent( ... )
+end
+function _sendMouseEvent( ... )
+	return _defaultInputManger:sendMouseEvent( ... )
+end
+function _sendKeyEvent( ... )
+	return _defaultInputManger:sendKeyEvent( ... )
+end
+function _sendJoystickEvent( ... )
+	return _defaultInputManger:sendJoystickEvent( ... )
+end
+function _sendMotionEvent( ... )
+	return _defaultInputManger:sendMotionEvent( ... )
+end
+function _sendLevelEvent( ... )
+	return _defaultInputManger:sendLevelEvent( ... )
 end
