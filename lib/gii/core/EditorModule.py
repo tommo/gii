@@ -63,9 +63,9 @@ class EditorModule( object ):
 		Project.get().setConfig( fullname, value )
 
 	def getConfig( self, name, defaultValue=None ):
-		assert(isinstance(name, (str,unicode)))
+		assert( isinstance(name, (str,unicode)) )
 		fullname = self.getName()+'/'+name
-		Project.get().getConfig( fullname, defaultValue )
+		return Project.get().getConfig( fullname, defaultValue )
 	
 	def isDependencyReady(self):
 		dep=self.getDependency()

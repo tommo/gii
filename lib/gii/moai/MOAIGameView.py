@@ -111,15 +111,11 @@ class MOAIGameView( QtEditorModule ):
 		signals.connect( 'game.pause',     self.onGamePause )
 		signals.connect( 'game.resume',    self.onGameResume )
 		signals.connect( 'moai.reset',     self.onMoaiReset )
-
 		self.menu = self.addMenu( 'main/game', dict( label = 'Game' ) )
 		self.menu.addChild([
-				'----',
-				{'name':'orient_landscape', 'label':'Landscape'  },
-				{'name':'orient_portrait', 'label':'Portrait'  },
-				'----',
-				{'name':'size_original', 'label':'Original Size' },
-				{'name':'size_double',   'label':'Double Size'   },
+				{'name':'run_game',   'label':'Run Game' },
+				{'name':'pause_game', 'label':'Pause Game' },
+				{'name':'stop_game',  'label':'Stop Game' },
 				'----',
 				{'name':'pause_on_leave','label':'Pause On Leave', 'type':'check', 'checked':self.getConfig('pause_on_leave')},
 				'----',
@@ -276,7 +272,7 @@ class MOAIGameView( QtEditorModule ):
 				self.tryResizeContainer(w,h)
 
 		elif name=='pause_on_leave':
-			self.setSettingValue('pause_on_leave', node.getValue())
+			self.setConfig( 'pause_on_leave', node.getValue())
 
 		elif name=='reset_moai':
 			#TODO: dont simply reset in debug
