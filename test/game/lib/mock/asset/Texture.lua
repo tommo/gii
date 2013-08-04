@@ -150,9 +150,9 @@ end
 
 -------main
 local function loadTexture( node )
-	local configPath = node.objectFiles[ 'config' ]
+	local configPath = node:getAbsObjectFile( 'config' )
 	
-	local config = loadAssetDataTable( absProjectPath( configPath ) ) or defaultTextureConfig
+	local config = loadAssetDataTable( configPath ) or defaultTextureConfig
 	if not config[ 'atlas_allowed' ] then
 		local pixmapPath = node.objectFiles[ 'pixmap' ]
 		return loadSingleTexture( pixmapPath, config )

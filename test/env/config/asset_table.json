@@ -216,6 +216,21 @@
     "rDep": [], 
     "type": "font_ttf"
   }, 
+  "mother": {
+    "cacheFiles": {}, 
+    "deploy": null, 
+    "filePath": "game/asset/mother", 
+    "fileTime": [
+      1375598148.0
+    ], 
+    "manager": null, 
+    "modified": true, 
+    "objectFiles": {}, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "folder"
+  }, 
   "test": {
     "cacheFiles": {}, 
     "deploy": null, 

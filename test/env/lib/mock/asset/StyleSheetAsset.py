@@ -1,7 +1,8 @@
 import os.path
-from gii.core import AssetManager, AssetLibrary, app
+from gii.core import AssetManager, AssetLibrary, AssetCreator, app
 import json
 
+##----------------------------------------------------------------##
 class StyleSheetAssetManager(AssetManager):
 	def getName(self):
 		return 'asset_manager.stylesheet'
@@ -33,6 +34,40 @@ class StyleSheetAssetManager(AssetManager):
 		editor.setFocus()
 		editor.startEdit( node )
 
-StyleSheetAssetManager().register()
-AssetLibrary.get().setAssetIcon('stylesheet', 'text')
+##----------------------------------------------------------------##
+class StyleSheetCreator( AssetCreator ):
+	def getAssetType( self ):
+		return 'stylesheet'
 
+	def getLabel( self ):
+		return 'Style Sheet'
+
+	def createAsset(self, name, contextNode, assetType):
+		ext = '.stylesheet'
+		filename = name + ext
+
+		if contextNode.isType( 'folder' ):
+			nodepath = contextNode.getChildPath(filename)
+			print nodepath
+		else:
+			nodepath = contextNode.getSiblingPath(filename)
+
+		fullpath = AssetLibrary.get().getAbsPath( nodepath )
+		data={
+			'_assetType':'stylesheet', #checksum
+			'styles':[]
+		}
+		print fullpath
+		if os.path.exists( fullpath ):
+			raise Exception( 'File already exist: %s' % fullpath )
+		fp = open( fullpath, 'w' )
+		json.dump(data, fp, sort_keys=True,indent=2)
+		fp.close()
+		return nodepath
+
+
+##----------------------------------------------------------------##
+StyleSheetAssetManager().register()
+StyleSheetCreator().register()
+
+AssetLibrary.get().setAssetIcon('stylesheet', 'text')

@@ -16,8 +16,6 @@ class AssetBrowser( AssetEditorModule ):
 	"""docstring for AssetBrowser"""
 	def __init__(self):
 		super(AssetBrowser, self).__init__()
-
-		self.creators          = []
 		self.newCreateNodePath = None
 
 	def getName(self):
@@ -81,9 +79,9 @@ class AssetBrowser( AssetEditorModule ):
 		#persist expand state
 		self.treeView.saveTreeStates()
 
-	def onModuleLoaded(self):		
-		for setting in self.creators:
-			self._loadCreator(setting)
+	def onModuleLoaded(self):				
+		for creator in self.getAssetLibrary().assetCreators:
+			self.loadAssetCreator(creator)
 
 	def setAssetIcon(self, assetType, iconName):
 		self.assetIconMap[assetType] = iconName
@@ -95,12 +93,7 @@ class AssetBrowser( AssetEditorModule ):
 			item.setSelected( True )
 			self.treeView.scrollToItem( item )
 
-	def registerAssetCreator( self, creator ):		
-		self.creators.append( creator )
-		if self.alive:
-			self._loadCreator( setting )
-
-	def _loadCreator(self, creator):
+	def loadAssetCreator(self, creator):
 		label     = creator.getLabel()
 		assetType = creator.getAssetType()		
 

@@ -5,6 +5,8 @@ import logging
 import os.path
 import weakref
 
+from abc import ABCMeta, abstractmethod
+
 import jsonHelper
 import signals
 import AssetUtils
@@ -393,6 +395,25 @@ class RawAssetManager(AssetManager):
 		return True
 
 ##----------------------------------------------------------------##
+class AssetCreator(object):
+	__metaclass__ = ABCMeta
+
+	@abstractmethod
+	def getAssetType( self ):
+		return 'name'
+
+	@abstractmethod
+	def getLabel( self ):
+		return 'Label'
+
+	def register( self ):
+		return AssetLibrary.get().registerAssetCreator( self )
+
+	def createAsset(self, name, contextNode, assetType):
+		return False
+
+
+##----------------------------------------------------------------##
 class AssetLibrary(object):
 	"""docstring for AssetLibrary"""
 	_singleton=None
@@ -407,6 +428,7 @@ class AssetLibrary(object):
 
 		self.assetTable      = {}
 		self.assetManagers   = []
+		self.assetCreators   = []
 
 		self.rawAssetManager = RawAssetManager()
 		
@@ -498,6 +520,9 @@ class AssetLibrary(object):
 
 		self.assetManagers.append(manager)
 		return manager
+
+	def registerAssetCreator(self, creator):
+		self.assetCreators.append( creator )
 
 	def getAssetManager(self, name, allowRawManager = False ):
 		for mgr in self.assetManagers:

@@ -91,6 +91,20 @@ function AssetNode:getFilePath( )
 end
 
 
+function AssetNode:getAbsObjectFile( name )
+	local path = self.objectFiles[ name ]
+	if path then
+		return absProjectPath( path )
+	else
+		return false
+	end
+end
+
+function AssetNode:getAbsFilePath()
+	return absProjectPath( self.filePath )
+end
+
+
 
 function registerAssetNode( path, data )
 	ppath=splitPath(path)

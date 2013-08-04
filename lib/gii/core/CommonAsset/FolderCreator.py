@@ -2,7 +2,6 @@ import os
 import os.path
 
 from gii.core         import *
-from AssetCreator     import AssetCreator
 ##----------------------------------------------------------------##
 class FolderCreator(AssetCreator):
 	def getAssetType( self ):

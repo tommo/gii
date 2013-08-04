@@ -2,24 +2,18 @@ import os.path
 from gii.core import *
 import json
 
-
+##----------------------------------------------------------------##
 class Deck2DAssetManager(AssetManager):
 	def getName(self):
 		return 'asset_manager.deck2d'
 
-	def acceptAssetFile(self, filepath):
-		if not os.path.isfile( filepath ): return False		
-		name, ext = os.path.splitext( filepath )
+	def acceptAssetFile(self, filePath):
+		if not os.path.isfile( filePath ): return False		
+		name, ext = os.path.splitext( filePath )
 		if not ext in ( '.deck2d' ): return False
 		#validation
-		try:
-			fp = open( filepath, 'r' )
-			text = fp.read()
-			fp.close()
-			data = json.loads( text )
-			return data.get( '_assetType', None ) == 'deck2d'
-		except Exception, e:
-			pass
+		data = jsonHelper.tryLoadJSON( filePath )
+		return data and data.get( '_assetType', None ) == 'deck2d'		
 
 	def importAsset(self, node, option=None):
 		node.assetType = 'deck2d'
@@ -39,8 +33,38 @@ class Deck2DAssetManager(AssetManager):
 		
 		editor.startEdit( node )
 
+##----------------------------------------------------------------##
+class Deck2DCreator(AssetCreator):
+	def getAssetType( self ):
+		return 'deck2d'
 
+	def getLabel( self ):
+		return 'Deck2D Pack'
+
+	def createAsset( self, name, contextNode, assetType ):
+		ext = '.deck2d'
+		filename = name + ext
+		if contextNode.isType('folder'):
+			nodepath = contextNode.getChildPath( filename )
+		else:
+			nodepath = contextNode.getSiblingPath( filename )
+
+		fullpath = AssetLibrary.get().getAbsPath( nodepath )
+		data={
+			'_assetType' : 'deck2d', #checksum
+			'items':[]
+		}
+		if os.path.exists(fullpath):
+			raise Exception('File already exist:%s'%fullpath)
+		fp = open(fullpath,'w')
+		json.dump( data, fp, sort_keys=True, indent=2 )
+		fp.close()
+		return nodepath
+		
+##----------------------------------------------------------------##
 Deck2DAssetManager().register()
+Deck2DCreator().register()
+
 AssetLibrary.get().setAssetIcon( 'deck2d',              'pack' )
 AssetLibrary.get().setAssetIcon( 'deck2d.quad',         'deck_quad' )
 AssetLibrary.get().setAssetIcon( 'deck2d.tileset',      'deck_tileset' )

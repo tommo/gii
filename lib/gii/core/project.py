@@ -209,6 +209,12 @@ class Project(object):
 	def getConfigPath(self, path=None):
 		return _makePath( self.envConfigPath, path)
 
+	def getBinaryPath(self, path=None):
+		return _makePath( self.binaryPath, path)
+
+	def getGamePath(self, path=None):
+		return _makePath( self.gamePath, path)
+
 	def getAssetPath(self, path=None):
 		return _makePath( self.assetPath, path)
 

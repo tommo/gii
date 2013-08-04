@@ -1,2 +1,1 @@
-import StyleSheetCreator
 import StyleSheetEditor
