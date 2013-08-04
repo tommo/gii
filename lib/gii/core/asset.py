@@ -337,6 +337,7 @@ class AssetNode(object):
 		fp.write(text)
 		fp.close()
 
+		self.markModified()
 		return True
 
 ##----------------------------------------------------------------##

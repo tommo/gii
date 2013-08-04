@@ -94,10 +94,10 @@ function loadLuaWithEnv(file, env, ...)
 	local function _f()
 		return func( unpack( args ))
 	end
-	local function _onError( ... )
-		print ( ... )
-		print( debug.traceback( 2 ) )
-		return ...
+	local function _onError( err, level )
+		print ( err )
+		print( debug.traceback( level or 2 ) )
+		return err, level
 	end
 
 	local succ, err = xpcall( _f, _onError )

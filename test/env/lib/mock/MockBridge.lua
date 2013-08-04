@@ -86,7 +86,7 @@ gii.registerModelProvier{
 }
 
 local function onContextChange( ctx, oldCtx )
-	mock.game.currentRenderContext = ctx
+	mock.game:setCurrentRenderContext( ctx )
 end
 
 gii.addContextChangeListeners( onContextChange )

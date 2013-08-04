@@ -20,16 +20,16 @@ local ContextChangeListeners = {}
 function createRenderContext(key)
 	local root = MOAICoroutine.new()
 	local context = {
-		key         = key,
-		w           = false,
-		h           = false,
-		clearColor  = { 0,0,0,0 },
-		actionRoot  = root
+		key              = key,
+		w                = false,
+		h                = false,
+		clearColor       = { 0,0,0,0 },
+		actionRoot       = root,
+		bufferTable      = {},
+		renderTableMap   = setmetatable( {}, { __mode = 'v' } ),
 	}
-	renderContextTable[key] = context
-
+	renderContextTable[ key ] = context
 	root:run( function() local dt = coroutine.yield() end )
-	
 end
 
 
@@ -50,11 +50,20 @@ function changeRenderContext(key, w, h)
 		f( key, currentContextKey )
 	end
 
+	local deviceBuffer = MOAIGfxDevice.getFrameBuffer()
+
 	if currentContext then --persist context
-		local fb = MOAIGfxDevice.getFrameBuffer()
-		currentContext.actionRoot  = MOAIActionMgr.getRoot()
-		currentContext.renderTable = fb:getRenderTable()
-		currentContext.bufferTable = MOAIRenderMgr.getBufferTable()
+		local bufferTable  = MOAIRenderMgr.getBufferTable()
+		local renderTableMap = {}
+		for i, fb in pairs( bufferTable ) do
+			if fb ~= deviceBuffer then
+				renderTableMap[i] = { fb, fb:getRenderTable() } 
+			end
+		end
+		currentContext.bufferTable       = bufferTable
+		currentContext.renderTableMap    = renderTableMap
+		currentContext.deviceRenderTable = deviceBuffer:getRenderTable()
+		currentContext.actionRoot        = MOAIActionMgr.getRoot()
 		-- local res = gii.bridge.GLHelper.getClearColor()
 		-- currentContext.clearColor=gii.listToTable(res)
 	end
@@ -63,11 +72,16 @@ function changeRenderContext(key, w, h)
 	
 	currentContext    = context
 	currentContextKey = key
-	MOAIGfxDevice.getFrameBuffer():setRenderTable( currentContext.renderTable )
 	-- local r,g,b,a=unpack(currentContext.clearColor)
 	-- MOAIGfxDevice.getFrameBuffer():setClearColor(r,g,b,a)
-	MOAIRenderMgr.setBufferTable( currentContext.bufferTable )	
-	MOAIActionMgr.setRoot( currentContext.actionRoot )
+	for i, p in ipairs( currentContext.renderTableMap ) do
+		local fb = p[1]
+		local rt = p[2]
+		fb:setRenderTable( rt )
+	end
+	MOAIRenderMgr.setBufferTable ( currentContext.bufferTable )	
+	deviceBuffer:setRenderTable  ( currentContext.deviceRenderTable )
+	MOAIActionMgr.setRoot        ( currentContext.actionRoot )
 end
 
 
@@ -79,12 +93,16 @@ end
 -- 	end
 -- end
 
-function getCurrentContextKey()
+function getCurrentRenderContextKey()
 	return currentContextKey
 end
 
-function getCurrentContext()
+function getCurrentRenderContext()
 	return currentContext
+end
+
+function getRenderContext( key )
+	return renderContextTable[ key ]
 end
 
 

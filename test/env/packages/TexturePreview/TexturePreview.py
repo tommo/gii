@@ -1,5 +1,5 @@
 from gii.AssetEditor         import AssetPreviewer
-from gii.moai.MOAIEditCanvas import MOAIEditCanvas
+from mock.editor import MOCKEditCanvas
 
 def _getModulePath( path ):
 	import os.path
@@ -7,8 +7,8 @@ def _getModulePath( path ):
 
 class TexturePreviewer(AssetPreviewer):
 	def createWidget(self, container):
-		self.canvas = MOAIEditCanvas( container )
-		self.canvas.loadScript( _getModulePath('TexturePreview.lua') )
+		self.canvas = MOCKEditCanvas( container )
+		self.canvas.loadScript( _getModulePath('TexturePreview2.lua') )
 		return self.canvas
 
 	def accept(self, assetNode):

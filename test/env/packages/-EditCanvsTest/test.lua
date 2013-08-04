@@ -12,7 +12,7 @@ end
 CLASS: EditCanvasCamera ( mock.Camera )
 function EditCanvasCamera:__init()
 	canvasCameras[ self ] = true
-	self.context = gii.getCurrentContextKey()
+	self.context = gii.getCurrentRenderContextKey()
 end
 
 function EditCanvasCamera:getGameViewRect()
@@ -31,7 +31,7 @@ function TestScene:onEnter()
 end
 
 function TestScene:getActionRoot()
-	local ctx = gii.getCurrentContext()
+	local ctx = gii.getCurrentRenderContext()
 	return ctx.actionRoot
 end
 

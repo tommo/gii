@@ -19,6 +19,12 @@ end
 function InputScript:onAttach( entity )
 	local refuseMockUpInput = not self.acceptMockUpInput
 	local option = self.option
+
+	local inputDeviceName = self.option['device'] or 'device'
+	local inputDevice = getInputDevice( inputDeviceName )
+
+	self.inputDevice = inputDevice
+
 	----link callbacks
 	self.mouseCallback    = false
 	self.keyboardCallback = false
@@ -44,7 +50,7 @@ function InputScript:onAttach( entity )
 				return onMouseEvent( entity, ev, x, y, btn, mock )
 			end
 		end
-		addMouseListener( self.mouseCallback )
+		inputDevice:addMouseListener( self.mouseCallback )
 	end
 
 	----TouchEvent
@@ -69,7 +75,7 @@ function InputScript:onAttach( entity )
 				return onTouchEvent( entity, ev, id, x, y, mock )
 			end
 		end
-		addTouchListener( self.TouchCallback )
+		inputDevice:addTouchListener( self.TouchCallback )
 	end
 
 	----KeyEvent
@@ -88,7 +94,7 @@ function InputScript:onAttach( entity )
 				return onKeyEvent( entity, key, down, mock )
 			end
 		end
-		addKeyboardListener( self.keyboardCallback )
+		inputDevice:addKeyboardListener( self.keyboardCallback )
 	end
 	
 	---JOYSTICK EVNET

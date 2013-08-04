@@ -42,8 +42,6 @@ function AuroraSprite:__init( option )
 		if option.sprite then	self:load( option.sprite ) end
 		setupMoaiProp( self.prop, option )
 	end
-
-
 end
 
 function AuroraSprite:onAttach( entity )

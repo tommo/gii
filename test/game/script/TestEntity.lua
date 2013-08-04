@@ -14,3 +14,6 @@ function TestEntity:onLoad()
 end
 
 
+mock.registerEntityType( 'Test', TestEntity )
+--------------------------------------------------------------------
+

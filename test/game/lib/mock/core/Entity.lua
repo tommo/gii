@@ -537,3 +537,21 @@ function Entity:inside( x, y, z, pad )
 end
 
 
+--------------------------------------------------------------------
+--- Registry
+--------------------------------------------------------------------
+
+local entityTypeRegistry = {}
+function registerEntityType( name, creator )
+	assert( not entityTypeRegistry[ name ], 'duplicated entity type:'..name )
+	entityTypeRegistry[ name ] = creator
+end
+
+function getEntityRegistry()
+	return entityTypeRegistry
+end
+
+function getEntityType( name )
+	return entityTypeRegistry[ name ]
+end
+

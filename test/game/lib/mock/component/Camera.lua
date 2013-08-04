@@ -23,34 +23,53 @@ local function findMainCameraForScene( scene )
 end
 
 local function updateRenderStack()
-	local context = game.currentRenderContext
+	--TODO: render order of framebuffers
+	local contextMap = {}
+
 	local renderTableMap = {}
 	local bufferTable    = {}
 	local deviceBuffer   = MOAIGfxDevice.getFrameBuffer()
 	local count = 0
-
 	table.sort( globalCameraList, prioritySortFunc )
 
 	for _, cam in ipairs( globalCameraList ) do
-		if cam.context == context then
-			local fb = cam:getFrameBuffer()
-			local rt = renderTableMap[ fb ]
+		local context = cam.context
+		local renderData = contextMap[ context ]
+		if not renderData then
+			renderData = {
+				renderTableMap    = {},
+				bufferTable       = {},
+				deviceRenderTable = {}
+			}
+			contextMap[ context ] = renderData
+		end
+
+		local fb = cam:getFrameBuffer()
+		local rt
+		if fb ~= deviceBuffer then
+			rt = renderData.renderTableMap[ fb ]
 			if not rt then
 				rt = {}
-				renderTableMap[ fb ] = rt
-				fb:setRenderTable( rt )
+				renderData.renderTableMap[ fb ] = rt
 				if fb ~= deviceBuffer then --add framebuffer by camera order
-					insert( bufferTable, fb )
+					insert( renderData.bufferTable, fb )
 				end
 			end
-			for i, layer in ipairs( cam.moaiLayers ) do
-				count = count + 1
-				insert( rt, layer )
-			end
+		else
+			rt = renderData.deviceRenderTable
 		end
+
+		for i, layer in ipairs( cam.moaiLayers ) do
+			count = count + 1
+			insert( rt, layer )
+		end
+
 	end
 
-	MOAIRenderMgr.setBufferTable( bufferTable )
+	for context, renderData in pairs( contextMap ) do
+		game:setRenderStack( context, renderData.deviceRenderTable, renderData.bufferTable, renderData.renderTableMap )		
+	end
+
 end
 
 local function _onScreenResize( w, h )
@@ -347,3 +366,6 @@ _wrapMethods(Camera, '_camera', {
 	})
 
 wrapWithMoaiTransformMethods( Camera, '_camera' )
+
+
+registerComponentType( 'Camera', Camera)

@@ -39,50 +39,6 @@ def _fixDuplicatedName( names, name, id = None ):
 		return testName
 
 ##----------------------------------------------------------------##
-deckModels={
-	'quad' : ObjectModel.fromList( 
-		'Quad',
-		[
-			( 'name', unicode,  dict(label = 'Name', readonly = True) ),
-			( 'tex',  unicode,  dict(label = 'Texture', readonly = True) ),
-			( 'ox',   int,      dict(label = 'Origin X')),
-			( 'oy',   int,      dict(label = 'Origin Y')),
-			( 'w',    float,    dict(label = 'Width')),
-			( 'h',    float,    dict(label = 'Height')),
-		]
-	),
-
-	'stretchpatch' : ObjectModel.fromList( 
-		'Stretch Patch',
-		[
-			( 'name', unicode,  dict(label = 'Name', readonly = True) ),
-			( 'tex',  unicode,  dict(label = 'Texture', readonly = True) ),
-			( 'ox',   int,      dict(label = 'Origin X')),
-			( 'oy',   int,      dict(label = 'Origin Y')),
-			( 'row1', float ),
-			( 'row2', float ),
-			( 'row3', float ),
-			( 'col1', float ),
-			( 'col2', float ),
-			( 'col3', float ),
-		]
-	),
-
-	'tileset' : ObjectModel.fromList( 
-		'Tile Set',
-		[
-			( 'name',    unicode,  dict(label = 'Name', readonly = True) ),
-			( 'tex',     unicode,  dict(label = 'Texture', readonly = True) ),
-			( 'ox',      int,      dict(label = 'Origin X')),
-			( 'oy',      int,      dict(label = 'Origin Y')),
-			( 'width',   int ),
-			( 'height',  int ),
-			( 'gutter',  int ),
-			( 'offsetX', int ),
-			( 'offsetY', int ),
-		]
-	)
-}
 
 class MockStyleSheetEditor( AssetEditorModule ):
 	"""docstring for MockStyleSheetEditor"""
@@ -117,12 +73,12 @@ class MockStyleSheetEditor( AssetEditorModule ):
 			window.settingsContainer
 		)
 
-		self.previewCanvas = addWidgetWithLayout(
+		self.canvas = addWidgetWithLayout(
 			MOAIEditCanvas(window.canvasContainer),
 			window.canvasContainer
 		)
-		self.previewCanvas.loadScript( _getModulePath('Deck2DEditor.lua') )
-		self.previewCanvas.setDelegateEnv( 'updateEditor', self.onCanvasUpdateRequested )
+		self.canvas.loadScript( _getModulePath('Deck2DEditor.lua') )
+		self.canvas.setDelegateEnv( 'updateEditor', self.onCanvasUpdateRequested )
 
 		#setup listwidget
 		listSprites = window.listSprites
@@ -154,7 +110,6 @@ class MockStyleSheetEditor( AssetEditorModule ):
 
 
 		self.propGrid .propertyChanged .connect(self.onPropertyChanged)
-		# window.textPreview.textChanged.connect( self.onPreviewTextChanged )
 		signals.connect('asset.modified', self.onAssetModified)
 
 		self.container.setEnabled( False )
@@ -178,42 +133,14 @@ class MockStyleSheetEditor( AssetEditorModule ):
 		assert node.getType() == 'deck2d'
 		self.editingAsset = node
 		self.container.setDocumentName( node.getNodePath() )
-		self.propGrid.setTarget(node)
-		
-		self.window.show()
-		self.refreshList()
-		self.editingPack = node.loadAsJson()
-		
-		for item in self.editingPack.get('items', []):
-			self.addListItem( item )
-
-		self.previewCanvas.safeCall('openAsset', node.getPath().encode('utf-8'))
+		self.canvas.safeCall('openAsset', node.getPath())
 
 	def refreshList(self):
 		self.window.listSprites.clear()
 
 	def onCanvasUpdateRequested(self):
 		item = self.editingItem
-		if not item : return
-		canvas = self.previewCanvas
-		
-		item [ 'ox' ] = canvas.getDelegateEnv( 'originX', 0 )
-		item [ 'oy' ] = canvas.getDelegateEnv( 'originY', 0 )
-
-		if item['type'] == 'stretchpatch':
-			item [ 'row1' ] = canvas.getDelegateEnv( 'row1', 0.33 )
-			item [ 'row2' ] = canvas.getDelegateEnv( 'row2', 0.33 )
-			item [ 'row3' ] = canvas.getDelegateEnv( 'row3', 0.33 )
-			item [ 'col1' ] = canvas.getDelegateEnv( 'col1', 0.33 )
-			item [ 'col2' ] = canvas.getDelegateEnv( 'col2', 0.33 )
-			item [ 'col3' ] = canvas.getDelegateEnv( 'col3', 0.33 )
-			
-		if item['type'] == 'tileset':
-			item [ 'width' ]   = canvas.getDelegateEnv( 'tileWidth', 32 )
-			item [ 'height' ]  = canvas.getDelegateEnv( 'tileHeight', 32 )
-			item [ 'gutter' ]  = canvas.getDelegateEnv( 'gutter', 0 )
-			item [ 'offsetX' ] = canvas.getDelegateEnv( 'offsetX', 0 )
-			item [ 'offsetY' ] = canvas.getDelegateEnv( 'offsetY', 0 )
+		if not item : return		
 		self.propGrid.refreshAll()
 
 	def onAddQuad( self ):
@@ -237,36 +164,7 @@ class MockStyleSheetEditor( AssetEditorModule ):
 	def addItem( self, atype ):
 		if not self.editingAsset: return
 		s = self.getSelectionManager().getSelection()
-		if not s: return
-		newItems = []
-		for n in s:
-			if not isinstance(n, AssetNode): continue
-			if n==self.editingAsset: continue
-			if self.editingAsset.hasDependency(n): continue
-			if n.hasDependency(self.editingAsset): continue
-			if not n.getType() in ( 'texture', 'sub_texture' ): continue #TODO: support sub_texture
-			#create item
-			item = { 
-				'name' : n.getBaseName(),
-				'tex'  : n.getPath(),
-				'type' : atype
-				}
-			newItems.append( item )
-
-		#rename duplicated one		
-		packItems = self.editingPack['items']
-		names = [ item0['name'] for item0 in packItems ]
-		for item in newItems: 
-			name = _fixDuplicatedName( names , item['name'] )
-			item['name'] = name
-			names.append( name )
-			packItems.append( item )
-
-		for item in newItems: 
-			#insert into listWidget
-			self.addListItem( item )
-			pass
-
+		if not s: return		
 		self.saveAsset()
 
 	def addListItem( self, item ):
@@ -282,7 +180,6 @@ class MockStyleSheetEditor( AssetEditorModule ):
 			listItem.setIcon( 0, getIcon('deck_quad_array'))
 		else:
 			listItem.setIcon( 0, getIcon('deck_quad'))
-
 
 		rootItem.addChild( listItem )
 		return listItem
@@ -306,7 +203,7 @@ class MockStyleSheetEditor( AssetEditorModule ):
 
 	def setOrigin( self, direction ):
 		if not self.editingItem: return 
-		self.previewCanvas.safeCall( 'setOrigin', direction )		
+		self.canvas.safeCall( 'setOrigin', direction )		
 
 	def onPreviewTextChanged( self ):
 		pass
@@ -324,12 +221,12 @@ class MockStyleSheetEditor( AssetEditorModule ):
 			deckType = sp ['type']
 			
 			self.propGrid.setTarget( sp, model = deckModels[ deckType ] )
-			self.previewCanvas.safeCall('selectItem', sp)
+			self.canvas.safeCall('selectItem', sp)
 			break
 
 	def onPropertyChanged( self, obj, id, value ):
-		self.previewCanvas.safeCall('updateItemFromEditor', obj, id, value)
-		self.previewCanvas.updateCanvas()
+		self.canvas.safeCall('updateItemFromEditor', obj, id, value)
+		self.canvas.updateCanvas()
 
 	def onUnload( self ):
 		self.saveAsset()

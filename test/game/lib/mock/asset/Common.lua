@@ -1,15 +1,16 @@
 module ('mock')
 
 function loadAssetDataTable(filename) --lua or json?
-	--lua
-	-- local f=loadfile(filename)
-	-- if f then return f() end
-	--json
+	-- _stat( 'loading json data table', filename )
 	local f = io.open( filename, 'r' )
-	if not f then return nil end
+	if not f then
+		error( 'data file not found:' .. tostring( filename ),2  )
+	end
 	local text=f:read('*a')
 	f:close()
-	return MOAIJsonParser.decode(text)
+	local data =  MOAIJsonParser.decode(text)
+	if not data then _error( 'json file not parsed: '..filename ) end
+	return data
 end
 
 ---------------------basic loaders

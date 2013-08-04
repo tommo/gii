@@ -1,6 +1,6 @@
-from PyQt4           import QtCore, QtGui, uic
-from PyQt4.QtCore    import Qt
-##----------------------------------------------------------------##
+import os
+import logging
+
 from gii.core        import app, signals
 from gii.qt.controls.Window import MainWindow
 from gii.qt.controls.Menu   import MenuManager
@@ -8,6 +8,10 @@ from gii.qt.QtEditorModule  import QtEditorModule
 
 from gii.qt.IconCache                  import getIcon
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
+##----------------------------------------------------------------##
+from PyQt4           import QtCore, QtGui, uic
+from PyQt4.QtCore    import Qt
+##----------------------------------------------------------------##
 
 from gii.moai.MOAIRuntime import MOAILuaDelegate
 
@@ -55,8 +59,7 @@ class SceneEditor( QtEditorModule ):
 		self.mainWindow.setFocus()
 
 	def startEdit( self, node ):
-		logging.info( 'start edit scene' + repr( node ) )
-		pass
+		logging.info( 'start edit scene' + repr( node ) )		
 
 	#resource provider
 	def requestDockWindow( self, id, **dockOptions ):

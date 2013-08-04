@@ -103,11 +103,15 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		if isMockInstance( node, 'Scene' ):
 			output = []
 			for ent in node.entities:
-				if not ent.parent:
+				if not ent.__editor_entity and not ent.parent:
 					output.append( ent )
 			return output
 
-		return node.children
+		output = []
+		for ent in node.children:
+			if not ent.__editor_entity:
+				output.append( ent )
+		return output
 
 	def createItem( self, node ):
 		return SceneGraphTreeItem()
@@ -125,9 +129,9 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		items=self.selectedItems()
 		if items:
 			selections=[item.node for item in items]
-			SelectionManager.get().changeSelection(selections)
+			app.getModule( 'scene_editor' ).getSelectionManager().changeSelection(selections)
 		else:
-			SelectionManager.get().changeSelection(None)
+			app.getModule( 'scene_editor' ).getSelectionManager().changeSelection(None)
 
 ##----------------------------------------------------------------##
 class SceneGraphTreeItem( QtGui.QTreeWidgetItem ):

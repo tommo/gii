@@ -23,7 +23,7 @@ function getComponentRegistry()
 	return componentRegistry
 end
 
-function getComponetType( name )
+function getComponentType( name )
 	return componentRegistry[ name ]
 end
 

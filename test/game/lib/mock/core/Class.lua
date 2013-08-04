@@ -140,7 +140,7 @@ local function buildInstanceBuilder(class)
 end
 
 --------------------------------------------------------------------
-function newclass( b, superclass, name )
+function newclass( b, superclass, name  )		
 	b=b or {}
 	local index
 	superclass = superclass or BaseClass
@@ -223,7 +223,15 @@ end
 local classBuilder
 local function affirmClass( t, id )
 	if type(id) ~= 'string' then error('class name expected',2) end
-	return function( a, superclass )
+	return function( a, ... )
+			local superclass
+			if select( '#', ... ) >= 1 then 
+				superclass = ...
+				if not superclass then
+					error( 'invalid superclass for:' .. id, 2 )
+				end
+			end
+			
 			if a ~= classBuilder then
 				error( 'Class syntax error', 2 )
 			end

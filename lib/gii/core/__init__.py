@@ -34,3 +34,6 @@ import CommonAsset
 
 def getProjectPath( path = None ):
 	return Project.get().getBasePath( path )
+
+def getAppPath( path = None ):
+	return app.getPath( path )

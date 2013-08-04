@@ -568,10 +568,58 @@ end
 function Game:pauseBox2DWorld( paused )
 	self.b2world:pause( paused )
 end
+----
+function Game:setRenderStack( context, deviceRenderTable, bufferTable, renderTableMap )
+	if context == self.currentRenderContext then
+		for framebuffer, renderTable in pairs( renderTableMap ) do
+			framebuffer:setRenderTable( renderTable )
+		end
+		MOAIRenderMgr.setBufferTable( bufferTable )
+		MOAIGfxDevice.getFrameBuffer():setRenderTable( deviceRenderTable )
 
-
-function Game:addRenderContext( context )
-
+	else
+		--render context helper for GII
+		local gii = rawget( _G, 'gii' )
+		if gii then
+			local renderContext = gii.getRenderContext( context )
+			assert( renderContext, 'render context not found:' .. context )
+			local renderTableMap1 = {}
+			for fb, rt in pairs( renderTableMap ) do
+				table.insert( renderTableMap1, { fb, rt } )
+			end
+			renderContext.renderTableMap    = renderTableMap1
+			renderContext.bufferTable       = bufferTable
+			renderContext.deviceRenderTable = deviceRenderTable
+		else
+			_error( 'no gii module found for render context functions')
+		end
+	end
 end
+
+function Game:setCurrentRenderContext( key )
+	self.currentRenderContext = key or 'game'
+end
+
+function Game:getCurrentRenderContext()
+	return self.currentRenderContext or 'game'
+end
+
+
+-- CLASS: RenderContext()
+
+-- function RenderContext:__init( name )
+-- 	self.name = name
+-- 	self.frameBufferTable = setmetatable( {}, { __mode = 'k' } )
+-- end
+
+-- function RenderContext:setFrameBufferRenderTable( fb, t )
+-- 	self.fb:getRenderTable[ fb ] = t
+-- end
+
+-- function RenderContext:setBufferTable( t )
+	
+-- end
+
+
 
 game = Game()

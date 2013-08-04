@@ -126,4 +126,7 @@ class EditorApp(object):
 	def getSelectionManager( self ):
 		return self.selectionManager
 
+	def isDebugging( self ):
+		return False
+
 app = EditorApp()
