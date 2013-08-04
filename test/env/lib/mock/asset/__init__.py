@@ -1,3 +1,5 @@
+import SceneAsset
+
 import TextureAsset
 import Deck2DAsset
 import FontAsset

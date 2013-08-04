@@ -44,6 +44,7 @@ class AssetNode(object):
 		self.objectFiles = {}
 
 		self.deployState = None
+		self.modifyState = 'new'
 
 		self.filePath = kwargs.get( 'filePath', nodePath )
 		self.fileTime = kwargs.get( 'fileTime', 0 )
@@ -53,8 +54,7 @@ class AssetNode(object):
 		else:
 			self.managerName = manager
 
-		self.accessPriority=0
-		self.modified  = False
+		self.accessPriority = 0
 
 		self.properties={}		
 
@@ -193,7 +193,7 @@ class AssetNode(object):
 		signals.emit('asset.deploy.changed', self)
 
 	def markModified( self ):
-		self.modified = True
+		self.modifyState = 'modified'
 
 	def getFilePath(self):
 		return self.filePath
@@ -274,11 +274,18 @@ class AssetNode(object):
 		self.cacheFiles[ name ] = cacheFile
 		return cacheFile
 
+	def clearCacheFiles( self ):
+		self.cacheFiles = {}
+
 	def getObjectFile(self, name):
 		return self.objectFiles.get( name, None )
 
 	def setObjectFile(self, name, path):
-		self.objectFiles[ name ] = path
+		if not path:
+			if self.objectFiles.has_key( name ):
+				del self.objectFiles[ name ]
+		else:
+			self.objectFiles[ name ] = path
 
 	def getAbsObjectFile( self, name ):
 		path = self.getObjectFile( name )
@@ -295,8 +302,8 @@ class AssetNode(object):
 		self.properties[ name ] = value
 
 	def forceReimport(self):
-		self.getManager().reimportAsset(self)
-		signals.emitNow('asset.modified', self)
+		self.getManager().reimportAsset(self) 
+		signals.emitNow( 'asset.modified' ,  self )
 		self.saveMetaDataTable()
 
 	def showInBrowser(self):
@@ -357,8 +364,8 @@ class AssetManager(object):
 		for n in assetNode.getChildren()[:]:
 			lib.unregisterAssetNode(n)
 		result = self.importAsset(assetNode, option)
-		if result:
-			assetNode.modified = False
+		if result: 
+			assetNode.modifyState  =  False
 			return True
 		else:
 			return False
@@ -459,7 +466,7 @@ class AssetLibrary(object):
 	def reset( self ):
 		signals.emit( 'asset.reset' )
 		self.unregisterAssetNode( self.rootNode )
-		self.scanProjectPath()
+		self.scanProject()
 
 	def getRootNode(self):
 		return self.rootNode
@@ -566,13 +573,14 @@ class AssetLibrary(object):
 			del self.assetTable[path]
 			assert not self.assetTable.has_key(path)	
 
-	def tryInitAssetNode( self, path, option = None, **kwargs ):
+	def initAssetNode( self, path, option = None, **kwargs ):
 		#fix path
 		absFilePath = os.path.abspath( self.rootAbsPath + '/' + path )
 		fileTime = os.path.getmtime(absFilePath),
 		filePath = self.rootPath + '/' + path
 
 		node = self.getAssetNode(path)
+		assert not node
 		#create a common asset node first
 		if not node:
 			ppath      = os.path.dirname(path)
@@ -589,42 +597,47 @@ class AssetLibrary(object):
 			parentNode.addChild(node)	
 			node.markModified()
 
-		elif os.path.getmtime( absFilePath ) >= node.getFileTime():
-			node.markModified()
-
 		return node
 
 	def reimportAll(self):
 		#TODO:should this be done by a asset index rebuilding (by restarting editor)?
 		pass
 
-	def importModifiedAssets( self ):
-		#collect 'modified'	asset
+	def importModifiedAssets(  self ):
+		#collect 'modifyState' 	 asset
 		modifiedAssets = {}
 		for node in self.assetTable.values():
-			if node.modified: #TODO: virtual node?
+			if node.modifyState:   #TODO: virtual node?
 				modifiedAssets[ node ] = True
 		#try importing with each asset manager, in priority order
 		for manager in self.assetManagers:
 			if not modifiedAssets: break
 			done = []
 			for node in modifiedAssets:
-				if not node.modified: #might get imported as a sub asset 
+				if not node.modifyState: #might get imported as a sub asset 
 					done.append( node )
 					continue
 				if not manager.acceptAssetFile( node.getAbsFilePath() ):
 					continue
-				node.setManager( manager )
+				if node.modifyState != 'new':					
+					for n in node.getChildren()[:]:
+						self.unregisterAssetNode(n)
+						#TODO: add failed state to node				
+				if node.getManager() != manager: node.setManager( manager )
 				if manager.importAsset( node ):
-					node.modified = False
-					done.append( node )
-					#TODO: add failed state to node
+						node.modifyState  =  False
+						done.append( node )
 			for node in done:
 				del modifiedAssets[ node ]			
 		signals.emitNow( 'asset.post_import_all' )
 
+	def scheduleScanProject( self ):
+		self.projectScanScheduled = True
+		pass
+
 	#Library
-	def scanProjectPath(self): #scan 
+	def scanProject(self): #scan 
+		self.projectScanScheduled = False
 		logging.info('scan project in:' + self.rootAbsPath )
 		#scan meta files first ( will be used in asset importing )
 		#TODO
@@ -652,21 +665,29 @@ class AssetLibrary(object):
 
 		#check new asset
 		for currentDir, dirs, files in os.walk(unicode(self.rootAbsPath)):
-			relDir = os.path.relpath(currentDir, self.rootAbsPath)
+			relDir = os.path.relpath( currentDir, self.rootAbsPath )
 
 			for filename in files:
 				if self.checkFileIgnorable(filename):
 					continue
-				fullpath = relDir+'/'+filename
-				self.tryInitAssetNode( self.fixPath( fullpath ) )
+				nodePath = self.fixPath( relDir + '/' + filename )
+				if not self.getAssetNode( nodePath ): #new
+					self.initAssetNode( nodePath )
+				else:
+					node = self.getAssetNode( nodePath )
+					absPath = self.getAbsPath( nodePath )
+					if os.path.getmtime( absPath ) >= node.getFileTime():
+						node.markModified()
 
 			dirs2 = dirs[:]
 			for dirname in dirs2:
 				if self.checkFileIgnorable(dirname):
 					dirs.pop(dirs.index(dirname)) #skip walk this
 					continue
-				fullpath = relDir+'/'+dirname
-				self.tryInitAssetNode( self.fixPath( fullpath ) )
+				nodePath = self.fixPath( relDir + '/' + dirname )
+				if not self.getAssetNode( nodePath ):
+					self.initAssetNode( nodePath )	
+			
 
 		self.importModifiedAssets()
 
@@ -691,8 +712,8 @@ class AssetLibrary(object):
 			node.deployState  = data.get('deploy', None)
 			node.cacheFiles   = data.get('cacheFiles', {})
 			node.objectFiles  = data.get('objectFiles', {})
-			node.properties   = data.get('properties', {})
-			node.modified     =	data.get('modified', False )
+			node.properties   = data.get('properties', {}) 
+			node.modifyState  =	data.get('modifyState' ,  False )
 			
 			assetTable[path]  = node
 			node.managerName  = data.get('manager')
@@ -735,9 +756,9 @@ class AssetLibrary(object):
 				'rDep'        : [ dnode.getNodePath() for dnode in node.rDep ],
 				'objectFiles' : node.objectFiles,
 				'cacheFiles'  : node.cacheFiles,
-				'properties'  : node.properties,
-				'modified'    : node.modified
-				# 'parent':node.getParent().getPath()
+				'properties'  :  node.properties,
+	 			'modifyState' : node.modifyState
+ 	 			# 'parent':node.getParent().getPath()
 			}				
 			table[path]=item
 			#mark cache files

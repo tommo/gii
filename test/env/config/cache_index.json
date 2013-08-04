@@ -55,13 +55,6 @@
     "src": "tmp/BOSS_3.sprite", 
     "touched": true
   }, 
-  "env/config/cache/balllight_28d681b050c8ded746491eb7261eb4f4": {
-    "file": "balllight_28d681b050c8ded746491eb7261eb4f4", 
-    "is_dir": false, 
-    "name": "pixmap", 
-    "src": "test/balllight.png", 
-    "touched": true
-  }, 
   "env/config/cache/balllight_34d5685a42373dc8a51df23e4992961d": {
     "file": "balllight_34d5685a42373dc8a51df23e4992961d", 
     "is_dir": false, 
@@ -69,18 +62,102 @@
     "src": "test/balllight.png", 
     "touched": true
   }, 
-  "env/config/cache/brick2_48e80cadc3c96958662c0b60a97a970f": {
-    "file": "brick2_48e80cadc3c96958662c0b60a97a970f", 
-    "is_dir": false, 
-    "name": "pixmap", 
-    "src": "test/brick2.png", 
-    "touched": true
-  }, 
   "env/config/cache/brick2_d2546be2683f11308bb471ac7940cd80": {
     "file": "brick2_d2546be2683f11308bb471ac7940cd80", 
     "is_dir": false, 
     "name": "config", 
     "src": "test/brick2.png", 
+    "touched": true
+  }, 
+  "env/config/cache/creature_cattle_0614ac6e50bd71c802844a5842051d7d": {
+    "file": "creature_cattle_0614ac6e50bd71c802844a5842051d7d", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "mark/creature_cattle.png", 
+    "touched": true
+  }, 
+  "env/config/cache/creature_chick_c17041eda92ffada55e10264e79690ca": {
+    "file": "creature_chick_c17041eda92ffada55e10264e79690ca", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "mark/creature_chick.png", 
+    "touched": true
+  }, 
+  "env/config/cache/creature_devil_f8733bce0a40d1c0ce461df14591cb5f": {
+    "file": "creature_devil_f8733bce0a40d1c0ce461df14591cb5f", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "mark/creature_devil.png", 
+    "touched": true
+  }, 
+  "env/config/cache/creature_ghost_b1b238548d59d0b4c8de55da0d09615a": {
+    "file": "creature_ghost_b1b238548d59d0b4c8de55da0d09615a", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "mark/creature_ghost.png", 
+    "touched": true
+  }, 
+  "env/config/cache/creature_goblin_346e7b79bbcc48703a0aa7ac53aa4331": {
+    "file": "creature_goblin_346e7b79bbcc48703a0aa7ac53aa4331", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "mark/creature_goblin.png", 
+    "touched": true
+  }, 
+  "env/config/cache/creature_golem_e06628042318170d3c4a9b0325d05ec9": {
+    "file": "creature_golem_e06628042318170d3c4a9b0325d05ec9", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "mark/creature_golem.png", 
+    "touched": true
+  }, 
+  "env/config/cache/creature_hero_f11f1bfed23ee42927afec59146c06e7": {
+    "file": "creature_hero_f11f1bfed23ee42927afec59146c06e7", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "mark/creature_hero.png", 
+    "touched": true
+  }, 
+  "env/config/cache/creature_kappa_6b43986a8d92b7ac580b823690cd81d1": {
+    "file": "creature_kappa_6b43986a8d92b7ac580b823690cd81d1", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "mark/creature_kappa.png", 
+    "touched": true
+  }, 
+  "env/config/cache/creature_ogre_9402e8120a17a20920212f29c21006fe": {
+    "file": "creature_ogre_9402e8120a17a20920212f29c21006fe", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "mark/creature_ogre.png", 
+    "touched": true
+  }, 
+  "env/config/cache/creature_shaman_b35c5a03af03b2879dc44db16b8e1732": {
+    "file": "creature_shaman_b35c5a03af03b2879dc44db16b8e1732", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "mark/creature_shaman.png", 
+    "touched": true
+  }, 
+  "env/config/cache/creature_slime_7bf2bc09d60ae9afcee70afc421c5147": {
+    "file": "creature_slime_7bf2bc09d60ae9afcee70afc421c5147", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "mark/creature_slime.png", 
+    "touched": true
+  }, 
+  "env/config/cache/creature_worker_62bc14e20adb53a417baadf452bfa748": {
+    "file": "creature_worker_62bc14e20adb53a417baadf452bfa748", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "mark/creature_worker.png", 
+    "touched": true
+  }, 
+  "env/config/cache/default_a3f94954a4bf5116ade898aa561563dd": {
+    "file": "default_a3f94954a4bf5116ade898aa561563dd", 
+    "is_dir": true, 
+    "name": null, 
+    "src": "<texture_group>/default", 
     "touched": true
   }, 
   "env/config/cache/explorer_af873fef31f9a23bc58ba7349b7d526b": {
@@ -104,24 +181,10 @@
     "src": "test/menu_arcade.png", 
     "touched": true
   }, 
-  "env/config/cache/menu_arcade_b6b95983509d6f5a9bfb9caa601f98ac": {
-    "file": "menu_arcade_b6b95983509d6f5a9bfb9caa601f98ac", 
-    "is_dir": false, 
-    "name": "pixmap", 
-    "src": "test/menu_arcade.png", 
-    "touched": true
-  }, 
   "env/config/cache/menu_vs_2507b49c8a1bce4e900a9331e8dfc517": {
     "file": "menu_vs_2507b49c8a1bce4e900a9331e8dfc517", 
     "is_dir": false, 
     "name": "config", 
-    "src": "test/menu_vs.png", 
-    "touched": true
-  }, 
-  "env/config/cache/menu_vs_d4a651a1d09969a07ad7d078f14c7d6a": {
-    "file": "menu_vs_d4a651a1d09969a07ad7d078f14c7d6a", 
-    "is_dir": false, 
-    "name": "pixmap", 
     "src": "test/menu_vs.png", 
     "touched": true
   }, 
@@ -137,13 +200,6 @@
     "is_dir": false, 
     "name": "config", 
     "src": "anim/output_atlas.png", 
-    "touched": true
-  }, 
-  "env/config/cache/sprite1_62214c5098efb58342b604046e779131": {
-    "file": "sprite1_62214c5098efb58342b604046e779131", 
-    "is_dir": false, 
-    "name": "pixmap", 
-    "src": "test/sprite1.psd", 
     "touched": true
   }, 
   "env/config/cache/sprite1_994ed28dab925963c1dc608036cf0681": {
@@ -167,20 +223,6 @@
     "src": "test/title.png", 
     "touched": true
   }, 
-  "env/config/cache/title_a1339a5b13b8120365454bc6d96da1ab": {
-    "file": "title_a1339a5b13b8120365454bc6d96da1ab", 
-    "is_dir": false, 
-    "name": "pixmap", 
-    "src": "test/title.png", 
-    "touched": true
-  }, 
-  "env/config/cache/好的_1d31489e6081db2698fcce4b5db51a44": {
-    "file": "好的_1d31489e6081db2698fcce4b5db51a44", 
-    "is_dir": false, 
-    "name": "pixmap", 
-    "src": "好的.psd", 
-    "touched": true
-  }, 
   "env/config/cache/好的_98ab98229399392eef482493c133d534": {
     "file": "好的_98ab98229399392eef482493c133d534", 
     "is_dir": false, 
@@ -192,13 +234,6 @@
     "file": "摩艾君_09f70059f3a22fcbd4f6aeced9320844", 
     "is_dir": false, 
     "name": "config", 
-    "src": "摩艾君.png", 
-    "touched": true
-  }, 
-  "env/config/cache/摩艾君_f4568ccc091a4656112b3643fb154675": {
-    "file": "摩艾君_f4568ccc091a4656112b3643fb154675", 
-    "is_dir": false, 
-    "name": "pixmap", 
     "src": "摩艾君.png", 
     "touched": true
   }

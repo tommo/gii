@@ -190,7 +190,6 @@ class Project(object):
 	def saveConfig( self ):
 		jsonHelper.trySaveJSON( self.config, self.getConfigPath( _GII_CONFIG_FILE ), 'project config')
 
-
 	def getRelativePath( self, path ):
 		return os.path.relpath( path, self.path )
 

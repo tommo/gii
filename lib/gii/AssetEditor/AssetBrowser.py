@@ -67,8 +67,7 @@ class AssetBrowser( AssetEditorModule ):
 
 
 	def onStart( self ):
-		self.getAssetLibrary().scanProjectPath()
-
+		self.getAssetLibrary().scheduleScanProject()
 		signals.connect( 'asset.register',   self.onAssetRegister )
 		signals.connect( 'asset.unregister', self.onAssetUnregister )
 		signals.connect( 'asset.moved',      self.onAssetMoved )
@@ -182,8 +181,8 @@ class AssetBrowser( AssetEditorModule ):
 			s = app.getSelectionManager().getSelection()
 			for n in s:
 				if isinstance( n, AssetNode ):
-					n.forceReimport()
-			app.getAssetLibrary().scanProjectPath()
+					n.markModified()
+			app.getAssetLibrary().importModifiedAssets()
 
 		if name == 'show_in_browser':
 			if not app.getSelectionManager().getSelection():

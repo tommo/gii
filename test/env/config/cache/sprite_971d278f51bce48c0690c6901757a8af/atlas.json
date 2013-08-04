@@ -60,10 +60,10 @@
     }
   ], 
   "sources": [
-    "/Volumes/prj/gii/test/game/asset/anim/output_atlas.png", 
-    "/Volumes/prj/gii/test/game/asset/tmp/BOSS_3.png", 
-    "/Volumes/prj/gii/test/game/asset/tmp/BOSS_2.png", 
     "/Volumes/prj/gii/test/game/asset/tmp/BOSS_1.png", 
+    "/Volumes/prj/gii/test/game/asset/anim/output_atlas.png", 
+    "/Volumes/prj/gii/test/game/asset/tmp/BOSS_2.png", 
+    "/Volumes/prj/gii/test/game/asset/tmp/BOSS_3.png", 
     "/Volumes/prj/gii/test/game/asset/anim/explorer_atlas.png"
   ]
 }

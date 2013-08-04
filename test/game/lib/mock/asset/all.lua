@@ -1,5 +1,6 @@
 module 'mock' 
 
+require 'mock.asset.Scene'
 require 'mock.asset.Common'
 -- require 'mock.asset.TextureLibrary'
 require 'mock.asset.Texture'

@@ -1,32 +1,58 @@
 import os.path
-from gii.core import AssetLibrary, AssetManager, getProjectPath
+import json
+from gii.core import *
 
 class SceneAssetManager(AssetManager):
 	def getName(self):
 		return 'asset_manager.scene'
 
-	def acceptAssetFile( self, filepath ):
-		if not os.path.isfile(filepath): return False		
-		name,ext = os.path.splitext(filepath)
+	def acceptAssetFile( self, filePath ):
+		if not os.path.isfile(filePath): return False		
+		name,ext = os.path.splitext(filePath)
 		if not ext in ('.scene'): return False
 		data = jsonHelper.tryLoadJSON( filePath )
 		return data and data.get( '_assetType', None ) == 'scene'
 
 	def importAsset( self, node, option = None ):
-		filePath = node.getAbsFilePath()
-		name,ext = os.path.splitext(filePath)
-		if ext == '.ttf':
-			node.assetType='font_ttf'
-			node.setObjectFile( 'font', node.getFilePath() )		
-		elif ext == '.fnt':
-			#TODO: font validation
-			node.assetType='font_bmfont'
-			node.setObjectFile( 'font', node.getFilePath() )
-			#replace texture path inside font file?
-
+		node.assetType = 'scene'		
 		return True
 
-FontAssetManager().register()
+	def editAsset( self, node ):
+		editor = app.getModule( 'scene_editor' )
+		if not editor:
+			return alertMessage( 'Editor not load', 'Scene Editor not found!' ) 
+		editor.startEdit( node )
 
-AssetLibrary.get().setAssetIcon( 'font_ttf',    'font' )
-AssetLibrary.get().setAssetIcon( 'font_bmfont', 'font' )
+##----------------------------------------------------------------##
+class SceneCreator(AssetCreator):
+	def getAssetType( self ):
+		return 'scene'
+
+	def getLabel( self ):
+		return 'Scene'
+
+	def createAsset( self, name, contextNode, assetType ):
+		ext = '.scene'
+		filename = name + ext
+		if contextNode.isType('folder'):
+			nodepath = contextNode.getChildPath( filename )
+		else:
+			nodepath = contextNode.getSiblingPath( filename )
+
+		fullpath = AssetLibrary.get().getAbsPath( nodepath )
+		data={
+			'_assetType' : 'scene', #checksum
+			'entities':[]
+		}
+		if os.path.exists(fullpath):
+			raise Exception('File already exist:%s'%fullpath)
+		fp = open(fullpath,'w')
+		json.dump( data, fp, sort_keys=True, indent=2 )
+		fp.close()
+		return nodepath
+
+##----------------------------------------------------------------##
+SceneAssetManager().register()
+SceneCreator().register()
+
+AssetLibrary.get().setAssetIcon( 'scene',    'scene' )

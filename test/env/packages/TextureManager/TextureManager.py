@@ -119,9 +119,11 @@ class TextureManager( AssetEditorModule ):
 		window.listGroup.setSortingEnabled(True)
 		window.listGroup.itemSelectionChanged.connect( self.onGroupSelectionChanged )
 
-		window.buttonAddGroup.clicked.connect( self.addGroup )
-		window.buttonRemoveGroup.clicked.connect( self.removeGroup )
-		window.buttonApplyGroup.clicked.connect( self.applyGroup )
+		window.buttonAddGroup    .clicked .connect( self.addGroup )
+		window.buttonRemoveGroup .clicked .connect( self.removeGroup )
+		window.buttonApplyGroup  .clicked .connect( self.applyGroup )
+		window.buttonRebuild     .clicked .connect( self.rebuildTexture )
+
 
 		# self.getModule( 'asset_editor' ).mainToolBar
 		self.addMenuItem(
@@ -131,6 +133,7 @@ class TextureManager( AssetEditorModule ):
 					'on_click': lambda menu: self.setFocus()
 				}
 			)
+
 
 		self.addTool( 
 			'asset/show_texture_manager',
@@ -198,6 +201,10 @@ class TextureManager( AssetEditorModule ):
 
 			node.setMetaData( 'group', group, save = True )
 			self.treeTextures.updateItem( node )
+
+	def rebuildTexture( self ):
+		lib = self.getModule( 'texture_library' )
+		lib.forceRebuildTextures()
 
 TextureManager().register()
 

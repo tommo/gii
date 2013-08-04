@@ -77,8 +77,9 @@ class MainWindow(QtGui.QMainWindow):
 	def ensureVisible(self):
 		ensureWindowVisible(self)
 
-	def startTimer(self, interval, trigger):
+	def startTimer(self, fps, trigger):
 		assert(hasattr(trigger,'__call__'))
+		interval = 1000/fps
 		timer=QtCore.QTimer(self)
 		timer.timeout.connect(trigger)
 		timer.start(interval)

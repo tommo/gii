@@ -1,11 +1,11 @@
 {
   "groups": {
     "default": {
-      "atlas_allowed": false, 
+      "atlas_allowed": true, 
       "atlas_force_single": false, 
       "atlas_max_height": 1024, 
       "atlas_max_width": 1024, 
-      "cache": null, 
+      "cache": "env/config/cache/default_a3f94954a4bf5116ade898aa561563dd", 
       "compression": null, 
       "filter": "nearest", 
       "mipmap": false, 

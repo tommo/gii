@@ -85,7 +85,7 @@ class TextureAssetManager( AssetManager ):
 		if not group:
 			group = 'default'
 			node.setNewMetaData( 'group', group )
-		TextureLibrary.get().pendImport( node ) #let texture library handle real import
+		TextureLibrary.get().scheduleImport( node ) #let texture library handle real import
 		return True
 
 	
@@ -193,7 +193,7 @@ class TextureLibrary( EditorModule ):
 		}
 		jsonHelper.trySaveJSON( data, self.indexPath, 'texture index' )
 
-	def pendImport( self, node ):
+	def scheduleImport( self, node ):
 		groupName = node.getMetaData( 'group' )
 		group = self.getGroup( groupName )
 		n = self.pendingImportGroups.get( group )
@@ -263,6 +263,7 @@ class TextureLibrary( EditorModule ):
 		logging.info( 'building single texture: %s<%s>' % ( node.getPath(), group.name ) )
 		compression = group.compression
 
+		node.clearCacheFiles()
 		node.setObjectFile( 'pixmap', node.getCacheFile( 'pixmap' ) )
 		arglist = [
 			'python', 
@@ -277,11 +278,19 @@ class TextureLibrary( EditorModule ):
 		#todo: check process result!
 
 	def buildSubTexture( self, group, node ):
+		node.clearCacheFiles()
+		node.setObjectFile( 'pixmap', None ) #remove single texture if any
 		node.setObjectFile( 'config', node.getCacheFile( 'config' ) )
 		jsonHelper.trySaveJSON( group.toJson(), node.getAbsObjectFile( 'config' ) )
 
 	def postAssetImportAll( self ):
 		self.doPendingImports()
+
+	def forceRebuildTextures( self ):
+		for node in self.getAssetLibrary().enumerateAsset( 'texture' ):
+			self.scheduleImport( node )
+		self.doPendingImports()
+
 
 	def onSaveProject( self, prj ):
 		self.saveIndex()

@@ -54,6 +54,10 @@ class SceneEditor( QtEditorModule ):
 		self.mainWindow.raise_()
 		self.mainWindow.setFocus()
 
+	def startEdit( self, node ):
+		logging.info( 'start edit scene' + repr( node ) )
+		pass
+
 	#resource provider
 	def requestDockWindow( self, id, **dockOptions ):
 		container = self.mainWindow.requestDockWindow(id, **dockOptions)		
@@ -75,6 +79,7 @@ class SceneEditor( QtEditorModule ):
 
 	def onMenu(self, node):
 		name = node.name
+
 
 ##----------------------------------------------------------------##
 class QtMainWindow( MainWindow ):

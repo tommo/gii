@@ -140,7 +140,7 @@ class MOAIGameView( QtEditorModule ):
 
 	def startScript( self, script = None ):
 		self.paused = False
-		self.updateTimer = self.mainWindow.startTimer(1000/fps, self.updateView)
+		self.updateTimer = self.mainWindow.startTimer( fps, self.updateView)
 		if not script:
 			script = self.getApp().getConfig( 'start_script', 'game/script/main.lua' )
 		if script:

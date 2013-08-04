@@ -63,22 +63,22 @@ class ModuleFileWatcher( EditorModule ):
 	
 	def onFileMoved(self, path, newpath):
 		# print('asset moved:',path, newpath)
-		app.getAssetLibrary().scanProjectPath()
+		app.getAssetLibrary().scheduleScanProject()
 		pass
 
 	def onFileCreated(self, path):
 		# print('asset created:',path)
-		app.getAssetLibrary().scanProjectPath()
+		app.getAssetLibrary().scheduleScanProject()
 		pass
 
 	def onFileModified(self, path):
 		# print('asset modified:',path)
-		app.getAssetLibrary().scanProjectPath()
+		app.getAssetLibrary().scheduleScanProject()
 		pass
 
 	def onFileDeleted(self, path):
 		# print('asset deleted:',path)
-		app.getAssetLibrary().scanProjectPath()
+		app.getAssetLibrary().scheduleScanProject()
 		pass
 
 ##----------------------------------------------------------------##

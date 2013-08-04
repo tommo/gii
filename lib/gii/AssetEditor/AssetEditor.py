@@ -51,6 +51,8 @@ class AssetEditor( QtEditorModule ):
 			'main/asset/clear_free_meta', 
 			{ 'label' : 'Clear Metadata' }
 		)
+
+		self.projectScanTimer = self.mainWindow.startTimer( 1, self.checkProjectScan )
 		
 
 	def onLoad( self ):
@@ -91,6 +93,13 @@ class AssetEditor( QtEditorModule ):
 	def getMainWindow( self ):
 		return self.mainWindow
 
+	##
+	def checkProjectScan( self ):
+		lib = self.getAssetLibrary()
+		if lib.projectScanScheduled:
+			lib.scanProject()
+
+	##
 	def onMenu(self, node):
 		name = node.name
 		if name == 'reset_all_asset':

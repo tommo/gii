@@ -61,6 +61,80 @@
       "oy": 0, 
       "tex": "test/title.png", 
       "type": "quad"
+    }, 
+    {
+      "name": "creature_cattle", 
+      "tex": "mark/creature_cattle.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "creature_chick", 
+      "ox": 0, 
+      "oy": 0, 
+      "tex": "mark/creature_chick.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "creature_devil", 
+      "tex": "mark/creature_devil.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "creature_ghost", 
+      "ox": 0, 
+      "oy": 0, 
+      "tex": "mark/creature_ghost.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "creature_goblin", 
+      "tex": "mark/creature_goblin.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "creature_golem", 
+      "ox": 0, 
+      "oy": 0, 
+      "tex": "mark/creature_golem.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "creature_hero", 
+      "ox": 0, 
+      "oy": 0, 
+      "tex": "mark/creature_hero.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "creature_kappa", 
+      "ox": 0, 
+      "oy": 0, 
+      "tex": "mark/creature_kappa.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "creature_ogre", 
+      "tex": "mark/creature_ogre.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "creature_shaman", 
+      "ox": 0, 
+      "oy": 0, 
+      "tex": "mark/creature_shaman.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "creature_slime", 
+      "tex": "mark/creature_slime.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "creature_worker", 
+      "ox": 0, 
+      "oy": 0, 
+      "tex": "mark/creature_worker.png", 
+      "type": "quad"
     }
   ]
 }
