@@ -16,10 +16,50 @@
       "type": "quad"
     }, 
     {
-      "name": "sprite1", 
+      "gutter": 0, 
+      "height": 26, 
+      "name": "sprite1_1", 
+      "offsetX": 0, 
+      "offsetY": 6, 
       "ox": 0, 
       "oy": 0, 
       "tex": "test/sprite1.psd", 
+      "type": "tileset", 
+      "width": 26
+    }, 
+    {
+      "name": "balllight", 
+      "ox": 0, 
+      "oy": 0, 
+      "tex": "test/balllight.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "brick2", 
+      "ox": 0, 
+      "oy": 0, 
+      "tex": "test/brick2.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "menu_arcade", 
+      "ox": 0, 
+      "oy": 0, 
+      "tex": "test/menu_arcade.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "menu_vs", 
+      "ox": 0, 
+      "oy": 0, 
+      "tex": "test/menu_vs.png", 
+      "type": "quad"
+    }, 
+    {
+      "name": "title", 
+      "ox": 0, 
+      "oy": 0, 
+      "tex": "test/title.png", 
       "type": "quad"
     }
   ]

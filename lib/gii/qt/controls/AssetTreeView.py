@@ -74,11 +74,22 @@ class AssetTreeItem(QtGui.QTreeWidgetItem):
 		node1 = hasattr(other, 'node') and other.node or None
 		if not node1:
 			return True
+		tree = self.treeWidget()
+
+		# if not tree:
+		# 	col = 0
+		# else:
+		# 	col = tree.sortColumn()		
 		t0 = node0.getType()
 		t1 = node1.getType()
-		if t1!=t0:
-			if t0 == 'folder': return True
-			if t1 == 'folder': return False
-		return node0.getName().lower()<node1.getName().lower()
+		if t1!=t0:			
+			if tree.sortOrder() == 0:
+				if t0 == 'folder': return True
+				if t1 == 'folder': return False
+			else:
+				if t0 == 'folder': return False
+				if t1 == 'folder': return True
+		return super( AssetTreeItem, self ).__lt__( other )
+		# return node0.getName().lower()<node1.getName().lower()
 
 ##----------------------------------------------------------------##

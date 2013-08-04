@@ -55,6 +55,34 @@
     "src": "tmp/BOSS_3.sprite", 
     "touched": true
   }, 
+  "env/config/cache/balllight_28d681b050c8ded746491eb7261eb4f4": {
+    "file": "balllight_28d681b050c8ded746491eb7261eb4f4", 
+    "is_dir": false, 
+    "name": "pixmap", 
+    "src": "test/balllight.png", 
+    "touched": true
+  }, 
+  "env/config/cache/balllight_34d5685a42373dc8a51df23e4992961d": {
+    "file": "balllight_34d5685a42373dc8a51df23e4992961d", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "test/balllight.png", 
+    "touched": true
+  }, 
+  "env/config/cache/brick2_48e80cadc3c96958662c0b60a97a970f": {
+    "file": "brick2_48e80cadc3c96958662c0b60a97a970f", 
+    "is_dir": false, 
+    "name": "pixmap", 
+    "src": "test/brick2.png", 
+    "touched": true
+  }, 
+  "env/config/cache/brick2_d2546be2683f11308bb471ac7940cd80": {
+    "file": "brick2_d2546be2683f11308bb471ac7940cd80", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "test/brick2.png", 
+    "touched": true
+  }, 
   "env/config/cache/explorer_af873fef31f9a23bc58ba7349b7d526b": {
     "file": "explorer_af873fef31f9a23bc58ba7349b7d526b", 
     "is_dir": false, 
@@ -67,6 +95,34 @@
     "is_dir": false, 
     "name": "config", 
     "src": "anim/explorer_atlas.png", 
+    "touched": true
+  }, 
+  "env/config/cache/menu_arcade_ad7f0ffff8541b8775b27a933b7e5116": {
+    "file": "menu_arcade_ad7f0ffff8541b8775b27a933b7e5116", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "test/menu_arcade.png", 
+    "touched": true
+  }, 
+  "env/config/cache/menu_arcade_b6b95983509d6f5a9bfb9caa601f98ac": {
+    "file": "menu_arcade_b6b95983509d6f5a9bfb9caa601f98ac", 
+    "is_dir": false, 
+    "name": "pixmap", 
+    "src": "test/menu_arcade.png", 
+    "touched": true
+  }, 
+  "env/config/cache/menu_vs_2507b49c8a1bce4e900a9331e8dfc517": {
+    "file": "menu_vs_2507b49c8a1bce4e900a9331e8dfc517", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "test/menu_vs.png", 
+    "touched": true
+  }, 
+  "env/config/cache/menu_vs_d4a651a1d09969a07ad7d078f14c7d6a": {
+    "file": "menu_vs_d4a651a1d09969a07ad7d078f14c7d6a", 
+    "is_dir": false, 
+    "name": "pixmap", 
+    "src": "test/menu_vs.png", 
     "touched": true
   }, 
   "env/config/cache/output_9184274f5b920d3b7bb3cd9010047e4b": {
@@ -102,6 +158,20 @@
     "is_dir": true, 
     "name": null, 
     "src": "<texture_group>/sprite", 
+    "touched": true
+  }, 
+  "env/config/cache/title_5b7d33be101d4359998db5d291a34ca1": {
+    "file": "title_5b7d33be101d4359998db5d291a34ca1", 
+    "is_dir": false, 
+    "name": "config", 
+    "src": "test/title.png", 
+    "touched": true
+  }, 
+  "env/config/cache/title_a1339a5b13b8120365454bc6d96da1ab": {
+    "file": "title_a1339a5b13b8120365454bc6d96da1ab", 
+    "is_dir": false, 
+    "name": "pixmap", 
+    "src": "test/title.png", 
     "touched": true
   }, 
   "env/config/cache/好的_1d31489e6081db2698fcce4b5db51a44": {

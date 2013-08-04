@@ -116,6 +116,10 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			self.selectionModel().clearSelection()
 			item.setSelected(True)
 			self.scrollToItem(item)
+
+	def sortOrder( self ):
+		headerView = self.header()
+		return headerView.sortIndicatorOrder()
 	
 		
 	##----------------------------------------------------------------##

@@ -246,7 +246,72 @@
     "rDep": [], 
     "type": "deck2d"
   }, 
-  "test.deck2d/sprite1": {
+  "test.deck2d/balllight": {
+    "cacheFiles": {}, 
+    "deploy": null, 
+    "filePath": false, 
+    "fileTime": 0, 
+    "manager": "asset_manager.deck2d", 
+    "modified": false, 
+    "objectFiles": {}, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "deck2d.quad"
+  }, 
+  "test.deck2d/brick2": {
+    "cacheFiles": {}, 
+    "deploy": null, 
+    "filePath": false, 
+    "fileTime": 0, 
+    "manager": "asset_manager.deck2d", 
+    "modified": false, 
+    "objectFiles": {}, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "deck2d.quad"
+  }, 
+  "test.deck2d/menu_arcade": {
+    "cacheFiles": {}, 
+    "deploy": null, 
+    "filePath": false, 
+    "fileTime": 0, 
+    "manager": "asset_manager.deck2d", 
+    "modified": false, 
+    "objectFiles": {}, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "deck2d.quad"
+  }, 
+  "test.deck2d/menu_vs": {
+    "cacheFiles": {}, 
+    "deploy": null, 
+    "filePath": false, 
+    "fileTime": 0, 
+    "manager": "asset_manager.deck2d", 
+    "modified": false, 
+    "objectFiles": {}, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "deck2d.quad"
+  }, 
+  "test.deck2d/sprite1_1": {
+    "cacheFiles": {}, 
+    "deploy": null, 
+    "filePath": false, 
+    "fileTime": 0, 
+    "manager": "asset_manager.deck2d", 
+    "modified": false, 
+    "objectFiles": {}, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "deck2d.tileset"
+  }, 
+  "test.deck2d/title": {
     "cacheFiles": {}, 
     "deploy": null, 
     "filePath": false, 
@@ -285,6 +350,90 @@
     "rDep": [], 
     "type": "deck2d.quad"
   }, 
+  "test/balllight.png": {
+    "cacheFiles": {
+      "config": "env/config/cache/balllight_34d5685a42373dc8a51df23e4992961d", 
+      "pixmap": "env/config/cache/balllight_28d681b050c8ded746491eb7261eb4f4"
+    }, 
+    "deploy": null, 
+    "filePath": "game/asset/test/balllight.png", 
+    "fileTime": [
+      1375585437.0
+    ], 
+    "manager": "asset_manager.texture", 
+    "modified": false, 
+    "objectFiles": {
+      "config": "env/config/cache/balllight_34d5685a42373dc8a51df23e4992961d", 
+      "pixmap": "env/config/cache/balllight_28d681b050c8ded746491eb7261eb4f4"
+    }, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "texture"
+  }, 
+  "test/brick2.png": {
+    "cacheFiles": {
+      "config": "env/config/cache/brick2_d2546be2683f11308bb471ac7940cd80", 
+      "pixmap": "env/config/cache/brick2_48e80cadc3c96958662c0b60a97a970f"
+    }, 
+    "deploy": null, 
+    "filePath": "game/asset/test/brick2.png", 
+    "fileTime": [
+      1375585437.0
+    ], 
+    "manager": "asset_manager.texture", 
+    "modified": false, 
+    "objectFiles": {
+      "config": "env/config/cache/brick2_d2546be2683f11308bb471ac7940cd80", 
+      "pixmap": "env/config/cache/brick2_48e80cadc3c96958662c0b60a97a970f"
+    }, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "texture"
+  }, 
+  "test/menu_arcade.png": {
+    "cacheFiles": {
+      "config": "env/config/cache/menu_arcade_ad7f0ffff8541b8775b27a933b7e5116", 
+      "pixmap": "env/config/cache/menu_arcade_b6b95983509d6f5a9bfb9caa601f98ac"
+    }, 
+    "deploy": null, 
+    "filePath": "game/asset/test/menu_arcade.png", 
+    "fileTime": [
+      1375585437.0
+    ], 
+    "manager": "asset_manager.texture", 
+    "modified": false, 
+    "objectFiles": {
+      "config": "env/config/cache/menu_arcade_ad7f0ffff8541b8775b27a933b7e5116", 
+      "pixmap": "env/config/cache/menu_arcade_b6b95983509d6f5a9bfb9caa601f98ac"
+    }, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "texture"
+  }, 
+  "test/menu_vs.png": {
+    "cacheFiles": {
+      "config": "env/config/cache/menu_vs_2507b49c8a1bce4e900a9331e8dfc517", 
+      "pixmap": "env/config/cache/menu_vs_d4a651a1d09969a07ad7d078f14c7d6a"
+    }, 
+    "deploy": null, 
+    "filePath": "game/asset/test/menu_vs.png", 
+    "fileTime": [
+      1375585437.0
+    ], 
+    "manager": "asset_manager.texture", 
+    "modified": false, 
+    "objectFiles": {
+      "config": "env/config/cache/menu_vs_2507b49c8a1bce4e900a9331e8dfc517", 
+      "pixmap": "env/config/cache/menu_vs_d4a651a1d09969a07ad7d078f14c7d6a"
+    }, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "texture"
+  }, 
   "test/sprite1.psd": {
     "cacheFiles": {
       "config": "env/config/cache/sprite1_994ed28dab925963c1dc608036cf0681", 
@@ -300,6 +449,27 @@
     "objectFiles": {
       "config": "env/config/cache/sprite1_994ed28dab925963c1dc608036cf0681", 
       "pixmap": "env/config/cache/sprite1_62214c5098efb58342b604046e779131"
+    }, 
+    "pDep": [], 
+    "properties": {}, 
+    "rDep": [], 
+    "type": "texture"
+  }, 
+  "test/title.png": {
+    "cacheFiles": {
+      "config": "env/config/cache/title_5b7d33be101d4359998db5d291a34ca1", 
+      "pixmap": "env/config/cache/title_a1339a5b13b8120365454bc6d96da1ab"
+    }, 
+    "deploy": null, 
+    "filePath": "game/asset/test/title.png", 
+    "fileTime": [
+      1375585437.0
+    ], 
+    "manager": "asset_manager.texture", 
+    "modified": false, 
+    "objectFiles": {
+      "config": "env/config/cache/title_5b7d33be101d4359998db5d291a34ca1", 
+      "pixmap": "env/config/cache/title_a1339a5b13b8120365454bc6d96da1ab"
     }, 
     "pDep": [], 
     "properties": {}, 

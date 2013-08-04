@@ -37,12 +37,12 @@ class SceneEditor( QtEditorModule ):
 	def onLoad( self ):
 		self.setupMainWindow()
 		self.containers  = {}
-
 		self.addTool( 'scene/run', label = 'Run' )
 
 		return True
 
 	def onStart( self ):
+		self.mainWindow.show()
 		self.restoreWindowState( self.mainWindow )
 	
 	def onStop( self ):

@@ -274,10 +274,11 @@ function updateItem( )
 
 	elseif targetType == 'quad' then
 		local w,  h  = deckWidth, deckHeight
-		deck:setRect( -w/2+ox, -h/2+oy, w/2+ox, w/2+oy )
+		deck:setRect( -w/2+ox, -h/2+oy, w/2+ox, h/2+oy )
+
 	elseif targetType == 'stretchpatch' then
 		local w,  h  = deckWidth, deckHeight
-		deck:setRect( -w/2+ox, -h/2+oy, w/2+ox, w/2+oy )
+		deck:setRect( -w/2+ox, -h/2+oy, w/2+ox, h/2+oy )
 		deck:setRow( 1, row1, false )
 		deck:setRow( 2, row2, true )
 		deck:setRow( 3, row3, false )

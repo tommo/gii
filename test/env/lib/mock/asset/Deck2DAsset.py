@@ -41,4 +41,8 @@ class Deck2DAssetManager(AssetManager):
 
 
 Deck2DAssetManager().register()
-AssetLibrary.get().setAssetIcon( 'deck2d', 'pack' )
+AssetLibrary.get().setAssetIcon( 'deck2d',              'pack' )
+AssetLibrary.get().setAssetIcon( 'deck2d.quad',         'deck_quad' )
+AssetLibrary.get().setAssetIcon( 'deck2d.tileset',      'deck_tileset' )
+AssetLibrary.get().setAssetIcon( 'deck2d.stretchpatch', 'deck_patch' )
+AssetLibrary.get().setAssetIcon( 'deck2d.quad_array	',  'deck_quad_array' )

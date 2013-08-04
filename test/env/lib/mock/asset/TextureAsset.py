@@ -149,10 +149,8 @@ class TextureLibrary( EditorModule ):
 		_G = self.getModule( 'mock' ).getLuaEnv()
 		_G['MOCK_TEXTURE_LIBRARY_INDEX'] = self.indexPath
 		signals.connect( 'asset.post_import_all', self.postAssetImportAll )
-
-	def onUnload( self ):
-		self.saveIndex()
-
+		signals.connect( 'project.save', self.onSaveProject )
+	
 	def addGroup( self, name ):
 		g = TextureGroup( name )
 		if name != 'default':
@@ -191,7 +189,7 @@ class TextureLibrary( EditorModule ):
 			groupDatas[ g.name ] = g.toJson()
 
 		data = {
-			'groups'   : groupDatas,
+			'groups' : groupDatas,
 		}
 		jsonHelper.trySaveJSON( data, self.indexPath, 'texture index' )
 
@@ -284,6 +282,9 @@ class TextureLibrary( EditorModule ):
 
 	def postAssetImportAll( self ):
 		self.doPendingImports()
+
+	def onSaveProject( self, prj ):
+		self.saveIndex()
 
 ##----------------------------------------------------------------##
 TextureAssetManager().register()
