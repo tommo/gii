@@ -18,10 +18,10 @@ class SceneAssetManager(AssetManager):
 		return True
 
 	def editAsset( self, node ):
-		editor = app.getModule( 'scene_editor' )
+		editor = app.getModule( 'scene_view' )
 		if not editor:
 			return alertMessage( 'Editor not load', 'Scene Editor not found!' ) 
-		editor.startEdit( node )
+		editor.openScene( node )
 
 ##----------------------------------------------------------------##
 class SceneCreator(AssetCreator):

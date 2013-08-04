@@ -181,11 +181,12 @@ class MOAIEditCanvasLuaDelegate(MOAILuaDelegate):
 
 class MOAIEditCanvas( GLWidget ):
 	_id = 0
-	def __init__(self, *args):
+	def __init__( self, *args, **kwargs ):
 		MOAIEditCanvas._id += 1
 		super(MOAIEditCanvas, self).__init__(*args)
+		contextPrefix = kwargs.get( 'context_prefix', 'edit_canvas')
 		self.runtime     = app.affirmModule( 'moai' )
-		self.contextName = 'EditCanvas-%d' % MOAIEditCanvas._id
+		self.contextName = '%s<%d>' % ( contextPrefix, MOAIEditCanvas._id )
 		self.delegate    = MOAIEditCanvasLuaDelegate( self, autoReload = False )
 		self.updateTimer = QtCore.QTimer(self)
 		self.viewWidth   = 0

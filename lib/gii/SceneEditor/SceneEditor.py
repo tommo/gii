@@ -14,6 +14,9 @@ from PyQt4.QtCore    import Qt
 ##----------------------------------------------------------------##
 
 from gii.moai.MOAIRuntime import MOAILuaDelegate
+##----------------------------------------------------------------##
+
+signals.register( 'entity.modified' )
 
 ##----------------------------------------------------------------##
 class SceneEditor( QtEditorModule ):
@@ -59,7 +62,7 @@ class SceneEditor( QtEditorModule ):
 		self.mainWindow.setFocus()
 
 	def startEdit( self, node ):
-		logging.info( 'start edit scene' + repr( node ) )		
+		logging.info( 'start edit scene' + repr( node ) )
 
 	#resource provider
 	def requestDockWindow( self, id, **dockOptions ):

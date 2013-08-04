@@ -23,7 +23,7 @@ class GamePreview( SceneEditorModule ):
 		self.viewHeight     = 0
 
 	def getName(self):
-		return 'game'
+		return 'scene_preview'
 
 	def getDependency(self):
 		return [ 'qt', 'moai', 'scene_editor' ]
@@ -115,6 +115,9 @@ class GamePreview( SceneEditorModule ):
 	def hide( self ):
 		self.window.hide()
 
+	def refresh( self ):
+		self.canvas.updateGL()
+
 	def updateView(self):
 		if self.paused: return
 		before  = time.clock()
@@ -148,7 +151,6 @@ class GamePreview( SceneEditorModule ):
 			runtime.addDefaultInputDevice()
 			)
 		getAKU().setFuncOpenWindow(self.onOpenWindow)
-		
 	
 	def onUnload(self):
 		self.window.destroy()

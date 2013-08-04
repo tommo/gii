@@ -135,7 +135,7 @@ class IntrospectorInstance(object):
 		pass
 
 	def onPropertyChanged( self, obj, id, value ):
-		pass
+		signals.emit( 'entity.modified', obj )
 
 
 		

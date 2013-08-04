@@ -26,7 +26,7 @@ function createRenderContext(key)
 		clearColor       = { 0,0,0,0 },
 		actionRoot       = root,
 		bufferTable      = {},
-		renderTableMap   = setmetatable( {}, { __mode = 'v' } ),
+		renderTableMap   = {},
 	}
 	renderContextTable[ key ] = context
 	root:run( function() local dt = coroutine.yield() end )
@@ -42,10 +42,10 @@ function removeContextChangeListener( f )
 end
 
 function changeRenderContext(key, w, h)	
+	if currentContextKey == key then return end
+
 	local context = renderContextTable[key]
 	assert ( context, 'no render context for:'..tostring(key) )
-
-	if currentContext == context then return end	
 	for f in pairs( ContextChangeListeners ) do
 		f( key, currentContextKey )
 	end
