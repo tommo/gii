@@ -1,0 +1,30 @@
+def configure( conf ):
+	print 'here'
+
+def build( bld ):	
+	LIBS_SYSTEM = [ 'System', 'crypto', 'ssl', 'objc', 'stdc++' ]
+	bld.program(
+		source   = 'ParticlePresets.cpp GlutHostMain.cpp GlutHost.cpp FolderWatcher-mac.mm',
+		target   = 'host',
+		use      = 'MOAI FMOD extension',
+
+		includes = '../extension',
+
+		framework = [ 
+			'CoreServices',
+			'CoreFoundation',
+			'Foundation',
+			'AudioUnit',
+			'AudioToolbox',
+			'GLUT',
+			'IOKit',
+			'OpenGL',
+		],
+
+		stlib      = LIBS_SYSTEM,
+		cxxflags   = [ 
+			'-DGLUTHOST_USE_LUAEXT', 
+			'-DGLUTHOST_USE_FMOD_DESIGNER' 
+		],
+
+	)

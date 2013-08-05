@@ -57,6 +57,7 @@ class PackageManager( object ):
 					if os.path.exists( fullpath + '/__init__.py' ) \
 					or os.path.exists( fullpath + '/__init__.pyc' ):
 						self.loadPackage( dirname, fullpath )
+				break
 
 ##----------------------------------------------------------------##
 class Package(object):

@@ -13,5 +13,6 @@ Thumbs.db
 BUILD_RESULT
 packer
 host/ios/content
-test/game/assset
+test/game
+test/bin
 test/env/config/cache

@@ -1,0 +1,10 @@
+{
+	"common" : {
+			"title" : "Game"
+		},
+
+	"ios" : {
+			"orientation" : "auto",
+		},
+	
+}

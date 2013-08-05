@@ -158,8 +158,19 @@ class Project(object):
 
 		sys.path.insert( 0, self.envLibPath )
 
-		self.info   = jsonHelper.tryLoadJSON( self.getBasePath( _GII_INFO_FILE ) ) or {}
-		self.config = jsonHelper.tryLoadJSON( self.getConfigPath( _GII_CONFIG_FILE ) ) or {}
+		self.info   = jsonHelper.tryLoadJSON( self.getBasePath( _GII_INFO_FILE ) )
+		self.config = jsonHelper.tryLoadJSON( self.getConfigPath( _GII_CONFIG_FILE ) )
+		if not self.config:
+			self.config = {}
+			jsonHelper.trySaveJSON( self.config, self.getConfigPath( _GII_CONFIG_FILE ) )
+
+		if not self.info:
+			self.info = {
+				'name' : 'name',
+				'version' : [0,0,1],
+			}
+			jsonHelper.trySaveJSON( self.info, self.getBasePath( _GII_INFO_FILE ) )
+			
 		#load cache & assetlib
 		self.cacheManager.load( _GII_ENV_CONFIG_DIR, self.envConfigPath )
 		self.assetLibrary.load( _GII_ASSET_DIR, self.assetPath, self.path, self.envConfigPath )

@@ -528,6 +528,30 @@
 			}
 		},
 		{
+			"file": "data/lua/renderContext.lua",
+			"settings":
+			{
+				"buffer_size": 4891,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test/env/packages/SceneView/SceneView.py",
+			"settings":
+			{
+				"buffer_size": 1777,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test/env/packages/SceneView/SceneView.lua",
+			"settings":
+			{
+				"buffer_size": 1044,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "test/game/lib/mock/core/Component.lua",
 			"settings":
 			{
@@ -536,13 +560,29 @@
 			}
 		},
 		{
-			"contents": "[STATUS]  registering asset manager:asset_manager.text\n[STATUS]  registering asset manager:asset_manager.script\n[STATUS]  start tool: ide </Volumes/prj/gii/tools/ide>\n[STATUS]  loading asset table from:/Volumes/prj/gii/test/env/config/asset_table.json\n[STATUS]  asset library loaded\n[STATUS]  project loaded: /Volumes/prj/gii/test\n[STATUS]  scanning package in:/Volumes/prj/gii/packages\n[STATUS]  loading package:CommonAssetPreview\n[STATUS]  loading package:ScriptView\n[STATUS]  scanning package in:/Volumes/prj/gii/test/env/packages\n[STATUS]  loading package:AnimPreview\n[STATUS]  loading package:DeckEditor\n[STATUS]  loading package:FontPreview\n[STATUS]  loading package:Mock\n[STATUS]  registering asset manager:asset_manager.scene\n[STATUS]  registering asset manager:asset_manager.texture\n[STATUS]  registering asset manager:asset_manager.deck2d\n[STATUS]  registering asset manager:asset_manager.font\n[STATUS]  registering asset manager:asset_manager.stylesheet\n[STATUS]  registering asset manager:asset_manager.aurora_sprite\n[STATUS]  loading package:SceneGraphBrowser\n[STATUS]  loading package:SceneView\n[STATUS]  loading package:StyleSheetEditor\n[STATUS]  loading package:TextureManager\n[STATUS]  loading package:TexturePreview\n[STATUS]  loading module:qt\n[STATUS]  loading module:filewatcher\n[STATUS]  start watching: /Volumes/prj/gii/test/game/asset\n[STATUS]  loading module:asset_editor\n[STATUS]  loading module:asset_browser\n[STATUS]  loading module:asset_previewer\n[STATUS]  loading module:script_view\n[STATUS]  loading module:moai\n[STATUS]  loading gii lua runtime\n[STATUS]  change moai working path:/Volumes/prj/gii/test\n[STATUS]  loading module:mock\nInitializing Chipmunk v5.3.4 (Debug Enabled)\nCompile with -DNDEBUG defined to disable debug mode and runtime assertion checks\n[STATUS]  loading module:deck2d_editor\n[STATUS]  loading module:texture_library\n[STATUS]  loading texture library index\n[STATUS]  loading module:scene_editor\n[STATUS]  loading module:introspector\n[STATUS]  loading module:scene_preview\n[STATUS]  loading module:scenegraph_browser\n[STATUS]  loading module:scene_view\n[STATUS]  loading module:mock.stylesheet_editor\n[STATUS]  loading module:mock.texture_manager\n[STATUS]  start all modules\n[STATUS]  loading library from  /Volumes/prj/gii/test/env/config/asset_table.json \n[STATUS]  scan project in:/Volumes/prj/gii/test/game/asset\n[STATUS]  asset table saved\n[STATUS]  loading asset from  scenes/main.scene \n[STATUS]  stop all modules\n[STATUS]  saving current project\n[STATUS]  asset table saved\n[STATUS]  removing free cache file/dir\n[STATUS]  saving texture library index\n[STATUS]  project saved\n[STATUS]  unloading module:qt\n[STATUS]  unloading module:filewatcher\n[STATUS]  unloading module:asset_editor\n[STATUS]  unloading module:asset_browser\n[STATUS]  unloading module:asset_previewer\n[STATUS]  unloading module:script_view\n[STATUS]  unloading module:moai\n[STATUS]  clean lua reference\n[STATUS]  unregister provider:<gii.moai.bridge.LuaObjectModelProvider object at 0xb4fa290>\n[STATUS]  unregister provider:<gii.moai.bridge.LuaObjectModelProvider object at 0x46b18f0>\n[STATUS]  unloading module:mock\n[STATUS]  unloading module:texture_library\n[STATUS]  unloading module:scene_editor\n[STATUS]  unloading module:introspector\n[STATUS]  unloading module:scene_preview\n[STATUS]  unloading module:scenegraph_browser\n[STATUS]  unloading module:scene_view\n[STATUS]  unloading module:mock.stylesheet_editor\n[STATUS]  unloading module:mock.texture_manager\n[STATUS]  unloading module:deck2d_editor\n\n[Finished in 116.7s]\n",
+			"file": "test/game/lib/mock/core/Game.lua",
+			"settings":
+			{
+				"buffer_size": 14341,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/moai/MOAIEditCanvas.py",
+			"settings":
+			{
+				"buffer_size": 8073,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "[STATUS]  registering asset manager:asset_manager.text\n[STATUS]  registering asset manager:asset_manager.script\n[STATUS]  start tool: ide </Volumes/prj/gii/tools/ide>\n[STATUS]  loading asset table from:/Volumes/prj/gii/test/env/config/asset_table.json\n[STATUS]  asset library loaded\n[STATUS]  project loaded: /Volumes/prj/gii/test\n[STATUS]  scanning package in:/Volumes/prj/gii/packages\n[STATUS]  loading package:CommonAssetPreview\n[STATUS]  loading package:ScriptView\n[STATUS]  scanning package in:/Volumes/prj/gii/test/env/packages\n[STATUS]  loading package:AnimPreview\n[STATUS]  loading package:DeckEditor\n[STATUS]  loading package:FontPreview\n[STATUS]  loading package:Mock\n[STATUS]  registering asset manager:asset_manager.scene\n[STATUS]  registering asset manager:asset_manager.texture\n[STATUS]  registering asset manager:asset_manager.deck2d\n[STATUS]  registering asset manager:asset_manager.font\n[STATUS]  registering asset manager:asset_manager.stylesheet\n[STATUS]  registering asset manager:asset_manager.aurora_sprite\n[STATUS]  loading package:SceneGraphBrowser\n[STATUS]  loading package:SceneView\n[STATUS]  loading package:StyleSheetEditor\n[STATUS]  loading package:TextureManager\n[STATUS]  loading package:TexturePreview\n[STATUS]  loading module:qt\n[STATUS]  loading module:filewatcher\n[STATUS]  start watching: /Volumes/prj/gii/test/game/asset\n[STATUS]  loading module:asset_editor\n[STATUS]  loading module:asset_browser\n[STATUS]  loading module:asset_previewer\n[STATUS]  loading module:script_view\n[STATUS]  loading module:moai\n[STATUS]  loading gii lua runtime\n[STATUS]  change moai working path:/Volumes/prj/gii/test\n[STATUS]  loading module:mock\nInitializing Chipmunk v5.3.4 (Debug Enabled)\nCompile with -DNDEBUG defined to disable debug mode and runtime assertion checks\n[STATUS]  loading module:deck2d_editor\n[STATUS]  loading module:texture_library\n[STATUS]  loading texture library index\n[STATUS]  loading module:scene_editor\n[STATUS]  loading module:introspector\n[STATUS]  loading module:scene_preview\n[STATUS]  loading module:scenegraph_browser\n[STATUS]  loading module:scene_view\n[STATUS]  loading module:mock.stylesheet_editor\n[STATUS]  loading module:mock.texture_manager\n[STATUS]  start all modules\n[STATUS]  loading library from  /Volumes/prj/gii/test/env/config/asset_table.json \n[STATUS]  scan project in:/Volumes/prj/gii/test/game/asset\n[STATUS]  asset table saved\n[STATUS]  loading asset from  misaki_gothic.ttf \nTEXTURE: '+'      32768 =   0.03MB < /Volumes/prj/gii/test/game/asset/misaki_gothic.ttf\n[STATUS]  loading asset from  scenes/main.scene \ncamera context: edit_canvas<2>\n[STATUS]  stop all modules\n[STATUS]  saving current project\n[STATUS]  asset table saved\n[STATUS]  removing free cache file/dir\n[STATUS]  saving texture library index\n[STATUS]  project saved\n[STATUS]  unloading module:qt\n[STATUS]  unloading module:filewatcher\n[STATUS]  unloading module:asset_editor\n[STATUS]  unloading module:asset_browser\n[STATUS]  unloading module:asset_previewer\n[STATUS]  unloading module:script_view\n[STATUS]  unloading module:moai\n[STATUS]  clean lua reference\n[STATUS]  unregister provider:<gii.moai.bridge.LuaObjectModelProvider object at 0x37f3930>\n[STATUS]  unregister provider:<gii.moai.bridge.LuaObjectModelProvider object at 0x37f3950>\n[STATUS]  unloading module:mock\n[STATUS]  unloading module:texture_library\n[STATUS]  unloading module:scene_editor\n[STATUS]  unloading module:introspector\n[STATUS]  unloading module:scene_preview\n[STATUS]  unloading module:scenegraph_browser\n[STATUS]  unloading module:scene_view\n[STATUS]  unloading module:mock.stylesheet_editor\n[STATUS]  unloading module:mock.texture_manager\n[STATUS]  unloading module:deck2d_editor\n\n[Finished in 24.4s]\n",
 			"file": "BUILD_RESULT",
 			"file_size": -1,
 			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 3553,
+				"buffer_size": 3720,
 				"line_ending": "Unix",
 				"scratch": true
 			}
@@ -1205,6 +1245,16 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"contextPrefix",
+			"self",
+			"Conte",
+			"kwargs",
+			"context",
+			"else",
+			"setBufferTable",
+			"createRenderContext",
+			"currentContextKey",
+			"change",
 			"startEdit",
 			"startEdi",
 			"scene_view",
@@ -1322,17 +1372,7 @@
 			"_defaultInputManger",
 			"InputManager",
 			"target",
-			"add",
-			"addMouseListener",
-			"a",
-			"TexturePreview",
-			"TexturePreviewControl",
-			"CLASS",
-			"EditorEntity",
-			"createRenderContext",
-			"previewCanvas",
-			"Deck2DEditor",
-			"addListItem"
+			"add"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1478,7 +1518,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -1499,7 +1539,7 @@
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
 							"syntax": "Packages/Lua/Lua.tmLanguage"
 						},
 						"translation.x": 0.0,
@@ -1507,27 +1547,77 @@
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
+				},
 				{
 					"buffer": 1,
-					"file": "test/game/lib/mock/core/Component.lua",
+					"file": "data/lua/renderContext.lua",
 					"settings":
 					{
-						"buffer_size": 1660,
+						"buffer_size": 4891,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								432,
-								432
+								1387,
+								1387
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 673.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "test/env/packages/SceneView/SceneView.py",
+					"settings":
+					{
+						"buffer_size": 1777,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1420,
+								1420
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 315.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "test/env/packages/SceneView/SceneView.lua",
+					"settings":
+					{
+						"buffer_size": 1044,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								844,
+								844
 							]
 						],
 						"settings":
@@ -1545,23 +1635,113 @@
 			]
 		},
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
-					"buffer": 2,
-					"file": "BUILD_RESULT",
+					"buffer": 4,
+					"file": "test/game/lib/mock/core/Component.lua",
 					"settings":
 					{
-						"buffer_size": 3553,
+						"buffer_size": 1660,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3553,
-								3553
+								689,
+								689
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "test/game/lib/mock/core/Game.lua",
+					"settings":
+					{
+						"buffer_size": 14341,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13280,
+								13280
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 9672.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "lib/gii/moai/MOAIEditCanvas.py",
+					"settings":
+					{
+						"buffer_size": 8073,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3863,
+								3863
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2952.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 7,
+					"file": "BUILD_RESULT",
+					"settings":
+					{
+						"buffer_size": 3720,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3720,
+								3720
 							]
 						],
 						"settings":
@@ -1575,13 +1755,13 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1107.0,
+						"translation.y": 1174.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 8,
 					"file": "gii_cfg.py",
 					"settings":
 					{
@@ -1690,16 +1870,32 @@
 		"selected_items":
 		[
 			[
+				"moaied",
+				"lib/gii/moai/MOAIEditCanvas.py"
+			],
+			[
+				"game",
+				"test/game/lib/mock/core/Game.lua"
+			],
+			[
+				"scenv",
+				"test/env/packages/SceneView/SceneView.py"
+			],
+			[
+				"rencon",
+				"data/lua/renderContext.lua"
+			],
+			[
+				"render",
+				"data/lua/renderContext.lua"
+			],
+			[
 				"edic",
 				"test/env/lib/mock/editor/MOCKEditCanvas.lua"
 			],
 			[
 				"scenee",
 				"test/env/lib/mock/asset/SceneAsset.py"
-			],
-			[
-				"scenv",
-				"test/env/packages/SceneView/SceneView.py"
 			],
 			[
 				"testen",
@@ -1766,16 +1962,8 @@
 				"data/lua/renderContext.lua"
 			],
 			[
-				"game",
-				"test/game/lib/mock/core/Game.lua"
-			],
-			[
 				"mockb",
 				"test/env/lib/mock/MockBridge.lua"
-			],
-			[
-				"render",
-				"data/lua/renderContext.lua"
 			],
 			[
 				"camera",
@@ -1832,10 +2020,6 @@
 			[
 				"mocked",
 				"test/env/lib/mock/editor/MOCKEditCanvas.lua"
-			],
-			[
-				"moaied",
-				"lib/gii/moai/MOAIEditCanvas.py"
 			],
 			[
 				"texturepre",
@@ -2196,10 +2380,6 @@
 			[
 				"com",
 				"test/game/lib/mock/core/Component.lua"
-			],
-			[
-				"main",
-				"test/game/main.lua"
 			]
 		],
 		"width": 0.0

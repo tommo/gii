@@ -1,0 +1,18 @@
+{
+	"_assetType":"scene",
+	"entities":[
+		{	
+			"type": false,
+			"name": "Camera",
+			"components": [
+				{ "type":"Camera" }
+			]
+		},
+		{	
+			"type": "Test",
+			"name": "test",
+			"components": [
+			]
+		}
+	]
+}
