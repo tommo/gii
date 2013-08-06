@@ -2,6 +2,8 @@ import os
 import os.path
 import logging
 import time
+import platform
+
 
 import signals
 
@@ -13,6 +15,7 @@ from MainModulePath import getMainModulePath
 from selection      import SelectionManager
 
 from InstanceHelper import checkSingleInstance
+
 
 _GII_BUILTIN_PACKAGES_PATH = 'packages'
 
@@ -115,10 +118,10 @@ class EditorApp(object):
 		return Project.get()
 
 	def openProject( self ):
-		path = Project.findProject()
-		if not path:
+		info = Project.findProject()
+		if not info:
 			raise Exception( 'no valid gii project found' )
-		Project.get().load( path )		
+		Project.get().load( info['path'] )
 
 	def getAssetLibrary( self ):
 		return self.getProject().getAssetLibrary()
@@ -129,4 +132,15 @@ class EditorApp(object):
 	def isDebugging( self ):
 		return False
 
+	def getPlatformName( self ):
+		name = platform.system()
+		if name == 'Linux':
+			return 'linux'
+		elif name == 'Darwin':
+			return 'osx'
+		elif name == 'Windows':
+			return 'win'
+		else:
+			raise Exception( 'what platform?' + name )
+			
 app = EditorApp()

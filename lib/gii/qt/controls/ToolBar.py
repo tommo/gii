@@ -8,11 +8,12 @@ from gii.core import signals
 from Menu import MenuManager
 
 class ToolBarItem(object):
-	def __init__( self, name, option ):
+	def __init__( self, name, **option ):
 		option = option or {}
 		self.name     = name.lower()
 		self.label    = option.get( 'label', name )	
 		self.priority = option.get( 'priority', 0 )
+		self.module   = None
 		
 		self.onClick = None
 		self.signal  = None
@@ -66,8 +67,8 @@ class ToolBarNode(object):
 		self.qtToolbar = qtToolbar
 		self.items = {}
 
-	def addTool( self, name, option ):
-		item = ToolBarItem( name, option )
+	def addTool( self, name, **option ):
+		item = ToolBarItem( name, **option )
 		self.items[ name ] = item
 		self.qtToolbar.addAction( item.qtaction )
 		return item
@@ -135,7 +136,7 @@ class ToolBarManager(object):
 
 		toolbar = self.find( blobs[0] )
 		if toolbar:
-			tool = toolbar.addTool( blobs[1], option )
+			tool = toolbar.addTool( blobs[1], **option )
 			tool.module = module or toolbar.module
 			return tool
 		logging.error( 'toolbar not found:' + blobs[0] )

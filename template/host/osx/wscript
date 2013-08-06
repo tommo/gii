@@ -2,6 +2,7 @@ def configure( conf ):
 	print 'here'
 
 def build( bld ):	
+	print bld.path
 	LIBS_SYSTEM = [ 'System', 'crypto', 'ssl', 'objc', 'stdc++' ]
 	bld.program(
 		source   = 'ParticlePresets.cpp GlutHostMain.cpp GlutHost.cpp FolderWatcher-mac.mm',

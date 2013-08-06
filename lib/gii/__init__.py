@@ -2,5 +2,5 @@ from core import *
 
 ##----------------------------------------------------------------##
 def startup():
-	path = Project.findProject()
-	startupTool( path )
+	info = Project.findProject()
+	startupTool( info )

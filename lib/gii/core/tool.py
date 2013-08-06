@@ -9,6 +9,7 @@ import imp
 
 import signals
 import globalSignals
+import jsonHelper
 
 from MainModulePath import getMainModulePath
 
@@ -83,6 +84,15 @@ def printHeader():
 	print 'GII development environment'
 	print '---------------------------'
 
+def printProjectInfo( info ):
+	if not info: return
+	print '  current project: ' + info.get('path')
+	print ''
+	print '    - NAME   : \t%s' % ( info.get('name', 'N/A') )
+	print '    - AUTHOR : \t%s' % ( info.get('author', 'N/A') )
+	print '    - VERSION: \t%s' % ( info.get('version', 'N/A') )
+	print ''
+
 def printToolInfo( info ):
 	output = '    %s \t %s' % ( info.get('name', '???') , info.get('help','') )
 	output = output.expandtabs( 16 )
@@ -104,27 +114,29 @@ def printAvailTools():
 	print ''
 
 def printUsage():
-	printHeader()
 	print 'Usage:  gii <tool-name> ...'
 	print ''
 	printAvailTools()
 
 def printMissingCommand( cmd ):
-	printHeader()
 	print 'ERROR: no tool found: ' + cmd
 	print ''
 	printAvailTools( )
 	
 ##----------------------------------------------------------------##
-def startupTool( path ):	
-	scanTools( path )
+def startupTool( info ):	
+	scanTools( info and info['path'] or None )
 	argv = sys.argv
 	if len( argv ) < 2:
+		printHeader()
 		printUsage()
+		printProjectInfo( info )
 		return False
 	cmd = argv[1]
-	for info in _prjTools + _libTools:
-		if info.get('name') == cmd:
-			return startTool( info )
+	for toolInfo in _prjTools + _libTools:
+		if toolInfo.get('name') == cmd:
+			return startTool( toolInfo )
+	printHeader()
+	printProjectInfo( info )
 	printMissingCommand( cmd )
 

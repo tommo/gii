@@ -53,11 +53,11 @@ class MainWindow(QtGui.QMainWindow):
 	"""docstring for MainWindow"""
 	def __init__(self, parent):
 		super(MainWindow, self).__init__(parent)
-		self.setDocumentMode(True)
+		# self.setDocumentMode(True)
 		self.setUnifiedTitleAndToolBarOnMac( False )
 		self.setDockOptions(
-			QtGui.QMainWindow.AllowNestedDocks | QtGui.QMainWindow.AllowTabbedDocks )
-
+			QtGui.QMainWindow.AllowNestedDocks | QtGui.QMainWindow.AllowTabbedDocks  )
+		# self.setTabPosition( Qt.AllDockWidgetAreas, QtGui.QTabWidget.North)
 		font=QtGui.QFont()
 		font.setPointSize(11)
 		self.setFont(font)
@@ -66,7 +66,7 @@ class MainWindow(QtGui.QMainWindow):
 		self.centerTabWidget = QtGui.QTabWidget(self)
 		self.setCentralWidget(self.centerTabWidget)
 
-		self.centerTabWidget.setDocumentMode(True)
+		# self.centerTabWidget.setDocumentMode(True)
 		self.centerTabWidget.setMovable(True)
 		self.centerTabWidget.setTabsClosable(True)
 		self.centerTabWidget.tabCloseRequested.connect( self.onTabCloseRequested )
@@ -228,30 +228,28 @@ class SubWindowMixin:
 		self.setWidget(container)
 		return container
 
-	def getMenu(self):
-		pass
 
-	def getToolBar(self):
-		pass
+	def addToolBar(self):
+		return self.addWidget( QtGui.QToolBar(), expanding = False ) 
 
 	def addWidget(self, widget, **layoutOption):
-		# widget.setParent(self)
-		if layoutOption.get('expanding', True):
-			widget.setSizePolicy(
-				QtGui.QSizePolicy.Expanding,
-				QtGui.QSizePolicy.Expanding
-				)
-		elif layoutOption.get('fixed', False):
+		# widget.setParent(self)		
+		if layoutOption.get('fixed', False):
 			widget.setSizePolicy(
 				QtGui.QSizePolicy.Fixed,
 				QtGui.QSizePolicy.Fixed
 				)
+		elif layoutOption.get('expanding', True):
+			widget.setSizePolicy(
+				QtGui.QSizePolicy.Expanding,
+				QtGui.QSizePolicy.Expanding
+				)		
 		self.mainLayout.addWidget(widget)
 		return widget
 
 	def addWidgetFromFile(self, uiFile, **layoutOption):
 		form=uic.loadUi(uiFile)
-		return self.addWidget(form, **layoutOption)
+		return self.addWidget(form, **layoutOption)	
 
 	def moveToCenter(self):
 		moveWindowToCenter(self)

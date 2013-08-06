@@ -6,11 +6,14 @@ def main( argv ):
 	app.openProject()
 	project = app.getProject()
 	os.chdir( project.getBasePath() )
+	
 	import subprocess
+
+	bin = project.getBinaryPath( app.getPlatformName() + '/moai' )
+
 	arglist = [
-		'bin/osx/moai',
-		'game/startup.lua',
-		'osx'
+		bin,
+		'game/main.lua'
 	]
 	try:
 		subprocess.call( arglist )

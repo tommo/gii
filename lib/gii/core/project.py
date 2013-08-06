@@ -63,7 +63,10 @@ class Project(object):
 		while path and not ( path in ( '', '/','\\' ) ):
 			if   os.path.exists( path + '/' + _GII_ENV_CONFIG_DIR ) \
 			and  os.path.exists( path + '/' + _GII_INFO_FILE ) :
-				return path
+				#get info
+				info = jsonHelper.tryLoadJSON( path + '/' + _GII_INFO_FILE )
+				info['path'] = path
+				return info
 			#go up level
 			opath = path
 			path = os.path.dirname( path )
@@ -126,9 +129,9 @@ class Project(object):
 		_mkdir( self.hostExtensionPath )
 		
 	def init( self, path ):
-		prjPath = Project.findProject( path )
-		if prjPath:
-			raise ProjectException( 'Gii project already initialized:' + prjPath )
+		info = Project.findProject( path )
+		if info:
+			raise ProjectException( 'Gii project already initialized:' + info['path'] )
 
 		path = os.path.realpath(path)
 		if not os.path.isdir(path):

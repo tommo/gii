@@ -36,11 +36,13 @@ class QtSupport( QtEditorModule ):
 
 	def setupStyle( self ):
 		# setup styles
-		# QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Cleanlooks'))
+		# QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Windows'))
+		QtCore.QDir.setSearchPaths( 'theme', [ self.getApp().getPath( 'data/theme' ) ] )
 		try:
-			styleSheetName = 'dark1.qss'
+			# styleSheetName = 'dark.qss'
+			styleSheetName = 'xn.qss'
 			self.qtApp.setStyleSheet(
-					open( self.getApp().getPath( 'data/' + styleSheetName ) ).read() 
+					open( self.getApp().getPath( 'data/theme/' + styleSheetName ) ).read() 
 				)
 		except Exception, e:
 			# logging.info('style sheet not load',e)

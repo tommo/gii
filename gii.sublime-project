@@ -50,12 +50,14 @@
 				"host/ios/*.xcodeproj",
 				"BUILD_RESULT"
 			],
+
 			"folder_exclude_patterns":
 			[
 				"host/ios/build",
 				"host/ios/content",
 				"audio",
-				"cache"
+				"cache",
+				"test/bin"
 			],
 			"path": "./"
 		}
