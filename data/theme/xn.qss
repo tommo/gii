@@ -10,6 +10,10 @@ QFrame
 	border:0;
 }
 
+QLabel{
+	background-color:transparent;
+}
+
 QToolButton
 {
 	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#353535,stop:1#252525);
@@ -418,9 +422,9 @@ QProgressBar::chunk
 
 QToolBar
 {
-	border-bottom:0px solid #000;
-	padding:2px;
-	background-color: #444;
+	border:1px solid #222;
+	padding:1px;
+	spacing:2px;
 }
 
 QToolBar::handle
