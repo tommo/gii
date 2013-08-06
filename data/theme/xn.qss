@@ -333,7 +333,7 @@ QMenuBar::item
 
 QMenu
 {
-	background-color:#3c3c3c;
+	background-color:#222222;
 	color:#dcdcdc;
 	border:0 solid red;
 	padding:5px;
@@ -425,8 +425,12 @@ QToolBar
 
 QToolBar::handle
 {
-	spacing: 3px; 
-	background: url(:/images/handle.png);
+	margin:2px;
+	border-left: 1px solid #222;
+	border-top: 1px solid #222;
+	border-right: 1px solid #333;
+	border-bottom: 1px solid #333;
+	background-color: transparent;	
 }
 
 QToolBar:separator

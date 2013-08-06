@@ -37,7 +37,7 @@ class ModAssetPreviewer( AssetEditorModule ):
 				QtGui.QSizePolicy.Expanding, 
 				QtGui.QSizePolicy.Expanding
 			)
-		self.previewerContainer.setMinimumSize(100,250)
+		self.previewerContainer.setMinimumSize(100,100)
 		self.container.addWidget( self.previewerContainer, expanding=False )
 		self.nullPreviewer = self.registerPreviewer( NullAssetPreviewer() )		
 

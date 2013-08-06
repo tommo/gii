@@ -71,6 +71,7 @@ class CacheManager(object):
 			return
 		node['touched'] = True
 
+
 	def getCacheFile( self, srcPath, name = None, **option ):
 		#make a name for cachefile { hash of srcPath }	
 		baseName    = srcPath
