@@ -403,7 +403,7 @@ QTabBar::tab:first{
 
 QTabBar::tab:selected
 {
-	background-color:#565656;
+	background-color:#444;
 	color:#c8c8c8;
 	padding:4px 5px;
 }
@@ -652,9 +652,9 @@ SearchLineEdit > QLineEdit
 	background-color:#5a5a5a;
 }
 
-:disabled,QListView::item
+:disabled
 {
-	color:#b4b4b4;
+	color:#818181;
 }
 
 QMainWindow,QScrollBar,QTableView
@@ -664,10 +664,9 @@ QMainWindow,QScrollBar,QTableView
 
 QMainWindow::separator
 {
-    background-color: #242424;
-    width:5px;
-    height:5px;
-    spacing: 3px; /* spacing between items in the tool bar */
+    background-color: #222;
+    width:3px;
+    height:3px;
 }
 
 QMainWindow::separator:hover

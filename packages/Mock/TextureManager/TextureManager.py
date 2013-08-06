@@ -204,6 +204,7 @@ class TextureManager( AssetEditorModule ):
 
 	def rebuildTexture( self ):
 		lib = self.getModule( 'texture_library' )
+		lib.saveIndex()
 		lib.forceRebuildTextures()
 
 TextureManager().register()

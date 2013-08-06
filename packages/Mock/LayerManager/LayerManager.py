@@ -60,10 +60,11 @@ class LayerManager( SceneEditorModule ):
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( _getModulePath( 'LayerManager.lua' ) )
 
-		self.tool.addTool( 'add', label = '+')
+		self.tool.addTool( 'add',    label = '+')
 		self.tool.addTool( 'remove', label = '-')
-		self.tool.addTool( 'up', label = 'up')
-		self.tool.addTool( 'down', label = 'down')
+		self.tool.addTool( 'up',     label = 'up')
+		self.tool.addTool( 'down',   label = 'down')
+		
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
 

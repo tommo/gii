@@ -520,14 +520,6 @@
 	"buffers":
 	[
 		{
-			"file": "test/env/lib/mock/editor/MOCKEditCanvas.lua",
-			"settings":
-			{
-				"buffer_size": 137,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "data/lua/renderContext.lua",
 			"settings":
 			{
@@ -536,18 +528,50 @@
 			}
 		},
 		{
-			"file": "test/env/packages/SceneView/SceneView.py",
+			"file": "test/env/packages/SceneView/SceneView.lua",
 			"settings":
 			{
-				"buffer_size": 1777,
+				"buffer_size": 0,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test/env/packages/SceneView/SceneView.lua",
+			"file": "template/host/wscript",
 			"settings":
 			{
-				"buffer_size": 1044,
+				"buffer_size": 2700,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/mock/MockBridge.py",
+			"settings":
+			{
+				"buffer_size": 1508,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/moai/MOAIRuntime.py",
+			"settings":
+			{
+				"buffer_size": 9205,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "data/theme/dark.qss",
+			"settings":
+			{
+				"buffer_size": 10772,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "packages/Mock/LayerManager/LayerManager.lua",
+			"settings":
+			{
+				"buffer_size": 0,
 				"line_ending": "Unix"
 			}
 		},
@@ -576,13 +600,29 @@
 			}
 		},
 		{
-			"contents": "[STATUS]  registering asset manager:asset_manager.text\n[STATUS]  registering asset manager:asset_manager.script\n[STATUS]  start tool: ide </Volumes/prj/gii/tools/ide>\n[STATUS]  loading asset table from:/Volumes/prj/gii/test/env/config/asset_table.json\n[STATUS]  asset library loaded\n[STATUS]  project loaded: /Volumes/prj/gii/test\n[STATUS]  scanning package in:/Volumes/prj/gii/packages\n[STATUS]  loading package:CommonAssetPreview\n[STATUS]  loading package:ScriptView\n[STATUS]  scanning package in:/Volumes/prj/gii/test/env/packages\n[STATUS]  loading package:AnimPreview\n[STATUS]  loading package:DeckEditor\n[STATUS]  loading package:FontPreview\n[STATUS]  loading package:Mock\n[STATUS]  registering asset manager:asset_manager.scene\n[STATUS]  registering asset manager:asset_manager.texture\n[STATUS]  registering asset manager:asset_manager.deck2d\n[STATUS]  registering asset manager:asset_manager.font\n[STATUS]  registering asset manager:asset_manager.stylesheet\n[STATUS]  registering asset manager:asset_manager.aurora_sprite\n[STATUS]  loading package:SceneGraphBrowser\n[STATUS]  loading package:SceneView\n[STATUS]  loading package:StyleSheetEditor\n[STATUS]  loading package:TextureManager\n[STATUS]  loading package:TexturePreview\n[STATUS]  loading module:qt\n[STATUS]  loading module:filewatcher\n[STATUS]  start watching: /Volumes/prj/gii/test/game/asset\n[STATUS]  loading module:asset_editor\n[STATUS]  loading module:asset_browser\n[STATUS]  loading module:asset_previewer\n[STATUS]  loading module:script_view\n[STATUS]  loading module:moai\n[STATUS]  loading gii lua runtime\n[STATUS]  change moai working path:/Volumes/prj/gii/test\n[STATUS]  loading module:mock\nInitializing Chipmunk v5.3.4 (Debug Enabled)\nCompile with -DNDEBUG defined to disable debug mode and runtime assertion checks\n[STATUS]  loading module:deck2d_editor\n[STATUS]  loading module:texture_library\n[STATUS]  loading texture library index\n[STATUS]  loading module:scene_editor\n[STATUS]  loading module:introspector\n[STATUS]  loading module:scene_preview\n[STATUS]  loading module:scenegraph_browser\n[STATUS]  loading module:scene_view\n[STATUS]  loading module:mock.stylesheet_editor\n[STATUS]  loading module:mock.texture_manager\n[STATUS]  start all modules\n[STATUS]  loading library from  /Volumes/prj/gii/test/env/config/asset_table.json \n[STATUS]  scan project in:/Volumes/prj/gii/test/game/asset\n[STATUS]  asset table saved\n[STATUS]  loading asset from  misaki_gothic.ttf \nTEXTURE: '+'      32768 =   0.03MB < /Volumes/prj/gii/test/game/asset/misaki_gothic.ttf\n[STATUS]  loading asset from  scenes/main.scene \ncamera context: edit_canvas<2>\n[STATUS]  stop all modules\n[STATUS]  saving current project\n[STATUS]  asset table saved\n[STATUS]  removing free cache file/dir\n[STATUS]  saving texture library index\n[STATUS]  project saved\n[STATUS]  unloading module:qt\n[STATUS]  unloading module:filewatcher\n[STATUS]  unloading module:asset_editor\n[STATUS]  unloading module:asset_browser\n[STATUS]  unloading module:asset_previewer\n[STATUS]  unloading module:script_view\n[STATUS]  unloading module:moai\n[STATUS]  clean lua reference\n[STATUS]  unregister provider:<gii.moai.bridge.LuaObjectModelProvider object at 0x37f3930>\n[STATUS]  unregister provider:<gii.moai.bridge.LuaObjectModelProvider object at 0x37f3950>\n[STATUS]  unloading module:mock\n[STATUS]  unloading module:texture_library\n[STATUS]  unloading module:scene_editor\n[STATUS]  unloading module:introspector\n[STATUS]  unloading module:scene_preview\n[STATUS]  unloading module:scenegraph_browser\n[STATUS]  unloading module:scene_view\n[STATUS]  unloading module:mock.stylesheet_editor\n[STATUS]  unloading module:mock.texture_manager\n[STATUS]  unloading module:deck2d_editor\n\n[Finished in 24.4s]\n",
+			"file": "lib/gii/core/project.py",
+			"settings":
+			{
+				"buffer_size": 7197,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "gii.sublime-project",
+			"settings":
+			{
+				"buffer_size": 1409,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "[STATUS]  registering asset manager:asset_manager.text\n[STATUS]  registering asset manager:asset_manager.script\n[STATUS]  start tool: ide </Volumes/prj/gii/tools/ide>\n[STATUS]  loading asset table from:/Volumes/prj/gii/test/env/config/asset_table.json\n[STATUS]  asset library loaded\n[STATUS]  project loaded: /Volumes/prj/gii/test\n[STATUS]  scanning package in:/Volumes/prj/gii/packages\n[STATUS]  loading package:CommonAssetPreview\n[STATUS]  loading package:Mock\n[STATUS]  registering asset manager:asset_manager.scene\n[STATUS]  registering asset manager:asset_manager.texture\n[STATUS]  registering asset manager:asset_manager.deck2d\n[STATUS]  registering asset manager:asset_manager.font\n[STATUS]  registering asset manager:asset_manager.stylesheet\n[STATUS]  registering asset manager:asset_manager.aurora_sprite\n[STATUS]  scanning package in:/Volumes/prj/gii/test/env/packages\n[STATUS]  loading module:qt\n[STATUS]  loading module:filewatcher\n[STATUS]  start watching: /Volumes/prj/gii/test/game/asset\n[STATUS]  loading module:asset_editor\n[STATUS]  loading module:asset_browser\n[STATUS]  loading module:asset_previewer\n[STATUS]  loading module:moai\n[STATUS]  loading gii lua runtime\n[STATUS]  change moai working path:/Volumes/prj/gii/test\n[STATUS]  loading module:mock\nInitializing Chipmunk v5.3.4 (Debug Enabled)\nCompile with -DNDEBUG defined to disable debug mode and runtime assertion checks\n[STATUS]  loading module:texture_library\n[STATUS]  loading texture library index\n[STATUS]  loading module:mock.texture_manager\n[STATUS]  loading module:deck2d_editor\n[STATUS]  loading module:mock.stylesheet_editor\n[STATUS]  loading module:scene_editor\n[STATUS]  loading module:introspector\n[STATUS]  loading module:scene_preview\n[STATUS]  loading module:scene_view\n[STATUS]  loading module:scenegraph_browser\n[STATUS]  loading module:layer_manager\n[STATUS]  start all modules\nlibpng warning: Interlace handling should be turned on when using png_read_image\n[STATUS]  loading library from  /Volumes/prj/gii/test/env/config/asset_table.json \n[STATUS]  scan project in:/Volumes/prj/gii/test/game/asset\n[STATUS]  asset table saved\n[STATUS]  loading asset from  misaki_gothic.ttf \n[STATUS]  loading asset from  font/04b03.fnt  \nTEXTURE: '+'      32768 =   0.03MB < /Volumes/prj/gii/test/game/asset/misaki_gothic.ttf\nTEXTURE: '+'      32768 =   0.06MB < /Volumes/prj/gii/test/game/asset/font/04b03.png\n[STATUS]  stop all modules\n[STATUS]  saving current project\n[STATUS]  asset table saved\n[STATUS]  removing free cache file/dir\n[STATUS]  saving texture library index\n[STATUS]  project saved\n[STATUS]  unloading module:qt\n[STATUS]  unloading module:filewatcher\n[STATUS]  unloading module:asset_editor\n[STATUS]  unloading module:asset_browser\n[STATUS]  unloading module:asset_previewer\n[STATUS]  unloading module:moai\n[STATUS]  clean lua reference\n[STATUS]  unregister provider:<gii.moai.bridge.LuaObjectModelProvider object at 0xb457e30>\n[STATUS]  unregister provider:<gii.moai.bridge.LuaObjectModelProvider object at 0xb457d90>\n[STATUS]  unloading module:mock\n[STATUS]  unloading module:texture_library\n[STATUS]  unloading module:mock.texture_manager\n[STATUS]  unloading module:deck2d_editor\n[STATUS]  unloading module:mock.stylesheet_editor\n[STATUS]  unloading module:scene_editor\n[STATUS]  unloading module:introspector\n[STATUS]  unloading module:scene_preview\n[STATUS]  unloading module:scene_view\n[STATUS]  unloading module:scenegraph_browser\n[STATUS]  unloading module:layer_manager\n\n[Finished in 34.0s]\n",
 			"file": "BUILD_RESULT",
 			"file_size": -1,
 			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 3720,
+				"buffer_size": 3502,
 				"line_ending": "Unix",
 				"scratch": true
 			}
@@ -602,6 +642,10 @@
 		"height": 375.0,
 		"selected_items":
 		[
+			[
+				"css",
+				"Set Syntax: CSS"
+			],
 			[
 				"git add",
 				"Git: Add..."
@@ -1015,7 +1059,7 @@
 				"Package Control: List Packages"
 			]
 		],
-		"width": 551.0
+		"width": 545.0
 	},
 	"console":
 	{
@@ -1032,14 +1076,37 @@
 	},
 	"file_history":
 	[
-		"/Volumes/prj/gii/data/lua/renderContext.lua",
+		"/Volumes/prj/gii/data/theme/xn.qss",
+		"/Volumes/prj/gii/data/theme/dark.qss",
+		"/Volumes/prj/gii/tools/run/__init__.py",
+		"/Volumes/prj/gii/start",
+		"/Volumes/prj/gii/data/lua/runtime.lua",
 		"/Volumes/prj/gii/lib/gii/SceneEditor/SceneEditor.py",
+		"/Volumes/prj/gii/packages/Mock/SceneView/SceneView.py",
+		"/Volumes/prj/gii/lib/gii/core/tool.py",
+		"/Volumes/prj/gii/lib/mock/MockBridge.lua",
+		"/Volumes/prj/gii/lib/gii/__init__.py",
+		"/Volumes/prj/gii/lib/gii/core/EditorApp.py",
+		"/Volumes/prj/gii/lib/gii/core/package.py",
+		"/Volumes/prj/gii/lib/gii/core/project.py",
+		"/Volumes/prj/gii/lib/gii/core/platforms.py",
+		"/Volumes/prj/gii/template/host/osx/wscript",
+		"/Volumes/prj/gii/.gitignore",
+		"/Volumes/prj/gii/test/project.json",
+		"/Volumes/prj/gii/packages/Mock/__init__.py",
+		"/Volumes/prj/gii/lib/gii/core/jsonHelper.py",
+		"/Volumes/prj/gii/gii.sublime-project",
+		"/Volumes/prj/mdd/project.json",
+		"/Volumes/prj/gii/packages/Mock/DeckEditor/Deck2DEditor.py",
+		"/Volumes/prj/gii/lib/gii/ScriptView/__init__.py",
+		"/Volumes/prj/gii/test/env/lib/mock/editor/MOCKEditCanvas.lua",
+		"/Volumes/prj/gii/test/env/packages/SceneView/SceneView.py",
+		"/Volumes/prj/gii/data/lua/renderContext.lua",
 		"/Volumes/prj/gii/test/env/packages/TexturePreview/TexturePreview.lua",
 		"/Volumes/prj/gii/lib/gii/moai/MOAIEditCanvas.py",
 		"/Volumes/prj/gii/lib/gii/qt/controls/GLWidget.py",
 		"/Volumes/prj/gii/test/env/packages/SceneView/SceneView.lua",
 		"/Volumes/prj/gii/test/game/script/TestEntity.lua",
-		"/Volumes/prj/gii/test/env/packages/SceneView/SceneView.py",
 		"/Volumes/prj/gii/test/env/lib/mock/asset/SceneAsset.py",
 		"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreview.py",
 		"/Volumes/prj/gii/lib/gii/SceneEditor/Introspector.py",
@@ -1052,7 +1119,6 @@
 		"/Volumes/prj/gii/test/game/lib/mock/component/Camera.lua",
 		"/Volumes/prj/gii/test/env/lib/mock/editor/EditCamera.lua",
 		"/Volumes/prj/gii/test/env/lib/mock/editor/MOCKEditCanvas.py",
-		"/Volumes/prj/gii/test/env/lib/mock/editor/MOCKEditCanvas.lua",
 		"/Volumes/prj/gii/test/env/packages/-EditCanvsTest/test.lua",
 		"/Volumes/prj/gii/test/host/osx/GlutHost.cpp",
 		"/Volumes/prj/gii/test/env/packages/TexturePreview/TexturePreview.py",
@@ -1079,7 +1145,6 @@
 		"/Volumes/prj/gii/test/env/packages/DeckEditor1/Deck2DEditor.py",
 		"/Volumes/prj/gii/lib/gii/core/asset.py",
 		"/Volumes/prj/gii/test/game/asset/test.deck2d",
-		"/Volumes/prj/gii/lib/gii/core/EditorApp.py",
 		"/Volumes/prj/gii/test/game/lib/mock/component/AuroraSprite.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/asset/Common.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/core/AssetLibrary.lua",
@@ -1091,7 +1156,6 @@
 		"/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua",
 		"/Volumes/prj/gii/lib/gii/SceneEditor/Introsepctor.py",
 		"/Volumes/prj/gii/lib/gii/core/IDPool.py",
-		"/Volumes/prj/gii/data/lua/runtime.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/component/Prop.lua",
 		"/Volumes/prj/gii/test/env/packages/-EditCanvsTest/test.py",
 		"/Volumes/prj/gii/test/game/lib/mock/asset/Deck2D.lua",
@@ -1100,7 +1164,6 @@
 		"/Volumes/prj/gii/test/game/script/sceneTest.lua",
 		"/Volumes/prj/gii/test/game/startup.lua",
 		"/Volumes/prj/gii/test/game/asset/scenes/main.scene",
-		"/Volumes/prj/gii/start",
 		"/Volumes/prj/gii/test/game/lib/mock/core/Entity.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/core/EntityHelper.lua",
 		"/Volumes/prj/gii/test/game/script/init.lua",
@@ -1108,9 +1171,7 @@
 		"/Volumes/prj/gii/test/env/packages/SceneView/__init__.py",
 		"/Volumes/prj/gii/test/game/test.lua",
 		"/Volumes/prj/gii/lib/gii/core/CommonAsset/FolderCreator.py",
-		"/Volumes/prj/gii/lib/gii/core/project.py",
 		"/Volumes/prj/gii/test/env/config/config.json",
-		"/Volumes/prj/gii/test/project.json",
 		"/Volumes/prj/gii/test/env/packages/TextureManager/TextureManager.py",
 		"/Volumes/prj/gii/test/env/lib/mock/asset/TextureAsset.py",
 		"/Volumes/prj/gii/test/env/config/asset_table.json",
@@ -1139,27 +1200,10 @@
 		"/Volumes/prj/gii/test/game/lib/mock/asset/Texture.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/core/Component.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/component/Text.lua",
-		"/Volumes/prj/gii/tools/run/__init__.py",
 		"/Volumes/prj/gii/test/game/main.lua",
 		"/Volumes/prj/gii/test/env/lib/mock/asset/AuroraAsset.py",
 		"/Volumes/prj/gii/test/game/lib/mock/asset/AuroraSprite.lua",
-		"/Volumes/prj/gii/lib/gii/qt/controls/GenericTreeWidget.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/AssetTreeView.py",
-		"/Volumes/prj/gii/test/game/lib/mock/asset/ParticleProcs.lua",
-		"/Volumes/prj/gii/tools/run/__gii__.json",
-		"/Volumes/prj/gii/test/env/config/game_config.json",
-		"/Volumes/prj/gii/test/env/config/texture_library.json",
-		"/Volumes/prj/gii/lib/gii/core/jsonHelper.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/Menu.py",
-		"/Volumes/prj/gii/test/game/asset/good.deck2d",
-		"/Volumes/prj/gii/test/env/packages/EditCanvsTest/test.lua",
-		"/Volumes/prj/gii/test/env/packages/AnimPreview/AnimPreview.lua",
-		"/Volumes/prj/gii/test/env/packages/AnimPreview/AnimPreviewer.py",
-		"/Volumes/prj/gii/test/game/script/main.lua",
-		"/Volumes/prj/gii/lib/gii/qt/QtSupport.py",
-		"/Volumes/prj/gii/packages/-SimpleConsole/console.py",
-		"/Volumes/prj/gii/lib/gii/qt/dialogs/Dialogs.py",
-		"/Users/tommo/dev/Python/qtexamples/examples/demos/qtdemo/qtdemo.py"
+		"/Volumes/prj/gii/lib/gii/qt/controls/GenericTreeWidget.py"
 	],
 	"find":
 	{
@@ -1167,7 +1211,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 97.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"",
@@ -1245,6 +1289,49 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"QCheckBox",
+			"617627",
+			"qlineed",
+			"QTextEdit",
+			"textedd",
+			"run",
+			"version",
+			"info",
+			"printHeader",
+			"prjInfo",
+			"info",
+			"version",
+			"project",
+			"printProjectInfo",
+			"info",
+			"prjInfo",
+			"printProjectInfo",
+			"printHeader",
+			"printUsage",
+			"info",
+			"path",
+			"prjPath",
+			"path",
+			"info",
+			"findProject",
+			"path",
+			"scanTools",
+			"printMissingCommand",
+			"getPlatformName",
+			"ide",
+			"assset",
+			"_GII_INFO_FILE",
+			"config",
+			"config_file",
+			"repr(e)",
+			"deck2d_editor",
+			"MockStyleSheetEditor",
+			"TextureManager",
+			"import",
+			"DeckEditor",
+			"AnimPreview",
+			"import",
+			"scene_editor",
 			"contextPrefix",
 			"self",
 			"Conte",
@@ -1329,50 +1416,7 @@
 			"startScript",
 			"game",
 			"import",
-			"MainWindow",
-			"mainWindow",
-			"tryResizeContainer",
-			"QtEditorModule",
-			"SceneEditorModule",
-			"MainWindow",
-			"mainWindow",
-			"EditCanvas",
-			"path",
-			"pass",
-			"canvas",
-			"MOAIEditCanvas",
-			"MOAICanvasBase",
-			"MOAIEditCanvas",
-			"MOAICanvasBase",
-			"moc",
-			"Editor",
-			"EditCanvasDelegate",
-			"pass",
-			"MOCKEditCanvas",
-			"MOAIEditCanvas",
-			"MOCKEditCanvas",
-			"MOAIEditCanvas",
-			"moai",
-			"MOCKEditCanvas",
-			"GLWidget",
-			"MOCKEditCanvas",
-			"TexturePreview",
-			"quadDeck",
-			"deck",
-			"TexturePreview",
-			"add",
-			"inputDevice",
-			"input",
-			"inputDevice",
-			"device",
-			"inputDeviceName",
-			"inputDevice",
-			"_inputDevices",
-			"InputManager",
-			"_defaultInputManger",
-			"InputManager",
-			"target",
-			"add"
+			"MainWindow"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1518,38 +1562,11 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 6,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "test/env/lib/mock/editor/MOCKEditCanvas.lua",
-					"settings":
-					{
-						"buffer_size": 137,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								137,
-								137
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "data/lua/renderContext.lua",
 					"settings":
 					{
@@ -1560,64 +1577,8 @@
 						"selection":
 						[
 							[
-								1387,
-								1387
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 673.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "test/env/packages/SceneView/SceneView.py",
-					"settings":
-					{
-						"buffer_size": 1777,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1420,
-								1420
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 315.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "test/env/packages/SceneView/SceneView.lua",
-					"settings":
-					{
-						"buffer_size": 1044,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								844,
-								844
+								547,
+								547
 							]
 						],
 						"settings":
@@ -1631,15 +1592,183 @@
 						"zoom_level": 1.0
 					},
 					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "test/env/packages/SceneView/SceneView.lua",
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "template/host/wscript",
+					"settings":
+					{
+						"buffer_size": 2700,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								152,
+								152
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/mock/MockBridge.py",
+					"settings":
+					{
+						"buffer_size": 1508,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1350,
+								1350
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "lib/gii/moai/MOAIRuntime.py",
+					"settings":
+					{
+						"buffer_size": 9205,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3653,
+								3653
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1687.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "data/theme/dark.qss",
+					"settings":
+					{
+						"buffer_size": 10772,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								400,
+								400
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "packages/Mock/LayerManager/LayerManager.lua",
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/Lua/Lua.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 2,
+			"selected": 4,
 			"sheets":
 			[
 				{
-					"buffer": 4,
+					"buffer": 7,
 					"file": "test/game/lib/mock/core/Component.lua",
 					"settings":
 					{
@@ -1667,7 +1796,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 8,
 					"file": "test/game/lib/mock/core/Game.lua",
 					"settings":
 					{
@@ -1684,7 +1813,7 @@
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
 							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
@@ -1695,7 +1824,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 9,
 					"file": "lib/gii/moai/MOAIEditCanvas.py",
 					"settings":
 					{
@@ -1706,8 +1835,36 @@
 						"selection":
 						[
 							[
-								3863,
-								3863
+								4193,
+								4193
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2933.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "lib/gii/core/project.py",
+					"settings":
+					{
+						"buffer_size": 7197,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3711,
+								3711
 							]
 						],
 						"settings":
@@ -1717,7 +1874,35 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2952.0,
+						"translation.y": 1998.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "gii.sublime-project",
+					"settings":
+					{
+						"buffer_size": 1409,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								565,
+								565
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 397.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1729,19 +1914,19 @@
 			"sheets":
 			[
 				{
-					"buffer": 7,
+					"buffer": 12,
 					"file": "BUILD_RESULT",
 					"settings":
 					{
-						"buffer_size": 3720,
+						"buffer_size": 3502,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3720,
-								3720
+								3080,
+								3080
 							]
 						],
 						"settings":
@@ -1755,13 +1940,13 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1174.0,
+						"translation.y": 1038.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 13,
 					"file": "gii_cfg.py",
 					"settings":
 					{
@@ -1870,16 +2055,108 @@
 		"selected_items":
 		[
 			[
+				"laym",
+				"packages/Mock/LayerManager/LayerManager.lua"
+			],
+			[
+				"qss",
+				"data/theme/dark.qss"
+			],
+			[
+				"dark",
+				"data/theme/dark.qss"
+			],
+			[
+				"xn.",
+				"data/theme/xn.qss"
+			],
+			[
+				"moairu",
+				"lib/gii/moai/MOAIRuntime.py"
+			],
+			[
+				"rn",
+				"data/lua/runtime.lua"
+			],
+			[
+				"sened",
+				"lib/gii/SceneEditor/SceneEditor.py"
+			],
+			[
+				"scenv",
+				"packages/Mock/SceneView/SceneView.py"
+			],
+			[
+				"mockb",
+				"lib/mock/MockBridge.py"
+			],
+			[
+				"mockbr",
+				"lib/mock/MockBridge.lua"
+			],
+			[
+				"proj",
+				"lib/gii/core/project.py"
+			],
+			[
+				"giiinit",
+				"lib/gii/__init__.py"
+			],
+			[
+				"tool",
+				"lib/gii/core/tool.py"
+			],
+			[
+				"runt",
+				"data/lua/runtime.lua"
+			],
+			[
+				"edita",
+				"lib/gii/core/EditorApp.py"
+			],
+			[
+				"run",
+				"tools/run/__init__.py"
+			],
+			[
+				"start",
+				"start"
+			],
+			[
+				"osxw",
+				"template/host/osx/wscript"
+			],
+			[
+				"proje",
+				"lib/gii/core/project.py"
+			],
+			[
+				"projec",
+				"test/project.json"
+			],
+			[
+				"jsonh",
+				"lib/gii/core/jsonHelper.py"
+			],
+			[
+				".proj",
+				"gii.sublime-project"
+			],
+			[
+				"package",
+				"lib/gii/core/package.py"
+			],
+			[
+				"deck2ded.py",
+				"packages/Mock/DeckEditor/Deck2DEditor.py"
+			],
+			[
 				"moaied",
 				"lib/gii/moai/MOAIEditCanvas.py"
 			],
 			[
 				"game",
 				"test/game/lib/mock/core/Game.lua"
-			],
-			[
-				"scenv",
-				"test/env/packages/SceneView/SceneView.py"
 			],
 			[
 				"rencon",
@@ -1960,10 +2237,6 @@
 			[
 				"ren",
 				"data/lua/renderContext.lua"
-			],
-			[
-				"mockb",
-				"test/env/lib/mock/MockBridge.lua"
 			],
 			[
 				"camera",
@@ -2202,10 +2475,6 @@
 				"data/lua/runtime.lua"
 			],
 			[
-				"start",
-				"start"
-			],
-			[
 				"prop",
 				"test/game/lib/mock/component/Prop.lua"
 			],
@@ -2226,20 +2495,12 @@
 				"test/env/config/config.json"
 			],
 			[
-				"proj",
-				"test/project.json"
-			],
-			[
 				"scend",
 				"lib/gii/SceneEditor/SceneEditor.py"
 			],
 			[
 				"asset_",
 				"test/env/config/asset_table.json"
-			],
-			[
-				"proje",
-				"lib/gii/core/project.py"
 			],
 			[
 				"textreas",
@@ -2304,82 +2565,6 @@
 			[
 				"deckedi",
 				"test/env/packages/DeckEditor/__init__.py"
-			],
-			[
-				"creator",
-				"lib/gii/core/CommonAsset/FolderCreator.py"
-			],
-			[
-				"stys",
-				"test/env/packages/StyleSheetEditor/StyleSheetEditor.py"
-			],
-			[
-				"stysheas",
-				"test/env/lib/mock/asset/StyleSheetAsset.py"
-			],
-			[
-				"stysas",
-				"test/env/lib/mock/asset/StyleSheetAsset.py"
-			],
-			[
-				"styshc",
-				"test/env/packages/StyleSheetEditor/StyleSheetCreator.py"
-			],
-			[
-				"fold",
-				"lib/gii/core/CommonAsset/FolderCreator.py"
-			],
-			[
-				"asset.py",
-				"lib/gii/core/asset.py"
-			],
-			[
-				"commoas",
-				"lib/gii/core/CommonAsset/TextAsset.py"
-			],
-			[
-				"assetedito/",
-				"lib/gii/AssetEditor/__init__.py"
-			],
-			[
-				"assetbro",
-				"lib/gii/AssetEditor/AssetBrowser.py"
-			],
-			[
-				"assetedi",
-				"lib/gii/AssetEditor/AssetEditor.py"
-			],
-			[
-				"deck2dc",
-				"test/env/packages/DeckEditor/Deck2DCreator.py"
-			],
-			[
-				"deck2d",
-				"test/env/lib/mock/asset/Deck2DAsset.py"
-			],
-			[
-				"asset.lua",
-				"test/game/lib/mock/core/AssetLibrary.lua"
-			],
-			[
-				"compo",
-				"test/game/lib/mock/core/Component.lua"
-			],
-			[
-				"deck2d.lu",
-				"test/game/lib/mock/asset/Deck2D.lua"
-			],
-			[
-				"text.lua",
-				"test/game/lib/mock/component/Text.lua"
-			],
-			[
-				"sasset/lu",
-				"test/game/lib/mock/asset/all.lua"
-			],
-			[
-				"com",
-				"test/game/lib/mock/core/Component.lua"
 			]
 		],
 		"width": 0.0
