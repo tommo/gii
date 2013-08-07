@@ -1,7 +1,15 @@
+def getSuperType( t ):
+	if isinstance( t, DataType ):
+		return t.getSuperType()		
+	return None
+	
 ##----------------------------------------------------------------##
 class DataType(object):
 	
 	def getName(self):
+		return None
+
+	def getSuperType( self ):
 		return None
 
 	def getDefaultValue(self):
@@ -59,6 +67,9 @@ class EnumType( DataType ):
 
 	def getName( self ):
 		return self.name
+
+	def getSuperType( self ):
+		return EnumType
 
 	def repr( self, value ):
 		return '<%s> %s' %( self.name, repr( value ) )
@@ -164,7 +175,7 @@ class Field(object):
 		self.model = model
 		self.id    = id
 
-		option=option or {}
+		option = option or {}
 
 		self.label	   = option.get( 'label',    id )
 		self.default   = option.get( 'default',  None )
@@ -178,6 +189,9 @@ class Field(object):
 		self.setter	   = option.get( 'set',   True )
 		self.option    = option
 		if self.setter == False: self.readonly = True
+
+	def getType( self ):
+		return self._type
 
 	def getValue( self, obj, defaultValue = None ):
 		getter = self.getter
@@ -322,4 +336,3 @@ class ModelManager(object):
 
 ##----------------------------------------------------------------##
 ModelManager()
-

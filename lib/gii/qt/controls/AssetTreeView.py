@@ -6,7 +6,6 @@ from gii.core         import *
 from gii.qt           import QtEditorModule
 
 from gii.qt.IconCache                  import getIcon
-from gii.qt.controls.PropertyGrid      import PropertyGrid
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 
 

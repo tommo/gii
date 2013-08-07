@@ -1,4 +1,4 @@
-from PropertyEditor import FieldEditor
+from PropertyEditor import FieldEditor, registerFieldEditor
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
@@ -9,7 +9,7 @@ class StringFieldEditor( FieldEditor ):
 		return self.lineEdit.text()
 
 	def set( self, value ):
-		self.lineEdit.setText( value )
+		self.lineEdit.setText( value or '' )
 
 	def initEditor( self, container ):
 		self.lineEdit = QtGui.QLineEdit( container )
@@ -22,7 +22,7 @@ class IntFieldEditor( FieldEditor ):
 		return self.spinBox.value()
 
 	def set( self, value ):
-		self.spinBox.setValue( value )
+		self.spinBox.setValue( value or 0 )
 
 	def initEditor( self, container ):
 		self.spinBox = QtGui.QSpinBox( container )
@@ -41,7 +41,7 @@ class FloatFieldEditor( FieldEditor ):
 		return self.spinBox.value()
 
 	def set( self, value ):
-		self.spinBox.setValue( value )
+		self.spinBox.setValue( value or 0 )
 
 	def initEditor( self, container ):
 		self.spinBox = QtGui.QDoubleSpinBox( container )
@@ -60,8 +60,8 @@ class BoolFieldEditor( FieldEditor ):
 	def get( self ):
 		return self.checkBox.isChecked()
 
-	def set( self, value ):
-		self.checkBox.setChecked( value )
+	def set( self, value ):		
+		self.checkBox.setChecked( bool(value) )
 
 	def onStateChanged( self, state ):
 		return self.notifyChanged( self.get() )
@@ -71,39 +71,12 @@ class BoolFieldEditor( FieldEditor ):
 		self.checkBox.stateChanged.connect( self.onStateChanged )
 		return self.checkBox
 
+
 ##----------------------------------------------------------------##
-class EnumFieldEditor( FieldEditor ):
-	def get( self ):
-		index = self.combo.currentIndex()
-		if index >= 0:
-			name, value = self.enumItems[ index ]
-		return value
 
-	def set( self, value ):
-		for i, t in enumerate( self.enumItems ):
-			itemName, itemValue = t
-			if value == itemValue:
-				self.combo.setCurrentIndex( i )
-				return
-
-	def setTarget( self, parent, fieldId ):
-		super( EnumFieldEditor, self ).setTarget( parent, fieldId )
-		self.enumItems = [ ('GOOD', 0), ('BAD', 1) ]
-
-	def onIndexChanged( self, index ):
-		if index >= 0:
-			name, value = self.enumItems[ index ]
-			return self.notifyChanged( value )
-
-	def initEditor( self, container ):
-		self.combo = QtGui.QComboBox( container )
-		for item in self.enumItems:
-			( name, value ) = item
-			self.combo.addItem( name, value )
-		self.combo.currentIndexChanged.connect( self.onIndexChanged )
-		self.combo.setSizePolicy(
-			QtGui.QSizePolicy.Expanding,
-			QtGui.QSizePolicy.Expanding
-			)
-		return self.combo
+registerFieldEditor( str,     StringFieldEditor )
+registerFieldEditor( unicode, StringFieldEditor )
+registerFieldEditor( int,     IntFieldEditor )
+registerFieldEditor( float,   FloatFieldEditor )
+registerFieldEditor( bool,    BoolFieldEditor )
 

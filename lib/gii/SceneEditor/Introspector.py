@@ -1,7 +1,7 @@
 import os
 ##----------------------------------------------------------------##
 from gii.core     import *
-from gii.qt.controls.PropertyGrid import PropertyGrid
+from gii.qt.controls.PropertyEditor import PropertyEditor
 
 from PyQt4        import QtCore, QtGui
 
@@ -90,8 +90,7 @@ class IntrospectorInstance(object):
 		self.header=container.addWidgetFromFile(
 			getAppPath( 'data/ui/introspector.ui' ),
 			expanding=False)
-		self.grid = container.addWidget(PropertyGrid(container))
-		self.grid.manager.valueChanged.connect(self.onValueChanged)
+		self.grid = container.addWidget(PropertyEditor(container))
 		self.header.hide()
 		self.grid.propertyChanged.connect( self.onPropertyChanged )
 
@@ -130,9 +129,6 @@ class IntrospectorInstance(object):
 		self.grid.refreshAll()
 		pass #TODO
 
-	def onValueChanged(self, prop, v):
-		# print(v)
-		pass
 
 	def onPropertyChanged( self, obj, id, value ):
 		signals.emit( 'entity.modified', obj )
