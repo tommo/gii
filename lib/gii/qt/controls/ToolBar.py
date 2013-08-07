@@ -57,6 +57,12 @@ class ToolBarItem(object):
 			self.signal( value )
 		if self.onClick != None:
 			self.onClick( value )
+			
+	def getFullName(self):
+		if parent:
+			return parent.getFullName()+'/'+self.name
+		return self.name
+	
 
 		
 class ToolBarNode(object):

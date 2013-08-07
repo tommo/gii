@@ -33,6 +33,7 @@ class EnumFieldEditor( FieldEditor ):
 
 	def initEditor( self, container ):
 		self.combo = QtGui.QComboBox( container )
+		self.combo.setMinimumSize( 50, 16 )
 		for item in self.enumItems:
 			( name, value ) = item
 			self.combo.addItem( name, value )

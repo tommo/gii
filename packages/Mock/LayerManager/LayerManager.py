@@ -55,15 +55,17 @@ class LayerManager( SceneEditorModule ):
 			)
 
 		#Components
-		self.tree = self.window.addWidget( LayerTreeWidget() )
+		self.tree = self.window.addWidget( LayerTreeWidget( multiple_selection = False, sorting = False ) )
+
 		self.tool = self.addToolBar( 'layer_manager', self.window.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( _getModulePath( 'LayerManager.lua' ) )
 
-		self.tool.addTool( 'add',    label = '+')
-		self.tool.addTool( 'remove', label = '-')
-		self.tool.addTool( 'up',     label = 'up')
-		self.tool.addTool( 'down',   label = 'down')
+		self.addTool( 'layer_manager/add',    label = '+')
+		self.addTool( 'layer_manager/remove', label = '-')
+		self.addTool( 'layer_manager/up',     label = 'up')
+		self.addTool( 'layer_manager/down',   label = 'down')
+
 		
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
@@ -71,23 +73,37 @@ class LayerManager( SceneEditorModule ):
 	def onStart( self ):
 		self.tree.rebuild()
 
-	def addEntity( self, entity, scene ):
-		self.tree.addNode( entity )
-
-	def removeEntity( self, entity, scene ):
-		self.tree.removeNode( entity )
-
-	def addScene( self, scn ):
-		self.tree.addNode( scn )
-
-	def removeScene( self, scene ):
-		self.tree.removeNode( scene )
-
 	def onMoaiClean( self ):
 		self.tree.clear()
 
+	def onTool( self, tool ):
+		name = tool.name
+		if name == 'add':
+			layer = self.delegate.safeCall( 'addLayer' )
+			self.tree.addNode( layer )
+			self.tree.editNode( layer )
+			self.tree.selectNode( layer )
+			
+		elif name == 'remove':
+			for l in self.tree.getSelection():
+				self.delegate.safeCall( 'removeLayer', l )
+				self.tree.removeNode( l )
+		elif name == 'up':
+			for l in self.tree.getSelection():
+				self.delegate.safeCall( 'moveLayerUp', l )
+				self.tree.rebuild()
+				self.tree.selectNode( l )
+				break
+		elif name == 'down':
+			for l in self.tree.getSelection():
+				self.delegate.safeCall( 'moveLayerDown', l )		
+				self.tree.rebuild()
+				self.tree.selectNode( l )
+				break
 
-
+	def changeLayerName( self, layer, name ):
+		layer.setName( layer, name )
+		# self.delegate.safeCall( 'setLayerName', layer, name )
 	
 ##----------------------------------------------------------------##
 class LayerTreeWidget( GenericTreeWidget ):
@@ -107,48 +123,29 @@ class LayerTreeWidget( GenericTreeWidget ):
 		if isMockInstance( node, 'Game' ):
 			return None
 
-		if isMockInstance( node, 'Scene' ):
-			return _MOCK.game
-
-		#Entity
-		p = node.parent
-		if p: return p
-		return node.scene
+		return _MOCK.game
 
 	def getNodeChildren( self, node ):
 		if isMockInstance( node, 'Game' ):
-			return node.layers
+			return [ item for item in node.layers.values() ]
 		return []
-
-	def createItem( self, node ):
-		return SceneGraphTreeItem()
 
 	def updateItemContent( self, item, node, **option ):
 		name = None
-		if isMockInstance( node,'Scene' ):
-			item.setText( 0, '%s <%s>' % ( node.name or '', node.getClassName( node ) ) )
-			item.setIcon( 0, getIcon('scene') )
+		if isMockInstance( node, 'Layer' ):
+			item.setText( 0, node.name )
+			item.setIcon( 0, getIcon('obj') )
 		else:
-			item.setText( 0, '%s <%s>' % ( node.name or '', node.getClassName( node ) ) )
+			item.setText( 0, '' )
 			item.setIcon( 0, getIcon('obj') )
 		
 	def onItemSelectionChanged(self):
-		items=self.selectedItems()
-		if items:
-			selections=[item.node for item in items]
-			app.getModule( 'scene_editor' ).getSelectionManager().changeSelection(selections)
-		else:
-			app.getModule( 'scene_editor' ).getSelectionManager().changeSelection(None)
+		selections = self.getSelection()
+		app.getModule( 'scene_editor' ).getSelectionManager().changeSelection( selections )
 
-##----------------------------------------------------------------##
-class SceneGraphTreeItem( QtGui.QTreeWidgetItem ):
-	pass
-	# def __lt__(self, other):
-	# 	node0 = self.node
-	# 	node1 = hasattr(other, 'node') and other.node or None
-	# 	if not node1:
-	# 		return True	
-	# 	return node0.getName().lower() < node1.getName().lower()
+	def onItemChanged( self, item, col ):
+		layer = self.getNodeByItem( item )
+		app.getModule('layer_manager').changeLayerName( layer, item.text(0) )
 
 ##----------------------------------------------------------------##
 LayerManager().register()

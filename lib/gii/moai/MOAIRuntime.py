@@ -333,7 +333,9 @@ class MOAILuaDelegate(object):
 		return v
 
 	def safeCall(self, method, *args):
-		if not self.luaEnv: return
+		if not self.luaEnv: 
+			logging.error( 'trying call a empty lua delegate' )
+			return
 		m = self.luaEnv[method]
 		if m: return m(*args)
 

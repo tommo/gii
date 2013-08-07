@@ -142,7 +142,7 @@ class FieldEditor( object ):
 	def initLabel( self, label, container ):
 		self.labelWidget = QtGui.QLabel( container )
 		self.labelWidget.setText( label )
-		self.labelWidget.setMinimumSize( 80, 16 )
+		self.labelWidget.setMinimumSize( 50, 16 )
 		self.labelWidget.setSizePolicy(
 			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Expanding

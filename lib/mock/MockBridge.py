@@ -8,8 +8,8 @@ from gii.moai.MOAIRuntime \
 _MOCK = LuaTableProxy( None )
 
 def isMockInstance( obj, name ):
-	if isinstance( obj, _LuaObject):
-		return obj.isInstance( obj, _MOCK[name] )
+	if isinstance( obj, _LuaObject ):
+		return  _MOCK.isInstanceOf( obj, _MOCK[name] )
 	else:
 		return False
 

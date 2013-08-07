@@ -4,8 +4,11 @@ from PyQt4.QtCore import Qt
 
 ##----------------------------------------------------------------##
 class GenericTreeWidget( QtGui.QTreeWidget ):
-	def __init__( self, *args ):
+	def __init__( self, *args, **option ):
 		super(GenericTreeWidget, self).__init__(*args)
+		
+		self.refreshing = False
+
 		self.rootItem = self.invisibleRootItem()
 
 		headerInfo = self.getHeaderInfo()
@@ -19,16 +22,20 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 				self.setColumnWidth ( i, info[1] )
 
 		self.clear()
-		self.setSortingEnabled( True )
-		self.setSelectionMode( QtGui.QAbstractItemView.ExtendedSelection )
-		self.setAlternatingRowColors( False)
+		self.setSortingEnabled( option.get('sorting', True) )
+		
+		if option.get( 'multiple_selection', True ):
+			self.setSelectionMode( QtGui.QAbstractItemView.ExtendedSelection )
+
+		self.setAlternatingRowColors( option.get('alternating_color', False) )
 		self.setExpandsOnDoubleClick( False )
-		self.sortByColumn(0, 0)
+		self.sortByColumn( 0, 0 )
 
 		self.itemDoubleClicked    .connect( self.onDClicked )
 		self.itemClicked          .connect( self.onClicked )
 		self.itemSelectionChanged .connect( self.onItemSelectionChanged )
-		self.itemActivated        .connect( self.onItemActivated)
+		self.itemActivated        .connect( self.onItemActivated )
+		self.itemChanged          .connect( self._onItemChanged )
 
 		self.setIndentation( 15 )
 
@@ -45,6 +52,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.loadTreeStates()
 
 	def addNode( self, node, addChildren = True ):
+		assert not node is None, 'attempt to insert null node '
 		if self.nodeDict.has_key( node ): return
 		pnode = self.getNodeParent( node )
 		assert pnode != node, 'parent is item itself'
@@ -54,7 +62,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			pitem = self.getItemByNode( pnode )
 			if not pitem:
 				pitem = self.addNode( pnode, False )
-			item  = self.createItem( node )
+			item  = self.createItem( node )			
 			item.node = node
 			assert pitem, ( 'node not found in tree:%s' % repr(pnode) )
 			pitem.addChild( item )
@@ -95,8 +103,10 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		if not updateLog: updateLog={} #for avoiding duplicated updates
 		if updateLog.has_key(node): return False
 		updateLog[node]=True
-		
+
+		self.refreshing = True
 		self.updateItemContent( item, node, **option )
+		self.refreshing = False
 
 		if option.get('updateChildren',False):
 			children = self.getNodeChildren( node )
@@ -118,11 +128,17 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			item.setSelected(True)
 			self.scrollToItem(item)
 
+	def editNode( self, node, col = 0 ):
+		item = self.getItemByNode( node )
+		if item:
+			self.editItem( item, col )
+
 	def sortOrder( self ):
 		headerView = self.header()
 		return headerView.sortIndicatorOrder()
 	
-		
+	def getSelection( self )	:
+		return [ item.node for item in self.selectedItems() ]
 	##----------------------------------------------------------------##
 	## VIRTUAL Functions
 	##----------------------------------------------------------------##	
@@ -142,13 +158,17 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		return []
 
 	def createItem( self, node ):
-		return QtGui.QTreeWidgetItem( )
+		item = QtGui.QTreeWidgetItem( )
+		item.setFlags ( Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable )
+		return item
 
 	def updateItemContent( self, item, node, **option ):
 		pass
 
 	def getHeaderInfo( self ):
 		return [('Name',100), ('State',30)]
+
+
 
 	##----------------------------------------------------------------##
 	# Event Callback
@@ -163,6 +183,13 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		pass
 
 	def onItemActivated(self, item, col):
+		pass
+
+	def _onItemChanged( self, item, col ):
+		if self.refreshing: return
+		return self.onItemChanged( item, col )
+
+	def onItemChanged( self, item, col ):
 		pass
 	
 		
