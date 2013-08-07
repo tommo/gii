@@ -45,11 +45,16 @@ class SceneEditor( QtEditorModule ):
 		self.setupMainWindow()
 		self.containers  = {}
 		self.addTool( 'scene/run', label = 'Run' )
+		signals.connect( 'app.start', self.postStart )
 
 		return True
 
-	def onStart( self ):
+	def postStart( self ):
+		self.mainWindow.setUpdatesEnabled( True )
 		self.mainWindow.show()
+
+	def onStart( self ):
+		self.mainWindow.setUpdatesEnabled( False )
 		self.restoreWindowState( self.mainWindow )
 	
 	def onStop( self ):

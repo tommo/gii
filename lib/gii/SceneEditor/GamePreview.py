@@ -21,6 +21,7 @@ class GamePreview( SceneEditorModule ):
 		self.waitActivate   = False
 		self.viewWidth      = 0
 		self.viewHeight     = 0
+		self.pendingScript  = None
 
 	def getName(self):
 		return 'scene_preview'
@@ -165,7 +166,7 @@ class GamePreview( SceneEditorModule ):
 		self.getRuntime().resume()
 		self.window.setFocusPolicy(Qt.StrongFocus)
 		if self.pendingScript:
-			script=self.pendingScript
+			script = self.pendingScript
 			self.pendingScript=False
 			self.restartScript(script)
 		self.setFocus()

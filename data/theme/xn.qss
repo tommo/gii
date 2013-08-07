@@ -693,7 +693,7 @@ QPushButton:pressed, QToolButton::pressed
 
 QHeaderView::section:hover,QHeaderView::section:pressed
 {
-	background-color: #444;
+	background-color: #555;
 }
 
 QScrollBar::handle:hover,MyThumbListView,QComboBox:!editable,QComboBox::drop-down:editable,QComboBox:!editable:on,QComboBox::drop-down:editable:on

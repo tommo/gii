@@ -8,7 +8,7 @@ def _getModulePath( path ):
 class TexturePreviewer(AssetPreviewer):
 	def createWidget(self, container):
 		self.canvas = MOCKEditCanvas( container )
-		self.canvas.loadScript( _getModulePath('TexturePreview2.lua') )
+		self.canvas.loadScript( _getModulePath('TexturePreview.lua') )
 		return self.canvas
 
 	def accept(self, assetNode):

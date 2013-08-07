@@ -129,7 +129,7 @@ class QtSupport( QtEditorModule ):
 	def getQtSettingObject( self ):
 		return self.qtSetting
 	
-	def onStart( self ):
+	def onStart( self ):		
 		self.restoreWindowState( self.mainWindow )
 		# from gii.qt.dialogs import requestColor
 		# requestColor( '???' )
