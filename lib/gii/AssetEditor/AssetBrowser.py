@@ -74,9 +74,14 @@ class AssetBrowser( AssetEditorModule ):
 
 		self.treeView.rebuild()
 
+	def onStop( self ):
+		self.treeView.saveTreeStates()
+
+
 	def onUnload(self):
 		#persist expand state
-		self.treeView.saveTreeStates()
+		# self.treeView.saveTreeStates()
+		pass
 
 	def onModuleLoaded(self):				
 		for creator in self.getAssetLibrary().assetCreators:
