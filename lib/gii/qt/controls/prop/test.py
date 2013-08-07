@@ -40,9 +40,9 @@ class TestWindow(QtGui.QWidget):
 app = QtGui.QApplication([])
 
 styleSheetName = 'xn.qss'
-QtCore.QDir.setSearchPaths( 'theme', [ '/Users/tommo/prj/gii/data/theme' ] )
+QtCore.QDir.setSearchPaths( 'theme', [ '/prj/moai/gii/data/theme' ] )
 app.setStyleSheet(
-		open( '/Users/tommo/prj/gii/data/theme/' + styleSheetName ).read() 
+		open( '/prj/moai/gii/data/theme/' + styleSheetName ).read() 
 	)
 test = TestWindow()
 test.show()
