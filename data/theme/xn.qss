@@ -1,6 +1,6 @@
 QWidget
 {
-	font-size:12px;
+	font-size:11px;
 	color:#cacaca;
 	background-color:#333;
 }
@@ -55,9 +55,10 @@ QDialogButtonBox > QPushButton,QDialog > QPushButton,QWizard > QWidget > QPushBu
 	min-height:1.4em;
 }
 
-QPushButton[text="..."]
+QCheckBox
 {
-	min-width:1em;
+	margin-bottom: 5px;
+	margin-top: 6px;
 }
 
 QDockWidget

@@ -11,7 +11,7 @@ from gii.qt.IconCache import getIcon
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.dialogs   import requestString, alertMessage, requestColor
 
-from gii.qt.controls.PropertyGrid  import PropertyGrid
+from gii.qt.controls.PropertyEditor  import PropertyEditor
 
 from gii.AssetEditor  import AssetEditorModule
 
@@ -68,8 +68,8 @@ class Deck2DEditor( AssetEditorModule ):
 			_getModulePath('Deck2DEditor.ui')
 		)
 		
-		self.propGrid = addWidgetWithLayout(
-			PropertyGrid(window.settingsContainer),
+		self.propEditor = addWidgetWithLayout(
+			PropertyEditor(window.settingsContainer),
 			window.settingsContainer
 		)
 
@@ -109,7 +109,7 @@ class Deck2DEditor( AssetEditorModule ):
 		window.toolOriginC         .clicked. connect( lambda: self.setOrigin('C') )
 
 
-		self.propGrid .propertyChanged .connect(self.onPropertyChanged)
+		self.propEditor .propertyChanged .connect(self.onPropertyChanged)
 		signals.connect('asset.modified', self.onAssetModified)
 
 		self.container.setEnabled( False )
@@ -141,7 +141,7 @@ class Deck2DEditor( AssetEditorModule ):
 	def onCanvasUpdateRequested(self):
 		item = self.editingItem
 		if not item : return		
-		self.propGrid.refreshAll()
+		self.propEditor.refreshAll()
 
 	def onAddQuad( self ):
 		return self.addItem('quad')
@@ -220,7 +220,7 @@ class Deck2DEditor( AssetEditorModule ):
 			self.editingItem = sp
 			deckType = sp ['type']
 			
-			self.propGrid.setTarget( sp, model = deckModels[ deckType ] )
+			self.propEditor.setTarget( sp, model = deckModels[ deckType ] )
 			self.canvas.safeCall('selectItem', sp)
 			break
 

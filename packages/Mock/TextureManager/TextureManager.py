@@ -10,7 +10,7 @@ from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.dialogs   import *
 
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
-from gii.qt.controls.PropertyGrid      import PropertyGrid
+from gii.qt.controls.PropertyEditor      import PropertyEditor
 
 from gii.AssetEditor  import AssetEditorModule
 
@@ -113,7 +113,7 @@ class TextureManager( AssetEditorModule ):
 		self.treeTextures.module = self
 
 		self.groupProp = addWidgetWithLayout(
-			PropertyGrid(window.containerGroupProp)
+			PropertyEditor(window.containerGroupProp)
 		)
 
 		window.listGroup.setSortingEnabled(True)
