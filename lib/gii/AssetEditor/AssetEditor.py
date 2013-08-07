@@ -58,12 +58,17 @@ class AssetEditor( QtEditorModule ):
 	def onLoad( self ):
 		self.setupMainWindow()
 		self.containers  = {}
-		return True
+		signals.connect( 'app.start', self.postStart )
+		
 
-	def onStart( self ):
-		self.restoreWindowState( self.mainWindow )
+	def postStart( self ):
+		self.mainWindow.setUpdatesEnabled( True )
 		self.mainWindow.show()
 		self.mainWindow.raise_()
+
+	def onStart( self ):
+		self.mainWindow.setUpdatesEnabled( False )
+		self.restoreWindowState( self.mainWindow )
 
 	def onStop( self ):
 		self.saveWindowState( self.mainWindow )

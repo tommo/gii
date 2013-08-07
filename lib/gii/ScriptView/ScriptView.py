@@ -31,7 +31,7 @@ class ScriptView( QtEditorModule ):
 	def onLoad(self):	
 		#init gui	
 		self.window = window = ScriptViewWindow(None)
-		window.resize(600,400)
+		window.resize( 600, 400 )
 		window.setWindowTitle('Script Viewer')
 		window.module = self
 		
@@ -77,15 +77,14 @@ class ScriptView( QtEditorModule ):
 
 	def onStart( self ):
 		self.restoreWindowState( self.getMainWindow() )
-		# self.hide()
-		pass
 
 	def show(self):
 		self.window.show()
 		self.window.raise_()
 
 	def hide(self):
-		self.window.hide()
+		# self.window.hide()
+		pass
 
 	def onUnload(self):
 		if self.debuggerHandler.busy:
@@ -98,8 +97,7 @@ class ScriptView( QtEditorModule ):
 		pass
 
 	def locateFile(self, filename, lineNumber=1, highLight = False):
-		if not self.window.isVisible():
-			self.window.show()
+		self.setFocus()
 		if not self.window.hasFocus():
 			if highLight:
 				# self.window.requestUserAttention()
@@ -143,6 +141,7 @@ class ScriptView( QtEditorModule ):
 				self.debuggerHandler.doStop()	#stop debug
 
 	def onSetFocus(self):
+		self.window.show()
 		self.window.raise_()
 		self.window.setFocus()
 		self.getQtSupport().setActiveWindow( self.window )
