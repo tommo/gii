@@ -1,0 +1,6 @@
+{
+	"name"     : "build",
+	"priority" : 1,
+	"help"     : "build host for current project",
+	"autoload" : false
+}
