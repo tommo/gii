@@ -107,19 +107,3 @@ class EnumFieldEditor( FieldEditor ):
 			)
 		return self.combo
 
-##----------------------------------------------------------------##
-class ColorFieldEditor( FieldEditor ):
-	def get( self ):
-		return self.checkBox.isChecked()
-
-	def set( self, value ):
-		self.checkBox.setChecked( value )
-
-	def onStateChanged( self, state ):
-		return self.notifyChanged( self.get() )
-
-	def initEditor( self, container ):
-		self.checkBox = QtGui.QCheckBox( container )
-		self.checkBox.stateChanged.connect( self.onStateChanged )
-		return self.checkBox
-	
