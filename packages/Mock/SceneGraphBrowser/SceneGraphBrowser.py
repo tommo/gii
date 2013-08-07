@@ -91,6 +91,8 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		if isMockInstance( node, 'Scene' ):
 			return _MOCK.game
 
+		if not isMockInstance( node, 'Entity' ):
+			return None
 		#Entity
 		p = node.parent
 		if p: return p
@@ -98,7 +100,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 
 	def getNodeChildren( self, node ):
 		if isMockInstance( node, 'Game' ):
-			return node.scenes
+			return [ scene for scene in node.scenes.values() ]
 
 		if isMockInstance( node, 'Scene' ):
 			output = []

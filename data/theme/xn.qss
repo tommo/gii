@@ -1,6 +1,6 @@
 QWidget
 {
-	font-size:10px;
+	font-size:11px;
 	color:#cacaca;
 	background-color:#333;
 }
@@ -16,7 +16,7 @@ QLabel{
 
 QToolButton
 {
-	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#353535,stop:1#252525);
+	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#444,stop:1#333);
 	border: 1px solid #222;
 	border-radius:2px;
 	color:#ccc;
@@ -25,13 +25,13 @@ QToolButton
 
 QToolButton::hover
 {
-	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#444,stop:1#333);
+	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#444,stop:1#444);
 	color:#eee;
 }
 
 QPushButton
 {
-	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#5a5a5a,stop:1#3c3c3c);
+	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#555,stop:1#444);
 	border: 1px solid #222;
 /*	border-top:1px solid #222;
 	border-left:1px solid #222;
@@ -70,7 +70,7 @@ QDockWidget
 QDockWidget::title
 {
 	/*background-color:#292929;*/
-  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #323232, stop:1 #2c2c2c, stop:1 #222);
+  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #222);
 	padding-top: 5px;
 	padding-left: 5px;
 	border: 1px solid #222;
@@ -282,7 +282,7 @@ QSplitter::handle
 
 QTreeView, QListView
 {
-	background-color:#464646;
+	background-color:#555;
 	alternate-background-color:#353535;
 	border:1px solid #222;
 }
@@ -352,7 +352,7 @@ QMenu::item
 
 QMenu::item:selected
 {
-	background-color:#426076;
+	background-color:#466dc6;
 	border:1px solid transparent;
 	color:#dcdcdc;
 }
@@ -390,11 +390,12 @@ QTabWidget::tab-bar
 
 QTabBar::tab
 {
-  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #323232, stop:1 #2c2c2c, stop:1 #222);
+  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
 	color:#a1a1a1;
 	padding:4px 5px;
 	border-top: 1px solid #222;
 	border-right: 1px solid #222;
+	border-left: 1px solid #444;
 }
 
 QTabBar::tab:first{
@@ -403,7 +404,7 @@ QTabBar::tab:first{
 
 QTabBar::tab:selected
 {
-	background-color:#444;
+	background-color:#666;
 	color:#c8c8c8;
 	padding:4px 5px;
 }
@@ -491,7 +492,7 @@ DlgSettings QTabBar[shape="0"]::tab:selected
 {
 	background-color:#3c3c3c;
 	color:#dcdcdc;
-	border-top:1px solid #426076;
+	border-top:1px solid #466dc6;
 }
 
 /*QToolButton
@@ -512,8 +513,8 @@ QSpinBox,QDoubleSpinBox
 {
 	/*background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#b4b4b4,stop:1#969696);*/
 	border:1px solid #000;
-	selection-background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#787878,stop:1#5a5a5a);
-	selection-color:#191919;
+	/*selection-background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#787878,stop:1#5a5a5a);*/
+	/*selection-color:#191919;*/
 	padding:0;
 }
 
@@ -566,7 +567,7 @@ QRadioButton::indicator:checked:disabled
 	image:url(theme:radiobutton_checked_disabled.png);
 }
 
-QLineEdit, QTextEdit, QPlainTextEdit, QSpinBox
+QLineEdit, QTextEdit, QPlainTextEdit, QSpinBox, QDoubleSpinBox
 {
 	background-color:#595959;
 	border:1px solid #000;
@@ -582,6 +583,7 @@ QComboBox
 	background-color: qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#343434,stop:1#1d1d1d) ;
 	color:#dcdcdc;
 	padding:0 18px 0 3px;
+	margin-left: 3px;
 }
 
 QComboBox:editable
@@ -625,7 +627,8 @@ QGroupBox::title
 
 QToolTip
 {
-	background-color:#7e9639;
+	background-color: #648ccb;
+	color: #dfdfdf;
 }
 
 QWizard QListView
@@ -659,7 +662,7 @@ SearchLineEdit > QLineEdit
 
 QMainWindow,QScrollBar,QTableView
 {
-	background-color:#2c2c2c;
+	background-color:#444;
 }
 
 QMainWindow::separator
@@ -698,13 +701,20 @@ QScrollBar::handle:hover,MyThumbListView,QComboBox:!editable,QComboBox::drop-dow
 
 QTreeView:active,QTreeView:!active,QTreeView#UIGroup_TreeView:active,QTreeView#UIGroup_TreeView:!active
 {
-	selection-background-color:#426076;
+	selection-background-color:#466dc6;
 }
 
 QTreeView::item:selected:!active,QTreeView::item:selected:active,QTreeView::item:hover,QTreeView#UIGroup_TreeView::item:selected:!active,QTreeView#UIGroup_TreeView::item:selected:active,QTreeView#UIGroup_TreeView::item:hover,QListView::item:selected:!active,QListView::item:selected:active,QListView::item:hover,QTabBar::tab:!selected:hover
 {
-	background-color:#426076;
+	background-color:#466dc6;
 }
+
+QCheckBox::indicator{
+	margin-left: 2px;	
+	margin-top: 2px;	
+}
+
+
 
 QTreeView::indicator:unchecked,QCheckBox::indicator:unchecked
 {

@@ -177,7 +177,7 @@
       1375370516.0
     ], 
     "manager": "asset_manager.stylesheet", 
-    "modifyState": "modified", 
+    "modifyState": false, 
     "objectFiles": {}, 
     "pDep": [], 
     "properties": {}, 

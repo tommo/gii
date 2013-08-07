@@ -119,9 +119,9 @@ def printUsage():
 	printAvailTools()
 
 def printMissingCommand( cmd ):
-	print 'ERROR: no tool found: ' + cmd
-	print ''
 	printAvailTools( )
+	print '  [ERROR] TOOL NOT FOUND: ' + cmd
+	print ''
 	
 ##----------------------------------------------------------------##
 def startupTool( info ):	

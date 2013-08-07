@@ -18,6 +18,15 @@
 			"name": "Python32",
 			"working_dir": "$file_path",
 			"target": "exec_in_window"
+		},
+
+		{
+			"cmd": ["python","-u", "test.py"],
+			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+			"selector": "source.python",
+			"name": "Test",
+			"working_dir": "$file_path",
+			"target": "exec_in_window"
 		}
 
 	],
@@ -67,7 +76,8 @@
 		"build_switcher_systems":
 		[
 			"Run",
-			"Python32"
+			"Python32",
+			"Test"
 
 		],
 		"show_panel_on_build": false,
