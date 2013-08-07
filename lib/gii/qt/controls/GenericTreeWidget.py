@@ -21,6 +21,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.clear()
 		self.setSortingEnabled( True )
 		self.setSelectionMode( QtGui.QAbstractItemView.ExtendedSelection )
+		self.setAlternatingRowColors( False)
 		self.setExpandsOnDoubleClick( False )
 		self.sortByColumn(0, 0)
 

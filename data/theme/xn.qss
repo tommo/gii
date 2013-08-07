@@ -283,7 +283,7 @@ QSplitter::handle
 QTreeView, QListView
 {
 	background-color:#555;
-	alternate-background-color:#353535;
+	alternate-background-color:#444;
 	border:1px solid #222;
 }
 

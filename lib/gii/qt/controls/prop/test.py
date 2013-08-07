@@ -34,7 +34,7 @@ class TestWindow(QtGui.QWidget):
 		self.editor._buildSubEditor( 'balance', FloatFieldEditor ).set( 0.5 )
 		self.editor._buildSubEditor( 'ready', BoolFieldEditor ).set(True)
 		self.editor._buildSubEditor( 'category', EnumFieldEditor ).set(1)
-
+		self.editor._buildSubEditor( 'color', ColorFieldEditor ).set( (1,1,1,1) )
 
 
 app = QtGui.QApplication([])
