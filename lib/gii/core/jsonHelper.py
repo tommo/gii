@@ -21,6 +21,7 @@ def trySaveJSON( data, path, dataName = None ):
 		return True
 	except Exception, e:
 		logging.warn( 'failed to save %s: %s' % ( dataName or 'JSON', path ) )
+		logging.exception( e )
 		return False
 
 
@@ -30,4 +31,5 @@ def tryLoadJSON( path, dataName = None ):
 		return data
 	except Exception, e:
 		logging.warn( 'failed to load %s: %s' % ( dataName or 'JSON', path ) )
+		logging.exception( e )
 		return False

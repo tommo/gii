@@ -50,7 +50,7 @@ class ModSceneGraphBrowser( SceneEditorModule ):
 		signals.connect( 'moai.clean', self.onMoaiClean )
 
 	def onStart( self ):
-		self.tree.rebuild()
+		pass
 
 	def addEntity( self, entity, scene ):
 		self.tree.addNode( entity )

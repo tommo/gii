@@ -195,7 +195,7 @@ class Node:
 class AtlasGenerator:
 	def __init__(self, prefix, size, **kwargs):
 		self.prefix = prefix # prefix path of output atlases
-		self.size = size # size of the resulting atlases
+		self.size = size # maxsize of the resulting atlases
 		self.crop_bbox = kwargs.get('crop_bbox', False) # crop transparent outside regions
 		self.alpha_cropper = kwargs.get('alpha_cropper', True) # crop pixels with alpha = 0, not just with RGBA = 0
 		self.premultiplied_alpha = kwargs.get('premultiplied_alpha', False)
@@ -283,6 +283,24 @@ class AtlasGenerator:
 		return bb
 
 	def generateAtlases(self, images):
+		w0, h0 = self.size
+		r = w0 / h0
+		
+		if r > 1:
+			h = 32
+			w = r * h
+		else:
+			w = 32
+			h = w / r
+		
+		while w < w0 and h < h0: #try each size
+			atlases = self.generateAtlasesOfSize( images, (w,h), True ) 
+			if atlases: return atlases
+			w *= 2
+			h *= 2
+		return self.generateAtlasesOfSize( images, (w0,h0), True )
+
+	def generateAtlasesOfSize(self, images, size, expanding = False ):
 		atlases = []
 		for img in images:
 			node = None
@@ -292,9 +310,11 @@ class AtlasGenerator:
 					break
 
 			if node is None:
-				new_atlas = Node(0, 0, self.size[0], self.size[1])
+				if atlases and expanding: return None
+				new_atlas = Node(0, 0, size[0], size[1])
 				node = new_atlas.insert(img, self.spacing)
 				if node is None:
+					if expanding: return None
 					print("ERROR: failed to insert image {0}".format(img.path))
 				else:
 					atlases.append(new_atlas)
@@ -303,7 +323,7 @@ class AtlasGenerator:
 
 	def paintAtlas(self, atlas, atlas_fname):
 		with Stopwatch() as s:
-			canvas = Image.new(self.pixel_type, self.size, (0, 0, 0, 0))
+			canvas = Image.new(self.pixel_type, (atlas.w, atlas.h), (0, 0, 0, 0))
 			atlas.paintOn(canvas)
 			canvas.save(atlas_fname, 'PNG')
 			D("        saved atlas image file '{0}' in {1} seconds", atlas_fname, s)

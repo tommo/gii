@@ -13,7 +13,7 @@ class AuroraSpriteAssetManager(AssetManager):
 	def acceptAssetFile(self, filepath):
 		if not os.path.isfile(filepath): return False		
 		name, ext = os.path.splitext(filepath)
-		if not ext in ('.sprite'): return False
+		if not ext in ['.sprite']: return False
 		
 		try:
 			f = open(filepath)

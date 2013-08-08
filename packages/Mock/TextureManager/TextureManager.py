@@ -141,6 +141,8 @@ class TextureManager( AssetEditorModule ):
 			on_click = lambda item: self.setFocus()
 			)
 
+		signals.connect( 'asset.register', self.onAssetRegister )
+		signals.connect( 'asset.unregister', self.onAssetUnregister )
 
 	def onStart( self ):
 		library = self.getModule( 'texture_library' )
@@ -201,6 +203,14 @@ class TextureManager( AssetEditorModule ):
 
 			node.setMetaData( 'group', group, save = True )
 			self.treeTextures.updateItem( node )
+
+	def onAssetRegister(self, node):
+		if not node.isType( 'texture' ) : return
+		self.treeTextures.addNode( node )		
+
+	def onAssetUnregister(self, node):
+		if not node.isType( 'texture' ) : return
+		self.treeTextures.removeNode( node )
 
 	def rebuildTexture( self ):
 		lib = self.getModule( 'texture_library' )

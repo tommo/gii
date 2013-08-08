@@ -77,13 +77,14 @@ class EditorApp(object):
 		EditorModuleManager.get().startAllModules()
 
 		signals.emitNow('app.start')
+		signals.dispatchAll()
 
 		while self.running:
 			self.doMainLoop( sleepTime )
 
 		signals.emitNow('app.close')
-		
 		signals.dispatchAll()
+		
 		EditorModuleManager.get().stopAllModules()
 		self.getProject().save()
 		EditorModuleManager.get().unloadAllModules()

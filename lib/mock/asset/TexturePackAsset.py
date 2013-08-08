@@ -9,7 +9,7 @@ class TexturePackAssetManager(AssetManager):
 	def acceptAssetFile(self, filepath):
 		if not os.path.isfile(filepath): return False		
 		name,ext=os.path.splitext(filepath)
-		if not ext in ('.texpack'): return False
+		if not ext in ['.texpack']: return False
 		try:
 			f=open(filepath,'r')
 			data=json.load(f)

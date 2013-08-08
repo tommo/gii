@@ -26,9 +26,10 @@ class SceneIntrospector( SceneEditorModule ):
 	
 	def onLoad(self):
 		signals.connect('selection.changed',self.onSelectionChanged)
+		self.requestInstance()
 
 	def onStart( self ):
-		self.requestInstance()
+		pass
 		# self.testObj=makeTestObject()
 		# SelectionManager.get().changeSelection(self.testObj)
 		# self.updateTimer=App.get().startTimer(1000/2, self.updateProp)

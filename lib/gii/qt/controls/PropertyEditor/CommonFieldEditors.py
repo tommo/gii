@@ -13,6 +13,7 @@ class StringFieldEditor( FieldEditor ):
 
 	def initEditor( self, container ):
 		self.lineEdit = QtGui.QLineEdit( container )
+		self.lineEdit.setMinimumSize( 50, 16 )
 		self.lineEdit.textEdited.connect( self.notifyChanged )
 		return self.lineEdit
 
@@ -26,6 +27,7 @@ class IntFieldEditor( FieldEditor ):
 
 	def initEditor( self, container ):
 		self.spinBox = QtGui.QSpinBox( container )
+		self.spinBox.setMinimumSize( 50, 16 )
 		self.spinBox.setRange( -16777215, 16777215 )
 		self.spinBox.setSizePolicy(
 			QtGui.QSizePolicy.Expanding,
@@ -45,6 +47,7 @@ class FloatFieldEditor( FieldEditor ):
 
 	def initEditor( self, container ):
 		self.spinBox = QtGui.QDoubleSpinBox( container )
+		self.spinBox.setMinimumSize( 50, 16 )
 		self.spinBox.setRange( -16777215, 16777215 )
 		self.spinBox.setDecimals( 5 )
 		self.spinBox.setSizePolicy(

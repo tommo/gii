@@ -3,7 +3,7 @@ from abc        import ABCMeta, abstractmethod
 from gii.core   import EditorModule
 
 from gii.qt.controls.Menu      import MenuManager
-from gii.qt.controls.ToolBar   import ToolBarManager
+from gii.qt.controls.ToolBar   import ToolBarManager, ToolBarNode
 
 ##----------------------------------------------------------------##
 _QT_SETTING_FILE = 'qt.ini'
@@ -111,7 +111,7 @@ class QtEditorModule( EditorModule ):
 		return node
 
 	def addTool(self, path, **opiton ):
-		node = ToolBarManager.get().addTool(path, opiton, self)
+		node = ToolBarManager.get().addTool( path, opiton, self )
 		return node
 
 	def findTool(self, path):

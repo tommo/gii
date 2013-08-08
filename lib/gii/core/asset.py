@@ -73,7 +73,7 @@ class AssetNode(object):
 
 	def isType(self, typeName):
 		if isinstance(typeName,(list, tuple)):
-			return self.assetType in typeName
+			return self.assetType in list( typeName )
 		else:
 			return self.assetType == typeName
 
@@ -495,7 +495,7 @@ class AssetLibrary(object):
 	def enumerateAsset( self, assetTypes, **options ):
 		noVirtualNode = options.get( 'no_virtual', False )
 		result = []
-		if isinstance( assetTypes, str ): assetTypes = ( assetTypes )
+		if isinstance( assetTypes, str ): assetTypes = [ assetTypes ]
 		for path, node in self.assetTable.items():
 			if node.getType() in assetTypes and \
 				not ( noVirtualNode and node.isVirtual() ):
@@ -631,6 +631,7 @@ class AssetLibrary(object):
 			for node in done:
 				del modifiedAssets[ node ]			
 		signals.emitNow( 'asset.post_import_all' )
+		logging.info( 'modified assets imported' )
 
 	def scheduleScanProject( self ):
 		self.projectScanScheduled = True

@@ -1,5 +1,6 @@
 import logging
 import json
+import weakref
 
 from gii.core   import *
 from exceptions import *
@@ -149,13 +150,27 @@ class LuaObjectModelProvider(ModelProvider):
 		pass
 
 class LuaObjectModel(ObjectModel):
+	_EnumCache = weakref.WeakValueDictionary()
 	def addLuaFieldInfo(self, name, typeId, data = None): #called by lua
 		#convert lua-typeId -> pythontype
-		typeId  = luaTypeToPyType(typeId)
+		typeId  = luaTypeToPyType( typeId )
 		setting = data and luaTableToDict(data) or {}
-		self.addFieldInfo(name, typeId, **setting)
+		self.addFieldInfo( name, typeId, **setting )
 
-def luaTypeToPyType(tname):
+	def addLuaEnumFieldInfo(self, name, enumItems, data = None): #called by lua
+		enumType = LuaObjectModel._EnumCache.get( enumItems, None )
+		if not enumType:
+			tuples = []
+			for item in enumItems.values():
+				itemName  = item[1]
+				itemValue = item[2]
+				tuples.append ( ( itemName, itemValue ) )
+			enumType = EnumType( '_LUAENUM_', tuples )
+			LuaObjectModel._EnumCache[ enumItems ] = enumType
+		return self.addLuaFieldInfo( name, enumType, data )
+
+
+def luaTypeToPyType( tname ):
 		if tname   == 'int':
 			return int
 		elif tname == 'string':

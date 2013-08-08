@@ -8,7 +8,7 @@ class FontAssetManager(AssetManager):
 	def acceptAssetFile( self, filepath ):
 		if not os.path.isfile(filepath): return False		
 		name,ext=os.path.splitext(filepath)
-		return ext in ('.ttf','.fnt','.bdf')
+		return ext in ['.ttf','.fnt','.bdf']
 
 	def importAsset( self, node, option = None ):
 		filePath = node.getAbsFilePath()

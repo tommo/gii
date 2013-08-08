@@ -44,7 +44,9 @@ class SceneEditor( QtEditorModule ):
 	def onLoad( self ):
 		self.setupMainWindow()
 		self.containers  = {}
-		self.addTool( 'scene/run', label = 'Run' )
+		self.addTool( 'scene/run',    label = 'Run' )
+		self.addTool( 'scene/deploy', label = 'Deploy' )
+
 		signals.connect( 'app.start', self.postStart )
 
 		return True

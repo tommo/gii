@@ -46,7 +46,14 @@ local function buildGiiModel( model )
 			--widget?
 			--range?
 		}
-		pmodel:addLuaFieldInfo( f.__id, f.__type, option )
+		local id     = f.__id
+		local typeid = f.__type
+		if f.__enum then
+			assert ( type(typeid) == 'table' )
+			pmodel:addLuaEnumFieldInfo( id, typeid, option )
+		else
+			pmodel:addLuaFieldInfo( id, typeid, option )
+		end
 	end
 
 	local superModel = model:getSuperModel()
@@ -94,3 +101,8 @@ gii.addContextChangeListeners( onContextChange )
 --------------------------------------------------------------------
 mock.setLogLevel( 'status' )
 
+
+function isMockInstance( obj, clas )
+	if isClassInstance( obj ) then return obj:isInstance( clas ) end
+	return false
+end

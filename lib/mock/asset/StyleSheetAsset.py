@@ -10,7 +10,7 @@ class StyleSheetAssetManager(AssetManager):
 	def acceptAssetFile(self, filepath):
 		if not os.path.isfile(filepath): return False		
 		name,ext=os.path.splitext(filepath)
-		if not ext in ('.stylesheet'): return False
+		if not ext in ['.stylesheet']: return False
 		#validation 
 		try:
 			fp = open( filepath, 'r' )
