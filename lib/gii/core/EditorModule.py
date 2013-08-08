@@ -101,6 +101,7 @@ class EditorModule( object ):
 
 	def start( self ):
 		if self.active: return
+		logging.info( 'starting module:' + self.getName() )
 		self.active = True
 		for dep in self.getDependency():
 			m = self.getModule( dep )

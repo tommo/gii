@@ -47,8 +47,12 @@ class GamePreview( SceneEditorModule ):
 		getAKU().setOrientationLandscape()
 
 	def onOpenWindow(self, title, w,h):
+		logging.info('opening MOAI window: %s @ (%d,%d)' % ( str(title), w, h ) )
 		#no argument accepted here, just use full window
-		self.getRuntime().initGLContext()
+		# self.getRuntime().initGLContext()
+		from gii.qt.controls.GLWidget import GLWidget
+		GLWidget.getSharedWidget().makeCurrent()
+
 		self.originalSize = (w,h)
 		self.tryResizeContainer( *self.originalSize )
 
@@ -98,11 +102,11 @@ class GamePreview( SceneEditorModule ):
 				'----',
 				{'name':'reset_moai','label':'RESET MOAI', 'shortcut':'Ctrl+Shift+R'}
 			], self)
+		self.onMoaiReset()
 
-		self.onMoaiReset() #moai is already ready...
 
 	def onStart( self ):
-		self.show()
+		self.setFocus()
 		self.restoreWindowState(self.window)
 
 	def onStop( self ):
@@ -151,7 +155,7 @@ class GamePreview( SceneEditorModule ):
 		self.canvas.setInputDevice(
 			runtime.addDefaultInputDevice()
 			)
-		getAKU().setFuncOpenWindow(self.onOpenWindow)
+		# getAKU().setFuncOpenWindow( self.onOpenWindow )
 	
 	def onUnload(self):
 		self.window.destroy()
@@ -174,14 +178,15 @@ class GamePreview( SceneEditorModule ):
 	def onDebugStop(self):
 		self.paused=True
 
-	def setFocus(self):
+	def onSetFocus(self):
 		# getModule('main').setFocus()
+		print 'focus on game preview'
 		self.window.show()
 		self.window.raise_()
 		self.window.setFocus()
 		self.canvas.setFocus()
 		self.canvas.activateWindow()
-		self.setActiveWindow(self.window)
+		self.setActiveWindow( self.window )
 
 	def onGamePause(self):
 		self.getRuntime().pause()

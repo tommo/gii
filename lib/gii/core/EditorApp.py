@@ -75,7 +75,7 @@ class EditorApp(object):
 		if not self.initialized: self.init()
 		sleepTime = kwargs.get( 'sleep', 0.005 )
 		EditorModuleManager.get().startAllModules()
-
+		
 		signals.emitNow('app.start')
 		signals.dispatchAll()
 

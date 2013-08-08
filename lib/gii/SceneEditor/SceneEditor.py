@@ -58,7 +58,7 @@ class SceneEditor( QtEditorModule ):
 	def onStart( self ):
 		self.mainWindow.setUpdatesEnabled( False )
 		self.restoreWindowState( self.mainWindow )
-	
+		
 	def onStop( self ):
 		self.saveWindowState( self.mainWindow )
 

@@ -72,7 +72,7 @@ class MockBridge( EditorModule ):
 		self.initMockGame()
 
 	def initMockGame( self ):
-		_MOCK.init( self.configPath )
+		_MOCK.init( self.configPath, True )
 
 	def syncAssetLibrary(self):
 		self.delegate.safeCall( 'syncAssetLibrary' )

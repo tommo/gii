@@ -92,10 +92,11 @@ class MOAIRuntime( EditorModule ):
 		self.paused        = False
 		self.GLContextInitializer = None
 		
-		getAKU().setFuncOpenWindow( self.onOpenWindow )		
+		# getAKU().setFuncOpenWindow( self.onOpenWindow )		
 
 	def initGLContext( self ):
 		if self.GLContextReady: return True
+		logging.info('init GL context')
 		from gii.qt.controls.GLWidget import GLWidget
 		GLWidget.getSharedWidget().makeCurrent()
 		# if not self.GLContextInitializer: 
