@@ -33,6 +33,12 @@ _default_config = {
 }
 
 ##----------------------------------------------------------------##
+def _fixPath( path ):
+		path = path.replace( '\\', '/' ) #for windows
+		if path.startswith('./'): path = path[2:]
+		return path	
+
+##----------------------------------------------------------------##
 def _makePath( base, path ):
 	if path:
 		return base + '/' + path
@@ -205,7 +211,7 @@ class Project(object):
 		jsonHelper.trySaveJSON( self.config, self.getConfigPath( _GII_CONFIG_FILE ), 'project config')
 
 	def getRelativePath( self, path ):
-		return os.path.relpath( path, self.path )
+		return _fixPath( os.path.relpath( path, self.path ) )
 
 	def getPath( self, path = None ):
 		return self.getBasePath( path )

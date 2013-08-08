@@ -101,8 +101,8 @@ gii.addContextChangeListeners( onContextChange )
 --------------------------------------------------------------------
 mock.setLogLevel( 'status' )
 
-
 function isMockInstance( obj, clas )
 	if isClassInstance( obj ) then return obj:isInstance( clas ) end
 	return false
 end
+
