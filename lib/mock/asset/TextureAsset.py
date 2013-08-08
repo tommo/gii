@@ -195,7 +195,10 @@ class TextureLibrary( EditorModule ):
 
 	def scheduleImport( self, node ):
 		groupName = node.getMetaData( 'group' )
+		if not groupName:
+			print node
 		group = self.getGroup( groupName )
+		
 		n = self.pendingImportGroups.get( group )
 		if not n:
 			n = {}

@@ -495,7 +495,7 @@ class AssetLibrary(object):
 	def enumerateAsset( self, assetTypes, **options ):
 		noVirtualNode = options.get( 'no_virtual', False )
 		result = []
-		if isinstance( assetTypes, str ): assetTypes = ( assetTypes )
+		if isinstance( assetTypes, str ): assetTypes = [ assetTypes ]
 		for path, node in self.assetTable.items():
 			if node.getType() in assetTypes and \
 				not ( noVirtualNode and node.isVirtual() ):
