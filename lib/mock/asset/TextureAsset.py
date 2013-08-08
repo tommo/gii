@@ -103,7 +103,7 @@ def _convertAtlas( inputfile,  basepath ):
 		path  = _fixPath( parts[1] )
 		if path.startswith('\"'):
 			path = path[1:-1]
-		path = os.path.relpath( path, basepath )
+		path = _fixpath( os.path.relpath( path, basepath ) )
 		name = os.path.basename( path )
 		name = path
 		atlasName = parts[0]
