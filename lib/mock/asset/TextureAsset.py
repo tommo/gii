@@ -88,7 +88,11 @@ class TextureAssetManager( AssetManager ):
 		TextureLibrary.get().scheduleImport( node ) #let texture library handle real import
 		return True
 
-	
+def _fixPath( path ):
+		path = path.replace( '\\', '/' ) #for windows
+		if path.startswith('./'): path = path[2:]
+		return path	
+		
 ##----------------------------------------------------------------##
 def _convertAtlas( inputfile,  basepath ):
 	f = open( inputfile, 'r' )
@@ -96,7 +100,7 @@ def _convertAtlas( inputfile,  basepath ):
 	atlases = []
 	for line in f.readlines():
 		parts = line.split('\t')
-		path  = parts[1]
+		path  = _fixPath( parts[1] )
 		if path.startswith('\"'):
 			path = path[1:-1]
 		path = os.path.relpath( path, basepath )

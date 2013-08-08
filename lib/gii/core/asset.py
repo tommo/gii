@@ -692,8 +692,9 @@ class AssetLibrary(object):
 			
 
 		self.importModifiedAssets()
-
 		self.saveAssetTable()
+		CacheManager.get().save()
+		
 
 	def loadAssetTable(self):
 

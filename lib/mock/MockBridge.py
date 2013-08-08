@@ -37,7 +37,7 @@ class MockBridge( EditorModule ):
 		
 
 	def onStart( self ):
-		_MOCK.loadAssetLibrary()
+		pass
 
 	def syncAssetLibrary(self):
 		self.delegate.safeCall( 'syncAssetLibrary' )
@@ -46,7 +46,6 @@ class MockBridge( EditorModule ):
 		self.syncAssetLibrary()
 
 	def onMoaiReset(self):		
-		_MOCK.loadAssetLibrary()
 		_MOCK._setTarget( _G['mock'] )
 
 	def getMockEnv( self ):
