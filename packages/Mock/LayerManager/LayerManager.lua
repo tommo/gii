@@ -28,5 +28,6 @@ function moveLayerDown( l )
 end
 
 function removeLayer( l )
-	mock.game.removeLayer( l )
+	mock.game:removeLayer( l )
 end
+

@@ -9,7 +9,7 @@ class SceneAssetManager(AssetManager):
 	def acceptAssetFile( self, filePath ):
 		if not os.path.isfile(filePath): return False		
 		name,ext = os.path.splitext(filePath)
-		if not ext in ('.scene'): return False
+		if not ext in ['.scene']: return False
 		data = jsonHelper.tryLoadJSON( filePath )
 		return data and data.get( '_assetType', None ) == 'scene'
 

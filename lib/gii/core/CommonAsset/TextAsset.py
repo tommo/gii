@@ -9,7 +9,7 @@ class TextAssetManager( AssetManager ):
 	def acceptAssetFile(self, filepath):
 		if not os.path.isfile(filepath): return False		
 		name,ext = os.path.splitext(filepath)
-		return ext in ('.txt','.html','.htm','.xml','.json') or name in ('README','TODO')
+		return ext in ['.txt','.html','.htm','.xml','.json'] or name in ('README','TODO')
 
 	def importAsset(self, node, option=None):
 		node.assetType='text'

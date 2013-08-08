@@ -77,7 +77,7 @@ class TextureAssetManager( AssetManager ):
 	def acceptAssetFile(self, filepath):
 		if not os.path.isfile(filepath): return False		
 		name,ext=os.path.splitext(filepath)
-		return ext in ( '.png', '.psd', '.jpg', '.bmp', '.jpeg' )
+		return ext in [ '.png', '.psd', '.jpg', '.bmp', '.jpeg' ]
 
 	def importAsset(self, node, option=None):
 		node.assetType = 'texture'
@@ -195,10 +195,8 @@ class TextureLibrary( EditorModule ):
 
 	def scheduleImport( self, node ):
 		groupName = node.getMetaData( 'group' )
-		if not groupName:
-			print node
 		group = self.getGroup( groupName )
-		
+		assert group
 		n = self.pendingImportGroups.get( group )
 		if not n:
 			n = {}
@@ -228,7 +226,7 @@ class TextureLibrary( EditorModule ):
 		outputDir = CacheManager.get().getCacheDir( '<texture_group>/' + group.name  )
 		
 		arglist = [ 'python', _getModulePath('tools/AtlasGenerator.py'), '--prefix', prefix ]
-		arglist += [ '1024', '1024' ]
+		arglist += [ str( group.atlas_max_width ) , str( group.atlas_max_height ) ]
 		arglist += sourceList
 		try:
 			ex = subprocess.call( arglist ) #run packer
@@ -240,7 +238,6 @@ class TextureLibrary( EditorModule ):
 			for i in range( 0, len( data['atlases'] ) ):
 				src = '%s%d.png' % ( prefix, i )
 				dst = '%s/%s%d.png' % ( dstPath, atlasName, i )
-				print( src, dst )
 				shutil.copy( src, dst )
 			#update texpack
 			data[ 'sources' ] = sourceList

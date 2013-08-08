@@ -73,7 +73,7 @@ class AssetNode(object):
 
 	def isType(self, typeName):
 		if isinstance(typeName,(list, tuple)):
-			return self.assetType in typeName
+			return self.assetType in list( typeName )
 		else:
 			return self.assetType == typeName
 
@@ -631,6 +631,7 @@ class AssetLibrary(object):
 			for node in done:
 				del modifiedAssets[ node ]			
 		signals.emitNow( 'asset.post_import_all' )
+		logging.info( 'modified assets imported' )
 
 	def scheduleScanProject( self ):
 		self.projectScanScheduled = True

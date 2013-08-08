@@ -85,6 +85,9 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			return item.node
 		return None
 
+	def hasNode( self, node ):
+		return self.getItemByNode( node ) != None
+
 	def refreshNode(self, node):
 		item=self.getItemByNode( node )
 		if item:
@@ -120,6 +123,8 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		item = self.getItemByNode(node)
 		if item and item!=self.rootItem:
 			(item.parent() or self.rootItem).removeChild(item)
+			return True
+		return False
 
 	def selectNode(self, node):
 		item=self.getItemByNode(node)
