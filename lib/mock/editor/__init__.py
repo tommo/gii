@@ -1,1 +1,0 @@
-from MOCKEditCanvas import MOCKEditCanvas

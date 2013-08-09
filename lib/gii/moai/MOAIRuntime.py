@@ -16,6 +16,7 @@ _G = LuaTableProxy( None )
 signals.register( 'lua.msg' )
 signals.register( 'moai.clean' )
 signals.register( 'moai.reset' )
+signals.register( 'moai.ready' )
 
 ##----------------------------------------------------------------##
 import bridge
@@ -80,9 +81,11 @@ class MOAIRuntime( EditorModule ):
 		_G['GII_PROJECT_SCRIPT_PATH']  = self.getProject().getScriptPath()
 		_G['GII_PROJECT_SCRIPT_LIB_PATH']  = self.getProject().getScriptLibPath()
 		logging.info( 'loading gii lua runtime' )
+
 		aku.runScript(
 			self.getApp().getPath( 'data/lua/runtime.lua' )
 			)
+
 		self.luaRuntime = lua.eval('gii')
 		assert self.luaRuntime, "Failed loading Gii Lua Runtime!"
 		#finish loading lua bridge
@@ -123,7 +126,8 @@ class MOAIRuntime( EditorModule ):
 		self.cleanLuaReferences()
 		self.initContext()
 		self.setWorkingDirectory( self.getProject().getPath() )
-		signals.emitNow('moai.reset')
+		signals.emitNow( 'moai.reset' )
+		signals.emitNow( 'moai.ready' )
 
 	def onOpenWindow( self, title, w, h ):
 		raise Exception( 'No GL context provided.' )
@@ -163,9 +167,11 @@ class MOAIRuntime( EditorModule ):
 		self.luaDelegates[ scriptPath ] = delegate
 		return delegate
 
-	def loadLuaWithEnv( self, file ):
+	def loadLuaWithEnv( self, file, env = None ):
 		try:
-			return self.luaRuntime.loadLuaWithEnv(file)
+			if env:
+				assert isinstance( env, dict )
+			return self.luaRuntime.loadLuaWithEnv( file, env )
 		except Exception, e:
 			logging.error( 'error loading lua:\n' + str(e) )
 
@@ -267,6 +273,7 @@ class MOAIRuntime( EditorModule ):
 		return device
 
 	def addDefaultInputDevice(self, name='device'):
+		logging.info( 'add input device: ' + str( name ) )
 		device=self.addInputDevice(name)
 		device.addSensor('touch',       'touch')
 		device.addSensor('pointer',     'pointer')
@@ -299,6 +306,7 @@ class MOAIRuntime( EditorModule ):
 class MOAILuaDelegate(object):
 	def __init__(self, owner=None, **option):
 		self.scriptPath   = None
+		self.scriptEnv    = None
 		self.owner        = owner
 		self.extraSymbols = {}
 		self.clearLua()
@@ -306,29 +314,33 @@ class MOAILuaDelegate(object):
 		if option.get( 'autoReload', True ):
 			signals.connect('moai.reset', self.reload)
 
-	def load(self, scriptPath):
+	def load( self, scriptPath, scriptEnv = None ):
 		self.scriptPath = scriptPath
+		self.scriptEnv  = scriptEnv
 		runtime = MOAIRuntime.get()
 		try:
-			self.luaEnv = runtime.loadLuaWithEnv(scriptPath)
-			if self.luaEnv:
-				self.luaEnv['_owner']    = self.owner
-				self.luaEnv['_delegate'] = self
+			env = {
+				'_owner'    : self.owner,
+				'_delegate' : self
+			}
+			if self.scriptEnv:
+				env.update( self.scriptEnv )
+			self.luaEnv = runtime.loadLuaWithEnv( scriptPath, env )
 		except Exception, e:
-			print(e)
+			logging.exception( e )
 
 
 	def reload(self):
 		if self.scriptPath: 
-			self.load(self.scriptPath)
+			self.load( self.scriptPath, self.scriptEnv )
 			for k,v in self.extraSymbols.items():
 				self.setEnv(k,v)
 
-	def setEnv(self, name ,value, autoReload=True):
+	def setEnv(self, name ,value, autoReload = True):
 		if autoReload : self.extraSymbols[name] = value
 		self.luaEnv[name] = value
 
-	def getEnv(self, name, defaultValue=None):
+	def getEnv(self, name, defaultValue = None):
 		v = self.luaEnv[name]
 		if v is None : return defaultValue
 		return v
@@ -346,7 +358,6 @@ class MOAILuaDelegate(object):
 
 	def clearLua(self):
 		self.luaEnv=None
-
 
 
 MOAIRuntime().register()

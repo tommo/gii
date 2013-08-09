@@ -49,6 +49,15 @@ function dictToTable(dict) --just one level?
 	return MOAIJsonParser.decode(json)
 end
 
+function dictToTablePlain(dict) --just one level?
+	local t = {}
+	for k in python.iter( dict ) do
+		t[k] = dict[k]
+	end
+	return t	
+end
+
+
 local _sizeOf=sizeOfPythonObject
 function listToTable(list)
 	local c=_sizeOf(list)
@@ -81,7 +90,12 @@ app = bridge.app
 -- PYTHON-LUA DELEGATION CREATION
 --------------------------------------------------------------------
 function loadLuaWithEnv(file, env, ...)
-	local env = setmetatable(env or {}, 
+	if env then
+		assert ( type( env ) == 'userdata' )
+		env = dictToTablePlain( env )
+	end
+
+	env = setmetatable(env or {}, 
 			{__index=function(t,k) return rawget(_G,k) end}
 		)
 	local func, err=loadfile(file)

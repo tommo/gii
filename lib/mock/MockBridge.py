@@ -31,14 +31,13 @@ class MockBridge( EditorModule ):
 	def onLoad(self):
 		self.affirmConfigFile()
 		self.runtime  = self.getManager().affirmModule( 'moai' )
-		self.delegate = MOAILuaDelegate( self )
-		self.delegate.load( self.getModulePath( 'MockBridge.lua' ) )
 
-		_MOCK._setTarget( _G['mock'] )
-		_MOCK.setBasePaths( self.getProject().getPath(), self.getProject().getAssetPath() )
+
+		self.setupLuaModule()		
 
 		signals.connect( 'project.load', self.onProjectLoaded )
 		signals.connect( 'moai.reset', self.onMoaiReset )
+		signals.connect( 'moai.ready', self.onMoaiReady )
 
 	def affirmConfigFile( self ):
 		proj = self.getProject()
@@ -74,14 +73,25 @@ class MockBridge( EditorModule ):
 	def initMockGame( self ):
 		_MOCK.init( self.configPath, True )
 
+	def setupLuaModule( self ):
+		self.runtime.runScript( self.getModulePath( 'MockBridge.lua' ) )
+		#TODO: use lua to handle editor modules
+		self.runtime.runScript( self.getModulePath( 'EditorCanvasScene.lua' ) )
+
+		_MOCK._setTarget( _G['mock'] )
+		_MOCK.setBasePaths( self.getProject().getPath(), self.getProject().getAssetPath() )
+
 	def syncAssetLibrary(self):
-		self.delegate.safeCall( 'syncAssetLibrary' )
+		#TODO:
+		pass
 
 	def onProjectLoaded(self,prj):
 		self.syncAssetLibrary()
 
 	def onMoaiReset(self):		
-		_MOCK._setTarget( _G['mock'] )
+		self.setupLuaModule()
+
+	def onMoaiReady( self ):
 		self.initMockGame()
 
 	def getMockEnv( self ):

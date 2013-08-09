@@ -1,7 +1,5 @@
 require 'mock.env'
 
-module ('mock.edit', package.seeall)
-
 local function onAssetModified( node ) --node: <py>AssetNode	
 	local nodepath = node:getPath()
 	mock.releaseAsset( nodepath )
@@ -99,10 +97,12 @@ end
 gii.addContextChangeListeners( onContextChange )
 
 --------------------------------------------------------------------
-mock.setLogLevel( 'status' )
 
 function isMockInstance( obj, clas )
 	if isClassInstance( obj ) then return obj:isInstance( clas ) end
 	return false
 end
+
+-- mock.setLogLevel( 'status' )
+
 

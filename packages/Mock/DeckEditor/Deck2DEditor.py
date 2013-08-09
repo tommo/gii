@@ -15,7 +15,7 @@ from gii.qt.controls.PropertyEditor  import PropertyEditor
 
 from gii.AssetEditor  import AssetEditorModule
 
-from gii.moai.MOAIEditCanvas import  MOAIEditCanvas
+from gii.moai.MOAIEditCanvas    import MOAIEditCanvas
 
 from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
@@ -74,7 +74,7 @@ class Deck2DEditor( AssetEditorModule ):
 		)
 
 		self.canvas = addWidgetWithLayout(
-			MOAIEditCanvas(window.canvasContainer),
+			MOAIEditCanvas( window.canvasContainer ),
 			window.canvasContainer
 		)
 		self.canvas.loadScript( _getModulePath('Deck2DEditor.lua') )
@@ -119,6 +119,9 @@ class Deck2DEditor( AssetEditorModule ):
 		self.container.raise_()
 		self.container.activateWindow()
 		self.container.setFocus()
+
+	def onStart( self ):
+		self.canvas.callWithContext( 'onStart' )
 
 	def saveAsset(self):
 		if self.editingAsset and self.editingPack:

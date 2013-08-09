@@ -8,11 +8,19 @@ from gii import *
 
 from gii.qt.controls.GLWidget import GLWidget
 from MOAIRuntime              import getAKU, MOAIRuntime, MOAILuaDelegate
+from MOAICanvasBase           import MOAICanvasBase
 
 import ContextDetection
 
 def isBoundMethod( v ):
 	return hasattr(v,'__func__') and hasattr(v,'im_self')
+
+def boundToClosure( value ):
+	if isBoundMethod( value ):
+		func = value
+		value = lambda *args: func(*args)
+	return value
+		
 
 QTKeymap={
 	205 : "alt" ,
@@ -126,8 +134,8 @@ class MOAIEditCanvasLuaDelegate(MOAILuaDelegate):
 		self._postDraw     = None
 		self._onUpdate     = None
 
-	def load(self, scriptPath):
-		super( MOAIEditCanvasLuaDelegate, self ).load( scriptPath )
+	def load(self, scriptPath, scriptEnv = None ):
+		super( MOAIEditCanvasLuaDelegate, self ).load( scriptPath, scriptEnv )
 		env = self.luaEnv
 		if not env:
 			raise Exception( 'failed loading editcanvas script:%s' % scriptPath )
@@ -179,11 +187,12 @@ class MOAIEditCanvasLuaDelegate(MOAILuaDelegate):
 		if self._onResize: self._onResize(w,h)
 
 
-class MOAIEditCanvas( GLWidget ):
+class MOAIEditCanvasBase( MOAICanvasBase ):
 	_id = 0
 	def __init__( self, *args, **kwargs ):
 		MOAIEditCanvas._id += 1
-		super(MOAIEditCanvas, self).__init__(*args)
+		super(MOAIEditCanvasBase, self).__init__( *args )
+
 		contextPrefix = kwargs.get( 'context_prefix', 'edit_canvas')
 		self.runtime     = app.affirmModule( 'moai' )
 		self.contextName = '%s<%d>' % ( contextPrefix, MOAIEditCanvas._id )
@@ -193,6 +202,10 @@ class MOAIEditCanvas( GLWidget ):
 		self.viewHeight  = 0
 		self.updateStep  = 0
 		
+		self.scriptEnv   = None
+		self.scriptPath  = None
+
+
 		self.updateTimer.timeout.connect( self.updateCanvas )
 		signals.connect('moai.reset', self.onMoaiReset)
 		signals.connect('moai.clean', self.onMoaiClean)
@@ -224,39 +237,40 @@ class MOAIEditCanvas( GLWidget ):
 		self.stopUpdateTimer()
 		self.stopRefreshTimer()
 
-	def loadScript( self, scriptPath, **kwargs ):
+	def loadScript( self, scriptPath, env = None, **kwargs ):
 		self.scriptPath = scriptPath
+		self.scriptEnv  = env
 		self.setupContext()
 
 	def setDelegateEnv(self, key, value, autoReload=True):
 		#convert bound method to closure
-		if isBoundMethod( value ):
-			func = value
-			value = lambda *args: func(*args)
-		self.delegate.setEnv(key, value, autoReload)
+		self.delegate.setEnv(key, boundToClosure( value ), autoReload)
 
 	def getDelegateEnv(self, key, defaultValue=None):
 		return self.delegate.getEnv(key, defaultValue)
 		
 	def setupContext(self):
-		self.runtime.createRenderContext(self.contextName)
-
+		self.runtime.createRenderContext( self.contextName )
+		self.setInputDevice( self.runtime.addDefaultInputDevice( self.contextName ) )
+		
 		if self.scriptPath:
 			self.makeCurrent()
-			self.delegate.load( self.scriptPath )
-
-			self.setDelegateEnv( 'updateCanvas',     self.updateCanvas,  False )
+			env = {
+				'updateCanvas'     : boundToClosure( self.updateCanvas ),
+				'hideCursor'       : boundToClosure( self.hideCursor ),
+				'showCursor'       : boundToClosure( self.showCursor ),
+				'setCursorPos'     : boundToClosure( self.setCursorPos ),
+				'getCanvasSize'    : boundToClosure( self.getCanvasSize ),
+				'startUpdateTimer' : boundToClosure( self.startUpdateTimer ),
+				'stopUpdateTimer'  : boundToClosure( self.stopUpdateTimer ),
+				'contextName'      : boundToClosure( self.contextName )
+			}
 			
-			self.setDelegateEnv( 'hideCursor',       self.hideCursor,    False )
-			self.setDelegateEnv( 'showCursor',       self.showCursor,    False )
-			self.setDelegateEnv( 'setCursorPos',     self.setCursorPos,  False )
-			
-			self.setDelegateEnv( 'getCanvasSize',    self.getCanvasSize, False )
+			if self.scriptEnv:
+				env.update( self.scriptEnv )
+			self.delegate.load( self.scriptPath, env )
 
-			self.setDelegateEnv( 'startUpdateTimer', self.startUpdateTimer, False )
-			self.setDelegateEnv( 'stopUpdateTimer',  self.stopUpdateTimer,  False )
-
-			self.delegate.safeCall('onLoad')
+			self.delegate.safeCall( 'onLoad' )
 			self.resizeGL(self.width(), self.height())
 			self.startRefreshTimer(60)
 			self.updateCanvas()
@@ -264,10 +278,9 @@ class MOAIEditCanvas( GLWidget ):
 	def safeCall(self, method, *args):		 
 		return self.delegate.safeCall(method, *args)
 
-	def resizeGL(self, width, height):
-		self.delegate.onResize(width,height)
-		self.viewWidth  = width
-		self.viewHeight = height
+	def callWithContext( self, method, *args):
+		self.makeCurrent()
+		return self.safeCall( method, *args )
 
 	def makeCurrent( self ):
 		self.runtime.changeRenderContext( self.contextName )
@@ -291,6 +304,13 @@ class MOAIEditCanvas( GLWidget ):
 		else:
 			self.updateGL()
 
+	def resizeGL(self, width, height):
+		self.delegate.onResize(width,height)
+		self.viewWidth  = width
+		self.viewHeight = height
+
+
+class MOAIEditCanvas( MOAIEditCanvasBase ):
 	def mousePressEvent(self, event):
 		button=event.button()		
 		x,y=event.x(), event.y()
@@ -345,3 +365,4 @@ class MOAIEditCanvas( GLWidget ):
 		self.delegate.onKeyUp(convertKeyCode(key))
 
 
+	

@@ -103,14 +103,10 @@ class GamePreview( SceneEditorModule ):
 			], self)
 		self.onMoaiReset()
 
-		signals.connect( 'app.start', self.postStart )
 
 	def onStart( self ):
 		self.restoreWindowState(self.window)
 		
-	def postStart( self ):
-		self.setFocus()
-
 	def onStop( self ):
 		if self.updateTimer:
 			self.updateTimer.stop()
@@ -155,7 +151,7 @@ class GamePreview( SceneEditorModule ):
 		runtime = self.getRuntime()
 		runtime.createRenderContext( 'game' )
 		self.canvas.setInputDevice(
-			runtime.addDefaultInputDevice()
+			runtime.addDefaultInputDevice( 'device' )
 			)
 		# getAKU().setFuncOpenWindow( self.onOpenWindow )
 	

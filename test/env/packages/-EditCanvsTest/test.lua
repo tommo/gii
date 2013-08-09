@@ -23,11 +23,30 @@ function EditCanvasCamera:getGameViewScale()
 	return canvasWidth, canvasHeight
 end
 
---
+---
+CLASS: PlaceHolder( mock.Entity )
+function PlaceHolder:onLoad()
+	self:attach( mock.DrawScript() )
+	self:attach( mock.InputScript() )
+end
+
+function PlaceHolder:onDraw()
+	MOAIDraw.fillRect( -50, -50, 50, 50 )
+end
+
+function PlaceHolder:onMouseMove( x, y )
+	self:setRot( 0, y, x )
+end
+
+function PlaceHolder:onKeyDown( key )
+	print( key )
+end
+
+---
 CLASS: TestScene ( mock.Scene )
 function TestScene:onEnter()
 	camera = self:addEntity( mock.SingleEntity( EditCanvasCamera() ) )
-	self:addEntity( TestEntity() )	
+	self:addEntity( PlaceHolder() )	
 end
 
 function TestScene:getActionRoot()
