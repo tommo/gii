@@ -13,7 +13,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 			fmt.setSwapInterval(1)
 			QtOpenGL.QGLFormat.setDefaultFormat(fmt)
 			
-			hiddenWindow = QtOpenGL.QGLWidget(QtOpenGL.QGLContext(fmt, None))
+			hiddenWindow = QtOpenGL.QGLWidget( QtOpenGL.QGLContext(fmt, None) )
 			GLWidget.sharedWidget = hiddenWindow
 			hiddenWindow.makeCurrent()
 
@@ -21,17 +21,16 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def __init__(self,parent=None):
 		sharedWidget = GLWidget.getSharedWidget()
-
 		QtOpenGL.QGLWidget.__init__(self, parent, sharedWidget)
-		self.setFocusPolicy(QtCore.Qt.StrongFocus)
-		
-		self.allowRefresh=False
-		self.pendingRefresh=False
 
-		self.refreshTimer=QtCore.QTimer(self)
+		self.setFocusPolicy(QtCore.Qt.StrongFocus)
+		self.setMinimumSize( 32, 32 )
+		self.allowRefresh   = False
+		self.pendingRefresh = False
+
+		self.refreshTimer   = QtCore.QTimer(self)
 		self.refreshTimer.timeout.connect(self.onRefreshTimer)
 		self.setMouseTracking(True)
-		
 
 	def startRefreshTimer(self,fps=60):
 		self.refreshTimer.start(1000/fps)
@@ -55,9 +54,6 @@ class GLWidget(QtOpenGL.QGLWidget):
 		if self.pendingRefresh:
 			self.updateGL()
 
-	# def sizeHint(self):
-	# 	return QtCore.QSize(400, 400)
-		
 	def paintGL( self ):
 		if not self.allowRefresh:
 			self.pendingRefresh = True

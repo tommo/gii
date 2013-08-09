@@ -4,6 +4,7 @@ register('app.activate')
 register('app.deactivate')
 
 register('app.start')
+register('app.post_start')
 register('app.close')
 register('app.stop')
 register('app.chdir')

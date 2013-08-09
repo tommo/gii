@@ -62,7 +62,6 @@ class GamePreview( SceneEditorModule ):
 		getAKU().setScreenSize(w,h)
 		getAKU().setViewSize(w,h)
 
-		self.setFocus()
 
 	def onLoad(self):
 		self.window = self.requestDocumentWindow(
@@ -104,10 +103,13 @@ class GamePreview( SceneEditorModule ):
 			], self)
 		self.onMoaiReset()
 
+		signals.connect( 'app.start', self.postStart )
 
 	def onStart( self ):
-		self.setFocus()
 		self.restoreWindowState(self.window)
+		
+	def postStart( self ):
+		self.setFocus()
 
 	def onStop( self ):
 		if self.updateTimer:
@@ -179,8 +181,6 @@ class GamePreview( SceneEditorModule ):
 		self.paused=True
 
 	def onSetFocus(self):
-		# getModule('main').setFocus()
-		print 'focus on game preview'
 		self.window.show()
 		self.window.raise_()
 		self.window.setFocus()

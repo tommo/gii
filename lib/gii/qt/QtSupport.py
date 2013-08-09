@@ -131,8 +131,7 @@ class QtSupport( QtEditorModule ):
 	
 	def onStart( self ):		
 		self.restoreWindowState( self.mainWindow )
-		# from gii.qt.dialogs import requestColor
-		# requestColor( '???' )
+		self.qtApp.processEvents( QEventLoop.AllEvents, 1 )
 
 	def onStop( self ):
 		self.saveWindowState( self.mainWindow )

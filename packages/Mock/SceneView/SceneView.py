@@ -33,6 +33,7 @@ class SceneView( SceneEditorModule ):
 		self.window = self.requestDocumentWindow(
 				title = 'Scene'
 			)
+		
 		self.canvas = self.window.addWidget( MOAIEditCanvas() )
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
 		self.updateTimer = self.window.startTimer( 60, self.onUpdateTimer )
@@ -41,7 +42,6 @@ class SceneView( SceneEditorModule ):
 		self.preview = self.getModule( 'scene_preview' )
 
 	def onStart( self ):
-		self.window.show()
 		self.canvas.makeCurrent()
 		self.canvas.safeCall( 'onStart' )
 		self.scheduleUpdate()

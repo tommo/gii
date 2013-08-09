@@ -268,7 +268,6 @@ class MOAIEditCanvas( GLWidget ):
 		self.delegate.onResize(width,height)
 		self.viewWidth  = width
 		self.viewHeight = height
-		self.updateGL()
 
 	def makeCurrent( self ):
 		self.runtime.changeRenderContext( self.contextName )

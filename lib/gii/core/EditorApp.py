@@ -79,6 +79,7 @@ class EditorApp(object):
 		
 		signals.emitNow('app.start')
 		signals.dispatchAll()
+		signals.emit('app.post_start')
 
 		while self.running:
 			self.doMainLoop( sleepTime )
