@@ -166,6 +166,7 @@ class Project(object):
 		os.chdir( path )
 
 		sys.path.insert( 0, self.envLibPath )
+		sys.path.insert( 0, self.getBinaryPath( 'python' ) ) #for python extension modules
 
 		self.info   = jsonHelper.tryLoadJSON( self.getBasePath( _GII_INFO_FILE ) )
 		self.config = jsonHelper.tryLoadJSON( self.getConfigPath( _GII_CONFIG_FILE ) )

@@ -32,6 +32,7 @@ class EditorApp(object):
 		EditorModuleManager.get()._app = self
 
 		self.initialized   = False
+		self.projectLoaded = False
 		self.flagModified  = False
 		self.debugging     = False
 		self.running       = False
@@ -119,10 +120,12 @@ class EditorApp(object):
 		return Project.get()
 
 	def openProject( self ):
+		if self.projectLoaded: return
 		info = Project.findProject()
 		if not info:
 			raise Exception( 'no valid gii project found' )
 		Project.get().load( info['path'] )
+		self.projectLoaded = True
 
 	def getAssetLibrary( self ):
 		return self.getProject().getAssetLibrary()

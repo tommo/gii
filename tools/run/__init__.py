@@ -10,10 +10,14 @@ def main( argv ):
 	import subprocess
 
 	bin = project.getBinaryPath( app.getPlatformName() + '/moai' )
+	
+	script = 'game/main.lua'
+	if len(argv) > 1:
+		script = 'game/' + argv[1] + '.lua'
 
 	arglist = [
 		bin,
-		'game/main.lua'
+		script
 	]
 	try:
 		subprocess.call( arglist )

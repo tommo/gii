@@ -16,3 +16,5 @@ host/ios/content
 test/game
 test/bin
 test/env/config/cache
+.waf*
+.lock-*

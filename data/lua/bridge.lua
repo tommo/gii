@@ -110,10 +110,9 @@ end
 --------------------------------------------------------------------
 -- Lua Functions For Python
 --------------------------------------------------------------------
---TODO: rename MOEIHELPER
-stepSim                 = assert(MOEIHelper.stepSim)
-setBufferSize           = assert(MOEIHelper.setBufferSize)
-local renderFrameBuffer = assert(MOEIHelper.renderFrameBuffer) --a manual renderer caller
+stepSim                 = assert(GIIHelper.stepSim)
+setBufferSize           = assert(GIIHelper.setBufferSize)
+local renderFrameBuffer = assert(GIIHelper.renderFrameBuffer) --a manual renderer caller
 
 local function renderTable(t)
 	for i,f in ipairs(t) do
