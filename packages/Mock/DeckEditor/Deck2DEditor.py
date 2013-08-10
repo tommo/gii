@@ -166,8 +166,20 @@ class Deck2DEditor( AssetEditorModule ):
 
 	def addItem( self, atype ):
 		if not self.editingAsset: return
-		s = self.getSelectionManager().getSelection()
-		if not s: return
+		selection = self.getSelectionManager().getSelection()
+		if not selection: return
+		newItems = []
+		for n in selection:
+			if not isinstance(n, AssetNode): continue
+			if not n.isType( 'texture' ): continue
+			#create item
+			item = { 
+				'name' : n.getBaseName(),
+				'src'  : n.getPath(),
+				'type' : atype
+				}
+			newItems.append( item )
+
 		self.saveAsset()
 
 	def addListItem( self, item ):

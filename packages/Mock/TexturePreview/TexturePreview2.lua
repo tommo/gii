@@ -2,8 +2,25 @@
 scn = gii.createMockEditorScene()
 --------------------------------------------------------------------
 
+--------------------------------------------------------------------
+CLASS: CanvasGrid( mock.Entity )
+function CanvasGrid:onLoad()
+	self:attach( mock.DrawScript{	priority = -1	} )
+end
+
+function CanvasGrid:onDraw()
+	axisSize = 10000
+	MOAIGfxDevice.setPenColor( .1, .1, .1 )
+	MOAIDraw.fillRect( -axisSize, -axisSize, axisSize, axisSize )
+	MOAIGfxDevice.setPenColor( .3, .3, .3 )
+	MOAIDraw.drawLine( -axisSize, 0, axisSize, 0 )
+	MOAIDraw.drawLine( 0, -axisSize, 0, axisSize )
+end
+
+--------------------------------------------------------------------
 CLASS: Preview ( mock.Entity )
 function Preview:onLoad()
+	self:addSibling( CanvasGrid() )
 	self.prop = self:addProp{
 		blend = 'alpha'
 	}
@@ -62,11 +79,15 @@ function Preview:onMouseMove( x, y )
 end
 
 function Preview:onScroll( x, y )
-	self:setZoom( self.zoom - y * 0.1 )
+	if y > 0 then
+		self:setZoom( self.zoom * 2 )
+	else
+		self:setZoom( self.zoom / 2 )
+	end
 end
 
 function Preview:setZoom( zoom )
-	zoom = clamp( zoom, 0.1, 10 )
+	zoom = clamp( zoom, 1 / 16, 16 )
 	self.zoom = zoom
 	scn.cameraCom:setZoom( zoom )
 	updateCanvas()
