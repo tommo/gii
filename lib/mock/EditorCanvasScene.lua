@@ -15,10 +15,18 @@ function EditorCanvasCamera:setScreenSize( w, h )
 	self:updateViewport()
 end
 
---
+--------------------------------------------------------------------
 CLASS: EditorCanvasScene ( mock.Scene )
 function EditorCanvasScene:__init()
 	self.__editor_scene = true
+end
+
+function EditorCanvasScene:setEnv( env )
+	self.env = env
+end
+
+function EditorCanvasScene:getEnv()
+	return self.env
 end
 
 function EditorCanvasScene:onEnter()
@@ -31,10 +39,41 @@ function EditorCanvasScene:getActionRoot()
 	return ctx.actionRoot
 end
 
----
+function EditorCanvasScene:updateCanvas()
+	self.env.updateCanvas()
+end
+
+function EditorCanvasScene:getCanvasSize()
+	local s = self.env.getCanvasSize()
+	return s[0], s[1]
+end
+
+function EditorCanvasScene:hideCursor()
+	return self.env.hideCursor()
+end
+
+function EditorCanvasScene:showCursor()
+	return self.env.showCursor()
+end
+
+function EditorCanvasScene:setCursorPos()
+	return self.env.setCursorPos()
+end
+
+function EditorCanvasScene:startUpdateTimer()
+	return self.env.startUpdateTimer()
+end
+
+function EditorCanvasScene:stopUpdateTimer()
+	return self.env.stopUpdateTimer()
+end
+
+---------------------------------------------------------------------
 function createMockEditorScene()
 	local env = getfenv( 2 )
 	local scn = EditorCanvasScene()
+
+	scn:setEnv( env )
 
 	function env.onResize( w, h )
 		scn.cameraCom:setScreenSize( w, h )
@@ -86,3 +125,4 @@ function createMockEditorScene()
 	return scn
 end 
 
+--------------------------------------------------------------------

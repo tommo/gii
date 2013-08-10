@@ -180,14 +180,16 @@ class TextureManager( AssetEditorModule ):
 		item.setSelected( True )
 
 	def removeGroup( self ):
-		for item in self.window.listGroup.selectedItems():
+		listGroup = self.window.listGroup
+		for item in listGroup.selectedItems():
 			groupName = item.text()
 			if groupName == 'default':
 				alertMessage( 'warning', 'default texture group cannot be removed')
 				return
 			self.getModule( 'texture_library' ).removeGroup( groupName )
-			self.listGroup.takeItem( item )
+			listGroup.takeItem( listGroup.row( item ) )
 			return
+		self.getSelectionManager().changeSelection([])
 
 	def applyGroup( self ):
 		group = None
