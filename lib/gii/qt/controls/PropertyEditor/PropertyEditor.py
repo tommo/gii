@@ -60,17 +60,17 @@ class PropertyEditor( QtGui.QWidget ):
 		return editor
 
 	def clear( self ):
-		self.setUpdatesEnabled( False )
 		layout = self.layout
 		while layout.count() > 0:
 			child = layout.takeAt( 0 )
 			if child:
-				if isinstance( child, QtGui.QWidget ):
-					child.destroy()
+				w = child.widget()
+				if w:
+					w.destroy()
+				else:
+					print 'cannot remove obj:', child
 			else:
 				break
-		
-		self.setUpdatesEnabled( True )
 		self.editors.clear()
 		self.target  = None
 
@@ -82,16 +82,18 @@ class PropertyEditor( QtGui.QWidget ):
 	def setTarget( self, target, **kwargs ):
 		if target==self.target:
 			return
+		self.setUpdatesEnabled( False )
+
 		self.clear()
 		model = kwargs.get( 'model', None )
 		if not model: model = ModelManager.get().getModel(target)
 		if not model: 
+			self.setUpdatesEnabled( True )
 			return
 
 		self.model  = model
 		self.target = target
 
-		self.setUpdatesEnabled( False )
 		assert(model)
 		#install field info
 		for field in model.fieldList:
@@ -101,6 +103,7 @@ class PropertyEditor( QtGui.QWidget ):
 			if not editorClas: continue
 			editor = self._buildSubEditor( field, label, editorClas )
 		self.refreshAll()
+		
 		self.setUpdatesEnabled( True )
 
 	def refreshAll( self ):

@@ -17,6 +17,10 @@ end
 
 --
 CLASS: EditorCanvasScene ( mock.Scene )
+function EditorCanvasScene:__init()
+	self.__editor_scene = true
+end
+
 function EditorCanvasScene:onEnter()
 	self.cameraCom = EditorCanvasCamera()
 	self.camera    = self:addEntity( mock.SingleEntity( self.cameraCom ) )

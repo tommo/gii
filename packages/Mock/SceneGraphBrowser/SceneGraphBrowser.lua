@@ -16,6 +16,7 @@ function onEntityEvent( action, entity, scene, layer )
 end
 
 function onSceneEnter( scn )
+	if scn.__editor_scene then return end
 	_owner:addScene( scn )
 	scn:setEntityListener( onEntityEvent )	
 end
