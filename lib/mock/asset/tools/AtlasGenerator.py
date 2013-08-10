@@ -377,7 +377,7 @@ def main():
 		description = "A texture atlas generator. Specify desired width and height of the output images and paths of directories and files to look for images. Generator will produce atlas images and text file with pixel coordinates."
 	)
 	parser.add_option("-n", "--dry-run", action="store_true", default=False, help="Do not write files.")
-	parser.add_option("-s", "--spacing", default='0', help="Spacing between textures in atlas, in pixels. Default is 0.")
+	parser.add_option("-s", "--spacing", default='1', help="Spacing between textures in atlas, in pixels. Default is 0.")
 	parser.add_option("-p", "--prefix", default='atlas', help="Prefix output files with this path prefix. Examples: '/tmp/tex', 'atl'. Default is 'atlas'.")
 	#parser.add_option("-c", "--crop", action="store_true", default=False, help="Crop transparent borders of images to increase packing density. Default is not to crop.")
 	#parser.add_option("-q", "--quiet", action="store_true", default=False, help="Do not print anything to the stdout.")

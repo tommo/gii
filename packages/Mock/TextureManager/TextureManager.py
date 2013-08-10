@@ -43,7 +43,7 @@ EnumTextureFilter = EnumType(
 	'TextureFilter',
 	[
 		( 'LINEAR',  'linear' ),
-		( 'NEAREST', 'neaerest' )
+		( 'NEAREST', 'nearest' )
 	])
 
 EnumTextureCompression = EnumType(

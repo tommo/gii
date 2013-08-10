@@ -8,36 +8,16 @@ def _getModulePath( path ):
 class TexturePreviewer(AssetPreviewer):
 	def createWidget(self, container):
 		self.canvas = MOAIEditCanvas( container )
-		self.canvas.loadScript( _getModulePath('TexturePreview.lua') )
+		self.canvas.loadScript( _getModulePath('TexturePreview2.lua') )
 		return self.canvas
 
 	def accept(self, assetNode):
 		return assetNode.getType() in ('texture','sub_texture','texpack', 'deck_quadlists')
 
 	def onStart(self, assetNode):
-		atype = assetNode.getType()
-		if   atype == 'texture':
-			self.canvas.safeCall( 'showTexture', assetNode.getPath() )
-
-		elif atype == 'texpack':
-			self.canvas.safeCall('showAtlas',
-				assetNode.getPath()
-				)
-
-		elif atype == 'sub_texture':
-			atlasNode = assetNode.getParent()
-			self.canvas.safeCall('showSubTexture',
-				atlasNode.getPath(),
-				assetNode.getName()
-				)
-			
-		elif atype == 'deck_quadlists':
-			atlasNode = assetNode.getParent()
-			self.canvas.safeCall('showQuadLists',
-				assetNode.getPath()
-				)
+		self.canvas.safeCall( 'show', assetNode.getPath() )		
 		
 	def onStop(self):
-		self.canvas.safeCall('setTexture',None)
+		self.canvas.safeCall('show',None)
 
 TexturePreviewer().register()

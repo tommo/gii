@@ -357,6 +357,7 @@ class MOAIEditCanvas( MOAIEditCanvasBase ):
 		self.delegate.onMouseLeave()
 
 	def keyPressEvent(self, event):
+		if event.isAutoRepeat(): return
 		key=event.key()
 		self.delegate.onKeyDown(convertKeyCode(key))
 

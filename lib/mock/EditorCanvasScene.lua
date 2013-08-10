@@ -31,8 +31,6 @@ end
 function createMockEditorScene()
 	local env = getfenv( 2 )
 	local scn = EditorCanvasScene()
-	local canvasWidth, canvasHeight = 100, 100
-	local canvasCameras = {}
 
 	function env.onResize( w, h )
 		scn.cameraCom:setScreenSize( w, h )
@@ -53,6 +51,18 @@ function createMockEditorScene()
 
 	function env.onMouseMove( x, y )
 		inputDevice:sendMouseEvent( 'move', x, y, false )
+	end
+
+	function env.onScroll( dx, dy, x, y )
+		inputDevice:sendMouseEvent( 'scroll', dx, dy, false )
+	end
+
+	function env.onMouseEnter()
+		inputDevice:sendMouseEvent( 'enter' )
+	end
+
+	function env.onMouseLeave()
+		inputDevice:sendMouseEvent( 'leave' )
 	end
 
 	function env.onKeyDown( key )

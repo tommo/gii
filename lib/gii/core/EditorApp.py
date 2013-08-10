@@ -74,7 +74,7 @@ class EditorApp(object):
 
 	def run( self, **kwargs ):
 		if not self.initialized: self.init()
-		sleepTime = kwargs.get( 'sleep', 0.005 )
+		sleepTime = kwargs.get( 'sleep', 0.01 )
 		EditorModuleManager.get().startAllModules()
 		
 		signals.emitNow('app.start')

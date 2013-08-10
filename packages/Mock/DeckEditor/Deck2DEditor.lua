@@ -1,24 +1,15 @@
 --------------------------------------------------------------------
 scn = gii.createMockEditorScene()
 --------------------------------------------------------------------
+CLASS: Deck2DEditor( mock.Entity )
 
-CLASS: PlaceHolder( mock.Entity )
-function PlaceHolder:onLoad()
-	self:attach( mock.DrawScript() )
-	self:attach( EditorInputScript() )
+function Deck2DEditor:onLoad()
+	
 end
 
-function PlaceHolder:onDraw()
-	MOAIDraw.fillRect( -50, -50, 50, 50 )
-end 
-
-function PlaceHolder:onMouseMove( x, y )
-	self:setRot( 0, y, x )
-	updateCanvas()
+function Deck2DEditor:openDeck( node )
+	
 end
 
-function PlaceHolder:onKeyDown( key )
-	print( key )
-end
 
-scn:addEntity( PlaceHolder() )
+editor = scn:addEntity( Deck2DEditor() )
