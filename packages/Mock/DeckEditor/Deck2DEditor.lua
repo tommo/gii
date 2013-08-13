@@ -10,6 +10,8 @@ CLASS: Deck2D ()
 
 function Deck2D:__init()
 	self._deck = self:createMoaiDeck()
+	self.w = 0
+	self.h = 0
 end
 
 function Deck2D:setTexture( path )
@@ -35,11 +37,9 @@ function Deck2D:getName()
 end
 
 function Deck2D:setOrigin( dx, dy )
-
 end
 
 function Deck2D:moveOrigin( dx, dy )
-
 end
 
 function Deck2D:getMoaiDeck()	
@@ -50,20 +50,6 @@ function Deck2D:createMoaiDeck()
 end
 
 function Deck2D:update()
-end
-
---------------------------------------------------------------------
-CLASS: Tileset ( Deck2D )
-	:MODEL {
-		Field 'ox' :type('number') :label('offset X') ;
-		Field 'oy' :type('number') :label('offset Y') ;
-		Field 'tw'  :type('number') :label('tile width')  ;
-		Field 'th'  :type('number') :label('tile height') ;
-	}
-
-function Tileset:createMoaiDeck()
-	local deck = MOAITileDeck2D.new()
-	return deck
 end
 --------------------------------------------------------------------
 CLASS: Quad2D ( Deck2D )
@@ -108,6 +94,113 @@ function Quad2D:update()
 	deck:setRect( self.ox - w/2, self.oy - h/2, self.ox + w/2, self.oy + h/2 )
 end
 
+
+--------------------------------------------------------------------
+CLASS: Tileset ( Deck2D )
+	:MODEL {
+		Field 'ox'       :type('int') :label('offset X') ;
+		Field 'oy'       :type('int') :label('offset Y') ;
+		Field 'tw'       :type('int') :label('tile width')  ;
+		Field 'th'       :type('int') :label('tile height') ;
+		Field 'spacing'  :type('int') :label('spacing')  ;
+	}
+
+function Tileset:__init()
+	self.ox      = 0
+	self.oy      = 0
+	self.tw      = 32
+	self.th      = 32
+	self.col     = 1
+	self.row     = 1
+	self.spacing = 0
+end
+
+function Tileset:createMoaiDeck()
+	local deck = MOAITileDeck2D.new()
+	return deck
+end
+
+function Tileset:update()
+	local texW, texH = self.w, self.h
+	local tw, th  = self.tw, self.th
+	local ox, oy  = self.ox, self.oy
+	local spacing = self.spacing
+
+	if tw < 0 then tw = 1 end
+	if th < 0 then th = 1 end
+
+	self.tw = tw
+	self.th = th
+	local w1, h1   = tw + spacing, th + spacing
+	local col, row = math.floor(texW/w1), math.floor(texH/h1)	
+
+	local tex = self.texture
+	local deck = self:getMoaiDeck()
+
+	local u0,v0,u1,v1 
+	if tex.type == 'sub_texture' then
+		deck:setTexture( tex.atlas )
+		u0,v0,u1,v1 = unpack( tex.uv )
+	else
+		deck:setTexture( tex )
+		u0,v0,u1,v1 = 0, 0, 1, 1
+	end
+	local du, dv = u1 - u0, v1 - v0
+	deck:setSize(
+		col, row, 
+		w1/texW * du,      h1/texH * dv,
+		ox/texW * du + u0, oy/texH * dv + v0,
+		tw/texW * du,      th/texH * dv
+		)
+	
+	self.col = col
+	self.row = row
+
+end
+
+--------------------------------------------------------------------
+CLASS: StretchPatch ( Deck2D )
+	:MODEL{		
+		Field 'w'  :type('number') :label('width')  ;
+		Field 'h'  :type('number') :label('height') ;
+		
+		Field 'border'  :type('number') :label('width')  ;
+	}
+
+function StretchPatch:__init()
+	self.ox = 0
+	self.oy = 0
+	self.w = 0
+	self.h = 0
+end
+
+function StretchPatch:setOrigin( ox, oy )
+	self.ox = ox
+	self.oy = oy
+end
+
+function StretchPatch:moveOrigin( dx, dy )
+	self:setOrigin( self.ox + dx, self.oy + dy )	
+end
+
+function StretchPatch:createMoaiDeck()
+	return MOAIGfxQuad2D.new()
+end
+
+function StretchPatch:update()
+	local deck = self:getMoaiDeck()
+	local tex = self.texture
+	if tex.type == 'sub_texture' then
+		deck:setTexture( tex.atlas )
+		deck:setUVRect( unpack( tex.uv ) )
+	else
+		deck:setTexture( tex )
+		deck:setUVRect( 0, 0, 1, 1 )
+	end
+	local w, h = self.w, self.h
+	deck:setRect( self.ox - w/2, self.oy - h/2, self.ox + w/2, self.oy + h/2 )
+end
+
 --------------------------------------------------------------------
 CLASS: Deck2DEditor( mock.Entity )
 
@@ -115,18 +208,43 @@ function Deck2DEditor:onLoad()
 	self:addSibling( CanvasGrid() )
 	self:addSibling( CanvasNavigate() )
 	self:attach( mock.InputScript{ device = scn.inputDevice } )
+	self:attach( mock.DrawScript{ priority = 1000 } )
+
 	self.currentDeck = false
 	self.preview = self:addProp{}
+	self.previewGrid = MOAIGrid.new()
 end
 
 function Deck2DEditor:selectDeck( deck )
-	self.preview:setDeck( deck and deck:getMoaiDeck() )	
-	self.preview:forceUpdate()
 	self.currentDeck = deck
+	if deck.type == 'tileset' then
+		self.preview:setGrid( self.previewGrid )
+	else
+		self:detach( self.preview )
+		self.preview = self:addProp{}
+	end
+	self.preview:setDeck( deck and deck:getMoaiDeck() )	
+	self:updateDeck()
 end
 
 function Deck2DEditor:updateDeck( )
+	local deck = self.currentDeck
 	self.currentDeck:update()
+	if deck.type == 'tileset' then		
+		local grid = self.previewGrid
+		local col, row = deck.col, deck.row
+		local tw , th  = deck.tw , deck.th
+		local sp = deck.spacing
+		grid:setSize( col, row, tw + sp, th + sp, 0, 0, tw, th)
+		local t = 1
+		for j = row, 1, -1 do
+			for i = 1, col do
+				grid:setTile( i, j, t )
+				t=t+1
+			end
+		end
+	end
+	self.preview:forceUpdate()
 	updateCanvas()
 	updateEditor()
 end
@@ -179,6 +297,26 @@ end
 function Deck2DEditor:onMouseDown( btn, x, y )
 	if btn == 'right' then
 
+	end
+end
+
+function Deck2DEditor:onDraw()
+	local deck = self.currentDeck
+	if not deck then return end
+	if deck.type == 'tileset' then
+		local col, row = deck.col, deck.row
+		local tw , th  = deck.tw , deck.th
+		local sp = deck.spacing
+		MOAIGfxDevice.setPenColor(0,1,0,0.3)
+		for i = 0, col-1 do
+			for j = 0, row-1 do
+				local x , y
+				x = i * (tw + sp)
+				y = j * (th + sp)
+				MOAIDraw.drawRect( x, y, x+tw, y+th )
+			end
+		end
+		return
 	end
 end
 

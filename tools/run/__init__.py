@@ -1,25 +1,36 @@
 import os
 import logging
+import argparse
 from gii.core import Project, app
+
+cli = argparse.ArgumentParser(
+	prog = 'gii run',
+	description = 'Run GII desktop Host'
+)
+
+cli.add_argument( 'target', 
+	type = str, 
+	nargs = '?',
+	default = 'main'
+	)
+
+cli.add_argument( '-b', 
+	dest   = 'build',
+	help   = 'Build host before running',
+	action = 'store_true',
+	default = False
+	)
+
 
 def main( argv ):
 	app.openProject()
-	project = app.getProject()
-	os.chdir( project.getBasePath() )
-	
-	import subprocess
+	args = cli.parse_args( argv[1:] )	
+	if args.build:
+		from gii.core.tools import Build
+		code = Build.run()
+		if code != 0:
+			exit( code )
 
-	bin = project.getBinaryPath( app.getPlatformName() + '/moai' )
-	
-	script = 'game/main.lua'
-	if len(argv) > 1:
-		script = 'game/' + argv[1] + '.lua'
-
-	arglist = [
-		bin,
-		script
-	]
-	try:
-		subprocess.call( arglist )
-	except Exception, e:
-		logging.error( 'cannot start host: %s ' % e)
+	from gii.core.tools import RunHost
+	code = RunHost.run( args.target )
+	exit( code )

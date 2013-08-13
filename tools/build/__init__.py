@@ -1,23 +1,10 @@
 import os
 import logging
 from gii.core import Project, app
+from gii.core.tools import Build
 
 def main( argv ):
 	app.openProject()
-	project = app.getProject()
+	code = Build.run()
+	exit( code )
 	
-	import subprocess
-
-	os.chdir( project.getHostPath() )
-
-	waf = app.getPath( 'support/waf/waf' )
-
-	arglist = [
-		waf,
-		'build',
-		'install'
-	]
-	try:
-		subprocess.call( arglist )
-	except Exception, e:
-		logging.error( 'cannot start host: %s ' % e)
