@@ -28,7 +28,6 @@ gii.connectPythonSignal( 'asset.unregister', onAssetUnregister )
 -- --MODEL
 ----------------------------------------------------------------------
 local modelBridge     = GII_PYTHON_BRIDGE.ModelBridge.get()
-local modelFromObject = Model.fromObject
 local getClass        = getClass
 
 ----
@@ -40,6 +39,7 @@ local function buildGiiModel( model )
 		local option = {
 			get = f.__getter,
 			set = f.__setter,
+			label = f.__label,
 			--extra
 			--widget?
 			--range?
@@ -67,19 +67,47 @@ end
 
 ----
 local function typeIdGetter( obj )
-	return getClass( obj )
+	local tt = type(v)
+	if tt == 'table' then
+		local mt = getmetatable(v)
+		if not mt then return nil end
+		return mt
+	elseif tt == 'userdata' then --MOAIObject
+		local getClass = v.getClass
+		if getClass then
+			return getClass(v)
+		end
+	end
+	return nil
 end
 
 ----
 local function modelGetter( obj )
-	local model = modelFromObject( obj )
-	if not model then return nil end	
-	--if not converted, convert first
+	local model
+
+	local tt = type(obj)
+	if tt == 'table' then
+		local clas = getmetatable(obj)
+		if not isClass( clas ) then return nil end
+		model = Model.fromClass( clas )
+		
+	elseif tt == 'userdata' then --MOAIObject
+		local getClass = obj.getClass
+		if getClass then
+			local clas = getClass( obj )
+			model = Model.fromClass( clas )
+		end
+	else
+		return nil
+	end
+
+	if not model then return nil end	 --if not converted, convert first
 	local giiModel = model.__gii_model
 	if not giiModel then
 		giiModel = buildGiiModel( model )
 	end
 	return giiModel
+
 end
 
 ----

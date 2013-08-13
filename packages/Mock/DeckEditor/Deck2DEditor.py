@@ -10,6 +10,7 @@ from gii.qt           import *
 from gii.qt.IconCache import getIcon
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.dialogs   import requestString, alertMessage, requestColor
+from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 
 from gii.qt.controls.PropertyEditor  import PropertyEditor
 
@@ -46,7 +47,7 @@ class Deck2DEditor( AssetEditorModule ):
 		super(Deck2DEditor, self).__init__()
 		self.editingAsset  = None
 		self.editingPack   = None
-		self.editingItem   = None
+		self.editingDeck   = None
 		self.spriteToItems = {}
 	
 	def getName(self):
@@ -81,20 +82,20 @@ class Deck2DEditor( AssetEditorModule ):
 		self.canvas.setDelegateEnv( 'updateEditor', self.onCanvasUpdateRequested )
 
 		#setup listwidget
-		listSprites = window.listSprites
-		listSprites.itemSelectionChanged.connect(self.onItemSelectionChanged)
-		listSprites.setSortingEnabled(True)
-		#header item
-		headerItem=QtGui.QTreeWidgetItem()		
-		headerItem.setText( 0, 'Name' ) ; listSprites.setColumnWidth( 0, 140 )
-		headerItem.setText( 1, 'Type' ) ; listSprites.setColumnWidth( 1, 40 )
-		listSprites.setHeaderItem(headerItem)
+		treeSprites = addWidgetWithLayout( 
+			SpriteTreeWidget( self.window.containerSpriteTree )
+			)
+		treeSprites.module = self
+		treeSprites.itemSelectionChanged.connect(self.onItemSelectionChanged)
+		treeSprites.setSortingEnabled(True)
+		self.treeSprites = treeSprites
 
 		#signals
-		window.toolAddQuad         .clicked. connect( self.onAddQuad )
-		window.toolAddQuadArray    .clicked. connect( self.onAddQuadArray )
-		window.toolAddTileset      .clicked. connect( self.onAddTileset )
-		window.toolAddStretchPatch .clicked. connect( self.onAddStretchPatch )
+		window.toolAddQuad         .clicked. connect( lambda: self.addItem('quad') )
+		window.toolAddQuadArray    .clicked. connect( lambda: self.addItem('quad_array') )
+		window.toolAddTileset      .clicked. connect( lambda: self.addItem('tileset') )
+		window.toolAddStretchPatch .clicked. connect( lambda: self.addItem('stretchpatch') )
+
 		window.toolRemove          .clicked. connect( self.onRemoveItem )
 		window.toolClone           .clicked. connect( self.onCloneItem )
 
@@ -120,9 +121,6 @@ class Deck2DEditor( AssetEditorModule ):
 		self.container.activateWindow()
 		self.container.setFocus()
 
-	def onStart( self ):
-		self.canvas.callWithContext( 'onStart' )
-
 	def saveAsset(self):
 		if self.editingAsset and self.editingPack:
 			self.editingAsset.saveAsJson( self.editingPack )
@@ -136,38 +134,21 @@ class Deck2DEditor( AssetEditorModule ):
 		assert node.getType() == 'deck2d'
 		self.editingAsset = node
 		self.container.setDocumentName( node.getNodePath() )
-		self.canvas.safeCall('openAsset', node.getPath())
+		self.canvas.safeCall( 'openAsset', node.getPath() )
 
-	def refreshList(self):
-		self.window.listSprites.clear()
+	def getSpriteList( self ):
+		return []
 
 	def onCanvasUpdateRequested(self):
-		item = self.editingItem
+		item = self.editingDeck
 		if not item : return		
 		self.propEditor.refreshAll()
-
-	def onAddQuad( self ):
-		return self.addItem('quad')
-
-	def onAddQuadArray( self ):
-		return self.addItem('quad_array')
-
-	def onAddTileset( self ):
-		return self.addItem('tileset')
-
-	def onAddStretchPatch( self ):
-		return self.addItem('stretchpatch')
-
-	def findSpriteItem(self, name):
-		if not self.editingPack: return None
-		for item in self.editingPack['items'] :
-			if item['name'] == name : return item
-		return None
 
 	def addItem( self, atype ):
 		if not self.editingAsset: return
 		selection = self.getSelectionManager().getSelection()
 		if not selection: return
+
 		newItems = []
 		for n in selection:
 			if not isinstance(n, AssetNode): continue
@@ -178,46 +159,22 @@ class Deck2DEditor( AssetEditorModule ):
 				'src'  : n.getPath(),
 				'type' : atype
 				}
-			newItems.append( item )
-
+			deck = self.canvas.safeCall( 'addItem', item )
+			self.treeSprites.addNode( deck )
 		self.saveAsset()
 
-	def addListItem( self, item ):
-		rootItem = self.window.listSprites.invisibleRootItem()
-		listItem = QtGui.QTreeWidgetItem()
-		listItem.setText( 0, item['name'])
-		listItem.setText( 1, item['type'])
-		if item['type'] == 'stretchpatch':
-			listItem.setIcon( 0, getIcon('deck_patch'))
-		elif item['type'] == 'tileset':
-			listItem.setIcon( 0, getIcon('deck_tileset'))
-		elif item['type'] == 'quad_array':
-			listItem.setIcon( 0, getIcon('deck_quad_array'))
-		else:
-			listItem.setIcon( 0, getIcon('deck_quad'))
-
-		rootItem.addChild( listItem )
-		return listItem
-
 	def onRemoveItem( self ):
-		listSprites=self.window.listSprites
-		selected=listSprites.selectedItems()
-		if not selected: return
-		items = self.editingPack['items']
-		for item in selected:
-			name = item.text( 0 )
-			sp = self.findSpriteItem( name )
-			assert sp
-			idx =  items.index( sp )
-			items.pop(idx)
-			(item.parent() or listSprites.invisibleRootItem()).removeChild(item)
+		selection = self.treeSprites.getSelection()
+		for deck in selection:
+			#todo: remove from pack
+			self.treeSprites.removeNode( deck )
 		self.saveAsset()
 
 	def onCloneItem( self ):
 		pass
 
 	def setOrigin( self, direction ):
-		if not self.editingItem: return 
+		if not self.editingDeck: return 
 		self.canvas.safeCall( 'setOrigin', direction )		
 
 	def onPreviewTextChanged( self ):
@@ -227,24 +184,57 @@ class Deck2DEditor( AssetEditorModule ):
 		pass
 
 	def onItemSelectionChanged( self ):
-		listSprites = self.window.listSprites
-		self.editingItem = None
-		for item in listSprites.selectedItems():
-			name = item.text(0)
-			sp = self.findSpriteItem( name )
-			self.editingItem = sp
-			deckType = sp ['type']
-			
-			self.propEditor.setTarget( sp, model = deckModels[ deckType ] )
-			self.canvas.safeCall('selectItem', sp)
-			break
+		treeSprites = self.treeSprites
+		self.editingDeck = None
+		for deck in treeSprites.getSelection():
+			self.editingDeck = deck
+			self.propEditor.setTarget( deck )
+			self.canvas.safeCall( 'selectDeck', deck )			
 
 	def onPropertyChanged( self, obj, id, value ):
-		self.canvas.safeCall('updateItemFromEditor', obj, id, value)
-		self.canvas.updateCanvas()
+		self.canvas.safeCall( 'updateDeck' )
 
 	def onUnload( self ):
 		self.saveAsset()
 
 
 Deck2DEditor().register()
+
+##----------------------------------------------------------------##
+class SpriteTreeWidget( GenericTreeWidget ):
+	def getHeaderInfo( self ):
+		return [ ('Name', 140), ('Type', 40) ]
+
+	def getRootNode( self ):
+		return self.module
+
+	def getNodeParent( self, node ):
+		if node == self.getRootNode(): return None
+		return self.getRootNode()
+
+	def getNodeChildren( self, node ):
+		if node == self.module:
+			return node.getSpriteList()
+		else:
+			return []
+
+	def updateItemContent( self, item, node, **option ):
+		if node == self.getRootNode() : return
+		
+		item.setText( 0, node['name'] )
+		item.setText( 1, node['type'] )
+
+		if node['type'] == 'stretchpatch':
+			item.setIcon( 0, getIcon('deck_patch'))
+		elif node['type'] == 'tileset':
+			item.setIcon( 0, getIcon('deck_tileset'))
+		elif node['type'] == 'quad_array':
+			item.setIcon( 0, getIcon('deck_quad_array'))
+		else:
+			item.setIcon( 0, getIcon('deck_quad'))
+
+	def onItemSelectionChanged( self ):
+		pass
+
+	def onItemActivated( self, item, col ):
+		pass

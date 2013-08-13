@@ -14,8 +14,7 @@ end
 --------------------------------------------------------------------
 -- MODEL BRIDGE
 --------------------------------------------------------------------
-local function typeIdGetter(v)
-	--todo: allow register multiple lua type getter
+local function typeIdGetter(v)	
 	local tt = type(v)
 	if tt == 'table' then
 		local mt = getmetatable(v)
@@ -41,7 +40,6 @@ registerModelProvier{
 	getTypeId = typeIdGetter,
 	getModel  = modelGetter
 }
---------------------------------------------------------------------
 
 -- --------------------------------------------------------------------
 -- local function _method(id)

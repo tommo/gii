@@ -63,10 +63,10 @@ class PropertyEditor( QtGui.QWidget ):
 		layout = self.layout
 		while layout.count() > 0:
 			child = layout.takeAt( 0 )
-			if child:
+			if child :
 				w = child.widget()
 				if w:
-					w.destroy()
+					w.setParent( None )
 				else:
 					print 'cannot remove obj:', child
 			else:
@@ -80,15 +80,15 @@ class PropertyEditor( QtGui.QWidget ):
 		self.propertyChanged.emit( self.target, field.id, value )
 
 	def setTarget( self, target, **kwargs ):
+		oldtarget = self.target
+
 		if target==self.target:
 			return
-		self.setUpdatesEnabled( False )
-
+		self.hide()
 		self.clear()
 		model = kwargs.get( 'model', None )
 		if not model: model = ModelManager.get().getModel(target)
 		if not model: 
-			self.setUpdatesEnabled( True )
 			return
 
 		self.model  = model
@@ -103,8 +103,7 @@ class PropertyEditor( QtGui.QWidget ):
 			if not editorClas: continue
 			editor = self._buildSubEditor( field, label, editorClas )
 		self.refreshAll()
-		
-		self.setUpdatesEnabled( True )
+		self.show()
 
 	def refreshAll( self ):
 		target=self.target

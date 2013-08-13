@@ -68,6 +68,14 @@ function EditorCanvasScene:stopUpdateTimer()
 	return self.env.stopUpdateTimer()
 end
 
+function EditorCanvasScene:getCameraZoom()
+	return self.cameraCom:getZoom()
+end
+
+function EditorCanvasScene:setCameraZoom( zoom )
+	self.cameraCom:setCameraZoom( zoom )
+end
+
 ---------------------------------------------------------------------
 function createMockEditorScene()
 	local env = getfenv( 2 )

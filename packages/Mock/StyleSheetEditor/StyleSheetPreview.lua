@@ -63,7 +63,7 @@ local function createStyle( data )
 	local font = mock.loadAsset( _fu(data.font) )
 	local size = data.size
 	local color = gii.listToTable(data.color)
-	style:setFont( font )
+	style:setFont( font or mock.getFontPlaceHolder() )
 	style:setSize( size )
 	style:setColor( unpack(color) )
 	return name, style
@@ -78,7 +78,7 @@ function setStyleSheet( sheet )
 		local name, style = createStyle( data )
 		if not currentDefault or name == 'default' then
 			currentDefault = name
-			textbox:setStyle( style )			
+			textbox:setStyle( style )
 		end
 		textbox:setStyle( name, style )
 	end

@@ -263,7 +263,7 @@ class TextureTreeWidget( GenericTreeWidget ):
 		selection = [ item.node for item in self.selectedItems() ]
 		self.module.getSelectionManager().changeSelection( selection )
 
-	def onDClicked( self, item, col ):
+	def onItemActivated( self, item, col ):
 		node = item.node
 		self.module.getModule('asset_browser').locateAsset( node )
 

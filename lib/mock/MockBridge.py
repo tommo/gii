@@ -75,6 +75,7 @@ class MockBridge( EditorModule ):
 
 	def setupLuaModule( self ):
 		self.runtime.runScript( self.getModulePath( 'MockBridge.lua' ) )
+		self.runtime.runScript( self.getModulePath( 'MOAIModels.lua' ) )
 		#TODO: use lua to handle editor modules
 		self.runtime.runScript( self.getModulePath( 'EditorCanvasScene.lua' ) )
 		self.runtime.runScript( self.getModulePath( 'EditorCanvasControls.lua' ) )

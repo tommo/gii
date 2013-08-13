@@ -1,4 +1,5 @@
 from PropertyEditor import FieldEditor, registerFieldEditor
+from FieldEditorControls import *
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
@@ -12,7 +13,7 @@ class StringFieldEditor( FieldEditor ):
 		self.lineEdit.setText( value or '' )
 
 	def initEditor( self, container ):
-		self.lineEdit = QtGui.QLineEdit( container )
+		self.lineEdit = FieldEditorLineEdit( container )
 		self.lineEdit.setMinimumSize( 50, 16 )
 		self.lineEdit.textEdited.connect( self.notifyChanged )
 		return self.lineEdit
@@ -26,7 +27,7 @@ class IntFieldEditor( FieldEditor ):
 		self.spinBox.setValue( value or 0 )
 
 	def initEditor( self, container ):
-		self.spinBox = QtGui.QSpinBox( container )
+		self.spinBox = FieldEditorSpinBox( container )
 		self.spinBox.setMinimumSize( 50, 16 )
 		self.spinBox.setRange( -16777215, 16777215 )
 		self.spinBox.setSizePolicy(
@@ -46,7 +47,7 @@ class FloatFieldEditor( FieldEditor ):
 		self.spinBox.setValue( value or 0 )
 
 	def initEditor( self, container ):
-		self.spinBox = QtGui.QDoubleSpinBox( container )
+		self.spinBox = FieldEditorDoubleSpinBox( container )
 		self.spinBox.setMinimumSize( 50, 16 )
 		self.spinBox.setRange( -16777215, 16777215 )
 		self.spinBox.setDecimals( 5 )
