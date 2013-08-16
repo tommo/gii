@@ -1,6 +1,0 @@
-{
-	"name" : "moai",
-	"priority" : 2,
-	"help" : "start the builtin PyQt based MOAI host",
-	"autoload" : false
-}

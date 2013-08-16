@@ -124,13 +124,15 @@ class PropertyEditor( QtGui.QWidget ):
 
 ##----------------------------------------------------------------##
 class FieldEditor( object ):
-	def __init__( self, parent, field, **option ):
+	def __init__( self, parent, field ):
 		self.setTarget( parent, field )
 		
-	def setTarget( self, parent, field, **option ):
+	def setTarget( self, parent, field ):
 		self.field   = field
 		self.parent  = parent
-		self.option  = option
+
+	def getOption( self, key, v = None ):
+		return self.field.option.get( key, v )
 
 	def notifyChanged( self, value ):
 		return self.parent.onPropertyChanged( self.field, value )

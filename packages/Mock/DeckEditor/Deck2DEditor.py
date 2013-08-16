@@ -83,7 +83,9 @@ class Deck2DEditor( AssetEditorModule ):
 
 		#setup listwidget
 		treeSprites = addWidgetWithLayout( 
-			SpriteTreeWidget( self.window.containerSpriteTree )
+			SpriteTreeWidget( self.window.containerSpriteTree, 
+				multiple_selection = False 
+				)
 			)
 		treeSprites.module = self
 		treeSprites.itemSelectionChanged.connect(self.onItemSelectionChanged)
@@ -115,6 +117,9 @@ class Deck2DEditor( AssetEditorModule ):
 
 		self.container.setEnabled( False )
 
+	def onStop( self ):
+		self.saveAsset()
+
 	def onSetFocus(self):
 		self.container.show()
 		self.container.raise_()
@@ -122,8 +127,17 @@ class Deck2DEditor( AssetEditorModule ):
 		self.container.setFocus()
 
 	def saveAsset(self):
-		if self.editingAsset and self.editingPack:
-			self.editingAsset.saveAsJson( self.editingPack )
+		if not self.editingAsset: return
+		#TODO
+		deckDatas = []
+		for deck in self.editingPack:
+			data = serializeObject( deck )
+			deckDatas.append( data )
+		pack = {
+			'_assetType' : 'deck2d', #checksum
+			'decks' : deckDatas,
+		}
+		self.editingAsset.saveAsJson( pack )
 
 	def startEdit(self, node, subnode=None):
 		self.setFocus()
@@ -135,6 +149,9 @@ class Deck2DEditor( AssetEditorModule ):
 		self.editingAsset = node
 		self.container.setDocumentName( node.getNodePath() )
 		self.canvas.safeCall( 'openAsset', node.getPath() )
+		#TODO
+		self.editingPack = []
+		
 
 	def getSpriteList( self ):
 		return []
@@ -149,7 +166,7 @@ class Deck2DEditor( AssetEditorModule ):
 		selection = self.getSelectionManager().getSelection()
 		if not selection: return
 
-		newItems = []
+		newItems = []		
 		for n in selection:
 			if not isinstance(n, AssetNode): continue
 			if not n.isType( 'texture' ): continue
@@ -161,7 +178,12 @@ class Deck2DEditor( AssetEditorModule ):
 				}
 			deck = self.canvas.safeCall( 'addItem', item )
 			self.treeSprites.addNode( deck )
+			lastDeck = deck
+			self.editingPack.append( deck )
+
+		self.treeSprites.selectNode( deck )
 		self.saveAsset()
+
 
 	def onRemoveItem( self ):
 		selection = self.treeSprites.getSelection()
@@ -194,8 +216,6 @@ class Deck2DEditor( AssetEditorModule ):
 	def onPropertyChanged( self, obj, id, value ):
 		self.canvas.safeCall( 'updateDeck' )
 
-	def onUnload( self ):
-		self.saveAsset()
 
 
 Deck2DEditor().register()

@@ -59,14 +59,7 @@ class AssetNode(object):
 		self.properties={}		
 
 	def __repr__(self):	
-		return u'<{0}>{1}'.format( self.getType(), self.getNodePath() ).encode('utf-8')
-		# p = self.getNodePath()
-		# t = self.getType()
-		# if isinstance( p, unicode ):
-		# 	p = p.encode('utf-8')
-		# if isinstance( t, unicode ):
-		# 	t = t.encode('utf-8')
-		# return '<%s>%s'%( t, p )
+		return u'<{0}>{1}'.format( self.getType(), self.getNodePath() ).encode('utf-8')		
 
 	def getType(self):
 		return self.assetType

@@ -40,9 +40,7 @@ local function buildGiiModel( model )
 			get = f.__getter,
 			set = f.__setter,
 			label = f.__label,
-			--extra
-			--widget?
-			--range?
+			meta  = f.__meta
 		}
 		local id     = f.__id
 		local typeid = f.__type
@@ -101,9 +99,9 @@ local function modelGetter( obj )
 		return nil
 	end
 
-	if not model then return nil end	 --if not converted, convert first
+	if not model then return nil end	 
 	local giiModel = model.__gii_model
-	if not giiModel then
+	if not giiModel then --if not converted, convert first
 		giiModel = buildGiiModel( model )
 	end
 	return giiModel
@@ -111,11 +109,24 @@ local function modelGetter( obj )
 end
 
 ----
+local function modelFromType( t )
+	local model = Model.fromClass( t )
+	if not model then return nil end	
+
+	local giiModel = model.__gii_model
+	if not giiModel then --if not converted, convert first
+		giiModel = buildGiiModel( model )
+	end
+	return giiModel
+end
+
+----
 gii.registerModelProvier{
-	name      = 'MockModelProvider',
-	priority  = 100,
-	getTypeId = typeIdGetter,
-	getModel  = modelGetter,
+	name               = 'MockModelProvider',
+	priority           = 100,
+	getTypeId          = typeIdGetter,
+	getModel           = modelGetter,
+	getModelFromTypeId = modelFromType
 }
 
 local function onContextChange( ctx, oldCtx )

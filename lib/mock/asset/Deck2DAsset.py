@@ -52,7 +52,7 @@ class Deck2DCreator(AssetCreator):
 		fullpath = AssetLibrary.get().getAbsPath( nodepath )
 		data={
 			'_assetType' : 'deck2d', #checksum
-			'items':[]
+			'decks':[]
 		}
 		if os.path.exists(fullpath):
 			raise Exception('File already exist:%s'%fullpath)

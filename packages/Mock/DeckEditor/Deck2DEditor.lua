@@ -159,12 +159,12 @@ function Tileset:update()
 end
 
 --------------------------------------------------------------------
-CLASS: StretchPatch ( Deck2D )
-	:MODEL{		
-		Field 'w'  :type('number') :label('width')  ;
-		Field 'h'  :type('number') :label('height') ;
-		
-		Field 'border'  :type('number') :label('width')  ;
+CLASS: StretchPatch ( Quad2D )
+	:MODEL {
+		Field 'left'   :type('number') :label('border left')   :meta{ min=0, max=1 };
+		Field 'right'  :type('number') :label('border right')  :meta{ min=0, max=1 };
+		Field 'top'    :type('number') :label('border top')    :meta{ min=0, max=1 };
+		Field 'bottom' :type('number') :label('border bottom') :meta{ min=0, max=1 };
 	}
 
 function StretchPatch:__init()
@@ -172,6 +172,12 @@ function StretchPatch:__init()
 	self.oy = 0
 	self.w = 0
 	self.h = 0
+
+	self.left   = 0.3
+	self.right  = 0.3
+	self.top    = 0.3
+	self.bottom = 0.3
+
 end
 
 function StretchPatch:setOrigin( ox, oy )
@@ -184,7 +190,12 @@ function StretchPatch:moveOrigin( dx, dy )
 end
 
 function StretchPatch:createMoaiDeck()
-	return MOAIGfxQuad2D.new()
+	local deck = MOAIStretchPatch2D.new()
+	deck:reserveRows( 3 )
+	deck:reserveColumns( 3 )
+	deck:reserveUVRects( 1 )
+	deck:setUVRect( 1, 0, 1, 1, 0 )
+	return deck
 end
 
 function StretchPatch:update()
@@ -192,13 +203,22 @@ function StretchPatch:update()
 	local tex = self.texture
 	if tex.type == 'sub_texture' then
 		deck:setTexture( tex.atlas )
-		deck:setUVRect( unpack( tex.uv ) )
+		deck:setUVRect( 1, unpack( tex.uv ) )
 	else
 		deck:setTexture( tex )
-		deck:setUVRect( 0, 0, 1, 1 )
+		deck:setUVRect( 1, 0, 0, 1, 1 )
 	end
 	local w, h = self.w, self.h
 	deck:setRect( self.ox - w/2, self.oy - h/2, self.ox + w/2, self.oy + h/2 )
+
+	deck:setRow( 1, self.top, false )
+	deck:setRow( 3, self.bottom, false )
+	deck:setRow( 2, 1 - (self.top+self.bottom), true )
+
+	deck:setColumn( 1, self.left, false )
+	deck:setColumn( 3, self.right, false )
+	deck:setColumn( 2, 1-(self.left+self.right), true )
+
 end
 
 --------------------------------------------------------------------
@@ -222,6 +242,9 @@ function Deck2DEditor:selectDeck( deck )
 	else
 		self:detach( self.preview )
 		self.preview = self:addProp{}
+	end
+	if deck.type == 'stretchpatch' then
+		self.preview:setScl( 2, 2, 2 )
 	end
 	self.preview:setDeck( deck and deck:getMoaiDeck() )	
 	self:updateDeck()
@@ -282,15 +305,17 @@ function Deck2DEditor:setOrigin( direction )
 end
 
 function Deck2DEditor:onMouseMove()
+	if not self.currentDeck then return end
+
 	if scn.inputDevice:isMouseDown('right') then
 		local dx , dy = scn.inputDevice:getMouseDelta()
-		if self.currentDeck then
-			local zoom = scn:getCameraZoom()
-			dx = dx/zoom
-			dy = dy/zoom
-			self.currentDeck:moveOrigin( dx, - dy )
-			self:updateDeck()
-		end
+		local zoom = scn:getCameraZoom()
+		dx = dx/zoom
+		dy = dy/zoom
+		self.currentDeck:moveOrigin( dx, - dy )
+		self:updateDeck()
+	end
+	if scn.inputDevice:isMouseDown('left') then
 	end
 end
 
@@ -318,6 +343,29 @@ function Deck2DEditor:onDraw()
 		end
 		return
 	end
+
+	MOAIGfxDevice.setPenColor(0,1,0,0.4)
+	local x0,y0,z0, x1,y1,z1 = self.preview:getWorldBounds()
+	MOAIDraw.drawRect(x0,y0,x1,y1)
+
+	if deck.type == 'stretchpatch' then
+		MOAIGfxDevice.setPenColor(1,0,0,0.4)
+		local extent = 20
+		local r1,r3 = deck.top * deck.h,  deck.bottom * deck.h
+		local c1,c3 = deck.left * deck.w, deck.right * deck.w
+
+		--rows
+		-- local y= y0 ;      MOAIDraw.drawLine( x0-extent, y, x1+extent, y )
+		local y= r1 + y0;  MOAIDraw.drawLine( x0-extent, y, x1+extent, y )
+		local y= y1 - r3;  MOAIDraw.drawLine( x0-extent, y, x1+extent, y )
+		-- local y= y1 ;      MOAIDraw.drawLine( x0-extent, y, x1+extent, y )
+
+		--columns
+		-- local x= x0 ;      MOAIDraw.drawLine( x, y0-extent, x, y1+extent )
+		local x= c1 + x0;  MOAIDraw.drawLine( x, y0-extent, x, y1+extent )
+		local x= x1 - c3;  MOAIDraw.drawLine( x, y0-extent, x, y1+extent )
+		-- local x= x1 ;      MOAIDraw.drawLine( x, y0-extent, x, y1+extent )
+	end
 end
 
 --------------------------------------------------------------------
@@ -335,16 +383,18 @@ function addItem( item )
 	if dtype == 'quad' then
 		local quad = Quad2D()
 		quad:setTexture( src )
-		quad:setName( name )
 		deck = quad
-	end
-
-	if dtype == 'tileset' then
+	elseif dtype == 'tileset' then
 		local tileset = Tileset()
 		tileset:setTexture( src )
-		tileset:setName( name )
 		deck = tileset
+	elseif dtype == 'stretchpatch' then
+		local patch = StretchPatch()
+		patch:setTexture( src )
+		deck = patch
 	end
+
+	deck:setName( name )
 	deck.type = dtype
 	return deck
 end

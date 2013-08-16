@@ -29,12 +29,27 @@ class IntFieldEditor( FieldEditor ):
 	def initEditor( self, container ):
 		self.spinBox = FieldEditorSpinBox( container )
 		self.spinBox.setMinimumSize( 50, 16 )
-		self.spinBox.setRange( -16777215, 16777215 )
 		self.spinBox.setSizePolicy(
 			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Expanding
 			)
 		self.spinBox.valueChanged.connect( self.notifyChanged )
+
+		#options
+		minValue = self.getOption( 'min', -16777215.0 )
+		maxValue = self.getOption( 'max',  16777215.0 )
+		step     = ( maxValue - minValue ) / 100.0
+		if step > 10: step = 10
+		if step < 1: step = 1
+
+		self.spinBox.setRange( minValue, maxValue	)
+
+		self.spinBox.setSingleStep( 
+			self.getOption( 'step', step )
+			)
+		
+		if self.getOption( 'readonly', False):
+			self.spinBox.setEnabled( False )
 
 		return self.spinBox
 
@@ -49,13 +64,29 @@ class FloatFieldEditor( FieldEditor ):
 	def initEditor( self, container ):
 		self.spinBox = FieldEditorDoubleSpinBox( container )
 		self.spinBox.setMinimumSize( 50, 16 )
-		self.spinBox.setRange( -16777215, 16777215 )
-		self.spinBox.setDecimals( 5 )
 		self.spinBox.setSizePolicy(
 			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Expanding
 			)
 		self.spinBox.valueChanged.connect( self.notifyChanged )
+		#options
+		minValue = self.getOption( 'min', -16777215.0 )
+		maxValue = self.getOption( 'max',  16777215.0 )
+		step     = ( maxValue - minValue ) / 100.0
+		if step > 10: step = 10
+
+		self.spinBox.setRange( minValue, maxValue	)
+
+		self.spinBox.setDecimals( 
+			self.getOption( 'decimals', 5 )
+			)
+		
+		self.spinBox.setSingleStep( 
+			self.getOption( 'step', step )
+			)
+		
+		if self.getOption( 'readonly', False):
+			self.spinBox.setEnabled( False )
 
 		return self.spinBox
 

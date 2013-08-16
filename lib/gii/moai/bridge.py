@@ -102,7 +102,10 @@ def luaTableToDict(luat): #no deep conversion
 	assert isinstance(luat , _LuaTable)
 	res={}
 	for k in luat:
-		res[k]=luat[k]
+		v = luat[k]
+		if isinstance( v, _LuaTable ):
+			v = luaTableToDict( v )
+		res[k] = v
 	return res
 
 def newPythonList(*arg):
@@ -125,11 +128,13 @@ def sizeOfPythonObject(list):
 #MODEL BRIDGE
 ####################################
 class LuaObjectModelProvider(ModelProvider):
-	def __init__( self,  name, priority, getTypeId, getModel ):
-		self.name = name
-		self.priority = priority
-		self._getTypeId = getTypeId
-		self._getModel  = getModel
+	def __init__( self,  name, priority, getTypeId, getModel, getModelFromTypeId ):
+		self.name        = name
+		self.priority    = priority
+
+		self._getTypeId          = getTypeId
+		self._getModel           = getModel
+		self._getModelFromTypeId = getModelFromTypeId
 
 	def getPriority( self ):
 		return self.priority
@@ -146,6 +151,9 @@ class LuaObjectModelProvider(ModelProvider):
 		else:
 			return None
 
+	def getModelFromTypeId( self, typeId ):
+		return self._getModelFromTypeId( typeId )
+
 	def clear( self ):
 		pass
 
@@ -155,6 +163,12 @@ class LuaObjectModel(ObjectModel):
 		#convert lua-typeId -> pythontype
 		typeId  = luaTypeToPyType( typeId )
 		setting = data and luaTableToDict(data) or {}
+		meta = setting.get('meta',None)
+		if meta:
+			del setting['meta']
+			for k, v in meta.items():
+				if not setting.has_key( k ):
+					setting[k] = v
 		self.addFieldInfo( name, typeId, **setting )
 
 	def addLuaEnumFieldInfo(self, name, enumItems, data = None): #called by lua
@@ -201,8 +215,8 @@ class ModelBridge(object):
 	def newLuaObjectMoel(self, name):
 		return LuaObjectModel(name)
 
-	def buildLuaObjectModelProvider( self, name, priority, getTypeId, getModel ):
-		provider = LuaObjectModelProvider( name, priority, getTypeId, getModel )
+	def buildLuaObjectModelProvider( self, name, priority, getTypeId, getModel, getModelFromTypeId ):
+		provider = LuaObjectModelProvider( name, priority, getTypeId, getModel, getModelFromTypeId )
 		ModelManager.get().registerModelProvier( provider )
 		self.modelProviders.append( provider )
 		return provider

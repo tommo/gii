@@ -1,8 +1,10 @@
+import logging
+
 def getSuperType( t ):
 	if isinstance( t, DataType ):
 		return t.getSuperType()		
 	return None
-	
+
 ##----------------------------------------------------------------##
 class DataType(object):
 	
@@ -167,6 +169,16 @@ class ObjectModel(DataType):
 		f=self.getFieldInfo(id)
 		f.setValue(obj, value)
 
+	def serialize( self, obj, objMap = None ):
+		data = {}
+		if not objMap: objMap = {}
+		for field in self.fieldList:
+			field.serialize( obj, data, objMap )
+		return data
+
+	def deserialize( self, data, objMap = None ):
+		pass
+
 ##----------------------------------------------------------------##
 class Field(object):
 	"""docstring for Field"""
@@ -178,17 +190,13 @@ class Field(object):
 		option = option or {}
 
 		self.label	   = option.get( 'label',    id )
+		
 		self.default   = option.get( 'default',  None )
-		self.widget	   = option.get( 'widget',   None )
-		self.readonly  = option.get( 'readonly', False )
-		self.choice	   = option.get( 'choice',   None )
-		self.reference = option.get( 'reference', None )
-		self.subobject = option.get( 'subobject', None )		
-
 		self.getter	   = option.get( 'get',   True )
 		self.setter	   = option.get( 'set',   True )
+		self.readonly  = self.setter == False
+		option[ 'readonly' ] = self.readonly
 		self.option    = option
-		if self.setter == False: self.readonly = True
 
 	def getType( self ):
 		return self._type
@@ -216,6 +224,22 @@ class Field(object):
 				setattr(obj, self.id, value)
 		else:
 			self.setter(obj, value)
+	
+	def serialize( self, obj, data, objMap ):
+		_type = self._type
+		if _type in ( int, float, str, unicode, bool ):
+			v = self.getValue( obj )
+			data[ self.id ] = v
+			return
+		model = ModelManager.get().getModelFromTypeId( _type )
+		if not model: return
+		#ref? subobj?
+		if obj:
+			v = model.serialize( obj, objMap )
+			if v:
+				data[ self.id ] = v
+		else:
+			data[ self.id ] = None
 
 ##----------------------------------------------------------------##
 class TypeIdGetter(object):
@@ -231,6 +255,12 @@ class ModelProvider(object):
 		return None
 
 	def getTypeId( self, obj ):
+		return None
+
+	def getModelFromTypeId( self, typeId ):
+		return None
+
+	def createObject( self, typeId ):
 		return None
 
 	#the bigger the first
@@ -257,14 +287,16 @@ class PythonModelProvider(ModelProvider):
 		del self.typeMapN[Model.getName()]
 
 	def getModel( self, obj ):
-		typeId = type(obj)
-		if typeId:
-			return self.typeMapV.get( typeId, None )
-		return None
+		return self.getModelFromTypeId( self.getTypeId(obj) )
 
 	def getTypeId( self, obj ):
 		typeId = type(obj)
 		return typeId
+
+	def getModelFromTypeId( self, typeId ):
+		if typeId:
+			return self.typeMapV.get( typeId, None )
+		return None
 
 	def getPriority( self ):
 		return 0
@@ -316,8 +348,14 @@ class ModelManager(object):
 
 	def getModel(self, obj):
 		for provider in self.modelProviders:
-			typeId = provider.getModel( obj )
-			if typeId: return typeId			
+			model = provider.getModel( obj )
+			if model: return model			
+		return None
+
+	def getModelFromTypeId(self, typeId):
+		for provider in self.modelProviders:
+			model = provider.getModelFromTypeId( typeId )
+			if model: return model			
 		return None
 
 	def enumerateObject(self, targetTypeId, context = None):
@@ -333,6 +371,30 @@ class ModelManager(object):
 	def registerPythonModel(self, typeId, model):
 		self.pythonModelProvider.registerModel( typeId, model)
 
+	def serialize( self, obj, **kw ):
+		model = kw.get( 'model', ModelManager.get().getModel( obj ) )
+		if not model: 
+			logging.warn( '(serialize) no model detected for %s' % repr(obj) )
+			return None
+		objMap = {}
+		data = model.serialize( obj, objMap )
+		return {
+			'data': data,
+			'model': model.getName(),
+			'map': objMap
+		}
+
+	def deserialize( self, data, **kw ):
+		model = kw.get( 'model', None )		
+		if not model: return None
+		#TODO
 
 ##----------------------------------------------------------------##
 ModelManager()
+
+
+def serializeObject( obj, **kw ):
+	return ModelManager.get().serialize( obj, **kw )
+
+def deserializeObject( data, **kw ):
+	return ModelManager.get().deserialize( data, **kw )

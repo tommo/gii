@@ -4,18 +4,26 @@ import subprocess
 
 from gii.core import Project, app
 
-def run():
+def run( **option ):
 	project = app.getProject()
 	assert project.isLoaded()
 	os.chdir( project.getHostPath() )
 
 	waf = app.getPath( 'support/waf/waf' )
+	arglist = [	waf	]
 
-	arglist = [
-		waf,
-		'build',
-		'install'
-	]
+	if option.get( 'verbose', False ):
+		arglist.append( '-v' )
+		
+	if option.get( 'clean', False ):
+		arglist.append( 'clean' )
+	else:
+		arglist.append( 'build' )
+		arglist.append( 'install' )
+
+	targets = option.get( 'targets', [] )
+	#todo, targets
+
 	try:
 		code = subprocess.call( arglist )
 	except Exception, e:
