@@ -12,7 +12,7 @@ class TexturePreviewer(AssetPreviewer):
 		return self.canvas
 
 	def accept(self, assetNode):
-		return assetNode.getType() in ('texture','sub_texture','texpack', 'deck_quadlists')
+		return assetNode.getType() in ('texture')
 
 	def onStart(self, assetNode):
 		self.canvas.safeCall( 'show', assetNode.getPath() )		

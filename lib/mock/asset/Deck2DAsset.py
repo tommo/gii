@@ -19,10 +19,12 @@ class Deck2DAssetManager(AssetManager):
 		node.assetType = 'deck2d'
 		data = jsonHelper.tryLoadJSON( node.getAbsFilePath() )
 		if data:
-			for item in data.get( 'items', [] ):
-				deckType = 'deck2d.' + item['type']
-				name  =  item['name']
-				node.createChildNode( name ,  deckType, manager = self )
+			for item in data.get( 'decks', [] ):
+				body = item['body']
+				deckType = 'deck2d.' + body['type']
+				name  =  body['name']
+				node.createChildNode( name, deckType, manager = self )
+		node.setObjectFile( 'def', node.getFilePath() )
 		return True
 
 
@@ -30,8 +32,10 @@ class Deck2DAssetManager(AssetManager):
 		editor = app.getModule( 'deck2d_editor' )
 		if not editor: 
 			return alertMessage( 'Editor not load', 'Style Editor not found!' )
-		
-		editor.startEdit( node )
+		if not node.isType( 'deck2d' ):
+			editor.startEdit( node.getParent(), node )			
+		else:
+			editor.startEdit( node )
 
 ##----------------------------------------------------------------##
 class Deck2DCreator(AssetCreator):
