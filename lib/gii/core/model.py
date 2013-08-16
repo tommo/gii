@@ -176,8 +176,9 @@ class ObjectModel(DataType):
 			field.serialize( obj, data, objMap )
 		return data
 
-	def deserialize( self, data, objMap = None ):
-		pass
+	def deserialize( self, obj, data, objMap = None ):
+		for field in self.fieldList:
+			field.deserialize( obj, data, objMap )
 
 ##----------------------------------------------------------------##
 class Field(object):
@@ -200,6 +201,9 @@ class Field(object):
 
 	def getType( self ):
 		return self._type
+
+	def getOption( self, key, default = None ):
+		return self.option.get( key, default )
 
 	def getValue( self, obj, defaultValue = None ):
 		getter = self.getter
@@ -230,16 +234,33 @@ class Field(object):
 		if _type in ( int, float, str, unicode, bool ):
 			v = self.getValue( obj )
 			data[ self.id ] = v
-			return
-		model = ModelManager.get().getModelFromTypeId( _type )
-		if not model: return
-		#ref? subobj?
-		if obj:
-			v = model.serialize( obj, objMap )
-			if v:
-				data[ self.id ] = v
 		else:
-			data[ self.id ] = None
+			model = ModelManager.get().getModelFromTypeId( _type )
+			if not model: return
+			#TODO
+			#ref? subobj?
+			if v:
+				subData = model.serialize( v, objMap )
+				if v:
+					data[ self.id ] = subData
+			else:
+				data[ self.id ] = None
+
+	def deserialize( self, obj, data, objMap ):
+		_type = self._type
+		value = data.get( self.id, None )
+		if _type in ( int, float, str, unicode, bool ):
+			self.setValue( obj, value )
+		else:
+			model = ModelManager.get().getModelFromTypeId( _type )
+			if not model: return
+			if value:
+				#TODO
+				#ref? subobj?
+				subObj = model.deserialize( obj, objMap )
+				self.setValue( obj, subObj )
+			else:
+				self.setValue( obj, None )
 
 ##----------------------------------------------------------------##
 class TypeIdGetter(object):
@@ -379,15 +400,19 @@ class ModelManager(object):
 		objMap = {}
 		data = model.serialize( obj, objMap )
 		return {
-			'data': data,
+			'body':  data,
 			'model': model.getName(),
-			'map': objMap
+			'map':   objMap
 		}
 
-	def deserialize( self, data, **kw ):
-		model = kw.get( 'model', None )		
-		if not model: return None
-		#TODO
+	def deserialize( self, obj, data, **kw ):
+		model = kw.get( 'model', ModelManager.get().getModel( obj ) )
+		if not model: 
+			logging.warn( '(deserialize) no model detected for %s' % repr(obj) )
+			return None
+		objMap = {}
+		model.deserialize( obj, data, objMap )
+		return obj
 
 ##----------------------------------------------------------------##
 ModelManager()

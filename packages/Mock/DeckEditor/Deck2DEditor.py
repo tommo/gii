@@ -144,13 +144,19 @@ class Deck2DEditor( AssetEditorModule ):
 		if self.editingAsset == node: return
 		self.saveAsset()
 		self.container.setEnabled( True )
+		self.treeSprites.clear()
 		
 		assert node.getType() == 'deck2d'
 		self.editingAsset = node
 		self.container.setDocumentName( node.getNodePath() )
-		self.canvas.safeCall( 'openAsset', node.getPath() )
-		#TODO
 		self.editingPack = []
+
+		data = node.loadAsJson()
+		if data:
+			for deckData in data.get('decks',[]):
+				deck = self.canvas.safeCall( 'loadAsset', deckData )
+				self.treeSprites.addNode( deck )
+				self.editingPack.append( deck )
 		
 
 	def getSpriteList( self ):

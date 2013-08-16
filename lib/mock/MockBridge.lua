@@ -44,9 +44,9 @@ local function buildGiiModel( model )
 		}
 		local id     = f.__id
 		local typeid = f.__type
-		if f.__enum then
+		if typeid == '@enum' then
 			assert ( type(typeid) == 'table' )
-			pmodel:addLuaEnumFieldInfo( id, typeid, option )
+			pmodel:addLuaEnumFieldInfo( id, f.__enum, option )
 		else
 			pmodel:addLuaFieldInfo( id, typeid, option )
 		end

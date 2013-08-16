@@ -4,8 +4,9 @@ scn = gii.createMockEditorScene()
 
 CLASS: Deck2D ()
 	:MODEL {
-		Field 'name'     :type('string')    :getset('Name') ;
-		Field 'texture'  :asset('texture')  :getset('Texture');		
+		Field 'type'     :type('string')  :hidden();
+		Field 'name'     :type('string')  :getset('Name') ;
+		Field 'texture'  :type('string')  :getset('Texture');		
 	}
 
 function Deck2D:__init()
@@ -15,7 +16,8 @@ function Deck2D:__init()
 end
 
 function Deck2D:setTexture( path )
-	local tex = mock.loadAsset( path )
+	local tex, node = mock.loadAsset( path )
+	if not tex then return end
 	local w, h = tex:getSize()
 	self.w = w
 	self.h = h
@@ -371,8 +373,18 @@ end
 --------------------------------------------------------------------
 editor = scn:addEntity( Deck2DEditor() )
 
-function openAsset( path )
-
+function loadAsset( data )
+	local modelName = data['model']
+	local deck
+	if modelName == 'Quad2D' then
+		deck = Quad2D()
+	elseif modelName == 'Tileset' then
+		deck = Tileset()
+	elseif modelName == 'StretchPatch' then
+		deck = StretchPatch()
+	end
+	mock.deserialize( deck, data )
+	return deck
 end
 
 function addItem( item )
