@@ -1,6 +1,7 @@
 --------------------------------------------------------------------
 CLASS: EditorCanvasCamera ( mock.Camera )
 function EditorCanvasCamera:__init()
+	self.__editor_entity = true
 	self.context = gii.getCurrentRenderContextKey()
 	self.screenWidth   = 100
 	self.screenHeight	 = 100
@@ -31,7 +32,9 @@ end
 
 function EditorCanvasScene:onEnter()
 	self.cameraCom = EditorCanvasCamera()
-	self.camera    = self:addEntity( mock.SingleEntity( self.cameraCom ) )
+	self.camera    = mock.SingleEntity( self.cameraCom )
+	self.camera.__editor_entity = true
+	self:addEntity( self.camera )
 end
 
 function EditorCanvasScene:getActionRoot()

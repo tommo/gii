@@ -43,7 +43,6 @@ class SceneView( SceneEditorModule ):
 
 	def onStart( self ):
 		self.canvas.makeCurrent()
-		self.canvas.safeCall( 'onStart' )
 		self.scheduleUpdate()
 
 	def onUpdateTimer( self ):
@@ -62,8 +61,11 @@ class SceneView( SceneEditorModule ):
 
 	def openScene( self, node ):
 		self.window.setDocumentName( node.getPath() )
+		
 		self.canvas.makeCurrent()
 		self.canvas.safeCall( 'openScene', node.getPath() )
+		scene = self.canvas.safeCall( 'getScene' )
+		self.getModule( 'scenegraph_browser' ).addScene( scene )
 		self.scheduleUpdate()
 		self.setFocus()
 

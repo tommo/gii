@@ -74,6 +74,8 @@ class ScriptView( QtEditorModule ):
 		self.book.getPageByFile('picking.lua')
 		
 		signals.connect('app.command', self.onAppCommand)
+		signals.connect('app.remote', self.onAppRemote)
+
 
 	def onStart( self ):
 		self.restoreWindowState( self.getMainWindow() )
@@ -139,6 +141,13 @@ class ScriptView( QtEditorModule ):
 		if cmd=='exec':
 			if self.debuggerHandler.busy:
 				self.debuggerHandler.doStop()	#stop debug
+
+	def onAppRemote( self, data, output ):
+		cmd = data[0]
+		if cmd == 'debug.step_in':
+			pass
+			#TODO
+
 
 	def onSetFocus(self):
 		self.window.show()

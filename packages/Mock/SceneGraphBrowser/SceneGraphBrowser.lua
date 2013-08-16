@@ -15,15 +15,15 @@ function onEntityEvent( action, entity, scene, layer )
 	end
 end
 
-function onSceneEnter( scn )
-	if scn.__editor_scene then return end
-	_owner:addScene( scn )
-	scn:setEntityListener( onEntityEvent )	
-end
+-- function onSceneEnter( scn )
+-- 	if scn.__editor_scene then return end
+-- 	_owner:addScene( scn )
+-- 	scn:setEntityListener( onEntityEvent )	
+-- end
 
-function onSceneExit( scn )
-	_owner:removeScene( scn )
-end
+-- function onSceneExit( scn )
+-- 	_owner:removeScene( scn )
+-- end
 
-connectSignal( 'scene.enter', onSceneEnter )
-connectSignal( 'scene.exit',  onSceneExit )
+-- connectSignal( 'scene.enter', onSceneEnter )
+-- connectSignal( 'scene.exit',  onSceneExit )

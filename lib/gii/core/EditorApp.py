@@ -14,7 +14,7 @@ from package        import PackageManager
 from MainModulePath import getMainModulePath
 from selection      import SelectionManager
 
-from InstanceHelper import checkSingleInstance
+from InstanceHelper import checkSingleInstance, setRemoteArgumentCallback
 
 
 _GII_BUILTIN_PACKAGES_PATH = 'packages'
@@ -56,6 +56,7 @@ class EditorApp(object):
 		if self.initialized: return
 		self.openProject()
 		
+		setRemoteArgumentCallback( self.onRemoteArgument )
 		#packages
 		excludePackages = self.getProject().getConfig( 'excluded_packages' )
 		self.packageManager.addExcludedPackage( excludePackages )
@@ -147,5 +148,8 @@ class EditorApp(object):
 			return 'win'
 		else:
 			raise Exception( 'what platform?' + name )
+
+	def onRemoteArgument( self, data, output ):
+		signals.emitNow( 'app.remote', data, output )
 			
 app = EditorApp()

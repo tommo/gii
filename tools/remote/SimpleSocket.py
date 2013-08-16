@@ -13,12 +13,9 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
         cur_thread = threading.currentThread()
         data = data.split()
         #Note to the self.server.app
-        output = []
         if not RemoteArgumentCallBack is None:
-            RemoteArgumentCallBack( data, output )
-        result = '\n'.join( output )
-        print result, output
-        self.request.send( result )
+            RemoteArgumentCallBack( data, self.request )
+        self.request.send('<OK>')
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     stopped = False

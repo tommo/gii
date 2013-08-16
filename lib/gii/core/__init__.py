@@ -15,7 +15,6 @@ import signals
 import globalSignals
 ##----------------------------------------------------------------##
 from model          import *
-from model          import *
 from cli            import CLICommand, parseCLI
 from tool           import ToolBase, startupTool
 from project        import Project

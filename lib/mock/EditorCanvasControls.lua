@@ -1,6 +1,11 @@
+--------------------------------------------------------------------
+CLASS: EditorEntity ( mock.Entity )
+function EditorEntity:__init()
+	self.__editor_entity = true
+end
 
 --------------------------------------------------------------------
-CLASS: CanvasGrid( mock.Entity )
+CLASS: CanvasGrid( EditorEntity )
 function CanvasGrid:onLoad()
 	self:attach( mock.DrawScript{	priority = -1	} )
 end
@@ -15,7 +20,7 @@ function CanvasGrid:onDraw()
 end
 
 --------------------------------------------------------------------
-CLASS: CanvasNavigate( mock.Entity )
+CLASS: CanvasNavigate( EditorEntity )
 function CanvasNavigate:onLoad()
 	self:attach( mock.InputScript{ device = self:getScene().inputDevice } )
 	self.zoom = 1

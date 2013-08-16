@@ -9,6 +9,7 @@ register('app.close')
 register('app.stop')
 register('app.chdir')
 register('app.command')
+register('app.remote')
 
 register('module.loaded')
 

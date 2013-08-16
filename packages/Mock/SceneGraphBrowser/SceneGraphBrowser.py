@@ -53,9 +53,11 @@ class ModSceneGraphBrowser( SceneEditorModule ):
 		pass
 
 	def addEntity( self, entity, scene ):
+		if entity['__editor_entity']: return
 		self.tree.addNode( entity )
 
 	def removeEntity( self, entity, scene ):
+		if entity['__editor_entity']: return
 		self.tree.removeNode( entity )
 
 	def addScene( self, scn ):
@@ -102,20 +104,20 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		if isMockInstance( node, 'Game' ):
 			output = []
 			for scene in node.scenes.values():
-				if not scene.__editor_scene:
+				if not scene['__editor_scene']:
 					output.append( scene )
 			return output
 
 		if isMockInstance( node, 'Scene' ):
 			output = []
 			for ent in node.entities:
-				if not ent.__editor_entity and not ent.parent:
+				if not ent['__editor_entity'] and not ent.parent:
 					output.append( ent )
 			return output
 
 		output = []
 		for ent in node.children:
-			if not ent.__editor_entity:
+			if not ent['__editor_entity']:
 				output.append( ent )
 		return output
 
