@@ -34,10 +34,6 @@ QPushButton
 {
 	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#555,stop:1#444);
 	border: 1px solid #222;
-/*	border-top:1px solid #222;
-	border-left:1px solid #222;
-	border-right:1px solid #000;
-	border-bottom:1px solid #000;*/
 	border-radius:2px;
 	color:#dcdcdc;
 	padding:4px;
@@ -71,7 +67,6 @@ QDockWidget
 
 QDockWidget::title
 {
-	/*background-color:#292929;*/
   background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #222);
 	padding-top: 5px;
 	padding-left: 5px;
@@ -87,7 +82,6 @@ QHeaderView::section
 	border-right:1 solid #000;
 	border-bottom:1px solid #222;
 	border-left:1px solid #444;
-	/*background-color:#282828;*/
 	padding:2px;
 	padding-left:5px;
 }
@@ -702,14 +696,19 @@ QScrollBar::handle:hover,MyThumbListView,QComboBox:!editable,QComboBox::drop-dow
 	background-color:#333333;
 }
 
-QTreeView:active,QTreeView:!active,QTreeView#UIGroup_TreeView:active,QTreeView#UIGroup_TreeView:!active
+QTreeView:active,QTreeView:!active
 {
 	selection-background-color:#466dc6;
 }
 
-QTreeView::item:selected:!active,QTreeView::item:selected:active,QTreeView::item:hover,QTreeView#UIGroup_TreeView::item:selected:!active,QTreeView#UIGroup_TreeView::item:selected:active,QTreeView#UIGroup_TreeView::item:hover,QListView::item:selected:!active,QListView::item:selected:active,QListView::item:hover,QTabBar::tab:!selected:hover
+QTreeView::item:selected:!active,QTreeView::item:selected:active,QListView::item:selected:!active,QListView::item:selected:active,QTabBar::tab:!selected:hover
 {
 	background-color:#466dc6;
+}
+
+QTreeView::item:hover,QListView::item:hover
+{
+	background-color:#58628b;
 }
 
 QCheckBox::indicator{
