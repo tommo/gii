@@ -69,5 +69,7 @@ class ColorFieldEditor( FieldEditor ):
 	def initEditor( self, container ):
 		self.colorBlock = ColorBlock( container )
 		self.colorBlock.colorChanged.connect( self.onColorChanged )
+		if self.getOption( 'readonly', False ):
+			self.colorBlock.setEnabled( False )
 		return self.colorBlock
 	

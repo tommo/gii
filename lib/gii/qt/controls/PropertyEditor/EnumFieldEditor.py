@@ -42,6 +42,8 @@ class EnumFieldEditor( FieldEditor ):
 			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Expanding
 			)
+		if self.getOption( 'readonly', False ):
+			self.combo.setEnabled( False )
 		return self.combo
 
 registerFieldEditor( EnumType, EnumFieldEditor )

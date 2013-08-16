@@ -88,7 +88,6 @@ class Deck2DEditor( AssetEditorModule ):
 				)
 			)
 		treeSprites.module = self
-		treeSprites.itemSelectionChanged.connect(self.onItemSelectionChanged)
 		treeSprites.setSortingEnabled(True)
 		self.treeSprites = treeSprites
 
@@ -167,6 +166,15 @@ class Deck2DEditor( AssetEditorModule ):
 		if not item : return		
 		self.propEditor.refreshAll()
 
+	def selectDeck( self, deck ):
+		self.editingDeck = deck
+		if deck:
+			self.propEditor.setTarget( deck )
+			self.canvas.safeCall( 'selectDeck', deck )			
+
+	def changeDeckName( self, deck, name ):
+			self.canvas.safeCall( 'renameDeck', deck, name )
+			
 	def addItem( self, atype ):
 		if not self.editingAsset: return
 		selection = self.getSelectionManager().getSelection()
@@ -211,13 +219,6 @@ class Deck2DEditor( AssetEditorModule ):
 	def onAssetModified( self, asset ):
 		pass
 
-	def onItemSelectionChanged( self ):
-		treeSprites = self.treeSprites
-		self.editingDeck = None
-		for deck in treeSprites.getSelection():
-			self.editingDeck = deck
-			self.propEditor.setTarget( deck )
-			self.canvas.safeCall( 'selectDeck', deck )			
 
 	def onPropertyChanged( self, obj, id, value ):
 		self.canvas.safeCall( 'updateDeck' )
@@ -260,7 +261,14 @@ class SpriteTreeWidget( GenericTreeWidget ):
 			item.setIcon( 0, getIcon('deck_quad'))
 
 	def onItemSelectionChanged( self ):
-		pass
+		for deck in self.getSelection():
+			app.getModule('deck2d_editor').selectDeck( deck )
+			break
 
 	def onItemActivated( self, item, col ):
 		pass
+
+	def onItemChanged( self, item, col ):
+		deck = self.getNodeByItem( item )
+		app.getModule('deck2d_editor').changeDeckName( deck, item.text(0) )
+

@@ -575,6 +575,11 @@ QLineEdit, QTextEdit, QPlainTextEdit, QSpinBox, QDoubleSpinBox
 	padding:1px;
 }
 
+QLineEdit:read-only, QTextEdit:read-only, QPlainTextEdit:read-only, QSpinBox:read-only, QDoubleSpinBox:read-only {
+	background-color:#414859;
+}
+
+
 QComboBox
 {
 	border:1px solid #000;

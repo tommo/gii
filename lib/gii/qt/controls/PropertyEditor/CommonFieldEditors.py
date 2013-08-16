@@ -16,6 +16,8 @@ class StringFieldEditor( FieldEditor ):
 		self.lineEdit = FieldEditorLineEdit( container )
 		self.lineEdit.setMinimumSize( 50, 16 )
 		self.lineEdit.textEdited.connect( self.notifyChanged )
+		if self.getOption( 'readonly', False ):
+			self.lineEdit.setReadOnly( True )
 		return self.lineEdit
 
 ##----------------------------------------------------------------##
@@ -104,6 +106,8 @@ class BoolFieldEditor( FieldEditor ):
 	def initEditor( self, container ):
 		self.checkBox = QtGui.QCheckBox( container )
 		self.checkBox.stateChanged.connect( self.onStateChanged )
+		if self.getOption( 'readonly', False ):
+			self.checkBox.setEnabled( False )
 		return self.checkBox
 
 

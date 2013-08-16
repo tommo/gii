@@ -5,8 +5,8 @@ scn = gii.createMockEditorScene()
 CLASS: Deck2D ()
 	:MODEL {
 		Field 'type'     :type('string')  :hidden();
-		Field 'name'     :type('string')  :getset('Name') ;
-		Field 'texture'  :type('string')  :getset('Texture');		
+		Field 'name'     :type('string')  :getset('Name')    :readonly() ;
+		Field 'texture'  :type('string')  :getset('Texture') :readonly() ;		
 	}
 
 function Deck2D:__init()
@@ -420,5 +420,10 @@ function selectDeck( deck )
 end
 
 function updateDeck( )
+	editor:updateDeck()
+end
+
+function renameDeck( deck, name )
+	deck:setName( name )
 	editor:updateDeck()
 end

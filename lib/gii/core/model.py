@@ -195,7 +195,8 @@ class Field(object):
 		self.default   = option.get( 'default',  None )
 		self.getter	   = option.get( 'get',   True )
 		self.setter	   = option.get( 'set',   True )
-		self.readonly  = self.setter == False
+		self.readonly  = option.get( 'readonly', False )
+		if self.setter == False: self.readonly = True
 		option[ 'readonly' ] = self.readonly
 		self.option    = option
 
