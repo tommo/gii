@@ -40,14 +40,11 @@ class IntFieldEditor( FieldEditor ):
 		#options
 		minValue = self.getOption( 'min', -16777215.0 )
 		maxValue = self.getOption( 'max',  16777215.0 )
-		step     = ( maxValue - minValue ) / 100.0
-		if step > 10: step = 10
-		if step < 1: step = 1
 
 		self.spinBox.setRange( minValue, maxValue	)
 
 		self.spinBox.setSingleStep( 
-			self.getOption( 'step', step )
+			self.getOption( 'step', 1 )
 			)
 		
 		if self.getOption( 'readonly', False):
@@ -74,8 +71,6 @@ class FloatFieldEditor( FieldEditor ):
 		#options
 		minValue = self.getOption( 'min', -16777215.0 )
 		maxValue = self.getOption( 'max',  16777215.0 )
-		step     = ( maxValue - minValue ) / 100.0
-		if step > 10: step = 10
 
 		self.spinBox.setRange( minValue, maxValue	)
 
@@ -84,7 +79,7 @@ class FloatFieldEditor( FieldEditor ):
 			)
 		
 		self.spinBox.setSingleStep( 
-			self.getOption( 'step', step )
+			self.getOption( 'step', 1 )
 			)
 		
 		if self.getOption( 'readonly', False):

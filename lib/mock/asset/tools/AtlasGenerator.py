@@ -285,7 +285,7 @@ class AtlasGenerator:
 	def generateAtlases(self, images):
 		w0, h0 = self.size
 		r = w0 / h0
-		
+		expand = 1
 		if r > 1:
 			h = 32
 			w = r * h
@@ -296,8 +296,12 @@ class AtlasGenerator:
 		while w < w0 and h < h0: #try each size
 			atlases = self.generateAtlasesOfSize( images, (w,h), True ) 
 			if atlases: return atlases
-			w *= 2
-			h *= 2
+			if expand == 1:
+				w *= 2
+				expand = 2
+			else:
+				h *= 2
+				expand = 1
 		return self.generateAtlasesOfSize( images, (w0,h0), True )
 
 	def generateAtlasesOfSize(self, images, size, expanding = False ):

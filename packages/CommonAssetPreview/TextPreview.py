@@ -13,7 +13,7 @@ if app.getModule('asset_browser'):
 			return self.textBrowser
 
 		def accept(self, assetNode):
-			return assetNode.getType() in ('script','text')
+			return assetNode.isType( 'script', 'text' )
 
 		def onStart(self, assetNode):
 			try:

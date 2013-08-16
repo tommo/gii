@@ -3,14 +3,19 @@ from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import Qt
 
 ##----------------------------------------------------------------##
+class NoEditItemDelegate( QtGui.QStyledItemDelegate ):
+	def createEditor( *args ):
+		return None
+
+##----------------------------------------------------------------##
 class GenericTreeWidget( QtGui.QTreeWidget ):
 	def __init__( self, *args, **option ):
 		super(GenericTreeWidget, self).__init__(*args)
-		
+		self.noEditItemDelegate = NoEditItemDelegate( self )
 		self.refreshing = False
 
 		self.rootItem = self.invisibleRootItem()
-
+		
 		headerInfo = self.getHeaderInfo()
 		headerItem = QtGui.QTreeWidgetItem()
 		self.setHeaderItem(headerItem)
@@ -20,6 +25,8 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			w = info[1]
 			if w>0:
 				self.setColumnWidth ( i, info[1] )
+			if i > 0:
+				self.setItemDelegateForColumn( i, self.noEditItemDelegate )
 
 		self.clear()
 		self.setSortingEnabled( option.get('sorting', True) )

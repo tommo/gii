@@ -64,11 +64,8 @@ class AssetNode(object):
 	def getType(self):
 		return self.assetType
 
-	def isType(self, typeName):
-		if isinstance(typeName,(list, tuple)):
-			return self.assetType in list( typeName )
-		else:
-			return self.assetType == typeName
+	def isType(self, *typeNames ):
+		return self.assetType in list( typeNames )
 
 	def getManager(self):
 		return AssetLibrary.get().getAssetManager( self.managerName, True )

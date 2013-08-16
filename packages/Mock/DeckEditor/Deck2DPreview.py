@@ -5,14 +5,14 @@ def _getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 
-class TexturePreviewer(AssetPreviewer):
+class Deck2DPreviewer(AssetPreviewer):
 	def createWidget(self, container):
 		self.canvas = MOAIEditCanvas( container )
-		self.canvas.loadScript( _getModulePath('TexturePreview2.lua') )
+		self.canvas.loadScript( _getModulePath('Deck2DPreview.lua') )
 		return self.canvas
 
 	def accept(self, assetNode):
-		return assetNode.isType( 'texture' )
+		return assetNode.getType() in [ 'deck2d.quad', 'deck2d.stretchpatch', 'deck2d.tileset' ]
 
 	def onStart(self, assetNode):
 		self.canvas.safeCall( 'show', assetNode.getPath() )		
@@ -20,4 +20,4 @@ class TexturePreviewer(AssetPreviewer):
 	def onStop(self):
 		self.canvas.safeCall('show',None)
 
-TexturePreviewer().register()
+Deck2DPreviewer().register()
