@@ -229,9 +229,6 @@ class SubWindowMixin:
 		return container
 
 
-	def addToolBar(self):
-		return self.addWidget( QtGui.QToolBar(), expanding = False ) 
-
 	def addWidget(self, widget, **layoutOption):
 		# widget.setParent(self)		
 		if layoutOption.get('fixed', False):
@@ -307,7 +304,9 @@ class DocumentWindow( SubWindow ):
 		idx = tabParent.indexOf( self )
 		tabParent.setTabText( idx, title )
 		
-
+	def addToolBar(self):
+		return self.addWidget( QtGui.QToolBar(), expanding = False ) 
+		
 ##----------------------------------------------------------------##
 class DockWindowTitleBar( QtGui.QWidget ):
 	"""docstring for DockWindowTitleBar"""
@@ -376,5 +375,7 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 			self.setTitleBarWidget( self.customTitleBar )
 			pass
 
+	def addToolBar(self):
+		return self.addWidget( QtGui.QToolBar(), expanding = False ) 
 
 		

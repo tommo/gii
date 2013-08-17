@@ -3,7 +3,7 @@ import weakref
 
 class SelectionManager(object):
 	def __init__(self):
-		self.currentSelection = None
+		self.currentSelection = []
 		self.history = []
 		self.historyPos = 0
 		self.maxHistorySize = 32
@@ -13,7 +13,7 @@ class SelectionManager(object):
 		self.historyPos = 0
 
 	def clearSelection(self):
-		self.changeSelection(None)
+		self.changeSelection([])
 
 	def changeSelection(self, selection):		
 		#todo: use weakref to hold selection		
@@ -24,6 +24,8 @@ class SelectionManager(object):
 			self.history.append(selection)
 			self.history = self.history[0:self.maxHistorySize]
 			self.historyPos = 0
+		if selection is None:
+			selection = []
 		self.currentSelection = selection
 		signals.emit('selection.changed', selection)
 
@@ -44,7 +46,7 @@ class SelectionManager(object):
 			signals.emit('selection.changed', selection)
 
 	def getSelection(self):
-		return self.currentSelection
+		return self.currentSelection or []
 
 	def getSingleSelection(self):
 		return self.currentSelection and self.currentSelection[0] or None

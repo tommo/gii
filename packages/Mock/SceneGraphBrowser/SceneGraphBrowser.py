@@ -48,6 +48,7 @@ class ModSceneGraphBrowser( SceneEditorModule ):
 
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
+		signals.connect( 'selection.changed', self.onSelectionChanged)
 
 	def onStart( self ):
 		pass
@@ -69,6 +70,12 @@ class ModSceneGraphBrowser( SceneEditorModule ):
 	def onMoaiClean( self ):
 		self.tree.clear()
 
+	def onSelectionChanged(self, selection):
+		self.tree.blockSignals( True )
+		self.tree.selectNode( None )
+		for e in selection:
+			self.tree.selectNode( e, add = True)
+		self.tree.blockSignals( False )
 
 
 	

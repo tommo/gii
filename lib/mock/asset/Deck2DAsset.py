@@ -31,7 +31,7 @@ class Deck2DAssetManager(AssetManager):
 	def editAsset(self, node):	
 		editor = app.getModule( 'deck2d_editor' )
 		if not editor: 
-			return alertMessage( 'Editor not load', 'Style Editor not found!' )
+			return alertMessage( 'Editor not load', 'Deck2D Editor not found!' )
 		if not node.isType( 'deck2d' ):
 			editor.startEdit( node.getParent(), node )			
 		else:

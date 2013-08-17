@@ -61,7 +61,7 @@ def throwPythonException(name, data=None):
 ####################################
 #todo
 def changeSelection(targets=None):
-	SelectionManager.get().changeSelection(targets)
+	app.getSelectionManager().changeSelection(targets)
 
 
 

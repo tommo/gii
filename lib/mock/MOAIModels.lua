@@ -51,3 +51,4 @@ Model( MOAIProp, 'MOAIProp' ):update{
 	Field 'Rot' :type( Vec3 ) :get( getMoaiRot ) :set( setMoaiRot ) ;
 	Field 'Scl' :type( Vec3 ) :get( getMoaiScl ) :set( setMoaiScl ) ;
 }
+

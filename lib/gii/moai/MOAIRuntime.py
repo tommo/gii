@@ -116,10 +116,8 @@ class MOAIRuntime( EditorModule ):
 	# 	self.GLContextInitializer = func
 
 	def onStart( self ):
-		self.initGLContext()
-		scriptInit = self.getProject().getScriptPath( 'init.lua' )
-		if os.path.exists( scriptInit ):
-			getAKU().runScript( scriptInit )
+		pass
+		
 
 	def reset(self):
 		if not self.AKUReady: return
@@ -291,6 +289,10 @@ class MOAIRuntime( EditorModule ):
 		signals.tryConnect ( 'console.exec', self.execConsole )
 		self.initContext()
 		self.setWorkingDirectory( self.getProject().getPath() )
+		self.initGLContext()
+		scriptInit = self.getProject().getScriptPath( 'init.lua' )
+		if os.path.exists( scriptInit ):
+			getAKU().runScript( scriptInit )
 
 	def onUnload(self):
 		self.cleanLuaReferences()

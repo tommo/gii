@@ -59,12 +59,12 @@ function EditorCanvasScene:showCursor()
 	return self.env.showCursor()
 end
 
-function EditorCanvasScene:setCursorPos()
-	return self.env.setCursorPos()
+function EditorCanvasScene:setCursorPos( x, y )
+	return self.env.setCursorPos( x, y )
 end
 
-function EditorCanvasScene:startUpdateTimer()
-	return self.env.startUpdateTimer()
+function EditorCanvasScene:startUpdateTimer( fps )
+	return self.env.startUpdateTimer( fps )
 end
 
 function EditorCanvasScene:stopUpdateTimer()

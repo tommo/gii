@@ -6,3 +6,4 @@ import FontAsset
 import StyleSheetAsset
 import AuroraAsset
 
+import ParticleAsset
