@@ -16,11 +16,13 @@ from gii.qt.controls.PropertyEditor  import PropertyEditor
 
 from gii.AssetEditor  import AssetEditorModule
 
-from gii.moai.MOAIEditCanvas    import MOAIEditCanvas
+from gii.moai.MOAIEditCanvas import MOAIEditCanvas
+from gii.moai import _LuaObject
 
 from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
 
+from mock import getMockClassName
 ##----------------------------------------------------------------##
 
 def _getModulePath( path ):
@@ -52,7 +54,8 @@ class ParticleEditor( AssetEditorModule ):
 	def __init__(self):
 		super(ParticleEditor, self).__init__()
 		self.editingAsset  = None		
-		
+		self.editingConfig = None
+
 		self.emitters = Box()
 		self.emitters.items=[]
 		
@@ -88,13 +91,18 @@ class ParticleEditor( AssetEditorModule ):
 			MOAIEditCanvas( window.containerPreview )
 		)
 		self.tree = addWidgetWithLayout(
-			ParticleTreeWidget( window.containerTree )
+			ParticleTreeWidget( window.containerTree, multiple_selection = False, editable = False )
 			)
 		self.tree.module = self
 
 		self.propEditor = addWidgetWithLayout(
 			PropertyEditor( window.containerProperty )
 			)
+
+		window.textScriptRender.textChanged.connect( self.onScriptModified )
+		window.textScriptInit.textChanged.connect( self.onScriptModified )
+
+		self.propEditor.propertyChanged.connect( self.onPropertyChanged )
 		
 	def onStart( self ):
 		self.canvas.loadScript( _getModulePath('ParticleEditor.lua') )
@@ -106,14 +114,26 @@ class ParticleEditor( AssetEditorModule ):
 		self.container.setFocus()
 
 	def openAsset( self, node ):
-		self.tree.rebuild()
 		self.setFocus()
+		if self.editingAsset == node: return
+		
+		self.container.setDocumentName( node.getNodePath() )
+		self.editingAsset  = node
+		self.editingConfig = self.canvas.safeCallMethod( 'preview', 'open', node.getPath() )
+		self.tree.rebuild()
+		self.tree.setAllExpanded( True )
 
+	def onScriptModified( self ):
+		pass
+
+	def onPropertyChanged( self, obj, field, value ):
+		if field == 'name':
+			self.tree.refreshNodeContent( obj )
 
 ##----------------------------------------------------------------##
 class ParticleTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		return [ ('Name',150), ('Type', 80) ]
+		return [ ('Name', -1) ]
 
 	def getRootNode( self ):
 		return self.module
@@ -125,41 +145,74 @@ class ParticleTreeWidget( GenericTreeWidget ):
 		pass
 
 	def getNodeParent( self, node ): # reimplemnt for target node	
-		if node == self.module.emitters or node == self.module.states:
-			return self.getRootNode()
-
 		if node == self.module:
 			return None
 
-		return None
+		if node == self.module.editingConfig:
+			return self.module
+
+		if node in [ self.module.emitters, self.module.states ]:
+			return self.module.editingConfig
+
+		clas = node.getClassName( node )
+		if clas == 'ParticleEmitterConfig':
+			return self.module.emitters
+
+		if clas == 'ParticleStateConfig':
+			return self.module.states
+
+		return node.parent
 
 	def getNodeChildren( self, node ):
-		if node == self.module.emitters or node == self.module.states:
-			return node.items
+		config = self.module.editingConfig
 		if node == self.module:
-			return [ node.emitters, node.states ]
+			if config:
+				return [ config ]
+			else:
+				return []
+
+		if node == config:
+			return [ self.module.emitters, self.module.states ] #virtual nodes
+		
+		if node == self.module.emitters:			
+			return [ item for item in config.emitters.values() ]
+
+		if node == self.module.states:
+			return [ item for item in config.states.values() ]
+
 		return []
 
 	def updateItemContent( self, item, node, **option ):
+		if node == self.module: return
+
 		if node == self.module.emitters:
 			item.setText( 0, 'Emitters' )
 			item.setIcon( 0, getIcon('folder') )
-			item.setFlags( Qt.ItemIsEnabled | Qt.ItemIsSelectable )
 		elif node == self.module.states:
 			item.setText( 0, 'States' )
 			item.setIcon( 0, getIcon('folder') )
-			item.setFlags( Qt.ItemIsEnabled | Qt.ItemIsSelectable )
+		elif node == self.module.editingConfig:
+			item.setText( 0, 'Particle System' )
+			item.setIcon( 0, getIcon('particle') )
+		elif node.getClassName( node ) in [ 'ParticleEmitterConfig', 'ParticleStateConfig' ]:
+			item.setText( 0, node.name )
+			item.setIcon( 0, getIcon('obj') )
 		else:
 			item.setText( 0, '' )
 			item.setIcon( 0, getIcon('obj') )
 		
 	def onItemSelectionChanged(self):
-		selections = self.getSelection()
+		for selection in self.getSelection():
+			self.module.propEditor.setTarget( selection )
+			break
 
 	def onItemChanged( self, item, col ):
 		node = self.getNodeByItem( item )
 		# app.getModule('layer_manager').changeLayerName( layer, item.text(0) )
 
+	def onItemActivated( self, item, col ):
+		node = self.getNodeByItem( item )
+		self.module.canvas.safeCallMethod( 'preview', 'activateItem', node )
 ##----------------------------------------------------------------##
 
 ##----------------------------------------------------------------##

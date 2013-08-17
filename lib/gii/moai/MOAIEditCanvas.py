@@ -278,6 +278,13 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 	def safeCall(self, method, *args):		 
 		return self.delegate.safeCall(method, *args)
 
+	def safeCallMethod(self, objId, method, *args):		 
+		return self.delegate.safeCallMethod(objId, method, *args)
+
+	def callMethodWithContext(self, objId, method, *args):		 
+		self.makeCurrent()
+		return self.delegate.safeCallMethod(objId, method, *args)
+
 	def callWithContext( self, method, *args):
 		self.makeCurrent()
 		return self.safeCall( method, *args )

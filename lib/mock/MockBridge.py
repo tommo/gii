@@ -19,6 +19,12 @@ def isMockInstance( obj, name ):
 	else:
 		return False
 
+def getMockClassName( obj ):
+	if isinstance( obj, _LuaTable ):
+		clas = obj.__class
+		if clas: return clas.__name
+	return None
+	
 ##----------------------------------------------------------------##
 class MockBridge( EditorModule ):
 	

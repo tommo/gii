@@ -13,6 +13,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		super(GenericTreeWidget, self).__init__(*args)
 		self.noEditItemDelegate = NoEditItemDelegate( self )
 		self.refreshing = False
+		self.option = option
 
 		self.rootItem = self.invisibleRootItem()
 		
@@ -58,7 +59,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.addNode( rootNode )
 		self.loadTreeStates()
 
-	def addNode( self, node, addChildren = True ):
+	def addNode( self, node, addChildren = True, **option ):
 		assert not node is None, 'attempt to insert null node '
 		if self.nodeDict.has_key( node ): return
 		pnode = self.getNodeParent( node )
@@ -75,13 +76,16 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			pitem.addChild( item )
 		self.nodeDict[ node ]=item
 
+		if option.get( 'expand', False ):
+			item.setExpanded( True )
+			
 		# if pnode:
 		self.updateItem( node )
 		if addChildren:
 			children = self.getNodeChildren( node )
 			if children:
 				for child in children:
-					self.addNode( child )
+					self.addNode( child, True, **option )
 		return item
 
 	def getItemByNode(self, node):
@@ -95,6 +99,16 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def hasNode( self, node ):
 		return self.getItemByNode( node ) != None
 
+	def setNodeExpanded( self, node, expanded = True ):
+		item = self.getItemByNode( node )
+		if not item: return False
+		item.setExpanded( expanded )
+		return True
+
+	def setAllExpanded( self, expanded = True ):
+		for item in self.nodeDict.values():
+			item.setExpanded( expanded )
+
 	def refreshNode(self, node):
 		item=self.getItemByNode( node )
 		if item:
@@ -103,6 +117,16 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 				return
 			self.removeNode( node )
 			self.addNode( node )
+
+	def refreshNodeContent( self, node, **option ):
+		item=self.getItemByNode( node )
+		if item:
+			self.updateItemContent( item, node, **option )
+			if option.get('updateChildren', False):
+				children = self.getNodeChildren( node )
+				if children:
+					for child in children:
+						self.refreshNodeContent( child , **option )
 
 	def updateItem(self, node, **option ):
 		return self._updateItem( node, None, **option )
@@ -180,7 +204,10 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 	def createItem( self, node ):
 		item = QtGui.QTreeWidgetItem( )
-		item.setFlags ( Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable )
+		flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
+		if self.option.get('editable', True):
+			flags |= Qt.ItemIsEditable 
+		item.setFlags ( flags )
 		return item
 
 	def updateItemContent( self, item, node, **option ):

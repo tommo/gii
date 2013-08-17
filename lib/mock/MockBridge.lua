@@ -142,6 +142,8 @@ function isMockInstance( obj, clas )
 	return false
 end
 
+
+
 -- mock.setLogLevel( 'status' )
 
 

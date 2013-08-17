@@ -353,10 +353,22 @@ class MOAILuaDelegate(object):
 			return
 		m = self.luaEnv[method]
 		if m: return m(*args)
+	
+	def safeCallMethod( self, objId, methodName, *args ):
+		obj = self.luaEnv[objId]
+		if not obj: return
+		method = obj[methodName]
+		if not method: return
+		return method( obj, *args )
 
 	def call(self, method, *args):
 		m = self.luaEnv[method]
 		return m(*args)
+
+	def callMethod( self, objId, methodName, *args ):
+		obj = self.luaEnv[objId]
+		method = obj[methodName]
+		return method( obj, *args )
 
 	def clearLua(self):
 		self.luaEnv=None

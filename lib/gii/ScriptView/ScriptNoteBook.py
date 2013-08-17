@@ -313,7 +313,7 @@ class ScriptPage(ScintillaCompat, Qsci.QsciScintilla):
 	def mousePressEvent(self, event):
 	 	Sci.mousePressEvent(self, event)
 
-
+##----------------------------------------------------------------##
 class ScriptNoteBook(QtGui.QTabWidget):
 	"""docstring for ScriptNoteBook"""
 	def __init__(self, parent):
