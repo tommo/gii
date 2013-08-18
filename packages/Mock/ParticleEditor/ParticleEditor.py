@@ -61,6 +61,7 @@ class ParticleEditor( AssetEditorModule ):
 		
 		self.states = Box()
 		self.states.items=[]
+		self.scriptModified = False
 
 		
 	
@@ -105,7 +106,8 @@ class ParticleEditor( AssetEditorModule ):
 		window.textScriptInit.textChanged.connect( self.onScriptModified )
 
 		self.propEditor.propertyChanged.connect( self.onPropertyChanged )
-		
+		self.container.startTimer( 1, self.checkScript )
+
 	def onStart( self ):
 		self.canvas.loadScript( _getModulePath('ParticleEditor.lua') )
 
@@ -130,6 +132,7 @@ class ParticleEditor( AssetEditorModule ):
 		self.tree.rebuild()
 		self.tree.setAllExpanded( True )
 
+
 	def changeState( self, state ):
 		self.editingState = state
 
@@ -153,7 +156,16 @@ class ParticleEditor( AssetEditorModule ):
 		tabParent.setTabText( idx, 'Render Script <%s>' % state.name )
 
 	def onScriptModified( self ):
-		pass
+		self.scriptModified = True
+
+	def checkScript( self ):
+		if self.scriptModified:
+			self.canvas.safeCallMethod(
+				'preview',
+				'tryUpdateScript', 
+				self.window.textScriptInit.toPlainText(),
+				self.window.textScriptRender.toPlainText()
+			 )
 
 	def onPropertyChanged( self, obj, field, value ):
 		if field == 'name':

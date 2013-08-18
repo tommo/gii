@@ -275,12 +275,14 @@ class SubWindow(QtGui.QMainWindow, SubWindowMixin):
 		return container
 
 
-	def startTimer(self, interval, trigger):
+	def startTimer(self, fps, trigger):
 		assert(hasattr(trigger,'__call__'))
+		interval = 1000/fps
 		timer=QtCore.QTimer(self)
 		timer.timeout.connect(trigger)
 		timer.start(interval)
 		return timer
+
 
 	def focusOutEvent(self, event):
 		pass
@@ -348,9 +350,10 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 		emptyTitle = QtGui.QWidget()
 		self.setTitleBarWidget(emptyTitle)
 
-	def startTimer(self, interval, trigger):
+	def startTimer(self, fps, trigger):
 		assert(hasattr(trigger,'__call__'))
-		timer = QtCore.QTimer(self)
+		interval = 1000/fps
+		timer=QtCore.QTimer(self)
 		timer.timeout.connect(trigger)
 		timer.start(interval)
 		return timer

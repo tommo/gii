@@ -30,9 +30,6 @@ class SceneIntrospector( SceneEditorModule ):
 
 	def onStart( self ):
 		pass
-		# self.testObj=makeTestObject()
-		# SelectionManager.get().changeSelection(self.testObj)
-		# self.updateTimer=App.get().startTimer(1000/2, self.updateProp)
 
 	def updateProp(self):
 		if app.isDebugging():

@@ -40,6 +40,10 @@ function ParticlePreview:rebuildSystem()
 	self:updateEmitter( true )	
 end
 
+function ParticlePreview:tryUpdateScript( initScript, renderScript )
+	print( initScript, renderScript )
+end
+
 function ParticlePreview:updateEmitter( rebuild )
 	local item = self.activeEmitterItem
 	if not item then return end

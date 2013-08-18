@@ -70,7 +70,7 @@ class Console( SceneEditorModule ):
 		self.panel.module=self
 		# self.stdoutCapture = StdouCapture()
 		# self.stdOutFile=self.stdoutCapture.file
-		# self.refreshTimer=self.container.startTimer(100, self.doRefresh)
+		# self.refreshTimer=self.container.startTimer( 10, self.doRefresh)
 		sys.stdout=self
 
 	def doRefresh(self):
