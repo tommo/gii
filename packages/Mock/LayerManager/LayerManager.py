@@ -134,10 +134,13 @@ class LayerTreeWidget( GenericTreeWidget ):
 		name = None
 		if isMockInstance( node, 'Layer' ):
 			item.setText( 0, node.name )
-			item.setIcon( 0, getIcon('obj') )
+			if node.default :
+				item.setIcon( 0, getIcon('obj_blue') )
+			else:
+				item.setIcon( 0, getIcon('obj') )
 		else:
 			item.setText( 0, '' )
-			item.setIcon( 0, getIcon('obj') )
+			item.setIcon( 0, getIcon('normal') )
 		
 	def onItemSelectionChanged(self):
 		selections = self.getSelection()

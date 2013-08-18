@@ -142,8 +142,11 @@ function isMockInstance( obj, clas )
 	return false
 end
 
+function saveGameConfig( path )
+	local data = game:saveConfig()
+end
 
 
--- mock.setLogLevel( 'status' )
+mock.setLogLevel( 'status' )
 
 

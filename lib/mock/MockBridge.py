@@ -11,7 +11,7 @@ from gii.moai.MOAIRuntime \
 ##----------------------------------------------------------------##
 _MOCK = LuaTableProxy( None )
 
-_MOCK_GAME_CONFI_NAME = 'game.json'
+_MOCK_GAME_CONFIG_NAME = 'game.json'
 
 def isMockInstance( obj, name ):
 	if isinstance( obj, _LuaObject ):
@@ -47,7 +47,7 @@ class MockBridge( EditorModule ):
 
 	def affirmConfigFile( self ):
 		proj = self.getProject()
-		self.configPath = proj.getConfigPath( _MOCK_GAME_CONFI_NAME )
+		self.configPath = proj.getConfigPath( _MOCK_GAME_CONFIG_NAME )
 		indexPath = proj.getRelativePath( self.getAssetLibrary().assetIndexPath )
 
 		if os.path.exists( self.configPath ):
@@ -59,14 +59,11 @@ class MockBridge( EditorModule ):
 			return
 		#create default config
 		defaultConfigData = {
-			"name"   : "MDD",
-			"title"  : "My Dear Dungeon",
-			"version": "0.0.1",
-
+			
 			"asset_library": indexPath ,
 			"layers" : [
-				{ "name" : "base",
-					"sort" : "PRIORTY",
+				{ "name" : "default",
+					"sort" : "priority_ascending",
 					"clear": false
 				 },
 			]
@@ -75,6 +72,10 @@ class MockBridge( EditorModule ):
 
 	def onStart( self ):
 		self.initMockGame()
+
+	def onStop( self ):
+		game = _MOCK.game
+		game.saveConfig( game, self.configPath )
 
 	def initMockGame( self ):
 		_MOCK.init( self.configPath, True )

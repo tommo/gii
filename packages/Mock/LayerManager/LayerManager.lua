@@ -8,6 +8,12 @@ function setLayerName( l, name )
 	l:setName( name )
 end
 
+function updatePriority()
+	for i, l in ipairs( mock.game.layers ) do
+		l.priority = i
+	end
+	emitSignal( 'layer.update', 'all', 'priority' )
+end
 
 function moveLayerUp( l )
 	local layers = mock.game.layers
@@ -15,7 +21,8 @@ function moveLayerUp( l )
 	assert ( i )
 	if i <= 1 then return end
 	table.remove( layers, i )
-	table.insert( layers, i - 1 , l )	
+	table.insert( layers, i - 1 , l )		
+	updatePriority()
 end
 
 function moveLayerDown( l )
@@ -25,6 +32,7 @@ function moveLayerDown( l )
 	if i >= #layers then return end
 	table.remove( layers, i )
 	table.insert( layers, i + 1 , l )	
+	updatePriority()
 end
 
 function removeLayer( l )
