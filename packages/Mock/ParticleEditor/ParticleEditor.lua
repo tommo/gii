@@ -13,8 +13,13 @@ function ParticlePreview:onLoad()
 
 	self.testSystem  = false
 	self.testEmitter = false 
-	self.activeEmitterItem = false
+
+	self.editingConfig  = false
+	self.editingEmitter = false
+	self.editingState   = false
+
 	startUpdateTimer( 60 )
+
 end
 
 function ParticlePreview:onMouseDown( btn, x, y )
@@ -40,12 +45,13 @@ function ParticlePreview:rebuildSystem()
 	self:updateEmitter( true )	
 end
 
-function ParticlePreview:tryUpdateScript( initScript, renderScript )
-	print( initScript, renderScript )
+function ParticlePreview:updateState( )
+	local state = self.editingState
+	self:rebuildSystem()
 end
 
 function ParticlePreview:updateEmitter( rebuild )
-	local item = self.activeEmitterItem
+	local item = self.editingEmitter
 	if not item then return end
 	if rebuild then
 		if self.testEmitter then self.testEmitter:stop() end
@@ -57,24 +63,38 @@ end
 
 function ParticlePreview:activateEmitter( item )
 	if not self.testSystem then return end
-	self.activeEmitterItem = item
+	self.editingEmitter = item
 	self:updateEmitter( true )
+end
+
+function ParticlePreview:activateState( state )
+	if state == self.editingState then return end
+	self.editingState = state
+	gii.app:getModule('particle_editor'):changeState( state )
+end
+
+function ParticlePreview:updateScript( initScript, renderScript )
+	if not self.editingState then return end
+	self.editingState.initScript   = initScript
+	self.editingState.renderScript = renderScript
+	self:updateState()	
 end
 
 function ParticlePreview:update( obj, field )
 	if isInstanceOf( obj, mock.ParticleEmitterConfig ) then
 		self:updateEmitter( field=='type' )
 	elseif isInstanceOf( obj, mock.ParticleStateConfig ) then
-		-- self:updateSystem()
+		self:updateState()
 	end
 end
 
 function ParticlePreview:changeSelection( node )
 	if isInstanceOf( node, mock.ParticleEmitterConfig ) then
 		self:activateEmitter( node )
-	elseif isInstanceOf( obj, mock.ParticleStateConfig ) then
-
+	elseif isInstanceOf( node, mock.ParticleStateConfig ) then
+		self:activateState( node )
 	end
+
 end
 
 function ParticlePreview:open( path )

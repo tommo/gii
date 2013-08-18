@@ -61,7 +61,7 @@ class ParticleEditor( AssetEditorModule ):
 		
 		self.states = Box()
 		self.states.items=[]
-		self.scriptModified = False
+		self.scriptModifyFlag = 0
 
 		
 	
@@ -104,12 +104,14 @@ class ParticleEditor( AssetEditorModule ):
 
 		window.textScriptRender.textChanged.connect( self.onScriptModified )
 		window.textScriptInit.textChanged.connect( self.onScriptModified )
+		self.window.panelScript.setEnabled( False )
 
 		self.propEditor.propertyChanged.connect( self.onPropertyChanged )
-		self.container.startTimer( 1, self.checkScript )
+		self.container.startTimer( 3, self.checkScript )
 
 	def onStart( self ):
 		self.canvas.loadScript( _getModulePath('ParticleEditor.lua') )
+		# self.canvas.setDelegateEnv( 'editor', self )
 
 	def onSetFocus( self ):
 		self.container.show()
@@ -126,20 +128,19 @@ class ParticleEditor( AssetEditorModule ):
 
 		self.canvas.makeCurrent()
 		self.editingConfig = self.canvas.safeCallMethod( 'preview', 'open', node.getPath() )
-		state = self.editingConfig.states[ 1 ]
-		if state:
-			self.changeState( state )
+		
 		self.tree.rebuild()
 		self.tree.setAllExpanded( True )
 
-
 	def changeState( self, state ):
 		self.editingState = state
-
-		self.window.textScriptRender.setPlainText( state.renderScript )
-		self.window.textScriptInit.setPlainText( state.initScript )
-
-		self.refreshScriptTitle()
+		if state:
+			self.window.panelScript.setEnabled( True )
+			self.window.textScriptRender.setPlainText( state.renderScript )
+			self.window.textScriptInit.setPlainText( state.initScript )
+			self.refreshScriptTitle()
+		else:
+			self.window.panelScript.setEnabled( False )
 
 	def changeSelection( self, selection ):
 		self.propEditor.setTarget( selection )
@@ -148,24 +149,27 @@ class ParticleEditor( AssetEditorModule ):
 
 	def refreshScriptTitle( self ):
 		state = self.editingState
-		if not state: return
-		tabParent = self.window.tabScripts
-		idx = tabParent.indexOf( self.window.tabInit )
-		tabParent.setTabText( idx, 'Init Script <%s>' % state.name )
-		idx = tabParent.indexOf( self.window.tabRender )
-		tabParent.setTabText( idx, 'Render Script <%s>' % state.name )
+		self.window.labelStateName.setText( 'current editing state script: <%s>' % state.name )
+		# if not state: return
+		# tabParent = self.window.panelScript
+		# idx = tabParent.indexOf( self.window.tabInit )
+		# tabParent.setTabText( idx, 'Init Script <%s>' % state.name )
+		# idx = tabParent.indexOf( self.window.tabRender )
+		# tabParent.setTabText( idx, 'Render Script <%s>' % state.name )
 
 	def onScriptModified( self ):
-		self.scriptModified = True
+		self.scriptModifyFlag = 1
 
 	def checkScript( self ):
-		if self.scriptModified:
+		if self.scriptModifyFlag == 0:
 			self.canvas.safeCallMethod(
 				'preview',
-				'tryUpdateScript', 
+				'updateScript', 
 				self.window.textScriptInit.toPlainText(),
 				self.window.textScriptRender.toPlainText()
 			 )
+		if self.scriptModifyFlag >= 0:
+			self.scriptModifyFlag -= 1
 
 	def onPropertyChanged( self, obj, field, value ):
 		if field == 'name':
