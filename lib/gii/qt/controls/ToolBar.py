@@ -82,6 +82,9 @@ class ToolBarNode(object):
 	def addWidget( self, widget ):
 		return self.qtToolbar.addWidget( widget )
 
+	def addSeparator( self ):
+		self.qtToolbar.addSeparator()
+
 	def getTool( self, name ):
 		return self.items.get( name, None )
 

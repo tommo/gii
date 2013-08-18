@@ -130,12 +130,12 @@
      <item>
       <widget class="QTabWidget" name="tabScripts">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="elideMode">
         <enum>Qt::ElideRight</enum>
        </property>
-       <widget class="QWidget" name="tab">
+       <widget class="QWidget" name="tabInit">
         <attribute name="title">
          <string>Init</string>
         </attribute>
@@ -151,7 +151,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="tab_2">
+       <widget class="QWidget" name="tabRender">
         <attribute name="title">
          <string>Render</string>
         </attribute>

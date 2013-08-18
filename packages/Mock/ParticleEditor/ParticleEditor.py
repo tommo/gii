@@ -83,6 +83,8 @@ class ParticleEditor( AssetEditorModule ):
 		self.addTool( 'particle_editor/add_state',   label = '+ State')
 		self.addTool( 'particle_editor/add_emitter', label = '+ Emitter')
 		self.addTool( 'particle_editor/remove',      label = 'Delete')
+		self.addTool( 'particle_editor/update',      label = 'Update')
+
 		
 		self.window = window = self.container.addWidgetFromFile(
 			_getModulePath('ParticleEditor2.ui')
@@ -119,9 +121,36 @@ class ParticleEditor( AssetEditorModule ):
 		
 		self.container.setDocumentName( node.getNodePath() )
 		self.editingAsset  = node
+
+		self.canvas.makeCurrent()
 		self.editingConfig = self.canvas.safeCallMethod( 'preview', 'open', node.getPath() )
+		state = self.editingConfig.states[ 1 ]
+		if state:
+			self.changeState( state )
 		self.tree.rebuild()
 		self.tree.setAllExpanded( True )
+
+	def changeState( self, state ):
+		self.editingState = state
+
+		self.window.textScriptRender.setPlainText( state.renderScript )
+		self.window.textScriptInit.setPlainText( state.initScript )
+
+		self.refreshScriptTitle()
+
+	def changeSelection( self, selection ):
+		self.propEditor.setTarget( selection )
+		self.canvas.safeCallMethod( 'preview', 'changeSelection', selection )
+
+
+	def refreshScriptTitle( self ):
+		state = self.editingState
+		if not state: return
+		tabParent = self.window.tabScripts
+		idx = tabParent.indexOf( self.window.tabInit )
+		tabParent.setTabText( idx, 'Init Script <%s>' % state.name )
+		idx = tabParent.indexOf( self.window.tabRender )
+		tabParent.setTabText( idx, 'Render Script <%s>' % state.name )
 
 	def onScriptModified( self ):
 		pass
@@ -129,6 +158,21 @@ class ParticleEditor( AssetEditorModule ):
 	def onPropertyChanged( self, obj, field, value ):
 		if field == 'name':
 			self.tree.refreshNodeContent( obj )
+			if obj == self.editingState:
+				self.refreshScriptTitle()
+		else:
+			self.canvas.safeCallMethod( 'preview', 'update', obj, field )
+
+	def onTool( self, tool ):
+		if tool.name == 'update':
+			if self.editingAsset:				
+				self.canvas.safeCallMethod( 'preview', 'rebuildSystem' )			
+		elif tool.name == 'add_state':
+			pass
+		elif tool.name == 'add_emitter':
+			pass
+		elif tool.name == 'remove':
+			pass
 
 ##----------------------------------------------------------------##
 class ParticleTreeWidget( GenericTreeWidget ):
@@ -203,16 +247,21 @@ class ParticleTreeWidget( GenericTreeWidget ):
 		
 	def onItemSelectionChanged(self):
 		for selection in self.getSelection():
-			self.module.propEditor.setTarget( selection )
+			self.module.changeSelection( selection )			
 			break
 
 	def onItemChanged( self, item, col ):
 		node = self.getNodeByItem( item )
 		# app.getModule('layer_manager').changeLayerName( layer, item.text(0) )
 
-	def onItemActivated( self, item, col ):
-		node = self.getNodeByItem( item )
-		self.module.canvas.safeCallMethod( 'preview', 'activateItem', node )
+	# def onItemActivated( self, item, col ):
+	# 	node = self.getNodeByItem( item )
+	# 	if isinstance( node, _LuaObject ):
+	# 		clas = node.getClassName( node )
+	# 		if clas == 'ParticleStateConfig':
+	# 			self.module.changeState( node )
+	# 		elif clas == 'ParticleEmitterConfig':
+	# 			self.module.canvas.safeCallMethod( 'preview', 'activateEmitter', node )
 ##----------------------------------------------------------------##
 
 ##----------------------------------------------------------------##

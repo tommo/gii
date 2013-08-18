@@ -53,9 +53,9 @@ end
 
 function CanvasNavigate:onScroll( x, y )
 	if y > 0 then
-		self:seekZoom( self.zoom * 2, 0.1 )
+		self:setZoom( self.zoom * 2 )
 	else
-		self:seekZoom( self.zoom / 2, 0.1 )
+		self:setZoom( self.zoom / 2 )
 	end
 end
 

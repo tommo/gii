@@ -79,7 +79,7 @@ class FloatFieldEditor( FieldEditor ):
 			)
 		
 		self.spinBox.setSingleStep( 
-			self.getOption( 'step', 1 )
+			self.getOption( 'step', 0.1 )
 			)
 		
 		if self.getOption( 'readonly', False):
