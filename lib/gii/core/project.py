@@ -138,11 +138,20 @@ class Project(object):
 		info = Project.findProject( path )
 		if info:
 			raise ProjectException( 'Gii project already initialized:' + info['path'] )
-
+		#
 		path = os.path.realpath(path)
 		if not os.path.isdir(path):
 			raise ProjectException('%s is not a valid path' % path)
 		self._initPath( path )
+		#
+		logging.info( 'copy template contents' )
+		from MainModulePath import getMainModulePath
+		import shutil
+		def ignore( src, names ):
+			return ['.DS_Store']
+		shutil.copytree( getMainModulePath('template/host'), self.getPath('host'), ignore )
+		shutil.copy( getMainModulePath('template/.gitignore'), self.getPath() )
+		#
 		self._affirmDirectories()
 
 		try:

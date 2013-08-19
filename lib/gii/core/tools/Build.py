@@ -14,16 +14,20 @@ def run( **option ):
 
 	if option.get( 'verbose', False ):
 		arglist.append( '-v' )
-		
-	if option.get( 'clean', False ):
+	
+	if option.get( 'configure', False ):
+		arglist.append( 'configure' )
+
+	elif option.get( 'clean', False ):
 		arglist.append( 'clean' )
+	
 	else:
 		arglist.append( 'build' )
 		arglist.append( 'install' )
 
 	targets = option.get( 'targets', [] )
 	#todo, targets
-
+	print arglist
 	try:
 		code = subprocess.call( arglist )
 	except Exception, e:

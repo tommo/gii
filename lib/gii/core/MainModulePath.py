@@ -5,7 +5,7 @@ import sys
 def isPythonFrozen():
 	return hasattr(sys, "frozen")
 
-def getMainModulePath():
+def _getMainModulePath():
 		if isPythonFrozen():
 			return os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding( )))
 		if __name__ == 'main':
@@ -17,3 +17,7 @@ def getMainModulePath():
 			return os.path.dirname( mainfile )
 
 
+def getMainModulePath( path = None ):
+	base = _getMainModulePath()
+	if not path: return base
+	return base + '/' + path

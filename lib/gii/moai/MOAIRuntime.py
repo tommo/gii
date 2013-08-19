@@ -76,9 +76,9 @@ class MOAIRuntime( EditorModule ):
 		#inject python env
 		lua = aku.getLuaRuntime()
 		_G._setTarget( lua.globals() )
-		_G['GII_PYTHON_BRIDGE']        = bridge
-		_G['GII_DATA_PATH']            = self.getApp().getPath('data')
-		_G['GII_PROJECT_SCRIPT_PATH']  = self.getProject().getScriptPath()
+		_G['GII_PYTHON_BRIDGE']            = bridge
+		_G['GII_DATA_PATH']                = self.getApp().getPath('data')
+		_G['GII_PROJECT_SCRIPT_PATH']      = self.getProject().getScriptPath()
 		_G['GII_PROJECT_SCRIPT_LIB_PATH']  = self.getProject().getScriptLibPath()
 		logging.info( 'loading gii lua runtime' )
 
@@ -290,9 +290,9 @@ class MOAIRuntime( EditorModule ):
 		self.initContext()
 		self.setWorkingDirectory( self.getProject().getPath() )
 		self.initGLContext()
-		scriptInit = self.getProject().getScriptPath( 'init.lua' )
-		if os.path.exists( scriptInit ):
-			getAKU().runScript( scriptInit )
+		# scriptInit = self.getProject().getScriptPath( 'init.lua' )
+		# if os.path.exists( scriptInit ):
+		# 	getAKU().runScript( scriptInit )
 
 	def onUnload(self):
 		self.cleanLuaReferences()

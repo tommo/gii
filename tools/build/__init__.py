@@ -16,6 +16,13 @@ cli.add_argument( 'targets',
 	default = 'all'
 	)
 
+cli.add_argument( '--configure', 
+	dest   = 'configure',
+	help   = 'Configure waf buildtool',
+	action = 'store_true',
+	default = False
+	)
+
 cli.add_argument( '--clean', 
 	dest   = 'clean',
 	help   = 'Clean build files',
@@ -34,9 +41,7 @@ def main( argv ):
 	app.openProject()
 	args = cli.parse_args( argv[1:] )		
 	code = Build.run( 
-		clean   = args.clean,
-		targets = args.targets,
-		verbose = args.verbose
+		**vars( args )		
 		)
 	exit( code )
 	

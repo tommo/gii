@@ -210,7 +210,6 @@ cdef class AKU:
 		return self.lua.eval(text)
 
 	def onOpenWindow(self, title, width, height):
-		# print('open window', title, width, height)
 		if self._funcOpenWindow:
 			self._funcOpenWindow(title, width, height)
 

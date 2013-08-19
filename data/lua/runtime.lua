@@ -10,8 +10,6 @@ GII_VERSION_REV   = 0
 --Setup package path
 --------------------------------------------------------------------
 package.path = package.path 
-	.. ( ';' .. GII_PROJECT_SCRIPT_PATH .. '/?.lua' )
-	.. ( ';' .. GII_PROJECT_SCRIPT_PATH .. '/?/init.lua' )
 	.. ( ';' .. GII_PROJECT_SCRIPT_LIB_PATH .. '/?.lua' )
 	.. ( ';' .. GII_PROJECT_SCRIPT_LIB_PATH .. '/?/init.lua' )
 

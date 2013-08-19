@@ -64,7 +64,7 @@ class MockBridge( EditorModule ):
 			"layers" : [
 				{ "name" : "default",
 					"sort" : "priority_ascending",
-					"clear": false
+					"clear": False
 				 },
 			]
 		}
@@ -75,14 +75,17 @@ class MockBridge( EditorModule ):
 
 	def onStop( self ):
 		game = _MOCK.game
-		game.saveConfig( game, self.configPath )
+		#game.saveConfig( game, self.configPath )
 
 	def initMockGame( self ):
+		_G.requireGameModule( 'init' )
 		_MOCK.init( self.configPath, True )
+		_G.reloadGameModule( 'ai.deepblue' )
 
 	def setupLuaModule( self ):
 		self.runtime.runScript( self.getModulePath( 'MockBridge.lua' ) )
 		self.runtime.runScript( self.getModulePath( 'MOAIModels.lua' ) )
+		self.runtime.runScript( self.getModulePath( 'LuaModule.lua' ) )
 		#TODO: use lua to handle editor modules
 		self.runtime.runScript( self.getModulePath( 'EditorCanvasScene.lua' ) )
 		self.runtime.runScript( self.getModulePath( 'EditorCanvasControls.lua' ) )

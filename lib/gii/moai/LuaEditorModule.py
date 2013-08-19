@@ -16,10 +16,10 @@ def wrapLuaFunc(func):
 			print(e) #TODO
 	return caller
 
-class LuaModuleContainer(Module):
-	"""docstring for LuaModuleContainer"""
+##----------------------------------------------------------------##
+class LuaEditorModuleContainer(EditorModule):
 	def __init__(self, setting):
-		super(LuaModuleContainer, self).__init__()
+		super(LuaEditorModuleContainer, self).__init__()
 
 		self.name       = setting['name']
 		self.dependency = setting['dependency'] or ['moai']

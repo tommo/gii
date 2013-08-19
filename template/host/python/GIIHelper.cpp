@@ -8,6 +8,12 @@ int GIIHelper::_stepSim( lua_State *L){
 	return 0;
 }
 
+int GIIHelper::_updateInput( lua_State *L){
+	MOAILuaState state (L);
+	GIIHelper::Get().updateInput();
+	return 0;
+}
+
 int GIIHelper::_setBufferSize( lua_State *L){
 	MOAILuaState state (L);
 	if ( !state.CheckParams ( 1, "NN" )) return 0;
@@ -27,12 +33,25 @@ int GIIHelper::_renderFrameBuffer( lua_State *L ){
 	return 0;
 }
 
+int GIIHelper::_setVertexTransform( lua_State *L){
+	MOAILuaState state (L);
+	if ( !state.CheckParams ( 1, "U" )) return 0;
+	MOAITransform* trans = state.GetLuaObject< MOAITransform >(1, true);
+	if ( trans ) {
+		MOAIGfxDevice::Get().SetVertexTransform( MOAIGfxDevice::VTX_WORLD_TRANSFORM, trans->GetLocalToWorldMtx() );
+	}
+	return 0;
+}
+
 void GIIHelper::stepSim( double step ){
 	MOAIInputMgr::Get ().Update ();
 	MOAIActionMgr::Get ().Update (( float )step );		
 	MOAINodeMgr::Get ().Update ();
 }
 
+void GIIHelper::updateInput(){
+	MOAIInputMgr::Get ().Update ();
+}
 
 GIIHelper::GIIHelper(){
 	RTTI_BEGIN
@@ -47,6 +66,7 @@ void GIIHelper::RegisterLuaClass(MOAILuaState &state){
 		{ "stepSim",             _stepSim },
 		{ "setBufferSize",       _setBufferSize },
 		{ "renderFrameBuffer",   _renderFrameBuffer },
+		{ "setVertexTransform",  _setVertexTransform },
 		{ NULL, NULL }
 	};
 
