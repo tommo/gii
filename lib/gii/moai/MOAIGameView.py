@@ -89,9 +89,8 @@ class MOAIGameView( QtEditorModule ):
 	def onLoad(self):
 		self.setupMainWindow()
 
-		fps = 60
 		self.canvas = MOAIGameViewCanvas( self.mainWindow ) 
-		self.canvas.startRefreshTimer(fps)
+		self.canvas.startRefreshTimer()
 		self.paused = True
 		self.mainWindow.setCentralWidget( self.canvas )
 		
@@ -140,6 +139,7 @@ class MOAIGameView( QtEditorModule ):
 		self.mainWindow.hide()
 
 	def startScript( self, script = None ):
+		logging.info('starting script')
 		self.paused = False
 		self.updateTimer = self.mainWindow.startTimer( fps, self.updateView)
 		if not script:

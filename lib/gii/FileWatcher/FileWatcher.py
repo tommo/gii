@@ -21,18 +21,18 @@ class ModuleFileWatcher( EditorModule ):
 	def onLoad(self):		
 		self.observer=Observer()
 		self.observer.start()
-
-		self.assetWatcher=self.startWatch(
-			self.getProject().getAssetPath(),
-			ignorePatterns = ['*/.git','*/.*','*/_gii']
-		)
-
+		
 		signals.connect( 'file.moved',    self.onFileMoved )
 		signals.connect( 'file.added',    self.onFileCreated )
 		signals.connect( 'file.removed',  self.onFileDeleted )
 		signals.connect( 'file.modified', self.onFileModified )
 		
-
+	def onStart( self ):
+		self.assetWatcher=self.startWatch(
+			self.getProject().getAssetPath(),
+			ignorePatterns = ['*/.git','*/.*','*/_gii']
+		)
+		
 	def startWatch(self, path, **options):
 		path=os.path.realpath(path)
 		if self.watches.get(path):

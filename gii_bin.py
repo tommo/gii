@@ -31,9 +31,22 @@ sys.path.insert( 0, giipath )
 import gii_cfg
 import gii
 ##----------------------------------------------------------------##
+DO_PROFILE = False
 
 def main():
-	gii.startup()
+ 	if DO_PROFILE:
+		import cProfile, pstats, io
+		pr = cProfile.Profile()
+		pr.enable()
+
+		gii.startup()
+
+		pr.disable()
+		ps = pstats.Stats(pr)
+		ps.sort_stats( 'calls', 'time' )
+		ps.print_stats()
+	else:
+		gii.startup()
 
 if __name__ == '__main__':
 	main()

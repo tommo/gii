@@ -67,8 +67,8 @@ def checkSingleInstance(PORT=61957):
         logging.warn( "running instance detected" )
         sys.exit()
     except socket.error:
-        pass
         server = start_server(HOST, PORT)
+        
     return True
 
 def setRemoteArgumentCallback(callback):

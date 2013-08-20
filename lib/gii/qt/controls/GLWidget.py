@@ -2,6 +2,7 @@ from PyQt4 import QtCore, QtGui, QtOpenGL
 
 class GLWidget(QtOpenGL.QGLWidget):
 	sharedWidget = None
+
 	@staticmethod
 	def getSharedWidget():
 		if not GLWidget.sharedWidget:
@@ -16,7 +17,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 			hiddenWindow = QtOpenGL.QGLWidget( QtOpenGL.QGLContext(fmt, None) )
 			GLWidget.sharedWidget = hiddenWindow
 			hiddenWindow.makeCurrent()
-
+	
 		return GLWidget.sharedWidget
 
 	def __init__(self,parent=None):
@@ -29,37 +30,40 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.pendingRefresh = False
 
 		self.refreshTimer   = QtCore.QTimer(self)
+		self.refreshTimer.setSingleShot( True )
 		self.refreshTimer.timeout.connect(self.onRefreshTimer)
 		self.setMouseTracking(True)
 
-	def startRefreshTimer(self,fps=60):
-		self.refreshTimer.start(1000/fps)
+	def startRefreshTimer( self, fps = 60 ):
+		# self.refreshTimer.start( 1000/fps )
+		self.allowRefresh = True
+		self.refreshTimer.setInterval( 2 )
 
 	def stopRefreshTimer(self):
-		self.allowRefresh=False
+		self.allowRefresh = False
 		self.refreshTimer.stop()
 
 	def forceUpdateGL(self):
-		self.allowNextRefresh()
-		self.updateGL()
-
-	def allowNextRefresh(self):
 		self.allowRefresh=True
+		self.refreshTimer.stop()
+		self.updateGL()
 
 	def minimumSizeHint(self):
 		return QtCore.QSize(50, 50)
 
 	def onRefreshTimer(self): #auto render if has pending render
-		self.allowNextRefresh()
 		if self.pendingRefresh:
+			self.pendingRefresh = False
+			self.allowRefresh = True
 			self.updateGL()
+		self.allowRefresh = True
 
 	def paintGL( self ):
 		if not self.allowRefresh:
 			self.pendingRefresh = True
 			return
-		self.allowRefresh     = False
-		self.pendingRefresh   = False
+		self.allowRefresh = False
+		self.refreshTimer.start()
 		self.onDraw()
 
 	def onDraw(self):

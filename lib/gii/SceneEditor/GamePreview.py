@@ -68,9 +68,8 @@ class GamePreview( SceneEditorModule ):
 			'GamePreview',
 			title = 'Game Preview',
 			)
-		fps = 60
 		self.canvas = GamePreviewCanvas( self.window ) 
-		self.canvas.startRefreshTimer(fps)
+		self.canvas.startRefreshTimer()
 		self.paused = True
 		self.window.setCentralWidget( self.canvas )
 		

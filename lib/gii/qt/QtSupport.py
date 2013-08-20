@@ -21,7 +21,7 @@ class QtSupportEventFilter(QObject):
 			signals.emitNow('app.activate')
 		elif e == QEvent.ApplicationDeactivate:
 			signals.emitNow('app.deactivate')		
-		return QObject.eventFilter(self, obj,event)
+		return QObject.eventFilter( self, obj, event )
 
 ##----------------------------------------------------------------##
 class QtSupport( QtEditorModule ):
@@ -111,7 +111,7 @@ class QtSupport( QtEditorModule ):
 
 		eventFilter = QtSupportEventFilter( self.qtApp )
 		eventFilter.app = self
-		self.qtApp.installEventFilter(eventFilter)
+		# self.qtApp.installEventFilter(eventFilter)
 		self.setupStyle()
 		
 		self.setupMainWindow()		
@@ -121,7 +121,7 @@ class QtSupport( QtEditorModule ):
 		return True
 
 	def update( self ):
-		self.qtApp.processEvents( QEventLoop.AllEvents, 1 )
+		self.qtApp.processEvents( QEventLoop.AllEvents )
 	
 	def getMainWindow( self ):
 		return self.mainWindow
@@ -131,7 +131,7 @@ class QtSupport( QtEditorModule ):
 	
 	def onStart( self ):		
 		self.restoreWindowState( self.mainWindow )
-		self.qtApp.processEvents( QEventLoop.AllEvents, 1 )
+		self.qtApp.processEvents( QEventLoop.AllEvents )
 
 	def onStop( self ):
 		self.saveWindowState( self.mainWindow )

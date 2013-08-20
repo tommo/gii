@@ -80,7 +80,7 @@ class MainWindow(QtGui.QMainWindow):
 	def startTimer(self, fps, trigger):
 		assert(hasattr(trigger,'__call__'))
 		interval = 1000/fps
-		timer=QtCore.QTimer(self)
+		timer = QtCore.QTimer(self)
 		timer.timeout.connect(trigger)
 		timer.start(interval)
 		return timer

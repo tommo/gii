@@ -272,7 +272,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 
 			self.delegate.safeCall( 'onLoad' )
 			self.resizeGL(self.width(), self.height())
-			self.startRefreshTimer(60)
+			self.startRefreshTimer()
 			self.updateCanvas()
 
 	def safeCall(self, method, *args):		 
@@ -299,7 +299,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		runtime.manualRenderAll()
 		self.delegate.postDraw()
 
-	def updateCanvas( self, forced = True ):
+	def updateCanvas( self, forced = False ):
 		step    = self.updateStep
 		runtime = self.runtime
 		runtime.setBufferSize( self.viewWidth, self.viewHeight )
