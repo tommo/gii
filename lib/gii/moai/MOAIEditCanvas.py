@@ -294,7 +294,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 
 	def onDraw(self):
 		runtime = self.runtime
-		runtime.setBufferSize(self.viewWidth,self.viewHeight)
+		runtime.setBufferSize( self.viewWidth, self.viewHeight )
 		self.makeCurrent()
 		runtime.manualRenderAll()
 		self.delegate.postDraw()

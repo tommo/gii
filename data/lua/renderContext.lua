@@ -41,7 +41,7 @@ function removeContextChangeListener( f )
 	ContextChangeListeners[ f ] = nil
 end
 
-function changeRenderContext(key, w, h)	
+function changeRenderContext( key, w, h )
 	if currentContextKey == key then return end
 
 	local context = renderContextTable[key]
@@ -63,10 +63,7 @@ function changeRenderContext(key, w, h)
 		currentContext.bufferTable       = bufferTable
 		currentContext.renderTableMap    = renderTableMap
 		currentContext.deviceRenderTable = deviceBuffer:getRenderTable()
-		currentContext.actionRoot        = MOAIActionMgr.getRoot()
-		currentContext.w = w
-		currentContext.h = h
-
+		currentContext.actionRoot        = MOAIActionMgr.getRoot()		
 		-- local res = gii.bridge.GLHelper.getClearColor()
 		-- currentContext.clearColor=gii.listToTable(res)
 	end
@@ -75,6 +72,9 @@ function changeRenderContext(key, w, h)
 	
 	currentContext    = context
 	currentContextKey = key
+	currentContext.w  = w
+	currentContext.h  = h
+
 	-- local r,g,b,a=unpack(currentContext.clearColor)
 	-- MOAIGfxDevice.getFrameBuffer():setClearColor(r,g,b,a)
 	for i, p in ipairs( currentContext.renderTableMap ) do
