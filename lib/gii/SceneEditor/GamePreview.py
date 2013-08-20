@@ -126,7 +126,7 @@ class GamePreview( SceneEditorModule ):
 		before  = time.clock()
 		runtime = self.getRuntime()
 		runtime.setBufferSize( self.viewWidth, self.viewHeight )
-		runtime.changeRenderContext('game')
+		runtime.changeRenderContext( 'game', self.viewWidth, self.viewHeight )
 		
 		if runtime.updateAKU():
 			used=time.clock()-before
@@ -142,7 +142,7 @@ class GamePreview( SceneEditorModule ):
 		before  = time.clock()
 		runtime = self.getRuntime()
 		runtime.setBufferSize(self.viewWidth,self.viewHeight)
-		runtime.changeRenderContext('game')
+		runtime.changeRenderContext( 'game', self.viewWidth, self.viewHeight )
 
 		if runtime.renderAKU():
 			used=time.clock()-before

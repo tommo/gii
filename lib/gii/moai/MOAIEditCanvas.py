@@ -290,7 +290,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		return self.safeCall( method, *args )
 
 	def makeCurrent( self ):
-		self.runtime.changeRenderContext( self.contextName )
+		self.runtime.changeRenderContext( self.contextName, self.viewHeight, self.viewHeight )
 
 	def onDraw(self):
 		runtime = self.runtime

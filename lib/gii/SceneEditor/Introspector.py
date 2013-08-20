@@ -74,6 +74,7 @@ class SceneIntrospector( SceneEditorModule ):
 		#first selection only?
 		self.activeInstance.setTarget(target)
 
+
 ##----------------------------------------------------------------##
 class IntrospectorInstance(object):
 	def __init__(self, id):

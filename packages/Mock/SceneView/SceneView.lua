@@ -112,12 +112,15 @@ end
 
 
 --------------------------------------------------------------------
-local view = false
+view = false
+
 function openScene( scene )
 	local ctx = gii.getCurrentRenderContext()
 	view = scene:addEntity( SceneView() )
-	local scene = mock.loadAsset( path, { scene = scn } )
-	-- scene.timer:attach( ctx.actionRoot )
+end
+
+function closeScene()
+	view = false
 end
 
 function onResize( w, h )

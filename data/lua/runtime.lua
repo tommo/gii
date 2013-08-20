@@ -20,6 +20,11 @@ function doRuntimeScript(name)
 	return dofile(path)
 end
 
+function lupaErrFunc( msg )
+	return msg .. '\n' ..debug.traceback()
+end
+
+python.seterrfunc( lupaErrFunc )
 ----------------------------
 doRuntimeScript 'MOAInterfaces.lua' --REMOVE THIS?
 

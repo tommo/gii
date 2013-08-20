@@ -236,6 +236,21 @@ class ModelBridge(object):
 ModelBridge()
 
 ##----------------------------------------------------------------##
+class SafeDict(object):
+	def __init__( self, dict ):
+		self.__dict = dict
+
+	def __setitem__( self, key, value ):
+		self.__dict[key] = value
+
+	def __getitem__( self, key ):
+		return self.__dict.get( key, None )
+
+	def __iter__( self ):
+		return self.__dict
+
+	def values( self ):
+		return self.__dict.values()
 
 def registerLuaEditorCommand( fullname, cmdCreator ):
 	class LuaEditorCommand( EditorCommand ):	
@@ -245,7 +260,7 @@ def registerLuaEditorCommand( fullname, cmdCreator ):
 
 		def init( self, **kwargs ):
 			cmd = self.luaCmd
-			return cmd.init( cmd, kwargs )
+			return cmd.init( cmd, SafeDict( kwargs ) )
 
 		def redo( self ):
 			cmd = self.luaCmd

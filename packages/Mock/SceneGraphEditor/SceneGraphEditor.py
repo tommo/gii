@@ -23,6 +23,8 @@ def getModulePath( path ):
 class SceneGraphEditor( SceneEditorModule ):
 	def __init__(self):
 		super( SceneGraphEditor, self ).__init__()
+		self.activeScene     = None
+		self.activeSceneNode = None
 
 	def getName( self ):
 		return 'scenegraph_editor'
@@ -43,9 +45,13 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		#Components
 		self.tree = self.container.addWidget( SceneGraphTreeWidget() )
+		self.tree.module = self
 		self.tool = self.addToolBar( 'scene_graph', self.container.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( getModulePath( 'SceneGraphEditor.lua' ) )
+
+		#menu
+		self.addMenuItem( 'main/scene/close_scene', dict( label = 'Close' ) )
 
 		#Toolbars
 		self.addTool( 'scene_graph/add_sibling', label = '+obj' )
@@ -58,24 +64,23 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onStart( self ):
 		pass
 
-	def addEntity( self, entity, scene ):
-		if entity['__editor_entity']: return
-		self.tree.addNode( entity )
-
-	def removeEntity( self, entity, scene ):
-		if entity['__editor_entity']: return
-		self.tree.removeNode( entity )
-
-	def addScene( self, scn ):
-		self.tree.addNode( scn )
-
-	def removeScene( self, scene ):
-		self.tree.removeNode( scene )
-
 	def openScene( self, node ):
+		if self.activeSceneNode == node:			
+			if self.getModule('scene_view'):
+				self.getModule('scene_view').setFocus()
+			return
 		signals.emitNow( 'scene.pre_open', node )
-		scene = self.delegate.safeCall( 'openScene', node.getPath() )
+		scene = self.delegate.safeCallMethod( 'editor', 'openScene', node.getPath() )
 		signals.emit( 'scene.open', node, scene )
+		self.activeScene     = scene
+		self.activeSceneNode = node
+		self.tree.rebuild()
+
+	def closeScene( self ):
+		signals.emitNow( 'scene.close', self.activeSceneNode )
+		scene = self.delegate.safeCallMethod( 'editor', 'closeScene' )
+		self.activeScene     = None
+		self.activeSceneNode = None
 
 	def onMoaiClean( self ):
 		self.tree.clear()
@@ -84,9 +89,14 @@ class SceneGraphEditor( SceneEditorModule ):
 		name = tool.name
 		if name == 'add_sibling':
 			self.doCommand( 'scene_editor/create_entity' )
-			
 		elif name == 'add_child':
 			pass
+
+	def onMenu( self, menu ):
+		name = menu.name
+		if name == 'close_scene':
+			self.closeScene()
+
 
 	def onSelectionChanged(self, selection):
 		self.tree.blockSignals( True )
@@ -102,7 +112,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		return [('Name',-1)]
 
 	def getRootNode( self ):
-		return _MOCK.game
+		return self.module.activeScene
 
 	def saveTreeStates( self ):
 		pass
@@ -111,37 +121,27 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		pass
 
 	def getNodeParent( self, node ): # reimplemnt for target node	
-		if isMockInstance( node, 'Game' ):
-			return None
-
 		if isMockInstance( node, 'Scene' ):
-			return _MOCK.game
+			return None
 
 		if not isMockInstance( node, 'Entity' ):
 			return None
 		#Entity
 		p = node.parent
-		if p: return p
+		if p and not p.__editor_entity : return p
 		return node.scene
 
 	def getNodeChildren( self, node ):
-		if isMockInstance( node, 'Game' ):
-			output = []
-			for scene in node.scenes.values():
-				if not scene['__editor_scene']:
-					output.append( scene )
-			return output
-
 		if isMockInstance( node, 'Scene' ):
 			output = []
 			for ent in node.entities:
-				if not ent['__editor_entity'] and not ent.parent:
+				if not ent.__editor_entity and not ent.parent:
 					output.append( ent )
 			return output
 
 		output = []
 		for ent in node.children:
-			if not ent['__editor_entity']:
+			if not ent.__editor_entity:
 				output.append( ent )
 		return output
 

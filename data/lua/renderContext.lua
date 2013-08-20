@@ -64,6 +64,9 @@ function changeRenderContext(key, w, h)
 		currentContext.renderTableMap    = renderTableMap
 		currentContext.deviceRenderTable = deviceBuffer:getRenderTable()
 		currentContext.actionRoot        = MOAIActionMgr.getRoot()
+		currentContext.w = w
+		currentContext.h = h
+
 		-- local res = gii.bridge.GLHelper.getClearColor()
 		-- currentContext.clearColor=gii.listToTable(res)
 	end
@@ -84,14 +87,6 @@ function changeRenderContext(key, w, h)
 	MOAIActionMgr.setRoot        ( currentContext.actionRoot )
 end
 
-
--- function setCurrentRenderContextSize(w,h)
--- 	local context=currentContext
--- 	if context then
--- 		context.w=w
--- 		context.h=h
--- 	end
--- end
 
 function getCurrentRenderContextKey()
 	return currentContextKey

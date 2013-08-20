@@ -156,7 +156,7 @@ function EditorCommand.register( clas, name )
 	gii.registerLuaEditorCommand( name, clas )
 end
 
-function EditorCommand:init()
+function EditorCommand:init( option )
 end
 
 function EditorCommand:redo()

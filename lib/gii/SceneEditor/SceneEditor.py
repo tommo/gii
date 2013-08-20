@@ -51,6 +51,9 @@ class SceneEditor( QtEditorModule ):
 		self.addTool( 'scene/run',    label = 'Run' )
 		self.addTool( 'scene/deploy', label = 'Deploy' )
 
+		#menu
+		self.addMenu( 'main/scene' )
+
 		signals.connect( 'app.start', self.postStart )
 
 		return True

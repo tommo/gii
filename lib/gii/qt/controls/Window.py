@@ -212,8 +212,11 @@ class MainWindow(QtGui.QMainWindow):
 class SubWindowMixin:	
 	def setDocumentName( self, name ):
 		self.documentName = name
-		title = '%s - %s' % ( self.documentName, self.titleBase )
-		self.setWindowTitle( title )
+		if name:
+			title = '%s - %s' % ( self.documentName, self.titleBase )
+			self.setWindowTitle( title )
+		else:
+			self.setWindowTitle( self.titleBase )
 		
 	def setupUi(self):
 		self.container = self.createContainer()

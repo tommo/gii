@@ -50,9 +50,11 @@ end
 CLASS: EditorCanvasCamera ( mock.Camera )
 function EditorCanvasCamera:__init( env )	
 	self.__editor_entity = true
-	self.context = gii.getCurrentRenderContextKey()
-	self.screenWidth   = 100
-	self.screenHeight	 = 100
+	context = gii.getCurrentRenderContext()
+
+	self.context = context.key
+	self.screenWidth   = context.w or 100
+	self.screenHeight	 = context.h or 100
 
 	self.env = env
 

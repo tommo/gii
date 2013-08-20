@@ -43,6 +43,7 @@ class SceneView( SceneEditorModule ):
 
 		signals.connect( 'entity.modified', self.onEntityModified )
 		signals.connect( 'scene.open', self.onSceneOpen )
+		signals.connect( 'scene.close', self.onSceneClose )
 
 	def onStart( self ):
 		self.canvas.makeCurrent()
@@ -64,11 +65,16 @@ class SceneView( SceneEditorModule ):
 
 	def onSceneOpen( self, node, scene ):
 		self.window.setDocumentName( node.getPath() )
-		
+		self.canvas.show()
 		self.canvas.makeCurrent()
 		self.canvas.safeCall( 'openScene', scene )
 		self.scheduleUpdate()
 		self.setFocus()
+
+	def onSceneClose( self, node ):
+		self.window.setDocumentName( None )
+		self.canvas.hide()
+		self.canvas.safeCall( 'closeScene' )
 
 	def scheduleUpdate( self ):
 		self.updatePending = True

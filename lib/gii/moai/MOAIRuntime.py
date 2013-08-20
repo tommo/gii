@@ -146,11 +146,8 @@ class MOAIRuntime( EditorModule ):
 		if not self.GLContextReady: return
 		self.luaRuntime.manualRenderAll()
 
-	def changeRenderContext(self, s):
-		self.luaRuntime.changeRenderContext(s or False)
-
-	def setCurrentRenderContextSize(self, w, h):
-		self.luaRuntime.setCurrentRenderContextSize(w,h)
+	def changeRenderContext(self, contextId, w, h ):
+		self.luaRuntime.changeRenderContext( contextId or False, w or False, h or False )
 
 	def createRenderContext(self, s):
 		self.luaRuntime.createRenderContext(s)
