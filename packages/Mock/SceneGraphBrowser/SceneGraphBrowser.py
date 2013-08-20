@@ -43,8 +43,12 @@ class ModSceneGraphBrowser( SceneEditorModule ):
 
 		#Components
 		self.tree = self.container.addWidget( SceneGraphTreeWidget() )
+		self.tool = self.addToolBar( 'scene_graph', self.container.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( getModulePath( 'SceneGraphBrowser.lua' ) )
+
+		self.addTool( 'scene_graph/add_sibling', label = '+obj' )
+		self.addTool( 'scene_graph/add_child', label = '+child' )
 
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
@@ -69,6 +73,14 @@ class ModSceneGraphBrowser( SceneEditorModule ):
 
 	def onMoaiClean( self ):
 		self.tree.clear()
+
+	def onTool( self, tool ):
+		name = tool.name
+		if name == 'add_sibling':
+			self.doCommand( 'scene_editor/create_entity' )
+			
+		elif name == 'add_child':
+			pass
 
 	def onSelectionChanged(self, selection):
 		self.tree.blockSignals( True )

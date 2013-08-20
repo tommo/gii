@@ -13,6 +13,7 @@ from project        import Project
 from package        import PackageManager
 from MainModulePath import getMainModulePath
 from selection      import SelectionManager
+from Command        import EditorCommandRegistry
 
 from InstanceHelper import checkSingleInstance, setRemoteArgumentCallback
 
@@ -41,6 +42,7 @@ class EditorApp(object):
 		self.config        = {}
 		self.selectionManager = SelectionManager()
 		self.packageManager   = PackageManager()
+		self.commandRegistry  = EditorCommandRegistry()
 
 		signals.connect( 'module.register', self.onModuleRegister )
 
@@ -111,6 +113,15 @@ class EditorApp(object):
 
 	def affirmModule(self, name):
 		return EditorModuleManager.get().affirmModule( name )
+
+	def createCommandStack( self, stackName ):
+		return self.commandRegistry.createCommandStack( stackName )
+
+	def getCommandStack( self, stackName ):
+		return self.commandRegistry.getCommandStack( stackName )
+
+	def doCommand( self, fullname, *args, **kwargs ):
+		self.commandRegistry.doCommand( fullname, *args, **kwargs )
 
 	def getPath( self, path = None ):
 		if path:

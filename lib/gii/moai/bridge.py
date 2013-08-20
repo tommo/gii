@@ -234,3 +234,25 @@ class ModelBridge(object):
 
 
 ModelBridge()
+
+##----------------------------------------------------------------##
+
+def registerLuaEditorCommand( fullname, cmdCreator ):
+	class LuaEditorCommand( EditorCommand ):	
+		name = fullname
+		def __init__( self ):
+			self.luaCmd = cmdCreator()
+
+		def init( self, **kwargs ):
+			cmd = self.luaCmd
+			return cmd.init( cmd, kwargs )
+
+		def redo( self ):
+			cmd = self.luaCmd
+			return cmd.redo( cmd )
+
+		def undo( self ):
+			cmd = self.luaCmd
+			return cmd.undo( cmd )
+			
+	return LuaEditorCommand

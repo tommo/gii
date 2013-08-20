@@ -1,7 +1,7 @@
 import os
 import logging
 
-from gii.core        import app, signals
+from gii.core        import app, signals, EditorCommandStack
 from gii.qt.controls.Window import MainWindow
 from gii.qt.controls.Menu   import MenuManager
 from gii.qt.QtEditorModule  import QtEditorModule
@@ -42,6 +42,8 @@ class SceneEditor( QtEditorModule ):
 		self.mainWindow.setStatusBar(self.statusBar)
 
 	def onLoad( self ):
+		self.commands = self.createCommandStack( 'scene_editor' )
+
 		self.setupMainWindow()
 		self.containers  = {}
 		self.addTool( 'scene/run',    label = 'Run' )

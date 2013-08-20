@@ -1,5 +1,5 @@
 import TextAsset
-import ScriptAsset
+# import ScriptAsset
 
 import FolderCreator
 

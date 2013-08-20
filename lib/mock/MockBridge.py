@@ -59,7 +59,6 @@ class MockBridge( EditorModule ):
 			return
 		#create default config
 		defaultConfigData = {
-			
 			"asset_library": indexPath ,
 			"layers" : [
 				{ "name" : "default",
@@ -77,15 +76,11 @@ class MockBridge( EditorModule ):
 		game = _MOCK.game
 		#game.saveConfig( game, self.configPath )
 
-	def initMockGame( self ):
-		_G.requireGameModule( 'init' )
-		_MOCK.init( self.configPath, True )
-		_G.reloadGameModule( 'ai.deepblue' )
-
 	def setupLuaModule( self ):
 		self.runtime.runScript( self.getModulePath( 'MockBridge.lua' ) )
 		self.runtime.runScript( self.getModulePath( 'MOAIModels.lua' ) )
 		self.runtime.runScript( self.getModulePath( 'LuaModule.lua' ) )
+		self.runtime.runScript( self.getModulePath( 'Commands.lua' ) )
 		#TODO: use lua to handle editor modules
 		self.runtime.runScript( self.getModulePath( 'EditorCanvasScene.lua' ) )
 		self.runtime.runScript( self.getModulePath( 'EditorCanvasControls.lua' ) )
@@ -96,6 +91,10 @@ class MockBridge( EditorModule ):
 	def syncAssetLibrary(self):
 		#TODO:
 		pass
+
+	def initMockGame( self ):
+		_G.requireGameModule( 'init' )
+		_MOCK.init( self.configPath, True )
 
 	def onProjectLoaded(self,prj):
 		self.syncAssetLibrary()

@@ -25,6 +25,7 @@ from target         import Target, DeployManager
 from MainModulePath import getMainModulePath
 
 ##----------------------------------------------------------------##
+from Command        import EditorCommand, EditorCommandStack
 from EditorModule   import EditorModule
 from EditorApp      import app
 ##----------------------------------------------------------------##

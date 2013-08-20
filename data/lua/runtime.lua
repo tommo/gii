@@ -22,12 +22,12 @@ end
 
 ----------------------------
 doRuntimeScript 'MOAInterfaces.lua' --REMOVE THIS?
+
 ----------------------------
 doRuntimeScript	'bridge.lua'
-doRuntimeScript	'moduleBridge.lua'
--- doRuntimeScript	'model.lua'
 doRuntimeScript	'MOAIModels.lua'
 doRuntimeScript	'debugger.lua'
-doRuntimeScript	'renderContext.lua'
+
 ----------------------------
+doRuntimeScript	'renderContext.lua'
 doRuntimeScript	'editCanvas.lua'

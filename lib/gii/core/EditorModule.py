@@ -6,6 +6,7 @@ import os.path
 
 import signals
 from project import Project
+from Command import EditorCommandRegistry
 
 ##----------------------------------------------------------------##
 ## EDITORMODULE
@@ -38,6 +39,12 @@ class EditorModule( object ):
 
 	def getApp( self ):
 		return self._app
+
+	def doCommand( self, fullname, *args, **kwargs ):
+		self._app.doCommand( fullname, *args, **kwargs )
+
+	def createCommandStack( self, stackName ):
+		return self._app.createCommandStack( stackName )
 
 	def getProject( self ):
 		return Project.get()

@@ -33,7 +33,6 @@ class SceneView( SceneEditorModule ):
 		self.window = self.requestDocumentWindow(
 				title = 'Scene'
 			)
-		
 		self.canvas = self.window.addWidget( MOAIEditCanvas() )
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
 		self.updateTimer = self.window.startTimer( 60, self.onUpdateTimer )

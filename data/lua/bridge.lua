@@ -148,4 +148,7 @@ function manualRenderAll()
 end
 
 
--------------------------------------------
+--------------------------------------------------------------------
+-- Editor Command
+--------------------------------------------------------------------
+registerLuaEditorCommand = bridge.registerLuaEditorCommand

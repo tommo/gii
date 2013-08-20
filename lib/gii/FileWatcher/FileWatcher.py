@@ -24,13 +24,13 @@ class ModuleFileWatcher( EditorModule ):
 
 		self.assetWatcher=self.startWatch(
 			self.getProject().getAssetPath(),
-			ignorePatterns=['*/.git','*/.*','*/_gii']
+			ignorePatterns = ['*/.git','*/.*','*/_gii']
 		)
 
-		signals.connect('file.moved', self.onFileMoved)
-		signals.connect('file.added', self.onFileCreated)
-		signals.connect('file.modified', self.onFileModified)
-		signals.connect('file.removed', self.onFileDeleted)
+		signals.connect( 'file.moved',    self.onFileMoved )
+		signals.connect( 'file.added',    self.onFileCreated )
+		signals.connect( 'file.removed',  self.onFileDeleted )
+		signals.connect( 'file.modified', self.onFileModified )
 		
 
 	def startWatch(self, path, **options):
@@ -39,13 +39,16 @@ class ModuleFileWatcher( EditorModule ):
 			logging.warning( 'already watching: %s' % path )
 			return self.watches[path]
 		logging.info ( 'start watching: %s' % path )
-		handler=FileWatcherEventHandler(
-				options.get('patterns',None),
-				options.get('ignorePatterns',None),
-				options.get('ignoreDirectories',False),
-				options.get('caseSensitive',False)
+		
+		ignorePatterns = ['*/.git','*/.*','*/_gii'] + options.get('ignorePatterns',[])
+
+		handler = FileWatcherEventHandler(
+				options.get( 'patterns', None ),
+				ignorePatterns,
+				options.get( 'ignoreDirectories', False ),
+				options.get( 'caseSensitive', True )
 			)
-		watch=self.observer.schedule(handler, path, options.get('recursive',True))
+		watch=self.observer.schedule( handler, path, options.get( 'recursive', True ) )
 		self.watches[path]=watch
 		return watch
 
@@ -89,7 +92,7 @@ class ModuleFileWatcher( EditorModule ):
 class FileWatcherEventHandler(PatternMatchingEventHandler):
 	def on_moved(self, event):
 		super(FileWatcherEventHandler, self).on_moved(event)
-		signals.emit('file.moved', event.src_path, event.dest_path)
+		signals.emit('file.moved', event.src_path, event.dest_path)		
 
 		# what = 'directory' if event.is_directory else 'file'
 		# logging.info("Moved %s: from %s to %s", what, event.src_path,
