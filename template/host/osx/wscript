@@ -1,12 +1,21 @@
+def options( opt ):
+	pass
+	
 def configure( conf ):
-	print 'here'
+	pass
 
-def build( bld ):	
-	print bld.path
+def build( bld ):		
+	hostName = 'moai'
+	binPath = bld.env.GII_BINARY_PATH
+	import os.path
+	if not os.path.exists( binPath + '/osx' ):
+		os.mkdir( binPath + '/osx' )
+	output = binPath + '/osx'
 	LIBS_SYSTEM = [ 'System', 'crypto', 'ssl', 'objc', 'stdc++' ]
 	bld.program(
 		source   = 'ParticlePresets.cpp GlutHostMain.cpp GlutHost.cpp FolderWatcher-mac.mm',
-		target   = 'host',
+		target   = 'moai',
+		name     = 'host-osx',
 		use      = 'MOAI FMOD extension',
 
 		includes = '../extension',
@@ -28,4 +37,8 @@ def build( bld ):
 			'-DGLUTHOST_USE_FMOD_DESIGNER' 
 		],
 
+		install_path = output
 	)
+
+
+

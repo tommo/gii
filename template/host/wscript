@@ -9,21 +9,25 @@ out = '../bin/_build'
 
 def options( opt ):
 	opt.load( 'compiler_cxx compiler_c' )
+	opt.recurse( [ 'osx', 'python']  )
 
 def configure( conf ):
 	conf.load( 'compiler_cxx compiler_c' )
 	conf.env.ARCH         = [ 'i386' ]
-	conf.env.CXXFLAGS     = [ '-fno-rtti']
+	conf.env.CXXFLAGS     = [ '-fno-rtti', '-g' ]
 	conf.env.LINKFLAGS    = []
-	conf.recurse( 'osx' )
+	conf.recurse( [ 'osx', 'python']  )
 
 def build( bld ):
 	# bld( name = 'moai_include', export_includes = find_moai_includes() )
-	targets = [ 'osx' ]
+	targets = [ 'osx', 'python' ]
 	bld.recurse( 'extension' )
 	# TODO: variant
 	setup_moai_env( bld )
 	setup_fmod_env( bld )
+	
+	bld.env.GII_BINARY_PATH = bld.path.parent.abspath() + '/bin'
+
 	for target in targets:
 		bld.recurse( target )
 

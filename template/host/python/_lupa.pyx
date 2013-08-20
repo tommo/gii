@@ -32,6 +32,7 @@ except ImportError:
 
 DEF POBJECT = "POBJECT" # as used by LunaticPython
 DEF LUPACACHE = "__LUPA_CACHE__"
+DEF LUPAERRFUNC   = "__LUPA_ERRFUNC__"
 
 cdef class _LuaObject
 
@@ -284,6 +285,7 @@ cdef class LuaRuntime:
         self.register_py_object(b'builtins', b'builtins', builtins)
 
         return 0 # nothing left to return on the stack
+
 
 
 ################################################################################
@@ -909,18 +911,20 @@ cdef int py_to_lua(LuaRuntime runtime, lua_State *L, object o, bint withnone) ex
     cdef int type_flags = 0
 
     if o is None:
-        if withnone:
-            lua.lua_pushlstring(L, "Py_None", 7)
-            lua.lua_rawget(L, lua.LUA_REGISTRYINDEX)
-            if lua.lua_isnil(L, -1):
-                lua.lua_pop(L, 1)
-                return 0
-            pushed_values_count = 1
-        else:
-            # Not really needed, but this way we may check for errors
-            # with pushed_values_count == 0.
-            lua.lua_pushnil(L)
-            pushed_values_count = 1
+        lua.lua_pushnil(L)
+        pushed_values_count = 1 #only nil please
+        # if withnone:
+        #     lua.lua_pushlstring(L, "Py_None", 7)
+        #     lua.lua_rawget(L, lua.LUA_REGISTRYINDEX)
+        #     if lua.lua_isnil(L, -1):
+        #         lua.lua_pop(L, 1)
+        #         return 0
+        #     pushed_values_count = 1
+        # else:
+        #     # Not really needed, but this way we may check for errors
+        #     # with pushed_values_count == 0.
+        #     lua.lua_pushnil(L)
+        #     pushed_values_count = 1
     elif type(o) is bool:
         lua.lua_pushboolean(L, <bint>o)
         pushed_values_count = 1
@@ -1025,13 +1029,24 @@ cdef call_lua(LuaRuntime runtime, lua_State *L, tuple args):
 
 cdef object execute_lua_call(LuaRuntime runtime, lua_State *L, Py_ssize_t nargs):
     cdef int result_status
+    cdef int errIdx
     try:
         # call into Lua
         with nogil:
-            result_status = lua.lua_pcall(L, nargs, lua.LUA_MULTRET, 0)
+            errIdx = lua.lua_gettop( L ) - nargs;
+            lua.lua_getfield( L, lua.LUA_REGISTRYINDEX, LUPAERRFUNC )
+            if lua.lua_isnil( L, -1 ):
+                lua.lua_pop( L, 1 )
+                result_status = lua.lua_pcall( L, nargs, lua.LUA_MULTRET, 0 )
+            else:
+                lua.lua_insert( L, errIdx )
+                result_status = lua.lua_pcall( L, nargs, lua.LUA_MULTRET, errIdx )
+                lua.lua_remove( L, errIdx )
+
         runtime.reraise_on_exception()
         if result_status:
             raise_lua_error(runtime, L, result_status)
+            
         return unpack_lua_results(runtime, L)
     finally:
         lua.lua_settop(L, 0)
@@ -1321,6 +1336,12 @@ cdef int py_enumerate(lua_State* L) nogil:
         return lua.luaL_error(L, 'error creating an iterator with enumerate()')  # never returns!
     return result
 
+cdef int py_seterrfunc(lua_State* L) nogil:
+    if not lua.lua_isfunction( L, 1 ):
+        lua.luaL_argerror(L, 1, "lua function expected")
+    lua.lua_pushvalue( L, 1 )
+    lua.lua_setfield( L, lua.LUA_REGISTRYINDEX, LUPAERRFUNC )
+    return 0
 
 cdef int py_enumerate_with_gil(lua_State* L, py_object* py_obj, double start) with gil:
     cdef LuaRuntime runtime
@@ -1400,8 +1421,9 @@ cdef int py_iter_next_with_gil(lua_State* L, py_object* py_iter) with gil:
 cdef lua.luaL_Reg py_lib[7]
 py_lib[0] = lua.luaL_Reg(name = "as_attrgetter", func = <lua.lua_CFunction> py_as_attrgetter)
 py_lib[1] = lua.luaL_Reg(name = "as_itemgetter", func = <lua.lua_CFunction> py_as_itemgetter)
-py_lib[2] = lua.luaL_Reg(name = "as_function", func = <lua.lua_CFunction> py_as_function)
-py_lib[3] = lua.luaL_Reg(name = "iter", func = <lua.lua_CFunction> py_iter)
-py_lib[4] = lua.luaL_Reg(name = "iterex", func = <lua.lua_CFunction> py_iterex)
-py_lib[5] = lua.luaL_Reg(name = "enumerate", func = <lua.lua_CFunction> py_enumerate)
-py_lib[6] = lua.luaL_Reg(name = NULL, func = NULL)
+py_lib[2] = lua.luaL_Reg(name = "as_function",   func = <lua.lua_CFunction> py_as_function)
+py_lib[3] = lua.luaL_Reg(name = "iter",          func = <lua.lua_CFunction> py_iter)
+py_lib[4] = lua.luaL_Reg(name = "iterex",        func = <lua.lua_CFunction> py_iterex)
+py_lib[5] = lua.luaL_Reg(name = "enumerate",     func = <lua.lua_CFunction> py_enumerate)
+py_lib[5] = lua.luaL_Reg(name = "seterrfunc",    func = <lua.lua_CFunction> py_seterrfunc)
+py_lib[6] = lua.luaL_Reg(name = NULL,            func = NULL)
