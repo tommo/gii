@@ -20,12 +20,12 @@ def getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 
-class ModSceneGraphBrowser( SceneEditorModule ):
+class SceneGraphEdito( SceneEditorModule ):
 	def __init__(self):
-		super( ModSceneGraphBrowser, self ).__init__()
+		super( SceneGraphEdito, self ).__init__()
 
 	def getName( self ):
-		return 'scenegraph_browser'
+		return 'scenegraph_editor'
 
 	def getDependency( self ):
 		return [ 'scene_editor' ]
@@ -34,7 +34,7 @@ class ModSceneGraphBrowser( SceneEditorModule ):
 		#UI
 		sceneEditor = self.getModule( 'scene_editor' )
 		self.windowTitle = 'Scenegraph'
-		self.container = sceneEditor.requestDockWindow( 'SceneGraphBrowser',
+		self.container = sceneEditor.requestDockWindow( 'SceneGraphEditor',
 			title     = 'Scenegraph',
 			size      = (200,200),
 			minSize   = (200,200),
@@ -45,7 +45,7 @@ class ModSceneGraphBrowser( SceneEditorModule ):
 		self.tree = self.container.addWidget( SceneGraphTreeWidget() )
 		self.tool = self.addToolBar( 'scene_graph', self.container.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )
-		self.delegate.load( getModulePath( 'SceneGraphBrowser.lua' ) )
+		self.delegate.load( getModulePath( 'SceneGraphEditor.lua' ) )
 
 		self.addTool( 'scene_graph/add_sibling', label = '+obj' )
 		self.addTool( 'scene_graph/add_child', label = '+child' )
@@ -88,7 +88,6 @@ class ModSceneGraphBrowser( SceneEditorModule ):
 		for e in selection:
 			self.tree.selectNode( e, add = True)
 		self.tree.blockSignals( False )
-
 
 	
 ##----------------------------------------------------------------##
@@ -171,4 +170,4 @@ class SceneGraphTreeItem( QtGui.QTreeWidgetItem ):
 	# 	return node0.getName().lower() < node1.getName().lower()
 
 ##----------------------------------------------------------------##
-ModSceneGraphBrowser().register()
+SceneGraphEdito().register()

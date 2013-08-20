@@ -27,7 +27,7 @@ class SceneView( SceneEditorModule ):
 		return 'scene_view'
 
 	def getDependency( self ):
-		return [ 'mock', 'scene_editor' ]
+		return [ 'mock', 'scene_editor', 'scenegraph_editor' ]
 
 	def onLoad( self ):
 		self.window = self.requestDocumentWindow(
@@ -64,7 +64,7 @@ class SceneView( SceneEditorModule ):
 		self.canvas.makeCurrent()
 		self.canvas.safeCall( 'openScene', node.getPath() )
 		scene = self.canvas.safeCall( 'getScene' )
-		self.getModule( 'scenegraph_browser' ).addScene( scene )
+		self.getModule( 'scenegraph_editor' ).addScene( scene )
 		self.scheduleUpdate()
 		self.setFocus()
 

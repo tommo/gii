@@ -96,6 +96,13 @@ class SceneEditor( QtEditorModule ):
 	def onMenu(self, node):
 		name = node.name
 
+	def onTool( self, tool ):
+		name = tool.name
+		if name == 'run':
+			from gii.core.tools import RunHost
+			RunHost.run( 'main' )
+
+
 
 ##----------------------------------------------------------------##
 class QtMainWindow( MainWindow ):

@@ -1,5 +1,10 @@
 require 'mock.env'
+--------------------------------------------------------------------
+-- mock.setLogLevel( 'status' )
 
+--------------------------------------------------------------------
+--Asset Sync
+--------------------------------------------------------------------
 local function onAssetModified( node ) --node: <py>AssetNode	
 	local nodepath = node:getPath()
 	mock.releaseAsset( nodepath )
@@ -24,8 +29,9 @@ gii.connectPythonSignal( 'asset.modified',   onAssetModified )
 gii.connectPythonSignal( 'asset.register',   onAssetRegister )
 gii.connectPythonSignal( 'asset.unregister', onAssetUnregister )
 
--- --------------------------------------------------------------------
--- --MODEL
+
+----------------------------------------------------------------------
+----MODEL
 ----------------------------------------------------------------------
 local modelBridge     = GII_PYTHON_BRIDGE.ModelBridge.get()
 local getClass        = getClass
@@ -135,19 +141,10 @@ end
 
 gii.addContextChangeListeners( onContextChange )
 
---------------------------------------------------------------------
 
-function isMockInstance( obj, clas )
-	if isClassInstance( obj ) then return obj:isInstance( clas ) end
-	return false
-end
-
-function saveGameConfig( path )
-	local data = game:saveConfig()
-end
-
-
-mock.setLogLevel( 'status' )
+----------------------------------------------------------------------
+----Component/Entity Class
+----------------------------------------------------------------------
 
 
 --------------------------------------------------------------------
@@ -167,3 +164,5 @@ end
 
 function EditorCommand:undo()
 end
+
+

@@ -11,8 +11,8 @@ import StyleSheetEditor
 
 import AnimPreview
 
+import SceneGraphEditor
 import SceneView
-import SceneGraphBrowser
 
 import LayerManager
 

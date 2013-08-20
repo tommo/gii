@@ -105,7 +105,6 @@ end
 
 
 --------------------------------------------------------------------
-
 sceneView = scn:addEntity( SceneView() )
 
 function openScene( path )

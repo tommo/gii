@@ -111,7 +111,12 @@ class MockBridge( EditorModule ):
 	def getLuaEnv( self ):
 		return _G
 
+	def getComponentTypeList( self ):
+		pass
+
+	def getEntityTypeList( self ):
+		pass
+
 ##----------------------------------------------------------------##	
 MockBridge().register()
-
 
