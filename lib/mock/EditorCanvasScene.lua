@@ -1,10 +1,61 @@
 --------------------------------------------------------------------
+CLASS: EditorEntity ( mock.Entity )
+function EditorEntity:__init()
+	self.__editor_entity = true
+end
+
+--------------------------------------------------------------------
+function createEditorCanvasInputDevice( env )
+	local env = env or getfenv( 2 )
+	local inputDevice = mock.InputDevice( env.contextName )
+
+	function env.onMouseDown( btn, x, y )
+		inputDevice:sendMouseEvent( 'down', x, y, btn )
+	end
+
+	function env.onMouseUp( btn, x, y )
+		inputDevice:sendMouseEvent( 'up', x, y, btn )
+	end
+
+	function env.onMouseMove( x, y )
+		inputDevice:sendMouseEvent( 'move', x, y, false )
+	end
+
+	function env.onScroll( dx, dy, x, y )
+		inputDevice:sendMouseEvent( 'scroll', dx, dy, false )
+	end
+
+	function env.onMouseEnter()
+		inputDevice:sendMouseEvent( 'enter' )
+	end
+
+	function env.onMouseLeave()
+		inputDevice:sendMouseEvent( 'leave' )
+	end
+
+	function env.onKeyDown( key )
+		inputDevice:sendKeyEvent( key, true )
+	end
+
+	function env.onKeyUp( key )
+		inputDevice:sendKeyEvent( key, false )
+	end
+
+	return inputDevice
+end
+
+--------------------------------------------------------------------
+--EditorCanvasCamera
+--------------------------------------------------------------------
 CLASS: EditorCanvasCamera ( mock.Camera )
-function EditorCanvasCamera:__init()
+function EditorCanvasCamera:__init( env )	
 	self.__editor_entity = true
 	self.context = gii.getCurrentRenderContextKey()
 	self.screenWidth   = 100
 	self.screenHeight	 = 100
+
+	self.env = env
+
 end
 
 function EditorCanvasCamera:getScreenSize()
@@ -13,9 +64,17 @@ end
 
 function EditorCanvasCamera:setScreenSize( w, h )
 	self.screenWidth, self.screenHeight = w, h
-	self:updateViewport()
+	if self.scene then
+		self:updateViewport()
+	end
 end
 
+function EditorCanvasCamera:updateCanvas()
+	if self.env then self.env.updateCanvas() end
+end
+
+--------------------------------------------------------------------
+--EditorCanvasScene
 --------------------------------------------------------------------
 CLASS: EditorCanvasScene ( mock.Scene )
 function EditorCanvasScene:__init()
@@ -31,7 +90,7 @@ function EditorCanvasScene:getEnv()
 end
 
 function EditorCanvasScene:onEnter()
-	self.cameraCom = EditorCanvasCamera()
+	self.cameraCom = EditorCanvasCamera( self.env )
 	self.camera    = mock.SingleEntity( self.cameraCom )
 	self.camera.__editor_entity = true
 	self:addEntity( self.camera )
@@ -93,39 +152,7 @@ function createMockEditorScene()
 	function env.onLoad()
 	end
 
-	local inputDevice = mock.InputDevice( env.contextName )
-
-	function env.onMouseDown( btn, x, y )
-		inputDevice:sendMouseEvent( 'down', x, y, btn )
-	end
-
-	function env.onMouseUp( btn, x, y )
-		inputDevice:sendMouseEvent( 'up', x, y, btn )
-	end
-
-	function env.onMouseMove( x, y )
-		inputDevice:sendMouseEvent( 'move', x, y, false )
-	end
-
-	function env.onScroll( dx, dy, x, y )
-		inputDevice:sendMouseEvent( 'scroll', dx, dy, false )
-	end
-
-	function env.onMouseEnter()
-		inputDevice:sendMouseEvent( 'enter' )
-	end
-
-	function env.onMouseLeave()
-		inputDevice:sendMouseEvent( 'leave' )
-	end
-
-	function env.onKeyDown( key )
-		inputDevice:sendKeyEvent( key, true )
-	end
-
-	function env.onKeyUp( key )
-		inputDevice:sendKeyEvent( key, false )
-	end
+	local inputDevice = createEditorCanvasInputDevice( env )
 
 	function env.EditorInputScript()
 		return mock.InputScript{ device = inputDevice }

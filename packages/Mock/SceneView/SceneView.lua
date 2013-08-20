@@ -1,6 +1,7 @@
 require 'mock'
 --------------------------------------------------------------------
-scn = gii.createMockEditorScene()
+local inputDevice = createEditorCanvasInputDevice()
+
 --------------------------------------------------------------------
 --TODO: use a global configure for this
 local ColorTable   = {}
@@ -38,11 +39,17 @@ CLASS:SceneView ( EditorEntity )
 
 function SceneView:onLoad()
 	self.gizmos = {}
+	
+	self.camera = self:addChild( 
+			mock.SingleEntity( EditorCanvasCamera( _M ) )
+		)
 
-	self:addSibling( CanvasGrid() )
-	self:addSibling( CanvasNavigate() )
-	self:attach( mock.InputScript{ device = self:getScene().inputDevice } )
-
+	self.grid = self:addChild( CanvasGrid() )
+	self.navi = self:addChild( CanvasNavigate{ 
+			inputDevice = inputDevice,
+			camera      = self.camera
+		} )
+	self:attach( mock.InputScript{ device = inputDevice } )
 end
 
 function SceneView:onMouseDown( btn, x, y )
@@ -67,7 +74,7 @@ function SceneView:clearSelection()
 end
 
 function SceneView:pick( x, y )
-	for ent in pairs( scn.entities ) do
+	for ent in pairs( self:getScene().entities ) do
 		if not ent.__editor_entity then
 			local picked = ent:pick( x, y )
 			if picked then return picked end
@@ -105,12 +112,18 @@ end
 
 
 --------------------------------------------------------------------
-sceneView = scn:addEntity( SceneView() )
-
-function openScene( path )
+local view = false
+function openScene( scene )
 	local ctx = gii.getCurrentRenderContext()
+	view = scene:addEntity( SceneView() )
 	local scene = mock.loadAsset( path, { scene = scn } )
-	scene.timer:attach( ctx.actionRoot )
+	-- scene.timer:attach( ctx.actionRoot )
+end
+
+function onResize( w, h )
+	if view then
+		view.camera:getComponent( EditorCanvasCamera ):setScreenSize( w, h )
+	end
 end
 
 function getScene()

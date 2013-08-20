@@ -8,6 +8,7 @@ from gii.moai.MOAIRuntime \
 	MOAIRuntime, MOAILuaDelegate, LuaTableProxy, _G, _LuaTable, _LuaObject
 
 
+
 ##----------------------------------------------------------------##
 _MOCK = LuaTableProxy( None )
 
@@ -37,7 +38,6 @@ class MockBridge( EditorModule ):
 	def onLoad(self):
 		self.affirmConfigFile()
 		self.runtime  = self.getManager().affirmModule( 'moai' )
-
 
 		self.setupLuaModule()		
 

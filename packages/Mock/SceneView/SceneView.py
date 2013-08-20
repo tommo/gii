@@ -35,10 +35,14 @@ class SceneView( SceneEditorModule ):
 			)
 		self.canvas = self.window.addWidget( MOAIEditCanvas() )
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
+
 		self.updateTimer = self.window.startTimer( 60, self.onUpdateTimer )
-		signals.connect( 'entity.modified', self.onEntityModified )
 		self.updatePending = False
+
 		self.preview = self.getModule( 'scene_preview' )
+
+		signals.connect( 'entity.modified', self.onEntityModified )
+		signals.connect( 'scene.open', self.onSceneOpen )
 
 	def onStart( self ):
 		self.canvas.makeCurrent()
@@ -58,13 +62,11 @@ class SceneView( SceneEditorModule ):
 	def onEntityModified( self, entity ):
 		self.scheduleUpdate()
 
-	def openScene( self, node ):
+	def onSceneOpen( self, node, scene ):
 		self.window.setDocumentName( node.getPath() )
 		
 		self.canvas.makeCurrent()
-		self.canvas.safeCall( 'openScene', node.getPath() )
-		scene = self.canvas.safeCall( 'getScene' )
-		self.getModule( 'scenegraph_editor' ).addScene( scene )
+		self.canvas.safeCall( 'openScene', scene )
 		self.scheduleUpdate()
 		self.setFocus()
 

@@ -18,7 +18,7 @@ class SceneAssetManager(AssetManager):
 		return True
 
 	def editAsset( self, node ):
-		editor = app.getModule( 'scene_view' )
+		editor = app.getModule( 'scenegraph_editor' )
 		if not editor:
 			return alertMessage( 'Editor not load', 'Scene Editor not found!' ) 
 		editor.openScene( node )

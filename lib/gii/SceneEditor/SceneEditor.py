@@ -46,6 +46,8 @@ class SceneEditor( QtEditorModule ):
 
 		self.setupMainWindow()
 		self.containers  = {}
+
+		#MainTool 
 		self.addTool( 'scene/run',    label = 'Run' )
 		self.addTool( 'scene/deploy', label = 'Deploy' )
 

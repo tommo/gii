@@ -20,9 +20,9 @@ def getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 
-class SceneGraphEdito( SceneEditorModule ):
+class SceneGraphEditor( SceneEditorModule ):
 	def __init__(self):
-		super( SceneGraphEdito, self ).__init__()
+		super( SceneGraphEditor, self ).__init__()
 
 	def getName( self ):
 		return 'scenegraph_editor'
@@ -47,6 +47,7 @@ class SceneGraphEdito( SceneEditorModule ):
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( getModulePath( 'SceneGraphEditor.lua' ) )
 
+		#Toolbars
 		self.addTool( 'scene_graph/add_sibling', label = '+obj' )
 		self.addTool( 'scene_graph/add_child', label = '+child' )
 
@@ -70,6 +71,11 @@ class SceneGraphEdito( SceneEditorModule ):
 
 	def removeScene( self, scene ):
 		self.tree.removeNode( scene )
+
+	def openScene( self, node ):
+		signals.emitNow( 'scene.pre_open', node )
+		scene = self.delegate.safeCall( 'openScene', node.getPath() )
+		signals.emit( 'scene.open', node, scene )
 
 	def onMoaiClean( self ):
 		self.tree.clear()
@@ -170,4 +176,4 @@ class SceneGraphTreeItem( QtGui.QTreeWidgetItem ):
 	# 	return node0.getName().lower() < node1.getName().lower()
 
 ##----------------------------------------------------------------##
-SceneGraphEdito().register()
+SceneGraphEditor().register()

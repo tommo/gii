@@ -1,9 +1,6 @@
---------------------------------------------------------------------
-CLASS: EditorEntity ( mock.Entity )
-function EditorEntity:__init()
-	self.__editor_entity = true
-end
 
+--------------------------------------------------------------------
+--CanvasGrid
 --------------------------------------------------------------------
 CLASS: CanvasGrid( EditorEntity )
 function CanvasGrid:onLoad()
@@ -20,16 +17,29 @@ function CanvasGrid:onDraw()
 end
 
 --------------------------------------------------------------------
+--CanvasNavigate
+--------------------------------------------------------------------
 CLASS: CanvasNavigate( EditorEntity )
+
+function CanvasNavigate:__init( option )
+	self.option = option
+end
+
 function CanvasNavigate:onLoad()
-	self:attach( mock.InputScript{ device = self:getScene().inputDevice } )
+	local option = self.option or {}
+	local inputDevice = option.inputDevice or self:getScene().inputDevice
+	self.targetCamera = assert( option.camera or self:getScene().camera )
+	self:attach( mock.InputScript{ 
+			device = inputDevice
+		} )
 	self.zoom = 1
+
 end
 
 function CanvasNavigate:onMouseDown( btn, x, y )
 	if btn == 'middle' then
 		self.dragFrom = { x, y }
-		self.cameraFrom = { self:getScene().camera:getLoc() }
+		self.cameraFrom = { self.targetCamera:getLoc() }
 		self.dragging = true
 	end
 end
@@ -41,14 +51,14 @@ function CanvasNavigate:onMouseUp( btn, x, y )
 end
 
 function CanvasNavigate:onMouseMove( x, y )
-	if not self.dragging then return end
-	local scn = self:getScene()
+	if not self.dragging then return end	
 	local x0, y0 = unpack( self.dragFrom )
 	local dx, dy = x - x0, y - y0
 	local cx0, cy0 = unpack( self.cameraFrom )
-	local zoom = scn.cameraCom:getZoom()
-	scn.camera:setLoc( cx0 - dx/zoom, cy0 + dy/zoom )
-	scn:updateCanvas()
+	local cameraCom = self.targetCamera:getComponent( EditorCanvasCamera )
+	local zoom = cameraCom:getZoom()
+	self.targetCamera:setLoc( cx0 - dx/zoom, cy0 + dy/zoom )
+	cameraCom:updateCanvas()	
 end
 
 function CanvasNavigate:onScroll( x, y )
@@ -62,6 +72,7 @@ end
 function CanvasNavigate:setZoom( zoom )
 	zoom = clamp( zoom, 1 / 16, 16 )
 	self.zoom = zoom
-	self.scene.cameraCom:setZoom( zoom )
-	self.scene:updateCanvas()
+	local cameraCom = self.targetCamera:getComponent( EditorCanvasCamera )
+	cameraCom:setZoom( zoom )
+	cameraCom:updateCanvas()	
 end

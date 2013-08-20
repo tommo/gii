@@ -102,6 +102,7 @@ function loadLuaWithEnv(file, env, ...)
 	if not func then
 		error('Failed load script:'..file..'\n'..err, 2)
 	end
+	env._M = env
 	setfenv(func, env)
 	local args = {...}
 	
