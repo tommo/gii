@@ -2,229 +2,7 @@
 scn = gii.createMockEditorScene()
 --------------------------------------------------------------------
 
-CLASS: Deck2D ()
-	:MODEL {
-		Field 'type'     :type('string')  :hidden();
-		Field 'name'     :type('string')  :getset('Name')    :readonly() ;
-		Field 'texture'  :type('string')  :getset('Texture') :readonly() ;		
-	}
-
-function Deck2D:__init()
-	self._deck = self:createMoaiDeck()
-	self.w = 0
-	self.h = 0
-end
-
-function Deck2D:setTexture( path )
-	local tex, node = mock.loadAsset( path )
-	if not tex then return end
-	local w, h = tex:getSize()
-	self.w = w
-	self.h = h
-	self.texturePath = path
-	self.texture = tex
-	self:update()
-end
-
-function Deck2D:getTexture()
-	return self.texturePath
-end
-
-function Deck2D:setName( n )
-	self.name = n
-end
-
-function Deck2D:getName()
-	return self.name
-end
-
-function Deck2D:setOrigin( dx, dy )
-end
-
-function Deck2D:moveOrigin( dx, dy )
-end
-
-function Deck2D:getMoaiDeck()	
-	return self._deck
-end
-
-function Deck2D:createMoaiDeck()
-end
-
-function Deck2D:update()
-end
---------------------------------------------------------------------
-CLASS: Quad2D ( Deck2D )
-	:MODEL{
-		Field 'ox' :type('number') :label('offset X') ;
-		Field 'oy' :type('number') :label('offset Y') ;
-		Field 'w'  :type('number') :label('width')  ;
-		Field 'h'  :type('number') :label('height') ;
-	}
-
-function Quad2D:__init()
-	self.ox = 0
-	self.oy = 0
-	self.w = 0
-	self.h = 0
-end
-
-function Quad2D:setOrigin( ox, oy )
-	self.ox = ox
-	self.oy = oy
-end
-
-function Quad2D:moveOrigin( dx, dy )
-	self:setOrigin( self.ox + dx, self.oy + dy )	
-end
-
-function Quad2D:createMoaiDeck()
-	return MOAIGfxQuad2D.new()
-end
-
-function Quad2D:update()
-	local deck = self:getMoaiDeck()
-	local tex = self.texture
-	if tex.type == 'sub_texture' then
-		deck:setTexture( tex.atlas )
-		deck:setUVRect( unpack( tex.uv ) )
-	else
-		deck:setTexture( tex )
-		deck:setUVRect( 0, 0, 1, 1 )
-	end
-	local w, h = self.w, self.h
-	deck:setRect( self.ox - w/2, self.oy - h/2, self.ox + w/2, self.oy + h/2 )
-end
-
-
---------------------------------------------------------------------
-CLASS: Tileset ( Deck2D )
-	:MODEL {
-		Field 'ox'       :type('int') :label('offset X') ;
-		Field 'oy'       :type('int') :label('offset Y') ;
-		Field 'tw'       :type('int') :label('tile width')  ;
-		Field 'th'       :type('int') :label('tile height') ;
-		Field 'spacing'  :type('int') :label('spacing')  ;
-	}
-
-function Tileset:__init()
-	self.ox      = 0
-	self.oy      = 0
-	self.tw      = 32
-	self.th      = 32
-	self.col     = 1
-	self.row     = 1
-	self.spacing = 0
-end
-
-function Tileset:createMoaiDeck()
-	local deck = MOAITileDeck2D.new()
-	return deck
-end
-
-function Tileset:update()
-	local texW, texH = self.w, self.h
-	local tw, th  = self.tw, self.th
-	local ox, oy  = self.ox, self.oy
-	local spacing = self.spacing
-
-	if tw < 0 then tw = 1 end
-	if th < 0 then th = 1 end
-
-	self.tw = tw
-	self.th = th
-	local w1, h1   = tw + spacing, th + spacing
-	local col, row = math.floor(texW/w1), math.floor(texH/h1)	
-
-	local tex = self.texture
-	local deck = self:getMoaiDeck()
-
-	local u0,v0,u1,v1 
-	if tex.type == 'sub_texture' then
-		deck:setTexture( tex.atlas )
-		u0,v0,u1,v1 = unpack( tex.uv )
-	else
-		deck:setTexture( tex )
-		u0,v0,u1,v1 = 0, 0, 1, 1
-	end
-	local du, dv = u1 - u0, v1 - v0
-	deck:setSize(
-		col, row, 
-		w1/texW * du,      h1/texH * dv,
-		ox/texW * du + u0, oy/texH * dv + v0,
-		tw/texW * du,      th/texH * dv
-		)
-	
-	self.col = col
-	self.row = row
-
-end
-
---------------------------------------------------------------------
-CLASS: StretchPatch ( Quad2D )
-	:MODEL {
-		Field 'left'   :type('number') :label('border left')   :meta{ min=0, max=1 };
-		Field 'right'  :type('number') :label('border right')  :meta{ min=0, max=1 };
-		Field 'top'    :type('number') :label('border top')    :meta{ min=0, max=1 };
-		Field 'bottom' :type('number') :label('border bottom') :meta{ min=0, max=1 };
-	}
-
-function StretchPatch:__init()
-	self.ox = 0
-	self.oy = 0
-	self.w = 0
-	self.h = 0
-
-	self.left   = 0.3
-	self.right  = 0.3
-	self.top    = 0.3
-	self.bottom = 0.3
-
-end
-
-function StretchPatch:setOrigin( ox, oy )
-	self.ox = ox
-	self.oy = oy
-end
-
-function StretchPatch:moveOrigin( dx, dy )
-	self:setOrigin( self.ox + dx, self.oy + dy )	
-end
-
-function StretchPatch:createMoaiDeck()
-	local deck = MOAIStretchPatch2D.new()
-	deck:reserveRows( 3 )
-	deck:reserveColumns( 3 )
-	deck:reserveUVRects( 1 )
-	deck:setUVRect( 1, 0, 1, 1, 0 )
-	return deck
-end
-
-function StretchPatch:update()
-	local deck = self:getMoaiDeck()
-	local tex = self.texture
-	if tex.type == 'sub_texture' then
-		deck:setTexture( tex.atlas )
-		deck:setUVRect( 1, unpack( tex.uv ) )
-	else
-		deck:setTexture( tex )
-		deck:setUVRect( 1, 0, 0, 1, 1 )
-	end
-	local w, h = self.w, self.h
-	deck:setRect( self.ox - w/2, self.oy - h/2, self.ox + w/2, self.oy + h/2 )
-
-	deck:setRow( 1, self.top, false )
-	deck:setRow( 3, self.bottom, false )
-	deck:setRow( 2, 1 - (self.top+self.bottom), true )
-
-	deck:setColumn( 1, self.left, false )
-	deck:setColumn( 3, self.right, false )
-	deck:setColumn( 2, 1-(self.left+self.right), true )
-
-end
-
---------------------------------------------------------------------
-CLASS: Deck2DEditor( mock.Entity )
+CLASS: Deck2DEditor( EditorEntity )
 
 function Deck2DEditor:onLoad()
 	self:addSibling( CanvasGrid() )
@@ -306,6 +84,7 @@ function Deck2DEditor:setOrigin( direction )
 	self:updateDeck()
 end
 
+--------------------------------------------------------------------
 function Deck2DEditor:onMouseMove()
 	if not self.currentDeck then return end
 
@@ -314,19 +93,23 @@ function Deck2DEditor:onMouseMove()
 		local zoom = scn:getCameraZoom()
 		dx = dx/zoom
 		dy = dy/zoom
-		self.currentDeck:moveOrigin( dx, - dy )
+		local ox,oy = self.currentDeck:getOrigin()
+		if ox then
+			self.currentDeck:setOrigin( ox + dx, oy - dy )
+		end
 		self:updateDeck()
 	end
 	if scn.inputDevice:isMouseDown('left') then
 	end
 end
 
+--------------------------------------------------------------------
 function Deck2DEditor:onMouseDown( btn, x, y )
 	if btn == 'right' then
-
 	end
 end
 
+--------------------------------------------------------------------
 function Deck2DEditor:onDraw()
 	local deck = self.currentDeck
 	if not deck then return end
@@ -370,6 +153,27 @@ function Deck2DEditor:onDraw()
 	end
 end
 
+function Deck2DEditor:addItem( item )
+	if not self.editingPack then return end
+	local dtype = item['type']
+	local src   = item['src']
+	local name  = item['name']
+	local deck = self.editingPack:addDeck( name, dtype, src )
+	return deck
+end
+
+function Deck2DEditor:openPack( path )
+	local pack = mock.loadAsset( path )
+	if not pack then pack = mock.Deck2DPack() end
+	self.editingPack = pack
+	return pack
+end
+
+function Deck2DEditor:savePack( path )
+	if not self.editingPack then return end
+	mock.serializeToFile( self.editingPack, path )
+end
+
 --------------------------------------------------------------------
 editor = scn:addEntity( Deck2DEditor() )
 
@@ -388,27 +192,7 @@ function loadAsset( data )
 end
 
 function addItem( item )
-	local dtype = item['type']
-	local src   = item['src']
-	local name  = item['name']
-	local deck
-	if dtype == 'quad' then
-		local quad = Quad2D()
-		quad:setTexture( src )
-		deck = quad
-	elseif dtype == 'tileset' then
-		local tileset = Tileset()
-		tileset:setTexture( src )
-		deck = tileset
-	elseif dtype == 'stretchpatch' then
-		local patch = StretchPatch()
-		patch:setTexture( src )
-		deck = patch
-	end
-
-	deck:setName( name )
-	deck.type = dtype
-	return deck
+	return editor:addItem( item )
 end
 
 function setOrigin( direction )

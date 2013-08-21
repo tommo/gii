@@ -126,18 +126,9 @@ class Deck2DEditor( AssetEditorModule ):
 		self.container.setFocus()
 
 	def saveAsset(self):
-		if not self.editingAsset: return
-		#TODO
-		deckDatas = []
-		for deck in self.editingPack:
-			data = serializeObject( deck )
-			deckDatas.append( data )
-		pack = {
-			'_assetType' : 'deck2d', #checksum
-			'decks' : deckDatas,
-		}
-		self.editingAsset.saveAsJson( pack )
-
+		if not self.editingAsset or not self.editingPack: return
+		self.canvas.callMethod( 'editor', 'savePack' , self.editingAsset.getAbsFilePath() )
+		
 	def startEdit(self, node, subnode=None):
 		self.setFocus()
 		
@@ -148,14 +139,9 @@ class Deck2DEditor( AssetEditorModule ):
 			assert node.getType() == 'deck2d'
 			self.editingAsset = node
 			self.container.setDocumentName( node.getNodePath() )
-			self.editingPack = []
+			self.editingPack = self.canvas.safeCallMethod( 'editor', 'openPack', node.getNodePath() )
 
-			data = node.loadAsJson()
-			if data:
-				for deckData in data.get('decks',[]):
-					deck = self.canvas.safeCall( 'loadAsset', deckData )
-					self.treeSprites.addNode( deck )
-					self.editingPack.append( deck )
+			self.treeSprites.rebuild()
 
 		if subnode:
 			name = subnode.getName()
@@ -199,8 +185,6 @@ class Deck2DEditor( AssetEditorModule ):
 				}
 			deck = self.canvas.safeCall( 'addItem', item )
 			self.treeSprites.addNode( deck )
-			lastDeck = deck
-			self.editingPack.append( deck )
 
 		self.treeSprites.selectNode( deck )
 		self.saveAsset()
@@ -240,15 +224,15 @@ class SpriteTreeWidget( GenericTreeWidget ):
 		return [ ('Name', 140), ('Type', 40) ]
 
 	def getRootNode( self ):
-		return self.module
+		return self.module.editingPack
 
 	def getNodeParent( self, node ):
 		if node == self.getRootNode(): return None
 		return self.getRootNode()
 
 	def getNodeChildren( self, node ):
-		if node == self.module:
-			return node.getSpriteList()
+		if node == self.module.editingPack:
+			return [ deck for deck in node.decks.values() ]
 		else:
 			return []
 

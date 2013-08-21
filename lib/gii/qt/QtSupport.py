@@ -111,7 +111,7 @@ class QtSupport( QtEditorModule ):
 
 		eventFilter = QtSupportEventFilter( self.qtApp )
 		eventFilter.app = self
-		# self.qtApp.installEventFilter(eventFilter)
+		self.qtApp.installEventFilter(eventFilter)
 		self.setupStyle()
 		
 		self.setupMainWindow()		
@@ -121,7 +121,7 @@ class QtSupport( QtEditorModule ):
 		return True
 
 	def update( self ):
-		self.qtApp.processEvents( QEventLoop.AllEvents )
+		self.qtApp.processEvents( QEventLoop.WaitForMoreEvents )
 	
 	def getMainWindow( self ):
 		return self.mainWindow

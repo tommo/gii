@@ -289,10 +289,6 @@ class EditorModuleManager(object):
 		if not m: raise Exception('Module not found: %s' %name)
 		return m
 
-	def update(self):
-		for name, m in self.modules:
-			m.onUpdate()
-
 EditorModuleManager()
 
 ##----------------------------------------------------------------##	

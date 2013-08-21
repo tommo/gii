@@ -1,5 +1,6 @@
 import os.path
 from gii.core import *
+from mock import _MOCK
 import json
 
 ##----------------------------------------------------------------##
@@ -8,22 +9,22 @@ class Deck2DAssetManager(AssetManager):
 		return 'asset_manager.deck2d'
 
 	def acceptAssetFile(self, filePath):
-		if not os.path.isfile( filePath ): return False		
+		if not os.path.isfile( filePath ): return False
 		name, ext = os.path.splitext( filePath )
 		if not ext in [ '.deck2d' ]: return False
-		#validation
-		data = jsonHelper.tryLoadJSON( filePath )
-		return data and data.get( '_assetType', None ) == 'deck2d'		
-
+		return _MOCK.checkSerializationFile( filePath, 'mock.Deck2DPack' )
+		
 	def importAsset(self, node, option=None):
 		node.assetType = 'deck2d'
-		data = jsonHelper.tryLoadJSON( node.getAbsFilePath() )
-		if data:
-			for item in data.get( 'decks', [] ):
-				body = item['body']
-				deckType = 'deck2d.' + body['type']
-				name  =  body['name']
-				node.createChildNode( name, deckType, manager = self )
+		pack = _MOCK.deserializeFromFile( None, node.getAbsFilePath() )
+		if not pack:
+			return False
+
+		for item in pack.decks.values():
+			deckType = 'deck2d.' + item.type
+			name  =  item.name
+			node.createChildNode( name, deckType, manager = self )
+
 		node.setObjectFile( 'def', node.getFilePath() )
 		return True
 
@@ -54,15 +55,8 @@ class Deck2DCreator(AssetCreator):
 			nodepath = contextNode.getSiblingPath( filename )
 
 		fullpath = AssetLibrary.get().getAbsPath( nodepath )
-		data={
-			'_assetType' : 'deck2d', #checksum
-			'decks':[]
-		}
-		if os.path.exists(fullpath):
-			raise Exception('File already exist:%s'%fullpath)
-		fp = open(fullpath,'w')
-		json.dump( data, fp, sort_keys=True, indent=2 )
-		fp.close()
+	
+		_MOCK.createEmptySerialization( fullpath, 'mock.Deck2DPack' )
 		return nodepath
 		
 ##----------------------------------------------------------------##

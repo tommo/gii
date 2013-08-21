@@ -183,6 +183,12 @@ class LuaObjectModel(ObjectModel):
 			LuaObjectModel._EnumCache[ enumItems ] = enumType
 		return self.addLuaFieldInfo( name, enumType, data )
 
+	def serialize( self, obj, objMap = None ):
+		raise Exception('Serializing Lua object in python is not supported, yet')
+
+	def deserialize( self, obj, data, objMap = None ):
+		raise Exception('Deserializing Lua object in python is not supported, yet')
+
 
 def luaTypeToPyType( tname ):
 		if tname   == 'int':

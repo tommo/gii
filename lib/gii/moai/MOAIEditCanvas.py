@@ -263,7 +263,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 				'getCanvasSize'    : boundToClosure( self.getCanvasSize ),
 				'startUpdateTimer' : boundToClosure( self.startUpdateTimer ),
 				'stopUpdateTimer'  : boundToClosure( self.stopUpdateTimer ),
-				'contextName'      : boundToClosure( self.contextName )
+				'contextName'      : boundToClosure( self.contextName )				
 			}
 			
 			if self.scriptEnv:
@@ -278,8 +278,14 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 	def safeCall(self, method, *args):		 
 		return self.delegate.safeCall(method, *args)
 
+	def call(self, method, *args):		 
+		return self.delegate.call(method, *args)
+
 	def safeCallMethod(self, objId, method, *args):		 
 		return self.delegate.safeCallMethod(objId, method, *args)
+
+	def callMethod(self, objId, method, *args):		 
+		return self.delegate.callMethod(objId, method, *args)
 
 	def callMethodWithContext(self, objId, method, *args):		 
 		self.makeCurrent()

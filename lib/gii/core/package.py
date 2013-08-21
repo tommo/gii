@@ -19,12 +19,8 @@ def _clearSysModule( prefix ):
 ##----------------------------------------------------------------##
 class PackageManager( object ):
 	def __init__( self ):
-		self.packagePaths = []
 		self.packages = {}
 		self.excludedPackages = []
-
-	def addPackagePath( self, path ):
-		self.packagePaths.append( path )
 
 	def addExcludedPackage( self, excluded ):
 		if isinstance( excluded, list ):
@@ -45,19 +41,18 @@ class PackageManager( object ):
 	def getPackage( self, name ):
 		return self.packages.get( name, None )
 
-	def scanPackages( self ):
-		for path in self.packagePaths:
-			if not os.path.exists( path ): continue
-			logging.info( 'scanning package in:' + path )			
-			for currentDir, dirs, files in os.walk( unicode(path) ):
-				for dirname in dirs:
-					if dirname.startswith('-'): continue
-					if dirname in self.excludedPackages: continue
-					fullpath = currentDir + '/' + dirname
-					if os.path.exists( fullpath + '/__init__.py' ) \
-					or os.path.exists( fullpath + '/__init__.pyc' ):
-						self.loadPackage( dirname, fullpath )
-				break
+	def scanPackages( self, path ):
+		if not os.path.exists( path ): return
+		logging.info( 'scanning package in:' + path )			
+		for currentDir, dirs, files in os.walk( unicode(path) ):
+			for dirname in dirs:
+				if dirname.startswith('-'): continue
+				if dirname in self.excludedPackages: continue
+				fullpath = currentDir + '/' + dirname
+				if os.path.exists( fullpath + '/__init__.py' ) \
+				or os.path.exists( fullpath + '/__init__.pyc' ):
+					self.loadPackage( dirname, fullpath )
+			break
 
 ##----------------------------------------------------------------##
 class Package(object):

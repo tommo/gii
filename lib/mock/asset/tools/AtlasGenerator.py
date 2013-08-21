@@ -302,7 +302,7 @@ class AtlasGenerator:
 			else:
 				h *= 2
 				expand = 1
-		return self.generateAtlasesOfSize( images, (w0,h0), True )
+		return self.generateAtlasesOfSize( images, (w0,h0), False )
 
 	def generateAtlasesOfSize(self, images, size, expanding = False ):
 		atlases = []
@@ -349,7 +349,7 @@ class AtlasGenerator:
 			D("    done reading images metadata in {0} seconds", s)
 
 		with Stopwatch() as s:
-			atlases = self.generateAtlases(image_infos)
+			atlases = self.generateAtlases(image_infos) or []
 			D("    generated {0} atlas maps in {1} seconds", len(atlases), s)
 
 		tilesets_info = []

@@ -58,22 +58,26 @@ class EditorApp(object):
 		if self.initialized: return
 		self.openProject()
 		
-		setRemoteArgumentCallback( self.onRemoteArgument )
-		#packages
+		#scan packages
 		excludePackages = self.getProject().getConfig( 'excluded_packages' )
 		self.packageManager.addExcludedPackage( excludePackages )
-		self.packageManager.addPackagePath( self.getPath( _GII_BUILTIN_PACKAGES_PATH ) )
+
+		self.packageManager.scanPackages( self.getPath( _GII_BUILTIN_PACKAGES_PATH ) )
+
 		if self.getProject().isLoaded():
-			self.packageManager.addPackagePath( self.getProject().envPackagePath )
-		self.packageManager.scanPackages()
+			self.packageManager.scanPackages( self.getProject().envPackagePath )
 
 		#modules
 		EditorModuleManager.get().loadAllModules()
 		signals.emitNow( 'module.loaded' ) #some pre app-ready activities
 		signals.dispatchAll()
 
+		self.getProject().loadAssetLibrary()
+
 		self.initialized = True
 		self.running     = True
+
+		setRemoteArgumentCallback( self.onRemoteArgument )
 
 	def run( self, **kwargs ):
 		if not self.initialized: self.init()

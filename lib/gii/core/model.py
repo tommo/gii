@@ -289,6 +289,7 @@ class ModelProvider(object):
 	def getPriority( self ):
 		return 0
 	
+##----------------------------------------------------------------##
 class PythonModelProvider(ModelProvider):
 	def __init__(self):
 		self.typeMapV           = {}
@@ -324,6 +325,7 @@ class PythonModelProvider(ModelProvider):
 		return 0
 		
 
+##----------------------------------------------------------------##
 class ModelManager(object):
 	_singleton=None
 
@@ -419,6 +421,7 @@ class ModelManager(object):
 ModelManager()
 
 
+##----------------------------------------------------------------##
 def serializeObject( obj, **kw ):
 	return ModelManager.get().serialize( obj, **kw )
 

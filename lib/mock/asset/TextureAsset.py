@@ -222,6 +222,7 @@ class TextureLibrary( EditorModule ):
 		logging.info( 'building atlas texture:' + group.name )
 		#packing atlas
 		sourceList = [ node.getAbsFilePath() for node in nodes ]
+		print( sourceList )
 		atlasName = 'atlas_' + group.name
 
 		tmpDir = CacheManager.get().getTempDir()

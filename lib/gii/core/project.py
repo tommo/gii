@@ -190,17 +190,20 @@ class Project(object):
 			}
 			jsonHelper.trySaveJSON( self.info, self.getBasePath( _GII_INFO_FILE ) )
 			
-		#load cache & assetlib
 		self.cacheManager.load( _GII_ENV_CONFIG_DIR, self.envConfigPath )
 		self.assetLibrary.load( _GII_ASSET_DIR, self.assetPath, self.path, self.envConfigPath )
 
 		#will trigger other module
 		signals.emitNow( 'project.preload', self )
 		signals.emitNow( 'project.load', self )
-
+		
 		logging.info( 'project loaded: %s' % path )
 
 		return True
+
+	def loadAssetLibrary( self ):
+		#load cache & assetlib
+		self.assetLibrary.loadAssetTable()
 
 	def save( self ):
 		logging.info( 'saving current project' )

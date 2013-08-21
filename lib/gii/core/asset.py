@@ -449,7 +449,7 @@ class AssetLibrary(object):
 		self.projectAbsPath = projectAbsPath
 		self.assetIndexPath = configPath + '/' +GII_ASSET_INDEX_PATH
 		self.rootNode       = AssetNode( '', 'folder', filePath = self.rootPath )
-		self.loadAssetTable()		
+		# self.loadAssetTable()		
 
 	def save( self ):
 		self.saveAssetTable()
