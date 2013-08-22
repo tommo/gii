@@ -47,3 +47,4 @@ class EnumFieldEditor( FieldEditor ):
 		return self.combo
 
 registerFieldEditor( EnumType, EnumFieldEditor )
+

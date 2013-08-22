@@ -191,7 +191,6 @@ class TextureLibrary( EditorModule ):
 		#fix missing meta file
 		for node in self.getAssetLibrary().enumerateAsset( 'texture' ):
 			groupName = node.getMetaData( 'group' )
-			print 'verify', node
 			if not groupName:
 				node.setMetaData('group', 'default')
 			

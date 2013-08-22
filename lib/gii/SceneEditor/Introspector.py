@@ -18,6 +18,8 @@ class SceneIntrospector( SceneEditorModule ):
 		self.idPool         = IDPool()
 		self.activeInstance = None
 
+		self.objectEditorRegistry = {}
+
 	def getName(self):
 		return 'introspector'
 
@@ -62,6 +64,17 @@ class SceneIntrospector( SceneEditorModule ):
 	def getInstances(self):
 		return self.instances
 
+	def registerObjectEditor( self, typeId, editorClas ):
+		self.objectEditorRegistry[ typeId ] = editorClas
+
+	def getObjectEditor( self, typeId ):		
+		while True:
+			clas = self.objectEditorRegistry.get( typeId, None )
+			if clas: return clas
+			typeId = getSuperType( typeId )
+			if not typeId: break
+		return CommonObjectEditor
+
 	def onSelectionChanged(self, s):
 		if not self.activeInstance: return
 		target = None
@@ -81,22 +94,21 @@ class IntrospectorInstance(object):
 		self.id = id
 
 		self.target    = None
-		self.grid      = None
 		self.container = None
+		self.editors   = []
 
 	def createWidget(self, container):
 		self.container=container
 		self.header=container.addWidgetFromFile(
 			getAppPath( 'data/ui/introspector.ui' ),
 			expanding=False)
-		self.grid = container.addWidget(PropertyEditor(container))
 		self.header.hide()
-		self.grid.propertyChanged.connect( self.onPropertyChanged )
-
+	
 	def getTarget(self):
 		return self.target
 
 	def setTarget(self, t):
+		parent = app.getModule('introspector')
 		if self.target:
 			self.clear()
 		
@@ -108,30 +120,84 @@ class IntrospectorInstance(object):
 			self.header.textInfo.setText('Multiple object selected...')
 			self.header.buttonApply.hide()
 			self.header.show()
-			self.target=t[0] #TODO: use a multiple selection proxy as target
+			self.target = t[0] #TODO: use a multiple selection proxy as target
 		else:
-			self.target=t[0]
+			self.target = t[0]
 
-		if self.grid:
-			self.grid.setTarget(self.target)
-		
+		typeId = ModelManager.get().getTypeId( self.target )
+		if typeId:
+			clas = parent.getObjectEditor( typeId )
+			editor = clas()			
+			self.editors.append( editor )
+			widget = editor.initWidget( self.container )
+			if widget: 
+				self.container.addWidget( widget )
+			editor.setTarget( self.target )
 
-	def clear(self):
-		self.target=None
+	def clear(self):		
+		for editor in self.editors:
+			editor.unload() #TODO: cache?
+		#remove widgets
+		layout = self.container.mainLayout
+		while layout.count() > 0:
+			child = layout.takeAt( 0 )
+			if child :
+				w = child.widget()
+				if w:
+					w.setParent( None )
+				else:
+					print 'cannot remove obj:', child
+			else:
+				break
+
+		self.target = None
 		self.header.hide()
-		self.grid.clear()
-		#TODO
+		self.editors = []
 
 	def refresh(self):
 		if not self.target:
 			return
-		self.grid.refreshAll()
-		pass #TODO
+		for editor in self.editors:
+			editor.refresh()
 
+
+##----------------------------------------------------------------##
+class ObjectEditor( object ):
+	def initWidget( self, container ):
+		pass
+
+	def setTarget( self, target ):
+		pass
+
+	def unload( self ):
+		pass
+
+		
+##----------------------------------------------------------------##
+class CommonObjectEditor( ObjectEditor ): #a generic property grid 
+	def initWidget( self, container ):
+		self.grid = PropertyEditor(container)
+		self.grid.propertyChanged.connect( self.onPropertyChanged )
+		return self.grid
+
+	def setTarget( self, target ):
+		self.grid.setTarget( target )
 
 	def onPropertyChanged( self, obj, id, value ):
 		signals.emit( 'entity.modified', obj )
 
+	def refresh( self ):
+		self.grid.refreshAll()
 
-		
+	def unload( self ):
+		pass
+
+
+##----------------------------------------------------------------##
+def registerObjectEditor( typeId, editorClas ):
+	app.getModule('introspector').registerObjectEditor( typeId, editorClas )
+
+
+##----------------------------------------------------------------##
 SceneIntrospector().register()
+

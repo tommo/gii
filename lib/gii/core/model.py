@@ -107,7 +107,7 @@ class FlagsValueType( DataType ):
 
 
 ##----------------------------------------------------------------##
-class ObjectModel(DataType):
+class ObjectModel( DataType ):
 	@staticmethod
 	def fromList( name, fieldList, **option ):
 		model = ObjectModel( name, **option )

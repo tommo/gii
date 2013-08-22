@@ -29,3 +29,31 @@ class FieldEditorDoubleSpinBox(QtGui.QDoubleSpinBox):
 		self.selectAll()
 		super(FieldEditorDoubleSpinBox, self).focusInEvent( ev )
 		
+
+##----------------------------------------------------------------##
+class DraggableLabel( QtGui.QLabel ):
+	dragged = QtCore.pyqtSignal( int )
+
+	def __init__( self, *args ):
+		super( DraggableLabel, self ).__init__( *args )
+		self.dragging = False
+		self.x0 = 0
+		self.setCursor( Qt.PointingHandCursor )
+
+	def mousePressEvent( self, ev ):
+		if ev.button() == Qt.LeftButton:
+			self.dragging = True
+			self.grabMouse()
+			self.x0 = ev.x()
+
+	def mouseReleaseEvent( self, ev ):
+		if ev.button() == Qt.LeftButton:
+			if self.dragging:
+				self.dragging = False
+				self.releaseMouse()
+
+	def mouseMoveEvent( self, ev ):
+		if self.dragging:
+			delta = ev.x() - self.x0
+			self.x0 = ev.x()
+			self.dragged.emit( delta )
