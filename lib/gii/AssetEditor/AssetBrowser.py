@@ -207,8 +207,9 @@ class AssetBrowser( AssetEditorModule ):
 		if name == 'copy_node_path':
 			text = ''
 			for n in app.getSelectionManager().getSelection():
-				text += n.getNodePath() + '\n'
-				setClipboardText( text )
+				if text: text += '\n'
+				text += n.getNodePath()
+			setClipboardText( text )
 
 ##----------------------------------------------------------------##
 class AssetBrowserTreeView( AssetTreeView ):

@@ -146,7 +146,6 @@ class TextureLibrary( EditorModule ):
 
 	def onLoad( self ):
 		self.indexPath = self.getProject().getConfigPath( _TEXTURE_LIBRARY_INDEX_FILE )
-		self.loadIndex()
 		if not self.groups.get( 'default' ):
 			self.addGroup( 'default' )
 
@@ -154,7 +153,10 @@ class TextureLibrary( EditorModule ):
 		_G['MOCK_TEXTURE_LIBRARY_INDEX'] = self.indexPath
 		signals.connect( 'asset.post_import_all', self.postAssetImportAll )
 		signals.connect( 'project.save', self.onSaveProject )
-	
+		
+	def onStart( self ):
+		self.loadIndex()
+
 	def addGroup( self, name ):
 		g = TextureGroup( name )
 		if name != 'default':
@@ -185,6 +187,13 @@ class TextureLibrary( EditorModule ):
 				if g.cache:
 					CacheManager.get().touchCacheFile( g.cache )
 				self.groups[ name ] = g
+
+		#fix missing meta file
+		for node in self.getAssetLibrary().enumerateAsset( 'texture' ):
+			groupName = node.getMetaData( 'group' )
+			print 'verify', node
+			if not groupName:
+				node.setMetaData('group', 'default')
 			
 	def saveIndex( self ):
 		logging.info( 'saving texture library index' )
@@ -198,7 +207,7 @@ class TextureLibrary( EditorModule ):
 		jsonHelper.trySaveJSON( data, self.indexPath, 'texture index' )
 
 	def scheduleImport( self, node ):
-		groupName = node.getMetaData( 'group' )
+		groupName = node.getMetaData( 'group' )		
 		group = self.getGroup( groupName )
 		assert group
 		n = self.pendingImportGroups.get( group )

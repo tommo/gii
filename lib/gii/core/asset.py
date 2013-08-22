@@ -215,11 +215,8 @@ class AssetNode(object):
 		metaDir  = dirname + '/' +GII_ASSET_META_DIR
 		metaPath = metaDir + '/' + self.getName() + '.meta'
 		if os.path.exists( metaPath ):
-			fp = open( metaPath, 'r' )
-			text = fp.read()
-			fp.close()
-			data = json.loads( text )
-			self.metadata = data
+			data = jsonHelper.tryLoadJSON( metaPath )
+			self.metadata = data or {}			
 			return self.metadata
 		elif  createIfEmpty:
 			self.metadata = {}

@@ -75,7 +75,7 @@ end
 
 function SceneView:pick( x, y )
 	for ent in pairs( self:getScene().entities ) do
-		if not ent.__editor_entity then
+		if not ent.FLAG_EDITOR_OBJECT then
 			local picked = ent:pick( x, y )
 			if picked then return picked end
 		end

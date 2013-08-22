@@ -138,7 +138,7 @@ class MainWindow(QtGui.QMainWindow):
 		title=dockOptions.get( 'title', id )
 
 		dockArea=dockOptions.get('dock','left')
-
+		
 		if dockArea=='left':
 			dockArea=Qt.LeftDockWidgetArea
 		elif dockArea=='right':
@@ -160,14 +160,14 @@ class MainWindow(QtGui.QMainWindow):
 		window.windowMode = 'dock'
 		window.titleBase = title
 
-		if dockOptions.get('allowDock',True):
-			window.setAllowedAreas(Qt.AllDockWidgetAreas)
+		if dockOptions.get( 'allowDock', True ):
+			window.setAllowedAreas( Qt.AllDockWidgetAreas )
 		else:
-			window.setAllowedAreas(Qt.NoDockWidgetArea)
-
+			window.setAllowedAreas( Qt.NoDockWidgetArea )
+			dockArea = None
+			
 		if dockArea and dockArea!='center':
 			self.addDockWidget(dockArea, window)
-
 		elif dockArea=='center':
 			self.setCentralWidget(window)
 			window.setFeatures(QtGui.QDockWidget.NoDockWidgetFeatures)

@@ -53,6 +53,7 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		#menu
 		self.addMenuItem( 'main/scene/close_scene', dict( label = 'Close' ) )
+		self.addMenuItem( 'main/scene/save_scene',  dict( label = 'Save' ) )
 
 		#Toolbars
 		self.addTool( 'scene_graph/add_sibling', label = '+obj' )
@@ -83,6 +84,10 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.activeScene     = None
 		self.activeSceneNode = None
 
+	def saveScene( self ):
+		if not self.activeSceneNode: return
+		self.delegate.safeCallMethod( 'editor', 'saveScene', self.activeSceneNode.getAbsFilePath() )
+
 	def refreshScene( self ):
 		if not self.activeScene: return
 		self.refreshScheduled = False
@@ -112,6 +117,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		name = menu.name
 		if name == 'close_scene':
 			self.closeScene()
+		elif name == 'save_scene':
+			self.saveScene()
 
 
 	def onSelectionChanged(self, selection):
@@ -144,20 +151,21 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			return None
 		#Entity
 		p = node.parent
-		if p and not p.__editor_entity : return p
+		if p and not p.FLAG_EDITOR_OBJECT : return p
 		return node.scene
 
 	def getNodeChildren( self, node ):
 		if isMockInstance( node, 'Scene' ):
 			output = []
 			for ent in node.entities:
-				if not ent.__editor_entity and not ent.parent:
+				if ( not ent.parent ) and ( not ent.FLAG_EDITOR_OBJECT ):
 					output.append( ent )
+
 			return output
 
 		output = []
 		for ent in node.children:
-			if not ent.__editor_entity:
+			if not ent.FLAG_EDITOR_OBJECT:
 				output.append( ent )
 		return output
 

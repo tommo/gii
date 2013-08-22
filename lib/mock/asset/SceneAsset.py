@@ -42,6 +42,7 @@ class SceneCreator(AssetCreator):
 		fullpath = AssetLibrary.get().getAbsPath( nodepath )
 		data={
 			'_assetType' : 'scene', #checksum
+			'map'     :{},
 			'entities':[]
 		}
 		if os.path.exists(fullpath):

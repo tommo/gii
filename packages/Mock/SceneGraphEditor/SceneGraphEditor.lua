@@ -17,9 +17,15 @@ function SceneGraphEditor:closeScene()
 	self.scene = false
 end
 
+function SceneGraphEditor:saveScene( path )
+	if not self.scene then return false end
+	mock.serializeSceneToFile( self.scene, path )
+	return true
+end
+
 local function isEditorEntity( e )
 	while e do
-		if e.__editor_entity then return true end
+		if e.FLAG_EDITOR_OBJECT then return true end
 		e = e.parent
 	end
 	return false

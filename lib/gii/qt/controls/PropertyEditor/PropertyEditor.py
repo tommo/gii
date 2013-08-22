@@ -97,7 +97,7 @@ class PropertyEditor( QtGui.QWidget ):
 		assert(model)
 		#install field info
 		for field in model.fieldList:
-			if field.getOption('hidden'): continue
+			if field.getOption('noedit'): continue
 			label = field.label
 			ft    = field._type
 			editorClas  =  getFieldEditor( ft )

@@ -37,7 +37,8 @@ class GLWidget(QtOpenGL.QGLWidget):
 	def startRefreshTimer( self, fps = 60 ):
 		# self.refreshTimer.start( 1000/fps )
 		self.allowRefresh = True
-		self.refreshTimer.setInterval( 10 )
+		interval = 1000/fps
+		self.refreshTimer.setInterval( interval )
 
 	def stopRefreshTimer(self):
 		self.allowRefresh = False

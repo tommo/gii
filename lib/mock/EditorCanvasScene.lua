@@ -1,7 +1,7 @@
 --------------------------------------------------------------------
 CLASS: EditorEntity ( mock.Entity )
 function EditorEntity:__init()
-	self.__editor_entity = true
+	self.FLAG_EDITOR_OBJECT = true
 end
 
 --------------------------------------------------------------------
@@ -49,7 +49,7 @@ end
 --------------------------------------------------------------------
 CLASS: EditorCanvasCamera ( mock.Camera )
 function EditorCanvasCamera:__init( env )	
-	self.__editor_entity = true
+	self.FLAG_EDITOR_OBJECT = true
 	context = gii.getCurrentRenderContext()
 
 	self.context = context.key
@@ -94,7 +94,7 @@ end
 function EditorCanvasScene:onEnter()
 	self.cameraCom = EditorCanvasCamera( self.env )
 	self.camera    = mock.SingleEntity( self.cameraCom )
-	self.camera.__editor_entity = true
+	self.camera.FLAG_EDITOR_OBJECT = true
 	self:addEntity( self.camera )
 end
 

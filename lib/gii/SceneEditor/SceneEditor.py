@@ -106,7 +106,11 @@ class SceneEditor( QtEditorModule ):
 		if name == 'run':
 			from gii.core.tools import RunHost
 			RunHost.run( 'main' )
-
+			
+		elif name == 'deploy':
+			deployManager = self.getModule('deploy_manager')
+			if deployManager:
+				deployManager.setFocus()
 
 
 ##----------------------------------------------------------------##
