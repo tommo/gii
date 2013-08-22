@@ -1,6 +1,18 @@
 module 'gii'
 
+
 local GameModules = {}
+
+local callbackModuleRelease = {}
+local callbackModuleLoad    = {}
+
+function addGameModuleReleaseListener( func )
+	table.insert( callbackModuleRelease, func )
+end
+
+function addGameModuleLoadListener( func )
+	table.insert( callbackModuleLoad, func )
+end
 
 function registerGameModule( name, m )
 	GameModules[ name ] = m
@@ -114,6 +126,9 @@ function _loadGameModule( path )
 	local ok = xpcall( chunk, _onError )
 	if ok then
 		registerGameModule( path, m )
+		for i, func in ipairs( callbackModuleLoad ) do
+			func( path, m )
+		end
 		return m
 	else
 		pushErrorInfo{
@@ -151,8 +166,10 @@ function releaseGameModule( path, releasedModules )
 		return nil
 	end
 	releasedModules[ path ] = true
+	for i, func in ipairs( callbackModuleRelease ) do
+		func( path, oldModule )
+	end
 	GameModules[ path ] = nil
-	--TODO: emitSignal( 'module.released', path, oldModule )
 	for requiredBy in pairs( oldModule.__REQUIREDBY ) do
 		releaseGameModule( requiredBy, releasedModules )
 	end
@@ -167,13 +184,15 @@ end
 --------------------------------------------------------------------
 function reloadGameModule( path )
 	flushErrorInfo()
-	local released = {}
-	releaseGameModule( path, released )
-	for path1 in pairs( released ) do
+	--release
+	local releasedModules = {}
+	releaseGameModule( path, releasedModules )
+	--reload
+	for path1 in pairs( releasedModules ) do
 		loadGameModule( path1 )
 	end
 	local m = findGameModule( path )
-	return m, flushErrorInfo()	
+	return m, flushErrorInfo()
 end
 
 ---------------------------------------------------------------------

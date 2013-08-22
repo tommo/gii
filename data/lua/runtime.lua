@@ -22,7 +22,7 @@ end
 
 --------------------------------------------------------------------
 function lupaErrFunc( msg )
-	return msg .. '\n' ..debug.traceback()
+	return msg .. '\n' ..debug.traceback(2)
 end
 
 python.seterrfunc( lupaErrFunc ) --lupa err func

@@ -23,8 +23,9 @@ def getModulePath( path ):
 class SceneGraphEditor( SceneEditorModule ):
 	def __init__(self):
 		super( SceneGraphEditor, self ).__init__()
-		self.activeScene     = None
-		self.activeSceneNode = None
+		self.activeScene      = None
+		self.activeSceneNode  = None
+		self.refreshScheduled = False
 
 	def getName( self ):
 		return 'scenegraph_editor'
@@ -71,7 +72,7 @@ class SceneGraphEditor( SceneEditorModule ):
 			return
 		signals.emitNow( 'scene.pre_open', node )
 		scene = self.delegate.safeCallMethod( 'editor', 'openScene', node.getPath() )
-		signals.emit( 'scene.open', node, scene )
+		signals.emitNow( 'scene.open', node, scene )
 		self.activeScene     = scene
 		self.activeSceneNode = node
 		self.tree.rebuild()
@@ -81,6 +82,21 @@ class SceneGraphEditor( SceneEditorModule ):
 		scene = self.delegate.safeCallMethod( 'editor', 'closeScene' )
 		self.activeScene     = None
 		self.activeSceneNode = None
+
+	def refreshScene( self ):
+		if not self.activeScene: return
+		self.refreshScheduled = False
+		node = self.activeSceneNode
+		self.closeScene()
+		self.openScene( node )
+
+	def scheduleRefreshScene( self ):
+		if not self.activeScene: return
+		self.refreshScheduled = True
+
+	def onUpdate( self ):
+		if self.refreshScheduled:
+			self.refreshScene()
 
 	def onMoaiClean( self ):
 		self.tree.clear()

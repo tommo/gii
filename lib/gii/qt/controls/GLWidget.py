@@ -44,7 +44,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.refreshTimer.stop()
 
 	def forceUpdateGL(self):
-		self.allowRefresh=True
+		self.allowRefresh = True
 		self.refreshTimer.stop()
 		self.updateGL()
 
@@ -58,13 +58,16 @@ class GLWidget(QtOpenGL.QGLWidget):
 			self.updateGL()
 		self.allowRefresh = True
 
-	def paintGL( self ):
+	def paintGL( self ):		
+		self.onDraw()
+
+	def updateGL( self ):
 		if not self.allowRefresh:
 			self.pendingRefresh = True
 			return
 		self.allowRefresh = False
 		self.refreshTimer.start()
-		self.onDraw()
+		super( GLWidget, self ).updateGL()
 
 	def onDraw(self):
 		pass
