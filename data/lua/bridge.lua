@@ -18,11 +18,8 @@ _M.newPythonDict        = bridge.newPythonDict
 _M.newPythonList        = bridge.newPythonList
 _M.appendPythonList     = bridge.appendPythonList
 _M.deletePythonList     = bridge.deletePythonList
-_M.fromUnicode          = bridge.fromUnicode
-_M.toUnicode            = bridge.toUnicode
 _M.getDict              = bridge.getDict
 _M.setDict              = bridge.setDict
-
 --other
 _M.throwPythonException = bridge.throwPythonException
 _M.getTime              = bridge.getTime
@@ -66,6 +63,10 @@ function listToTable(list)
 		r[i]=list[i-1]
 	end
 	return r
+end
+
+function unpackPythonList( t )
+	return unpack( listToTable( t ) )
 end
 
 --------------------------------------------------------------------

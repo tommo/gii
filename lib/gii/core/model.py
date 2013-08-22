@@ -427,3 +427,4 @@ def serializeObject( obj, **kw ):
 
 def deserializeObject( data, **kw ):
 	return ModelManager.get().deserialize( data, **kw )
+

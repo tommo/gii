@@ -1,4 +1,4 @@
-from PropertyEditor import FieldEditor
+from PropertyEditor import FieldEditor,registerFieldEditor
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
@@ -72,4 +72,5 @@ class ColorFieldEditor( FieldEditor ):
 		if self.getOption( 'readonly', False ):
 			self.colorBlock.setEnabled( False )
 		return self.colorBlock
-	
+
+registerFieldEditor( 'color',    ColorFieldEditor )

@@ -37,6 +37,15 @@ local modelBridge     = GII_PYTHON_BRIDGE.ModelBridge.get()
 local getClass        = getClass
 
 ----
+
+local function isTupleValue( ft )
+	return
+		   ft == 'vec2' 
+		or ft == 'vec3' 
+		or ft == 'color'		
+end
+
+local unpackPythonList = gii.unpackPythonList
 local function buildGiiModel( model )
 	local pmodel = GII_PYTHON_BRIDGE.LuaObjectModel( model.__name )
 	
@@ -50,6 +59,14 @@ local function buildGiiModel( model )
 		}
 		local id     = f.__id
 		local typeid = f.__type
+		
+		if isTupleValue( typeid ) then
+			local _set = f.__setter
+			option.set = function( obj, tuple )
+				_set( obj, unpackPythonList( tuple ) )
+			end
+		end
+
 		if typeid == '@enum' then
 			assert ( type(f.__enum) == 'table' )
 			pmodel:addLuaEnumFieldInfo( id, f.__enum, option )

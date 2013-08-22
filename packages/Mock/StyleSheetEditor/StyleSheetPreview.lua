@@ -55,12 +55,11 @@ function setAlign( align )
 	updateText()
 end
 
-local _fu = gii.fromUnicode
 
 local function createStyle( data )
 	local style = MOAITextStyle.new()
-	local name = _fu(data.name)
-	local font = mock.loadAsset( _fu(data.font) )
+	local name = data.name
+	local font = mock.loadAsset( data.font ) 
 	local size = data.size
 	local color = gii.listToTable(data.color)
 	style:setFont( font or mock.getFontPlaceHolder() )

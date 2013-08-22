@@ -76,16 +76,6 @@ def GUIYield():
 ####################################
 #COMMON DATA BRIDGE
 ####################################
-def fromUnicode(s, codec='utf-8'):
-	if isinstance(s,unicode):
-		return s.encode(codec)
-	return s
-
-def toUnicode(s, codec='utf-8'):
-	if isinstance(s,str):
-		return s.decode(codec)
-	return s
-
 def getDict( d, key, default=None ):
 	return d.get( key, default )
 
@@ -123,6 +113,8 @@ def deletePythonList(list, i):
 def sizeOfPythonObject(list):
 	return len(list)
 
+def tupleToList( t ):
+	return list( t )
 
 ####################################
 #MODEL BRIDGE
@@ -157,6 +149,7 @@ class LuaObjectModelProvider(ModelProvider):
 	def clear( self ):
 		pass
 
+##----------------------------------------------------------------##
 class LuaObjectModel(ObjectModel):
 	_EnumCache = weakref.WeakValueDictionary()
 	def addLuaFieldInfo(self, name, typeId, data = None): #called by lua
@@ -190,6 +183,7 @@ class LuaObjectModel(ObjectModel):
 		raise Exception('Deserializing Lua object in python is not supported, yet')
 
 
+##----------------------------------------------------------------##
 def luaTypeToPyType( tname ):
 		if tname   == 'int':
 			return int
@@ -203,7 +197,7 @@ def luaTypeToPyType( tname ):
 			return None
 		return tname #no conversion
 
-
+##----------------------------------------------------------------##
 class ModelBridge(object):
 	_singleton=None
 
