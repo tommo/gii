@@ -6,6 +6,13 @@ function registerGameModule( name, m )
 	GameModules[ name ] = m
 end
 
+function findGameModule( name )
+	return GameModules[ name ]
+end
+
+function hasGameModule( name )
+	return GameModules[ name ] ~= nil
+end
 --[[
 	create a envrionment
 ]]
@@ -30,8 +37,17 @@ end
 --------------------------------------------------------------------
 local GameModuleMT = { __index = _G }
 local _createEmptyModule, _loadGameModule, _requireGameModule
-local _errorInfos = {}
 
+local _errorInfos = {}
+local function flushErrorInfo()
+	local infos = _errorInfos
+	_errorInfos = {}
+	return infos
+end
+
+local function pushErrorInfo( data )
+	table.insert( _errorInfos, data )
+end
 
 local _require = require
 function _createEmptyModule( path, fullpath )
@@ -63,7 +79,6 @@ end
 
 --------------------------------------------------------------------
 function _requireGameModule( path )
-	--todo: error handle
 	local m = GameModules[ path ]
 	if m then return m end
 	return _loadGameModule( path )	
@@ -79,12 +94,12 @@ function _loadGameModule( path )
 	_stat( 'loading module from', fullpath )
 	local chunk, compileErr = loadfile( fullpath )
 	if not chunk then
-		table.insert( _errorInfos, {
+		pushErrorInfo{
 			path = path,
 			fullpath = fullpath,
 			errtype =	'compile',
 			msg     = compileErr
-		})
+		}
 		return nil, 'failtocompile', compileErr
 	end
 	local m = _createEmptyModule( path, fullpath )
@@ -101,38 +116,29 @@ function _loadGameModule( path )
 		registerGameModule( path, m )
 		return m
 	else
-		table.insert( _errorInfos, {
+		pushErrorInfo{
 			path      = path,
 			fullpath  = fullpath,
 			errtype   =	'load',
 			msg       = errMsg,
 			traceback = tracebackMsg
-		})
+		}
 		return nil, 'failtoload', errMsg, tracebackMsg
 	end
 end
 
 --------------------------------------------------------------------
-function loadGameModule( path, clearErrInfo )
+function loadGameModule( path, flushError )
 	local loaded, errType, errMsg, tracebackMsg = _requireGameModule( path )
-	if loaded then return loaded end
-	if clearErrInfo ~= false then
-		local errInfos = _errorInfos
-		_errorInfos = {}
-		return false, errInfos
+	
+	if loaded then return loaded, {} end
+
+	if flushError then
+		return false, flushErrorInfo()
 	else
 		return false, _errorInfos
 	end
-	-- if errType == 'notfound' then
-	-- 	error( 'game module not found:' .. path ) 
-	-- elseif errType == 'failtocompile' then
-	-- 	print( errMsg )
-	-- 	error( 'failed to compile game module:' .. path )
-	-- else
-	-- 	print( errMsg )
-	-- 	print( tracebackMsg )
-	-- 	error( 'failed to load game module:' .. path )
-	-- end
+
 end
 
 --------------------------------------------------------------------
@@ -160,13 +166,26 @@ end
 
 --------------------------------------------------------------------
 function reloadGameModule( path )
+	flushErrorInfo()
 	local released = {}
 	releaseGameModule( path, released )
 	for path1 in pairs( released ) do
-		loadGameModule( path1, false )
+		loadGameModule( path1 )
 	end
-	local errInfos = _errorInfos
-	_errorInfos = {}
-	return errInfos
+	local m = findGameModule( path )
+	return m, flushErrorInfo()	
+end
+
+---------------------------------------------------------------------
+function unloadGameModule( path )
+	flushErrorInfo()
+	local released = {}
+	releaseGameModule( path, released )
+	for path1 in pairs( released ) do
+		if path1 ~= path then
+			loadGameModule( path1 )
+		end
+	end
+	return flushErrorInfo()
 end
 

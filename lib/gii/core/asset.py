@@ -621,7 +621,9 @@ class AssetLibrary(object):
 						node.modifyState  =  False
 						done.append( node )
 			for node in done:
-				del modifiedAssets[ node ]			
+				if not node.isVirtual():
+					node.fileTime = os.path.getmtime( node.getAbsFilePath() )
+				del modifiedAssets[ node ]
 		signals.emitNow( 'asset.post_import_all' )
 		logging.info( 'modified assets imported' )
 

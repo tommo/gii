@@ -25,7 +25,7 @@ class LuaScriptAssetManager( AssetManager ):
 	def importAsset(self, node, option=None):
 		node.assetType = 'lua'
 		lib = app.getModule( 'script_library' )
-		lib.registerScript( node )
+		lib.loadScript( node )
 		return True
 
 	def reimportAsset( self, node, option=None):
@@ -51,11 +51,18 @@ class ScriptLibrary( EditorModule ):
 		name, ext = os.path.splitext( path )
 		return name.replace( '/', '.' )
 
-	def registerScript( self, node ):
-		_GII.loadGameModule( self.convertScriptPath( node ), True ) #force
+	def loadScript( self, node ):
+		path = self.convertScriptPath( node )
+		if _GII.hasGameModule( path ):
+			m, err = _GII.reloadGameModule( path )
+		else:
+			m, err = _GII.loadGameModule( path ) #force
+		if not m:
+			for info in err.values():
+				logging.error( 'script error <%s>: %s', info.path, info.msg )
 
 	def releaseScript( self, node ):
-		_GII.releaseGameModule( self.convertScriptPath( node ) ) #force
+		_GII.unloadGameModule( self.convertScriptPath( node ) ) #force
 
 	def onStart( self ):
 		for node in self.getAssetLibrary().enumerateAsset( 'lua' ):
