@@ -1,13 +1,20 @@
+module 'gii'
+
 local GameModules = {}
 
-local _require = require
+function registerGameModule( name, m )
+	GameModules[ name ] = m
+end
+
 --[[
 	create a envrionment
 ]]
 
 local gameScriptPaths = {
 	GII_PROJECT_SCRIPT_PATH .. '/?.lua',
-	GII_PROJECT_SCRIPT_PATH .. '/?/init.lua'
+	-- GII_PROJECT_SCRIPT_PATH .. '/?/init.lua',
+	GII_PROJECT_ASSET_PATH .. '/?.lua',
+	-- GII_PROJECT_ASSET_PATH .. '/?/init.lua'
 }
 
 local function searchFile( path )
@@ -22,7 +29,12 @@ end
 
 --------------------------------------------------------------------
 local GameModuleMT = { __index = _G }
-function createEmptyModule( path, fullpath )
+local _createEmptyModule, _loadGameModule, _requireGameModule
+local _errorInfos = {}
+
+
+local _require = require
+function _createEmptyModule( path, fullpath )
 	local m = {
 		_NAME   = path,
 		_PATH   = path,
@@ -32,15 +44,15 @@ function createEmptyModule( path, fullpath )
 	}
 
 	m.require = function( path, ... )
-		local loaded, errType, errMsg, tracebackMsg = requireGameModule( path )
+		local loaded, errType, errMsg, tracebackMsg = _requireGameModule( path )
 		if loaded then 
 			m.__REQUIRES[ path ] = true
 			loaded.__REQUIREDBY[ m._PATH ] = true
 			return loaded
 		end
 		if errType ~= 'notfound' then
-			print( errMsg )
-			if tracebackMsg then print( tracebackMsg ) end
+			-- print( errMsg )
+			-- if tracebackMsg then print( tracebackMsg ) end
 			error( 'error loading game module', 2 )
 		end
 		return _require( path, ... )
@@ -48,9 +60,18 @@ function createEmptyModule( path, fullpath )
 
 	return setmetatable( m, GameModuleMT )
 end
+
+--------------------------------------------------------------------
+function _requireGameModule( path )
+	--todo: error handle
+	local m = GameModules[ path ]
+	if m then return m end
+	return _loadGameModule( path )	
+end
+
 --------------------------------------------------------------------
 
-function loadGameModule( path )
+function _loadGameModule( path )
 	local fullpath = searchFile( path )
 	if not fullpath then
 		return nil, 'notfound'
@@ -58,9 +79,15 @@ function loadGameModule( path )
 	_stat( 'loading module from', fullpath )
 	local chunk, compileErr = loadfile( fullpath )
 	if not chunk then
+		table.insert( _errorInfos, {
+			path = path,
+			fullpath = fullpath,
+			errtype =	'compile',
+			msg     = compileErr
+		})
 		return nil, 'failtocompile', compileErr
 	end
-	local m = createEmptyModule( path, fullpath )
+	local m = _createEmptyModule( path, fullpath )
 	setfenv( chunk, m )
 
 	local errMsg, tracebackMsg
@@ -71,19 +98,41 @@ function loadGameModule( path )
 
 	local ok = xpcall( chunk, _onError )
 	if ok then
-		GameModules[ path ] = m
+		registerGameModule( path, m )
 		return m
 	else
+		table.insert( _errorInfos, {
+			path      = path,
+			fullpath  = fullpath,
+			errtype   =	'load',
+			msg       = errMsg,
+			traceback = tracebackMsg
+		})
 		return nil, 'failtoload', errMsg, tracebackMsg
 	end
 end
 
 --------------------------------------------------------------------
-function requireGameModule( path )
-	--todo: error handle
-	local m = GameModules[ path ]
-	if m then return m end
-	return loadGameModule( path )	
+function loadGameModule( path, clearErrInfo )
+	local loaded, errType, errMsg, tracebackMsg = _requireGameModule( path )
+	if loaded then return loaded end
+	if clearErrInfo ~= false then
+		local errInfos = _errorInfos
+		_errorInfos = {}
+		return false, errInfos
+	else
+		return false, _errorInfos
+	end
+	-- if errType == 'notfound' then
+	-- 	error( 'game module not found:' .. path ) 
+	-- elseif errType == 'failtocompile' then
+	-- 	print( errMsg )
+	-- 	error( 'failed to compile game module:' .. path )
+	-- else
+	-- 	print( errMsg )
+	-- 	print( tracebackMsg )
+	-- 	error( 'failed to load game module:' .. path )
+	-- end
 end
 
 --------------------------------------------------------------------
@@ -113,8 +162,11 @@ end
 function reloadGameModule( path )
 	local released = {}
 	releaseGameModule( path, released )
-	for path in pairs( released ) do
-		requireGameModule( path )
+	for path1 in pairs( released ) do
+		loadGameModule( path1, false )
 	end
+	local errInfos = _errorInfos
+	_errorInfos = {}
+	return errInfos
 end
 

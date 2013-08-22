@@ -1,6 +1,17 @@
 import os.path
 from MOAIRuntime import *
+from MOAIRuntime import _G, _GII
 from gii.core import *
+
+signals.register ( 'script.load'   )
+signals.register ( 'script.reload' )
+signals.register ( 'script.unload' )
+
+##----------------------------------------------------------------##
+def getModulePath( path ):
+	import os.path
+	return os.path.dirname( __file__ ) + '/' + path
+##----------------------------------------------------------------##
 
 class LuaScriptAssetManager( AssetManager ):
 	def getName( self ):
@@ -13,11 +24,16 @@ class LuaScriptAssetManager( AssetManager ):
 
 	def importAsset(self, node, option=None):
 		node.assetType = 'lua'
+		lib = app.getModule( 'script_library' )
+		lib.registerScript( node )
 		return True
 
 	def reimportAsset( self, node, option=None):
-		#TODO
 		return super( LuaScriptAssetManager, self ).reimportAsset( node, option )
+
+	def forgetAsset( self , node ):
+		lib = app.getModule( 'script_library' )
+		lib.releaseScript( node )
 
 ##----------------------------------------------------------------##
 class ScriptLibrary( EditorModule ):
@@ -28,11 +44,28 @@ class ScriptLibrary( EditorModule ):
 		return ['moai']
 
 	def onLoad( self ):
-		self.delegate = MOAILuaDelegate( self )
-		self.getApp().getPath( 'data/lua/runtime.lua' )
+		self.scripts = {}
 
-	def compileScripts( self ):
-		pass
+	def convertScriptPath( self, node ):
+		path = node.getNodePath()
+		name, ext = os.path.splitext( path )
+		return name.replace( '/', '.' )
+
+	def registerScript( self, node ):
+		_GII.loadGameModule( self.convertScriptPath( node ), True ) #force
+
+	def releaseScript( self, node ):
+		_GII.releaseGameModule( self.convertScriptPath( node ) ) #force
+
+	def onStart( self ):
+		for node in self.getAssetLibrary().enumerateAsset( 'lua' ):
+			_GII.loadGameModule( self.convertScriptPath( node ) )
+
+	def compileScript( self, node, dstPath, version = 'lua' ):
+		if version == 'lua':
+			pass
+		# 'luajit -b -g $in $out'
+		# 'luac -o $out $in'
 
 
 ##----------------------------------------------------------------##

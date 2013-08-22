@@ -145,10 +145,9 @@ class Deck2DEditor( AssetEditorModule ):
 
 		if subnode:
 			name = subnode.getName()
-			for deck in self.editingPack:
-				if deck['name'] == name:
-					self.treeSprites.selectNode( deck )
-					break
+			deck = self.editingPack.getDeck( self.editingPack, name )
+			if deck:
+				self.treeSprites.selectNode( deck )
 		
 
 	def getSpriteList( self ):

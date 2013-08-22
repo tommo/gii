@@ -183,6 +183,7 @@ class AssetNode(object):
 		signals.emit('asset.deploy.changed', self)
 
 	def markModified( self ):
+		logging.info( 'modified: %s', repr(self) )
 		self.modifyState = 'modified'
 
 	def getFilePath(self):
@@ -556,10 +557,11 @@ class AssetLibrary(object):
 			self.unregisterAssetNode(child)
 
 		if oldnode != self.rootNode:
+			oldnode.getManager().forgetAsset( oldnode )
 			signals.emitNow('asset.unregister', oldnode)
 			if oldnode.parentNode: 
 				oldnode.parentNode.removeChild(oldnode)
-				oldnode.parentNode=None
+				oldnode.parentNode = None
 			path = oldnode.getNodePath()
 			del self.assetTable[path]
 			assert not self.assetTable.has_key(path)	
@@ -567,7 +569,7 @@ class AssetLibrary(object):
 	def initAssetNode( self, path, option = None, **kwargs ):
 		#fix path
 		absFilePath = os.path.abspath( self.rootAbsPath + '/' + path )
-		fileTime = os.path.getmtime(absFilePath),
+		fileTime = os.path.getmtime(absFilePath)
 		filePath = self.rootPath + '/' + path
 
 		node = self.getAssetNode(path)
@@ -668,7 +670,7 @@ class AssetLibrary(object):
 				else:
 					node = self.getAssetNode( nodePath )
 					absPath = self.getAbsPath( nodePath )
-					if os.path.getmtime( absPath ) >= node.getFileTime():
+					if os.path.getmtime( absPath ) > node.getFileTime():
 						node.markModified()
 
 			dirs2 = dirs[:]
@@ -700,7 +702,7 @@ class AssetLibrary(object):
 		for path,data in dataTable.items():
 			node=AssetNode(path, data.get('type').encode('utf-8'), 
 					filePath = data.get( 'filePath', path ),
-					fileTime = data.get( 'fileTime', 0 ),
+					fileTime = data.get( 'fileTime', 0 )
 				)
 			node.deployState  = data.get('deploy', None)
 			node.cacheFiles   = data.get('cacheFiles', {})

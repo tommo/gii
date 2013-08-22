@@ -100,7 +100,7 @@ end
 function ParticlePreview:open( path )
 	self.editingConfig = mock.ParticleSystemConfig()
 	self.editingConfig.allowPool = false
-	self.editingConfig.deck = mock.loadAsset( 'decks/icons.deck2d/simley_coin' )
+	self.editingConfig.deck = mock.loadAsset( 'decks/icons.deck2d/build' )
 
 	self.editingConfig:addEmitterConfig().name = 'timed'
 	local config2 = self.editingConfig:addEmitterConfig()
@@ -114,6 +114,9 @@ function ParticlePreview:open( path )
 	self:rebuildSystem()
 	
 	return self.editingConfig
+end
+
+function ParticlePreview:save( path )
 end
 
 preview = scn:addEntity( ParticlePreview() )

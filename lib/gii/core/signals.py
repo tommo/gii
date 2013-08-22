@@ -41,10 +41,10 @@ def emitNow(name,*args, **kwargs):
 	if sig is None: raise Exception('SIGNAL undefined: %s '%name)
 	sig.emitNow(*args,  **kwargs)
 
-def register(name, description=False):
+def register( name ):
 	if not SIGNALS.get(name,None) is None :raise Exception('SIGNAL duplicated: %s '%name)
 	logging.debug( 'register signal: %s ' % name )
-	sig=Signal(name=name)
+	sig = Signal( name=name )
 	# sig=Signal()
 	# sig.description = description
 	# sig.name=name

@@ -14,25 +14,30 @@ package.path = package.path
 	.. ( ';' .. GII_PROJECT_SCRIPT_LIB_PATH .. '/?/init.lua' )
 
 
-----------------------------
+--------------------------------------------------------------------
 function doRuntimeScript(name)
 	local path = GII_DATA_PATH..'/lua/'..name
 	return dofile(path)
 end
 
+--------------------------------------------------------------------
 function lupaErrFunc( msg )
 	return msg .. '\n' ..debug.traceback()
 end
 
-python.seterrfunc( lupaErrFunc )
-----------------------------
+python.seterrfunc( lupaErrFunc ) --lupa err func
+
+--------------------------------------------------------------------
 doRuntimeScript 'MOAInterfaces.lua' --REMOVE THIS?
 
 ----------------------------
 doRuntimeScript	'bridge.lua'
-doRuntimeScript	'MOAIModels.lua'
 doRuntimeScript	'debugger.lua'
 
+--------------------------------------------------------------------
+doRuntimeScript	'MOAIModel.lua'
+doRuntimeScript	'LuaModule.lua'
+
 ----------------------------
-doRuntimeScript	'renderContext.lua'
-doRuntimeScript	'editCanvas.lua'
+doRuntimeScript	'RenderContext.lua'
+doRuntimeScript	'EditCanvasContext.lua'

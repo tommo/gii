@@ -8,6 +8,7 @@ import signals
 from project import Project
 from Command import EditorCommandRegistry
 
+
 ##----------------------------------------------------------------##
 ## EDITORMODULE
 ##----------------------------------------------------------------##

@@ -11,7 +11,8 @@ from MOAIInputDevice import MOAIInputDevice
 from LuaTableProxy   import LuaTableProxy
 
 ##----------------------------------------------------------------##
-_G = LuaTableProxy( None )
+_G   = LuaTableProxy( None )
+_GII = LuaTableProxy( None )
 
 signals.register( 'lua.msg' )
 signals.register( 'moai.clean' )
@@ -56,18 +57,19 @@ class MOAIRuntime( EditorModule ):
 		return _G
 
 	def getRuntimeEnv( self ):
-		return self.luaRuntime
+		return _GII
 
 	#-------Context Control
 	def initContext(self):
 		global _G
+		global _GII
+
 		self.luaModules        = []
 
 		self.inputDevices      = {}
 		self.lastInputDeviceId = 0
 		
 		aku = getAKU()
-		self.luaRuntime     = None
 		self.GLContextReady = False
 
 		aku.resetContext()
@@ -79,6 +81,7 @@ class MOAIRuntime( EditorModule ):
 		_G['GII_PYTHON_BRIDGE']            = bridge
 		_G['GII_DATA_PATH']                = self.getApp().getPath('data')
 		_G['GII_PROJECT_SCRIPT_PATH']      = self.getProject().getScriptPath()
+		_G['GII_PROJECT_ASSET_PATH']       = self.getProject().getAssetPath()
 		_G['GII_PROJECT_SCRIPT_LIB_PATH']  = self.getProject().getScriptLibPath()
 		logging.info( 'loading gii lua runtime' )
 
@@ -86,8 +89,9 @@ class MOAIRuntime( EditorModule ):
 			self.getApp().getPath( 'data/lua/runtime.lua' )
 			)
 
-		self.luaRuntime = lua.eval('gii')
-		assert self.luaRuntime, "Failed loading Gii Lua Runtime!"
+		_GII._setTarget( _G['gii'] )
+
+		assert _GII, "Failed loading Gii Lua Runtime!"
 		#finish loading lua bridge
 		
 		self.AKUReady      = True
@@ -133,24 +137,24 @@ class MOAIRuntime( EditorModule ):
 	#------Manual Control For MOAI Module
 	#TODO: move function below into bridge module
 	def syncAssetLibrary(self):
-		self.luaRuntime.syncAssetLibrary()
+		_GII.syncAssetLibrary()
 		
 	def stepSim(self, step):
-		self.luaRuntime.stepSim(step)
+		_GII.stepSim(step)
 
 	def setBufferSize(self, w,h):
 	#for setting edit canvas size (without sending resize event)
-		self.luaRuntime.setBufferSize(w,h) 
+		_GII.setBufferSize(w,h) 
 
 	def manualRenderAll(self):
 		if not self.GLContextReady: return
-		self.luaRuntime.manualRenderAll()
+		_GII.manualRenderAll()
 
 	def changeRenderContext(self, contextId, w, h ):
-		self.luaRuntime.changeRenderContext( contextId or False, w or False, h or False )
+		_GII.changeRenderContext( contextId or False, w or False, h or False )
 
 	def createRenderContext(self, s):
-		self.luaRuntime.createRenderContext(s)
+		_GII.createRenderContext(s)
 
 	#### Delegate Related
 	def loadLuaDelegate( self, scriptPath , owner = None, **option ):
@@ -166,7 +170,7 @@ class MOAIRuntime( EditorModule ):
 		try:
 			if env:
 				assert isinstance( env, dict )
-			return self.luaRuntime.loadLuaWithEnv( file, env )
+			return _GII.loadLuaWithEnv( file, env )
 		except Exception, e:
 			logging.error( 'error loading lua:\n' + str(e) )
 
@@ -293,7 +297,6 @@ class MOAIRuntime( EditorModule ):
 
 	def onUnload(self):
 		self.cleanLuaReferences()
-		self.luaRuntime = None
 		self.AKUReady   = False
 		pass
 
