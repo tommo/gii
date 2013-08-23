@@ -344,10 +344,15 @@ class ModelManager(object):
 		self.modelProviders     = []
 		self.objectEnumerators  = []
 	
-		self.pythonModelProvider = self.registerModelProvier( PythonModelProvider() )
+		self.pythonModelProvider = self.RegisterModelProvider( PythonModelProvider() )
 		#build python types
 	
-	def registerModelProvier( self, provider ):
+	def RegisterModelProvider( self, provider ):
+		priority = provider.getPriority()
+		for i, p in enumerate( self.modelProviders ):
+			if priority >= p.getPriority() :
+				self.modelProviders.insert( i, provider )
+				return provider
 		self.modelProviders.append( provider )
 		return provider
 

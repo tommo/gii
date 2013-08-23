@@ -3,13 +3,15 @@ local modelBridge = bridge.ModelBridge.get()
 
 module('gii',package.seeall)
 
-function registerModelProvier( setting )
+function registerModelProvider( setting )
 	local priority  = setting.priority or 10
 	local name      = setting.name
 	local getTypeId           = assert( setting.getTypeId, 'getTypeId not provided' )
 	local getModel            = assert( setting.getModel,  'getModel not provided' )
 	local getModelFromTypeId  = assert( setting.getModelFromTypeId,  'getModelFromTypeId not provided' )
-	return modelBridge:buildLuaObjectModelProvider( name, priority, getTypeId, getModel, getModelFromTypeId )
+	return modelBridge:buildLuaObjectModelProvider( 
+			name, priority, getTypeId, getModel, getModelFromTypeId
+		)
 end
 
 --------------------------------------------------------------------
@@ -40,7 +42,7 @@ local function modelFromType(t)
 	return nil
 end
 
-registerModelProvier{
+registerModelProvider{
 	name               = 'MOAIModelProvider',
 	priority           = 10,
 	getTypeId          = typeIdGetter,

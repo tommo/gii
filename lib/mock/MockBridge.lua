@@ -85,15 +85,15 @@ end
 
 ----
 local function typeIdGetter( obj )
-	local tt = type(v)
+	local tt = type(obj)
 	if tt == 'table' then
-		local mt = getmetatable(v)
+		local mt = getmetatable(obj)
 		if not mt then return nil end
 		return mt
 	elseif tt == 'userdata' then --MOAIObject
-		local getClass = v.getClass
+		local getClass = obj.getClass
 		if getClass then
-			return getClass(v)
+			return getClass(obj)
 		end
 	end
 	return nil
@@ -141,7 +141,7 @@ local function modelFromType( t )
 end
 
 ----
-gii.registerModelProvier{
+gii.registerModelProvider{
 	name               = 'MockModelProvider',
 	priority           = 100,
 	getTypeId          = typeIdGetter,

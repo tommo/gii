@@ -46,7 +46,7 @@ class SceneIntrospector( SceneEditorModule ):
 		container = self.requestDockWindow('SceneIntrospector-%d'%id,
 				title   = 'Introspector',
 				dock    = 'right',
-				minSize = (200,200)
+				minSize = (200,100)
 		)
 		instance = IntrospectorInstance(id)
 		instance.createWidget( container )
@@ -65,9 +65,10 @@ class SceneIntrospector( SceneEditorModule ):
 		return self.instances
 
 	def registerObjectEditor( self, typeId, editorClas ):
+		assert typeId, 'null typeid'
 		self.objectEditorRegistry[ typeId ] = editorClas
 
-	def getObjectEditor( self, typeId ):		
+	def getObjectEditor( self, typeId ):	
 		while True:
 			clas = self.objectEditorRegistry.get( typeId, None )
 			if clas: return clas
@@ -95,20 +96,30 @@ class IntrospectorInstance(object):
 
 		self.target    = None
 		self.container = None
+		self.body      = None
 		self.editors   = []
 
 	def createWidget(self, container):
-		self.container=container
-		self.header=container.addWidgetFromFile(
+		self.container = container
+		self.header = container.addWidgetFromFile(
 			getAppPath( 'data/ui/introspector.ui' ),
 			expanding=False)
+		self.scroll = scroll = container.addWidget( QtGui.QScrollArea( container ) )
+		self.body   = body   = QtGui.QWidget( container )
 		self.header.hide()
+
+		scroll.setWidgetResizable(True)
+		scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+		body.mainLayout = layout = QtGui.QVBoxLayout( body )
+		layout.setSpacing(0)
+		layout.setMargin(0)
+		layout.addStretch()
+		scroll.setWidget( body )
 	
 	def getTarget(self):
 		return self.target
 
 	def setTarget(self, t):
-		parent = app.getModule('introspector')
 		if self.target:
 			self.clear()
 		
@@ -124,21 +135,30 @@ class IntrospectorInstance(object):
 		else:
 			self.target = t[0]
 
-		typeId = ModelManager.get().getTypeId( self.target )
+		self.addObjectEditor( self.target )
+	
+	def addObjectEditor( self, target ):
+		parent = app.getModule('introspector')
+		typeId = ModelManager.get().getTypeId( target )
 		if typeId:
-			clas = parent.getObjectEditor( typeId )
-			editor = clas()			
+			editorClas = parent.getObjectEditor( typeId )
+			editor = editorClas()			
 			self.editors.append( editor )
-			widget = editor.initWidget( self.container )
+			widget = editor.initWidget( self.body )
 			if widget: 
-				self.container.addWidget( widget )
-			editor.setTarget( self.target )
+				count = self.body.mainLayout.count()
+				assert count>0
+				self.body.mainLayout.insertWidget( count - 1, widget )
+				# self.body.addWidget( widget )
+			editor.setTarget( target, self )
+			return editor
+		return None
 
 	def clear(self):		
 		for editor in self.editors:
 			editor.unload() #TODO: cache?
 		#remove widgets
-		layout = self.container.mainLayout
+		layout = self.body.mainLayout
 		while layout.count() > 0:
 			child = layout.takeAt( 0 )
 			if child :
@@ -166,7 +186,7 @@ class ObjectEditor( object ):
 	def initWidget( self, container ):
 		pass
 
-	def setTarget( self, target ):
+	def setTarget( self, target, introspectorInstance ):
 		pass
 
 	def unload( self ):
@@ -180,7 +200,7 @@ class CommonObjectEditor( ObjectEditor ): #a generic property grid
 		self.grid.propertyChanged.connect( self.onPropertyChanged )
 		return self.grid
 
-	def setTarget( self, target ):
+	def setTarget( self, target, introspectorInstance ):
 		self.grid.setTarget( target )
 
 	def onPropertyChanged( self, obj, id, value ):

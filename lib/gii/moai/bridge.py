@@ -146,6 +146,9 @@ class LuaObjectModelProvider(ModelProvider):
 	def getModelFromTypeId( self, typeId ):
 		return self._getModelFromTypeId( typeId )
 
+	def getPriority( self ):
+		return 1
+
 	def clear( self ):
 		pass
 
@@ -217,7 +220,7 @@ class ModelBridge(object):
 
 	def buildLuaObjectModelProvider( self, name, priority, getTypeId, getModel, getModelFromTypeId ):
 		provider = LuaObjectModelProvider( name, priority, getTypeId, getModel, getModelFromTypeId )
-		ModelManager.get().registerModelProvier( provider )
+		ModelManager.get().RegisterModelProvider( provider )
 		self.modelProviders.append( provider )
 		return provider
 

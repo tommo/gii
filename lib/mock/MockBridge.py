@@ -45,6 +45,7 @@ class MockBridge( EditorModule ):
 		signals.connect( 'moai.reset', self.onMoaiReset )
 		signals.connect( 'moai.ready', self.onMoaiReady )
 
+
 	def affirmConfigFile( self ):
 		proj = self.getProject()
 		self.configPath = proj.getConfigPath( _MOCK_GAME_CONFIG_NAME )
@@ -68,6 +69,7 @@ class MockBridge( EditorModule ):
 			]
 		}
 		jsonHelper.trySaveJSON( defaultConfigData, self.configPath )
+
 
 	def onStart( self ):
 		self.initMockGame()
@@ -115,6 +117,7 @@ class MockBridge( EditorModule ):
 
 	def getEntityTypeList( self ):
 		pass
+
 
 ##----------------------------------------------------------------##	
 MockBridge().register()

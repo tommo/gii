@@ -63,6 +63,10 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'moai.clean', self.onMoaiClean )
 		signals.connect( 'selection.changed', self.onSelectionChanged)
 
+		#editor
+		if self.getModule('introspector'):
+			import EntityEditor
+
 	def onStart( self ):
 		pass
 
