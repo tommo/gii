@@ -9,7 +9,7 @@ from gii.core import *
 
 from gii.qt.controls.Window    import MainWindow
 from QtEditorModule            import QtEditorModule
-
+from gii.qt.dialogs            import *
 
 _QT_SETTING_FILE = 'qt.ini'
 
@@ -80,8 +80,7 @@ class QtSupport( QtEditorModule ):
 			'E&xit',
 			]
 		)	
-		
-		self.statusWindow = None
+		# requestColor('lll')
 
 	def getSharedMenubar( self ):
 		return self.sharedMenuBar
@@ -103,14 +102,15 @@ class QtSupport( QtEditorModule ):
 		self.qtApp.setActiveWindow(window)
 
 	def onLoad( self ):
+
 		self.qtApp   = QtGui.QApplication(sys.argv)
 		self.qtSetting = QtCore.QSettings(
 					self.getProject().getConfigPath( _QT_SETTING_FILE ),
 					QtCore.QSettings.IniFormat
 				)
-
 		eventFilter = QtSupportEventFilter( self.qtApp )
 		eventFilter.app = self
+		QtGui.QColorDialog().setVisible( False )
 		self.qtApp.installEventFilter(eventFilter)
 		self.setupStyle()
 		
@@ -130,7 +130,7 @@ class QtSupport( QtEditorModule ):
 	def getQtSettingObject( self ):
 		return self.qtSetting
 	
-	def onStart( self ):		
+	def onStart( self ):	
 		self.restoreWindowState( self.mainWindow )
 		self.qtApp.processEvents( QEventLoop.AllEvents )
 

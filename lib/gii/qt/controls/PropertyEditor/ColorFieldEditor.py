@@ -29,31 +29,71 @@ class ColorBlock( QtGui.QToolButton ):
 		super(ColorBlock, self).__init__( parent )
 		self.setColor( color or QtGui.QColor( 1,1,1,1 ) )
 		self.clicked.connect( self.onClicked )
-		self.setMinimumSize( 10, 10 )
 		self.setSizePolicy(
 			QtGui.QSizePolicy.Fixed,
 			QtGui.QSizePolicy.Fixed
 			)
+
 		self.title = option.get( 'title', 'Color' )
+		self.pen = QtGui.QPen()
+		self.brush = QtGui.QBrush()
+		self.brush.setStyle( Qt.SolidPattern )
+
+	def sizeHint( self ):
+		return QtCore.QSize( 60, 20 )
 
 	def getColor( self ):
 		return self.color
 
 	def setColor( self, color ):
 		self.color = color
-		self.setStyleSheet('''
-			background-color: %s;
-			border: 1px solid rgb(179, 179, 179);
-			border-radius: 0px;
-			margin: 5px 0px 5px 1px;
-			padding: 0;
-			''' % color.name()
-			)
+		# self.setStyleSheet('''
+		# 	background-color: %s;
+		# 	border: 1px solid rgb(179, 179, 179);
+		# 	border-radius: 0px;
+		# 	margin: 2px 0px 2px 1px;
+		# 	padding: 0;
+		# 	''' % color.name()
+		# 	)
 		self.colorChanged.emit( self.color )
+		self.update()
+
+	def paintEvent( self, event ):
+		painter = QtGui.QPainter()
+		painter.begin( self )
+		painter.setRenderHint( QtGui.QPainter.Antialiasing )
+		pen   = self.pen
+		brush = self.brush
+		painter.setPen( pen )
+		painter.setBrush( brush )
+		margin = 1
+		x = margin
+		y = margin
+		w = self.width() - margin * 2
+		h = self.height() - margin * 2
+		#border
+		c = QtGui.QColor( self.color )
+		c.setAlpha( 255 )
+		painter.setBrush( c )
+		painter.setPen( QtGui.QPen( QColorF( .5,.5,.5 ) ) )
+		painter.drawRect( x,y,w,h )
+		#alpha
+		alphaH = 4
+		p2 = QtGui.QPen()
+		p2.setStyle( Qt.NoPen )
+		painter.setPen( p2 )
+		painter.setBrush( QtGui.QBrush( QColorF( 0,0,0 ) ) )
+		painter.drawRect( x + 1, y + h - alphaH ,w - 2, alphaH )
+		
+		painter.setBrush( QtGui.QBrush( QColorF( 1,1,1 ) ) )
+		painter.drawRect( x + 1, y + h - alphaH ,( w -2 ) * self.color.alphaF(), alphaH  )
+
 
 	def onClicked( self ):		
 		color = requestColor( self.title, self.color, onColorChanged = self.setColor )
 		self.setColor( color )
+
+
 
 ##----------------------------------------------------------------##
 class ColorFieldEditor( FieldEditor ):

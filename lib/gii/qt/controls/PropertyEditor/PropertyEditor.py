@@ -40,8 +40,8 @@ class PropertyEditor( QtGui.QWidget ):
 		layout = QtGui.QFormLayout( )
 		self.setLayout( layout )
 		self.layout = layout
-		self.layout.setSpacing( 10 )
-		self.layout.setVerticalSpacing( 3 )
+		self.layout.setSpacing( 0 )
+		self.layout.setVerticalSpacing( 0 )
 		self.layout.setLabelAlignment( Qt.AlignLeft )
 		self.layout.setFieldGrowthPolicy( QtGui.QFormLayout.ExpandingFieldsGrow )
 
