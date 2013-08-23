@@ -38,12 +38,8 @@ local getClass        = getClass
 
 ----
 
-local function isTupleValue( ft )
-	return
-		   ft == 'vec2' 
-		or ft == 'vec3' 
-		or ft == 'color'		
-end
+local isTupleValue  = mock.isTupleValue
+local isAtomicValue = mock.isAtomicValue
 
 local unpackPythonList = gii.unpackPythonList
 local function buildGiiModel( model )
@@ -59,18 +55,19 @@ local function buildGiiModel( model )
 		}
 		local id     = f.__id
 		local typeid = f.__type
-		
-		if isTupleValue( typeid ) then
-			local _set = f.__setter
-			option.set = function( obj, tuple )
-				_set( obj, unpackPythonList( tuple ) )
-			end
-		end
 
 		if typeid == '@enum' then
 			assert ( type(f.__enum) == 'table' )
 			pmodel:addLuaEnumFieldInfo( id, f.__enum, option )
 		else
+			if isTupleValue( typeid ) then
+				local _set = f.__setter
+				option.set = function( obj, tuple )
+					_set( obj, unpackPythonList( tuple ) )
+				end
+			elseif not isAtomicValue( typeid ) then
+				option['objtype'] = f.__objtype or 'ref'
+			end
 			pmodel:addLuaFieldInfo( id, typeid, option )
 		end
 	end

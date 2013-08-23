@@ -92,6 +92,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		if not self.activeScene: return
 		self.refreshScheduled = False
 		node = self.activeSceneNode
+		self.delegate.safeCallMethod( 'editor', 'refreshScene' )
+		#TODO:remove this
 		self.closeScene()
 		self.openScene( node )
 

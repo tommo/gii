@@ -30,7 +30,7 @@ class ColorBlock( QtGui.QToolButton ):
 		self.setColor( color or QtGui.QColor( 1,1,1,1 ) )
 		self.clicked.connect( self.onClicked )
 		self.setSizePolicy(
-			QtGui.QSizePolicy.Fixed,
+			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Fixed
 			)
 

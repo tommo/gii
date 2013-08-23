@@ -23,6 +23,9 @@ function SceneGraphEditor:saveScene( path )
 	return true
 end
 
+function SceneGraphEditor:refreshScene()
+end
+
 local function isEditorEntity( e )
 	while e do
 		if e.FLAG_EDITOR_OBJECT then return true end

@@ -32,6 +32,10 @@ class DataType(object):
 	def register( self ):
 		raise 'not implemented'
 
+##----------------------------------------------------------------##
+class ReferenceType(DataType):
+	pass
+
 
 ##----------------------------------------------------------------##
 class PythonValueType(DataType):

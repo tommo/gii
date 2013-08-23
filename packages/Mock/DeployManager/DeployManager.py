@@ -51,11 +51,12 @@ class DeployManager( SceneEditorModule ):
 		self.addTool( 'deploy_manager/down',   label = 'down')
 		
 		# self.container.show()
+		self.window.buttonCancel.clicked.connect( self.onButtonCancel )
+		self.window.buttonOK.clicked.connect( self.onButtonOK )
 
 	def onStart( self ):
 		# self.tree.rebuild()
-		pass
-
+		pass	
 
 	def onTool( self, tool ):
 		name = tool.name
@@ -63,6 +64,17 @@ class DeployManager( SceneEditorModule ):
 	def onSetFocus( self ):
 		self.container.show()
 		self.container.raise_()
+
+	def saveConfig( self ):
+		pass
+
+	def onButtonCancel( self ):
+		self.container.hide()
+
+	def onButtonOK( self ):
+		self.saveConfig()
+		self.container.hide()
+
 # ##----------------------------------------------------------------##
 # class LayerTreeWidget( GenericTreeWidget ):
 # 	def getHeaderInfo( self ):

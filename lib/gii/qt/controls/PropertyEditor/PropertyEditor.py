@@ -100,6 +100,8 @@ class PropertyEditor( QtGui.QWidget ):
 			if field.getOption('noedit'): continue
 			label = field.label
 			ft    = field._type
+			if field.getOption( 'objtype', None) == 'ref' :
+				ft    = ReferenceType
 			editorClas  =  getFieldEditor( ft )
 			if not editorClas: continue
 			editor = self._buildSubEditor( field, label, editorClas )
