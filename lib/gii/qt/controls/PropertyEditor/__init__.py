@@ -8,4 +8,5 @@ from CommonFieldEditors import \
 from EnumFieldEditor      import EnumFieldEditor
 from ColorFieldEditor     import ColorFieldEditor
 from ReferenceFieldEditor import ReferenceFieldEditor #TODO
+from AssetRefFieldEditor  import AssetRefFieldEditor #TODO
 ##----------------------------------------------------------------##

@@ -177,6 +177,8 @@ class LuaObjectEnumerator( ObjectEnumerator ):
 ##----------------------------------------------------------------##
 class LuaObjectModel(ObjectModel):
 	_EnumCache = weakref.WeakValueDictionary()
+	_AssetTypeCache = {}
+
 	def addLuaFieldInfo(self, name, typeId, data = None): #called by lua
 		#convert lua-typeId -> pythontype
 		typeId  = luaTypeToPyType( typeId )
@@ -200,6 +202,13 @@ class LuaObjectModel(ObjectModel):
 			enumType = EnumType( '_LUAENUM_', tuples )
 			LuaObjectModel._EnumCache[ enumItems ] = enumType
 		return self.addLuaFieldInfo( name, enumType, data )
+
+	def addLuaAssetFieldInfo(self, name, assetType, data = None): #called by lua
+		typeId = LuaObjectModel._AssetTypeCache.get( assetType )
+		if not typeId:
+			typeId = AssetRefType( assetType )
+			LuaObjectModel._AssetTypeCache[ assetType ] = typeId
+		return self.addLuaFieldInfo( name, typeId, data )
 
 	def serialize( self, obj, objMap = None ):
 		raise Exception('Serializing Lua object in python is not supported, yet')

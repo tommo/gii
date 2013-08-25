@@ -92,15 +92,19 @@ class EnumType( DataType ):
 			if value == v: return i
 		return None
 
-	def register( self, typeId ):
-		ModelManager.get().registerPythonModel( typeId, self )
-		return self
+	
+class AssetRefType( DataType ):
+	def __init__( self, assetType ):
+		self.assetType = assetType
 
+	def getName( self ):
+		return self.assetType
 
-# class StringEnumValueType(object):	
-# 	def __init__(self, arg):
-# 		super(IntEnumValueType, self).__init__()
-# 		self.arg = arg
+	def getSuperType( self ):
+		return AssetRefType
+
+	def repr( self, value ):
+		return '<%s> %s' % ( self.assetType, value )
 		
 
 ##----------------------------------------------------------------##
@@ -204,6 +208,9 @@ class Field(object):
 		option[ 'readonly' ] = self.readonly
 		self.option    = option
 
+	def __repr__( self ):
+		return 'field: %s <%s>' % ( self.id, repr(self._type) )
+
 	def getType( self ):
 		return self._type
 
@@ -295,6 +302,9 @@ class ModelProvider(object):
 
 ##----------------------------------------------------------------##
 class ObjectEnumerator(object):
+	def getName( self ):
+		return 'enumerator'
+		
 	def enumerateObjects( self, typeId, context = None ):
 		return None
 

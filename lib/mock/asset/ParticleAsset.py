@@ -5,19 +5,22 @@ import shutil
 import json
 
 from gii.core import *
+from mock import _MOCK
 
 ##----------------------------------------------------------------##
 class ParticleSystemAssetManager( AssetManager ):
 	def getName( self ):
 		return 'asset_manager.particle'
 
-	def acceptAssetFile(self, filepath):
-		if not os.path.isfile(filepath): return False		
-		name,ext = os.path.splitext(filepath)
-		return ext in [ '.particle' ]
+	def acceptAssetFile(self, filePath):
+		if not os.path.isfile( filePath ): return False
+		name, ext = os.path.splitext( filePath )
+		if not ext in [ '.particle' ]: return False
+		return _MOCK.checkSerializationFile( filePath, 'mock.ParticleSystemConfig' )
 
 	def importAsset( self, node, option = None ):
 		node.assetType = 'particle_system'		
+		node.setObjectFile( 'def', node.getFilePath() )
 		return True
 
 	def editAsset(self, node):	
@@ -43,14 +46,8 @@ class ParticleSystemCreator(AssetCreator):
 			nodepath = contextNode.getSiblingPath( filename )
 
 		fullpath = AssetLibrary.get().getAbsPath( nodepath )
-		data={
-			'_assetType' : 'particle' #checksum			
-		}
-		if os.path.exists(fullpath):
-			raise Exception('File already exist:%s'%fullpath)
-		fp = open(fullpath,'w')
-		json.dump( data, fp, sort_keys=True, indent=2 )
-		fp.close()
+		
+		_MOCK.createEmptySerialization( fullpath, 'mock.ParticleSystemConfig' )
 		return nodepath
 
 

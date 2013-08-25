@@ -98,10 +98,9 @@ function ParticlePreview:changeSelection( node )
 end
 
 function ParticlePreview:open( path )
-	self.editingConfig = mock.ParticleSystemConfig()
-	self.editingConfig.allowPool = false
-	self.editingConfig.deck = mock.loadAsset( 'decks/icons.deck2d/build' )
 
+	self.editingConfig = mock.loadAsset( path )
+	self.editingConfig.allowPool = false
 	self.editingConfig:addEmitterConfig().name = 'timed'
 	local config2 = self.editingConfig:addEmitterConfig()
 	config2.name = 'distance'

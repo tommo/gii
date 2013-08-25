@@ -59,6 +59,8 @@ local function buildGiiModel( model )
 		if typeid == '@enum' then
 			assert ( type(f.__enum) == 'table' )
 			pmodel:addLuaEnumFieldInfo( id, f.__enum, option )
+		elseif typeid == '@asset' then
+			pmodel:addLuaAssetFieldInfo( id, f.__assettype, option )
 		else
 			if isTupleValue( typeid ) then
 				local _set = f.__setter

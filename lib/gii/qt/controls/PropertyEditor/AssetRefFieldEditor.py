@@ -9,6 +9,8 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
 
+#TODO: rewrite this!!!!!!!!!!
+
 ##----------------------------------------------------------------##
 def getModulePath( path ):
 	import os.path
@@ -25,17 +27,17 @@ class WindowAutoHideEventFilter(QObject):
 		return QObject.eventFilter( self, obj, event )
 
 ##----------------------------------------------------------------##
-class ReferenceBrowser( QtGui.QWidget ):
+class AssetRefBrowser( QtGui.QWidget ):
 	_singleton = None
 	@staticmethod
 	def get():
-		if ReferenceBrowser._singleton:
-			return ReferenceBrowser._singleton
-		return ReferenceBrowser( None )
+		if AssetRefBrowser._singleton:
+			return AssetRefBrowser._singleton
+		return AssetRefBrowser( None )
 
 	@staticmethod
 	def start( editor, targetType, context ):
-		browser = ReferenceBrowser.get()
+		browser = AssetRefBrowser.get()
 		browser.setEditor( editor )
 		browser.move( editor.getBrowserPos() )
 		browser.setTarget( targetType, context )
@@ -43,8 +45,8 @@ class ReferenceBrowser( QtGui.QWidget ):
 
 		
 	def __init__(self, *args ):
-		super( ReferenceBrowser, self ).__init__( *args )
-		ReferenceBrowser._singleton = self
+		super( AssetRefBrowser, self ).__init__( *args )
+		AssetRefBrowser._singleton = self
 
 		self.setWindowFlags( Qt.Popup )
 		self.ui = ReferenceBrowserForm()
@@ -68,11 +70,10 @@ class ReferenceBrowser( QtGui.QWidget ):
 	def sizeHint( self ):
 		return QtCore.QSize( 300, 250 )
 
-	def setTarget( self, typeId, context = None ):
+	def setTarget( self, assetType, context = None ):
 		self.ui.textTerms.setText('')
-		self.targetType = typeId
-		entries = ModelManager.get().enumerateObjects( typeId, context )
-		self.entries = entries
+		self.targetType = assetType
+		self.entries = AssetLibrary.get().enumerateAsset( assetType )
 		self.ui.textTerms.setFocus()
 		self.treeResult.rebuild()
 
@@ -86,10 +87,10 @@ class ReferenceBrowser( QtGui.QWidget ):
 			self.hide()
 
 	def getObjectRepr( self, obj ):
-		return ModelManager.get().getObjectRepr( obj )
+		return obj.getNodePath()
 
 	def getObjectTypeRepr( self, obj ):
-		return ModelManager.get().getObjectTypeRepr( obj )
+		return obj.getType()
 
 	def onTermsChanged( self, text ):
 		#TODO: set filter
@@ -102,12 +103,12 @@ class ReferenceBrowser( QtGui.QWidget ):
 	def hideEvent( self, ev ):
 		self.setEditor( None )
 		self.treeResult.clear()
-		return super( ReferenceBrowser, self ).hideEvent( ev )
+		return super( AssetRefBrowser, self ).hideEvent( ev )
 	
 ##----------------------------------------------------------------##
 class ReferenceBrowserTree(GenericTreeWidget):
 	def getHeaderInfo( self ):
-		return [('Name', 300), ('Type', 80)]
+		return [('Path', 300), ('Type', 80)]
 
 	def getRootNode( self ):
 		return self.browser
@@ -190,7 +191,7 @@ class ReferenceFieldWidget( QtGui.QWidget ):
 			self.buttonGoto.hide()
 			self.buttonClear.hide()
 		else:
-			self.buttonRef.setText( 'Object' ) #TODO:
+			self.buttonRef.setText( '...' ) #TODO:
 			self.buttonGoto.show()
 			self.buttonClear.show()
 
@@ -198,15 +199,16 @@ class ReferenceFieldWidget( QtGui.QWidget ):
 		self.buttonRef.setText( name )
 
 ##----------------------------------------------------------------##
-class ReferenceFieldEditor( FieldEditor ):	
+class AssetRefFieldEditor( FieldEditor ):	
 	def setTarget( self, parent, field ):
-		super( ReferenceFieldEditor, self ).setTarget( parent, field )
-		self.targetType    = field.getType()
+		super( AssetRefFieldEditor, self ).setTarget( parent, field )
+		t = field.getType()
+		self.targetType    = t.assetType
 		self.targetContext = None  #TODO
 		self.target = None
 
 	def clear( self ):
-		ReferenceBrowser.get().hide()
+		AssetRefBrowser.get().hide()
 
 	def get( self ):
 		#TODO
@@ -216,10 +218,13 @@ class ReferenceFieldEditor( FieldEditor ):
 		self.target = value
 		self.refWidget.setRef( value )
 		if value:
-			name = ModelManager.get().getObjectRepr( value )
-			self.refWidget.setRefName( name )
+			self.refWidget.setRefName( value )
 
-	def setValue( self, value ):		
+	def setValue( self, node ):
+		if node:
+			value = node.getNodePath()
+		else:
+			value = None
 		self.set( value )
 		self.notifyChanged( value )
 
@@ -231,7 +236,7 @@ class ReferenceFieldEditor( FieldEditor ):
 		return self.refWidget
 
 	def openBrowser( self ):			
-		ReferenceBrowser.start( self, self.targetType, self.targetContext)
+		AssetRefBrowser.start( self, self.targetType, self.targetContext)
 
 	def getBrowserPos( self ):
 		size = self.refWidget.size()
@@ -251,4 +256,4 @@ class ReferenceFieldEditor( FieldEditor ):
 
 ##----------------------------------------------------------------##
 
-registerFieldEditor( ReferenceType, ReferenceFieldEditor )
+registerFieldEditor( AssetRefType, AssetRefFieldEditor )

@@ -480,14 +480,21 @@ class AssetLibrary(object):
 		if not nodePath: return self.rootNode
 		return self.assetTable.get(nodePath, None)
 
-	def enumerateAsset( self, assetTypes, **options ):
+	def enumerateAsset( self, patterns, **options ):
 		noVirtualNode = options.get( 'no_virtual', False )
 		result = []
-		if isinstance( assetTypes, str ): assetTypes = [ assetTypes ]
+		if isinstance( patterns, ( str, unicode ) ):
+			patterns = [ patterns ]
+		matchPatterns = []
+		for p in patterns:
+			pattern = re.compile( p )
+			matchPatterns.append( pattern )
 		for path, node in self.assetTable.items():
-			if node.getType() in assetTypes and \
-				not ( noVirtualNode and node.isVirtual() ):
-				result.append(node)
+			for matchPattern in matchPatterns:
+				if matchPattern.match( node.getType() ) and \
+					not ( noVirtualNode and node.isVirtual() ):
+					result.append(node)
+					break
 		return result
 
 	#tools
