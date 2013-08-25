@@ -109,7 +109,7 @@ class IntrospectorInstance(object):
 		self.header.hide()
 
 		scroll.setWidgetResizable(True)
-		scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
+		# scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
 		body.mainLayout = layout = QtGui.QVBoxLayout( body )
 		layout.setSpacing(0)
 		layout.setMargin(0)
@@ -165,11 +165,12 @@ class IntrospectorInstance(object):
 				w = child.widget()
 				if w:
 					w.setParent( None )
-				else:
-					print 'cannot remove obj:', child
+				# else:
+				# 	print 'cannot remove obj:', child
 			else:
 				break
-
+				
+		layout.addStretch()
 		self.target = None
 		self.header.hide()
 		self.editors = []

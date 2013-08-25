@@ -292,6 +292,12 @@ class ModelProvider(object):
 	#the bigger the first
 	def getPriority( self ):
 		return 0
+
+##----------------------------------------------------------------##
+class ObjectEnumerator(object):
+	def enumerateObjects( self, typeId, context = None ):
+		return []
+		
 	
 ##----------------------------------------------------------------##
 class PythonModelProvider(ModelProvider):
@@ -360,17 +366,15 @@ class ModelManager(object):
 		idx = self.modelProviders.index( provider )
 		self.modelProviders.pop( idx )
 
-	def registerEnumerator(self, typeId, enumerator):
-		# assert not self.objectEnumerators.has_key(typeId), 'duplicated Enumerator for type:%s'%repr(typeId)
-		# self.objectEnumerators[typeId]=enumerator
-		self.objectEnumerators.append((typeId, enumerator))
+	def registerObjectEnumerator(self, enumerator):
+		assert isinstance( enumerator, ObjectEnumerator )
+		self.objectEnumerators.append( enumerator )
 		return enumerator
 
-	def unregisterEnumerator(self, enumerator):
+	def unregisterObjectEnumerator(self, enumerator):
 		newList = []
-		for enumEntry in self.objectEnumerators:
-			typeId, enum = enumEntry
-			if enum != enumerator: newList.append( enumEntry )
+		for enumerator1 in self.objectEnumerators:
+			if enumerator1 != enumerator: newList.append( enumerator1 )
 		self.objectEnumerators = newList
 	
 	def getTypeId(self, obj):
@@ -388,17 +392,15 @@ class ModelManager(object):
 	def getModelFromTypeId(self, typeId):
 		for provider in self.modelProviders:
 			model = provider.getModelFromTypeId( typeId )
-			if model: return model			
+			if model: return model
 		return None
 
-	def enumerateObject(self, targetTypeId, context = None):
+	def enumerateObjects(self, targetTypeId, context = None):
 		res=[]
-		for m in self.objectEnumerators:
-			(typeId, enumerator) = m
-			if issubclass(typeId, targetTypeId):
-				objs = enumerator( targetTypeId, context )
-				if objs:
-					res += objs
+		for enumerator in self.objectEnumerators:
+			objectEntries = enumerator.enumerateObjects( targetTypeId, context ) #format is [(obj, name, typename)]
+			if objectEntries:
+				res += objectEntries
 		return res
 
 	def registerPythonModel(self, typeId, model):

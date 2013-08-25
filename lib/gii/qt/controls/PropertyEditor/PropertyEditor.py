@@ -60,6 +60,8 @@ class PropertyEditor( QtGui.QWidget ):
 		return editor
 
 	def clear( self ):
+		for editor in self.editors.values():
+			editor.clear()
 		layout = self.layout
 		while layout.count() > 0:
 			child = layout.takeAt( 0 )
@@ -67,8 +69,8 @@ class PropertyEditor( QtGui.QWidget ):
 				w = child.widget()
 				if w:
 					w.setParent( None )
-				else:
-					print 'cannot remove obj:', child
+				# else:
+				# 	print 'cannot remove obj:', child
 			else:
 				break
 		self.editors.clear()
@@ -158,6 +160,9 @@ class FieldEditor( object ):
 
 	def initEditor( self, container ):
 		return QtGui.QWidget( container )
+
+	def clear( self ):
+		pass
 
 
 

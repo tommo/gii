@@ -52,3 +52,5 @@ Model( MOAIProp, 'MOAIProp' ):update{
 	Field 'Scl' :type( Vec3 ) :get( getMoaiScl ) :set( setMoaiScl ) ;
 }
 
+
+

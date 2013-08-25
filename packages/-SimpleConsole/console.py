@@ -59,7 +59,7 @@ class Console( SceneEditorModule ):
 
 	def onLoad(self):
 
-		self.container = self.requestDockWindow('Console',
+		self.container = self.requestSubWindow('Console',
 				title   = 'Console',
 				minSize = (100,100),
 				dock    = 'bottom'
@@ -67,11 +67,11 @@ class Console( SceneEditorModule ):
 		self.panel = self.container.addWidget(
 				ConsoleWindow()
 			)
-		self.panel.module=self
+		self.panel.module = self
 		# self.stdoutCapture = StdouCapture()
 		# self.stdOutFile=self.stdoutCapture.file
 		# self.refreshTimer=self.container.startTimer( 10, self.doRefresh)
-		sys.stdout=self
+		# sys.stdout=self
 
 	def doRefresh(self):
 		if self.alive:

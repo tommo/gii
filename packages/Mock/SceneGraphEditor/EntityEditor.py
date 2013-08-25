@@ -1,3 +1,4 @@
+from gii.core import  *
 from gii.SceneEditor.Introspector   import ObjectEditor, registerObjectEditor
 from gii.qt.controls.PropertyEditor import PropertyEditor
 

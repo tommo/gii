@@ -21,11 +21,7 @@
     <number>5</number>
    </property>
    <item>
-    <widget class="QComboBox" name="textTerms">
-     <property name="editable">
-      <bool>true</bool>
-     </property>
-    </widget>
+    <widget class="QLineEdit" name="textTerms"/>
    </item>
    <item>
     <widget class="QFrame" name="containerResultTree">

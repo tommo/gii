@@ -1,4 +1,12 @@
 
+local function isEditorEntity( e )
+	while e do
+		if e.FLAG_EDITOR_OBJECT then return true end
+		e = e.parent
+	end
+	return false
+end
+
 --------------------------------------------------------------------
 CLASS:  SceneGraphEditor()
 
@@ -7,7 +15,7 @@ function SceneGraphEditor:openScene( path )
 	local scene = mock.loadAsset( path )
 	scene.timer:attach( ctx.actionRoot )
 	self.scene = scene
-	scene:setEntityListener( function( ... ) return self:onEntityEvent( ... ) end )
+	self:postLoadScene()
 	return scene
 end
 
@@ -24,15 +32,64 @@ function SceneGraphEditor:saveScene( path )
 end
 
 function SceneGraphEditor:refreshScene()
+	local data = mock.serializeScene( self.scene )
+	self.scene:exit()
+	self.scene = mock.deserializeScene( data )
+	self:postLoadScene()
 end
 
-local function isEditorEntity( e )
-	while e do
-		if e.FLAG_EDITOR_OBJECT then return true end
-		e = e.parent
-	end
-	return false
+function SceneGraphEditor:postLoadScene()
+	local scene = self.scene
+	scene:setEntityListener( function( ... ) return self:onEntityEvent( ... ) end )
 end
+
+
+local function collectEntity( e, typeId, collection )
+	if isEditorEntity( e ) then return end
+	if isInstanceOf( e, typeId ) then
+		collection[ e ] = true
+	end
+	for child in pairs( e.children ) do
+		collectEntity( child, typeId, collection )
+	end
+end
+
+local function collectComponent( entity, typeId, collection )
+	if isEditorEntity( e ) then return end
+	for com in pairs( entity.components ) do
+		if isInstanceOf( com, typeId ) then
+			collection[ e ] = entity
+		end
+	end
+	for child in pairs( e.children ) do
+		collectComponent( child, typeId, collection )
+	end
+end
+
+
+function SceneGraphEditor:enumerateObjects( typeId )	
+	local scene = self.scene
+	if not scene then return nil end
+	local result = {}
+	--REMOVE: demo codes
+	if typeId == mock.Entity then	
+		local collection = {}	
+		
+		for e in pairs( scene.entities ) do
+			collectEntity( e, typeId, collection )
+		end
+
+		for e in pairs( collection ) do
+			table.insert( result, {
+					e,
+					e:getName(),
+					e:getClassName()
+				})
+		end
+	end
+	return result
+end
+
 
 function SceneGraphEditor:onEntityEvent( action, entity, scene, layer )
 	if isEditorEntity( entity ) then return end
@@ -92,3 +149,13 @@ function CmdRemoveEntity:undo()
 end
 
 
+--------------------------------------------------------------------
+function enumerateSceneObjects( enumerator, typeId, context )
+	--if context~='scene_editor' then return nil end
+	return editor:enumerateObjects( typeId )
+end
+
+gii.registerObjectEnumerator{
+	name = 'scene_object_enumerator',
+	enumerateObjects =  enumerateSceneObjects
+}

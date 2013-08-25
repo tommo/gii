@@ -248,7 +248,7 @@ class SubWindowMixin:
 		return widget
 
 	def addWidgetFromFile(self, uiFile, **layoutOption):
-		form=uic.loadUi(uiFile)
+		form = uic.loadUi(uiFile)
 		return self.addWidget(form, **layoutOption)	
 
 	def moveToCenter(self):

@@ -22,9 +22,8 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def __init__(self,parent=None):
 		sharedWidget = GLWidget.getSharedWidget()
-		QtOpenGL.QGLWidget.__init__(self, parent, sharedWidget)
-
-		self.setFocusPolicy(QtCore.Qt.StrongFocus)
+		QtOpenGL.QGLWidget.__init__(self, parent, sharedWidget)		
+		self.setFocusPolicy( QtCore.Qt.WheelFocus )
 		self.setMinimumSize( 32, 32 )
 		self.allowRefresh   = False
 		self.pendingRefresh = False

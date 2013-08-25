@@ -153,6 +153,28 @@ class LuaObjectModelProvider(ModelProvider):
 		pass
 
 ##----------------------------------------------------------------##
+class LuaObjectEnumerator( ObjectEnumerator ):
+	def __init__( self, name, callback ):
+		self.name     = name
+		self.callback = callback
+
+	def getName( self ):
+		return self.name
+
+	def enumerateObjects( self, typeId, context ):
+		if self.callback:
+			result = self.callback( self, typeId, context )
+			if not result: return None
+			#convert result to python format
+			pyresult = []
+			for entry in result.values():
+				converted = ( entry[1], entry[2] or '<unnamed>', entry[3] )
+				pyresult.append( converted )
+			print pyresult
+			return pyresult
+		return None
+
+##----------------------------------------------------------------##
 class LuaObjectModel(ObjectModel):
 	_EnumCache = weakref.WeakValueDictionary()
 	def addLuaFieldInfo(self, name, typeId, data = None): #called by lua
@@ -212,6 +234,7 @@ class ModelBridge(object):
 		assert(not ModelBridge._singleton)
 		ModelBridge._singleton=self
 		self.modelProviders  = []
+		self.enumerators     = []
 		self.registeredTypes = {}
 		signals.connect( 'moai.clean', self.cleanLuaBridgeReference )
 
@@ -224,6 +247,12 @@ class ModelBridge(object):
 		self.modelProviders.append( provider )
 		return provider
 
+	def buildLuaObjectEnumerator( self, name, enumerateObjects ):
+		enumerator = LuaObjectEnumerator( name, enumerateObjects )
+		ModelManager.get().registerObjectEnumerator( enumerator )
+		self.enumerators.append( enumerator )
+		return enumerator
+
 	def getTypeId(self, obj):
 		return ModelManager.get().getTypeId(obj)
 
@@ -233,7 +262,14 @@ class ModelBridge(object):
 			logging.info( 'unregister provider:%s'% repr(provider) )
 			provider.clear()
 			ModelManager.get().unregisterModelProvider( provider )
+
+		for enumerator in self.enumerators:
+			logging.info( 'unregister enumerator:%s'% repr(enumerator) )
+			ModelManager.get().unregisterObjectEnumerator( enumerator )
+
 		self.modelProviders = []
+		self.enumerators    = []
+
 
 
 ModelBridge()

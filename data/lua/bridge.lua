@@ -154,3 +154,30 @@ end
 -- Editor Command
 --------------------------------------------------------------------
 registerLuaEditorCommand = bridge.registerLuaEditorCommand
+
+--------------------------------------------------------------------
+-- MODEL
+--------------------------------------------------------------------
+local modelBridge = bridge.ModelBridge.get()
+
+function registerModelProvider( setting )
+	local priority  = setting.priority or 10
+	local name      = setting.name
+	local getTypeId           = assert( setting.getTypeId, 'getTypeId not provided' )
+	local getModel            = assert( setting.getModel,  'getModel not provided' )
+	local getModelFromTypeId  = assert( setting.getModelFromTypeId,  'getModelFromTypeId not provided' )
+	return modelBridge:buildLuaObjectModelProvider( 
+			name, priority, getTypeId, getModel, getModelFromTypeId
+		)
+end
+
+
+function registerObjectEnumerator( setting )
+	local name      = setting.name
+	local enumerateObjects = assert( setting.enumerateObjects, 'enumerateObjects not provided' )
+	return modelBridge:buildLuaObjectEnumerator(
+			name,
+			enumerateObjects
+		)
+end
+

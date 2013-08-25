@@ -113,7 +113,7 @@ local function modelGetter( obj )
 		local getClass = obj.getClass
 		if getClass then
 			local clas = getClass( obj )
-			model = Model.fromClass( clas )
+			model = MoaiModel.fromClass( clas )
 		end
 	else
 		return nil
