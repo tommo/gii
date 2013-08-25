@@ -62,7 +62,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
 		signals.connect( 'selection.changed', self.onSelectionChanged)
-
+		signals.connect( 'selection.hint', self.onSelectionHint )
 		#editor
 		if self.getModule('introspector'):
 			import EntityEditor
@@ -133,6 +133,9 @@ class SceneGraphEditor( SceneEditorModule ):
 		for e in selection:
 			self.tree.selectNode( e, add = True)
 		self.tree.blockSignals( False )
+
+	def onSelectionHint( self, selection ):
+		self.getSelectionManager().changeSelection( selection )
 
 	
 ##----------------------------------------------------------------##

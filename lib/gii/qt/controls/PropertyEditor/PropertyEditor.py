@@ -45,9 +45,10 @@ class PropertyEditor( QtGui.QWidget ):
 		self.layout.setLabelAlignment( Qt.AlignLeft )
 		self.layout.setFieldGrowthPolicy( QtGui.QFormLayout.ExpandingFieldsGrow )
 
-		self.editors = {}
-		self.target  = None
+		self.editors    = {}
+		self.target     = None
 		self.refreshing = False
+		self.context    = None
 		self.clear()
 
 	def _buildSubEditor( self, field, label, editorClas ):
@@ -75,6 +76,9 @@ class PropertyEditor( QtGui.QWidget ):
 				break
 		self.editors.clear()
 		self.target  = None
+
+	def setContext( self, context ):
+		self.context = context
 
 	def onPropertyChanged( self, field, value ):
 		if self.refreshing : return
@@ -135,6 +139,9 @@ class FieldEditor( object ):
 	def setTarget( self, parent, field ):
 		self.field   = field
 		self.parent  = parent
+
+	def getContext( self ):
+		return self.parent.context
 
 	def getOption( self, key, v = None ):
 		return self.field.option.get( key, v )

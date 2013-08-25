@@ -296,7 +296,13 @@ class ModelProvider(object):
 ##----------------------------------------------------------------##
 class ObjectEnumerator(object):
 	def enumerateObjects( self, typeId, context = None ):
-		return []
+		return None
+
+	def getObjectRepr( self, obj ):
+		return None
+
+	def getObjectTypeRepr( self, obj ):
+		return None
 		
 	
 ##----------------------------------------------------------------##
@@ -398,10 +404,24 @@ class ModelManager(object):
 	def enumerateObjects(self, targetTypeId, context = None):
 		res=[]
 		for enumerator in self.objectEnumerators:
-			objectEntries = enumerator.enumerateObjects( targetTypeId, context ) #format is [(obj, name, typename)]
+			objectEntries = enumerator.enumerateObjects( targetTypeId, context ) 
 			if objectEntries:
 				res += objectEntries
 		return res
+
+	def getObjectRepr( self, obj ):
+		for enumerator in self.objectEnumerators:
+			name = enumerator.getObjectRepr( obj )
+			if name is not None:
+				return name
+		return repr(obj)
+
+	def getObjectTypeRepr( self, obj ):
+		for enumerator in self.objectEnumerators:
+			typeName = enumerator.getObjectTypeRepr( obj )
+			if typeName is not None:
+				return typeName
+		return repr( type(obj) )
 
 	def registerPythonModel(self, typeId, model):
 		self.pythonModelProvider.registerModel( typeId, model)

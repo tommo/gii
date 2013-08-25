@@ -1,6 +1,7 @@
+from gii.core import *
 from gii.core.model import *
 from PropertyEditor import FieldEditor, registerFieldEditor
-from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
+from gii.qt.helpers import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 
 from PyQt4 import QtGui, QtCore, uic
@@ -37,8 +38,8 @@ class ReferenceBrowser( QtGui.QWidget ):
 		browser = ReferenceBrowser.get()
 		browser.setEditor( editor )
 		browser.move( editor.getBrowserPos() )
-		browser.show()
 		browser.setTarget( targetType, context )
+		browser.show()
 
 		
 	def __init__(self, *args ):
@@ -62,16 +63,15 @@ class ReferenceBrowser( QtGui.QWidget ):
 		self.ui.textTerms.returnPressed.connect( self.onTermsReturn )
 		self.treeResult.browser = self
 		self.entries = None
+		self.setFixedSize( 400, 250 )
 
 	def sizeHint( self ):
-		return QtCore.QSize( 400, 250 )
+		return QtCore.QSize( 300, 250 )
 
 	def setTarget( self, typeId, context = None ):
+		self.ui.textTerms.setText('')
 		self.targetType = typeId
 		entries = ModelManager.get().enumerateObjects( typeId, context )
-		# for entry in entries:
-		# 	# obj, name, className = entry
-		# 	self.treeResult.addNode( entry )
 		self.entries = entries
 		self.ui.textTerms.setFocus()
 		self.treeResult.rebuild()
@@ -81,7 +81,7 @@ class ReferenceBrowser( QtGui.QWidget ):
 
 	def setSelection( self, obj ):
 		if self.editor:
-			self.editor.set( obj )
+			self.editor.setValue( obj )
 			self.editor.setFocus()
 			self.hide()
 
@@ -95,6 +95,7 @@ class ReferenceBrowser( QtGui.QWidget ):
 
 	def hideEvent( self, ev ):
 		self.setEditor( None )
+		self.treeResult.clear()
 		return super( ReferenceBrowser, self ).hideEvent( ev )
 	
 ##----------------------------------------------------------------##
@@ -123,17 +124,19 @@ class ReferenceBrowserTree(GenericTreeWidget):
 
 	def updateItemContent( self, item, node, **option ):
 		if node == self.getRootNode(): return
-		item.setText( 0, node[1] )
-		item.setText( 1, node[2] )
+		name     = ModelManager.get().getObjectRepr( node )
+		typeName = ModelManager.get().getObjectTypeRepr( node )
+		item.setText( 0, name )
+		item.setText( 1, typeName )
 		
 	def onItemSelectionChanged(self):
 		for node in self.getSelection():
-			self.browser.setSelection( node[0] )
+			self.browser.setSelection( node )
 			return
 
 	def onItemActivated( self, item, col ):
 		node = item.node
-		self.browser.setSelection( node[0] )
+		self.browser.setSelection( node )
 
 
 ##----------------------------------------------------------------##
@@ -148,8 +151,9 @@ class ReferenceFieldWidget( QtGui.QWidget ):
 		self.layout = layout = QtGui.QHBoxLayout( self )
 		layout.setSpacing( 0 )
 		layout.setMargin( 0 )
-		self.buttonRef  = buttonRef  = ReferenceFieldButton( self )
-		self.buttonGoto = buttonGoto = ReferenceFieldButton( self )
+		self.buttonRef   = buttonRef   = ReferenceFieldButton( self )
+		self.buttonGoto  = buttonGoto  = ReferenceFieldButton( self )
+		self.buttonClear = buttonClear = ReferenceFieldButton( self )
 		buttonRef.setSizePolicy(
 			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Fixed
@@ -158,11 +162,17 @@ class ReferenceFieldWidget( QtGui.QWidget ):
 			QtGui.QSizePolicy.Fixed,
 			QtGui.QSizePolicy.Fixed
 			)
+		buttonClear.setSizePolicy(
+			QtGui.QSizePolicy.Fixed,
+			QtGui.QSizePolicy.Fixed
+			)
 		buttonRef.setText( '<None>' )
 		buttonRef.setStyleSheet ("text-align: left;"); 
 		buttonGoto.setText( '...' )
+		buttonClear.setText( 'x' )
 		layout.addWidget( buttonRef )
 		layout.addWidget( buttonGoto )
+		layout.addWidget( buttonClear )
 		self.targetRef = None 
 		self.setRef( None )
 
@@ -172,9 +182,14 @@ class ReferenceFieldWidget( QtGui.QWidget ):
 		if not target:
 			self.buttonRef.setText( '<None>' )
 			self.buttonGoto.hide()
+			self.buttonClear.hide()
 		else:
 			self.buttonRef.setText( 'Object' ) #TODO:
 			self.buttonGoto.show()
+			self.buttonClear.show()
+
+	def setRefName( self, name ):
+		self.buttonRef.setText( name )
 
 ##----------------------------------------------------------------##
 class ReferenceFieldEditor( FieldEditor ):	
@@ -182,6 +197,7 @@ class ReferenceFieldEditor( FieldEditor ):
 		super( ReferenceFieldEditor, self ).setTarget( parent, field )
 		self.targetType    = field.getType()
 		self.targetContext = None  #TODO
+		self.target = None
 
 	def clear( self ):
 		ReferenceBrowser.get().hide()
@@ -191,7 +207,11 @@ class ReferenceFieldEditor( FieldEditor ):
 		return None
 
 	def set( self, value ):
+		self.target = value
 		self.refWidget.setRef( value )
+		if value:
+			name = ModelManager.get().getObjectRepr( value )
+			self.refWidget.setRefName( name )
 
 	def setValue( self, value ):		
 		self.set( value )
@@ -201,6 +221,7 @@ class ReferenceFieldEditor( FieldEditor ):
 		self.refWidget = widget = ReferenceFieldWidget( container )
 		widget.buttonRef.clicked.connect( self.openBrowser )
 		widget.buttonGoto.clicked.connect( self.gotoObject )
+		widget.buttonClear.clicked.connect( self.clearObject )
 		return self.refWidget
 
 	def openBrowser( self ):			
@@ -213,12 +234,13 @@ class ReferenceFieldEditor( FieldEditor ):
 		return p
 
 	def gotoObject( self ):
-		pass
+		signals.emit( 'selection.hint', self.target )
+
+	def clearObject( self ):
+		self.setValue( None )
 
 	def setFocus( self ):
 		self.refWidget.setFocus()
-
-
 
 
 registerFieldEditor( ReferenceType, ReferenceFieldEditor )

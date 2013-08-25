@@ -15,10 +15,10 @@ class SelectionManager(object):
 	def clearSelection(self):
 		self.changeSelection([])
 
-	def changeSelection(self, selection):		
+	def changeSelection( self, selection ):
 		#todo: use weakref to hold selection		
 		if selection:			
-			if not isinstance(selection, list): selection = [selection]
+			if not isinstance(selection, list): selection = [ selection ]
 			hisSize = len(self.history)
 			self.history = self.history[:hisSize - self.historyPos]
 			self.history.append(selection)

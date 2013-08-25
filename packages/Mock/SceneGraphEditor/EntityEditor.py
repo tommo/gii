@@ -7,7 +7,8 @@ from mock import _MOCK, isMockInstance, getMockClassName
 class EntityEditor( ObjectEditor ): #a generic property grid 
 	def initWidget( self, container ):		
 		self.grid = PropertyEditor(container)
-		self.grid.propertyChanged.connect( self.onPropertyChanged )
+		self.grid.propertyChanged.connect( self.onPropertyChanged )		
+		self.grid.setContext( 'scene_editor' )
 		return self.grid
 
 	def setTarget( self, target, introspectorInstance ):
@@ -22,6 +23,6 @@ class EntityEditor( ObjectEditor ): #a generic property grid
 		self.grid.refreshAll()
 
 	def unload( self ):
-		pass
+		self.grid.clear()
 
 registerObjectEditor( _MOCK.Entity, EntityEditor )

@@ -80,11 +80,7 @@ function SceneGraphEditor:enumerateObjects( typeId )
 		end
 
 		for e in pairs( collection ) do
-			table.insert( result, {
-					e,
-					e:getName(),
-					e:getClassName()
-				})
+			table.insert( result, e )
 		end
 	end
 	return result
@@ -155,7 +151,26 @@ function enumerateSceneObjects( enumerator, typeId, context )
 	return editor:enumerateObjects( typeId )
 end
 
+function getSceneObjectRepr( enumerator, obj )
+	if isInstanceOf( obj, mock.Entity ) then
+		return obj:getName() or '<unnamed>'
+	end
+	--todo: component
+	return nil
+end
+
+function getSceneObjectTypeRepr( enumerator, obj )
+	local class = getClass( obj )
+	if class then
+		return class.__name
+	end
+	--todo: component
+	return nil
+end
+
 gii.registerObjectEnumerator{
 	name = 'scene_object_enumerator',
-	enumerateObjects =  enumerateSceneObjects
+	enumerateObjects   = enumerateSceneObjects,
+	getObjectRepr      = getSceneObjectRepr,
+	getObjectTypeRepr  = getSceneObjectTypeRepr
 }

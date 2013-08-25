@@ -174,10 +174,14 @@ end
 
 function registerObjectEnumerator( setting )
 	local name      = setting.name
-	local enumerateObjects = assert( setting.enumerateObjects, 'enumerateObjects not provided' )
+	local enumerateObjects   = assert( setting.enumerateObjects, 'enumerateObjects not provided' )
+	local getObjectRepr      = assert( setting.getObjectRepr, 'getObjectRepr not provided' )
+	local getObjectTypeRepr  = assert( setting.getObjectTypeRepr, 'getObjectTypeRepr not provided' )
 	return modelBridge:buildLuaObjectEnumerator(
 			name,
-			enumerateObjects
+			enumerateObjects,
+			getObjectRepr,
+			getObjectTypeRepr
 		)
 end
 

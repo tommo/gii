@@ -36,6 +36,7 @@ register('module.load')
 register('module.unload')
 
 register('selection.changed')
+register('selection.hint')
 
 register('project.init')
 register('project.preload')

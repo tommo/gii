@@ -79,7 +79,7 @@ def requestColor(prompt, initColor = None, **kwargs):
 		dialog.currentColorChanged.connect( onColorChanged )
 	if dialog.exec_() == 1:
 		col = dialog.currentColor()
-		dialog.destroy()
+		# dialog.destroy()
 		if col.isValid(): return col
 	return initColor
 

@@ -154,25 +154,25 @@ class LuaObjectModelProvider(ModelProvider):
 
 ##----------------------------------------------------------------##
 class LuaObjectEnumerator( ObjectEnumerator ):
-	def __init__( self, name, callback ):
+	def __init__( self, name, enumerateObject, getObjectRepr, getObjectTypeRepr ):
 		self.name     = name
-		self.callback = callback
+		self._enumerateObject    = enumerateObject
+		self._getObjectTypeRepr  = getObjectTypeRepr
+		self._getObjectRepr      = getObjectRepr
 
 	def getName( self ):
 		return self.name
 
 	def enumerateObjects( self, typeId, context ):
-		if self.callback:
-			result = self.callback( self, typeId, context )
-			if not result: return None
-			#convert result to python format
-			pyresult = []
-			for entry in result.values():
-				converted = ( entry[1], entry[2] or '<unnamed>', entry[3] )
-				pyresult.append( converted )
-			print pyresult
-			return pyresult
-		return None
+		result = self._enumerateObject( self, typeId, context )
+		if not result: return None
+		return [ obj for obj in result.values() ]			
+
+	def getObjectRepr( self, obj ):
+		return self._getObjectRepr( self, obj )
+
+	def getObjectTypeRepr( self, obj ):
+		return self._getObjectTypeRepr( self, obj )
 
 ##----------------------------------------------------------------##
 class LuaObjectModel(ObjectModel):
@@ -233,9 +233,9 @@ class ModelBridge(object):
 	def __init__(self):
 		assert(not ModelBridge._singleton)
 		ModelBridge._singleton=self
-		self.modelProviders  = []
-		self.enumerators     = []
-		self.registeredTypes = {}
+		self.modelProviders   = []
+		self.enumerators      = []		
+		self.registeredTypes  = {}
 		signals.connect( 'moai.clean', self.cleanLuaBridgeReference )
 
 	def newLuaObjectMoel(self, name):
@@ -247,8 +247,8 @@ class ModelBridge(object):
 		self.modelProviders.append( provider )
 		return provider
 
-	def buildLuaObjectEnumerator( self, name, enumerateObjects ):
-		enumerator = LuaObjectEnumerator( name, enumerateObjects )
+	def buildLuaObjectEnumerator( self, name, enumerateObjects, getObjectRepr, getObjectTypeRepr ):
+		enumerator = LuaObjectEnumerator( name, enumerateObjects, getObjectRepr, getObjectTypeRepr )
 		ModelManager.get().registerObjectEnumerator( enumerator )
 		self.enumerators.append( enumerator )
 		return enumerator
