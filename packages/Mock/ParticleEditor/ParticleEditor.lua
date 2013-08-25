@@ -17,8 +17,7 @@ function ParticlePreview:onLoad()
 	self.editingConfig  = false
 	self.editingEmitter = false
 	self.editingState   = false
-
-	-- startUpdateTimer( 60 )
+	startUpdateTimer( 60 )
 
 end
 
@@ -64,7 +63,7 @@ end
 function ParticlePreview:activateEmitter( item )
 	if not self.testSystem then return end
 	self.editingEmitter = item
-	self:updateEmitter( true )
+	self:updateEmitter( true )	
 end
 
 function ParticlePreview:activateState( state )
@@ -80,11 +79,16 @@ function ParticlePreview:updateScript( initScript, renderScript )
 	self:updateState()	
 end
 
-function ParticlePreview:update( obj, field )
+function ParticlePreview:update( obj, field, value )
 	if isInstanceOf( obj, mock.ParticleEmitterConfig ) then
 		self:updateEmitter( field=='type' )
 	elseif isInstanceOf( obj, mock.ParticleStateConfig ) then
 		self:updateState()
+	else --system		
+		if field == 'blend' and self.testSystem then
+			return setPropBlend( self.testSystem._system, value )
+		end
+		return self:rebuildSystem()
 	end
 end
 

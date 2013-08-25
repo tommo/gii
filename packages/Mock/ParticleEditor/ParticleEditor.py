@@ -177,7 +177,7 @@ class ParticleEditor( AssetEditorModule ):
 			if obj == self.editingState:
 				self.refreshScriptTitle()
 		else:
-			self.canvas.safeCallMethod( 'preview', 'update', obj, field )
+			self.canvas.safeCallMethod( 'preview', 'update', obj, field, value )
 
 	def onTool( self, tool ):
 		if tool.name == 'update':
