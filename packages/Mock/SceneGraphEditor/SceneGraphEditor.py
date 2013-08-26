@@ -51,6 +51,16 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( getModulePath( 'SceneGraphEditor.lua' ) )
 
+		self.entityCreatorMenu=self.addMenu(
+			'main/scene/entity_create',
+			{ 'label':'Create Entity' }
+			)
+
+		self.componentCreatorMenu=self.addMenu(
+			'main/scene/component_create',
+			{ 'label':'Create Component' }
+			)
+
 		#menu
 		self.addMenuItem( 'main/scene/close_scene', dict( label = 'Close' ) )
 		self.addMenuItem( 'main/scene/save_scene',  dict( label = 'Save' ) )
@@ -81,6 +91,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.activeScene     = scene
 		self.activeSceneNode = node
 		self.tree.rebuild()
+		self.refreshCreatorMenu()
 
 	def closeScene( self ):
 		signals.emitNow( 'scene.close', self.activeSceneNode )
@@ -105,6 +116,27 @@ class SceneGraphEditor( SceneEditorModule ):
 		if not self.activeScene: return
 		self.refreshScheduled = True
 
+	def refreshCreatorMenu( self ):
+		self.entityCreatorMenu.clear()
+		self.componentCreatorMenu.clear()
+		registry = _MOCK.getEntityRegistry()
+
+		for entityName in registry.keys():
+			self.entityCreatorMenu.addChild({
+					'name'     : 'create_entity_'+entityName,
+					'label'    : entityName,
+					'command'  : 'scene_editor/create_entity',
+					'command_args' : dict( name = entityName )
+				})
+
+		for comName in registry.keys():			
+			self.componentCreatorMenu.addChild({
+					'name'     : 'create_component_'+comName,
+					'label'    : comName,
+					'command'  : 'scene_editor/create_component',
+					'command_args' : dict( name = comName )
+				})
+
 	def onUpdate( self ):
 		if self.refreshScheduled:
 			self.refreshScene()
@@ -115,9 +147,9 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'add_sibling':
-			self.doCommand( 'scene_editor/create_entity' )
+			self.entityCreatorMenu.popUp()
 		elif name == 'add_child':
-			pass
+			self.entityCreatorMenu.popUp()
 
 	def onMenu( self, menu ):
 		name = menu.name

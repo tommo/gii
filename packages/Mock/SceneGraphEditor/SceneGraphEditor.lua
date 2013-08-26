@@ -91,8 +91,10 @@ function SceneGraphEditor:onEntityEvent( action, entity, scene, layer )
 	if isEditorEntity( entity ) then return end
 	if action == 'add' then
 		_owner.tree:addNode( entity )
+		gii.emitPythonSignal( 'scene.update', scene )
 	elseif action == 'remove' then
 		_owner.tree:removeNode( entity )
+		gii.emitPythonSignal( 'scene.update', scene )
 	end
 
 end
@@ -115,11 +117,13 @@ CLASS: CmdCreateEntity ( EditorCommand )
 	:register( 'scene_editor/create_entity' )
 
 function CmdCreateEntity:init( option )
-	if option.good then print "shit" end
+	self.entityName = option.name
 end
 
 function CmdCreateEntity:redo()
-	local entity = Entity()
+	local entType = mock.getEntityType( self.entityName )
+	assert( entType )
+	local entity = entType()
 	self.created = entity
 	editor.scene:addEntity( entity )
 end

@@ -44,6 +44,7 @@ class SceneView( SceneEditorModule ):
 		signals.connect( 'entity.modified', self.onEntityModified )
 		signals.connect( 'scene.open', self.onSceneOpen )
 		signals.connect( 'scene.close', self.onSceneClose )
+		signals.connect( 'scene.update', self.onSceneUpdate )
 
 	def onStart( self ):
 		self.canvas.makeCurrent()
@@ -61,6 +62,9 @@ class SceneView( SceneEditorModule ):
 		self.window.setFocus()
 
 	def onEntityModified( self, entity ):
+		self.scheduleUpdate()
+
+	def onSceneUpdate( self, scene ):
 		self.scheduleUpdate()
 
 	def onSceneOpen( self, node, scene ):

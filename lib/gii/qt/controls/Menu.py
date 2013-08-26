@@ -3,7 +3,7 @@ import logging
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import QMenu, QMenuBar, QAction
 
-from gii.core import signals
+from gii.core import signals, app
 
 class MenuNode(object):
 	"""docstring for MenuNode"""
@@ -43,6 +43,8 @@ class MenuNode(object):
 		self.priority = option.get('priority',0)
 		self.itemType = option.get('type',False)
 		self.onClick  = option.get('on_click',None)
+		self.cmd      = option.get('command', None)
+		self.cmdArgs  = option.get('command_args', None)
 		self.link     = None
 
 		self.menuType = self.qtmenubar and 'menubar' or 'item'
@@ -147,9 +149,7 @@ class MenuNode(object):
 			self.qtaction.setEnabled(enabled)
 
 	def remove(self):
-		for node in self.children:
-			node.remove()
-		#todo: remove qtmenu item
+		self.clear()
 		self.parent.children.remove(self)
 		selfType=self.menuType
 		
@@ -165,7 +165,10 @@ class MenuNode(object):
 		elif parentType=='menubar':
 			self.parent.qtmenubar.removeAction(self.qtaction)
 
-
+	def clear( self ):
+		if self.menuType in [ 'menu', 'menubar' ]:
+			for node in self.children:
+				node.remove()	
 		
 	def findChild(self,name):
 		name=name.lower()
@@ -204,6 +207,9 @@ class MenuNode(object):
 			self.signal(value)
 		if self.onClick !=None:			
 			self.onClick(value)
+		if self.cmd:
+			args = self.cmdArgs or {}
+			app.doCommand( self.cmd, **args )
 
 class MenuManager(object):
 	"""docstring for MenuManager"""
