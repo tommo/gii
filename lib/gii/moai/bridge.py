@@ -63,7 +63,8 @@ def throwPythonException(name, data=None):
 def changeSelection(targets=None):
 	app.getSelectionManager().changeSelection(targets)
 
-
+def getSelection():
+	return app.getSelectionManager().getSelection()
 
 ####################################
 #GUI BRIDGE

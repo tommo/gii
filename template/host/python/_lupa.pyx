@@ -469,7 +469,7 @@ cdef class _LuaObject:
         self.__setattr__(index_or_name, value)
 
 
-cdef _LuaObject find_cahced_lua_object(lua_State* L, int n):
+cdef _LuaObject find_cached_lua_object(lua_State* L, int n):
     #check cache first
     if n < 0 :
         n = lua.lua_gettop(L) + n + 1
@@ -486,7 +486,7 @@ cdef _LuaObject find_cahced_lua_object(lua_State* L, int n):
 
 cdef _LuaObject new_lua_object(LuaRuntime runtime, lua_State* L, int n):
     cdef _LuaObject obj
-    obj = find_cahced_lua_object( L, n )
+    obj = find_cached_lua_object( L, n )
     if obj: return obj
     #create new luaobject
     obj = _LuaObject.__new__(_LuaObject)
@@ -558,7 +558,7 @@ cdef class _LuaTable(_LuaObject):
 
 cdef _LuaTable new_lua_table(LuaRuntime runtime, lua_State* L, int n):
     cdef _LuaTable obj 
-    obj = <_LuaTable> find_cahced_lua_object( L, n )
+    obj = <_LuaTable> find_cached_lua_object( L, n )
     if obj: return obj
     #create new
     obj= _LuaTable.__new__(_LuaTable)
@@ -597,7 +597,7 @@ cdef class _LuaFunction(_LuaObject):
 
 cdef _LuaFunction new_lua_function(LuaRuntime runtime, lua_State* L, int n):
     cdef _LuaFunction obj 
-    obj = <_LuaFunction> find_cahced_lua_object( L, n )
+    obj = <_LuaFunction> find_cached_lua_object( L, n )
     if obj: return obj
     #create new one
     obj = _LuaFunction.__new__(_LuaFunction)
@@ -613,7 +613,7 @@ cdef class _LuaCoroutineFunction(_LuaFunction):
 
 cdef _LuaCoroutineFunction new_lua_coroutine_function(LuaRuntime runtime, lua_State* L, int n):
     cdef _LuaCoroutineFunction obj 
-    obj = <_LuaCoroutineFunction> find_cahced_lua_object( L, n )
+    obj = <_LuaCoroutineFunction> find_cached_lua_object( L, n )
     if obj: return obj
     #create new one
     obj = _LuaCoroutineFunction.__new__(_LuaCoroutineFunction)
@@ -666,7 +666,7 @@ cdef class _LuaThread(_LuaObject):
 
 cdef _LuaThread new_lua_thread(LuaRuntime runtime, lua_State* L, int n):
     cdef _LuaThread obj 
-    obj = <_LuaThread> find_cahced_lua_object( L, n )
+    obj = <_LuaThread> find_cached_lua_object( L, n )
     if obj: return obj
     #create new one
     obj = _LuaThread.__new__(_LuaThread)
@@ -892,6 +892,7 @@ cdef object py_from_lua(LuaRuntime runtime, lua_State *L, int n):
                 py_obj = <py_object*>lua.lua_touserdata(L, n)#, POBJECT) # FIXME: doesn't return on error!
                 if py_obj:
                     return <object>py_obj.obj
+            lua.lua_pop( L, 2 )
         return new_lua_object(runtime, L, n)
     elif lua_type == lua.LUA_TTABLE:
         return new_lua_table(runtime, L, n)
@@ -1043,9 +1044,9 @@ cdef object execute_lua_call(LuaRuntime runtime, lua_State *L, Py_ssize_t nargs)
                 result_status = lua.lua_pcall( L, nargs, lua.LUA_MULTRET, errIdx )
                 lua.lua_remove( L, errIdx )
 
-        runtime.reraise_on_exception()
         if result_status:
             raise_lua_error(runtime, L, result_status)
+        runtime.reraise_on_exception()
             
         return unpack_lua_results(runtime, L)
     finally:

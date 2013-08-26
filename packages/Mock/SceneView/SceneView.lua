@@ -63,11 +63,11 @@ function SceneView:onMouseDown( btn, x, y )
 end
 
 function SceneView:selectEntity( e, additive )
-	gii.changeSelection( e )
-	local gizmo = self:addSibling( SelectionGizmo() )
-	gizmo:setTarget( e )
-	self.gizmos[ e ] = gizmo
-	updateCanvas()
+	-- gii.changeSelection( e )
+	-- local gizmo = self:addSibling( SelectionGizmo() )
+	-- gizmo:setTarget( e )
+	-- self.gizmos[ e ] = gizmo
+	-- updateCanvas()
 end
 
 function SceneView:clearSelection()

@@ -10,6 +10,10 @@ end
 --------------------------------------------------------------------
 CLASS:  SceneGraphEditor()
 
+function SceneGraphEditor:__init()
+	self.failedRefreshData = false
+end
+
 function SceneGraphEditor:openScene( path )
 	local ctx = gii.getCurrentRenderContext()
 	local scene = mock.loadAsset( path )
@@ -32,10 +36,14 @@ function SceneGraphEditor:saveScene( path )
 end
 
 function SceneGraphEditor:refreshScene()
-	local data = mock.serializeScene( self.scene )
-	self.scene:exit()
-	self.scene = mock.deserializeScene( data )
-	self:postLoadScene()
+	local data = self.failedRefreshData or mock.serializeScene( self.scene )
+	self.scene:clear( true )
+	if pcall( mock.deserializeScene, data, self.scene ) then
+		self.failedRefreshData = false
+		self:postLoadScene()
+	else
+		self.failedRefreshData = data
+	end
 end
 
 function SceneGraphEditor:postLoadScene()
@@ -111,44 +119,6 @@ function getActiveScenes()
 end
 
 
-
---------------------------------------------------------------------
-CLASS: CmdCreateEntity ( EditorCommand )
-	:register( 'scene_editor/create_entity' )
-
-function CmdCreateEntity:init( option )
-	self.entityName = option.name
-end
-
-function CmdCreateEntity:redo()
-	local entType = mock.getEntityType( self.entityName )
-	assert( entType )
-	local entity = entType()
-	self.created = entity
-	editor.scene:addEntity( entity )
-end
-
-function CmdCreateEntity:undo()
-	self.created:destroy()
-end
-
---------------------------------------------------------------------
-CLASS: CmdRemoveEntity ( EditorCommand )
-	:register( 'scene_editor/remove_entity' )
-
-function CmdRemoveEntity:init( option )
-	self.target = option['target']
-end
-
-function CmdRemoveEntity:redo()
-	self.target:destroy()
-end
-
-function CmdRemoveEntity:undo()
-	--todo:
-end
-
-
 --------------------------------------------------------------------
 function enumerateSceneObjects( enumerator, typeId, context )
 	--if context~='scene_editor' then return nil end
@@ -178,3 +148,85 @@ gii.registerObjectEnumerator{
 	getObjectRepr      = getSceneObjectRepr,
 	getObjectTypeRepr  = getSceneObjectTypeRepr
 }
+
+
+--------------------------------------------------------------------
+--- COMMAND
+--------------------------------------------------------------------
+CLASS: CmdCreateEntity ( EditorCommand )
+	:register( 'scene_editor/create_entity' )
+
+function CmdCreateEntity:init( option )
+	self.entityName = option.name
+end
+
+function CmdCreateEntity:redo()
+	local entType = mock.getEntityType( self.entityName )
+	assert( entType )
+	local entity = entType()
+	self.created = entity
+	editor.scene:addEntity( entity )
+end
+
+function CmdCreateEntity:undo()
+	self.created:destroy()
+end
+
+--------------------------------------------------------------------
+CLASS: CmdRemoveEntity ( EditorCommand )
+	:register( 'scene_editor/remove_entity' )
+
+function CmdRemoveEntity:init( option )
+	local target = gii.getSelection()[1]
+	if not isInstanceOf( target, mock.Entity ) then return false end
+	self.target = target
+end
+
+function CmdRemoveEntity:redo()
+	self.target:destroyNow()
+end
+
+function CmdRemoveEntity:undo()
+	--todo:
+end
+
+--------------------------------------------------------------------
+CLASS: CmdCreateComponent ( EditorCommand )
+	:register( 'scene_editor/create_component' )
+
+function CmdCreateComponent:init( option )
+	self.componentName = option.name	
+	local target = gii.getSelection()[1]
+	if not isInstanceOf( target, mock.Entity ) then return false end
+	self.targetEntity  = target
+end
+
+function CmdCreateComponent:redo()	
+	local entType = mock.getComponentType( self.componentName )
+	assert( entType )
+	local component = entType()
+	self.createdComponent = component
+	self.targetEntity:attach( component )
+end
+
+function CmdCreateComponent:undo()
+	self.targetEntity:detach( self.createdComponent )
+end
+
+--------------------------------------------------------------------
+CLASS: CmdRemoveComponent ( EditorCommand )
+	:register( 'scene_editor/remove_component' )
+
+function CmdRemoveComponent:init( option )
+	self.target = option['target']
+end
+
+function CmdRemoveComponent:redo()
+	--todo
+	-- self.target:destroy()
+end
+
+function CmdRemoveComponent:undo()
+	--todo:
+end
+

@@ -68,6 +68,10 @@ class SceneGraphEditor( SceneEditorModule ):
 		#Toolbars
 		self.addTool( 'scene_graph/add_sibling', label = '+obj' )
 		self.addTool( 'scene_graph/add_child', label = '+child' )
+		self.addTool( 'scene_graph/add_component', label = '+com' )
+		self.addTool( 'scene_graph/remove_entity', label = '-obj' )
+
+		self.addTool( 'scene/refresh', label = 'REFRESH')
 
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
@@ -78,7 +82,7 @@ class SceneGraphEditor( SceneEditorModule ):
 			import EntityEditor
 
 	def onStart( self ):
-		pass
+		self.refreshCreatorMenu()
 
 	def openScene( self, node ):
 		if self.activeSceneNode == node:			
@@ -91,7 +95,6 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.activeScene     = scene
 		self.activeSceneNode = node
 		self.tree.rebuild()
-		self.refreshCreatorMenu()
 
 	def closeScene( self ):
 		signals.emitNow( 'scene.close', self.activeSceneNode )
@@ -107,10 +110,11 @@ class SceneGraphEditor( SceneEditorModule ):
 		if not self.activeScene: return
 		self.refreshScheduled = False
 		node = self.activeSceneNode
-		# self.delegate.safeCallMethod( 'editor', 'refreshScene' )
+		self.delegate.safeCallMethod( 'editor', 'refreshScene' )
 		#TODO:remove this
-		self.closeScene()
-		self.openScene( node )
+		# self.closeScene()
+		# self.openScene( node )
+		self.refreshCreatorMenu()
 
 	def scheduleRefreshScene( self ):
 		if not self.activeScene: return
@@ -129,6 +133,7 @@ class SceneGraphEditor( SceneEditorModule ):
 					'command_args' : dict( name = entityName )
 				})
 
+		registry = _MOCK.getComponentRegistry()
 		for comName in registry.keys():			
 			self.componentCreatorMenu.addChild({
 					'name'     : 'create_component_'+comName,
@@ -150,6 +155,12 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.entityCreatorMenu.popUp()
 		elif name == 'add_child':
 			self.entityCreatorMenu.popUp()
+		elif name == 'add_component':
+			self.componentCreatorMenu.popUp()
+		elif name == 'remove_entity':
+			self.doCommand( 'scene_editor/remove_entity' )
+		elif name == 'refresh':
+			self.scheduleRefreshScene()
 
 	def onMenu( self, menu ):
 		name = menu.name

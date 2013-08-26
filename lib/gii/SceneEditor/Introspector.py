@@ -165,8 +165,6 @@ class IntrospectorInstance(object):
 				w = child.widget()
 				if w:
 					w.setParent( None )
-				# else:
-				# 	print 'cannot remove obj:', child
 			else:
 				break
 				

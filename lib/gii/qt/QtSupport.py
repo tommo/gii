@@ -110,7 +110,7 @@ class QtSupport( QtEditorModule ):
 				)
 		eventFilter = QtSupportEventFilter( self.qtApp )
 		eventFilter.app = self
-		QtGui.QColorDialog().setVisible( False )
+		# QtGui.QColorDialog().setVisible( False )
 		self.qtApp.installEventFilter(eventFilter)
 		self.setupStyle()
 		

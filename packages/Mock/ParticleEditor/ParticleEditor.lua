@@ -17,7 +17,7 @@ function ParticlePreview:onLoad()
 	self.editingConfig  = false
 	self.editingEmitter = false
 	self.editingState   = false
-	startUpdateTimer( 60 )
+	-- startUpdateTimer( 60 )
 
 end
 

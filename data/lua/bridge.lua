@@ -80,6 +80,10 @@ function changeSelection(obj,...)
 	end
 end
 
+function getSelection()
+	return listToTable( bridge.getSelection() )
+end
+
 -- Environment
 -- getProjectExtPath = bridge.getProjectExtPath
 -- getProjectPath    = bridge.getProjectPath

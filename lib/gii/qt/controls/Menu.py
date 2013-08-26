@@ -158,17 +158,18 @@ class MenuNode(object):
 		if selfType=='menubar':
 			return
 
-		parentType=self.parent.menuType
+		parentType = self.parent.menuType
 
-		if parentType=='menu':
-			self.parent.qtmenu.removeAction(self.qtaction)
-		elif parentType=='menubar':
-			self.parent.qtmenubar.removeAction(self.qtaction)
+		if parentType == 'menu':
+			self.parent.qtmenu.removeAction( self.qtaction )
+		elif parentType == 'menubar':
+			self.parent.qtmenubar.removeAction( self.qtaction )
+		logging.info('remove menunode:' + self.name )
 
 	def clear( self ):
 		if self.menuType in [ 'menu', 'menubar' ]:
-			for node in self.children:
-				node.remove()	
+			for node in self.children[:]:
+				node.remove()
 		
 	def findChild(self,name):
 		name=name.lower()

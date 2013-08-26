@@ -2,6 +2,17 @@ from PropertyEditor import FieldEditor,registerFieldEditor
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
+from PyQt4.QtCore import QEventLoop, QEvent, QObject
+
+##----------------------------------------------------------------##
+class DialogAutoAcceptEventFilter(QObject):
+	def eventFilter(self, obj, event):
+		e = event.type()
+		if e == QEvent.WindowDeactivate:
+			obj.accept()
+		return QObject.eventFilter( self, obj, event )
+
+##----------------------------------------------------------------##
 
 def unpackQColor( c ):
 	return ( c.redF(), c.greenF(), c.blueF(), c.alphaF() )
@@ -38,6 +49,7 @@ class ColorBlock( QtGui.QToolButton ):
 		self.pen = QtGui.QPen()
 		self.brush = QtGui.QBrush()
 		self.brush.setStyle( Qt.SolidPattern )
+		self.dialog = None
 
 	def sizeHint( self ):
 		return QtCore.QSize( 60, 20 )
@@ -89,9 +101,25 @@ class ColorBlock( QtGui.QToolButton ):
 		painter.drawRect( x + 1, y + h - alphaH ,( w -2 ) * self.color.alphaF(), alphaH  )
 
 
-	def onClicked( self ):		
-		color = requestColor( self.title, self.color, onColorChanged = self.setColor )
-		self.setColor( color )
+	def onClicked( self ):
+		self.prevColor = self.color
+		if not self.dialog:
+			self.dialog = QtGui.QColorDialog( self.color )
+		dialog = self.dialog
+		dialog.setOption( 
+			QtGui.QColorDialog.ShowAlphaChannel,
+			True
+			)
+		dialog.rejected.connect( self.onCancel )
+		dialog.currentColorChanged.connect( self.setColor )
+		dialog.show()
+		pass
+		# color = requestColor( self.title, self.color, onColorChanged = self.setColor )
+		# self.setColor( color )
+
+	def onCancel( self ):
+		self.setColor( self.prevColor )
+
 
 
 
