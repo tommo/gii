@@ -489,4 +489,17 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
 {
     border: 1px solid #444;
 }
+/*
+QToolButton#buttonFold
+{
+  background-color: red;
+}
 
+QToolButton#buttonFold:pressed
+{
+  background-color: blue;
+}
+*/
+QWidget#ObjectContainer{
+  border: 1px solid #555; 
+}

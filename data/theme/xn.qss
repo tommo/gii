@@ -56,6 +56,7 @@ QCheckBox
 {
 	margin-bottom: 5px;
 	margin-top: 6px;
+	background-color:none;
 }
 
 QDockWidget
@@ -758,3 +759,12 @@ QToolButton::checked,QToolButton::menu-button:hover
 {
 	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#b4b4b4,stop:1#969696);
 }
+
+#ObjectHeader {
+	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#444,stop:1#555);
+}
+
+#ObjectInnerContainer{
+	background-color:#444;
+}
+

@@ -52,7 +52,7 @@ def ensureWindowVisible(window, border=0): #TODO
 class MainWindow(QtGui.QMainWindow):
 	"""docstring for MainWindow"""
 	def __init__(self, parent):
-		super(MainWindow, self).__init__(parent)
+		super(MainWindow, self).__init__(parent)		
 		# self.setDocumentMode(True)
 		self.setUnifiedTitleAndToolBarOnMac( False )
 		self.setDockOptions(

@@ -3,10 +3,72 @@ import os
 from gii.core     import *
 from gii.qt.controls.PropertyEditor import PropertyEditor
 
-from PyQt4        import QtCore, QtGui
+from PyQt4        import QtCore, QtGui, uic
+from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
 from SceneEditor  import SceneEditorModule
 from IDPool       import IDPool
+
+
+##----------------------------------------------------------------##
+def getModulePath( path ):
+	import os.path
+	return os.path.dirname( __file__ ) + '/' + path
+##----------------------------------------------------------------##
+ObjectContainerBase,BaseClass = uic.loadUiType(getModulePath('ObjectContainer.ui'))
+
+##----------------------------------------------------------------##
+class ObjectContainer( QtGui.QWidget ):
+	def __init__( self, *args ):
+		super( ObjectContainer, self ).__init__( *args )
+		self.ui = ObjectContainerBase()
+		self.ui.setupUi( self )
+
+		self.setSizePolicy( 
+			QtGui.QSizePolicy.Expanding,
+			QtGui.QSizePolicy.Fixed
+			)
+
+		self.mainLayout = QtGui.QVBoxLayout(self.getInnerContainer())
+		self.mainLayout.setSpacing(0)
+		self.mainLayout.setMargin(0)
+		
+		self.folded = False
+		self.toggleFold( False )
+		self.ui.buttonFold.clicked.connect( lambda x: self.toggleFold( None ) )
+
+	def addWidget(self, widget, **layoutOption):
+		# widget.setParent(self)		
+		if layoutOption.get('fixed', False):
+			widget.setSizePolicy(
+				QtGui.QSizePolicy.Fixed,
+				QtGui.QSizePolicy.Fixed
+				)
+		elif layoutOption.get('expanding', True):
+			widget.setSizePolicy(
+				QtGui.QSizePolicy.Expanding,
+				QtGui.QSizePolicy.Expanding
+				)		
+		self.mainLayout.addWidget(widget)
+		return widget
+
+	def getInnerContainer( self ):
+		return self.ui.ObjectInnerContainer
+
+	def toggleFold( self, folded = None ):
+		if folded == None:
+			folded = not self.folded
+		self.folded = folded
+		if folded:
+			self.ui.buttonFold.setText( '+' )
+			self.ui.ObjectInnerContainer.hide()
+		else:
+			self.ui.buttonFold.setText( '-' )
+			self.ui.ObjectInnerContainer.show()
+
+	def setTitle( self, title ):
+		self.ui.labelName.setText( title )
+
 
 ##----------------------------------------------------------------##
 class SceneIntrospector( SceneEditorModule ):
@@ -109,7 +171,6 @@ class IntrospectorInstance(object):
 		self.header.hide()
 
 		scroll.setWidgetResizable(True)
-		# scroll.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
 		body.mainLayout = layout = QtGui.QVBoxLayout( body )
 		layout.setSpacing(0)
 		layout.setMargin(0)
@@ -138,20 +199,30 @@ class IntrospectorInstance(object):
 		self.addObjectEditor( self.target )
 	
 	def addObjectEditor( self, target ):
+		self.body.hide()
 		parent = app.getModule('introspector')
 		typeId = ModelManager.get().getTypeId( target )
 		if typeId:
 			editorClas = parent.getObjectEditor( typeId )
 			editor = editorClas()			
 			self.editors.append( editor )
-			widget = editor.initWidget( self.body )
+			container = ObjectContainer( self.body )
+			widget = editor.initWidget( container.getInnerContainer() )
 			if widget: 
+				container.addWidget( widget )
+				model = ModelManager.get().getModelFromTypeId( typeId )
+				if model:
+					container.setTitle( model.getName() )
+				else:
+					container.setTitle( repr( typeId ) )
+					#ERROR
 				count = self.body.mainLayout.count()
 				assert count>0
-				self.body.mainLayout.insertWidget( count - 1, widget )
-				# self.body.addWidget( widget )
+				self.body.mainLayout.insertWidget( count - 1, container )
 			editor.setTarget( target, self )
+			self.body.show()
 			return editor
+		self.body.show()
 		return None
 
 	def clear(self):		
@@ -159,16 +230,13 @@ class IntrospectorInstance(object):
 			editor.unload() #TODO: cache?
 		#remove widgets
 		layout = self.body.mainLayout
-		while layout.count() > 0:
-			child = layout.takeAt( 0 )
-			if child :
-				w = child.widget()
-				if w:
-					w.setParent( None )
-			else:
-				break
-				
+		for count in reversed( range(layout.count()) ):
+			child = layout.takeAt( count )
+			w = child.widget()
+			if w:
+				w.setParent( None )
 		layout.addStretch()
+		
 		self.target = None
 		self.header.hide()
 		self.editors = []
@@ -209,7 +277,7 @@ class CommonObjectEditor( ObjectEditor ): #a generic property grid
 		self.grid.refreshAll()
 
 	def unload( self ):
-		pass
+		self.grid.clear()
 
 
 ##----------------------------------------------------------------##
