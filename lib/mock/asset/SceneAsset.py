@@ -13,7 +13,7 @@ class SceneAssetManager(AssetManager):
 		data = jsonHelper.tryLoadJSON( filePath )
 		return data and data.get( '_assetType', None ) == 'scene'
 
-	def importAsset( self, node, option = None ):
+	def importAsset( self, node, reload = False ):
 		node.assetType = 'scene'		
 		return True
 

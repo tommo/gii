@@ -22,14 +22,17 @@ class LuaScriptAssetManager( AssetManager ):
 		name,ext = os.path.splitext(filepath)
 		return ext in [ '.lua' ]
 
-	def importAsset(self, node, option=None):
-		node.assetType = 'lua'
-		lib = app.getModule( 'script_library' )
-		lib.loadScript( node )
-		return True
-
-	def reimportAsset( self, node, option=None):
-		return super( LuaScriptAssetManager, self ).reimportAsset( node, option )
+	def importAsset(self, node, reload = False ):
+		if reload:
+			print 'need reload', node
+			lib = app.getModule( 'script_library' )
+			lib.markModified( node )
+			return True
+		else:
+			node.assetType = 'lua'
+			lib = app.getModule( 'script_library' )
+			lib.loadScript( node )
+			return True		
 
 	def forgetAsset( self , node ):
 		lib = app.getModule( 'script_library' )
@@ -45,11 +48,19 @@ class ScriptLibrary( EditorModule ):
 
 	def onLoad( self ):
 		self.scripts = {}
+		self.modifiedScripts = {}
 
 	def convertScriptPath( self, node ):
 		path = node.getNodePath()
 		name, ext = os.path.splitext( path )
 		return name.replace( '/', '.' )
+
+	def markModified( self, node ):
+		self.modifiedScripts[ node ] = True
+
+	def isModified( self ):
+		if self.modifiedScripts: return True
+		return False
 
 	def loadScript( self, node ):
 		path = self.convertScriptPath( node )
@@ -60,6 +71,13 @@ class ScriptLibrary( EditorModule ):
 		if not m:
 			for info in err.values():
 				logging.error( 'script error <%s>: %s', info.path, info.msg )
+
+	def loadModifiedScript( self ):
+		logging.info( 'reloading modified scripts' )
+		modified = self.modifiedScripts
+		self.modifiedScripts = {}
+		for node in modified:
+			self.loadScript( node )
 
 	def releaseScript( self, node ):
 		_GII.unloadGameModule( self.convertScriptPath( node ) ) #force
@@ -78,3 +96,11 @@ class ScriptLibrary( EditorModule ):
 ##----------------------------------------------------------------##
 ScriptLibrary().register()
 LuaScriptAssetManager().register()
+##----------------------------------------------------------------##
+
+class RemoteCommandReloadScript( RemoteCommand ):
+	name = 'reload_script'
+	def run( self, *args ):
+		lib = app.getModule( 'script_library' )
+		lib.loadModifiedScript()
+

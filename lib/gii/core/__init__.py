@@ -26,6 +26,7 @@ from MainModulePath import getMainModulePath
 
 ##----------------------------------------------------------------##
 from Command        import EditorCommand, EditorCommandStack
+from RemoteCommand  import RemoteCommand, RemoteCommandRegistry
 from EditorModule   import EditorModule
 from EditorApp      import app
 ##----------------------------------------------------------------##

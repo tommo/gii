@@ -11,7 +11,7 @@ class ScriptAssetManager(AssetManager):
 		name,ext=os.path.splitext(filepath)
 		return ext in ['.py','.lua','.sh']
 
-	def importAsset(self, node, option=None):
+	def importAsset(self, node, reload = False ):
 		node.assetType = 'script'
 		return True
 

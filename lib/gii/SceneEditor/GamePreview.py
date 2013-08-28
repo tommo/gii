@@ -101,7 +101,7 @@ class GamePreview( SceneEditorModule ):
 				{'name':'reset_moai','label':'RESET MOAI', 'shortcut':'Ctrl+Shift+R'}
 			], self)
 		self.onMoaiReset()
-
+		self.show()
 
 	def onStart( self ):
 		self.restoreWindowState(self.window)

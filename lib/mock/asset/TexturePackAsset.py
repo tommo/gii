@@ -20,7 +20,7 @@ class TexturePackAssetManager(AssetManager):
 		if not (data.has_key('atlases') and data.has_key('items')): return False
 		return True
 
-	def importAsset(self, node, option=None):
+	def importAsset(self, node, reload = False ):
 		node.assetType='texpack'
 		try:
 			f=open(node.getAbsFilePath(),'r')

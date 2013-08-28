@@ -1,7 +1,7 @@
 import os
 import logging
 
-from gii.core        import app, signals, EditorCommandStack
+from gii.core        import app, signals, EditorCommandStack, RemoteCommand
 from gii.qt.controls.Window import MainWindow
 from gii.qt.controls.Menu   import MenuManager
 from gii.qt.QtEditorModule  import QtEditorModule
@@ -55,7 +55,6 @@ class SceneEditor( QtEditorModule ):
 		self.addMenu( 'main/scene' )
 
 		signals.connect( 'app.start', self.postStart )
-
 		return True
 
 	def postStart( self ):
@@ -133,3 +132,10 @@ class SceneEditorModule( QtEditorModule ):
 
 ##----------------------------------------------------------------##
 SceneEditor().register()
+##----------------------------------------------------------------##
+
+class RemoteCommandRunGame( RemoteCommand ):
+	name = 'run_game'
+	def run( self, target = None, *args ):
+		from gii.core.tools import RunHost
+		RunHost.run( 'main' )

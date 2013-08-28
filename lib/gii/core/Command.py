@@ -89,6 +89,8 @@ class EditorCommandRegistry(object):
 
 	@staticmethod
 	def get():
+		if not EditorCommandRegistry._singleton:
+			return EditorCommandRegistry()
 		return EditorCommandRegistry._singleton
 
 	def __init__( self ):

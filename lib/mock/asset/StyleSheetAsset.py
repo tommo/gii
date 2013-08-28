@@ -22,7 +22,7 @@ class StyleSheetAssetManager(AssetManager):
 			pass
 		return False
 
-	def importAsset(self, node, option=None):
+	def importAsset(self, node, reload = False ):
 		node.assetType = 'stylesheet'
 		#TODO: sub style?
 		return True

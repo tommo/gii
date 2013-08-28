@@ -10,7 +10,7 @@ class FontAssetManager(AssetManager):
 		name,ext=os.path.splitext(filepath)
 		return ext in ['.ttf','.fnt','.bdf']
 
-	def importAsset( self, node, option = None ):
+	def importAsset( self, node, reload = False ):
 		filePath = node.getAbsFilePath()
 		name,ext = os.path.splitext(filePath)
 		if ext == '.ttf':

@@ -25,7 +25,7 @@ class AuroraSpriteAssetManager(AssetManager):
 			pass
 		return False
 
-	def importAsset(self, node, option=None):
+	def importAsset(self, node, reload = False ):
 		node.assetType = 'aurora_sprite'
 		scriptPath     = _getModulePath( 'AuroraSpriteImporter.lua' )
 		importer       = app.getModule('moai').loadLuaDelegate( scriptPath )

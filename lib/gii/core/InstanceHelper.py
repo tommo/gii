@@ -11,13 +11,13 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
         data = self.request.recv(1024)
         cur_thread = threading.currentThread()
+        logging.info('remote data:' + data )
         data = data.split()
         #Note to the self.server.app
         output = []
         if not RemoteArgumentCallBack is None:
             RemoteArgumentCallBack( data, output )
         result = '\n'.join( output )
-        print result, output
         self.request.send( result )
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):

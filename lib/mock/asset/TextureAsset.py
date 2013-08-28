@@ -79,7 +79,7 @@ class TextureAssetManager( AssetManager ):
 		name,ext=os.path.splitext(filepath)
 		return ext in [ '.png', '.psd', '.jpg', '.bmp', '.jpeg' ]
 
-	def importAsset(self, node, option=None):
+	def importAsset(self, node, reload = False ):
 		node.assetType = 'texture'
 		group = node.getMetaData( 'group' )
 		if not group:

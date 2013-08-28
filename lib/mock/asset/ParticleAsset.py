@@ -18,7 +18,7 @@ class ParticleSystemAssetManager( AssetManager ):
 		if not ext in [ '.particle' ]: return False
 		return _MOCK.checkSerializationFile( filePath, 'mock.ParticleSystemConfig' )
 
-	def importAsset( self, node, option = None ):
+	def importAsset( self, node, reload = False ):
 		node.assetType = 'particle_system'		
 		node.setObjectFile( 'def', node.getFilePath() )
 		return True

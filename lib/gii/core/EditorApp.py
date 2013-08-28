@@ -14,6 +14,7 @@ from package        import PackageManager
 from MainModulePath import getMainModulePath
 from selection      import SelectionManager
 from Command        import EditorCommandRegistry
+from RemoteCommand  import RemoteCommandRegistry
 
 from InstanceHelper import checkSingleInstance, setRemoteArgumentCallback
 
@@ -42,7 +43,9 @@ class EditorApp(object):
 		self.config        = {}
 		self.selectionManager = SelectionManager()
 		self.packageManager   = PackageManager()
-		self.commandRegistry  = EditorCommandRegistry()
+
+		self.commandRegistry       = EditorCommandRegistry.get()
+		self.remoteCommandRegistry = RemoteCommandRegistry.get()
 
 		signals.connect( 'module.register', self.onModuleRegister )
 
@@ -77,7 +80,7 @@ class EditorApp(object):
 		self.initialized = True
 		self.running     = True
 
-		setRemoteArgumentCallback( self.onRemoteArgument )
+		signals.connect( 'app.remote', self.onRemote )
 
 	def run( self, **kwargs ):
 		if not self.initialized: self.init()
@@ -164,7 +167,14 @@ class EditorApp(object):
 		else:
 			raise Exception( 'what platform?' + name )
 
-	def onRemoteArgument( self, data, output ):
-		signals.emitNow( 'app.remote', data, output )
-			
+	def onRemote( self, data, output ):
+		self.remoteCommandRegistry.doCommand( data, output )
+
 app = EditorApp()
+##----------------------------------------------------------------##
+
+def _onRemoteArgument( data, output ):
+		#warning: comes from another thread
+		signals.emit( 'app.remote', data, output )
+
+setRemoteArgumentCallback( _onRemoteArgument )

@@ -11,7 +11,7 @@ class TextAssetManager( AssetManager ):
 		name,ext = os.path.splitext(filepath)
 		return ext in ['.txt','.html','.htm','.xml','.json'] or name in ('README','TODO')
 
-	def importAsset(self, node, option=None):
+	def importAsset(self, node, reload = False ):
 		node.assetType='text'
 		return True
 

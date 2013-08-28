@@ -14,7 +14,7 @@ class Deck2DAssetManager(AssetManager):
 		if not ext in [ '.deck2d' ]: return False
 		return _MOCK.checkSerializationFile( filePath, 'mock.Deck2DPack' )
 		
-	def importAsset(self, node, option=None):
+	def importAsset(self, node, reload = False ):
 		node.assetType = 'deck2d'
 		pack = _MOCK.deserializeFromFile( None, node.getAbsFilePath() )
 		if not pack:

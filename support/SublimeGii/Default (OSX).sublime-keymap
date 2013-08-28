@@ -1,0 +1,4 @@
+[
+	{ "keys": [ "super+alt+r" ], "command": "gii_reload_script" },
+	{ "keys": [ "super+alt+g" ], "command": "gii_run_game" }
+]

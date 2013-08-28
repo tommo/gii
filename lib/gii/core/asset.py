@@ -289,10 +289,10 @@ class AssetNode(object):
 	def setProperty(self, name, value):
 		self.properties[ name ] = value
 
-	def forceReimport(self):
-		self.getManager().reimportAsset(self) 
-		signals.emitNow( 'asset.modified' ,  self )
-		self.saveMetaDataTable()
+	# def forceReimport(self):
+	# 	self.getManager().reimportAsset(self) 
+	# 	signals.emitNow( 'asset.modified' ,  self )
+	# 	self.saveMetaDataTable()
 
 	def showInBrowser(self):
 		path = self.getAbsFilePath()
@@ -345,19 +345,19 @@ class AssetManager(object):
 	def acceptAssetFile(self, filepath):
 		return False
 
-	def importAsset(self, assetNode, option = None):
+	def importAsset(self, assetNode, reload = False):
 		return None
 
-	def reimportAsset(self, assetNode, option = None):
-		lib = AssetLibrary.get()
-		for n in assetNode.getChildren()[:]:
-			lib.unregisterAssetNode(n)
-		result = self.importAsset(assetNode, option)
-		if result: 
-			assetNode.modifyState  =  False
-			return True
-		else:
-			return False
+	# def reimportAsset(self, assetNode, reload = None):
+	# 	lib = AssetLibrary.get()
+	# 	for n in assetNode.getChildren()[:]:
+	# 		lib.unregisterAssetNode(n)
+	# 	result = self.importAsset(assetNode, reload)
+	# 	if result: 
+	# 		assetNode.modifyState  =  False
+	# 		return True
+	# 	else:
+	# 		return False
 
 	def forgetAsset( self, assetNode ):
 		pass
@@ -382,7 +382,7 @@ class RawAssetManager(AssetManager):
 	def acceptAssetFile(self, filepath):
 		return True
 
-	def importAsset(self, assetNode, option = None):
+	def importAsset(self, assetNode, reload = False ):
 		path = os.path.realpath( assetNode.getAbsFilePath() )
 		if os.path.isfile( path ): 
 			assetNode.assetType = 'file'
@@ -616,12 +616,13 @@ class AssetLibrary(object):
 					continue
 				if not manager.acceptAssetFile( node.getAbsFilePath() ):
 					continue
-				if node.modifyState != 'new':					
+				isNew = node.modifyState == 'new'
+				if not isNew:
 					for n in node.getChildren()[:]:
 						self.unregisterAssetNode(n)
 						#TODO: add failed state to node				
 				if node.getManager() != manager: node.setManager( manager )
-				if manager.importAsset( node ):
+				if manager.importAsset( node, reload = not isNew ):
 						node.modifyState  =  False
 						done.append( node )
 			for node in done:

@@ -184,7 +184,7 @@ class SceneGraphEditor( SceneEditorModule ):
 ##----------------------------------------------------------------##
 class SceneGraphTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		return [('Name',-1)]
+		return [('Name',200), ('Type', 50)]
 
 	def getRootNode( self ):
 		return self.module.activeScene
@@ -227,11 +227,12 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 	def updateItemContent( self, item, node, **option ):
 		name = None
 		if isMockInstance( node,'Scene' ):
-			item.setText( 0, '%s <%s>' % ( node.name or '', node.getClassName( node ) ) )
+			item.setText( 0, node.name or '<unnamed>' )
 			item.setIcon( 0, getIcon('scene') )
 		else:
-			item.setText( 0, '%s <%s>' % ( node.name or '', node.getClassName( node ) ) )
+			item.setText( 0, node.name or '<unnamed>' )
 			item.setIcon( 0, getIcon('obj') )
+			item.setText( 1, node.getClassName( node ) )
 		
 	def onItemSelectionChanged(self):
 		items=self.selectedItems()
