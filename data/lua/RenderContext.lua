@@ -17,7 +17,7 @@ local currentContextKey = false
 
 local ContextChangeListeners = {}
 
-function createRenderContext(key)
+function createRenderContext( key )
 	local root = MOAICoroutine.new()
 	local context = {
 		key              = key,
@@ -100,6 +100,10 @@ function getRenderContext( key )
 	return renderContextTable[ key ]
 end
 
+function setCurrentRenderContextActionRoot( root )
+	currentContext.actionRoot = root
+	MOAIActionMgr.setRoot( root )
+end
 
 local keymap_GII={
 	["alt"]        = 163 ;

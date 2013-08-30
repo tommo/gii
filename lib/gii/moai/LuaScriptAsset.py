@@ -23,13 +23,12 @@ class LuaScriptAssetManager( AssetManager ):
 		return ext in [ '.lua' ]
 
 	def importAsset(self, node, reload = False ):
-		if reload:
-			print 'need reload', node
+		node.assetType = 'lua'
+		if reload:			
 			lib = app.getModule( 'script_library' )
 			lib.markModified( node )
 			return True
 		else:
-			node.assetType = 'lua'
 			lib = app.getModule( 'script_library' )
 			lib.loadScript( node )
 			return True		

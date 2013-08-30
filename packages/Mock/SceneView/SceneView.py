@@ -36,7 +36,7 @@ class SceneView( SceneEditorModule ):
 		self.canvas = self.window.addWidget( MOAIEditCanvas() )
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
 
-		self.updateTimer = self.window.startTimer( 60, self.onUpdateTimer )
+		self.updateTimer = self.window.startTimer( 30, self.onUpdateTimer )
 		self.updatePending = False
 
 		self.preview = self.getModule( 'scene_preview' )
@@ -64,7 +64,7 @@ class SceneView( SceneEditorModule ):
 	def onEntityModified( self, entity ):
 		self.scheduleUpdate()
 
-	def onSceneUpdate( self, scene ):
+	def onSceneUpdate( self ):
 		self.scheduleUpdate()
 
 	def onSceneOpen( self, node, scene ):

@@ -127,7 +127,11 @@ class LayerTreeWidget( GenericTreeWidget ):
 
 	def getNodeChildren( self, node ):
 		if isMockInstance( node, 'Game' ):
-			return [ item for item in node.layers.values() ]
+			result = []
+			for item in node.layers.values():
+				if item.name == '_GII_EDITOR_LAYER': continue
+				result.append( item )
+			return reversed( result )
 		return []
 
 	def updateItemContent( self, item, node, **option ):

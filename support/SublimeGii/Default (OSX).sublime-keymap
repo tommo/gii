@@ -1,4 +1,6 @@
 [
-	{ "keys": [ "super+alt+r" ], "command": "gii_reload_script" },
-	{ "keys": [ "super+alt+g" ], "command": "gii_run_game" }
+	{ "keys": [ "ctrl+r" ], "command": "gii_reload_script" },
+	{ "keys": [ "ctrl+]" ], "command": "gii_preview_start" },
+	{ "keys": [ "ctrl+[" ], "command": "gii_preview_stop" },
+	{ "keys": [ "ctrl+e" ], "command": "gii_eval" }
 ]

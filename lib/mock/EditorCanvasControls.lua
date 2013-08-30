@@ -9,8 +9,8 @@ end
 
 function CanvasGrid:onDraw()
 	axisSize = 10000
-	MOAIGfxDevice.setPenColor( .1, .1, .1 )
-	MOAIDraw.fillRect( -axisSize, -axisSize, axisSize, axisSize )
+	-- MOAIGfxDevice.setPenColor( .1, .1, .1 )
+	-- MOAIDraw.fillRect( -axisSize, -axisSize, axisSize, axisSize )
 	MOAIGfxDevice.setPenColor( .3, .3, .3 )
 	MOAIDraw.drawLine( -axisSize, 0, axisSize, 0 )
 	MOAIDraw.drawLine( 0, -axisSize, 0, axisSize )

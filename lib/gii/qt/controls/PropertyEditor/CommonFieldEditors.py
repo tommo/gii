@@ -120,7 +120,7 @@ class BoolFieldEditor( FieldEditor ):
 		self.checkBox.setChecked( bool(value) )
 
 	def onStateChanged( self, state ):
-		return self.notifyChanged( self.get() )
+		return self.notifyChanged( bool( self.get() ) )
 
 	def initEditor( self, container ):
 		self.checkBox = QtGui.QCheckBox( container )

@@ -37,3 +37,20 @@ class GiiRunGameCommand(sublime_plugin.WindowCommand):
 	def run(self, **kwargs):
 		send_to_server( 'run_game' )
 
+class GiiEvalCommand(sublime_plugin.WindowCommand):
+	def run(self, **kwargs):
+		sublime.active_window().show_input_panel('(Gii)Script to execute:', '', self.do, None, None)
+
+	def do(self, script):
+		send_to_server( 'eval '+script )
+	
+
+class GiiPreviewStartCommand(sublime_plugin.WindowCommand):
+	def run(self, **kwargs):
+		send_to_server( 'preview_start' )
+
+
+class GiiPreviewStopCommand(sublime_plugin.WindowCommand):
+	def run(self, **kwargs):
+		send_to_server( 'preview_stop' )
+

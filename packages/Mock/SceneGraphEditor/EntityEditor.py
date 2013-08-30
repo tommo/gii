@@ -14,7 +14,7 @@ class EntityEditor( ObjectEditor ): #a generic property grid
 	def setTarget( self, target, introspectorInstance ):
 		self.grid.setTarget( target )
 		for com in target.components:
-			introspectorInstance.addObjectEditor( com )
+			editor = introspectorInstance.addObjectEditor( com )
 
 	def onPropertyChanged( self, obj, id, value ):
 		signals.emit( 'entity.modified', obj )

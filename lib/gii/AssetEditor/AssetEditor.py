@@ -62,12 +62,12 @@ class AssetEditor( QtEditorModule ):
 		
 	def postStart( self ):
 		logging.info('opening up asset editor')
-		self.mainWindow.setUpdatesEnabled( True )
+		# self.mainWindow.setUpdatesEnabled( True )
 		self.mainWindow.show()
 		self.mainWindow.raise_()
 
 	def onStart( self ):
-		self.mainWindow.setUpdatesEnabled( False )
+		# self.mainWindow.setUpdatesEnabled( False )
 		self.restoreWindowState( self.mainWindow )
 	
 	def onStop( self ):

@@ -1,6 +1,6 @@
 import logging
 import os.path
-from gii.core import signals, EditorModule
+from gii.core import signals, EditorModule, RemoteCommand, app
 
 # from gii.core import Module, signals, getAppPath, unregisterModule, registerModule, App, Project
 
@@ -382,3 +382,13 @@ class MOAILuaDelegate(object):
 
 
 MOAIRuntime().register()
+
+class RemoteCommandEvalScript( RemoteCommand ):
+	name = 'eval'
+	def run( self, *args ):
+		if len( args ) >= 1:
+			s = ' '.join( args )
+			runtime = app.getModule( 'moai' )
+			print '> ' + s
+			runtime.runString( s )
+

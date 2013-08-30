@@ -17,6 +17,11 @@ register('module.loaded')
 register('game.pause')
 register('game.resume')
 
+register('preview.start')
+register('preview.resume')
+register('preview.stop')
+register('preview.pause')
+
 register('debug.enter')
 register('debug.exit')
 register('debug.continue')

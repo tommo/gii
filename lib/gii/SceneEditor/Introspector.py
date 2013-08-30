@@ -36,6 +36,7 @@ class ObjectContainer( QtGui.QWidget ):
 		self.folded = False
 		self.toggleFold( False )
 		self.ui.buttonFold.clicked.connect( lambda x: self.toggleFold( None ) )
+		self.ui.buttonContext.clicked.connect( lambda x: self.openContextMenu() )
 
 	def addWidget(self, widget, **layoutOption):
 		# widget.setParent(self)		
@@ -51,6 +52,14 @@ class ObjectContainer( QtGui.QWidget ):
 				)		
 		self.mainLayout.addWidget(widget)
 		return widget
+
+	def setContextMenu( self, menuName ):
+		menu = menuName and MenuManager.get().find( menuName ) or None
+		self.contextMenu = menu
+		if not menu:
+			self.ui.buttonContext.hide()
+		else:
+			self.ui.buttonContext.show()
 
 	def getInnerContainer( self ):
 		return self.ui.ObjectInnerContainer
@@ -69,6 +78,9 @@ class ObjectContainer( QtGui.QWidget ):
 	def setTitle( self, title ):
 		self.ui.labelName.setText( title )
 
+	def openContextMenu( self ):
+		if self.contextMenu:
+			self.contextMenu.popUp()
 
 ##----------------------------------------------------------------##
 class SceneIntrospector( SceneEditorModule ):
@@ -208,8 +220,9 @@ class IntrospectorInstance(object):
 			self.editors.append( editor )
 			container = ObjectContainer( self.body )
 			widget = editor.initWidget( container.getInnerContainer() )
-			if widget: 
-				container.addWidget( widget )
+			editor.container = container
+			if widget:
+				container.addWidget( widget )				
 				model = ModelManager.get().getModelFromTypeId( typeId )
 				if model:
 					container.setTitle( model.getName() )
@@ -219,6 +232,8 @@ class IntrospectorInstance(object):
 				count = self.body.mainLayout.count()
 				assert count>0
 				self.body.mainLayout.insertWidget( count - 1, container )
+				menuName = editor.getContextMenu()
+				container.setContextMenu( menuName )
 			editor.setTarget( target, self )
 			self.body.show()
 			return editor
@@ -251,6 +266,9 @@ class IntrospectorInstance(object):
 ##----------------------------------------------------------------##
 class ObjectEditor( object ):
 	def initWidget( self, container ):
+		pass
+
+	def getContextMenu( self ):
 		pass
 
 	def setTarget( self, target, introspectorInstance ):

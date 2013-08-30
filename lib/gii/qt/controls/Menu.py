@@ -84,7 +84,7 @@ class MenuNode(object):
 			return parent.getFullName()+'/'+self.name
 		return self.name
 		
-	def addChild(self,option, module=None):
+	def addChild(self, option, module=None):
 		if option=='----':
 			if self.qtmenu:
 				self.qtmenu.addSeparator()
@@ -265,22 +265,24 @@ class MenuManager(object):
 		return node
 
 	def addMenu(self, path, option=None, module=None): #menu for link or popup
-		blobs=path.split('/')
-		upperPath="/".join(blobs[:-1])
-		name=blobs[-1]
-		parent=self.find(upperPath) 
+		blobs     = path.split('/')
+		upperPath = "/".join(blobs[:-1])
+		name      = blobs[-1]
+		parent    = self.find(upperPath) 
 		
-		if not parent: parent=self.rootNode
+		if not parent: parent = self.rootNode
 		if not option: option={}
-
-		if isinstance(option, dict):
-			if not option.get('label',None):
-				option['label'] = name
-			if not option.get('name'):
-				option['name']  = name
-
-		option['type']='menu'
-		return parent.addChild(option, module)
+		if name == '----':
+			option = '----'
+		else:
+			if isinstance(option, dict):
+				if not option.get('label',None):
+					option['label'] = name
+				if not option.get('name'):
+					option['name']  = name
+			option[ 'type' ]='menu'
+			
+		return parent.addChild( option, module )
 
 	def addMenuItem(self, path, option = None, module=None):
 		blobs     = path.split('/')

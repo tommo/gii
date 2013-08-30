@@ -1,8 +1,10 @@
 --------------------------------------------------------------------
 CLASS: EditorEntity ( mock.Entity )
 function EditorEntity:__init()
+	self.defaultLayer = '_GII_EDITOR_LAYER'
 	self.FLAG_EDITOR_OBJECT = true
 end
+
 
 --------------------------------------------------------------------
 function createEditorCanvasInputDevice( env )
@@ -55,12 +57,17 @@ function EditorCanvasCamera:__init( env )
 	self.context = context.key
 	self.screenWidth   = context.w or 100
 	self.screenHeight	 = context.h or 100
-
 	self.env = env
+	self.__allowEditorLayer = true
 
 end
 
-function EditorCanvasCamera:getScreenSize()
+
+function EditorCanvasCamera:getScreenRect()
+	return 0, 0, self.screenWidth, self.screenHeight
+end
+
+function EditorCanvasCamera:getScreenScale()
 	return self.screenWidth, self.screenHeight
 end
 
@@ -73,6 +80,11 @@ end
 
 function EditorCanvasCamera:updateCanvas()
 	if self.env then self.env.updateCanvas() end
+end
+
+function EditorCanvasCamera:onAttach( entity )
+	entity.FLAG_EDITOR_OBJECT = true
+	return mock.Camera.onAttach( self, entity)
 end
 
 --------------------------------------------------------------------
@@ -96,6 +108,11 @@ function EditorCanvasScene:onEnter()
 	self.camera    = mock.SingleEntity( self.cameraCom )
 	self.camera.FLAG_EDITOR_OBJECT = true
 	self:addEntity( self.camera )
+end
+
+function EditorCanvasScene:getLayer( name )
+	if name == '_GII_EDITOR_LAYER' then return self.defaultLayer end
+	return self.__super.getLayer( self, name )
 end
 
 function EditorCanvasScene:getActionRoot()

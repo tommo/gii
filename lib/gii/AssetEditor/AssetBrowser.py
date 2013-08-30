@@ -36,7 +36,8 @@ class AssetBrowser( AssetEditorModule ):
 				expanding = False
 			)
 		self.treeView  = self.container.addWidget(AssetBrowserTreeView())
-
+		toolbar = self.container.addWidget( QtGui.QToolBar(), expanding = False )
+		self.toolbar = self.addToolBar( 'asset_browser', toolbar )
 
 		signals.connect( 'module.loaded',        self.onModuleLoaded )		
 		signals.connect( 'asset.deploy.changed', self.onAssetDeployChanged )
@@ -64,6 +65,8 @@ class AssetBrowser( AssetEditorModule ):
 				'----',
 				{'name':'create', 'label':'Create', 'link':self.creatorMenu},
 			])
+
+		self.addTool( 'asset_browser/create_asset', label = '+' )
 
 
 	def onStart( self ):
@@ -124,7 +127,7 @@ class AssetBrowser( AssetEditorModule ):
 				'on_click' : creatorFunc
 			})
 
-	def onTreeViewContextMenu(self, point):
+	def onTreeViewContextMenu( self, point ):
 		item = self.treeView.itemAt(point)
 		if item:			
 			node=item.node
@@ -210,6 +213,11 @@ class AssetBrowser( AssetEditorModule ):
 				if text: text += '\n'
 				text += n.getNodePath()
 			setClipboardText( text )
+
+	def onTool( self, toolNode ):
+		name = toolNode.name
+		if name == 'create_asset':
+			self.creatorMenu.popUp()
 
 ##----------------------------------------------------------------##
 class AssetBrowserTreeView( AssetTreeView ):

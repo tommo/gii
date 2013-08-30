@@ -45,7 +45,10 @@ class SceneGraphEditor( SceneEditorModule ):
 			)
 
 		#Components
-		self.tree = self.container.addWidget( SceneGraphTreeWidget() )
+		self.tree = self.container.addWidget( 
+				SceneGraphTreeWidget( sorting = False )
+			)
+		
 		self.tree.module = self
 		self.tool = self.addToolBar( 'scene_graph', self.container.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )
@@ -64,11 +67,20 @@ class SceneGraphEditor( SceneEditorModule ):
 		#menu
 		self.addMenuItem( 'main/scene/close_scene', dict( label = 'Close' ) )
 		self.addMenuItem( 'main/scene/save_scene',  dict( label = 'Save' ) )
+		self.addMenu( 'main/scene/----' )
+		self.addMenu( 'main/scene/component_context', dict( label = 'Selected Component' ) )
+
+		self.addMenu( 'main/scene/component_context/remove', 
+				dict( 
+					label = 'Remove'					
+				 )
+			)
 
 		#Toolbars
 		self.addTool( 'scene_graph/add_sibling', label = '+obj' )
 		self.addTool( 'scene_graph/add_child', label = '+child' )
 		self.addTool( 'scene_graph/add_component', label = '+com' )
+		self.addTool( 'scene_graph/clone_entity', label = 'clone' )
 		self.addTool( 'scene_graph/remove_entity', label = '-obj' )
 
 		self.addTool( 'scene/refresh', label = 'REFRESH')
@@ -77,6 +89,11 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'moai.clean', self.onMoaiClean )
 		signals.connect( 'selection.changed', self.onSelectionChanged)
 		signals.connect( 'selection.hint', self.onSelectionHint )
+
+		signals.connect( 'preview.start', self.onPreviewStart )
+		signals.connect( 'preview.stop' , self.onPreviewStop )
+
+
 		#editor
 		if self.getModule('introspector'):
 			import EntityEditor
@@ -89,6 +106,8 @@ class SceneGraphEditor( SceneEditorModule ):
 			if self.getModule('scene_view'):
 				self.getModule('scene_view').setFocus()
 			return
+		if not self.closeScene(): return
+
 		signals.emitNow( 'scene.pre_open', node )
 		scene = self.delegate.safeCallMethod( 'editor', 'openScene', node.getPath() )
 		signals.emitNow( 'scene.open', node, scene )
@@ -101,6 +120,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		scene = self.delegate.safeCallMethod( 'editor', 'closeScene' )
 		self.activeScene     = None
 		self.activeSceneNode = None
+		#TODO: save confirmation
+		return True
 
 	def saveScene( self ):
 		if not self.activeSceneNode: return
@@ -159,6 +180,8 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.componentCreatorMenu.popUp()
 		elif name == 'remove_entity':
 			self.doCommand( 'scene_editor/remove_entity' )
+		elif name == 'clone_entity':
+			self.doCommand( 'scene_editor/clone_entity' )
 		elif name == 'refresh':
 			self.scheduleRefreshScene()
 
@@ -180,11 +203,20 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onSelectionHint( self, selection ):
 		self.getSelectionManager().changeSelection( selection )
 
+	def onPreviewStart( self ):
+		if not self.activeScene: return
+		self.delegate.safeCallMethod( 'editor', 'retainScene' )
+
+	def onPreviewStop( self ):
+		if not self.activeScene: return
+		self.delegate.safeCallMethod( 'editor', 'restoreScene' )
+
+
 	
 ##----------------------------------------------------------------##
 class SceneGraphTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		return [('Name',200), ('Type', 50)]
+		return [('Name',200), ( 'Layer', 50 ), ('Type', 50)]
 
 	def getRootNode( self ):
 		return self.module.activeScene
@@ -232,7 +264,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		else:
 			item.setText( 0, node.name or '<unnamed>' )
 			item.setIcon( 0, getIcon('obj') )
-			item.setText( 1, node.getClassName( node ) )
+			item.setText( 2, node.getClassName( node ) )
 		
 	def onItemSelectionChanged(self):
 		items=self.selectedItems()

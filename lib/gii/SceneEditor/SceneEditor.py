@@ -60,10 +60,10 @@ class SceneEditor( QtEditorModule ):
 	def postStart( self ):
 		logging.info('opening up scene editor')
 		self.mainWindow.show()
-		self.mainWindow.setUpdatesEnabled( True )
+		# self.mainWindow.setUpdatesEnabled( True )
 
 	def onStart( self ):
-		self.mainWindow.setUpdatesEnabled( False )
+		# self.mainWindow.setUpdatesEnabled( False )
 		self.restoreWindowState( self.mainWindow )
 		
 	def onStop( self ):

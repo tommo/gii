@@ -16,8 +16,9 @@ end
 
 function SceneGraphEditor:openScene( path )
 	local ctx = gii.getCurrentRenderContext()
+	gii.setCurrentRenderContextActionRoot( game:getActionRoot() )
 	local scene = mock.loadAsset( path )
-	scene.timer:attach( ctx.actionRoot )
+	-- scene.timer:attach( ctx.actionRoot )
 	self.scene = scene
 	self:postLoadScene()
 	return scene
@@ -51,6 +52,20 @@ function SceneGraphEditor:postLoadScene()
 	scene:setEntityListener( function( ... ) return self:onEntityEvent( ... ) end )
 end
 
+function SceneGraphEditor:retainScene()
+	self.retainedSceneData = mock.serializeScene( self.scene )
+end
+
+function SceneGraphEditor:restoreScene()
+	if not self.retainedSceneData then return end
+	self.scene:clear( true )
+	if pcall( mock.deserializeScene, self.retainedSceneData, self.scene ) then
+		self.retainedSceneData = false
+		self:postLoadScene()
+	else
+		self.failedRefreshData = self.retainedSceneData
+	end
+end
 
 local function collectEntity( e, typeId, collection )
 	if isEditorEntity( e ) then return end
@@ -99,10 +114,10 @@ function SceneGraphEditor:onEntityEvent( action, entity, scene, layer )
 	if isEditorEntity( entity ) then return end
 	if action == 'add' then
 		_owner.tree:addNode( entity )
-		gii.emitPythonSignal( 'scene.update', scene )
+		gii.emitPythonSignal( 'scene.update' )
 	elseif action == 'remove' then
 		_owner.tree:removeNode( entity )
-		gii.emitPythonSignal( 'scene.update', scene )
+		gii.emitPythonSignal( 'scene.update' )
 	end
 
 end
@@ -228,5 +243,26 @@ end
 
 function CmdRemoveComponent:undo()
 	--todo:
+end
+
+
+--------------------------------------------------------------------
+CLASS: CmdCloneEntity ( EditorCommand )
+	:register( 'scene_editor/clone_entity' )
+
+function CmdCloneEntity:init( option )
+	local target = gii.getSelection()[1]
+	if not isInstanceOf( target, mock.Entity ) then return false end
+	self.target = target
+end
+
+function CmdCloneEntity:redo()
+	self.created = mock.cloneEntity( self.target )
+	editor.scene:addEntity( self.created )
+end
+
+function CmdCloneEntity:undo()
+	--todo:
+	self.created:destroyNow()
 end
 

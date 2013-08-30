@@ -2,7 +2,7 @@ import os.path
 import time
 import logging
 
-from gii.core                import signals, app
+from gii.core                import signals, app, RemoteCommand
 
 from gii.moai.MOAIRuntime    import getAKU
 from gii.moai.MOAICanvasBase import MOAICanvasBase
@@ -64,14 +64,19 @@ class GamePreview( SceneEditorModule ):
 
 
 	def onLoad(self):
-		self.window = self.requestDocumentWindow(
+		self.window = self.requestDockWindow(
 			'GamePreview',
 			title = 'Game Preview',
+			dock  = 'right'
 			)
+
+		self.window.stayOnTop = True
+
 		self.canvas = GamePreviewCanvas( self.window ) 
 		self.canvas.startRefreshTimer()
-		self.paused = True
-		self.window.setCentralWidget( self.canvas )
+
+		self.paused = None
+		self.window.addWidget( self.canvas )
 		
 		self.canvas.module = self
 
@@ -85,31 +90,32 @@ class GamePreview( SceneEditorModule ):
 		signals.connect( 'debug.exit',     self.onDebugExit )
 		signals.connect( 'debug.stop',     self.onDebugStop )
 		
-		signals.connect( 'game.pause',     self.onGamePause )
-		signals.connect( 'game.resume',    self.onGameResume )
+		# signals.connect( 'game.pause',     self.onGamePause )
+		# signals.connect( 'game.resume',    self.onGameResume )
 		signals.connect( 'moai.reset',     self.onMoaiReset )
 		
 		self.menu = self.addMenu( 'main/preview', dict( label = 'Game' ) )
 
 		self.menu.addChild([
-				{'name':'run_game',   'label':'Run Game' },
-				{'name':'pause_game', 'label':'Pause Game' },
-				{'name':'stop_game',  'label':'Stop Game' },
+				{'name':'start_game',    'label':'Resume Game','shortcut':'F5' },
+				{'name':'pause_game',  'label':'Pause Game', 'shortcut':'F6' },
+				{'name':'stop_game',   'label':'Stop Game',  'shortcut':'Ctrl+F5' },
 				'----',
 				{'name':'pause_on_leave','label':'Pause On Leave', 'type':'check', 'checked':self.getConfig('pause_on_leave')},
 				'----',
 				{'name':'reset_moai','label':'RESET MOAI', 'shortcut':'Ctrl+Shift+R'}
 			], self)
 		self.onMoaiReset()
-		self.show()
+
+		self.enableMenu( 'main/preview/pause_game',  False )
+		self.enableMenu( 'main/preview/stop_game',   False )
 
 	def onStart( self ):
-		self.restoreWindowState(self.window)
-		
+		pass
+
 	def onStop( self ):
 		if self.updateTimer:
 			self.updateTimer.stop()
-		self.saveWindowState( self.window )
 
 	def show( self ):
 		self.window.show()
@@ -128,15 +134,16 @@ class GamePreview( SceneEditorModule ):
 		runtime.changeRenderContext( 'game', self.viewWidth, self.viewHeight )
 		
 		if runtime.updateAKU():
-			used=time.clock()-before
+			used = time.clock() - before
 			self.canvas.forceUpdateGL()
+			signals.emit( 'scene.update' )
 
 	def resizeView(self, w,h):
 		self.viewWidth  = w
 		self.viewHeight = h
 		getAKU().setScreenSize(w,h)
 		getAKU().setViewSize(w,h)		
-			
+
 	def renderView(self):
 		before  = time.clock()
 		runtime = self.getRuntime()
@@ -154,11 +161,8 @@ class GamePreview( SceneEditorModule ):
 			)
 		# getAKU().setFuncOpenWindow( self.onOpenWindow )
 	
-	def onUnload(self):
-		self.window.destroy()
-
 	def onDebugEnter(self):
-		self.paused=True
+		self.paused = True
 		self.getRuntime().pause()
 		self.window.setFocusPolicy(Qt.NoFocus)
 
@@ -183,11 +187,43 @@ class GamePreview( SceneEditorModule ):
 		self.canvas.activateWindow()
 		self.setActiveWindow( self.window )
 
-	def onGamePause(self):
-		self.getRuntime().pause()
+	def startPreview( self ):
+		if self.paused == False: return
+		self.enableMenu( 'main/preview/pause_game', True )
+		self.enableMenu( 'main/preview/stop_game',  True )
+		self.enableMenu( 'main/preview/start_game', False )
 
-	def onGameResume(self): #TODO: proper pause state
+		if self.paused: #resume
+			logging.info('resume game preview')
+			signals.emitNow( 'preview.resume' )
+
+		elif self.paused is None: #start
+			logging.info('start game preview')
+			signals.emitNow( 'preview.start' )
+			self.updateTimer = self.window.startTimer( 60, self.updateView )
+
+		self.paused = False
 		self.getRuntime().resume()
+		self.setFocus()
+
+	def stopPreview( self ):
+		logging.info('stop game preview')
+		signals.emitNow( 'preview.stop' )
+		self.updateTimer.stop()
+		self.enableMenu( 'main/preview/stop_game',  False )
+		self.enableMenu( 'main/preview/pause_game', False )
+		self.enableMenu( 'main/preview/start_game', True )
+		self.paused = None
+		self.updateTimer = None
+
+	def pausePreview( self ):
+		if self.paused: return
+		signals.emitNow( 'preview.pause' )
+		logging.info('pause game preview')
+		self.enableMenu( 'main/preview/start_game', True )
+		self.enableMenu( 'main/preview/pause_game',  False )
+		self.paused = True
+		self.getRuntime().pause()
 
 	def onAppActivate(self):
 		if self.waitActivate:
@@ -200,7 +236,7 @@ class GamePreview( SceneEditorModule ):
 			self.getRuntime().pause()
 
 	def onMenu(self, node):
-		name=node.name
+		name = node.name
 		if name=='size_double':
 			if self.originalSize:
 				w,h=self.originalSize
@@ -225,6 +261,17 @@ class GamePreview( SceneEditorModule ):
 		elif name=='orient_landscape':
 			self.setOrientationLandscape()
 
+		elif name == 'start_game':
+			self.startPreview()
+
+		elif name == 'stop_game':
+			self.stopPreview()
+
+		elif name == 'pause_game':
+			self.pausePreview()
+
+			
+
 ##----------------------------------------------------------------##
 class GamePreviewCanvas(MOAICanvasBase):
 	def resizeGL(self, width, height):
@@ -237,3 +284,16 @@ class GamePreviewCanvas(MOAICanvasBase):
 ##----------------------------------------------------------------##
 GamePreview().register()
 ##----------------------------------------------------------------##
+
+class RemoteCommandPreviewStart( RemoteCommand ):
+	name = 'preview_start'
+	def run( self, *args ):
+		preview = app.getModule('scene_preview')
+		preview.startPreview()
+		
+class RemoteCommandPreviewStart( RemoteCommand ):
+	name = 'preview_stop'
+	def run( self, *args ):
+		preview = app.getModule('scene_preview')
+		preview.stopPreview()
+		

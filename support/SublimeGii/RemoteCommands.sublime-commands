@@ -12,5 +12,12 @@
         "args": {
             "inline": false 
         }
+    },
+    {
+        "caption": "Gii Remote: Eval Lua Script",
+        "command": "gii_eval",
+        "args": {
+            "inline": false 
+        }
     }
 ]

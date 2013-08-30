@@ -265,6 +265,7 @@ class SubWindow(QtGui.QMainWindow, SubWindowMixin):
 	def __init__(self, parent):
 		super(SubWindow, self).__init__(parent)
 		self.setupUi()
+		self.stayOnTop = False
 
 
 	def hideTitleBar(self):
@@ -335,9 +336,10 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 		font = QtGui.QFont()
 		font.setPointSize(11)
 		self.setFont(font)
-		signals.connect( 'app.activate', self.onAppActivate )
-		signals.connect( 'app.deactivate', self.onAppDeactivate )
-		self.topLevel = False
+		# signals.connect( 'app.activate', self.onAppActivate )
+		# signals.connect( 'app.deactivate', self.onAppDeactivate )
+		self.topLevel  = False
+		self.stayOnTop = False
 
 	def setupCustomTitleBar(self):
 		self.originTitleBar = self.titleBarWidget()
@@ -361,21 +363,21 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 		timer.start(interval)
 		return timer
 
-	def onAppActivate( self ):
-		if self.topLevel:
-			self.setWindowFlags( Qt.Window | Qt.WindowStaysOnTopHint )
-			self.show()
+	# def onAppActivate( self ):
+	# 	if self.topLevel:
+	# 		self.setWindowFlags( Qt.Window | Qt.WindowStaysOnTopHint )
+	# 		self.show()
 
-	def onAppDeactivate( self ):
-		if self.topLevel:
-			self.setWindowFlags( Qt.Window )
-			self.show()
+	# def onAppDeactivate( self ):
+	# 	if self.topLevel:
+	# 		self.setWindowFlags( Qt.Window )
+	# 		self.show()
 
 	def onTopLevelChanged(self, toplevel):
 		self.topLevel = toplevel
 		if toplevel:
 			self.setTitleBarWidget( self.originTitleBar )
-			self.setWindowFlags( Qt.Window | Qt.WindowStaysOnTopHint )
+			self.setWindowFlags( Qt.Window )
 			self.show()
 		else:
 			self.setTitleBarWidget( self.customTitleBar )
