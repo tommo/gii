@@ -189,7 +189,7 @@ class TextureManager( AssetEditorModule ):
 			self.getModule( 'texture_library' ).removeGroup( groupName )
 			listGroup.takeItem( listGroup.row( item ) )
 			return
-		self.getSelectionManager().changeSelection([])
+		self.changeSelection( None )
 
 	def applyGroup( self ):
 		group = None
@@ -261,7 +261,7 @@ class TextureTreeWidget( GenericTreeWidget ):
 		
 	def onItemSelectionChanged(self):
 		selection = [ item.node for item in self.selectedItems() ]
-		self.module.getSelectionManager().changeSelection( selection )
+		self.module.changeSelection( selection )
 
 	def onItemActivated( self, item, col ):
 		node = item.node

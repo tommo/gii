@@ -101,8 +101,11 @@ class SceneIntrospector( SceneEditorModule ):
 		return ['qt', 'scene_editor']
 	
 	def onLoad(self):
-		signals.connect('selection.changed',self.onSelectionChanged)
+		signals.connect( 'selection.changed', self.onSelectionChanged )
 		self.requestInstance()
+		signals.connect( 'component.added',   self.onComponentAdded )
+		signals.connect( 'component.removed', self.onComponentRemoved )
+		signals.connect( 'entity.modified',   self.onEntityModified ) 
 
 	def onStart( self ):
 		pass
@@ -150,17 +153,34 @@ class SceneIntrospector( SceneEditorModule ):
 			if not typeId: break
 		return CommonObjectEditor
 
-	def onSelectionChanged(self, s):
+	def onSelectionChanged( self, selection, key ):
+		if key != 'scene': return
 		if not self.activeInstance: return
 		target = None
-		if isinstance(s, list):
-			target = s
-		elif isinstance(s, tuple):
-			(target) = s
+		if isinstance( selection, list ):
+			target = selection
+		elif isinstance( selection, tuple ):
+			(target) = selection
 		else:
-			target=s
+			target=selection
 		#first selection only?
 		self.activeInstance.setTarget(target)
+
+	def onComponentAdded( self, com, entity ):
+		if not self.activeInstance: return
+		if self.activeInstance.target == entity:
+			self.activeInstance.setTarget( [entity], True )
+
+	def onComponentRemoved( self, com, entity ):
+		if not self.activeInstance: return
+		if self.activeInstance.target == entity:
+			self.activeInstance.setTarget( [entity], True )
+
+	def onEntityModified( self, entity, context=None ):
+		if context != 'introspector' :
+			for ins in self.instances:
+				if ins.target == entity:
+					ins.refresh()
 
 
 ##----------------------------------------------------------------##
@@ -192,7 +212,9 @@ class IntrospectorInstance(object):
 	def getTarget(self):
 		return self.target
 
-	def setTarget(self, t):
+	def setTarget(self, t, forceRefresh = False ):
+		if self.target == t and not forceRefresh: return
+
 		if self.target:
 			self.clear()
 		
@@ -209,6 +231,7 @@ class IntrospectorInstance(object):
 			self.target = t[0]
 
 		self.addObjectEditor( self.target )
+
 	
 	def addObjectEditor( self, target ):
 		self.body.hide()
@@ -289,7 +312,7 @@ class CommonObjectEditor( ObjectEditor ): #a generic property grid
 		self.grid.setTarget( target )
 
 	def onPropertyChanged( self, obj, id, value ):
-		signals.emit( 'entity.modified', obj )
+		signals.emit( 'entity.modified', obj, 'introspector' )
 
 	def refresh( self ):
 		self.grid.refreshAll()

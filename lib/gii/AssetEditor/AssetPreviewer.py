@@ -41,14 +41,15 @@ class ModAssetPreviewer( AssetEditorModule ):
 		self.container.addWidget( self.previewerContainer, expanding=False )
 		self.nullPreviewer = self.registerPreviewer( NullAssetPreviewer() )		
 
-		signals.connect( 'selection.changed', self.onSelectionChanged)
+		signals.connect( 'selection.changed', self.onSelectionChanged )
 
 
 	def onStart( self ):
 		for previewer in self.previewers:
 			self._loadPreviewer(previewer)
 
-	def onSelectionChanged(self, selection):
+	def onSelectionChanged( self, selection, key ):
+		if key != 'asset': return
 		if self.activePreviewer:
 			self.activePreviewer.onStop()
 

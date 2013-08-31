@@ -2,6 +2,8 @@ import os
 import logging
 
 from gii.core        import app, signals, EditorCommandStack, RemoteCommand
+from gii.core.selection import SelectionManager
+
 from gii.qt.controls.Window import MainWindow
 from gii.qt.controls.Menu   import MenuManager
 from gii.qt.QtEditorModule  import QtEditorModule
@@ -17,11 +19,35 @@ from gii.moai.MOAIRuntime import MOAILuaDelegate
 ##----------------------------------------------------------------##
 
 signals.register( 'entity.modified' )
+signals.register( 'entity.renamed' )
+
+signals.register( 'component.added' )
+signals.register( 'component.removed' )
+
 
 ##----------------------------------------------------------------##
-class SceneEditor( QtEditorModule ):
+class SceneEditorModule( QtEditorModule ):
+	def getSceneEditor( self ):
+		return self.getModule('scene_editor')
+
+	def getMainWindow( self ):
+		return self.getModule('scene_editor').getMainWindow()
+
+	def getSelectionManager( self ):
+		selectionManager = self.getSceneEditor().selectionManager
+		return selectionManager
+
+	def getSelection( self ):
+		return self.getSelectionManager().getSelection()
+
+	def changeSelection( self, selection ):
+		self.getSelectionManager().changeSelection( selection )
+
+
+##----------------------------------------------------------------##
+class SceneEditor( SceneEditorModule ):
 	def __init__( self ):
-		pass
+		self.selectionManager = SelectionManager( 'scene' )
 
 	def getName( self ):
 		return 'scene_editor'
@@ -126,9 +152,8 @@ class QtMainWindow( MainWindow ):
 			pass
 
 ##----------------------------------------------------------------##
-class SceneEditorModule( QtEditorModule ):
-	def getMainWindow( self ):
-		return self.getModule('scene_editor').getMainWindow()
+def getSceneSelectionManager():
+	return app.getModule('scene_editor').selectionManager
 
 ##----------------------------------------------------------------##
 SceneEditor().register()

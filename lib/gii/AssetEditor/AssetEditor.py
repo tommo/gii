@@ -2,6 +2,7 @@ import sys
 import os
 
 from gii.core import *
+from gii.core.selection import SelectionManager
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
@@ -13,10 +14,30 @@ from gii.qt.QtEditorModule  import QtEditorModule
 
 import gii.FileWatcher
 
+
 ##----------------------------------------------------------------##
-class AssetEditor( QtEditorModule ):
+class AssetEditorModule( QtEditorModule ):
+	def getAssetEditor( self ):
+		return self.getModule('asset_editor')
+
+	def getMainWindow( self ):
+		return self.getModule('asset_editor').getMainWindow()
+
+	def getSelectionManager( self ):
+		selectionManager = self.getSceneEditor().selectionManager
+		return selectionManager
+
+	def getSelection( self ):
+		return self.getSelectionManager().getSelection()
+
+	def changeSelection( self, selection ):
+		self.getSelectionManager().changeSelection( selection )
+
+		
+##----------------------------------------------------------------##
+class AssetEditor( AssetEditorModule ):
 	def __init__( self ):
-		pass
+		self.selectionManager = SelectionManager( 'asset' )
 
 	def getName( self ):
 		return 'asset_editor'
@@ -131,11 +152,8 @@ class QtMainWindow( MainWindow ):
 		else:
 			pass
 
-##----------------------------------------------------------------##
-class AssetEditorModule( QtEditorModule ):
-	def getMainWindow( self ):
-		return self.getModule('asset_editor').getMainWindow()
 
-	def getAssetSelection( self ):
-		#TODO: use selection manager for asset editor
-		return SelectionManager.get().getSelection()
+
+##----------------------------------------------------------------##
+def getAssetSelectionManager():
+	return app.getModule('asset_editor').selectionManager

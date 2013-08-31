@@ -6,7 +6,7 @@ from gii.qt.dialogs   import requestString, alertMessage
 from gii.qt.controls.AssetTreeView import AssetTreeView
 from gii.qt.helpers   import setClipboardText
 
-from AssetEditor      import AssetEditorModule
+from AssetEditor      import AssetEditorModule, getAssetSelectionManager
 
 from PyQt4            import QtCore, QtGui, uic
 from PyQt4.QtCore     import Qt
@@ -41,7 +41,6 @@ class AssetBrowser( AssetEditorModule ):
 
 		signals.connect( 'module.loaded',        self.onModuleLoaded )		
 		signals.connect( 'asset.deploy.changed', self.onAssetDeployChanged )
-		# signals.connect( 'selection.changed',    self.onSelectionChanged)
 
 		self.treeView.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
 		self.treeView.customContextMenuRequested.connect( self.onTreeViewContextMenu)
@@ -105,7 +104,7 @@ class AssetBrowser( AssetEditorModule ):
 		assetType = creator.getAssetType()		
 
 		def creatorFunc(value=None):
-			contextNode = app.getSelectionManager().getSingleSelection()
+			contextNode = getAssetSelectionManager().getSingleSelection()
 			if not isinstance(contextNode, AssetNode):
 				contextNode = app.getAssetLibrary().getRootNode()
 
@@ -180,36 +179,36 @@ class AssetBrowser( AssetEditorModule ):
 			if name   == 'deploy_set':      newstate = True
 			elif name == 'deploy_disallow': newstate = False
 			elif name == 'deploy_unset':    newstate = None
-			s = app.getSelectionManager().getSelection()
+			s = getAssetSelectionManager().getSelection()
 			for n in s:
 				if isinstance(n,AssetNode):
 					n.setDeployState(newstate)
 					
 		if name == 'reimport':
-			s = app.getSelectionManager().getSelection()
+			s = getAssetSelectionManager().getSelection()
 			for n in s:
 				if isinstance( n, AssetNode ):
 					n.markModified()
 			app.getAssetLibrary().importModifiedAssets()
 
 		if name == 'show_in_browser':
-			if not app.getSelectionManager().getSelection():
+			if not getAssetSelectionManager().getSelection():
 				return AssetUtils.showFileInBrowser( getProjectPath() )
 				
-			for n in app.getSelectionManager().getSelection():
+			for n in getAssetSelectionManager().getSelection():
 				if isinstance( n, AssetNode ):
 					n.showInBrowser()
 					break
 
 		if name == 'open_in_system':
-			for n in app.getSelectionManager().getSelection():
+			for n in getAssetSelectionManager().getSelection():
 				if isinstance( n, AssetNode ):
 					n.openInSystem()
 					break
 
 		if name == 'copy_node_path':
 			text = ''
-			for n in app.getSelectionManager().getSelection():
+			for n in getAssetSelectionManager().getSelection():
 				if text: text += '\n'
 				text += n.getNodePath()
 			setClipboardText( text )
@@ -233,9 +232,9 @@ class AssetBrowserTreeView( AssetTreeView ):
 		items = self.selectedItems()
 		if items:
 			selections = [item.node for item in items]
-			app.getSelectionManager().changeSelection(selections)
+			getAssetSelectionManager().changeSelection(selections)
 		else:
-			app.getSelectionManager().changeSelection(None)
+			getAssetSelectionManager().changeSelection(None)
 ##----------------------------------------------------------------##
 
 

@@ -192,7 +192,7 @@ CLASS: CmdRemoveEntity ( EditorCommand )
 	:register( 'scene_editor/remove_entity' )
 
 function CmdRemoveEntity:init( option )
-	local target = gii.getSelection()[1]
+	local target = gii.getSelection( 'scene' )[1]
 	if not isInstanceOf( target, mock.Entity ) then return false end
 	self.target = target
 end
@@ -211,7 +211,7 @@ CLASS: CmdCreateComponent ( EditorCommand )
 
 function CmdCreateComponent:init( option )
 	self.componentName = option.name	
-	local target = gii.getSelection()[1]
+	local target = gii.getSelection( 'scene' )[1]
 	if not isInstanceOf( target, mock.Entity ) then return false end
 	self.targetEntity  = target
 end
@@ -222,10 +222,12 @@ function CmdCreateComponent:redo()
 	local component = entType()
 	self.createdComponent = component
 	self.targetEntity:attach( component )
+	gii.emitPythonSignal( 'component.added', component, self.targetEntity )	
 end
 
 function CmdCreateComponent:undo()
 	self.targetEntity:detach( self.createdComponent )
+	gii.emitPythonSignal( 'component.removed', component, self.targetEntity )	
 end
 
 --------------------------------------------------------------------
@@ -251,7 +253,7 @@ CLASS: CmdCloneEntity ( EditorCommand )
 	:register( 'scene_editor/clone_entity' )
 
 function CmdCloneEntity:init( option )
-	local target = gii.getSelection()[1]
+	local target = gii.getSelection( 'scene' )[1]
 	if not isInstanceOf( target, mock.Entity ) then return false end
 	self.target = target
 end

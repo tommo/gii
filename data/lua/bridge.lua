@@ -72,16 +72,18 @@ end
 --------------------------------------------------------------------
 -- EDITOR RELATED
 --------------------------------------------------------------------
-function changeSelection(obj,...)
+function changeSelection( key, obj, ... )
+	assert( type(key)=='string', 'selection key expected' )
 	if obj then
-		bridge.changeSelection(newPythonList(obj,...))
+		bridge.changeSelection( key, newPythonList(obj,...) )
 	else
-		bridge.changeSelection(nil)
+		bridge.changeSelection( key, nil )
 	end
 end
 
-function getSelection()
-	return listToTable( bridge.getSelection() )
+function getSelection( key )
+	assert( type(key)=='string', 'selection key expected' )
+	return listToTable( key, bridge.getSelection() )
 end
 
 -- Environment

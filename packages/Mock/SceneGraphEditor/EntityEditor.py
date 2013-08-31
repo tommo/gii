@@ -16,8 +16,10 @@ class EntityEditor( ObjectEditor ): #a generic property grid
 		for com in target.components:
 			editor = introspectorInstance.addObjectEditor( com )
 
-	def onPropertyChanged( self, obj, id, value ):
-		signals.emit( 'entity.modified', obj )
+	def onPropertyChanged( self, obj, id, value ):		
+		if id == 'name':
+			signals.emit( 'entity.renamed', obj, value )			
+		signals.emit( 'entity.modified', obj, 'introspector' )
 
 	def refresh( self ):
 		self.grid.refreshAll()

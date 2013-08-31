@@ -3,6 +3,9 @@ import json
 import weakref
 
 from gii.core   import *
+
+from gii.core.selection   import getSelectionManager
+
 from exceptions import *
 from AKU        import _LuaTable, _LuaThread, _LuaObject, _LuaFunction
 from time       import time as getTime
@@ -57,23 +60,20 @@ def throwPythonException(name, data=None):
 
 
 ####################################
-#COMMAND BRIDGE
-####################################
-#todo
-def changeSelection(targets=None):
-	app.getSelectionManager().changeSelection(targets)
-
-def getSelection():
-	return app.getSelectionManager().getSelection()
-
-####################################
 #GUI BRIDGE
 ####################################
 #todo
 def GUIYield():
 	app.doMainLoop()
 
+def getSelection( key ):
+	selectionManager = getSelectionManager( key )
+	return selectionManager.getSelection()
 
+def changeSelection( key, targets = None ):
+	selectionManager = getSelectionManager( key )
+	selectionManager.changeSelection( targets )
+	
 ####################################
 #COMMON DATA BRIDGE
 ####################################

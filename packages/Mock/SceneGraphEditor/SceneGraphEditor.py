@@ -93,6 +93,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'preview.start', self.onPreviewStart )
 		signals.connect( 'preview.stop' , self.onPreviewStop )
 
+		signals.connect( 'entity.renamed', self.onEntityRenamed )
+
 
 		#editor
 		if self.getModule('introspector'):
@@ -193,7 +195,8 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.saveScene()
 
 
-	def onSelectionChanged(self, selection):
+	def onSelectionChanged( self, selection, key ):
+		if key != 'scene': return
 		self.tree.blockSignals( True )
 		self.tree.selectNode( None )
 		for e in selection:
@@ -201,7 +204,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.tree.blockSignals( False )
 
 	def onSelectionHint( self, selection ):
-		self.getSelectionManager().changeSelection( selection )
+		self.changeSelection( selection )
 
 	def onPreviewStart( self ):
 		if not self.activeScene: return
@@ -211,7 +214,15 @@ class SceneGraphEditor( SceneEditorModule ):
 		if not self.activeScene: return
 		self.delegate.safeCallMethod( 'editor', 'restoreScene' )
 
+	def updateEntityPriority( self ):
+		if not self.activeScene: return
 
+	def onEntityRenamed( self, entity, newname ):
+		self.tree.refreshNodeContent( entity )
+
+##----------------------------------------------------------------##
+def _sortEntity( a, b ):
+	return b._priority - a._priority
 	
 ##----------------------------------------------------------------##
 class SceneGraphTreeWidget( GenericTreeWidget ):
@@ -244,7 +255,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			for ent in node.entities:
 				if ( not ent.parent ) and ( not ent.FLAG_EDITOR_OBJECT ):
 					output.append( ent )
-
+			output = sorted( output, cmp = _sortEntity )
 			return output
 
 		output = []
@@ -252,6 +263,9 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			if not ent.FLAG_EDITOR_OBJECT:
 				output.append( ent )
 		return output
+
+	def compareNodes( self, node1, node2 ):
+		return node1._priority >= node2._priority
 
 	def createItem( self, node ):
 		return SceneGraphTreeItem()
@@ -270,19 +284,18 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		items=self.selectedItems()
 		if items:
 			selections=[item.node for item in items]
-			app.getModule( 'scene_editor' ).getSelectionManager().changeSelection(selections)
+			self.module.changeSelection(selections)
 		else:
-			app.getModule( 'scene_editor' ).getSelectionManager().changeSelection(None)
+			self.module.changeSelection(None)
 
 ##----------------------------------------------------------------##
 class SceneGraphTreeItem( QtGui.QTreeWidgetItem ):
-	pass
-	# def __lt__(self, other):
-	# 	node0 = self.node
-	# 	node1 = hasattr(other, 'node') and other.node or None
-	# 	if not node1:
-	# 		return True	
-	# 	return node0.getName().lower() < node1.getName().lower()
+	def __lt__(self, other):
+		node0 = self.node
+		node1 = hasattr(other, 'node') and other.node or None
+		if not node1:
+			return True	
+		return node0._priority <= node1._priority
 
 ##----------------------------------------------------------------##
 SceneGraphEditor().register()

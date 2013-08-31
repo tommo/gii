@@ -1,12 +1,22 @@
 import signals
 import weakref
 
-class SelectionManager(object):
-	def __init__(self):
+_SelectionManagerRegistry = {
+	
+}
+
+def getSelectionManager( key ):
+	return _SelectionManagerRegistry.get( key, None )
+	
+
+class SelectionManager(object):	
+	def __init__( self, key ):
 		self.currentSelection = []
 		self.history = []
 		self.historyPos = 0
 		self.maxHistorySize = 32
+		self.key = key
+		_SelectionManagerRegistry[ key ] = self
 
 	def clearHistory(self):
 		self.history = []
@@ -27,7 +37,7 @@ class SelectionManager(object):
 		if selection is None:
 			selection = []
 		self.currentSelection = selection
-		signals.emit('selection.changed', selection)
+		signals.emit('selection.changed', selection, self.key )
 
 	def historyBack(self):
 		hisSize = len(self.history)
@@ -35,7 +45,7 @@ class SelectionManager(object):
 			self.historyPos += 1
 			selection=self.history[hisSize - self.historyPos]
 			self.currentSelection=selection
-			signals.emit('selection.changed', selection)
+			signals.emit('selection.changed', selection, self.key )
 
 	def historyForward(self):
 		hisSize = len(self.history)
@@ -43,7 +53,7 @@ class SelectionManager(object):
 			self.historyPos -= 1
 			selection=self.history[hisSize - self.historyPos]
 			self.currentSelection=selection
-			signals.emit('selection.changed', selection)
+			signals.emit('selection.changed', selection, self.key )
 
 	def getSelection(self):
 		return self.currentSelection or []
