@@ -6,7 +6,7 @@ from gii.qt          import QtEditorModule
 from gii.qt.IconCache                  import getIcon
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.moai.MOAIRuntime import MOAILuaDelegate
-from gii.SceneEditor      import SceneEditorModule
+from gii.SceneEditor      import SceneEditorModule, getSceneSelectionManager
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 
 ##----------------------------------------------------------------##
@@ -148,7 +148,7 @@ class LayerTreeWidget( GenericTreeWidget ):
 		
 	def onItemSelectionChanged(self):
 		selections = self.getSelection()
-		app.getModule( 'scene_editor' ).getSelectionManager().changeSelection( selections )
+		getSceneSelectionManager().changeSelection( selections )
 
 	def onItemChanged( self, item, col ):
 		layer = self.getNodeByItem( item )

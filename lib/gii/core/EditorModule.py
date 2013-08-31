@@ -52,9 +52,6 @@ class EditorModule( object ):
 
 	def getAssetLibrary( self ):
 		return self.getProject().getAssetLibrary()
-
-	def getSelectionManager( self ):
-		return self.getApp().getSelectionManager()
 	
 	def getManager(self):
 		return self._manager

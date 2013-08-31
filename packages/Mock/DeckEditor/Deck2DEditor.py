@@ -169,7 +169,7 @@ class Deck2DEditor( AssetEditorModule ):
 			
 	def addItem( self, atype ):
 		if not self.editingAsset: return
-		selection = self.getSelectionManager().getSelection()
+		selection = self.getSelection()
 		if not selection: return
 
 		newItems = []		

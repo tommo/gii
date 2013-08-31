@@ -12,7 +12,6 @@ from EditorModule   import EditorModule, EditorModuleManager
 from project        import Project
 from package        import PackageManager
 from MainModulePath import getMainModulePath
-from selection      import SelectionManager
 from Command        import EditorCommandRegistry
 from RemoteCommand  import RemoteCommandRegistry
 
@@ -41,7 +40,6 @@ class EditorApp(object):
 		self.basePath      = getMainModulePath()
 
 		self.config        = {}
-		self.selectionManager = SelectionManager()
 		self.packageManager   = PackageManager()
 
 		self.commandRegistry       = EditorCommandRegistry.get()
@@ -149,10 +147,7 @@ class EditorApp(object):
 
 	def getAssetLibrary( self ):
 		return self.getProject().getAssetLibrary()
-
-	def getSelectionManager( self ):
-		return self.selectionManager
-
+	
 	def isDebugging( self ):
 		return False
 

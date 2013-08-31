@@ -74,7 +74,22 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			item  = self.createItem( node )			
 			item.node = node
 			assert pitem, ( 'node not found in tree:%s' % repr(pnode) )
-			pitem.addChild( item )
+			#find best new item index
+			if not self.isSortingEnabled():
+				newindex = None
+				for i in range( pitem.childCount() ):
+					childItem = pitem.child( i )
+					node1 = childItem.node
+					if self.compareNodes( node, node1 ):
+						newindex = i
+						break
+				if newindex:
+					pitem.insertChild( i, item )
+				else:
+					pitem.addChild( item )
+			else:
+				pitem.addChild( item )
+
 		self.nodeDict[ node ]=item
 
 		if option.get( 'expand', False ):
@@ -88,6 +103,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 				for child in children:
 					self.addNode( child, True, **option )
 		return item
+
 
 	def getItemByNode(self, node):
 		return self.nodeDict.get( node, None )
@@ -216,6 +232,9 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 	def getHeaderInfo( self ):
 		return [('Name',100), ('State',30)]
+
+	def compareNodes( self, n1, n2 ):
+		return False
 
 
 
