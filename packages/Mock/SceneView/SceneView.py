@@ -69,9 +69,7 @@ class SceneView( SceneEditorModule ):
 		self.scheduleUpdate()
 
 	def onSceneUpdate( self ):
-		self.skipFrameIdx = ( self.skipFrameIdx + 1 ) % self.skipFrame
-		if self.skipFrameIdx == 0:
-			self.scheduleUpdate()
+		self.scheduleUpdate()
 
 	def onSceneOpen( self, node, scene ):
 		self.window.setDocumentName( node.getPath() )

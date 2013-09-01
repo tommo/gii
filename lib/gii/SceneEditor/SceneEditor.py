@@ -18,6 +18,8 @@ from PyQt4.QtCore    import Qt
 from gii.moai.MOAIRuntime import MOAILuaDelegate
 ##----------------------------------------------------------------##
 
+signals.register( 'scene.modified' )
+
 signals.register( 'entity.modified' )
 signals.register( 'entity.renamed' )
 

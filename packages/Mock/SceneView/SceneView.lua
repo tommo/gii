@@ -43,9 +43,9 @@ CLASS:SceneView ( EditorEntity )
 
 function SceneView:onLoad()
 	self.gizmos = {}
-	
+	self.cameraCom = EditorCanvasCamera( _M )
 	self.camera = self:addChild( 
-			mock.SingleEntity( EditorCanvasCamera( _M ) )
+			mock.SingleEntity( self.cameraCom )
 		)
 
 	self.grid = self:addChild( CanvasGrid() )
@@ -60,10 +60,18 @@ function SceneView:onLoad()
 
 end
 
+function SceneView:wndToWorld( x, y )
+	return self.cameraCom:wndToWorld( x, y )
+end
+
+function SceneView:wndToEntity( ent, x, y )
+	return ent:worldToModel( self:wndToWorld( x, y ) )
+end
+
 function SceneView:onMouseUp( btn, x, y )
 	if btn == 'left' then
-		x, y = self:wndToWorld( x, y )
-		local e = self:pick( x, y )
+		local x1, y1 = self:wndToWorld( x, y )
+		local e = self:pick( x1, y1 )
 		gii.changeSelection( 'scene', e )
 	end
 end

@@ -334,6 +334,7 @@ class MOAIEditCanvas( MOAIEditCanvasBase ):
 			btn='right'
 		elif button==Qt.MiddleButton:
 			btn='middle'
+		self.makeCurrent()
 		self.delegate.onMouseDown(btn, x,y)
 
 	def mouseReleaseEvent(self, event):
@@ -346,10 +347,12 @@ class MOAIEditCanvas( MOAIEditCanvasBase ):
 			btn='right'
 		elif button==Qt.MiddleButton:
 			btn='middle'
+		self.makeCurrent()
 		self.delegate.onMouseUp(btn, x,y)
 
 	def mouseMoveEvent(self, event):
 		x,y=event.x(), event.y()
+		self.makeCurrent()
 		self.delegate.onMouseMove(x,y)
 
 	def wheelEvent(self, event):
@@ -361,21 +364,26 @@ class MOAIEditCanvas( MOAIEditCanvasBase ):
 		else:
 			dy = steps
 		x,y=event.x(), event.y()
+		self.makeCurrent()
 		self.delegate.onScroll( dx, dy, x, y )
 
 	def enterEvent(self, event):
+		self.makeCurrent()
 		self.delegate.onMouseEnter()
 
 	def leaveEvent(self, event):
+		self.makeCurrent()
 		self.delegate.onMouseLeave()
 
 	def keyPressEvent(self, event):
 		if event.isAutoRepeat(): return
 		key=event.key()
+		self.makeCurrent()
 		self.delegate.onKeyDown(convertKeyCode(key))
 
 	def keyReleaseEvent(self, event):
 		key=event.key()
+		self.makeCurrent()
 		self.delegate.onKeyUp(convertKeyCode(key))
 
 
