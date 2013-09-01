@@ -76,3 +76,71 @@ function CanvasNavigate:setZoom( zoom )
 	cameraCom:setZoom( zoom )
 	cameraCom:updateCanvas()	
 end
+
+--------------------------------------------------------------------
+CLASS: CanvasHandleLayer ( EditorEntity )
+function CanvasHandleLayer:__init( option )
+	self.option = option
+	self.activeHandle = false
+	self.handles = {}
+end
+
+function CanvasHandleLayer:onLoad()
+	local option = self.option or {}
+	local inputDevice = option.inputDevice or self:getScene().inputDevice
+	self.targetCamera = assert( option.camera or self:getScene().camera )
+	self:attach( mock.InputScript{ 
+			device = inputDevice
+		} )
+	self.zoom = 1
+end
+
+function CanvasHandleLayer:onMouseDown( btn, x, y )
+	for i, handle in ipairs( self.handles ) do
+		if handle:onMouseDown( btn, x, y ) == true then --grabbed
+			return
+		end
+	end
+end
+
+function CanvasHandleLayer:onMouseUp( btn, x, y )
+	for i, handle in ipairs( self.handles ) do
+		if handle:onMouseUp( btn, x, y ) == true then
+			return
+		end
+	end
+end
+
+function CanvasHandleLayer:onMouseMove( x, y )
+	for i, handle in ipairs( self.handles ) do
+		if handle:onMouseMove( x, y ) == true then
+			return
+		end
+	end
+end
+
+function CanvasHandleLayer:addHandle( handle )
+	self:addChild( handle )
+	table.insert(self.handles, 1, handle )
+	return handle
+end
+
+
+--------------------------------------------------------------------
+CLASS: CanvasHandle ( EditorEntity )
+
+function CanvasHandle:onMouseDown( btn, x, y )
+end
+
+function CanvasHandle:onMouseUp( btn, x, y )
+end
+
+function CanvasHandle:onMouseMove( x, y )
+end
+
+function CanvasHandle:onDestroy()
+	for i, h in ipairs( self.parent.handles ) do
+		if h == self then table.remove( self.parent.handles, i ) return end
+	end
+end
+

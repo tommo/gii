@@ -68,14 +68,20 @@ class SceneGraphEditor( SceneEditorModule ):
 		#menu
 		self.addMenuItem( 'main/scene/close_scene', dict( label = 'Close' ) )
 		self.addMenuItem( 'main/scene/save_scene',  dict( label = 'Save', shortcut = 'Ctrl+S' ) )
+
 		self.addMenu( 'main/scene/----' )
 		self.addMenu( 'main/scene/component_context', dict( label = 'Selected Component' ) )
-
 		self.addMenu( 'main/scene/component_context/remove', 
 				dict( 
 					label = 'Remove'					
 				 )
 			)
+
+		self.addMenu( 'main/entity', dict( label = 'Entity' ) )
+		self.addMenuItem( 'main/entity/add_entity',    dict( label = 'Create', shortcut = 'ctrl+shift+N' ) )
+		self.addMenuItem( 'main/entity/remove_entity', dict( label = 'Remove'  ) )
+		self.addMenuItem( 'main/entity/clone_entity',  dict( label = 'Clone',  shortcut = 'ctrl+d' ) )
+
 
 		#Toolbars
 		self.addTool( 'scene_graph/add_sibling', label = '+obj' )
@@ -193,6 +199,12 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.closeScene()
 		elif name == 'save_scene':
 			self.saveScene()
+		elif name == 'add_entity':
+			self.entityCreatorMenu.popUp()
+		elif name == 'remove_entity':
+			self.doCommand( 'scene_editor/remove_entity' )
+		elif name == 'clone_entity':
+			self.doCommand( 'scene_editor/clone_entity' )
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return

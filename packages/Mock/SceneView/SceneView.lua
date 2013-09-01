@@ -53,11 +53,35 @@ function SceneView:onLoad()
 			inputDevice = inputDevice,
 			camera      = self.camera
 		} )
+
+	self.handleLayer = self:addChild( CanvasHandleLayer{
+			inputDevice = inputDevice,
+			camera      = self.camera
+		} )
+
 	self:attach( mock.InputScript{ device = inputDevice } )
 
 	self.gizmos  = {}
 	self.handles = {}
 
+	self:addHandle( SelectionHandle() )
+	self:connect( 'scene.serialize', 'preSceneSerialize' )
+
+	self:readConfig()
+end
+
+function SceneView:readConfig()
+	local cfg = self.scene.metaData[ 'scene_view' ]
+	if not cfg then return end
+	local cameraCfg = cfg['camera']
+	if cameraCfg then
+		self.camera:setLoc( unpack(cameraCfg['loc']) )
+		self.camera:getComponent( EditorCanvasCamera ):setZoom( cameraCfg['zoom'] )
+	end
+end
+
+function SceneView:addHandle( h )
+	return self.handleLayer:addHandle( h )	
 end
 
 function SceneView:wndToWorld( x, y )
@@ -66,14 +90,6 @@ end
 
 function SceneView:wndToEntity( ent, x, y )
 	return ent:worldToModel( self:wndToWorld( x, y ) )
-end
-
-function SceneView:onMouseUp( btn, x, y )
-	if btn == 'left' then
-		local x1, y1 = self:wndToWorld( x, y )
-		local e = self:pick( x1, y1 )
-		gii.changeSelection( 'scene', e )
-	end
 end
 
 function SceneView:pick( x, y )
@@ -105,11 +121,11 @@ function SceneView:onSelectionChanged( selection )
 	for i, e in ipairs( gii.listToTable( selection ) ) do
 		if isInstanceOf( e, mock.Entity ) then
 			--manipulator
-			local handle = self:addSibling( TranslationHandle{ inputDevice = inputDevice } )
+			local handle = self:addHandle( TranslationHandle() )
 			handle:setTarget( e )
 			self.handles[ handle ] = true
 			--gizmo
-			local gizmo = self:addSibling( SelectionGizmo() )
+			local gizmo = self:addHandle( BoundGizmo() )
 			gizmo:setTarget( e )
 			self.gizmos[ gizmo ] = true
 		end
@@ -118,19 +134,39 @@ function SceneView:onSelectionChanged( selection )
 	
 end
 
---------------------------------------------------------------------
-CLASS: SelectionGizmo( EditorEntity )
+function SceneView:preSceneSerialize( scene )
+	if scene ~= self.scene then return end
+	local cam = self.camera
+	self.scene.metaData [ 'scene_view' ] = {
+		camera = {
+			loc = { cam:getLoc() },
+			zoom = cam:getComponent( EditorCanvasCamera ):getZoom(),
+		}
+	}
+end
 
-function SelectionGizmo:onLoad()
+--------------------------------------------------------------------
+CLASS: SelectionHandle ( CanvasHandle )
+function SelectionHandle:onMouseUp( btn, x, y )
+	if btn == 'left' then
+		local x1, y1 = view:wndToWorld( x, y )
+		local e = view:pick( x1, y1 )
+		gii.changeSelection( 'scene', e )
+	end
+end
+
+--------------------------------------------------------------------
+CLASS: BoundGizmo( CanvasHandle )
+function BoundGizmo:onLoad()
 	self.target = false
 	self:attach( mock.DrawScript() )
 end
 
-function SelectionGizmo:setTarget( e )
+function BoundGizmo:setTarget( e )
 	self.target = e
 end
 
-function SelectionGizmo:onDraw()
+function BoundGizmo:onDraw()
 	local target = self.target
 	if not target then return end
 	applyColor 'selection'
@@ -138,23 +174,18 @@ function SelectionGizmo:onDraw()
 		local drawBounds = com.drawBounds
 		if drawBounds then drawBounds( com ) end
 	end
-	
 end
 
 --------------------------------------------------------------------
-CLASS: TranslationHandle( EditorEntity )
+CLASS: TranslationHandle( CanvasHandle )
 function TranslationHandle:__init( option )
 	self.option = option
 	self.activeAxis = false
-	
 end
 
 function TranslationHandle:onLoad()
 	local option = self.option
-	self:attach( mock.DrawScript() )
-	self:attach( mock.InputScript{ 
-			device = assert( option.inputDevice )
-		} )
+	self:attach( mock.DrawScript() )	
 end
 
 function TranslationHandle:onDraw()
@@ -193,23 +224,23 @@ function TranslationHandle:onMouseDown( btn, x, y )
 	self.y0 = y
 	if x >= 0 and y >= 0 and x <= handleArrowSize + 5 and y <= handleArrowSize + 5 then
 		self.activeAxis = 'all'
-		return
+		return true
 	end
 	if math.abs( y ) < 5 and x <= handleSize + handleArrowSize then
 		self.activeAxis = 'x'
-		return
+		return true
 	end
 	if math.abs( x ) < 5 and y <= handleSize + handleArrowSize then
 		self.activeAxis = 'y'
-		return
+		return true
 	end
-	updateCanvas()
 end
 
 function TranslationHandle:onMouseUp( btn, x, y )
 	if btn~='left' then return end
 	if not self.activeAxis then return end
 	self.activeAxis = false
+	return true
 end
 
 function TranslationHandle:onMouseMove( x, y )
@@ -229,6 +260,95 @@ function TranslationHandle:onMouseMove( x, y )
 	end
 	gii.emitPythonSignal( 'entity.modified', target, 'view' )
 	updateCanvas()
+	return true
+end
+
+
+--------------------------------------------------------------------
+CLASS: ScaleHandle( CanvasHandle )
+function ScaleHandle:__init( option )
+	self.option = option
+	self.activeAxis = false
+end
+
+function ScaleHandle:onLoad()
+	local option = self.option
+	self:attach( mock.DrawScript() )	
+end
+
+function ScaleHandle:onDraw()
+	applyColor 'handle-all'
+	MOAIDraw.fillRect( 0,0, handleArrowSize, handleArrowSize )
+	--x axis
+	applyColor 'handle-x'
+	MOAIDraw.drawLine( 0,0, handleSize, 0 )
+	MOAIDraw.fillFan(
+		handleSize,  handleArrowSize/3, 
+		handleSize + handleArrowSize, 0,
+		handleSize, -handleArrowSize/3
+		-- handleSize,  handleArrowSize/3
+		)
+	-- MOAIDraw.fillFan( 0,0, handleSize / 5, handleSize / 5 )
+	--y axis
+	applyColor 'handle-y'
+	MOAIDraw.drawLine( 0,0, 0, handleSize )
+	MOAIDraw.fillFan(
+		handleArrowSize/3, handleSize, 
+		0, handleSize + handleArrowSize,
+		-handleArrowSize/3, handleSize 
+		-- handleArrowSize/3, handleSize, 
+		)
+end
+
+function ScaleHandle:setTarget( target )
+	self.target = target
+	linkLoc( self:getProp(), target:getProp() )
+end
+
+function ScaleHandle:onMouseDown( btn, x, y )
+	if btn~='left' then return end
+	x, y = self:wndToModel( x, y )
+	self.x0 = x
+	self.y0 = y
+	if x >= 0 and y >= 0 and x <= handleArrowSize + 5 and y <= handleArrowSize + 5 then
+		self.activeAxis = 'all'
+		return true
+	end
+	if math.abs( y ) < 5 and x <= handleSize + handleArrowSize then
+		self.activeAxis = 'x'
+		return true
+	end
+	if math.abs( x ) < 5 and y <= handleSize + handleArrowSize then
+		self.activeAxis = 'y'
+		return true
+	end
+end
+
+function ScaleHandle:onMouseUp( btn, x, y )
+	if btn~='left' then return end
+	if not self.activeAxis then return end
+	self.activeAxis = false
+	return true
+end
+
+function ScaleHandle:onMouseMove( x, y )
+	if not self.activeAxis then return end
+	local target = self.target
+	target:forceUpdate()
+	self:forceUpdate()
+	x, y = self:wndToModel( x, y )
+	local dx = x - self.x0
+	local dy = y - self.y0
+	if self.activeAxis == 'all' then
+		target:addLoc( dx, dy )
+	elseif self.activeAxis == 'x' then
+		target:addLoc( dx, 0 )
+	elseif self.activeAxis == 'y' then
+		target:addLoc( 0, dy )
+	end
+	gii.emitPythonSignal( 'entity.modified', target, 'view' )
+	updateCanvas()
+	return true
 end
 
 --------------------------------------------------------------------
