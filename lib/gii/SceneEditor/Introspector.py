@@ -39,6 +39,10 @@ class ObjectContainer( QtGui.QWidget ):
 		self.ui.buttonContext.clicked.connect( lambda x: self.openContextMenu() )
 
 	def addWidget(self, widget, **layoutOption):
+		if isinstance( widget, list):
+			for w in widget:
+				self.addWidget( w, **layoutOption )
+			return
 		# widget.setParent(self)		
 		if layoutOption.get('fixed', False):
 			widget.setSizePolicy(
@@ -245,6 +249,7 @@ class IntrospectorInstance(object):
 			widget = editor.initWidget( container.getInnerContainer() )
 			editor.container = container
 			if widget:
+
 				container.addWidget( widget )				
 				model = ModelManager.get().getModelFromTypeId( typeId )
 				if model:

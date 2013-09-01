@@ -76,7 +76,7 @@ class MockBridge( EditorModule ):
 
 	def onStop( self ):
 		game = _MOCK.game
-		#game.saveConfig( game, self.configPath )
+		game.saveConfig( game, self.configPath )
 
 	def setupLuaModule( self ):
 		self.runtime.runScript( self.getModulePath( 'MockBridge.lua' ) )

@@ -55,7 +55,7 @@ class LayerManager( SceneEditorModule ):
 			)
 
 		#Components
-		self.tree = self.window.addWidget( LayerTreeWidget( multiple_selection = False, sorting = False ) )
+		self.tree = self.window.addWidget( LayerTreeWidget( multiple_selection = False, sorting = False, editable = True ) )
 
 		self.tool = self.addToolBar( 'layer_manager', self.window.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )
@@ -103,7 +103,6 @@ class LayerManager( SceneEditorModule ):
 
 	def changeLayerName( self, layer, name ):
 		layer.setName( layer, name )
-		# self.delegate.safeCall( 'setLayerName', layer, name )
 	
 ##----------------------------------------------------------------##
 class LayerTreeWidget( GenericTreeWidget ):

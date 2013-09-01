@@ -91,7 +91,6 @@ class ScriptView( QtEditorModule ):
 	def onUnload(self):
 		if self.debuggerHandler.busy:
 				self.debuggerHandler.doStop()	#stop debug
-		signals.dispatchAll()
 		self.window.close()
 		self.window = None
 

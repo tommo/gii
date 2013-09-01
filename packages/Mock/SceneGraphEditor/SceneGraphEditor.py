@@ -20,6 +20,7 @@ def getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 
+##----------------------------------------------------------------##
 class SceneGraphEditor( SceneEditorModule ):
 	def __init__(self):
 		super( SceneGraphEditor, self ).__init__()
@@ -66,7 +67,7 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		#menu
 		self.addMenuItem( 'main/scene/close_scene', dict( label = 'Close' ) )
-		self.addMenuItem( 'main/scene/save_scene',  dict( label = 'Save' ) )
+		self.addMenuItem( 'main/scene/save_scene',  dict( label = 'Save', shortcut = 'Ctrl+S' ) )
 		self.addMenu( 'main/scene/----' )
 		self.addMenu( 'main/scene/component_context', dict( label = 'Selected Component' ) )
 
@@ -94,7 +95,6 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'preview.stop' , self.onPreviewStop )
 
 		signals.connect( 'entity.renamed', self.onEntityRenamed )
-
 
 		#editor
 		if self.getModule('introspector'):
@@ -194,7 +194,6 @@ class SceneGraphEditor( SceneEditorModule ):
 		elif name == 'save_scene':
 			self.saveScene()
 
-
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
 		self.tree.blockSignals( True )
@@ -278,6 +277,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		else:
 			item.setText( 0, node.name or '<unnamed>' )
 			item.setIcon( 0, getIcon('obj') )
+			item.setText( 1, node.getLayer( node ) )
 			item.setText( 2, node.getClassName( node ) )
 		
 	def onItemSelectionChanged(self):

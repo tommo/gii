@@ -93,16 +93,19 @@ class EditorApp(object):
 			self.doMainLoop( sleepTime )
 
 		signals.emitNow('app.close')
+
 		signals.dispatchAll()
-		
 		EditorModuleManager.get().stopAllModules()
+		
 		self.getProject().save()
+
+		signals.dispatchAll()
 		EditorModuleManager.get().unloadAllModules()
 
-	def doMainLoop( self, sleepTime = 0.01 ):
-		signals.dispatchAll()
+	def doMainLoop( self, sleepTime = 0.01 ):		
 		EditorModuleManager.get().updateAllModules()
-		time.sleep( sleepTime )
+		if not signals.dispatchAll():
+			time.sleep( sleepTime )
 
 	def stop( self ):
 		self.running = False

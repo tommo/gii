@@ -83,7 +83,7 @@ end
 
 function getSelection( key )
 	assert( type(key)=='string', 'selection key expected' )
-	return listToTable( key, bridge.getSelection() )
+	return listToTable( bridge.getSelection( key ) )
 end
 
 -- Environment

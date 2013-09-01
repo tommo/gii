@@ -222,7 +222,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def createItem( self, node ):
 		item = QtGui.QTreeWidgetItem( )
 		flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable
-		if self.option.get('editable', True):
+		if self.option.get( 'editable', False ):
 			flags |= Qt.ItemIsEditable 
 		item.setFlags ( flags )
 		return item

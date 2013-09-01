@@ -11,6 +11,15 @@ def dispatchAll():
 		c()
 	return True
 
+def dispatchPartial( count ):
+	if idle_loop.empty(): return False
+	while not idle_loop.empty():
+		c=idle_loop.get()
+		c()
+		count -= 1
+		if count <= 0: return True
+	return True
+
 def connect(name, handler):
 	sig=SIGNALS.get(name,None)
 	if sig is None: raise Exception('SIGNAL undefined: %s '%name)

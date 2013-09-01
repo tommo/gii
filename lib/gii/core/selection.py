@@ -7,16 +7,17 @@ _SelectionManagerRegistry = {
 
 def getSelectionManager( key ):
 	return _SelectionManagerRegistry.get( key, None )
-	
+
 
 class SelectionManager(object):	
 	def __init__( self, key ):
+		assert not _SelectionManagerRegistry.has_key( key ), 'duplicated Manager ' + key
+		_SelectionManagerRegistry[ key ] = self
 		self.currentSelection = []
 		self.history = []
 		self.historyPos = 0
 		self.maxHistorySize = 32
 		self.key = key
-		_SelectionManagerRegistry[ key ] = self
 
 	def clearHistory(self):
 		self.history = []

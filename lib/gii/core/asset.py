@@ -273,7 +273,7 @@ class AssetNode(object):
 			if self.objectFiles.has_key( name ):
 				del self.objectFiles[ name ]
 		else:
-			self.objectFiles[ name ] = path
+			self.objectFiles[ name ] = path		
 
 	def getAbsObjectFile( self, name ):
 		path = self.getObjectFile( name )

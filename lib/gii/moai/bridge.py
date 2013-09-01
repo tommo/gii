@@ -68,12 +68,13 @@ def GUIYield():
 
 def getSelection( key ):
 	selectionManager = getSelectionManager( key )
-	return selectionManager.getSelection()
+	s = selectionManager.getSelection()
+	return s
 
 def changeSelection( key, targets = None ):
 	selectionManager = getSelectionManager( key )
 	selectionManager.changeSelection( targets )
-	
+
 ####################################
 #COMMON DATA BRIDGE
 ####################################

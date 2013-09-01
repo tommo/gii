@@ -128,15 +128,13 @@ class GamePreview( SceneEditorModule ):
 
 	def updateView(self):
 		if self.paused: return
-		before  = time.clock()
 		runtime = self.getRuntime()
+
 		runtime.setBufferSize( self.viewWidth, self.viewHeight )
 		runtime.changeRenderContext( 'game', self.viewWidth, self.viewHeight )
 		
 		if runtime.updateAKU():
-			used = time.clock() - before
 			self.canvas.forceUpdateGL()
-			signals.emit( 'scene.update' )
 
 	def resizeView(self, w,h):
 		self.viewWidth  = w
@@ -145,13 +143,10 @@ class GamePreview( SceneEditorModule ):
 		getAKU().setViewSize(w,h)		
 
 	def renderView(self):
-		before  = time.clock()
 		runtime = self.getRuntime()
-		runtime.setBufferSize(self.viewWidth,self.viewHeight)
+		runtime.setBufferSize( self.viewWidth, self.viewHeight )
 		runtime.changeRenderContext( 'game', self.viewWidth, self.viewHeight )
-
-		if runtime.renderAKU():
-			used=time.clock()-before
+		runtime.renderAKU()		
 
 	def onMoaiReset( self ):
 		runtime = self.getRuntime()
@@ -215,6 +210,10 @@ class GamePreview( SceneEditorModule ):
 		self.enableMenu( 'main/preview/start_game', True )
 		self.paused = None
 		self.updateTimer = None
+
+	# def onUpdate( self ):
+	# 	if self.paused != False: return
+	# 	self.updateView()
 
 	def pausePreview( self ):
 		if self.paused: return

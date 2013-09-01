@@ -34,6 +34,9 @@ addColor( 'handle-y', 0,1,0, alpha )
 addColor( 'handle-z', 0,0,1, alpha )
 addColor( 'handle-all', 1,1,0, alpha )
 
+--------------------------------------------------------------------
+local handleSize = 100
+local handleArrowSize = 20
 
 --------------------------------------------------------------------
 CLASS:SceneView ( EditorEntity )
@@ -51,30 +54,18 @@ function SceneView:onLoad()
 			camera      = self.camera
 		} )
 	self:attach( mock.InputScript{ device = inputDevice } )
+
+	self.gizmos  = {}
+	self.handles = {}
+
 end
 
-function SceneView:onMouseDown( btn, x, y )
+function SceneView:onMouseUp( btn, x, y )
 	if btn == 'left' then
 		x, y = self:wndToWorld( x, y )
 		local e = self:pick( x, y )
-		if e then
-			self:selectEntity( e )
-		end
+		gii.changeSelection( 'scene', e )
 	end
-end
-
-function SceneView:selectEntity( e, additive )
-	gii.changeSelection( 'scene', e )
-	-- local gizmo = self:addSibling( SelectionGizmo() )
-	-- gizmo:setTarget( e )
-	-- self.gizmos[ e ] = gizmo
-
-	self.handle = self:addSibling( TranslationHandle{ inputDevice = inputDevice } )
-	self.handle:setTarget( e )
-	updateCanvas()
-end
-
-function SceneView:clearSelection()
 end
 
 function SceneView:pick( x, y )
@@ -85,6 +76,38 @@ function SceneView:pick( x, y )
 		end
 	end
 	return nil
+end
+
+function SceneView:clearSelection()
+	--clear gizmo
+	for gizmo in pairs( self.gizmos ) do
+		gizmo:destroyNow()
+	end
+
+	for handle in pairs( self.handles ) do
+		handle:destroyNow()
+	end
+	--clear handle
+	self.handles = {}
+	self.gizmos = {}
+end
+
+function SceneView:onSelectionChanged( selection )
+	self:clearSelection()
+	for i, e in ipairs( gii.listToTable( selection ) ) do
+		if isInstanceOf( e, mock.Entity ) then
+			--manipulator
+			local handle = self:addSibling( TranslationHandle{ inputDevice = inputDevice } )
+			handle:setTarget( e )
+			self.handles[ handle ] = true
+			--gizmo
+			local gizmo = self:addSibling( SelectionGizmo() )
+			gizmo:setTarget( e )
+			self.gizmos[ gizmo ] = true
+		end
+	end
+	updateCanvas()
+	
 end
 
 --------------------------------------------------------------------
@@ -111,8 +134,6 @@ function SelectionGizmo:onDraw()
 end
 
 --------------------------------------------------------------------
-local handleSize = 120
-local handleArrowSize = 30
 
 CLASS: TranslationHandle( EditorEntity )
 function TranslationHandle:__init( option )
@@ -155,7 +176,8 @@ end
 
 function TranslationHandle:setTarget( target )
 	self.target = target
-	inheritTransform( self:getProp(), target:getProp() )
+	-- linkRot( self:getProp(), target:getProp() )
+	linkLoc( self:getProp(), target:getProp() )
 end
 
 function TranslationHandle:onMouseDown( btn, x, y )
@@ -163,7 +185,7 @@ function TranslationHandle:onMouseDown( btn, x, y )
 	x, y = self:wndToModel( x, y )
 	self.x0 = x
 	self.y0 = y
-	if x >= 0 and y >= 0 and x <= handleArrowSize and y <= handleArrowSize then
+	if x >= 0 and y >= 0 and x <= handleArrowSize + 5 and y <= handleArrowSize + 5 then
 		self.activeAxis = 'all'
 		return
 	end
@@ -202,7 +224,6 @@ function TranslationHandle:onMouseMove( x, y )
 	gii.emitPythonSignal( 'entity.modified', target, 'view' )
 	updateCanvas()
 end
-
 
 --------------------------------------------------------------------
 view = false

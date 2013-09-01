@@ -35,7 +35,6 @@ class SceneView( SceneEditorModule ):
 			)
 		self.canvas = self.window.addWidget( MOAIEditCanvas() )
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
-		self.canvas.setDelegateEnv( '_view', self )
 
 		self.updateTimer = self.window.startTimer( 20, self.onUpdateTimer )
 		self.updatePending = False
@@ -43,9 +42,12 @@ class SceneView( SceneEditorModule ):
 		self.preview = self.getModule( 'scene_preview' )
 
 		signals.connect( 'entity.modified', self.onEntityModified )
-		signals.connect( 'scene.open', self.onSceneOpen )
+		signals.connect( 'scene.open',  self.onSceneOpen )
 		signals.connect( 'scene.close', self.onSceneClose )
 		signals.connect( 'scene.update', self.onSceneUpdate )
+		signals.connect( 'selection.changed', self.onSelectionChanged )
+		self.skipFrameIdx = 1
+		self.skipFrame    = 5
 
 	def onStart( self ):
 		self.canvas.makeCurrent()
@@ -66,7 +68,9 @@ class SceneView( SceneEditorModule ):
 		self.scheduleUpdate()
 
 	def onSceneUpdate( self ):
-		self.scheduleUpdate()
+		self.skipFrameIdx = ( self.skipFrameIdx + 1 ) % self.skipFrame
+		if self.skipFrameIdx == 0:
+			self.scheduleUpdate()
 
 	def onSceneOpen( self, node, scene ):
 		self.window.setDocumentName( node.getPath() )
@@ -80,6 +84,11 @@ class SceneView( SceneEditorModule ):
 		self.window.setDocumentName( None )
 		self.canvas.hide()
 		self.canvas.safeCall( 'closeScene' )
+
+	def onSelectionChanged( self, selection, key ):
+		if key != 'scene': return
+		self.canvas.makeCurrent()
+		self.canvas.safeCallMethod( 'view', 'onSelectionChanged', selection )
 
 	def scheduleUpdate( self ):
 		self.updatePending = True

@@ -166,6 +166,35 @@ gii.registerObjectEnumerator{
 
 
 --------------------------------------------------------------------
+function enumerateLayers( enumerator, typeId, context )
+	--if context~='scene_editor' then return nil end
+	if typeId ~= 'layer' then return nil end
+	local r = {}
+	for i, l in ipairs( game.layers ) do
+		if l.name ~= '_GII_EDITOR_LAYER' then
+			table.insert( r, l.name )
+		end
+	end
+	return r
+end
+
+function getLayerRepr( enumerator, obj )
+	return obj
+end
+
+function getLayerTypeRepr( enumerator, obj )
+	return 'Layer'
+end
+
+gii.registerObjectEnumerator{
+	name = 'layer_enumerator',
+	enumerateObjects   = enumerateLayers,
+	getObjectRepr      = getLayerRepr,
+	getObjectTypeRepr  = getLayerTypeRepr
+}
+
+
+--------------------------------------------------------------------
 --- COMMAND
 --------------------------------------------------------------------
 CLASS: CmdCreateEntity ( EditorCommand )

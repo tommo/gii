@@ -533,7 +533,7 @@
 			"file": "lib/gii/qt/controls/PropertyEditor/CommonFieldEditors.py",
 			"settings":
 			{
-				"buffer_size": 2396,
+				"buffer_size": 3993,
 				"line_ending": "Unix"
 			}
 		},
@@ -541,7 +541,7 @@
 			"file": "lib/gii/qt/controls/PropertyEditor/EnumFieldEditor.py",
 			"settings":
 			{
-				"buffer_size": 1295,
+				"buffer_size": 1410,
 				"line_ending": "Unix"
 			}
 		},
@@ -549,7 +549,7 @@
 			"file": "lib/gii/core/model.py",
 			"settings":
 			{
-				"buffer_size": 8503,
+				"buffer_size": 11919,
 				"line_ending": "Unix"
 			}
 		},
@@ -565,7 +565,7 @@
 			"file": "lib/gii/qt/controls/PropertyEditor/test.py",
 			"settings":
 			{
-				"buffer_size": 1564,
+				"buffer_size": 1550,
 				"line_ending": "Unix"
 			}
 		},
@@ -573,7 +573,7 @@
 			"file": "packages/Mock/TextureManager/TextureManager.py",
 			"settings":
 			{
-				"buffer_size": 7026,
+				"buffer_size": 7434,
 				"line_ending": "Unix"
 			}
 		},
@@ -581,7 +581,7 @@
 			"file": "lib/gii/core/EditorApp.py",
 			"settings":
 			{
-				"buffer_size": 3560,
+				"buffer_size": 4505,
 				"line_ending": "Unix"
 			}
 		},
@@ -589,7 +589,7 @@
 			"file": "lib/gii/qt/QtSupport.py",
 			"settings":
 			{
-				"buffer_size": 4745,
+				"buffer_size": 4864,
 				"line_ending": "Unix"
 			}
 		},
@@ -597,7 +597,7 @@
 			"file": "lib/gii/SceneEditor/SceneEditor.py",
 			"settings":
 			{
-				"buffer_size": 3348,
+				"buffer_size": 4839,
 				"line_ending": "Unix"
 			}
 		},
@@ -629,7 +629,7 @@
 			"file": "gii_cfg.py",
 			"settings":
 			{
-				"buffer_size": 366,
+				"buffer_size": 364,
 				"line_ending": "Unix"
 			}
 		}
@@ -1213,7 +1213,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 97.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"",
@@ -1672,15 +1672,15 @@
 					"file": "lib/gii/qt/controls/PropertyEditor/CommonFieldEditors.py",
 					"settings":
 					{
-						"buffer_size": 2396,
+						"buffer_size": 3993,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1386,
-								1386
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1700,21 +1700,22 @@
 					"file": "lib/gii/qt/controls/PropertyEditor/EnumFieldEditor.py",
 					"settings":
 					{
-						"buffer_size": 1295,
+						"buffer_size": 1410,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								620,
-								625
+								718,
+								758
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage"
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1727,15 +1728,15 @@
 					"file": "lib/gii/core/model.py",
 					"settings":
 					{
-						"buffer_size": 8503,
+						"buffer_size": 11919,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								116,
-								116
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1789,15 +1790,15 @@
 					"file": "lib/gii/qt/controls/PropertyEditor/test.py",
 					"settings":
 					{
-						"buffer_size": 1564,
+						"buffer_size": 1550,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1310,
-								1310
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1817,15 +1818,15 @@
 					"file": "packages/Mock/TextureManager/TextureManager.py",
 					"settings":
 					{
-						"buffer_size": 7026,
+						"buffer_size": 7434,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6216,
-								6216
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1845,15 +1846,15 @@
 					"file": "lib/gii/core/EditorApp.py",
 					"settings":
 					{
-						"buffer_size": 3560,
+						"buffer_size": 4505,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2050,
-								2050
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1873,15 +1874,15 @@
 					"file": "lib/gii/qt/QtSupport.py",
 					"settings":
 					{
-						"buffer_size": 4745,
+						"buffer_size": 4864,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3299,
-								3299
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1901,15 +1902,15 @@
 					"file": "lib/gii/SceneEditor/SceneEditor.py",
 					"settings":
 					{
-						"buffer_size": 3348,
+						"buffer_size": 4839,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1606,
-								1606
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1997,7 +1998,7 @@
 					"file": "gii_cfg.py",
 					"settings":
 					{
-						"buffer_size": 366,
+						"buffer_size": 364,
 						"regions":
 						{
 						},
@@ -2622,12 +2623,12 @@
 		"selected_items":
 		[
 			[
-				"mdd",
-				"/Volumes/prj/mdd/mdd-gii.sublime-project"
+				"gii",
+				"/Volumes/prj/archive/ging/gii.sublime-project"
 			],
 			[
-				"gii",
-				"/Volumes/prj/ging/gii.sublime-project"
+				"mdd",
+				"/Volumes/prj/mdd/mdd-gii.sublime-project"
 			],
 			[
 				"",

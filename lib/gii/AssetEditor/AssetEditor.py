@@ -24,7 +24,7 @@ class AssetEditorModule( QtEditorModule ):
 		return self.getModule('asset_editor').getMainWindow()
 
 	def getSelectionManager( self ):
-		selectionManager = self.getSceneEditor().selectionManager
+		selectionManager = self.getAssetEditor().selectionManager
 		return selectionManager
 
 	def getSelection( self ):
@@ -151,8 +151,6 @@ class QtMainWindow( MainWindow ):
 			event.ignore()
 		else:
 			pass
-
-
 
 ##----------------------------------------------------------------##
 def getAssetSelectionManager():
