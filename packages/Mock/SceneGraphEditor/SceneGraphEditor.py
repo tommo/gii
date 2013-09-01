@@ -47,7 +47,7 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		#Components
 		self.tree = self.container.addWidget( 
-				SceneGraphTreeWidget( sorting = False )
+				SceneGraphTreeWidget( sorting = True )
 			)
 		
 		self.tree.module = self
@@ -302,12 +302,13 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 
 ##----------------------------------------------------------------##
 class SceneGraphTreeItem( QtGui.QTreeWidgetItem ):
-	def __lt__(self, other):
-		node0 = self.node
-		node1 = hasattr(other, 'node') and other.node or None
-		if not node1:
-			return True	
-		return node0._priority <= node1._priority
+	pass
+	# def __lt__(self, other):
+	# 	node0 = self.node
+	# 	node1 = hasattr(other, 'node') and other.node or None
+	# 	if not node1:
+	# 		return True	
+	# 	return node0._priority <= node1._priority
 
 ##----------------------------------------------------------------##
 SceneGraphEditor().register()

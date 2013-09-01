@@ -195,6 +195,7 @@ class GamePreview( SceneEditorModule ):
 		elif self.paused is None: #start
 			logging.info('start game preview')
 			signals.emitNow( 'preview.start' )
+			signals.emitNow( 'preview.resume' )
 			self.updateTimer = self.window.startTimer( 60, self.updateView )
 
 		self.paused = False

@@ -122,7 +122,7 @@ class QtSupport( QtEditorModule ):
 
 	def update( self ):
 		# self.qtApp.processEvents( QEventLoop.WaitForMoreEvents )
-		self.qtApp.processEvents( QEventLoop.AllEvents, 2 )
+		self.qtApp.processEvents( QEventLoop.AllEvents )
 	
 	def getMainWindow( self ):
 		return self.mainWindow

@@ -37,9 +37,10 @@ class SceneView( SceneEditorModule ):
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
 		self.canvas.setDelegateEnv( '_view', self )
 
-		self.updateTimer = self.window.startTimer( 20, self.onUpdateTimer )
+		self.updateTimer = self.window.startTimer( 30, self.onUpdateTimer )
 		self.updatePending = False
 
+		self.previewUpdateTimer = False
 		self.preview = self.getModule( 'scene_preview' )
 
 		signals.connect( 'entity.modified', self.onEntityModified )
@@ -47,6 +48,11 @@ class SceneView( SceneEditorModule ):
 		signals.connect( 'scene.close', self.onSceneClose )
 		signals.connect( 'scene.update', self.onSceneUpdate )
 		signals.connect( 'selection.changed', self.onSelectionChanged )
+
+		signals.connect( 'preview.resume', self.onPreviewResume )
+		signals.connect( 'preview.pause', self.onPreviewStop )
+		signals.connect( 'preview.stop', self.onPreviewStop )
+
 		self.skipFrameIdx = 1
 		self.skipFrame    = 5
 
@@ -88,6 +94,12 @@ class SceneView( SceneEditorModule ):
 		if key != 'scene': return
 		self.canvas.makeCurrent()
 		self.canvas.safeCallMethod( 'view', 'onSelectionChanged', selection )
+
+	def onPreviewResume( self ):
+		self.previewUpdateTimer = self.window.startTimer( 10, self.scheduleUpdate )
+
+	def onPreviewStop( self ):
+		self.previewUpdateTimer.stop()
 
 	def scheduleUpdate( self ):
 		self.updatePending = True

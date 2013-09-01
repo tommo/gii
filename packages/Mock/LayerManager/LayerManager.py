@@ -103,11 +103,21 @@ class LayerManager( SceneEditorModule ):
 
 	def changeLayerName( self, layer, name ):
 		layer.setName( layer, name )
+
+	def toggleHidden( self, layer ):
+		layer.setVisible( layer, not layer.isVisible( layer ) )
+		self.tree.refreshNodeContent( layer )
+		signals.emit( 'scene.update' )
+
+	def toggleLock( self, layer ):
+		layer.locked = not layer.locked
+		self.tree.refreshNodeContent( layer )
+		signals.emit( 'scene.update' )
 	
 ##----------------------------------------------------------------##
 class LayerTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		return [ ('Name',-1) ]
+		return [ ('Name',150), ('Show', 30), ('Edit',30), ('',-1) ]
 
 	def getRootNode( self ):
 		return _MOCK.game
@@ -121,7 +131,6 @@ class LayerTreeWidget( GenericTreeWidget ):
 	def getNodeParent( self, node ): # reimplemnt for target node	
 		if isMockInstance( node, 'Game' ):
 			return None
-
 		return _MOCK.game
 
 	def getNodeChildren( self, node ):
@@ -141,6 +150,17 @@ class LayerTreeWidget( GenericTreeWidget ):
 				item.setIcon( 0, getIcon('obj_blue') )
 			else:
 				item.setIcon( 0, getIcon('obj') )
+
+			if node.visible:
+				item.setIcon( 1, getIcon(None) )
+			else:
+				item.setIcon( 1, getIcon('state_no') )
+
+			if node.locked:
+				item.setIcon( 2, getIcon('state_no'))
+			else:
+				item.setIcon( 2, getIcon(None) )
+
 		else:
 			item.setText( 0, '' )
 			item.setIcon( 0, getIcon('normal') )
@@ -152,6 +172,12 @@ class LayerTreeWidget( GenericTreeWidget ):
 	def onItemChanged( self, item, col ):
 		layer = self.getNodeByItem( item )
 		app.getModule('layer_manager').changeLayerName( layer, item.text(0) )
+
+	def onDClicked(self, item, col):
+		if col == 1: #hide toggle
+			app.getModule('layer_manager').toggleHidden( self.getNodeByItem(item) )
+		elif col == 2: #lock toggle
+			app.getModule('layer_manager').toggleLock( self.getNodeByItem(item) )
 
 ##----------------------------------------------------------------##
 LayerManager().register()

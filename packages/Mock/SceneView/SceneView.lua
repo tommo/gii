@@ -77,6 +77,7 @@ function SceneView:readConfig()
 	if cameraCfg then
 		self.camera:setLoc( unpack(cameraCfg['loc']) )
 		self.camera:getComponent( EditorCanvasCamera ):setZoom( cameraCfg['zoom'] )
+		self.navi.zoom = cameraCfg['zoom']
 	end
 end
 
@@ -92,9 +93,17 @@ function SceneView:wndToEntity( ent, x, y )
 	return ent:worldToModel( self:wndToWorld( x, y ) )
 end
 
+local function isEntityPickable( ent )
+	if ent.FLAG_EDITOR_OBJECT then return false end
+	if not ent:isVisible() then return false end
+	if not ent.layer.source:isVisible() then return false end
+	if ent.layer.source:isLocked() then return false end
+	return true
+end
+
 function SceneView:pick( x, y )
 	for ent in pairs( self:getScene().entities ) do
-		if not ent.FLAG_EDITOR_OBJECT then
+		if isEntityPickable( ent ) then
 			local picked = ent:pick( x, y )
 			if picked then return picked end
 		end
