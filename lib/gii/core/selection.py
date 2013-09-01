@@ -8,7 +8,6 @@ _SelectionManagerRegistry = {
 def getSelectionManager( key ):
 	return _SelectionManagerRegistry.get( key, None )
 
-
 class SelectionManager(object):	
 	def __init__( self, key ):
 		assert not _SelectionManagerRegistry.has_key( key ), 'duplicated Manager ' + key

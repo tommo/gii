@@ -74,7 +74,7 @@ def getSelection( key ):
 def changeSelection( key, targets = None ):
 	selectionManager = getSelectionManager( key )
 	selectionManager.changeSelection( targets )
-
+	
 ####################################
 #COMMON DATA BRIDGE
 ####################################

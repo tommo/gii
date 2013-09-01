@@ -134,7 +134,6 @@ function SelectionGizmo:onDraw()
 end
 
 --------------------------------------------------------------------
-
 CLASS: TranslationHandle( EditorEntity )
 function TranslationHandle:__init( option )
 	self.option = option
@@ -176,7 +175,6 @@ end
 
 function TranslationHandle:setTarget( target )
 	self.target = target
-	-- linkRot( self:getProp(), target:getProp() )
 	linkLoc( self:getProp(), target:getProp() )
 end
 
