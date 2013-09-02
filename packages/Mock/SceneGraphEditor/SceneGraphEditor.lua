@@ -28,6 +28,7 @@ function SceneGraphEditor:closeScene()
 	if not self.scene then return end
 	self.scene:exitNow()
 	self.scene = false
+	mock.game:resetClock()
 end
 
 function SceneGraphEditor:saveScene( path )
@@ -38,7 +39,9 @@ end
 
 function SceneGraphEditor:refreshScene()
 	local data = self.failedRefreshData or mock.serializeScene( self.scene )
+	self.scene:stop()
 	self.scene:clear( true )
+	mock.game:resetClock()
 	if pcall( mock.deserializeScene, data, self.scene ) then
 		self.failedRefreshData = false
 		self:postLoadScene()
@@ -58,7 +61,9 @@ end
 
 function SceneGraphEditor:restoreScene()
 	if not self.retainedSceneData then return end
+	self.scene:stop()
 	self.scene:clear( true )
+	mock.game:resetClock()
 	if pcall( mock.deserializeScene, self.retainedSceneData, self.scene ) then
 		self.retainedSceneData = false
 		self:postLoadScene()
@@ -210,10 +215,12 @@ function CmdCreateEntity:redo()
 	local entity = entType()
 	self.created = entity
 	editor.scene:addEntity( entity )
+	gii.emitPythonSignal('entity.added', self.created )
 end
 
 function CmdCreateEntity:undo()
-	self.created:destroy()
+	self.created:destroyNow()
+	gii.emitPythonSignal('entity.removed', self.created )
 end
 
 --------------------------------------------------------------------
@@ -228,10 +235,12 @@ end
 
 function CmdRemoveEntity:redo()
 	self.target:destroyNow()
+	gii.emitPythonSignal('entity.removed', self.target )
 end
 
 function CmdRemoveEntity:undo()
 	--todo:
+	-- gii.emitPythonSignal('entity.added', self.created )
 end
 
 --------------------------------------------------------------------
@@ -251,12 +260,12 @@ function CmdCreateComponent:redo()
 	local component = entType()
 	self.createdComponent = component
 	self.targetEntity:attach( component )
-	gii.emitPythonSignal( 'component.added', component, self.targetEntity )	
+	gii.gii.emitPythonSignal( 'component.added', component, self.targetEntity )	
 end
 
 function CmdCreateComponent:undo()
 	self.targetEntity:detach( self.createdComponent )
-	gii.emitPythonSignal( 'component.removed', component, self.targetEntity )	
+	gii.gii.emitPythonSignal( 'component.removed', component, self.targetEntity )	
 end
 
 --------------------------------------------------------------------
@@ -290,10 +299,12 @@ end
 function CmdCloneEntity:redo()
 	self.created = mock.cloneEntity( self.target )
 	editor.scene:addEntity( self.created )
+	gii.emitPythonSignal('entity.added', self.created )
 end
 
 function CmdCloneEntity:undo()
 	--todo:
+	gii.emitPythonSignal('entity.removed', self.created )
 	self.created:destroyNow()
 end
 

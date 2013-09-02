@@ -197,7 +197,7 @@ function TranslationHandle:onLoad()
 	self:attach( mock.DrawScript() )	
 end
 
-function TranslationHandle:onDraw()
+function TranslationHandle:onDraw()	
 	applyColor 'handle-all'
 	MOAIDraw.fillRect( 0,0, handleArrowSize, handleArrowSize )
 	--x axis

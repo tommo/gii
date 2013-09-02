@@ -70,8 +70,8 @@ function _createEmptyModule( path, fullpath )
 		__REQUIRES    = {},
 		__REQUIREDBY  = {}
 	}
-
-	m.require = function( path, ... )
+	m._M = m
+	local requireInModule = function( path, ... )
 		local loaded, errType, errMsg, tracebackMsg = _requireGameModule( path )
 		if loaded then 
 			m.__REQUIRES[ path ] = true
@@ -86,6 +86,20 @@ function _createEmptyModule( path, fullpath )
 		return _require( path, ... )
 	end
 
+	local importInModule = function( path, ... )
+		local result = requireInModule( path, ... )
+		if result then
+			for k, v in pairs( result ) do
+				if type(k) == 'string' and not k:startWith('_') then
+					m[ k ] = v
+				end
+			end
+		end
+		return result
+	end
+
+	m.require = requireInModule
+	m.import  = importInModule
 	return setmetatable( m, GameModuleMT )
 end
 

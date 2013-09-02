@@ -100,6 +100,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'preview.start', self.onPreviewStart )
 		signals.connect( 'preview.stop' , self.onPreviewStop )
 
+		signals.connect( 'entity.added', self.onEntityAdded )
+		signals.connect( 'entity.removed', self.onEntityRemoved )
 		signals.connect( 'entity.renamed', self.onEntityRenamed )
 
 		#editor
@@ -154,7 +156,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.componentCreatorMenu.clear()
 		registry = _MOCK.getEntityRegistry()
 
-		for entityName in registry.keys():
+		for entityName in sorted( registry.keys() ):
+			print entityName
 			self.entityCreatorMenu.addChild({
 					'name'     : 'create_entity_'+entityName,
 					'label'    : entityName,
@@ -163,7 +166,7 @@ class SceneGraphEditor( SceneEditorModule ):
 				})
 
 		registry = _MOCK.getComponentRegistry()
-		for comName in registry.keys():			
+		for comName in sorted( registry.keys() ):
 			self.componentCreatorMenu.addChild({
 					'name'     : 'create_component_'+comName,
 					'label'    : comName,
@@ -230,6 +233,12 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def onEntityRenamed( self, entity, newname ):
 		self.tree.refreshNodeContent( entity )
+
+	def onEntityAdded( self, entity ):
+		self.tree.selectNode( entity )		
+
+	def onEntityRemoved( self, entity ):
+		pass		
 
 ##----------------------------------------------------------------##
 def _sortEntity( a, b ):

@@ -72,12 +72,14 @@ class GamePreview( SceneEditorModule ):
 
 		self.window.stayOnTop = True
 
-		self.canvas = GamePreviewCanvas( self.window ) 
-		self.canvas.startRefreshTimer()
 
+		self.canvas = self.window.addWidget( GamePreviewCanvas( self.window )  )
+		self.canvas.startRefreshTimer()
 		self.paused = None
-		self.window.addWidget( self.canvas )
 		
+		tool = self.window.addWidget( QtGui.QToolBar( self.window ), expanding = False )
+		self.toolbar = self.addToolBar( 'game_preview', tool )
+
 		self.canvas.module = self
 
 		self.updateTimer = None
@@ -105,6 +107,8 @@ class GamePreview( SceneEditorModule ):
 				'----',
 				{'name':'reset_moai','label':'RESET MOAI', 'shortcut':'Ctrl+Shift+R'}
 			], self)
+
+		self.addTool( 'game_preview/stay_on_top', label = 'Stay Top' )
 		self.onMoaiReset()
 
 		self.enableMenu( 'main/preview/pause_game',  False )
@@ -151,9 +155,7 @@ class GamePreview( SceneEditorModule ):
 	def onMoaiReset( self ):
 		runtime = self.getRuntime()
 		runtime.createRenderContext( 'game' )
-		self.canvas.setInputDevice(
-			runtime.addDefaultInputDevice( 'device' )
-			)
+		runtime.addDefaultInputDevice( 'device' )
 		# getAKU().setFuncOpenWindow( self.onOpenWindow )
 	
 	def onDebugEnter(self):
@@ -184,6 +186,9 @@ class GamePreview( SceneEditorModule ):
 
 	def startPreview( self ):
 		if self.paused == False: return
+		runtime = self.getRuntime()
+		self.canvas.setInputDevice( runtime.getInputDevice('device') )
+
 		self.enableMenu( 'main/preview/pause_game', True )
 		self.enableMenu( 'main/preview/stop_game',  True )
 		self.enableMenu( 'main/preview/start_game', False )
@@ -199,11 +204,13 @@ class GamePreview( SceneEditorModule ):
 			self.updateTimer = self.window.startTimer( 60, self.updateView )
 
 		self.paused = False
-		self.getRuntime().resume()
+		runtime.resume()
 		self.setFocus()
 
 	def stopPreview( self ):
 		logging.info('stop game preview')
+		self.canvas.setInputDevice( None )
+
 		signals.emitNow( 'preview.stop' )
 		self.updateTimer.stop()
 		self.enableMenu( 'main/preview/stop_game',  False )
@@ -218,6 +225,7 @@ class GamePreview( SceneEditorModule ):
 
 	def pausePreview( self ):
 		if self.paused: return
+		self.canvas.setInputDevice( None )
 		signals.emitNow( 'preview.pause' )
 		logging.info('pause game preview')
 		self.enableMenu( 'main/preview/start_game', True )

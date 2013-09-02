@@ -4,7 +4,7 @@ from AKU import getAKU, _LuaTable, _LuaThread, _LuaObject, _LuaFunction
 ## Input DEVICE
 ##----------------------------------------------------------------##
 class MOAIInputDevice(object):
-	def __init__(self, name, id):
+	def __init__( self, name, id ):
 		self.id           = id
 		self.name         = name or 'device'
 		self.sensors      = {}
@@ -29,9 +29,9 @@ class MOAIInputDevice(object):
 		self.sensors[name]=sensor
 		self.lastSensorId += 1
 
-		getAKU().reserveInputDeviceSensors(self.id, self.lastSensorId)
+		getAKU().reserveInputDeviceSensors( self.id, self.lastSensorId )
 		for k in self.sensors:
-			sensor=self.sensors[k]
+			sensor = self.sensors[k]
 			sensor.onRegister()
 		# sensor.onRegister()
 
@@ -39,10 +39,10 @@ class MOAIInputDevice(object):
 		return self.sensors.get(name, None)
 
 	def onRegister(self):
-		getAKU().setInputDevice(self.id, self.name)
-		getAKU().reserveInputDeviceSensors(self.id, self.lastSensorId)
+		getAKU().setInputDevice( self.id, self.name )
+		getAKU().reserveInputDeviceSensors( self.id, self.lastSensorId )
 		for k in self.sensors:
-			sensor=self.sensors[k]
+			sensor = self.sensors[k]
 			sensor.onRegister()
 
 ##----------------------------------------------------------------##

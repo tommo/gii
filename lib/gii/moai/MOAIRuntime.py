@@ -136,9 +136,6 @@ class MOAIRuntime( EditorModule ):
 
 	#------Manual Control For MOAI Module
 	#TODO: move function below into bridge module
-	def syncAssetLibrary(self):
-		_GII.syncAssetLibrary()
-		
 	def stepSim(self, step):
 		_GII.stepSim(step)
 
@@ -266,14 +263,15 @@ class MOAIRuntime( EditorModule ):
 		device = MOAIInputDevice(name, self.lastInputDeviceId)
 		self.inputDevices[name] = device
 		self.lastInputDeviceId += 1
+
 		getAKU().reserveInputDevices(self.lastInputDeviceId)
-		for k in self.inputDevices:
-			self.inputDevices[k].onRegister()
+		for inputDevice in self.inputDevices.values():
+			inputDevice.onRegister()
 		return device
 
-	def addDefaultInputDevice(self, name='device'):
+	def addDefaultInputDevice( self, name='device' ):
 		logging.info( 'add input device: ' + str( name ) )
-		device=self.addInputDevice(name)
+		device = self.addInputDevice(name)
 		device.addSensor('touch',       'touch')
 		device.addSensor('pointer',     'pointer')
 		device.addSensor('keyboard',    'keyboard')

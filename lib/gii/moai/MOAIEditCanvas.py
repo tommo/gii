@@ -251,7 +251,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		
 	def setupContext(self):
 		self.runtime.createRenderContext( self.contextName )
-		self.setInputDevice( self.runtime.addDefaultInputDevice( self.contextName ) )
+		# self.setInputDevice( self.runtime.addDefaultInputDevice( self.contextName ) )
 		
 		if self.scriptPath:
 			self.makeCurrent()

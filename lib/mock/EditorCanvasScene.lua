@@ -9,7 +9,7 @@ end
 --------------------------------------------------------------------
 function createEditorCanvasInputDevice( env )
 	local env = env or getfenv( 2 )
-	local inputDevice = mock.InputDevice( env.contextName )
+	local inputDevice = mock.InputDevice( env.contextName, true )
 
 	function env.onMouseDown( btn, x, y )
 		inputDevice:sendMouseEvent( 'down', x, y, btn )

@@ -36,7 +36,9 @@ class EntityEditor( ObjectEditor ): #a generic property grid
 
 	def onPropertyChanged( self, obj, id, value ):		
 		if id == 'name':
-			signals.emit( 'entity.renamed', obj, value )			
+			signals.emit( 'entity.renamed', obj, value )
+		elif id == 'layer':
+			signals.emit( 'entity.renamed', obj, value )
 		signals.emit( 'entity.modified', obj, 'introspector' )
 
 	def refresh( self ):

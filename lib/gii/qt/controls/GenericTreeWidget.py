@@ -31,9 +31,10 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		self.clear()
 		self.setSortingEnabled( option.get('sorting', True) )
+		self.setDragDropMode( QtGui.QAbstractItemView.InternalMove )
 		
 		if option.get( 'multiple_selection', True ):
-			self.setSelectionMode( QtGui.QAbstractItemView.ExtendedSelection )
+			self.setSelectionMode( QtGui.QAbstractItemView.ContiguousSelection )
 
 		self.setAlternatingRowColors( option.get('alternating_color', False) )
 		self.setExpandsOnDoubleClick( False )
@@ -237,6 +238,9 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		return False
 
 
+	def dropEvent( self, ev ):
+		print ev
+		pass
 
 	##----------------------------------------------------------------##
 	# Event Callback
@@ -259,5 +263,6 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 	def onItemChanged( self, item, col ):
 		pass
+
 	
 		
