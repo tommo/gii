@@ -350,6 +350,11 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 
 	def _useWindowFlags(self):
 		pass
+
+	def setStayOnTop( self, stayOnTop ):
+		self.stayOnTop = stayOnTop
+		if stayOnTop and self.topLevel:
+			self.setWindowFlags( Qt.Window | Qt.WindowStaysOnTopHint )
 		
 	def hideTitleBar(self):
 		emptyTitle = QtGui.QWidget()
@@ -363,21 +368,14 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 		timer.start(interval)
 		return timer
 
-	# def onAppActivate( self ):
-	# 	if self.topLevel:
-	# 		self.setWindowFlags( Qt.Window | Qt.WindowStaysOnTopHint )
-	# 		self.show()
-
-	# def onAppDeactivate( self ):
-	# 	if self.topLevel:
-	# 		self.setWindowFlags( Qt.Window )
-	# 		self.show()
-
 	def onTopLevelChanged(self, toplevel):
 		self.topLevel = toplevel
 		if toplevel:
 			self.setTitleBarWidget( self.originTitleBar )
-			self.setWindowFlags( Qt.Window )
+			flag = Qt.Window
+			if self.stayOnTop:
+				flag |= Qt.WindowStaysOnTopHint
+			self.setWindowFlags( flag )
 			self.show()
 		else:
 			self.setTitleBarWidget( self.customTitleBar )
@@ -386,4 +384,3 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 	def addToolBar(self):
 		return self.addWidget( QtGui.QToolBar(), expanding = False ) 
 
-		

@@ -70,8 +70,7 @@ class GamePreview( SceneEditorModule ):
 			dock  = 'right'
 			)
 
-		self.window.stayOnTop = True
-
+		# self.window.setStayOnTop( True )
 
 		self.canvas = self.window.addWidget( GamePreviewCanvas( self.window )  )
 		self.canvas.startRefreshTimer()
@@ -99,9 +98,9 @@ class GamePreview( SceneEditorModule ):
 		self.menu = self.addMenu( 'main/preview', dict( label = 'Game' ) )
 
 		self.menu.addChild([
-				{'name':'start_game',    'label':'Resume Game','shortcut':'F5' },
-				{'name':'pause_game',  'label':'Pause Game', 'shortcut':'F6' },
-				{'name':'stop_game',   'label':'Stop Game',  'shortcut':'Ctrl+F5' },
+				{'name':'start_game',    'label':'Resume Game','shortcut':'meta+]' },
+				{'name':'pause_game',  'label':'Pause Game', 'shortcut':'meta+shit+]' },
+				{'name':'stop_game',   'label':'Stop Game',  'shortcut':'meta+[' },
 				'----',
 				{'name':'pause_on_leave','label':'Pause On Leave', 'type':'check', 'checked':self.getConfig('pause_on_leave')},
 				'----',
@@ -208,6 +207,7 @@ class GamePreview( SceneEditorModule ):
 		self.setFocus()
 
 	def stopPreview( self ):
+		if self.paused is None: return
 		logging.info('stop game preview')
 		self.canvas.setInputDevice( None )
 

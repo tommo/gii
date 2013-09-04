@@ -48,7 +48,10 @@ def _makePath( base, path ):
 ##----------------------------------------------------------------##
 def _mkdir( path ):
 	if os.path.exists( path ): return
-	os.mkdir( path )
+	try:
+		os.mkdir( path )
+	except Exception, e:
+		pass
 
 ##----------------------------------------------------------------##
 class ProjectException(Exception):

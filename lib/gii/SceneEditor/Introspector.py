@@ -253,7 +253,7 @@ class IntrospectorInstance(object):
 				container.addWidget( widget )				
 				model = ModelManager.get().getModelFromTypeId( typeId )
 				if model:
-					container.setTitle( model.getName() )
+					container.setTitle( model.getShortName() )
 				else:
 					container.setTitle( repr( typeId ) )
 					#ERROR

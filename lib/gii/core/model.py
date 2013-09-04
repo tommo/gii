@@ -5,6 +5,10 @@ def getSuperType( t ):
 		return t.getSuperType()		
 	return None
 
+def _makeShortName( n ):
+	blobs = n.split('.')
+	return blobs[len(blobs)-1]
+
 ##----------------------------------------------------------------##
 class DataType(object):
 	
@@ -131,6 +135,9 @@ class ObjectModel( DataType ):
 	def getName(self):
 		return self.name
 
+	def getShortName( self ):
+		return self.shortName		
+
 	def getSuperType(self):
 		return self.superType
 
@@ -150,6 +157,7 @@ class ObjectModel( DataType ):
 
 	def __init__(self, name, superType = None, **option):
 		self.name      = name
+		self.shortName = _makeShortName( name )
 		self.fieldMap  = {}
 		self.fieldList = []
 		self.superType = None

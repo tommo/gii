@@ -65,6 +65,8 @@ class SceneGraphEditor( SceneEditorModule ):
 			{ 'label':'Create Component' }
 			)
 
+		self.addMenuItem( 'main/scene/search', dict( label = 'Search', shortcut = 'Ctrl+P' ) )
+
 		#menu
 		self.addMenuItem( 'main/scene/close_scene', dict( label = 'Close' ) )
 		self.addMenuItem( 'main/scene/save_scene',  dict( label = 'Save', shortcut = 'Ctrl+S' ) )
@@ -208,6 +210,8 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.doCommand( 'scene_editor/remove_entity' )
 		elif name == 'clone_entity':
 			self.doCommand( 'scene_editor/clone_entity' )
+		elif name == 'search':
+			pass
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
@@ -238,7 +242,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.tree.selectNode( entity )		
 
 	def onEntityRemoved( self, entity ):
-		pass		
+		pass
 
 ##----------------------------------------------------------------##
 def _sortEntity( a, b ):
@@ -308,6 +312,23 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			self.module.changeSelection(selections)
 		else:
 			self.module.changeSelection(None)
+
+	def dropEvent( self, ev ):		
+		p = self.dropIndicatorPosition()
+		pos = False
+		if p == QtGui.QAbstractItemView.OnItem: #reparent
+			pos = 'on'
+		elif p == QtGui.QAbstractItemView.AboveItem:
+			pos = 'above'
+		elif p == QtGui.QAbstractItemView.BelowItem:
+			pos = 'below'
+		else:
+			pos = 'viewport'
+
+		target = self.itemAt( ev.pos() )
+		if pos == 'on':
+			self.module.doCommand( 'scene_editor/reparent_entity', target = target.node )
+		super( GenericTreeWidget, self ).dropEvent( ev )
 
 ##----------------------------------------------------------------##
 class SceneGraphTreeItem( QtGui.QTreeWidgetItem ):

@@ -179,6 +179,9 @@ function BoundGizmo:onDraw()
 	local target = self.target
 	if not target then return end
 	applyColor 'selection'
+	if not target.components then 
+		return self:destroy()
+	end
 	for com in pairs( target.components ) do
 		local drawBounds = com.drawBounds
 		if drawBounds then drawBounds( com ) end
@@ -223,7 +226,7 @@ end
 
 function TranslationHandle:setTarget( target )
 	self.target = target
-	linkLoc( self:getProp(), target:getProp() )
+	inheritTransform( self:getProp(), target:getProp() )
 end
 
 function TranslationHandle:onMouseDown( btn, x, y )
@@ -319,7 +322,7 @@ function ScaleHandle:onMouseDown( btn, x, y )
 	x, y = self:wndToModel( x, y )
 	self.x0 = x
 	self.y0 = y
-	if x >= 0 and y >= 0 and x <= handleArrowSize + 5 and y <= handleArrowSize + 5 then
+	if x >= -5 and y >= -5 and x <= handleArrowSize + 5 and y <= handleArrowSize + 5 then
 		self.activeAxis = 'all'
 		return true
 	end

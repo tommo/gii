@@ -11,7 +11,6 @@ class VecEditorWidget( QtGui.QWidget ):
 		self.layout = layout = QtGui.QHBoxLayout( self )
 		layout.setSpacing(0)
 		layout.setMargin(0)		
-		for i in range()
 		self.valueX = FieldEditorDoubleSpinBox( self )
 		self.valueX.setSizePolicy(
 			QtGui.QSizePolicy.Expanding,

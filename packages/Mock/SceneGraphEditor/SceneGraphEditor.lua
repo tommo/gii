@@ -230,16 +230,20 @@ CLASS: CmdRemoveEntity ( EditorCommand )
 function CmdRemoveEntity:init( option )
 	local target = gii.getSelection( 'scene' )[1]
 	if not isInstanceOf( target, mock.Entity ) then return false end
-	self.target = target
+	self.selection = gii.getSelection( 'scene' )
 end
 
 function CmdRemoveEntity:redo()
-	self.target:destroyNow()
-	gii.emitPythonSignal('entity.removed', self.target )
+	for _, target in ipairs( self.selection ) do
+		if target.scene then 
+			target:destroyNow()
+			gii.emitPythonSignal('entity.removed', target )
+		end
+	end
 end
 
 function CmdRemoveEntity:undo()
-	--todo:
+	--todo: RESTORE deleted
 	-- gii.emitPythonSignal('entity.added', self.created )
 end
 
@@ -298,7 +302,12 @@ end
 
 function CmdCloneEntity:redo()
 	self.created = mock.cloneEntity( self.target )
-	editor.scene:addEntity( self.created )
+	local parent = self.target.parent
+	if parent then
+		parent:addChild( self.created )
+	else
+		editor.scene:addEntity( self.created )
+	end
 	gii.emitPythonSignal('entity.added', self.created )
 end
 
@@ -306,5 +315,28 @@ function CmdCloneEntity:undo()
 	--todo:
 	gii.emitPythonSignal('entity.removed', self.created )
 	self.created:destroyNow()
+end
+
+--------------------------------------------------------------------
+CLASS: CmdReparentEntity ( EditorCommand )
+	:register( 'scene_editor/reparent_entity' )
+
+function CmdReparentEntity:init( option )
+	self.target = option['target']
+	self.children = gii.getSelection( 'scene' )
+	self.oldParents = {}
+end
+
+function CmdReparentEntity:redo()
+	for i, e in ipairs( self.children ) do
+		local e1 = mock.cloneEntity(e)
+		self.target:addChild( e1 )
+		e:destroyNow()
+		print( self.target.name, e.name )
+	end	
+end
+
+function CmdReparentEntity:undo()
+	--todo:
 end
 

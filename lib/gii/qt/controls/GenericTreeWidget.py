@@ -238,10 +238,22 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		return False
 
 
-	def dropEvent( self, ev ):
-		print ev
-		pass
+	# def dropEvent( self, ev ):		
+	# 	p = self.dropIndicatorPosition()
+	# 	pos = False
+	# 	if p == QtGui.QAbstractItemView.OnItem: #reparent
+	# 		pos = 'on'
+	# 	elif p == QtGui.QAbstractItemView.AboveItem:
+	# 		pos = 'above'
+	# 	elif p == QtGui.QAbstractItemView.BelowItem:
+	# 		pos = 'below'
+	# 	else:
+	# 		pos = 'viewport'
 
+	# 	target = self.itemAt( ev.pos() )
+	# 	self.onDropEvent( target, pos, ev )
+	# 	super( GenericTreeWidget, self ).dropEvent( ev )
+		
 	##----------------------------------------------------------------##
 	# Event Callback
 	##----------------------------------------------------------------##

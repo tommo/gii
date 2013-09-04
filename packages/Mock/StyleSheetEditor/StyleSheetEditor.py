@@ -100,14 +100,15 @@ class MockStyleSheetEditor( AssetEditorModule ):
 
 		window.textPreview.textChanged.connect( self.onPreviewTextChanged )
 
-		self.loadFontNames()
 		window.comboAlign.addItems(['Align Left','Align Center','Align Right'])
 		window.comboAlign.currentIndexChanged.connect( self.onAlignChanged )
 
 		signals.connect('asset.modified', self.onAssetModified)
 		self.container.setEnabled( False )
 
-	def loadFontNames(self):
+
+	def refreshFontNames(self):
+		self.window.comboFont.clear()
 		for node in AssetLibrary.get().enumerateAsset( ( 'font_ttf', 'font_bmfont' ) ):
 			self.window.comboFont.addItem( node.getPath(), node )		
 		
@@ -170,7 +171,7 @@ class MockStyleSheetEditor( AssetEditorModule ):
 		listItem.setSelected( True )
 
 	def onStart( self ):
-		# self.container.show()
+		self.refreshFontNames()
 		pass
 
 	def onStop( self ):

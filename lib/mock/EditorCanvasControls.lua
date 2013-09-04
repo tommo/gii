@@ -62,6 +62,7 @@ function CanvasNavigate:onMouseMove( x, y )
 end
 
 function CanvasNavigate:onScroll( x, y )
+	if self.dragging then return end
 	if y > 0 then
 		self:setZoom( self.zoom * 2 )
 	else
