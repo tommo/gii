@@ -22,7 +22,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.setHeaderItem(headerItem)
 		for i in range( 0, len(headerInfo) ):
 			info =  headerInfo[i]
-			headerItem.setText  ( i, info[0] )
+			headerItem.setText ( i, info[0] )
 			w = info[1]
 			if w>0:
 				self.setColumnWidth ( i, info[1] )
