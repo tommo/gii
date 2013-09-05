@@ -19,8 +19,7 @@ class AssetTreeView( GenericTreeWidget ):
 
 	def loadTreeStates( self ):
 		for node, item in self.nodeDict.items():
-			if node.getProperty( 'expanded', False ):
-				item.setExpanded( True )
+			item.setExpanded( node.getProperty( 'expanded', False ) )
 
 	def getRootNode( self ):
 		return app.getAssetLibrary().getRootNode()

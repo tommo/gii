@@ -1,4 +1,5 @@
 import logging
+import weakref
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import QMenu, QMenuBar, QAction
@@ -6,6 +7,8 @@ from PyQt4.QtGui import QMenu, QMenuBar, QAction
 from gii.core import signals, app
 
 class MenuNode(object):
+	_currentMenuContext = None
+
 	"""docstring for MenuNode"""
 	def __init__(self, option, parent, menubar=None):
 		if isinstance(option ,(str,unicode)):
@@ -191,10 +194,15 @@ class MenuNode(object):
 			signal=signals.get(signal)
 		self.signal=signal
 
-	def popUp(self):
+	def popUp( self, **option ):
 		if self.qtmenu:
+			context = option.get( 'context', None )
+			MenuNode._currentMenuContext = context
 			self.qtmenu.exec_(QtGui.QCursor.pos())
 
+	def getContext( self ):
+		return MenuNode._currentMenuContext
+		
 	def setOnClick(self, onClick):
 		self.onClick=onClick
 
@@ -211,6 +219,7 @@ class MenuNode(object):
 		if self.cmd:
 			args = self.cmdArgs or {}
 			app.doCommand( self.cmd, **args )
+		MenuNode._currentMenuContext = None
 
 class MenuManager(object):
 	"""docstring for MenuManager"""

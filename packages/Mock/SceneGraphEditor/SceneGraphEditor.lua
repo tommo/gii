@@ -282,11 +282,17 @@ end
 
 function CmdRemoveComponent:redo()
 	--todo
-	-- self.target:destroy()
+	local ent = self.target._entity
+	if ent then
+		ent:detach( self.target )
+	end
+	self.previousParent = ent
+	gii.emitPythonSignal( 'component.removed', self.target, self.previousParent )	
 end
 
 function CmdRemoveComponent:undo()
-	--todo:
+	self.previousParent:attach( self.target )
+	gii.emitPythonSignal( 'component.added', self.target, self.previousParent )	
 end
 
 

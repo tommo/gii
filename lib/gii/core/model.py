@@ -2,7 +2,11 @@ import logging
 
 def getSuperType( t ):
 	if isinstance( t, DataType ):
-		return t.getSuperType()		
+		return t.getSuperType()
+		
+	m = ModelManager._singleton.getModelFromTypeId( t )
+	if m:
+		return m.getSuperType()
 	return None
 
 def _makeShortName( n ):

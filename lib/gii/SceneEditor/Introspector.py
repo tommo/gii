@@ -2,6 +2,7 @@ import os
 ##----------------------------------------------------------------##
 from gii.core     import *
 from gii.qt.controls.PropertyEditor import PropertyEditor
+from gii.qt.controls.Menu import MenuManager
 
 from PyQt4        import QtCore, QtGui, uic
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
@@ -32,11 +33,15 @@ class ObjectContainer( QtGui.QWidget ):
 		self.mainLayout = QtGui.QVBoxLayout(self.getInnerContainer())
 		self.mainLayout.setSpacing(0)
 		self.mainLayout.setMargin(0)
-		
+		self.contextObject = None
+
 		self.folded = False
 		self.toggleFold( False )
 		self.ui.buttonFold.clicked.connect( lambda x: self.toggleFold( None ) )
 		self.ui.buttonContext.clicked.connect( lambda x: self.openContextMenu() )
+
+	def setContextObject( self, context ):
+		self.contextObject = context
 
 	def addWidget(self, widget, **layoutOption):
 		if isinstance( widget, list):
@@ -84,7 +89,7 @@ class ObjectContainer( QtGui.QWidget ):
 
 	def openContextMenu( self ):
 		if self.contextMenu:
-			self.contextMenu.popUp()
+			self.contextMenu.popUp( context = self.contextObject )
 
 ##----------------------------------------------------------------##
 class SceneIntrospector( SceneEditorModule ):
@@ -149,7 +154,7 @@ class SceneIntrospector( SceneEditorModule ):
 		assert typeId, 'null typeid'
 		self.objectEditorRegistry[ typeId ] = editorClas
 
-	def getObjectEditor( self, typeId ):	
+	def getObjectEditor( self, typeId ):		
 		while True:
 			clas = self.objectEditorRegistry.get( typeId, None )
 			if clas: return clas
@@ -237,7 +242,7 @@ class IntrospectorInstance(object):
 		self.addObjectEditor( self.target )
 
 	
-	def addObjectEditor( self, target ):
+	def addObjectEditor( self, target, **option ):
 		self.body.hide()
 		parent = app.getModule('introspector')
 		typeId = ModelManager.get().getTypeId( target )
@@ -247,9 +252,8 @@ class IntrospectorInstance(object):
 			self.editors.append( editor )
 			container = ObjectContainer( self.body )
 			widget = editor.initWidget( container.getInnerContainer() )
-			editor.container = container
+			container.setContextObject( target )
 			if widget:
-
 				container.addWidget( widget )				
 				model = ModelManager.get().getModelFromTypeId( typeId )
 				if model:
@@ -260,7 +264,7 @@ class IntrospectorInstance(object):
 				count = self.body.mainLayout.count()
 				assert count>0
 				self.body.mainLayout.insertWidget( count - 1, container )
-				menuName = editor.getContextMenu()
+				menuName = option.get( 'context_menu', editor.getContextMenu() )
 				container.setContextMenu( menuName )
 			editor.setTarget( target, self )
 			self.body.show()
@@ -292,7 +296,7 @@ class IntrospectorInstance(object):
 
 
 ##----------------------------------------------------------------##
-class ObjectEditor( object ):
+class ObjectEditor( object ):	
 	def initWidget( self, container ):
 		pass
 

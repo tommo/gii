@@ -72,8 +72,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/scene/save_scene',  dict( label = 'Save', shortcut = 'Ctrl+S' ) )
 
 		self.addMenu( 'main/scene/----' )
-		self.addMenu( 'main/scene/component_context', dict( label = 'Selected Component' ) )
-		self.addMenu( 'main/scene/component_context/remove', 
+		self.addMenu( 'component_context', dict( label = 'Selected Component' ) )
+		self.addMenuItem( 'component_context/remove_component', 
 				dict( 
 					label = 'Remove'					
 				 )
@@ -91,6 +91,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addTool( 'scene_graph/add_component', label = '+com' )
 		self.addTool( 'scene_graph/clone_entity', label = 'clone' )
 		self.addTool( 'scene_graph/remove_entity', label = '-obj' )
+		self.addTool( 'scene_graph/save_prefab', label = '>prefab' )
 
 		self.addTool( 'scene/refresh', label = 'REFRESH')
 
@@ -159,7 +160,6 @@ class SceneGraphEditor( SceneEditorModule ):
 		registry = _MOCK.getEntityRegistry()
 
 		for entityName in sorted( registry.keys() ):
-			print entityName
 			self.entityCreatorMenu.addChild({
 					'name'     : 'create_entity_'+entityName,
 					'label'    : entityName,
@@ -197,6 +197,8 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.doCommand( 'scene_editor/clone_entity' )
 		elif name == 'refresh':
 			self.scheduleRefreshScene()
+		elif name == 'save_prefab':
+			pass
 
 	def onMenu( self, menu ):
 		name = menu.name
@@ -210,6 +212,11 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.doCommand( 'scene_editor/remove_entity' )
 		elif name == 'clone_entity':
 			self.doCommand( 'scene_editor/clone_entity' )
+		elif name == 'remove_component':
+			context = menu.getContext()
+			if context:
+				self.doCommand( 'scene_editor/remove_component', target = context )
+
 		elif name == 'search':
 			pass
 

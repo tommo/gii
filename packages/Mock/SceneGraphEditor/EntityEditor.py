@@ -31,11 +31,11 @@ class EntityEditor( ObjectEditor ): #a generic property grid
 
 	def setTarget( self, target, introspectorInstance ):
 		if not target.components: return
-		self.grid.setTarget( target )
-		
+		self.grid.setTarget( target )		
 		if getMockClassName( target ) == 'Entity':
 			for com in target.components:
-				editor = introspectorInstance.addObjectEditor( com )
+				editor = introspectorInstance.addObjectEditor( com, context_menu = 'component_context' )
+
 
 	def onPropertyChanged( self, obj, id, value ):		
 		if id == 'name':

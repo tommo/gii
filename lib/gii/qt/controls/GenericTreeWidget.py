@@ -93,7 +93,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		self.nodeDict[ node ]=item
 
-		if option.get( 'expand', False ):
+		if option.get( 'expand', True ):
 			item.setExpanded( True )
 			
 		# if pnode:
