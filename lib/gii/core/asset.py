@@ -289,11 +289,6 @@ class AssetNode(object):
 	def setProperty(self, name, value):
 		self.properties[ name ] = value
 
-	# def forceReimport(self):
-	# 	self.getManager().reimportAsset(self) 
-	# 	signals.emitNow( 'asset.modified' ,  self )
-	# 	self.saveMetaDataTable()
-
 	def showInBrowser(self):
 		path = self.getAbsFilePath()
 		if path:
@@ -623,8 +618,11 @@ class AssetLibrary(object):
 						#TODO: add failed state to node				
 				if node.getManager() != manager: node.setManager( manager )
 				if manager.importAsset( node, reload = not isNew ):
-						node.modifyState  =  False
-						done.append( node )
+					node.modifyState  =  False
+					done.append( node )
+				if not isNew:
+					signals.emitNow( 'asset.modified',  node )
+					
 			for node in done:
 				if not node.isVirtual():
 					node.fileTime = os.path.getmtime( node.getAbsFilePath() )
