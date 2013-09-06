@@ -47,6 +47,7 @@ class GiiEvalCommand(sublime_plugin.WindowCommand):
 
 class GiiPreviewStartCommand(sublime_plugin.WindowCommand):
 	def run(self, **kwargs):
+		sublime.active_window().run_command( 'save_all' )
 		send_to_server( 'reload_script' )
 		send_to_server( 'preview_start' )
 

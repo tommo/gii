@@ -100,6 +100,7 @@ LuaScriptAssetManager().register()
 class RemoteCommandReloadScript( RemoteCommand ):
 	name = 'reload_script'
 	def run( self, *args ):
+		app.getAssetLibrary().tryScanProject()
 		lib = app.getModule( 'script_library' )
 		lib.loadModifiedScript()
 

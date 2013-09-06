@@ -63,7 +63,7 @@ class Deck2DCreator(AssetCreator):
 Deck2DAssetManager().register()
 Deck2DCreator().register()
 
-AssetLibrary.get().setAssetIcon( 'deck2d',              'pack' )
+AssetLibrary.get().setAssetIcon( 'deck2d',              'cell' )
 AssetLibrary.get().setAssetIcon( 'deck2d.quad',         'deck_quad' )
 AssetLibrary.get().setAssetIcon( 'deck2d.tileset',      'deck_tileset' )
 AssetLibrary.get().setAssetIcon( 'deck2d.stretchpatch', 'deck_patch' )

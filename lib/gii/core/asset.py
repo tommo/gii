@@ -636,6 +636,10 @@ class AssetLibrary(object):
 		self.projectScanScheduled = True
 		pass
 
+	def tryScanProject( self ):
+		if self.projectScanScheduled:
+			self.scanProject()
+			
 	#Library
 	def scanProject(self): #scan 
 		self.projectScanScheduled = False

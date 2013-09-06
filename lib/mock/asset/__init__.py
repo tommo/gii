@@ -7,3 +7,5 @@ import StyleSheetAsset
 import AuroraAsset
 
 import ParticleAsset
+
+import FSMAsset

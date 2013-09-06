@@ -266,14 +266,17 @@ class IntrospectorInstance(object):
 				self.body.mainLayout.insertWidget( count - 1, container )
 				menuName = option.get( 'context_menu', editor.getContextMenu() )
 				container.setContextMenu( menuName )
+			editor.container = container
 			editor.setTarget( target, self )
 			self.body.show()
 			return editor
+
 		self.body.show()
 		return None
 
 	def clear(self):		
 		for editor in self.editors:
+			editor.container.setContextObject( None )
 			editor.unload() #TODO: cache?
 		#remove widgets
 		layout = self.body.mainLayout
