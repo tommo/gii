@@ -140,7 +140,9 @@ function CanvasHandle:onMouseMove( x, y )
 end
 
 function CanvasHandle:onDestroy()
-	for i, h in ipairs( self.parent.handles ) do
+	local parent = self.parent
+	if not parent then return end
+	for i, h in ipairs( parent.handles ) do
 		if h == self then table.remove( self.parent.handles, i ) return end
 	end
 end

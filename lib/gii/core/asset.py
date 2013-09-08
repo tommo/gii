@@ -255,10 +255,10 @@ class AssetNode(object):
 		return self.setMetaData( key, value, **option )
 		
 
-	def getCacheFile( self, name ):
+	def getCacheFile( self, name, **option ):
 		cacheFile = self.cacheFiles.get( name, None )
 		if cacheFile: return cacheFile
-		cacheFile = CacheManager.get().getCacheFile( self.getPath(), name )
+		cacheFile = CacheManager.get().getCacheFile( self.getPath(), name, **option )
 		self.cacheFiles[ name ] = cacheFile
 		return cacheFile
 
@@ -485,11 +485,13 @@ class AssetLibrary(object):
 			pattern = re.compile( p )
 			matchPatterns.append( pattern )
 		for path, node in self.assetTable.items():
+			if ( noVirtualNode and node.isVirtual() ) : continue
 			for matchPattern in matchPatterns:
-				if matchPattern.match( node.getType() ) and \
-					not ( noVirtualNode and node.isVirtual() ):
-					result.append(node)
-					break
+				mo = matchPattern.match( node.getType() )
+				if not mo: continue
+				if mo.end() < len( node.getType() ) - 1 : continue
+				result.append(node)
+				break
 		return result
 
 	#tools
