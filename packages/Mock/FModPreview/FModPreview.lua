@@ -41,7 +41,7 @@ end
 
 function FModPreview:startPlaying()
 	_stat( 'playing preview' )
-	self.playingEvent = self.soundSource:playEvent2D( self.target:getFullName() )
+	self.playingEvent = self.soundSource:playEvent2D( self.target )
 end
 
 

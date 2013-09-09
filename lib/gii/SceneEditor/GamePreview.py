@@ -77,6 +77,7 @@ class GamePreview( SceneEditorModule ):
 		self.paused = None
 		
 		tool = self.window.addWidget( QtGui.QToolBar( self.window ), expanding = False )
+		self.qtool = tool
 		self.toolbar = self.addToolBar( 'game_preview', tool )
 
 		self.canvas.module = self
@@ -202,6 +203,8 @@ class GamePreview( SceneEditorModule ):
 			signals.emitNow( 'preview.resume' )
 			self.updateTimer = self.window.startTimer( 60, self.updateView )
 
+		self.window.setWindowTitle( 'Game Preview [ RUNNING ]')
+		self.qtool.setStyleSheet('QToolBar{ border-top: 1px solid rgb(0, 255, 0); }')
 		self.paused = False
 		runtime.resume()
 		self.setFocus()
@@ -216,6 +219,10 @@ class GamePreview( SceneEditorModule ):
 		self.enableMenu( 'main/preview/stop_game',  False )
 		self.enableMenu( 'main/preview/pause_game', False )
 		self.enableMenu( 'main/preview/start_game', True )
+		
+		self.window.setWindowTitle( 'Game Preview' )
+		self.qtool.setStyleSheet('QToolBar{ border-top: none; }')
+
 		self.paused = None
 		self.updateTimer = None
 
@@ -230,6 +237,10 @@ class GamePreview( SceneEditorModule ):
 		logging.info('pause game preview')
 		self.enableMenu( 'main/preview/start_game', True )
 		self.enableMenu( 'main/preview/pause_game',  False )
+		
+		self.window.setWindowTitle( 'Game Preview[ Paused ]')
+		self.qtool.setStyleSheet('QToolBar{ border-top: 1px solid rgb(255, 0, 0); }')
+
 		self.paused = True
 		self.getRuntime().pause()
 
