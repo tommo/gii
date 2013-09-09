@@ -15,6 +15,7 @@ import SceneGraphEditor
 import SceneView
 
 import LayerManager
+import GlobalObjectManager
 import DeployManager
 
 import FModPreview

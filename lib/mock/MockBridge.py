@@ -8,7 +8,7 @@ from gii.moai.MOAIRuntime \
 	MOAIRuntime, MOAILuaDelegate, LuaTableProxy, _G, _LuaTable, _LuaObject
 
 
-
+signals.register ( 'mock.init' )
 ##----------------------------------------------------------------##
 _MOCK = LuaTableProxy( None )
 
@@ -96,6 +96,7 @@ class MockBridge( EditorModule ):
 
 	def initMockGame( self ):
 		_MOCK.init( self.configPath, True )
+		signals.emit( 'mock.init' )
 
 	def onProjectLoaded(self,prj):
 		self.syncAssetLibrary()

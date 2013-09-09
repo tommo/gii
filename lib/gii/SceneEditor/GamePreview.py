@@ -70,7 +70,6 @@ class GamePreview( SceneEditorModule ):
 			dock  = 'right'
 			)
 
-		# self.window.setStayOnTop( True )
 
 		self.canvas = self.window.addWidget( GamePreviewCanvas( self.window )  )
 		self.canvas.startRefreshTimer()

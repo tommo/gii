@@ -46,7 +46,7 @@ class LayerManager( SceneEditorModule ):
 
 	def onLoad( self ):
 		#UI
-		self.windowTitle = 'Scenegraph'
+		self.windowTitle = 'Layers'
 		self.window = self.requestDockWindow( 'LayerManager',
 			title     = 'Layers',
 			size      = (120,120),

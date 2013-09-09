@@ -77,6 +77,8 @@ class ScriptLibrary( EditorModule ):
 		self.modifiedScripts = {}
 		for node in modified:
 			self.loadScript( node )
+			
+		signals.emit( 'script.reload' )
 
 	def releaseScript( self, node ):
 		_GII.unloadGameModule( self.convertScriptPath( node ) ) #force
