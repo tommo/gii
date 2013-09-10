@@ -57,8 +57,11 @@ local function buildGiiModel( model )
 		local typeid = f.__type
 
 		if typeid == '@enum' then
-			assert ( type(f.__enum) == 'table' )
-			pmodel:addLuaEnumFieldInfo( id, f.__enum, option )
+			if type(f.__enum) == 'table' then
+				pmodel:addLuaEnumFieldInfo( id, f.__enum, option )
+			else
+				_error('invalid enum type')
+			end
 		elseif typeid == '@asset' then
 			pmodel:addLuaAssetFieldInfo( id, f.__assettype, option )
 		else

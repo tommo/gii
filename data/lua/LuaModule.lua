@@ -90,7 +90,7 @@ function _createEmptyModule( path, fullpath )
 		local result = requireInModule( path, ... )
 		if result then
 			for k, v in pairs( result ) do
-				if type(k) == 'string' and not k:startWith('_') then
+				if type(k) == 'string' and not rawget( m, k ) and not k:startWith('_') then
 					m[ k ] = v
 				end
 			end

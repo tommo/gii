@@ -128,9 +128,9 @@ class GlobalObjectManager( SceneEditorModule ):
 		obj.setName( obj, name )
 
 	def onObjectAdded( self, node ):
-		self.tree.addNode( obj )
-		self.tree.editNode( obj )
-		self.tree.selectNode( obj )
+		self.tree.addNode( node )
+		self.tree.editNode( node )
+		self.tree.selectNode( node )
 
 	def onObjectRemoved( self, node ):
 		self.tree.removeNode( node )

@@ -83,13 +83,13 @@ local function collectEntity( e, typeId, collection )
 end
 
 local function collectComponent( entity, typeId, collection )
-	if isEditorEntity( e ) then return end
+	if isEditorEntity( entity ) then return end
 	for com in pairs( entity.components ) do
 		if isInstanceOf( com, typeId ) then
-			collection[ e ] = entity
+			collection[ com ] = true
 		end
 	end
-	for child in pairs( e.children ) do
+	for child in pairs( entity.children ) do
 		collectComponent( child, typeId, collection )
 	end
 end
@@ -105,6 +105,16 @@ function SceneGraphEditor:enumerateObjects( typeId )
 		
 		for e in pairs( scene.entities ) do
 			collectEntity( e, typeId, collection )
+		end
+
+		for e in pairs( collection ) do
+			table.insert( result, e )
+		end
+
+	else
+		local collection = {}	
+		for e in pairs( scene.entities ) do
+			collectComponent( e, typeId, collection )
 		end
 
 		for e in pairs( collection ) do
@@ -150,6 +160,10 @@ function getSceneObjectRepr( enumerator, obj )
 		return obj:getName() or '<unnamed>'
 	end
 	--todo: component
+	local ent = obj._entity
+	if ent then
+		return ent:getName() or '<unnamed>'
+	end
 	return nil
 end
 
@@ -158,7 +172,6 @@ function getSceneObjectTypeRepr( enumerator, obj )
 	if class then
 		return class.__name
 	end
-	--todo: component
 	return nil
 end
 

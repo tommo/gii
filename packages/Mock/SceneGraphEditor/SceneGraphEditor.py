@@ -229,7 +229,10 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.tree.blockSignals( False )
 
 	def onSelectionHint( self, selection ):
-		self.changeSelection( selection )
+		if selection._entity:
+			self.changeSelection( selection._entity )			
+		else:
+			self.changeSelection( selection )
 
 	def onPreviewStart( self ):
 		if not self.activeScene: return
