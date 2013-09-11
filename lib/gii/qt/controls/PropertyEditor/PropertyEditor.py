@@ -100,6 +100,8 @@ class PropertyEditor( QtGui.QWidget ):
 		self.target = target
 
 		assert(model)
+
+		self.refreshing = True
 		#install field info
 		for field in model.fieldList:
 			if field.getOption('noedit'): continue
@@ -110,6 +112,8 @@ class PropertyEditor( QtGui.QWidget ):
 			editorClas  =  getFieldEditor( ft )
 			if not editorClas: continue
 			editor = self._buildSubEditor( field, label, editorClas )
+		self.refreshing = False
+		
 		self.refreshAll()
 		self.show()
 

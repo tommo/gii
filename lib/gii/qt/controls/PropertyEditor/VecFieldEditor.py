@@ -4,7 +4,7 @@ from FieldEditorControls import *
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 
-
+##----------------------------------------------------------------##
 class VecEditorWidget( QtGui.QWidget ):
 	def __init__( self, dim, parent ):
 		super(VecEditorWidget, self).__init__( parent )

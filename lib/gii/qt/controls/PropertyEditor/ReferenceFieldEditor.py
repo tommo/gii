@@ -195,7 +195,11 @@ class ReferenceFieldWidget( QtGui.QWidget ):
 			self.buttonClear.show()
 
 	def setRefName( self, name ):
-		self.buttonRef.setText( name )
+		if isinstance( name, (unicode, str) ):
+			self.buttonRef.setText( name )
+		else:
+			logging.error('unknown ref name type:' + repr( name ) )
+			self.buttonRef.setText( repr( name ) )
 
 ##----------------------------------------------------------------##
 class ReferenceFieldEditor( FieldEditor ):	

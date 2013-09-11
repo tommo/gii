@@ -23,6 +23,7 @@ local function unloadRegistredObject( registry, m, info )
 
 end
 
+
 local function onModuleReleased( path, m )
 	_stat( 'release game module', path, m )
 	--release classes
@@ -39,6 +40,9 @@ local function onModuleReleased( path, m )
 	if editor then
 		editor:scheduleRefreshScene()
 	end
+
+	--reload GlobalObject
+
 end
 
 local function onModuleLoaded( path, m )
