@@ -9,18 +9,31 @@ function AnimPreview:onLoad()
 	self:addSibling( CanvasNavigate() )
 	self.dragging = false
 	self:attach( mock.InputScript( { device = scn.inputDevice }) )
-	self.sprite = self:attach( mock.AuroraSprite{ blend = 'alpha' } )
-	self.sprite:setFPS( 10 )
+	self.spriteType = false
+	self.sprite = false
 end
 
-function AnimPreview:showAuroraSprite( path )
+function AnimPreview:showAnimSprite( path )
+	if self.sprite then self:detach( self.sprite ) end
+
 	local anim, node = mock.loadAsset( path )
-	self.sprite:load( anim )	
-	local names = {}
-	for k in pairs( anim.animations ) do
-		table.insert( names, k )
+	if node.type == 'aurora_sprite' then
+		self.spriteType = 'aurora'
+		self.sprite = self:attach( mock.AuroraSprite{ blend = 'alpha' } )
+		self.sprite:setFPS( 10 )
+		self.sprite:load( anim )	
+		local names = {}
+		for k in pairs( anim.animations ) do
+			table.insert( names, k )
+		end
+		return names
+	elseif node.type == 'spine' then
+		self.spriteType = 'spine'
+		self.sprite = self:attach( mock.SpineSprite() )
+		self.sprite:setSprite( path )
+		local names = { anim:getAnimationNames() }
+		return names
 	end
-	return names
 end
 
 function AnimPreview:setAnimClip( name )
@@ -56,11 +69,3 @@ end
 --------------------------------------------------------------------
 preview = scn:addEntity( AnimPreview() )
 --------------------------------------------------------------------
-
-function showAuroraSprite( path )
-	return preview:showAuroraSprite( path )
-end
-
-function setAnimClip( name )
-	return preview:setAnimClip( name )
-end

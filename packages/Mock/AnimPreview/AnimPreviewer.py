@@ -29,20 +29,19 @@ class AnimPreviewer(AssetPreviewer):
 		return self.container
 
 	def accept(self, assetNode):
-		return assetNode.getType() in ('aurora_sprite')
+		return assetNode.getType() in [ 'aurora_sprite', 'spine'  ]
 
 	def onStart(self, assetNode):
 		atype = assetNode.getType()
-		self.listAnim.clear()
-		if atype=='aurora_sprite':
-			self.canvas.makeCurrent()
-			animNames = self.canvas.safeCall( 'showAuroraSprite', assetNode.getPath() )
-			self.canvas.startUpdateTimer( 60 )
-			if animNames:
-				for i, name in animNames.items():
-					self.listAnim.addItem( name )
-				firstItem = self.listAnim.item( 0 )
-				if firstItem: firstItem.setSelected(True)
+		self.listAnim.clear()		
+		self.canvas.makeCurrent()
+		animNames = self.canvas.safeCallMethod( 'preview', 'showAnimSprite', assetNode.getPath() )
+		self.canvas.startUpdateTimer( 60 )
+		if animNames:
+			for i, name in animNames.items():
+				self.listAnim.addItem( name )
+			firstItem = self.listAnim.item( 0 )
+			if firstItem: firstItem.setSelected(True)
 
 		
 	def onStop(self):
@@ -52,7 +51,7 @@ class AnimPreviewer(AssetPreviewer):
 	def onItemSelectionChanged(self):
 		for item in self.listAnim.selectedItems():
 			name = item.text()
-			self.canvas.safeCall( 'setAnimClip', name )
+			self.canvas.safeCallMethod( 'preview', 'setAnimClip', name )
 
 AnimPreviewer().register()
 
