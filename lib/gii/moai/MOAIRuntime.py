@@ -80,9 +80,15 @@ class MOAIRuntime( EditorModule ):
 		_G._setTarget( lua.globals() )
 		_G['GII_PYTHON_BRIDGE']            = bridge
 		_G['GII_DATA_PATH']                = self.getApp().getPath('data')
+		
 		_G['GII_PROJECT_SCRIPT_PATH']      = self.getProject().getScriptPath()
 		_G['GII_PROJECT_ASSET_PATH']       = self.getProject().getAssetPath()
 		_G['GII_PROJECT_SCRIPT_LIB_PATH']  = self.getProject().getScriptLibPath()
+		#TODO
+		_G['GII_VERSION_MAJOR']            = 0
+		_G['GII_VERSION_MINOR']            = 1
+		_G['GII_VERSION_REV']              = 0
+
 		logging.info( 'loading gii lua runtime' )
 
 		aku.runScript(

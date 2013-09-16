@@ -226,6 +226,7 @@ function CmdCreateEntity:redo()
 	local entType = mock.getEntityType( self.entityName )
 	assert( entType )
 	local entity = entType()
+	entity.__guid = MOAIEnvironment.generateGUID()
 	self.created = entity
 	editor.scene:addEntity( entity )
 	gii.emitPythonSignal('entity.added', self.created )
@@ -272,17 +273,18 @@ function CmdCreateComponent:init( option )
 end
 
 function CmdCreateComponent:redo()	
-	local entType = mock.getComponentType( self.componentName )
-	assert( entType )
-	local component = entType()
+	local comType = mock.getComponentType( self.componentName )
+	assert( comType )
+	local component = comType()
+	component.__guid = MOAIEnvironment.generateGUID()
 	self.createdComponent = component
 	self.targetEntity:attach( component )
-	gii.gii.emitPythonSignal( 'component.added', component, self.targetEntity )	
+	gii.emitPythonSignal( 'component.added', component, self.targetEntity )	
 end
 
 function CmdCreateComponent:undo()
 	self.targetEntity:detach( self.createdComponent )
-	gii.gii.emitPythonSignal( 'component.removed', component, self.targetEntity )	
+	gii.emitPythonSignal( 'component.removed', component, self.targetEntity )	
 end
 
 --------------------------------------------------------------------
@@ -359,3 +361,5 @@ function CmdReparentEntity:undo()
 	--todo:
 end
 
+
+--------------------------------------------------------------------

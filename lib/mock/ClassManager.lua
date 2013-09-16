@@ -50,5 +50,5 @@ local function onModuleLoaded( path, m )
 end
 
 
-gii.addGameModuleReleaseListener( onModuleReleased )
-gii.addGameModuleLoadListener( onModuleLoaded )
+GameModule.addGameModuleReleaseListener( onModuleReleased )
+GameModule.addGameModuleLoadListener( onModuleLoaded )

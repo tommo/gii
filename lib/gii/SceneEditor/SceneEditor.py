@@ -82,7 +82,7 @@ class SceneEditor( SceneEditorModule ):
 		self.addTool( 'scene/deploy', label = 'Deploy' )
 
 		#menu
-		self.addMenu( 'main/scene' )
+		self.addMenu( 'main/scene', dict( label = 'Scene' ) )
 
 		signals.connect( 'app.start', self.postStart )
 		return True

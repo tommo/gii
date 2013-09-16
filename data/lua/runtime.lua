@@ -2,9 +2,17 @@ module( 'gii', package.seeall )
 --------------------------------------------------------------------
 --Env
 --------------------------------------------------------------------
-GII_VERSION_MAJOR = 0
-GII_VERSION_MINOR = 1
-GII_VERSION_REV   = 0
+--[[
+	PROJECT ENVIRONMENT VARIABLES
+	* should be set by either editor or runtime launcher 
+]]
+-- GII_VERSION_MAJOR           = 0
+-- GII_VERSION_MINOR           = 1
+-- GII_VERSION_REV             = 0
+-- GII_PROJECT_SCRIPT_PATH     = 'game/script'
+-- GII_PROJECT_ASSET_PATH      = 'game/asset'
+-- GII_PROJECT_SCRIPT_LIB_PATH = 'game/lib'
+
 
 --------------------------------------------------------------------
 --Setup package path
@@ -28,6 +36,8 @@ end
 python.seterrfunc( lupaErrFunc ) --lupa err func
 
 --------------------------------------------------------------------
+--EDITOR MODULES
+--------------------------------------------------------------------
 doRuntimeScript 'MOAInterfaces.lua' --REMOVE THIS?
 
 ----------------------------
@@ -36,8 +46,15 @@ doRuntimeScript	'debugger.lua'
 
 --------------------------------------------------------------------
 doRuntimeScript	'MOAIModel.lua'
-doRuntimeScript	'LuaModule.lua'
 
 ----------------------------
 doRuntimeScript	'RenderContext.lua'
 doRuntimeScript	'EditCanvasContext.lua'
+
+
+--------------------------------------------------------------------
+--DEFAULT RUNTIME MODULES
+--------------------------------------------------------------------
+require 'GameModule'
+GameModule.addGameModulePath( GII_PROJECT_ASSET_PATH .. '/?.lua' )
+GameModule.addGameModulePath( GII_PROJECT_ASSET_PATH .. '/?/init.lua' )

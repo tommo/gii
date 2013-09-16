@@ -63,10 +63,10 @@ class ScriptLibrary( EditorModule ):
 
 	def loadScript( self, node ):
 		path = self.convertScriptPath( node )
-		if _GII.hasGameModule( path ):
-			m, err = _GII.reloadGameModule( path )
+		if _GII.GameModule.hasGameModule( path ):
+			m, err = _GII.GameModule.reloadGameModule( path )
 		else:
-			m, err = _GII.loadGameModule( path ) #force
+			m, err = _GII.GameModule.loadGameModule( path ) #force
 		if not m:
 			for info in err.values():
 				logging.error( 'script error <%s>: %s', info.path, info.msg )
@@ -81,11 +81,11 @@ class ScriptLibrary( EditorModule ):
 		signals.emit( 'script.reload' )
 
 	def releaseScript( self, node ):
-		_GII.unloadGameModule( self.convertScriptPath( node ) ) #force
+		_GII.GameModule.unloadGameModule( self.convertScriptPath( node ) ) #force
 
 	def onStart( self ):
 		for node in self.getAssetLibrary().enumerateAsset( 'lua' ):
-			_GII.loadGameModule( self.convertScriptPath( node ) )
+			_GII.GameModule.loadGameModule( self.convertScriptPath( node ) )
 
 	def compileScript( self, node, dstPath, version = 'lua' ):
 		if version == 'lua':

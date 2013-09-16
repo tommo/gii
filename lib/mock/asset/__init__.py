@@ -1,4 +1,5 @@
 import SceneAsset
+import PrefabAsset
 
 import TextureAsset
 import Deck2DAsset
@@ -8,6 +9,7 @@ import AuroraAsset
 import SpineAsset
 
 import ParticleAsset
+import PexAsset
 
 import FmodAsset
 

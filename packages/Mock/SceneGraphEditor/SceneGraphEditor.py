@@ -80,17 +80,18 @@ class SceneGraphEditor( SceneEditorModule ):
 			)
 
 		self.addMenu( 'main/entity', dict( label = 'Entity' ) )
-		self.addMenuItem( 'main/entity/add_entity',    dict( label = 'Create', shortcut = 'ctrl+shift+N' ) )
-		self.addMenuItem( 'main/entity/remove_entity', dict( label = 'Remove'  ) )
-		self.addMenuItem( 'main/entity/clone_entity',  dict( label = 'Clone',  shortcut = 'ctrl+d' ) )
+		self.addMenuItem( 'main/entity/add_empty_entity', dict( label = 'Create Empty', shortcut = 'ctrl+alt+N' ) )
+		self.addMenuItem( 'main/entity/add_entity',       dict( label = 'Create', shortcut = 'ctrl+shift+N' ) )
+		self.addMenuItem( 'main/entity/remove_entity',    dict( label = 'Remove'  ) )
+		self.addMenuItem( 'main/entity/clone_entity',     dict( label = 'Clone',  shortcut = 'ctrl+d' ) )
 
 
 		#Toolbars
-		self.addTool( 'scene_graph/add_sibling', label = '+obj' )
-		self.addTool( 'scene_graph/add_child', label = '+child' )
-		self.addTool( 'scene_graph/add_component', label = '+com' )
-		self.addTool( 'scene_graph/clone_entity', label = 'clone' )
+		self.addTool( 'scene_graph/add_sibling', label = 'ent' )
+		self.addTool( 'scene_graph/add_child', label = '.ent' )
+		self.addTool( 'scene_graph/add_component', label = 'com' )
 		self.addTool( 'scene_graph/remove_entity', label = '-obj' )
+		self.addTool( 'scene_graph/load_prefab', label = '+prefab' )
 		self.addTool( 'scene_graph/save_prefab', label = '>prefab' )
 
 		self.addTool( 'scene/refresh', label = 'REFRESH')
@@ -155,26 +156,43 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.refreshScheduled = True
 
 	def refreshCreatorMenu( self ):
+		def addEntityMenuItem( name ):
+			if name == '----': 
+				self.entityCreatorMenu.addChild( '----' )
+				return
+			self.entityCreatorMenu.addChild({
+					'name'     : 'create_entity_'+name,
+					'label'    : name,
+					'command'  : 'scene_editor/create_entity',
+					'command_args' : dict( name = name )
+				})
+
+		def addComponentMenuItem( name ):
+			if name == '----': 
+				self.componentCreatorMenu.addChild( '----' )
+				return
+			self.componentCreatorMenu.addChild({
+					'name'     : 'create_component_'+name,
+					'label'    : name,
+					'command'  : 'scene_editor/create_component',
+					'command_args' : dict( name = name )
+				})
+
 		self.entityCreatorMenu.clear()
 		self.componentCreatorMenu.clear()
+
 		registry = _MOCK.getEntityRegistry()
-
+		#entity
+		keys = sorted( registry.keys() )
+		addEntityMenuItem( 'Entity' )
+		addEntityMenuItem( '----' )
 		for entityName in sorted( registry.keys() ):
-			self.entityCreatorMenu.addChild({
-					'name'     : 'create_entity_'+entityName,
-					'label'    : entityName,
-					'command'  : 'scene_editor/create_entity',
-					'command_args' : dict( name = entityName )
-				})
+			if entityName!='Entity': addEntityMenuItem( entityName )
 
+		#component
 		registry = _MOCK.getComponentRegistry()
 		for comName in sorted( registry.keys() ):
-			self.componentCreatorMenu.addChild({
-					'name'     : 'create_component_'+comName,
-					'label'    : comName,
-					'command'  : 'scene_editor/create_component',
-					'command_args' : dict( name = comName )
-				})
+			addComponentMenuItem( comName )
 
 	def onUpdate( self ):
 		if self.refreshScheduled:
@@ -208,6 +226,8 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.saveScene()
 		elif name == 'add_entity':
 			self.entityCreatorMenu.popUp()
+		elif name == 'add_empty_entity':
+			self.doCommand( 'scene_editor/create_entity', name = 'Entity' )
 		elif name == 'remove_entity':
 			self.doCommand( 'scene_editor/remove_entity' )
 		elif name == 'clone_entity':

@@ -62,8 +62,6 @@ class ParticleEditor( AssetEditorModule ):
 		self.states = Box()
 		self.states.items=[]
 		self.scriptModifyFlag = 0
-
-		
 	
 	def getName(self):
 		return 'particle_editor'
