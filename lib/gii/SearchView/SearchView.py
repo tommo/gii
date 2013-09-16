@@ -74,14 +74,18 @@ class SearchViewWidget( QtGui.QWidget ):
 
 	def onTermsChanged( self, text ):
 		if text:
+			globs = text.split()
+			globs1 = []
+			for g in globs:
+				if len(g) > 1: globs1.append( g.upper() )
 			for entry in self.entries:
-				entry.visible = entry.matchQuery( text )
+				entry.visible = entry.matchQuery( globs1 )
 				self.treeResult.setNodeVisible( entry, entry.visible )
 		else:
 			for entry in self.entries:
 				entry.visible = True
 				self.treeResult.setNodeVisible( entry, True )
-				
+
 		if not self.treeResult.getSelection():
 			item = self.treeResult.itemAt( 0, 0 )
 			if item:
@@ -174,11 +178,14 @@ class SearchEntry(object):
 		self.typeName = typeName
 		self.iconName = iconName
 
-	def matchQuery( self, text ):
-		ratio = fuzz.partial_ratio( text, self.name )
-		if ratio > 80: return True
-		ratio = fuzz.partial_ratio( text, self.typeName )
-		if ratio > 80: return True
+	def matchQuery( self, globs ):
+		# ratio = fuzz.partial_ratio( text, self.name )
+		# if ratio > 80: return True
+		# ratio = fuzz.partial_ratio( text, self.typeName )
+		# if ratio > 80: return True
+		for t in globs:
+			if t in self.name.upper(): return True
+			if t in self.typeName.upper(): return True
 		return False
 
 
