@@ -281,5 +281,13 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def onItemChanged( self, item, col ):
 		pass
 
+	def keyPressEvent( self, ev ):
+		key = ev.key()
+		if key in ( Qt.Key_Delete, Qt.Key_Backspace ):			
+			self.onDeletePressed()
+		return super( GenericTreeWidget, self ).keyPressEvent( ev )
+
+	def onDeletePressed( self ):
+		pass
 	
 		

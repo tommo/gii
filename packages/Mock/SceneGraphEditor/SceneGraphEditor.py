@@ -87,9 +87,12 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/entity/add_entity',       dict( label = 'Create', shortcut = 'ctrl+shift+N' ) )
 		self.addMenuItem( 'main/entity/remove_entity',    dict( label = 'Remove'  ) )
 		self.addMenuItem( 'main/entity/clone_entity',     dict( label = 'Clone',  shortcut = 'ctrl+d' ) )
+		
+		self.addMenuItem( 'main/entity/----' )
+		self.addMenuItem( 'main/entity/add_component',    dict( label = 'Add Component', shortcut = 'ctrl+shift++' ) )
 
+		self.addMenuItem( 'main/entity/----' )
 		self.addMenuItem( 'main/find/find_entity', dict( label = 'Find In Scene', shortcut = 'ctrl+g' ) )
-
 
 		#Toolbars
 		self.addTool( 'scene_graph/add_sibling', label = 'ent' )
@@ -118,6 +121,8 @@ class SceneGraphEditor( SceneEditorModule ):
 			import EntityEditor
 
 		registerSearchEnumerator( sceneObjectSearchEnumerator )
+		registerSearchEnumerator( entityNameSearchEnumerator )
+		registerSearchEnumerator( componentNameSearchEnumerator )
 
 	def onStart( self ):
 		self.refreshCreatorMenu()
@@ -211,17 +216,33 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'add_sibling':
-			self.entityCreatorMenu.popUp()
+			requestSearchView( 
+				info    = 'select entity type to create',
+				context = 'entity_creation',
+				on_selection = lambda obj: 
+					self.doCommand( 'scene_editor/create_entity', name = obj )
+				)
+		
 		elif name == 'add_child':
 			self.entityCreatorMenu.popUp()
+		
 		elif name == 'add_component':
-			self.componentCreatorMenu.popUp()
+			requestSearchView( 
+				info    = 'select component type to create',
+				context = 'component_creation',
+				on_selection = lambda obj: 
+					self.doCommand( 'scene_editor/create_component', name = obj )
+				)
+		
 		elif name == 'remove_entity':
 			self.doCommand( 'scene_editor/remove_entity' )
+		
 		elif name == 'clone_entity':
 			self.doCommand( 'scene_editor/clone_entity' )
+		
 		elif name == 'refresh':
 			self.scheduleRefreshScene()
+		
 		elif name == 'save_prefab':
 			requestSearchView( 
 				info    = 'select a perfab node to store',
@@ -229,6 +250,7 @@ class SceneGraphEditor( SceneEditorModule ):
 				type    = 'prefab',
 				on_selection = lambda obj: self.createPrefab( obj )				
 				)
+		
 		elif name == 'load_prefab':
 			requestSearchView( 
 				info    = 'select a perfab node to instantiate',
@@ -243,16 +265,35 @@ class SceneGraphEditor( SceneEditorModule ):
 		name = menu.name
 		if name == 'close_scene':
 			self.closeScene()
+
 		elif name == 'save_scene':
 			self.saveScene()
+
 		elif name == 'add_entity':
-			self.entityCreatorMenu.popUp()
+			requestSearchView( 
+				info    = 'select entity type to create',
+				context = 'entity_creation',
+				on_selection = lambda obj: 
+					self.doCommand( 'scene_editor/create_entity', name = obj )
+				)
+
+		elif name == 'add_component':
+			requestSearchView( 
+				info    = 'select component type to create',
+				context = 'component_creation',
+				on_selection = lambda obj: 
+					self.doCommand( 'scene_editor/create_component', name = obj )
+				)
+
 		elif name == 'add_empty_entity':
 			self.doCommand( 'scene_editor/create_entity', name = 'Entity' )
+
 		elif name == 'remove_entity':
 			self.doCommand( 'scene_editor/remove_entity' )
+
 		elif name == 'clone_entity':
 			self.doCommand( 'scene_editor/clone_entity' )
+
 		elif name == 'find_entity':
 			requestSearchView( 
 				context = 'scene',
@@ -403,6 +444,9 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			self.module.doCommand( 'scene_editor/reparent_entity', target = target.node )
 		super( GenericTreeWidget, self ).dropEvent( ev )
 
+	def onDeletePressed( self ):
+		self.module.doCommand( 'scene_editor/remove_entity' )
+
 ##----------------------------------------------------------------##
 class SceneGraphTreeItem( QtGui.QTreeWidgetItem ):
 	pass
@@ -429,3 +473,22 @@ def sceneObjectSearchEnumerator( typeId, context ):
 		entry = ( obj, name, typeName, None )
 		result.append( entry )
 	return result
+
+def entityNameSearchEnumerator( typeId, context ):
+	if not context in [ 'entity_creation' ] : return None
+	registry = _MOCK.getEntityRegistry()
+	result = []
+	for name in sorted( registry.keys() ):
+		entry = ( name, name, 'Entity', None )
+		result.append( entry )
+	return result
+
+def componentNameSearchEnumerator( typeId, context ):
+	if not context in [ 'component_creation' ] : return None
+	registry = _MOCK.getComponentRegistry()
+	result = []
+	for name in sorted( registry.keys() ):
+		entry = ( name, name, 'Entity', None )
+		result.append( entry )
+	return result
+		

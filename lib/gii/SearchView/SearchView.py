@@ -80,8 +80,11 @@ class SearchViewWidget( QtGui.QWidget ):
 		if text:
 			globs = text.split()
 			globs1 = []
-			for g in globs:
-				if len(g) > 1: globs1.append( g.upper() )
+			if len( globs ) > 1:
+				for g in globs:
+					if len(g) > 1: globs1.append( g.upper() )
+			else:
+				globs1 = [ g.upper() for g in globs ]
 			for entry in self.entries:
 				entry.visible = entry.matchQuery( globs1 )
 				self.treeResult.setNodeVisible( entry, entry.visible )
@@ -127,7 +130,8 @@ class SearchViewTextTerm( QtGui.QLineEdit):
 		key = ev.key()
 		if key == Qt.Key_Down:
 			self.browser.focusResultTree()
-
+			self.browser.treeResult.keyPressEvent( ev )
+			return
 		return super( SearchViewTextTerm, self ).keyPressEvent( ev )
 
 ##----------------------------------------------------------------##
@@ -248,7 +252,7 @@ class SearchView( EditorModule ):
 		if self.window.searchState: return
 		self.window.searchState = 'cancel'
 		if self.onCancel:
-			self.onCancel( obj )
+			self.onCancel()
 		self.window.hide() 
 
 	def registerSearchEnumerator( self, enumerator ):

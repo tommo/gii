@@ -2,149 +2,12 @@ from gii.core import *
 from gii.core.model import *
 from PropertyEditor import FieldEditor, registerFieldEditor
 from gii.qt.helpers import addWidgetWithLayout, QColorF, unpackQColor
-from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 
 from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
-
-#TODO: rewrite this!!!!!!!!!!
-
-##----------------------------------------------------------------##
-def getModulePath( path ):
-	import os.path
-	return os.path.dirname( __file__ ) + '/' + path
-
-ReferenceBrowserForm,BaseClass = uic.loadUiType(getModulePath('referenceBrowser.ui'))
-
-##----------------------------------------------------------------##
-class WindowAutoHideEventFilter(QObject):
-	def eventFilter(self, obj, event):
-		e = event.type()
-		if e == QEvent.WindowDeactivate:
-			obj.hide()
-		return QObject.eventFilter( self, obj, event )
-
-##----------------------------------------------------------------##
-class AssetRefBrowser( QtGui.QWidget ):
-	_singleton = None
-	@staticmethod
-	def get():
-		if AssetRefBrowser._singleton:
-			return AssetRefBrowser._singleton
-		return AssetRefBrowser( None )
-
-	@staticmethod
-	def start( editor, targetType, context ):
-		browser = AssetRefBrowser.get()
-		browser.setEditor( editor )
-		browser.move( editor.getBrowserPos() )
-		browser.setTarget( targetType, context )
-		browser.show()
-
-		
-	def __init__(self, *args ):
-		super( AssetRefBrowser, self ).__init__( *args )
-		AssetRefBrowser._singleton = self
-
-		self.setWindowFlags( Qt.Popup )
-		self.ui = ReferenceBrowserForm()
-		self.ui.setupUi( self )
-		
-		self.installEventFilter( WindowAutoHideEventFilter( self ) )
-		self.editor = None
-		self.treeResult = addWidgetWithLayout( 
-				ReferenceBrowserTree(
-					self.ui.containerResultTree,
-					multiple_selection = False,
-					editable = False
-				) 
-			)
-		self.ui.textTerms.textEdited.connect( self.onTermsChanged )
-		self.ui.textTerms.returnPressed.connect( self.onTermsReturn )
-		self.treeResult.browser = self
-		self.entries = None
-		self.setFixedSize( 400, 250 )
-
-	def sizeHint( self ):
-		return QtCore.QSize( 300, 250 )
-
-	def setTarget( self, assetType, context = None ):
-		self.ui.textTerms.setText('')
-		self.targetType = assetType
-		self.entries = AssetLibrary.get().enumerateAsset( assetType )
-		self.ui.textTerms.setFocus()
-		self.treeResult.rebuild()
-
-	def setEditor( self, editor ):
-		self.editor = editor		
-
-	def setSelection( self, obj ):
-		if self.editor:
-			self.editor.setValue( obj )
-			self.editor.setFocus()
-			self.hide()
-
-	def getObjectRepr( self, obj ):
-		return obj.getNodePath()
-
-	def getObjectTypeRepr( self, obj ):
-		return obj.getType()
-
-	def onTermsChanged( self, text ):
-		#TODO: set filter
-		pass
-
-	def onTermsReturn( self ):
-		self.treeResult.setFocus()		
-		#todo:select first
-
-	def hideEvent( self, ev ):
-		self.setEditor( None )
-		self.treeResult.clear()
-		return super( AssetRefBrowser, self ).hideEvent( ev )
-	
-##----------------------------------------------------------------##
-class ReferenceBrowserTree(GenericTreeWidget):
-	def getHeaderInfo( self ):
-		return [('Path', 300), ('Type', 80)]
-
-	def getRootNode( self ):
-		return self.browser
-
-	def saveTreeStates( self ):
-		pass
-
-	def loadTreeStates( self ):
-		pass
-
-	def getNodeParent( self, node ): # reimplemnt for target node	
-		if node == self.getRootNode(): return None
-		return self.getRootNode()
-		
-	def getNodeChildren( self, node ):
-		if node == self.browser:
-			return self.browser.entries
-		else:
-			return []
-
-	def updateItemContent( self, item, node, **option ):
-		if node == self.getRootNode(): return
-		name = self.browser.getObjectRepr( node )
-		typeName = self.browser.getObjectTypeRepr( node )		
-		item.setText( 0, name )
-		item.setText( 1, typeName )
-		
-	def onItemSelectionChanged(self):
-		for node in self.getSelection():
-			self.browser.setSelection( node )
-			return
-
-	def onItemActivated( self, item, col ):
-		node = item.node
-		self.browser.setSelection( node )
-
+from gii.SearchView import requestSearchView
 
 ##----------------------------------------------------------------##
 class ReferenceFieldButton( QtGui.QToolButton ):
@@ -202,7 +65,6 @@ class ReferenceFieldWidget( QtGui.QWidget ):
 			logging.error('unknown ref name type:' + repr( name ) )
 			self.buttonRef.setText( repr( name ) )
 
-
 ##----------------------------------------------------------------##
 class AssetRefFieldEditor( FieldEditor ):	
 	def setTarget( self, parent, field ):
@@ -213,7 +75,7 @@ class AssetRefFieldEditor( FieldEditor ):
 		self.target = None
 
 	def clear( self ):
-		AssetRefBrowser.get().hide()
+		pass
 
 	def get( self ):
 		#TODO
@@ -241,7 +103,19 @@ class AssetRefFieldEditor( FieldEditor ):
 		return self.refWidget
 
 	def openBrowser( self ):			
-		AssetRefBrowser.start( self, self.targetType, self.targetContext)
+		requestSearchView( 
+			context = 'asset',
+			type    = self.targetType,
+			on_selection = self.onSearchSelection,
+			on_cancel    = self.onSearchCancel
+			)
+
+	def onSearchSelection( self, target ):
+		self.setValue( target )
+		self.setFocus()
+
+	def onSearchCancel( self ):
+		self.setFocus()
 
 	def getBrowserPos( self ):
 		size = self.refWidget.size()

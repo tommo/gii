@@ -4,7 +4,9 @@ import TextureManager
 import TexturePreview
 
 import DeckEditor
+
 import ParticleEditor
+import ParticlePreview
 
 import FontPreview
 import StyleSheetEditor

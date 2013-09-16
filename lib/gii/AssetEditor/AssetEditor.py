@@ -40,7 +40,8 @@ class AssetEditorModule( QtEditorModule ):
 class AssetEditor( AssetEditorModule ):
 	def __init__( self ):
 		self.selectionManager = SelectionManager( 'asset' )
-
+		self.projectScanScheduled = False
+		
 	def getName( self ):
 		return 'asset_editor'
 
