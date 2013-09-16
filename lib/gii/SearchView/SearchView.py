@@ -92,7 +92,9 @@ class SearchViewWidget( QtGui.QWidget ):
 				item.setSelected( True )
 
 	def onTermsReturn( self ):
-		self.focusResultTree()
+		for node in self.treeResult.getSelection():
+			self.setSelection( node.obj )
+			return
 
 	def hideEvent( self, ev ):
 		if not self.searchState:

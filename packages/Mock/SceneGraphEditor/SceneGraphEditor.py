@@ -1,6 +1,8 @@
 import random
 ##----------------------------------------------------------------##
 from gii.core        import app, signals
+from gii.core.model  import *
+
 from gii.qt          import QtEditorModule
 
 from gii.qt.IconCache                  import getIcon
@@ -8,7 +10,7 @@ from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.moai.MOAIRuntime import MOAILuaDelegate
 from gii.SceneEditor      import SceneEditorModule
 
-from gii.SearchView       import registerSearchEnumerator
+from gii.SearchView       import requestSearchView, registerSearchEnumerator
 
 ##----------------------------------------------------------------##
 from PyQt4           import QtCore, QtGui, uic
@@ -86,7 +88,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/entity/remove_entity',    dict( label = 'Remove'  ) )
 		self.addMenuItem( 'main/entity/clone_entity',     dict( label = 'Clone',  shortcut = 'ctrl+d' ) )
 
-		self.addMenuItem( 'main/find/find_scene_object', dict( label = 'Find In Scene', shortcut = 'ctrl+g' ) )
+		self.addMenuItem( 'main/find/find_entity', dict( label = 'Find In Scene', shortcut = 'ctrl+g' ) )
 
 
 		#Toolbars
@@ -237,9 +239,13 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.doCommand( 'scene_editor/remove_entity' )
 		elif name == 'clone_entity':
 			self.doCommand( 'scene_editor/clone_entity' )
-		elif name == 'find_in_scene':
-			#TODO
-			pass
+		elif name == 'find_entity':
+			requestSearchView( 
+				context = 'scene',
+				type    = _MOCK.Entity,
+				on_selection = self.selectEntity
+				)
+
 		elif name == 'remove_component':
 			context = menu.getContext()
 			if context:
@@ -255,6 +261,9 @@ class SceneGraphEditor( SceneEditorModule ):
 		for e in selection:
 			self.tree.selectNode( e, add = True)
 		self.tree.blockSignals( False )
+
+	def selectEntity( self, target ):
+		self.changeSelection( target )
 
 	def onSelectionHint( self, selection ):
 		if selection._entity:
@@ -388,7 +397,7 @@ def sceneObjectSearchEnumerator( typeId, context ):
 	objects = modelMgr.enumerateObjects( typeId, context )
 	if not objects: return None
 	result = []
-	for obj in objs:
+	for obj in objects:
 		name     = modelMgr.getObjectRepr( obj )
 		typeName = modelMgr.getObjectTypeRepr( obj )
 		entry = ( obj, name, typeName, None )
