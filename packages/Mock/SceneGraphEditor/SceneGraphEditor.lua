@@ -215,21 +215,36 @@ gii.registerObjectEnumerator{
 --------------------------------------------------------------------
 --- COMMAND
 --------------------------------------------------------------------
-CLASS: CmdCreateEntity ( EditorCommand )
+CLASS: CmdCreateEntityBase ( EditorCommand )
+function CmdCreateEntityBase:createEntity()
+end
+
+function CmdCreateEntityBase:redo()
+	local entity = self:createEntity()
+	if not entity then return false end
+	entity.__guid = MOAIEnvironment.generateGUID()
+	self.created = entity
+	editor.scene:addEntity( entity )
+	gii.emitPythonSignal('entity.added', self.created )
+end
+
+function CmdCreateEntityBase:undo()
+	self.created:destroyNow()
+	gii.emitPythonSignal('entity.removed', self.created )
+end
+
+--------------------------------------------------------------------
+CLASS: CmdCreateEntity ( CmdCreateEntityBase )
 	:register( 'scene_editor/create_entity' )
 
 function CmdCreateEntity:init( option )
 	self.entityName = option.name
 end
 
-function CmdCreateEntity:redo()
+function CmdCreateEntity:createEntity()
 	local entType = mock.getEntityType( self.entityName )
 	assert( entType )
-	local entity = entType()
-	entity.__guid = MOAIEnvironment.generateGUID()
-	self.created = entity
-	editor.scene:addEntity( entity )
-	gii.emitPythonSignal('entity.added', self.created )
+	return entType()
 end
 
 function CmdCreateEntity:undo()
@@ -363,3 +378,39 @@ end
 
 
 --------------------------------------------------------------------
+CLASS: CmdCreatePrefab ( EditorCommand )
+	:register( 'scene_editor/create_prefab' )
+
+function CmdCreatePrefab:init( option )
+	self.prefabPath = option['prefab']
+	self.entity     = option['entity']
+end
+
+function CmdCreatePrefab:redo()
+	local data = mock.serializeEntity( self.entity )
+	local str  = MOAIJsonParser.encode( data )
+	local file = io.open( self.prefabPath, 'wb' )
+	if file then
+		file:write( str )
+		file:close()
+	else
+		_error( 'can not write to scene file', self.prefabPath )
+		return false
+	end
+	return true
+end
+
+--------------------------------------------------------------------
+
+CLASS: CmdCreatePrefabEntity ( CmdCreateEntityBase )
+	:register( 'scene_editor/create_prefab_entity' )
+
+function CmdCreatePrefabEntity:init( option )
+	self.prefabPath = option['prefab']
+end
+
+function CmdCreatePrefabEntity:createEntity()
+	local prefab, node = mock.loadAsset( self.prefabPath )
+	if not prefab then return false end
+	return prefab:createInstance()
+end

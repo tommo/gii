@@ -223,7 +223,21 @@ class SceneGraphEditor( SceneEditorModule ):
 		elif name == 'refresh':
 			self.scheduleRefreshScene()
 		elif name == 'save_prefab':
-			pass
+			requestSearchView( 
+				info    = 'select a perfab node to store',
+				context = 'asset',
+				type    = 'prefab',
+				on_selection = lambda obj: self.createPrefab( obj )				
+				)
+		elif name == 'load_prefab':
+			requestSearchView( 
+				info    = 'select a perfab node to instantiate',
+				context = 'asset',
+				type    = 'prefab',
+				on_selection = 
+					lambda obj: 
+						self.doCommand( 'scene_editor/create_prefab_entity', prefab = obj.getNodePath() )
+				)
 
 	def onMenu( self, menu ):
 		name = menu.name
@@ -290,6 +304,18 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def onEntityRemoved( self, entity ):
 		pass
+
+	def createPrefab( self, targetPrefab ):
+		selection = self.getSelection()
+		if not selection: return
+		if len( selection ) > 1:
+			return alertMessage( 'multiple entities cannot be converted into prefab' )
+		target = selection[0]
+		self.doCommand( 'scene_editor/create_prefab', 
+			entity = target, 
+			prefab = targetPrefab.getAbsFilePath()
+		)
+
 
 ##----------------------------------------------------------------##
 def _sortEntity( a, b ):

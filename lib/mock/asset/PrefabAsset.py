@@ -42,8 +42,8 @@ class PrefabCreator(AssetCreator):
 		fullpath = AssetLibrary.get().getAbsPath( nodepath )
 		data={
 			'_assetType' : 'prefab', #checksum
-			'map'     :False,
-			'body'    :False #empty
+			'map'        : False ,
+			'body'       : False #empty
 		}
 		if os.path.exists(fullpath):
 			raise Exception('File already exist:%s'%fullpath)

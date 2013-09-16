@@ -23,6 +23,9 @@ class EditorCommand( object ):
 	def canMerge( self, prevCommand ):
 		return False
 
+	def canUndo( self ):
+		return True
+
 
 ##----------------------------------------------------------------##
 class EditorCommandStack( object ):
@@ -42,6 +45,9 @@ class EditorCommandStack( object ):
 		return len( self.redoStack ) > 0
 
 	def pushCommand( self, cmd, redo = False ):
+		if not cmd.canUndo():
+			return cmd.redo()
+
 		assert not hasattr( cmd, 'inStack' )
 		count = len( self.undoStack )
 		cmd.inStack = True

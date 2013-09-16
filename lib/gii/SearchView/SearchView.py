@@ -53,6 +53,8 @@ class SearchViewWidget( QtGui.QWidget ):
 		self.entries = None
 		self.setFixedSize( 400, 250 )		
 
+		self.setInfo( None )
+
 	def sizeHint( self ):
 		return QtCore.QSize( 300, 250 )
 
@@ -63,6 +65,8 @@ class SearchViewWidget( QtGui.QWidget ):
 		self.entries = self.module.enumerateSearch( typeId, context )
 		self.treeResult.rebuild()
 		self.searchState = None
+		self.selectFirstItem()
+
 
 	def setSelection( self, obj ):
 		self.selected = True
@@ -86,6 +90,9 @@ class SearchViewWidget( QtGui.QWidget ):
 				entry.visible = True
 				self.treeResult.setNodeVisible( entry, True )
 
+		self.selectFirstItem()
+
+	def selectFirstItem( self ):
 		if not self.treeResult.getSelection():
 			item = self.treeResult.itemAt( 0, 0 )
 			if item:
@@ -103,11 +110,16 @@ class SearchViewWidget( QtGui.QWidget ):
 		return super( SearchViewWidget, self ).hideEvent( ev )
 
 	def focusResultTree( self ):
-		if not self.treeResult.getSelection():
-			item = self.treeResult.itemAt( 0, 0 )
-			if item:
-				item.setSelected( True )
+		self.selectFirstItem()
 		self.treeResult.setFocus()
+
+	def setInfo( self, text ):
+		if text:
+			self.ui.labelInfo.setText( text )
+			self.ui.labelInfo.show()
+		else:
+			self.ui.labelInfo.hide()
+
 
 ##----------------------------------------------------------------##
 class SearchViewTextTerm( QtGui.QLineEdit):
@@ -213,6 +225,7 @@ class SearchView( EditorModule ):
 		typeId  = option.get( 'type', None )
 		context = option.get( 'context', None )
 		action  = option.get( 'action', 'select' )
+		info    = option.get( 'info', None )
 
 		self.onSelection = option.get( 'on_selection', None )
 		self.onCancel    = option.get( 'on_cancel', None )
@@ -222,6 +235,7 @@ class SearchView( EditorModule ):
 		self.window.raise_()
 		self.window.setFocus()
 		self.window.setQuery( typeId, context )
+		self.window.setInfo( info )
 
 	def selectObject( self, obj ):
 		if self.window.searchState: return

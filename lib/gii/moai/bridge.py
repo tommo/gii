@@ -319,5 +319,9 @@ def registerLuaEditorCommand( fullname, cmdCreator ):
 		def undo( self ):
 			cmd = self.luaCmd
 			return cmd.undo( cmd )
+
+		def canUndo( self ):
+			cmd = self.luaCmd
+			return cmd.canUndo( cmd )
 			
 	return LuaEditorCommand

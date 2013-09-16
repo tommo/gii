@@ -184,4 +184,7 @@ end
 function EditorCommand:undo()
 end
 
+function EditorCommand:canUndo()
+	return true
+end
 
