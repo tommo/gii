@@ -35,10 +35,13 @@ class AssetTreeView( GenericTreeWidget ):
 
 	def updateItemContent( self, item, node, **option ):
 		if option.get('basic', True):
+			assetType=node.getType()
 			item.setText( 0, node.getName() )
 			item.setText( 1, '' )
-			item.setText( 2, node.getType() )
-			assetType=node.getType()
+			if assetType in [ 'file', 'folder' ] :
+				item.setText( 2, '' )
+			else:
+				item.setText( 2, assetType )
 
 			iconName = app.getAssetLibrary().getAssetIcon( assetType )
 			item.setIcon(0, getIcon(iconName,'normal'))

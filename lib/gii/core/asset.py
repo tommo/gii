@@ -478,6 +478,13 @@ class AssetLibrary(object):
 	def enumerateAsset( self, patterns, **options ):
 		noVirtualNode = options.get( 'no_virtual', False )
 		result = []
+		#all
+		if not patterns:
+			for path, node in self.assetTable.items():
+				if ( noVirtualNode and node.isVirtual() ) : continue
+				result.append( node )
+			return result
+		#match patterns
 		if isinstance( patterns, ( str, unicode ) ):
 			patterns = [ patterns ]
 		matchPatterns = []

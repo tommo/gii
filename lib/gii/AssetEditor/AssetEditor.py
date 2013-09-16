@@ -13,6 +13,8 @@ from gii.qt.controls.Menu   import MenuManager
 from gii.qt.QtEditorModule  import QtEditorModule
 
 import gii.FileWatcher
+from gii.SearchView       import requestSearchView, registerSearchEnumerator
+
 
 
 ##----------------------------------------------------------------##
@@ -66,11 +68,16 @@ class AssetEditor( AssetEditorModule ):
 		self.addMenu('main/asset', {'label':'&Asset'})
 		self.addMenuItem(
 			'main/asset/reset_all_asset', 
-			{ 'label' : 'Reset Asset Library' }
+			dict( label='Reset Asset Library' )
 		)
 		self.addMenuItem(
 			'main/asset/clear_free_meta', 
-			{ 'label' : 'Clear Metadata' }
+			dict( label='Clear Metadata' )
+		)
+
+		self.addMenuItem(
+			'main/find/find_asset', 
+			dict( label = 'Find Asset', shortcut = 'ctrl+t' )
 		)
 
 		self.projectScanTimer = self.mainWindow.startTimer( 1, self.checkProjectScan )
@@ -80,6 +87,7 @@ class AssetEditor( AssetEditorModule ):
 		self.setupMainWindow()
 		self.containers  = {}
 		signals.connect( 'app.start', self.postStart )
+		registerSearchEnumerator( assetSearchEnumerator )
 		
 	def postStart( self ):
 		logging.info('opening up asset editor')
@@ -132,9 +140,18 @@ class AssetEditor( AssetEditorModule ):
 			self.getAssetLibrary().reset()
 		elif name == 'clear_free_meta':
 			self.getAssetLibrary().clearFreeMetaData()
+		elif name == 'find_asset':
+			requestSearchView( 
+				context = 'asset',
+				on_selection = self.selectAsset
+				)
 
 	def onTool( self, tool ):
 		print tool.name
+
+	def selectAsset( self, obj ):
+		print( obj )
+		getAssetSelectionManager().changeSelection( obj )
 		
 AssetEditor().register()
 
@@ -155,3 +172,13 @@ class QtMainWindow( MainWindow ):
 ##----------------------------------------------------------------##
 def getAssetSelectionManager():
 	return app.getModule('asset_editor').selectionManager
+
+
+##----------------------------------------------------------------##
+def assetSearchEnumerator( typeId, context ):
+		if not context in [ 'all', 'asset' ] : return
+		result = []
+		for node in AssetLibrary.get().enumerateAsset( typeId ):
+			entry = ( node, node.getNodePath(), node.getType(), None )
+			result.append( entry )
+		return result

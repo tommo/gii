@@ -16,6 +16,7 @@ from PyQt4.QtCore    import Qt
 ##----------------------------------------------------------------##
 
 from gii.moai.MOAIRuntime import MOAILuaDelegate
+from gii.SearchView       import requestSearchView
 ##----------------------------------------------------------------##
 
 signals.register( 'scene.modified' )
@@ -84,6 +85,11 @@ class SceneEditor( SceneEditorModule ):
 		#menu
 		self.addMenu( 'main/scene', dict( label = 'Scene' ) )
 
+		self.addMenuItem(
+			'main/file/open_scene', 
+			dict( label = 'Open Scene', shortcut = 'ctrl+o' )
+		)
+
 		signals.connect( 'app.start', self.postStart )
 		return True
 
@@ -129,6 +135,9 @@ class SceneEditor( SceneEditorModule ):
 
 	def onMenu(self, node):
 		name = node.name
+		if name == 'open_scene':
+			#TODO
+			pass
 
 	def onTool( self, tool ):
 		name = tool.name

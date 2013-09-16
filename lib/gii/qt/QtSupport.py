@@ -81,6 +81,7 @@ class QtSupport( QtEditorModule ):
 			]
 		)	
 		# requestColor('lll')
+		self.menu.addChild('&Find')
 
 	def getSharedMenubar( self ):
 		return self.sharedMenuBar

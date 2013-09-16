@@ -196,6 +196,11 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		if item:
 			self.editItem( item, col )
 
+	def setNodeVisible( self, node, visible = True ):
+		item = self.getItemByNode( node )
+		if item:
+			item.setHidden( not visible )
+
 	def sortOrder( self ):
 		headerView = self.header()
 		return headerView.sortIndicatorOrder()

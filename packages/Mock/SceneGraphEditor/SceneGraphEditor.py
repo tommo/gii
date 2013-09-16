@@ -8,6 +8,8 @@ from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.moai.MOAIRuntime import MOAILuaDelegate
 from gii.SceneEditor      import SceneEditorModule
 
+from gii.SearchView       import registerSearchEnumerator
+
 ##----------------------------------------------------------------##
 from PyQt4           import QtCore, QtGui, uic
 from PyQt4.QtCore    import Qt
@@ -65,10 +67,9 @@ class SceneGraphEditor( SceneEditorModule ):
 			{ 'label':'Create Component' }
 			)
 
-		self.addMenuItem( 'main/scene/search', dict( label = 'Search', shortcut = 'Ctrl+P' ) )
 
 		#menu
-		self.addMenuItem( 'main/scene/close_scene', dict( label = 'Close' ) )
+		self.addMenuItem( 'main/file/close_scene', dict( label = 'Close Scene' ) )
 		self.addMenuItem( 'main/scene/save_scene',  dict( label = 'Save', shortcut = 'Ctrl+S' ) )
 
 		self.addMenu( 'main/scene/----' )
@@ -85,14 +86,16 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/entity/remove_entity',    dict( label = 'Remove'  ) )
 		self.addMenuItem( 'main/entity/clone_entity',     dict( label = 'Clone',  shortcut = 'ctrl+d' ) )
 
+		self.addMenuItem( 'main/find/find_scene_object', dict( label = 'Find In Scene', shortcut = 'ctrl+g' ) )
+
 
 		#Toolbars
 		self.addTool( 'scene_graph/add_sibling', label = 'ent' )
 		self.addTool( 'scene_graph/add_child', label = '.ent' )
 		self.addTool( 'scene_graph/add_component', label = 'com' )
 		self.addTool( 'scene_graph/remove_entity', label = '-obj' )
-		self.addTool( 'scene_graph/load_prefab', label = '+prefab' )
-		self.addTool( 'scene_graph/save_prefab', label = '>prefab' )
+		self.addTool( 'scene_graph/load_prefab', label = 'prefab' )
+		self.addTool( 'scene_graph/save_prefab', label = '->prefab' )
 
 		self.addTool( 'scene/refresh', label = 'REFRESH')
 
@@ -111,6 +114,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		#editor
 		if self.getModule('introspector'):
 			import EntityEditor
+
+		registerSearchEnumerator( sceneObjectSearchEnumerator )
 
 	def onStart( self ):
 		self.refreshCreatorMenu()
@@ -232,6 +237,9 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.doCommand( 'scene_editor/remove_entity' )
 		elif name == 'clone_entity':
 			self.doCommand( 'scene_editor/clone_entity' )
+		elif name == 'find_in_scene':
+			#TODO
+			pass
 		elif name == 'remove_component':
 			context = menu.getContext()
 			if context:
@@ -372,3 +380,17 @@ class SceneGraphTreeItem( QtGui.QTreeWidgetItem ):
 
 ##----------------------------------------------------------------##
 SceneGraphEditor().register()
+
+##----------------------------------------------------------------##
+def sceneObjectSearchEnumerator( typeId, context ):
+	if not context in ['scene', 'all']: return None
+	modelMgr = ModelManager.get()
+	objects = modelMgr.enumerateObjects( typeId, context )
+	if not objects: return None
+	result = []
+	for obj in objs:
+		name     = modelMgr.getObjectRepr( obj )
+		typeName = modelMgr.getObjectTypeRepr( obj )
+		entry = ( obj, name, typeName, None )
+		result.append( entry )
+	return result

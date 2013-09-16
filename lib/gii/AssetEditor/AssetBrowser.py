@@ -66,7 +66,7 @@ class AssetBrowser( AssetEditorModule ):
 			])
 
 		self.addTool( 'asset_browser/create_asset', label = '+' )
-
+		signals.connect( 'selection.changed', self.onSelectionChanged )
 
 	def onStart( self ):
 		self.getAssetLibrary().scheduleScanProject()
@@ -79,6 +79,10 @@ class AssetBrowser( AssetEditorModule ):
 	def onStop( self ):
 		self.treeView.saveTreeStates()
 
+	def onSetFocus( self ):
+		self.getMainWindow().raise_()
+		self.treeView.setFocus()
+		self.container.raise_()
 
 	def onUnload(self):
 		#persist expand state
@@ -218,8 +222,20 @@ class AssetBrowser( AssetEditorModule ):
 		if name == 'create_asset':
 			self.creatorMenu.popUp()
 
+	def onSelectionChanged( self, selection, context ):
+		if context == 'asset':
+			self.setFocus()
+			self.treeView.refreshingSelection = True
+			for obj in selection:
+				self.treeView.selectNode( obj )
+			self.treeView.refreshingSelection = False
+
 ##----------------------------------------------------------------##
 class AssetBrowserTreeView( AssetTreeView ):
+	def __init__( self, *args ):
+		super( AssetBrowserTreeView, self ).__init__( *args )
+		self.refreshingSelection = False
+
 	def onClicked(self, item, col):
 		pass
 
@@ -229,6 +245,7 @@ class AssetBrowserTreeView( AssetTreeView ):
 			node.edit()
 
 	def onItemSelectionChanged(self):
+		if self.refreshingSelection: return
 		items = self.selectedItems()
 		if items:
 			selections = [item.node for item in items]

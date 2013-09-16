@@ -71,8 +71,7 @@ class ReferenceBrowser( QtGui.QWidget ):
 	def setTarget( self, typeId, context = None ):
 		self.ui.textTerms.setText('')
 		self.targetType = typeId
-		entries = ModelManager.get().enumerateObjects( typeId, context )
-		self.entries = entries
+		self.entries = ModelManager.get().enumerateObjects( typeId, context )
 		self.ui.textTerms.setFocus()
 		self.treeResult.rebuild()
 
