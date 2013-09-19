@@ -1,12 +1,12 @@
 --------------------------------------------------------------------
-scn = gii.createMockEditorScene()
+scn = mock_edit.createEditorCanvasScene()
 --------------------------------------------------------------------
 
-CLASS: Deck2DEditor( EditorEntity )
+CLASS: Deck2DEditor( mock_edit.EditorEntity )
 
 function Deck2DEditor:onLoad()
-	self:addSibling( CanvasGrid() )
-	self:addSibling( CanvasNavigate() )
+	self:addSibling( mock_edit.CanvasGrid() )
+	self:addSibling( mock_edit.CanvasNavigate() )
 	self:attach( mock.InputScript{ device = scn.inputDevice } )
 	self:attach( mock.DrawScript{ priority = 1000 } )
 

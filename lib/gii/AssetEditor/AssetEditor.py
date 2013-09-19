@@ -143,6 +143,7 @@ class AssetEditor( AssetEditorModule ):
 			self.getAssetLibrary().clearFreeMetaData()
 		elif name == 'find_asset':
 			requestSearchView( 
+				info    = 'search for asset',
 				context = 'asset',
 				on_selection = self.selectAsset
 				)

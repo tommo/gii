@@ -79,13 +79,14 @@ class MockBridge( EditorModule ):
 		game.saveConfig( game, self.configPath )
 
 	def setupLuaModule( self ):
-		self.runtime.runScript( self.getModulePath( 'MockBridge.lua' ) )
-		self.runtime.runScript( self.getModulePath( 'ClassManager.lua' ) )
-		self.runtime.runScript( self.getModulePath( 'MOAIModels.lua' ) )
-		self.runtime.runScript( self.getModulePath( 'Commands.lua' ) )
-		#TODO: use lua to handle editor modules
-		self.runtime.runScript( self.getModulePath( 'EditorCanvasScene.lua' ) )
-		self.runtime.runScript( self.getModulePath( 'EditorCanvasControls.lua' ) )
+		self.runtime.requireModule( 'mock_edit' )
+		# self.runtime.runScript( self.getModulePath( 'MockBridge.lua' ) )
+		# self.runtime.runScript( self.getModulePath( 'ClassManager.lua' ) )
+		# self.runtime.runScript( self.getModulePath( 'MOAIModels.lua' ) )
+		# self.runtime.runScript( self.getModulePath( 'Commands.lua' ) )
+		# #TODO: use lua to handle editor modules
+		# self.runtime.runScript( self.getModulePath( 'EditorCanvasScene.lua' ) )
+		# self.runtime.runScript( self.getModulePath( 'EditorCanvasControls.lua' ) )
 
 		_MOCK._setTarget( _G['mock'] )
 		_MOCK.setBasePaths( self.getProject().getPath(), self.getProject().getAssetPath() )

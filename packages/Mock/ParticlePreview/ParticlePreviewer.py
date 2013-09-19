@@ -13,9 +13,7 @@ def _getModulePath( path ):
 
 class ParticlePreviewer(AssetPreviewer):
 	def createWidget(self, container):
-		self.canvas=addWidgetWithLayout(
-			MOAIEditCanvas(container)			
-		)
+		self.canvas = MOAIEditCanvas(container)
 		self.canvas.loadScript( _getModulePath('ParticlePreview.lua') )
 		return self.canvas
 

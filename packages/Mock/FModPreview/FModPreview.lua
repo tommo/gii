@@ -1,7 +1,7 @@
 --------------------------------------------------------------------
-scn = gii.createMockEditorScene()
+scn = mock_edit.createEditorCanvasScene()
 --------------------------------------------------------------------
-CLASS: FModPreview ( mock.Entity )
+CLASS: FModPreview ( mock_edit.EditorEntity )
 function FModPreview:onLoad()
 	self.prop = self:addProp{
 		blend = 'alpha'

@@ -1,10 +1,10 @@
 --------------------------------------------------------------------
-scn = gii.createMockEditorScene()
+scn = mock_edit.createEditorCanvasScene()
 --------------------------------------------------------------------
 
-CLASS: Preview ( mock.Entity )
+CLASS: Preview ( mock_edit.EditorEntity )
 function Preview:onLoad()
-	self:addSibling( CanvasGrid() )
+	self:addSibling( mock_edit.CanvasGrid() )
 	self.prop = self:addProp{
 		blend = 'alpha'
 	}

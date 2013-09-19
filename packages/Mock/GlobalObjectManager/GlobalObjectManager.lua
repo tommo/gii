@@ -20,9 +20,10 @@ function remove( node )
 end
 
 
-
 --------------------------------------------------------------------
-CLASS: CmdCreateGlobalObject ( EditorCommand )
+--COMMAND: create global object
+--------------------------------------------------------------------
+CLASS: CmdCreateGlobalObject ( mock_edit.EditorCommand )
 	:register( 'scene_editor/create_global_object' )
 
 function CmdCreateGlobalObject:init( option )

@@ -178,6 +178,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def selectNode( self, node, **kw ):
 		if not kw.get( 'add', False ):
 				self.selectionModel().clearSelection()
+		if not node: return
 		if isinstance( node, (tuple, list) ):
 			for n in node:
 				item = self.getItemByNode( n )
@@ -195,6 +196,11 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		item = self.getItemByNode( node )
 		if item:
 			self.editItem( item, col )
+
+	def scrollToNode( self, node ):
+		item = self.getItemByNode( node )
+		if item:
+			self.scrollToItem( item )
 
 	def setNodeVisible( self, node, visible = True ):
 		item = self.getItemByNode( node )

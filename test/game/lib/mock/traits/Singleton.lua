@@ -1,1 +1,0 @@
-local SingleTouch=newTrait('SingleTouch')

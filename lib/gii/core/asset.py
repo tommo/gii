@@ -416,6 +416,7 @@ class AssetLibrary(object):
 	def __init__(self):
 		assert not AssetLibrary._singleton
 		AssetLibrary._singleton=self
+		self.projectScanScheduled = False
 
 		self.assetTable      = {}
 		self.assetManagers   = []

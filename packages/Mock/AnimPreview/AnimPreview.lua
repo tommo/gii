@@ -1,12 +1,12 @@
 --------------------------------------------------------------------
-scn = gii.createMockEditorScene()
+scn = mock_edit.createEditorCanvasScene()
 --------------------------------------------------------------------
 
 CLASS: AnimPreview ( mock.Entity )
 
 function AnimPreview:onLoad()
-	self:addSibling( CanvasGrid() )
-	self:addSibling( CanvasNavigate() )
+	self:addSibling( mock_edit.CanvasGrid() )
+	self:addSibling( mock_edit.CanvasNavigate() )
 	self.dragging = false
 	self:attach( mock.InputScript( { device = scn.inputDevice }) )
 	self.spriteType = false

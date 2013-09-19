@@ -103,8 +103,12 @@ class MainWindow(QtGui.QMainWindow):
 		minSize=windowOption.get('minSize',None)
 		if minSize:
 			window.setMinimumSize(*minSize)
-		else:
-			window.setMinimumSize(20,20)
+		# else:
+		# 	window.setMinimumSize(20,20)
+
+		maxSize=windowOption.get('minSize',None)
+		if maxSize:
+			window.setMaximumSize( *maxSize )
 
 		size=windowOption.get('size',None)
 		if size:

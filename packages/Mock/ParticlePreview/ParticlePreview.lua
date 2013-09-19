@@ -1,12 +1,12 @@
 --------------------------------------------------------------------
-scn = gii.createMockEditorScene()
+scn = mock_edit.createEditorCanvasScene()
 --------------------------------------------------------------------
 
 CLASS: ParticlePreview ( mock.Entity )
 
 function ParticlePreview:onLoad()
-	self:addSibling( CanvasGrid() )
-	self:addSibling( CanvasNavigate() )
+	self:addSibling( mock_edit.CanvasGrid() )
+	self:addSibling( mock_edit.CanvasNavigate() )
 	self:attach( mock.InputScript( { device = scn.inputDevice }) )
 end
 

@@ -238,6 +238,9 @@ class Project(object):
 	def getEnvPath( self, path=None ):
 		return _makePath( self.envPath, path)
 
+	def getEnvLibPath( self, path = None ):
+		return _makePath( self.envLibPath, path)
+
 	def getHostPath( self, path=None ):
 		return _makePath( self.hostPath, path)
 

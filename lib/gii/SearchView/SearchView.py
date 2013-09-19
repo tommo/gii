@@ -1,5 +1,3 @@
-from fuzzywuzzy import fuzz
-
 from gii.core import *
 from gii.core.model import *
 
@@ -28,6 +26,7 @@ class WindowAutoHideEventFilter(QObject):
 class SearchViewWidget( QtGui.QWidget ):
 	def __init__(self, *args ):
 		super( SearchViewWidget, self ).__init__( *args )
+		self.searchState = None
 
 		self.setWindowFlags( Qt.Popup )
 		self.ui = SearchViewForm()
@@ -197,14 +196,19 @@ class SearchEntry(object):
 		self.iconName = iconName
 
 	def matchQuery( self, globs ):
-		# ratio = fuzz.partial_ratio( text, self.name )
-		# if ratio > 80: return True
-		# ratio = fuzz.partial_ratio( text, self.typeName )
-		# if ratio > 80: return True
+		findInName = True
 		for t in globs:
-			if t in self.name.upper(): return True
-			if t in self.typeName.upper(): return True
-		return False
+			if not t in self.name.upper():
+				findInName = False
+				break
+
+		findInType = False
+		for t in globs:
+			if t in self.typeName.upper():
+				findInType = True
+				break
+
+		return findInName or findInType
 
 
 ##----------------------------------------------------------------##

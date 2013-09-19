@@ -85,11 +85,6 @@ class SceneEditor( SceneEditorModule ):
 		#menu
 		self.addMenu( 'main/scene', dict( label = 'Scene' ) )
 
-		self.addMenuItem(
-			'main/file/open_scene', 
-			dict( label = 'Open Scene', shortcut = 'ctrl+o' )
-		)
-
 		signals.connect( 'app.start', self.postStart )
 		return True
 

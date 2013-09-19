@@ -80,7 +80,9 @@ class MOAIRuntime( EditorModule ):
 		_G._setTarget( lua.globals() )
 		_G['GII_PYTHON_BRIDGE']            = bridge
 		_G['GII_DATA_PATH']                = self.getApp().getPath('data')
-		
+
+		_G['GII_LIB_LUA_PATH']              = self.getApp().getPath('lib/lua')
+		_G['GII_PROJECT_ENV_LUA_PATH']     = self.getProject().getEnvLibPath( 'lua' )
 		_G['GII_PROJECT_SCRIPT_PATH']      = self.getProject().getScriptPath()
 		_G['GII_PROJECT_ASSET_PATH']       = self.getProject().getAssetPath()
 		_G['GII_PROJECT_SCRIPT_LIB_PATH']  = self.getProject().getScriptLibPath()
@@ -90,10 +92,14 @@ class MOAIRuntime( EditorModule ):
 		_G['GII_VERSION_REV']              = 0
 
 		logging.info( 'loading gii lua runtime' )
+		aku.runScript(
+			self.getApp().getPath( 'lib/lua/MOAInterfaces.lua' )
+			)
 
 		aku.runScript(
-			self.getApp().getPath( 'data/lua/runtime.lua' )
+			self.getApp().getPath( 'lib/lua/init.lua' )
 			)
+
 
 		_GII._setTarget( _G['gii'] )
 
@@ -253,6 +259,9 @@ class MOAIRuntime( EditorModule ):
 			return False
 		return True
 
+	def requireModule( self, modulename ):
+		return self.runString( 'require "%s"' % modulename )
+
 	def handleException(self,e):
 		code = e.code
 		if code=='TERMINATE':
@@ -314,6 +323,8 @@ class MOAILuaDelegate(object):
 		self.scriptPath   = None
 		self.scriptEnv    = None
 		self.owner        = owner
+		self.name         = option.get( 'name', None )
+
 		self.extraSymbols = {}
 		self.clearLua()
 		signals.connect('moai.clean', self.clearLua)
@@ -331,6 +342,8 @@ class MOAILuaDelegate(object):
 			}
 			if self.scriptEnv:
 				env.update( self.scriptEnv )
+			if self.name:
+				env['_NAME'] = env.name
 			self.luaEnv = runtime.loadLuaWithEnv( scriptPath, env )
 		except Exception, e:
 			logging.exception( e )
@@ -390,6 +403,8 @@ class MOAILuaDelegate(object):
 
 MOAIRuntime().register()
 
+
+##----------------------------------------------------------------##
 class RemoteCommandEvalScript( RemoteCommand ):
 	name = 'eval'
 	def run( self, *args ):

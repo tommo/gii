@@ -215,7 +215,7 @@ gii.registerObjectEnumerator{
 --------------------------------------------------------------------
 --- COMMAND
 --------------------------------------------------------------------
-CLASS: CmdCreateEntityBase ( EditorCommand )
+CLASS: CmdCreateEntityBase ( mock_edit.EditorCommand )
 function CmdCreateEntityBase:createEntity()
 end
 
@@ -253,7 +253,7 @@ function CmdCreateEntity:undo()
 end
 
 --------------------------------------------------------------------
-CLASS: CmdRemoveEntity ( EditorCommand )
+CLASS: CmdRemoveEntity ( mock_edit.EditorCommand )
 	:register( 'scene_editor/remove_entity' )
 
 function CmdRemoveEntity:init( option )
@@ -277,7 +277,7 @@ function CmdRemoveEntity:undo()
 end
 
 --------------------------------------------------------------------
-CLASS: CmdCreateComponent ( EditorCommand )
+CLASS: CmdCreateComponent ( mock_edit.EditorCommand )
 	:register( 'scene_editor/create_component' )
 
 function CmdCreateComponent:init( option )
@@ -303,7 +303,7 @@ function CmdCreateComponent:undo()
 end
 
 --------------------------------------------------------------------
-CLASS: CmdRemoveComponent ( EditorCommand )
+CLASS: CmdRemoveComponent ( mock_edit.EditorCommand )
 	:register( 'scene_editor/remove_component' )
 
 function CmdRemoveComponent:init( option )
@@ -327,7 +327,7 @@ end
 
 
 --------------------------------------------------------------------
-CLASS: CmdCloneEntity ( EditorCommand )
+CLASS: CmdCloneEntity ( mock_edit.EditorCommand )
 	:register( 'scene_editor/clone_entity' )
 
 function CmdCloneEntity:init( option )
@@ -354,7 +354,7 @@ function CmdCloneEntity:undo()
 end
 
 --------------------------------------------------------------------
-CLASS: CmdReparentEntity ( EditorCommand )
+CLASS: CmdReparentEntity ( mock_edit.EditorCommand )
 	:register( 'scene_editor/reparent_entity' )
 
 function CmdReparentEntity:init( option )
@@ -378,7 +378,7 @@ end
 
 
 --------------------------------------------------------------------
-CLASS: CmdCreatePrefab ( EditorCommand )
+CLASS: CmdCreatePrefab ( mock_edit.EditorCommand )
 	:register( 'scene_editor/create_prefab' )
 
 function CmdCreatePrefab:init( option )

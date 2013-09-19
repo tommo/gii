@@ -30,11 +30,7 @@ class AssetBrowser( AssetEditorModule ):
 				dock='left',
 				minSize=(250,250)
 			)
-
-		self.searchBox = self.container.addWidgetFromFile(
-				self.getApp().getPath( 'data/ui/search.ui' ),
-				expanding = False
-			)
+		
 		self.treeView  = self.container.addWidget(AssetBrowserTreeView())
 		toolbar = self.container.addWidget( QtGui.QToolBar(), expanding = False )
 		self.toolbar = self.addToolBar( 'asset_browser', toolbar )
@@ -226,8 +222,13 @@ class AssetBrowser( AssetEditorModule ):
 		if context == 'asset':
 			self.setFocus()
 			self.treeView.refreshingSelection = True
+			
+			firstObj = None
 			for obj in selection:
-				self.treeView.selectNode( obj )
+				firstObj = obj
+				self.treeView.selectNode( obj, add = True )
+			if firstObj: self.treeView.scrollToNode( firstObj )
+
 			self.treeView.refreshingSelection = False
 
 ##----------------------------------------------------------------##

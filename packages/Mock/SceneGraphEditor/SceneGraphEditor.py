@@ -71,8 +71,17 @@ class SceneGraphEditor( SceneEditorModule ):
 
 
 		#menu
-		self.addMenuItem( 'main/file/close_scene', dict( label = 'Close Scene' ) )
-		self.addMenuItem( 'main/scene/save_scene',  dict( label = 'Save', shortcut = 'Ctrl+S' ) )
+		self.addMenuItem(
+			'main/file/open_scene', 
+			dict( label = 'Open Scene', shortcut = 'ctrl+o' )
+			)
+
+		self.addMenuItem( 'main/file/close_scene', 
+			dict( label = 'Close Scene', shortcut = 'Ctrl+W' )
+			)
+		self.addMenuItem( 'main/scene/save_scene',
+			dict( label = 'Save', shortcut = 'Ctrl+S' )
+			)
 
 		self.addMenu( 'main/scene/----' )
 		self.addMenu( 'component_context', dict( label = 'Selected Component' ) )
@@ -126,6 +135,12 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def onStart( self ):
 		self.refreshCreatorMenu()
+
+	# def openSceneByPath( self, path ):
+	# 	print (path)
+	# 	node = self.getAssetLibrary().getAssetNode( path )
+	# 	if node and node.isType( 'scene' ):
+	# 		return self.openScene( node )
 
 	def openScene( self, node ):
 		if self.activeSceneNode == node:			
@@ -265,7 +280,13 @@ class SceneGraphEditor( SceneEditorModule ):
 		name = menu.name
 		if name == 'close_scene':
 			self.closeScene()
-
+		elif name == 'open_scene':
+			requestSearchView( 
+				info    = 'select scene to open',
+				context = 'asset',
+				type    = 'scene',
+				on_selection = self.openScene
+				)
 		elif name == 'save_scene':
 			self.saveScene()
 
@@ -296,6 +317,7 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		elif name == 'find_entity':
 			requestSearchView( 
+				info    = 'search for entity in current scene',
 				context = 'scene',
 				type    = _MOCK.Entity,
 				on_selection = self.selectEntity

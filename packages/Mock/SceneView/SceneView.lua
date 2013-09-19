@@ -1,6 +1,10 @@
-require 'mock'
+require 'mock.env'
+require 'mock_edit'
+
+
+
 --------------------------------------------------------------------
-local inputDevice = createEditorCanvasInputDevice()
+local inputDevice = mock_edit.createEditorCanvasInputDevice()
 
 --------------------------------------------------------------------
 --TODO: use a global configure for this
@@ -39,22 +43,22 @@ local handleSize = 100
 local handleArrowSize = 20
 
 --------------------------------------------------------------------
-CLASS:SceneView ( EditorEntity )
+CLASS:SceneView ( mock_edit.EditorEntity )
 
 function SceneView:onLoad()
 	self.gizmos = {}
-	self.cameraCom = EditorCanvasCamera( _M )
+	self.cameraCom = mock_edit.EditorCanvasCamera( _M )
 	self.camera = self:addChild( 
 			mock.SingleEntity( self.cameraCom )
 		)
 
-	self.grid = self:addChild( CanvasGrid() )
-	self.navi = self:addChild( CanvasNavigate{ 
+	self.grid = self:addChild( mock_edit.CanvasGrid() )
+	self.navi = self:addChild( mock_edit.CanvasNavigate{ 
 			inputDevice = inputDevice,
 			camera      = self.camera
 		} )
 
-	self.handleLayer = self:addChild( CanvasHandleLayer{
+	self.handleLayer = self:addChild( mock_edit.CanvasHandleLayer{
 			inputDevice = inputDevice,
 			camera      = self.camera
 		} )
@@ -76,7 +80,7 @@ function SceneView:readConfig()
 	local cameraCfg = cfg['camera']
 	if cameraCfg then
 		self.camera:setLoc( unpack(cameraCfg['loc']) )
-		self.camera:getComponent( EditorCanvasCamera ):setZoom( cameraCfg['zoom'] )
+		self.camera:getComponent( mock_edit.EditorCanvasCamera ):setZoom( cameraCfg['zoom'] )
 		self.navi.zoom = cameraCfg['zoom']
 	end
 end
@@ -149,13 +153,13 @@ function SceneView:preSceneSerialize( scene )
 	self.scene.metaData [ 'scene_view' ] = {
 		camera = {
 			loc = { cam:getLoc() },
-			zoom = cam:getComponent( EditorCanvasCamera ):getZoom(),
+			zoom = cam:getComponent( mock_edit.EditorCanvasCamera ):getZoom(),
 		}
 	}
 end
 
 --------------------------------------------------------------------
-CLASS: SelectionHandle ( CanvasHandle )
+CLASS: SelectionHandle ( mock_edit.CanvasHandle )
 function SelectionHandle:onMouseUp( btn, x, y )
 	if btn == 'left' then
 		local x1, y1 = view:wndToWorld( x, y )
@@ -165,7 +169,7 @@ function SelectionHandle:onMouseUp( btn, x, y )
 end
 
 --------------------------------------------------------------------
-CLASS: BoundGizmo( CanvasHandle )
+CLASS: BoundGizmo( mock_edit.CanvasHandle )
 function BoundGizmo:onLoad()
 	self.target = false
 	self:attach( mock.DrawScript() )
@@ -189,7 +193,7 @@ function BoundGizmo:onDraw()
 end
 
 --------------------------------------------------------------------
-CLASS: TranslationHandle( CanvasHandle )
+CLASS: TranslationHandle( mock_edit.CanvasHandle )
 function TranslationHandle:__init( option )
 	self.option = option
 	self.activeAxis = false
@@ -277,7 +281,7 @@ end
 
 
 --------------------------------------------------------------------
-CLASS: ScaleHandle( CanvasHandle )
+CLASS: ScaleHandle( mock_edit.CanvasHandle )
 function ScaleHandle:__init( option )
 	self.option = option
 	self.activeAxis = false
@@ -377,7 +381,7 @@ end
 
 function onResize( w, h )
 	if view then
-		view.camera:getComponent( EditorCanvasCamera ):setScreenSize( w, h )
+		view.camera:getComponent( mock_edit.EditorCanvasCamera ):setScreenSize( w, h )
 	end
 end
 
