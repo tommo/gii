@@ -16,13 +16,13 @@ CLASS: DeployTargetIOS ( DeployTarget )
 	:MODEL{
 		Field 'bundleId'     :string() :label('Bundle ID');
 		Field 'appName'      :string() :label('App Name');		
-		Field 'orientation'  :enum( EnumOrientationMode ) :label( 'Orientation' );
 		Field 'device'       :enum( EnumDeviceType ) :label( 'Device' );
+		Field 'orientation'  :enum( EnumOrientationMode ) :label( 'Orientation' );
 	}
 
 function DeployTargetIOS:__init()
 	self.name         = 'IOS_TARGET'
-
+	self.device       = 'universal'
 	self.bundleId     = 'com.hatrix.gii_game'
 	self.appName      = 'GII Game'
 	self.orientation = 'portrait'

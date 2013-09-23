@@ -279,7 +279,7 @@ class AssetNode(object):
 		path = self.getObjectFile( name )
 		if not path: return None
 		return AssetLibrary.get().getAbsProjectPath( path )
-
+	
 	def edit(self):
 		self.getManager().editAsset(self)
 
@@ -705,7 +705,9 @@ class AssetLibrary(object):
 		self.importModifiedAssets()
 		self.saveAssetTable()
 		CacheManager.get().save()
-		
+	
+	def buildProject( self ):
+		pass
 
 	def loadAssetTable(self):
 

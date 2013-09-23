@@ -68,7 +68,8 @@ class DeployManager( SceneEditorModule ):
 
 		self.treeScene = DeploySceneTree( 
 			self.window.containerSceneTree,
-			editable = False,
+			editable = True,
+			sorting  = False,
 			multiple_selection = False
 			)
 		self.treeScene.manager = self
@@ -81,6 +82,7 @@ class DeployManager( SceneEditorModule ):
 		self.addTool( 'deploy_scene/remove_scene',      label = '-')
 		self.addTool( 'deploy_scene/move_up_scene',     label = 'up')
 		self.addTool( 'deploy_scene/move_down_scene',   label = 'down')
+		self.addTool( 'deploy_scene/set_entry_scene',   label = '->ENTRY')
 
 		#deploy target tree
 		layout = QtGui.QVBoxLayout()
@@ -152,8 +154,19 @@ class DeployManager( SceneEditorModule ):
 	def renameDeployTarget( self, target, name ):
 		target.name = name #avoid duplicated name
 
+
+	def addDeployScene( self, sceneNode ):
+		if not sceneNode: return
+		entry = self.delegate.safeCallMethod( 'config', 'addDeployScene', sceneNode.getNodePath() )
+		self.treeScene.addNode( entry )
+		self.treeScene.editNode( entry )
+
+	def renameDeployScene( self, entry, alias ):
+		entry.alias = alias #TODO: avoid duplicated name
+
 	def getDeployScenes( self ):
-		return []
+		scenes =  self.delegate.safeCallMethod( 'config', 'getScenes' )
+		return [ obj for obj in scenes.values() ]
 
 	def onTool( self, tool ):
 		name = tool.name
@@ -167,6 +180,42 @@ class DeployManager( SceneEditorModule ):
 			for target in self.treeTarget.getSelection():
 				self.treeTarget.removeNode( target )
 				self.delegate.safeCallMethod( 'config', 'removeDeployTarget', target )
+
+		elif name == 'add_scene':
+			requestSearchView( 
+				info    = 'select scene to deploy',
+				context = 'asset',
+				type    = 'scene',
+				on_selection = self.addDeployScene
+				)
+
+		elif name == 'remove_scene':
+			for entry in self.treeScene.getSelection():	
+				self.delegate.safeCallMethod( 'config', 'removeDeployScene', entry )
+				self.treeScene.removeNode( entry )
+			self.treeScene.refreshAllContent()
+
+		elif name == 'set_entry_scene':
+			for entry in self.treeScene.getSelection():
+				self.delegate.safeCallMethod( 'config', 'setEntryScene', entry )
+				break
+			self.treeScene.refreshAllContent()
+
+		elif name == 'move_up_scene':
+			for target in self.treeScene.getSelection():
+				self.delegate.safeCallMethod( 'config', 'moveSceneUp', target )
+				self.treeScene.rebuild()
+				self.treeScene.selectNode( target )
+				break
+
+
+
+		elif name == 'move_down_scene':
+			for target in self.treeScene.getSelection():
+				self.delegate.safeCallMethod( 'config', 'moveSceneDown', target )
+				self.treeScene.rebuild()
+				self.treeScene.selectNode( target )
+				break
 
 	def onMenu( self, node ):
 		name = node.name
@@ -194,10 +243,12 @@ def deployTargetSearchEnumerator( typeId, context ):
 		return result
 ##----------------------------------------------------------------##
 
+_BrushEntryScene = QtGui.QBrush( QColorF( 0,0,1 ) )
+_BrushDefault    = QtGui.QBrush()
 
 class DeploySceneTree( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		return [ ('Name',150), ('ID',30), ('Path', -1) ]
+		return [ ('Name',250),  ('Path', 250), ('ID', 30) ]
 
 	def getRootNode( self ):
 		return self.manager
@@ -215,10 +266,17 @@ class DeploySceneTree( GenericTreeWidget ):
 	def updateItemContent( self, item, node, **option ):
 		if node == self.manager: return
 		#TODO:icon
-		item.setText( 0, node.getName() )
-		# item.setText( 1, node.state )
-		item.setText( 2, node.getNodePath() )
+		item.setText( 0, node.alias )
+		item.setText( 1, node.path )
+		item.setText( 2, str(node.id) )
+		if node.entry:
+			item.setIcon(0, getIcon( 'scene' ) )
+		else:
+			item.setIcon(0, getIcon( 'obj' ) )
 
+	def onItemChanged( self, item, col ):
+		entry = item.node
+		self.manager.renameDeployScene( entry, item.text(0) )
 
 ##----------------------------------------------------------------##
 class DeployTargetTree( GenericTreeWidget ):

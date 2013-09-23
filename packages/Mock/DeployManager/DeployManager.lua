@@ -22,3 +22,5 @@ end
 function getDeployTargetTypeRegistry()
 	return mock_edit.getDeployTargetTypeRegistry()
 end
+
+	

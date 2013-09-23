@@ -5,7 +5,8 @@ require 'mock.env'
 
 module( 'mock_edit', package.seeall )
 
-
+--------------------------------------------------------------------
+--CORE
 --------------------------------------------------------------------
 require 'mock_edit.common.ModelHelper'
 require 'mock_edit.common.ClassManager'
@@ -15,5 +16,12 @@ require 'mock_edit.common.bridge'
 
 
 --------------------------------------------------------------------
+--Editor related
+--------------------------------------------------------------------
 require 'mock_edit.EditorCanvas'
 
+
+--------------------------------------------------------------------
+--DEPLOY TARGETs
+--------------------------------------------------------------------
+require 'mock_edit.deploy.DeployTargetIOS'

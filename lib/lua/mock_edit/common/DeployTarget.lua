@@ -36,7 +36,15 @@ CLASS: DeploySceneEntry ()
 		Field 'path'  :string();
 		Field 'alias' :string();
 		Field 'entry' :boolean();
+		Field 'id'    :int();
 	}
+
+function DeploySceneEntry:__init( path )
+	self.path  = path
+	self.alias = 'Scene'
+	self.entry = false
+	self.id    = 1
+end
 
 ---------------------------------------------------------------------
 CLASS: DeployManagerConfig ()
@@ -60,10 +68,42 @@ end
 
 function DeployManagerConfig:removeDeployTarget( target )
 	for i,t in ipairs( self.targets ) do
-		table.remove( self.targets, i )
-		break
+		if t == target then
+			table.remove( self.targets, i )
+			break
+		end
 	end
 end
+
+function DeployManagerConfig:addDeployScene( path )
+	local entry = DeploySceneEntry( path )
+	if not self.scenes[1] then entry.entry = true end
+	table.insert( self.scenes, entry )
+	self:updateSceneId()
+	return entry
+end
+
+function DeployManagerConfig:removeDeployScene( entry )
+	for i,t in ipairs( self.scenes ) do
+		if t == entry then
+			table.remove( self.scenes, i )
+			if entry.entry then
+				local newEntry = self.scenes[1]
+				if newEntry then newEntry.entry = true end
+			end
+			break
+		end
+	end
+	self:updateSceneId()
+end
+
+function DeployManagerConfig:setEntryScene( entry )
+	if entry.entry then return end
+	entry.entry = true
+	for i, t in ipairs( self.scenes ) do
+		if t.entry and t ~= entry then t.entry = false end
+	end
+end 
 
 function DeployManagerConfig:clear()
 	self.scenes  = {}
@@ -72,4 +112,38 @@ end
 
 function DeployManagerConfig:getTargets()
 	return self.targets
+end
+
+function DeployManagerConfig:getScenes()
+	return self.scenes
+end
+
+function DeployManagerConfig:updateSceneId()
+	for i, entry in ipairs( self.scenes ) do
+		entry.id = i
+	end
+end
+
+function DeployManagerConfig:moveSceneUp( target )
+	for i, entry in ipairs( self.scenes ) do
+		if entry == target then
+			if i > 1 then
+				table.remove( self.scenes, i )
+				table.insert( self.scenes, i - 1, target )
+			end
+			return self:updateSceneId()
+		end
+	end
+end
+
+function DeployManagerConfig:moveSceneDown( target )
+	for i, entry in ipairs( self.scenes ) do
+		if entry == target then
+			if i < #self.scenes then
+				table.remove( self.scenes, i )
+				table.insert( self.scenes, i + 1, target )
+			end
+			return self:updateSceneId()
+		end
+	end
 end

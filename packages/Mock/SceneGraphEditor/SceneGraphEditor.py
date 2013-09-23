@@ -51,7 +51,11 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		#Components
 		self.tree = self.container.addWidget( 
-				SceneGraphTreeWidget( sorting = True )
+				SceneGraphTreeWidget( 
+					sorting  = True,
+					editable = True,
+					multiple_selection = True
+				)
 			)
 		
 		self.tree.module = self
@@ -342,6 +346,10 @@ class SceneGraphEditor( SceneEditorModule ):
 	def selectEntity( self, target ):
 		self.changeSelection( target )
 
+	def renameEntity( self, target, name ):
+		target.setName( target, name )
+		signals.emit( 'entity.modified', target )
+
 	def onSelectionHint( self, selection ):
 		if selection._entity:
 			self.changeSelection( selection._entity )			
@@ -427,9 +435,6 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 	def compareNodes( self, node1, node2 ):
 		return node1._priority >= node2._priority
 
-	def createItem( self, node ):
-		return SceneGraphTreeItem()
-
 	def updateItemContent( self, item, node, **option ):
 		name = None
 		if isMockInstance( node,'Scene' ):
@@ -469,15 +474,9 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 	def onDeletePressed( self ):
 		self.module.doCommand( 'scene_editor/remove_entity' )
 
-##----------------------------------------------------------------##
-class SceneGraphTreeItem( QtGui.QTreeWidgetItem ):
-	pass
-	# def __lt__(self, other):
-	# 	node0 = self.node
-	# 	node1 = hasattr(other, 'node') and other.node or None
-	# 	if not node1:
-	# 		return True	
-	# 	return node0._priority <= node1._priority
+	def onItemChanged( self, item, col ):
+		self.module.renameEntity( item.node, item.text(0) )
+
 
 ##----------------------------------------------------------------##
 SceneGraphEditor().register()

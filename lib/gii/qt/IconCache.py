@@ -18,8 +18,8 @@ def getIcon(name, fallback=None):
 	if not os.path.exists(path):
 		if fallback:
 			return getIcon(fallback)
-		logging.info('icon not found:' + path)
-		return None
+		logging.error('icon not found:' + path)
+		return QtGui.QIcon()
 
 	icon = QtGui.QIcon(QtGui.QPixmap(path))
 	_iconCache[name]=icon

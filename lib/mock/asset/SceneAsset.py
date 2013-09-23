@@ -14,7 +14,8 @@ class SceneAssetManager(AssetManager):
 		return data and data.get( '_assetType', None ) == 'scene'
 
 	def importAsset( self, node, reload = False ):
-		node.assetType = 'scene'		
+		node.assetType = 'scene'
+		node.setObjectFile( 'def', node.getFilePath() )
 		return True
 
 	def editAsset( self, node ):

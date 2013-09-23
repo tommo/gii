@@ -128,13 +128,17 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			item.setExpanded( expanded )
 
 	def refreshNode(self, node):
-		item=self.getItemByNode( node )
+		item = self.getItemByNode( node )
 		if item:
-			if item==self.rootItem:
+			if item == self.rootItem:
 				self.rebuild()
 				return
 			self.removeNode( node )
 			self.addNode( node )
+
+	def refreshAllContent( self ):
+		for node in self.nodeDict.keys():
+			self.refreshNodeContent( node )
 
 	def refreshNodeContent( self, node, **option ):
 		item=self.getItemByNode( node )

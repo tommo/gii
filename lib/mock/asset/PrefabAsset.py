@@ -14,7 +14,8 @@ class PrefabAssetManager(AssetManager):
 		return data and data.get( '_assetType', None ) == 'prefab'
 
 	def importAsset( self, node, reload = False ):
-		node.assetType = 'prefab'		
+		node.assetType = 'prefab'
+		node.setObjectFile( 'def', node.getFilePath() )
 		return True
 
 	# def editAsset( self, node ):
