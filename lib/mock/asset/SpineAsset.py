@@ -25,7 +25,7 @@ class SpineAssetManager(AssetManager):
 		baseName, ext = os.path.splitext( node.getNodePath() )
 		atlasPath   = baseName + '.atlas'
 		atlasNode = app.getAssetLibrary().getAssetNode( atlasPath )
-		print atlasPath, atlasNode
+		
 		if atlasNode:
 			node.addDependencyR( atlasNode )
 			atlasNode.setManager( self )
@@ -33,6 +33,10 @@ class SpineAssetManager(AssetManager):
 			node.setObjectFile( 'atlas', atlasNode.getFilePath() )
 
 		return True
+
+	def deployAsset( self, node, context ):
+		super( SpineAssetManager, self ).deployAsset( node, context )
+		
 
 SpineAssetManager().register()
 

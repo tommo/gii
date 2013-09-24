@@ -88,6 +88,15 @@ class TextureAssetManager( AssetManager ):
 		TextureLibrary.get().scheduleImport( node ) #let texture library handle real import
 		return True
 
+	def deployAsset( self, node, context ):
+		super( TextureAssetManager, self ).deployAsset( node, context )
+		groupName = node.getMetaData( 'group', 'default' )
+		group     = app.getModule( 'texture_library' ).getGroup( groupName )
+		if group.cache and group.atlas_allowed:
+			newPath = context.addFile( group.cache )
+			mappedConfigFile = context.getFile( node.getObjectFile('config') )
+			context.replaceInFile( context.getPath( mappedConfigFile ), group.cache, newPath )
+
 def _fixPath( path ):
 		path = path.replace( '\\', '/' ) #for windows
 		if path.startswith('./'): path = path[2:]
@@ -153,6 +162,7 @@ class TextureLibrary( EditorModule ):
 		_G['MOCK_TEXTURE_LIBRARY_INDEX'] = self.indexPath
 		signals.connect( 'asset.post_import_all', self.postAssetImportAll )
 		signals.connect( 'project.save', self.onSaveProject )
+		# signals.connect( 'project.post_deploy', self.postDeploy )
 		
 	def onStart( self ):
 		self.loadIndex()
@@ -204,6 +214,24 @@ class TextureLibrary( EditorModule ):
 			'groups' : groupDatas,
 		}
 		jsonHelper.trySaveJSON( data, self.indexPath, 'texture index' )
+
+	def postDeploy( self, context ):		
+		pass
+		# logging.info( 'saving texture library index for deploy' )
+		# logging.info( 'saving texture library index for deploy' )
+		# indexPath = context['asset_path'] + '/texture_library'
+		# groupDatas = {}
+		# for k, g in self.groups.items():			
+		# 	data = g.toJson()
+		# 	groupDatas[ g.name ] = data
+		# 	cache = data['cache']
+		# 	if cache:
+		# 		cache = mapping.get( cache, cache )
+		# 		data['cache'] = cache
+		# data = {
+		# 	'groups' : groupDatas,
+		# }
+		# jsonHelper.trySaveJSON( data, indexPath, 'texture index (deploy)' )
 
 	def scheduleImport( self, node ):
 		groupName = node.getMetaData( 'group' )		
@@ -303,7 +331,6 @@ class TextureLibrary( EditorModule ):
 		for node in self.getAssetLibrary().enumerateAsset( 'texture' ):
 			self.scheduleImport( node )
 		self.doPendingImports()
-
 
 	def onSaveProject( self, prj ):
 		self.saveIndex()

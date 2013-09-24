@@ -83,7 +83,6 @@ class MOAIRuntime( EditorModule ):
 
 		_G['GII_LIB_LUA_PATH']              = self.getApp().getPath('lib/lua')
 		_G['GII_PROJECT_ENV_LUA_PATH']     = self.getProject().getEnvLibPath( 'lua' )
-		_G['GII_PROJECT_SCRIPT_PATH']      = self.getProject().getScriptPath()
 		_G['GII_PROJECT_ASSET_PATH']       = self.getProject().getAssetPath()
 		_G['GII_PROJECT_SCRIPT_LIB_PATH']  = self.getProject().getScriptLibPath()
 		#TODO

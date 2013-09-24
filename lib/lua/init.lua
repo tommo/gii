@@ -8,7 +8,6 @@
 -- GII_VERSION_MAJOR           = 0
 -- GII_VERSION_MINOR           = 1
 -- GII_VERSION_REV             = 0
--- GII_PROJECT_SCRIPT_PATH     = 'game/script'
 -- GII_PROJECT_ASSET_PATH      = 'game/asset'
 -- GII_PROJECT_SCRIPT_LIB_PATH = 'game/lib'
 -- GII_PROJECT_ENV_LIB_PATH    = 'env/lib'

@@ -1,8 +1,12 @@
 import os.path
+import subprocess
+import hashlib
+
 from MOAIRuntime import *
 from MOAIRuntime import _G, _GII
 from gii.core import *
 
+##--------------------------------------------##
 signals.register ( 'script.load'   )
 signals.register ( 'script.reload' )
 signals.register ( 'script.unload' )
@@ -11,6 +15,21 @@ signals.register ( 'script.unload' )
 def getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
+
+##----------------------------------------------------------------##
+def _hashPath( path ):
+	name, ext = os.path.splitext( os.path.basename( path ) )
+	m = hashlib.md5()
+	m.update( path.encode('utf-8') )
+	return m.hexdigest()
+
+def _convertToGameModuleName( path ):
+	body, ext = os.path.splitext( path )
+	return body.replace( '/', '.' )
+
+##----------------------------------------------------------------##
+_GII_SCRIPT_LIBRARY_EXPORT_NAME = 'script_library'
+
 ##----------------------------------------------------------------##
 
 class LuaScriptAssetManager( AssetManager ):
@@ -37,6 +56,9 @@ class LuaScriptAssetManager( AssetManager ):
 		lib = app.getModule( 'script_library' )
 		lib.releaseScript( node )
 
+	def deployAsset( self, node, context ):
+		pass
+
 ##----------------------------------------------------------------##
 class ScriptLibrary( EditorModule ):
 	def getName( self ):
@@ -48,6 +70,7 @@ class ScriptLibrary( EditorModule ):
 	def onLoad( self ):
 		self.scripts = {}
 		self.modifiedScripts = {}
+		signals.connect( 'project.deploy', self.onDeploy )
 
 	def convertScriptPath( self, node ):
 		path = node.getNodePath()
@@ -87,11 +110,38 @@ class ScriptLibrary( EditorModule ):
 		for node in self.getAssetLibrary().enumerateAsset( 'lua' ):
 			_GII.GameModule.loadGameModule( self.convertScriptPath( node ) )
 
+	def onDeploy( self, context ):
+		version = context.meta.get( 'lua_version', 'lua' )
+		exportIndex = {}
+		for node in self.getAssetLibrary().enumerateAsset( 'lua' ):
+			hashed = _hashPath( node.getFilePath() )
+			dstPath = context.getAssetPath( hashed )
+			self.compileScript( node, dstPath, version )
+			exportIndex[ _convertToGameModuleName( node.getNodePath() ) ] = 'asset/' + hashed
+
+		jsonHelper.trySaveJSON(
+				exportIndex, 
+				context.getAssetPath( _GII_SCRIPT_LIBRARY_EXPORT_NAME ), 
+				'script index' 
+			)
+		context.meta['mock_script_library'] = 'asset/' + _GII_SCRIPT_LIBRARY_EXPORT_NAME
+
 	def compileScript( self, node, dstPath, version = 'lua' ):
 		if version == 'lua':
-			pass
-		# 'luajit -b -g $in $out'
-		# 'luac -o $out $in'
+			_GII.GameModule.compilePlainLua( node.getAbsFilePath(), dstPath ) #lua version problem
+			# 'luac -o $out $in'
+			# arglist =  [ 'luac' ]
+			# arglist += [ '-o', dstPath ]
+			# arglist += [ node.getAbsFilePath() ]
+			# subprocess.call( arglist )
+			#TODO: error handle
+		elif version == 'luajit':
+			# 'luajit -b -g $in $out'
+			arglist =  [ 'luajit' ]
+			arglist += [ '-b', '-g' ]
+			arglist += [ node.getAbsFilePath(), dstPath ]
+		else:
+			raise Exception( 'unknown lua version %s' % version )
 
 
 ##----------------------------------------------------------------##

@@ -279,7 +279,7 @@ class AssetNode(object):
 		path = self.getObjectFile( name )
 		if not path: return None
 		return AssetLibrary.get().getAbsProjectPath( path )
-	
+
 	def edit(self):
 		self.getManager().editAsset(self)
 
@@ -358,9 +358,10 @@ class AssetManager(object):
 		pass
 
 	#Process asset for deployment. eg.  Filepath replace, Extern file collection
-	def deployAsset( self, assetNode ):
-		#TODO:!!!!
-		pass
+	def deployAsset( self, assetNode, context ):
+		for k, path in assetNode.objectFiles.items():
+			if path:
+				context.addFile( path )
 
 	def editAsset(self, assetNode):
 		assetNode.openInSystem()
@@ -721,7 +722,7 @@ class AssetLibrary(object):
 		assetTable={}
 
 		for path,data in dataTable.items():
-			node=AssetNode(path, data.get('type').encode('utf-8'), 
+			node = AssetNode(path, data.get('type').encode('utf-8'), 
 					filePath = data.get( 'filePath', path ),
 					fileTime = data.get( 'fileTime', 0 )
 				)
@@ -759,31 +760,41 @@ class AssetLibrary(object):
 		self.assetTable=assetTable
 		logging.info("asset library loaded")
 
-	def saveAssetTable(self):
+	def saveAssetTable( self, **option ):
+		outputPath = option.get( 'path', self.assetIndexPath )		
+		deployContext  = option.get( 'deploy_context',  False )
+		mapping = deployContext and deployContext.fileMapping
 		table={}
 		for path, node in self.assetTable.items():
-			item={
-				'type'        : node.getType(),
-				'filePath'    : node.getFilePath() or False,
-				'fileTime'    : node.getFileTime(),
-				'manager'     : node.managerName,
-				'deploy'      : node.deployState,
-				'pDep'        : [ dnode.getNodePath() for dnode in node.pDep ],
-				'rDep'        : [ dnode.getNodePath() for dnode in node.rDep ],
-				'objectFiles' : node.objectFiles,
-				'cacheFiles'  : node.cacheFiles,
-				'properties'  :  node.properties,
-	 			'modifyState' : node.modifyState
- 	 			# 'parent':node.getParent().getPath()
-			}				
-			table[path]=item
-			#mark cache files
-			for name, cacheFile in node.cacheFiles.items():
-				CacheManager.get().touchCacheFile( cacheFile )
-				
-			node.saveMetaDataTable()	
+			item={}
+			table[ path ]=item
+			#common
+			item['type']        = node.getType()
+			item['filePath']    = node.getFilePath() or False
+			#oebjectfiles
+			if mapping:
+				mapped = {}
+				for key, path in node.objectFiles.items():
+					mapped[ key ] = mapping.get( path, path )
+				item['objectFiles'] = mapped
+			else:
+				item['objectFiles'] = node.objectFiles
+			#non deploy information
+			if not deployContext:
+				item['manager']     = node.managerName
+				item['fileTime']    = node.getFileTime()
+				item['deploy']      = node.deployState
+				item['pDep']        = [ dnode.getNodePath() for dnode in node.pDep ]
+				item['rDep']        = [ dnode.getNodePath() for dnode in node.rDep ]
+				item['cacheFiles']  = node.cacheFiles
+				item['properties']  = node.properties
+		 		item['modifyState'] = node.modifyState
+				#mark cache files
+				for name, cacheFile in node.cacheFiles.items():
+					CacheManager.get().touchCacheFile( cacheFile )
+				node.saveMetaDataTable()	
 
-		if not jsonHelper.trySaveJSON( table, self.assetIndexPath, 'asset index' ):
+		if not jsonHelper.trySaveJSON( table, outputPath, 'asset index' ):
 			return False
 		logging.info( 'asset table saved' )
 		return True	

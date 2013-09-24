@@ -49,6 +49,10 @@ register('project.presave')
 register('project.load')
 register('project.save')
 
+register('project.pre_deploy')
+register('project.deploy')
+register('project.post_deploy')
+
 register('asset.reset')
 register('asset.post_import_all')
 register('asset.added')

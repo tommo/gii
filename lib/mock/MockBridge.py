@@ -12,7 +12,7 @@ signals.register ( 'mock.init' )
 ##----------------------------------------------------------------##
 _MOCK = LuaTableProxy( None )
 
-_MOCK_GAME_CONFIG_NAME = 'game.json'
+_MOCK_GAME_CONFIG_NAME = 'game_config.json'
 
 def isMockInstance( obj, name ):
 	if isinstance( obj, _LuaObject ):
@@ -45,6 +45,8 @@ class MockBridge( EditorModule ):
 		signals.connect( 'moai.reset', self.onMoaiReset )
 		signals.connect( 'moai.ready', self.onMoaiReady )
 
+		signals.connect( 'project.post_deploy', self.post_deploy )
+
 
 	def affirmConfigFile( self ):
 		proj = self.getProject()
@@ -76,7 +78,15 @@ class MockBridge( EditorModule ):
 
 	def onStop( self ):
 		game = _MOCK.game
-		game.saveConfig( game, self.configPath )
+		game.saveConfigToFile( game, self.configPath )
+
+	def post_deploy( self, context ):
+		game = _MOCK.game
+		data = game.saveConfigToTable( game )
+		data['asset_library'] = 'asset/asset_index'
+		data['script_library'] = context.meta.get( 'mock_script_library', False )
+		configPath = context.getPath( 'game_config' )
+		game.saveJSONData( game, data, configPath, 'deploy game info' )
 
 	def setupLuaModule( self ):
 		self.runtime.requireModule( 'mock_edit' )

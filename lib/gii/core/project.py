@@ -3,6 +3,9 @@ import sys
 import imp
 import os
 import os.path
+import shutil
+
+import hashlib
 
 import signals
 import jsonHelper
@@ -16,7 +19,6 @@ _GII_HOST_DIR           = 'host'
 _GII_BINARY_DIR         = 'bin'
 
 _GII_ASSET_DIR          = _GII_GAME_DIR + '/asset'
-_GII_SCRIPT_DIR         = _GII_GAME_DIR + '/script'
 _GII_SCRIPT_LIB_DIR     = _GII_GAME_DIR + '/lib'
 
 _GII_HOST_EXTENSION_DIR = _GII_HOST_DIR  + '/extension'
@@ -27,6 +29,7 @@ _GII_ENV_CONFIG_DIR     = _GII_ENV_DIR  + '/config'
 
 _GII_INFO_FILE          = 'project.json'
 _GII_CONFIG_FILE        = 'config.json'
+
 ####----------------------------------------------------------------##
 _default_config = {
 	"excluded_packages" : []
@@ -46,12 +49,19 @@ def _makePath( base, path ):
 		return base
 
 ##----------------------------------------------------------------##
-def _mkdir( path ):
+def _affirmPath( path ):
 	if os.path.exists( path ): return
 	try:
 		os.mkdir( path )
 	except Exception, e:
 		pass
+
+##----------------------------------------------------------------##
+def _hashPath( path ):
+	name, ext = os.path.splitext( os.path.basename( path ) )
+	m = hashlib.md5()
+	m.update( path.encode('utf-8') )
+	return m.hexdigest()
 
 ##----------------------------------------------------------------##
 class ProjectException(Exception):
@@ -114,7 +124,6 @@ class Project(object):
 
 		self.assetPath         = path + '/' + _GII_ASSET_DIR
 
-		self.scriptPath        = path + '/' + _GII_SCRIPT_DIR
 		self.scriptLibPath     = path + '/' + _GII_SCRIPT_LIB_DIR
 
 		self.hostPath          = path + '/' + _GII_HOST_DIR
@@ -122,20 +131,19 @@ class Project(object):
 
 	def _affirmDirectories( self ):
 		#mkdir - lv1
-		_mkdir( self.binaryPath )
+		_affirmPath( self.binaryPath )
 
-		_mkdir( self.envPath )
-		_mkdir( self.envPackagePath )
-		_mkdir( self.envLibPath )
-		_mkdir( self.envConfigPath )
+		_affirmPath( self.envPath )
+		_affirmPath( self.envPackagePath )
+		_affirmPath( self.envLibPath )
+		_affirmPath( self.envConfigPath )
 
-		_mkdir( self.gamePath )
-		_mkdir( self.assetPath )
-		_mkdir( self.scriptPath )
-		_mkdir( self.scriptLibPath )
+		_affirmPath( self.gamePath )
+		_affirmPath( self.assetPath )
+		_affirmPath( self.scriptLibPath )
 		
-		_mkdir( self.hostPath )
-		_mkdir( self.hostExtensionPath )
+		_affirmPath( self.hostPath )
+		_affirmPath( self.hostExtensionPath )
 		
 	def init( self, path ):
 		info = Project.findProject( path )
@@ -149,7 +157,6 @@ class Project(object):
 		#
 		logging.info( 'copy template contents' )
 		from MainModulePath import getMainModulePath
-		import shutil
 		def ignore( src, names ):
 			return ['.DS_Store']
 		shutil.copytree( getMainModulePath('template/host'), self.getPath('host'), ignore )
@@ -208,6 +215,30 @@ class Project(object):
 		#load cache & assetlib
 		self.assetLibrary.loadAssetTable()
 
+	def deploy( self, **option ):
+		base    = self.getPath( option.get( 'path', 'output' ) )
+		context = DeployContext( base )
+
+		logging.info( 'deploy current project' )
+		signals.emitNow( 'project.pre_deploy', context )
+		#deploy asset library
+		objectFiles = []
+				
+		for node in self.assetLibrary.assetTable.values():
+			mgr = node.getManager()
+			if not mgr: continue
+			mgr.deployAsset( node, context )
+		#copy scripts
+		#copy static resources
+		signals.emitNow( 'project.deploy', context )
+		self.assetLibrary.saveAssetTable(
+				path    = base + '/asset/asset_index', 
+				deploy_context  = context
+			)
+		context.flushTask()
+		signals.emitNow( 'project.post_deploy', context )
+
+
 	def save( self ):
 		logging.info( 'saving current project' )
 		signals.emitNow('project.presave', self)
@@ -259,9 +290,6 @@ class Project(object):
 	def getAssetPath(self, path=None):
 		return _makePath( self.assetPath, path)
 
-	def getScriptPath(self, path=None):
-		return _makePath( self.scriptPath, path)
-
 	def getScriptLibPath(self, path=None):
 		return _makePath( self.scriptLibPath, path)
 
@@ -287,3 +315,66 @@ class Project(object):
 		return self.cacheManager
 
 Project()
+
+##----------------------------------------------------------------##
+class DeployContext():
+	def __init__( self, path ):
+		self.taskQueue   = []
+		self.path        = path
+		self.assetPath   = path + '/asset'
+		self.fileMapping = {}
+		self.meta        = {}
+
+		_affirmPath( self.path )
+		_affirmPath( self.assetPath )
+		
+	def getAssetPath( self, path = None ):
+		return _makePath( self.assetPath, path )
+
+	def getPath( self, path = None ):
+		return _makePath( self.path, path )
+
+	# def getAbsPath( self, path = None):
+	def addTask( self, stage, func, *args ):
+		task = ( func, args )
+		self.taskQueue.append( task )
+
+	def addFile( self, srcPath, dstPath = None, **option ):
+		newPath = self.fileMapping.get( srcPath, None )
+		if newPath:
+			if dstPath and dstPath != newPath: 
+				logging.warn( 'attempt to deploy a file with different names' )
+			if not option.get( 'force', False ): return newPath
+		#mapping
+		if not dstPath:
+			dstPath = 'asset/' + _hashPath( srcPath )
+		self.fileMapping[ srcPath ] = dstPath
+		#copy
+		absOutputFilePath = self.getPath( dstPath )
+		if os.path.isdir( srcPath ):
+			shutil.copytree( srcPath, absOutputFilePath )
+		else:
+			shutil.copy( srcPath, absOutputFilePath )
+		return dstPath
+
+	def getFile( self, srcPath ):
+		return self.fileMapping.get( srcPath, None )
+
+	def replaceInFile( self, srcFile, strFrom, strTo ):
+		try:
+			fp = open( srcFile, 'r' )
+			data = fp.read()
+			fp.close()
+			data = data.replace( strFrom, strTo )
+			fp = open( srcFile, 'w' )
+			fp.write( data )
+			fp.close()
+		except Exception, e:
+			logging.exception( e )			
+		
+	def flushTask( self ):
+		q = self.taskQueue
+		self.taskQueue = []
+		for t in q:
+			func, args = t
+			func( *args )
