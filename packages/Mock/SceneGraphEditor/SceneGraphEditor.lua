@@ -360,7 +360,6 @@ function CmdReparentEntity:redo()
 		local e1 = mock.cloneEntity(e)
 		self.target:addChild( e1 )
 		e:destroyNow()
-		print( self.target.name, e.name )
 	end	
 end
 
@@ -405,4 +404,49 @@ function CmdCreatePrefabEntity:createEntity()
 	local prefab, node = mock.loadAsset( self.prefabPath )
 	if not prefab then return false end
 	return prefab:createInstance()
+end
+
+--------------------------------------------------------------------
+CLASS: CmdAssignEntityLayer ( mock_edit.EditorCommand )
+	:register( 'scene_editor/assign_layer' )
+
+function CmdAssignEntityLayer:init( option )
+	self.layerName = option['target']
+	self.entities  = gii.getSelection( 'scene' )	
+	self.oldLayers = {}
+end
+
+function CmdAssignEntityLayer:redo()
+	local layerName = self.layerName
+	local oldLayers = self.oldLayers
+	for i, e in ipairs( self.entities ) do
+		oldLayers[ e ] = e:getLayer()
+		e:setLayer( layerName )
+		gii.emitPythonSignal( 'entity.renamed', e, '' )
+	end	
+end
+
+function CmdAssignEntityLayer:undo()
+	local oldLayers = self.oldLayers
+	for i, e in ipairs( self.entities ) do
+		layerName = oldLayers[ e ]
+		e:setLayer( layerName )
+		gii.emitPythonSignal( 'entity.renamed', e, '' )
+	end	
+end
+
+--------------------------------------------------------------------
+CLASS: CmdUnifyChildrenLayer ( mock_edit.EditorCommand )
+	:register( 'scene_editor/unify_children_layer' )
+
+function CmdUnifyChildrenLayer:init( option )
+	--TODO
+end
+
+function CmdUnifyChildrenLayer:redo( )
+	--TODO
+end
+
+function CmdUnifyChildrenLayer:undo( )
+	--TODO
 end

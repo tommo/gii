@@ -56,9 +56,9 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.tree = self.container.addWidget( 
 				SceneGraphTreeWidget( 
 					self.container,
-					# sorting  = True,
-					# editable = True,
-					multiple_selection = False,
+					sorting  = True,
+					editable = True,
+					multiple_selection = True,
 					drag_mode = 'internal'
 				)
 			)
@@ -106,7 +106,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/entity/clone_entity',     dict( label = 'Clone',  shortcut = 'ctrl+d' ) )
 		
 		self.addMenuItem( 'main/entity/----' )
-		self.addMenuItem( 'main/entity/add_component',    dict( label = 'Add Component', shortcut = 'ctrl+shift++' ) )
+		self.addMenuItem( 'main/entity/add_component',    dict( label = 'Add Component', shortcut = 'ctrl+alt++' ) )
+		self.addMenuItem( 'main/entity/assign_layer',        dict( label = 'Assign Layer', shortcut = 'ctrl+alt+L' ) )
 
 		self.addMenuItem( 'main/entity/----' )
 		self.addMenuItem( 'main/find/find_entity', dict( label = 'Find In Scene', shortcut = 'ctrl+g' ) )
@@ -140,15 +141,15 @@ class SceneGraphEditor( SceneEditorModule ):
 		registerSearchEnumerator( sceneObjectSearchEnumerator )
 		registerSearchEnumerator( entityNameSearchEnumerator )
 		registerSearchEnumerator( componentNameSearchEnumerator )
+		registerSearchEnumerator( layerNameSearchEnumerator )
 
 	def onStart( self ):
 		self.refreshCreatorMenu()
 
-	# def openSceneByPath( self, path ):
-	# 	print (path)
-	# 	node = self.getAssetLibrary().getAssetNode( path )
-	# 	if node and node.isType( 'scene' ):
-	# 		return self.openScene( node )
+	def onSetFocus( self ):
+		self.container.show()
+		self.container.raise_()
+		self.container.setFocus()
 
 	def openScene( self, node ):
 		if self.activeSceneNode == node:			
@@ -163,6 +164,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.activeScene     = scene
 		self.activeSceneNode = node
 		self.tree.rebuild()
+		self.setFocus()
 
 	def closeScene( self ):
 		self.getApp().clearCommandStack( 'scene_editor' )
@@ -348,8 +350,14 @@ class SceneGraphEditor( SceneEditorModule ):
 			if context:
 				self.doCommand( 'scene_editor/remove_component', target = context )
 
-		elif name == 'search':
-			pass
+		elif name == 'assign_layer':
+			if not self.tree.getSelection(): return
+			requestSearchView( 
+				info    = 'select layer to assign',
+				context = 'scene_layer',
+				type    = _MOCK.Entity,
+				on_selection = self.assignEntityLayer
+				)
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
@@ -363,8 +371,14 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.changeSelection( target )
 
 	def renameEntity( self, target, name ):
+		#TODO:command pattern
 		target.setName( target, name )
 		signals.emit( 'entity.modified', target )
+
+	def assignEntityLayer( self, layerName ):
+		#TODO:command pattern
+		if not layerName: return
+		self.doCommand( 'scene_editor/assign_layer', target = layerName )
 
 	def onSelectionHint( self, selection ):
 		if selection._entity:
@@ -389,7 +403,10 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.tree.refreshNodeContent( entity )
 
 	def onEntityAdded( self, entity ):
-		self.tree.selectNode( entity )		
+		self.setFocus()
+		self.tree.setFocus()
+		self.tree.selectNode( entity )
+		self.tree.editNode( entity )	
 
 	def onEntityRemoved( self, entity ):
 		pass
@@ -531,3 +548,13 @@ def componentNameSearchEnumerator( typeId, context ):
 		result.append( entry )
 	return result
 		
+def layerNameSearchEnumerator( typeId, context ):
+	if not context in [ 'scene_layer' ] : return None
+	layers = _MOCK.game.layers
+	result = []
+	for l in sorted( layers.values() ):
+		name = l.name
+		if name == '_GII_EDITOR_LAYER': continue
+		entry = ( name, name, 'Layer', None )
+		result.append( entry )
+	return result

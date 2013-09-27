@@ -47,6 +47,10 @@ class SceneEditorModule( QtEditorModule ):
 	def changeSelection( self, selection ):
 		self.getSelectionManager().changeSelection( selection )
 
+	def setFocus( self ):
+		self.getMainWindow().raise_()
+		self.getMainWindow().setFocus()
+		self.onSetFocus()
 
 ##----------------------------------------------------------------##
 class SceneEditor( SceneEditorModule ):
