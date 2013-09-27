@@ -6,7 +6,9 @@ from gii.core.model  import *
 from gii.qt          import QtEditorModule
 
 from gii.qt.IconCache                  import getIcon
+from gii.qt.dialogs                    import alertMessage
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
+
 from gii.moai.MOAIRuntime import MOAILuaDelegate
 from gii.SceneEditor      import SceneEditorModule
 
@@ -31,7 +33,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.activeScene      = None
 		self.activeSceneNode  = None
 		self.refreshScheduled = False
-
+		self.previewing       = False
 	def getName( self ):
 		return 'scenegraph_editor'
 
@@ -52,9 +54,10 @@ class SceneGraphEditor( SceneEditorModule ):
 		#Components
 		self.tree = self.container.addWidget( 
 				SceneGraphTreeWidget( 
-					sorting  = True,
-					editable = True,
-					multiple_selection = True
+					# sorting  = True,
+					# editable = True,
+					multiple_selection = False,
+					drag_mode = 'internal'
 				)
 			)
 		
@@ -119,7 +122,7 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
-		signals.connect( 'selection.changed', self.onSelectionChanged)
+		# signals.connect( 'selection.changed', self.onSelectionChanged)
 		signals.connect( 'selection.hint', self.onSelectionHint )
 
 		signals.connect( 'preview.start', self.onPreviewStart )
@@ -161,6 +164,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.tree.rebuild()
 
 	def closeScene( self ):
+		self.getApp().clearCommandStack( 'scene_editor' )
 		signals.emitNow( 'scene.close', self.activeSceneNode )
 		scene = self.delegate.safeCallMethod( 'editor', 'closeScene' )
 		self.activeScene     = None
@@ -283,15 +287,26 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onMenu( self, menu ):
 		name = menu.name
 		if name == 'close_scene':
+			if self.previewing:
+				alertMessage( 'Warning', 'Stop previewing before closing scene' )
+				return
 			self.closeScene()
+
 		elif name == 'open_scene':
+			if self.previewing:
+				alertMessage( 'Warning', 'Stop previewing before opening scene' )
+				return
 			requestSearchView( 
 				info    = 'select scene to open',
 				context = 'asset',
 				type    = 'scene',
 				on_selection = self.openScene
 				)
+			
 		elif name == 'save_scene':
+			if self.previewing:
+				alertMessage( 'Warning', 'Stop previewing before saving' )
+				return
 			self.saveScene()
 
 		elif name == 'add_entity':
@@ -359,10 +374,12 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onPreviewStart( self ):
 		if not self.activeScene: return
 		self.delegate.safeCallMethod( 'editor', 'retainScene' )
+		self.previewing = True
 
 	def onPreviewStop( self ):
 		if not self.activeScene: return
 		self.delegate.safeCallMethod( 'editor', 'restoreScene' )
+		self.previewing = False
 
 	def updateEntityPriority( self ):
 		if not self.activeScene: return

@@ -1,8 +1,8 @@
 import random
-from abc import ABCMeta, abstractmethod
+import os
 
 from gii.core         import *
-from gii.qt.dialogs   import requestString, alertMessage
+from gii.qt.dialogs   import requestString, alertMessage, confirmDialog
 from gii.qt.controls.AssetTreeView import AssetTreeView
 from gii.qt.helpers   import setClipboardText
 
@@ -253,6 +253,16 @@ class AssetBrowserTreeView( AssetTreeView ):
 			getAssetSelectionManager().changeSelection(selections)
 		else:
 			getAssetSelectionManager().changeSelection(None)
+
+	def onDeletePressed( self ):
+		if confirmDialog( 'delete asset', 'Confirm to delete asset(s)?' ):
+			for node in self.getSelection():
+				if not node.isVirtual():
+					path = node.getAbsFilePath()
+					os.remove( path )
+
+
+
 ##----------------------------------------------------------------##
 
 

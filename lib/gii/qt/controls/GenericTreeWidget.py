@@ -29,13 +29,14 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			if i > 0:
 				self.setItemDelegateForColumn( i, self.noEditItemDelegate )
 
-		self.clear()
 		self.setSortingEnabled( option.get('sorting', True) )
-		self.setDragDropMode( QtGui.QAbstractItemView.InternalMove )
-		
 		if option.get( 'multiple_selection', True ):
 			self.setSelectionMode( QtGui.QAbstractItemView.ContiguousSelection )
 
+		dragMode = option.get( 'drag_mode', None )
+		if dragMode:
+			self.setDragDropMode( QtGui.QAbstractItemView.InternalMove )
+			
 		self.setAlternatingRowColors( option.get('alternating_color', False) )
 		self.setExpandsOnDoubleClick( False )
 		self.sortByColumn( 0, 0 )
@@ -47,6 +48,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.itemChanged          .connect( self._onItemChanged )
 
 		self.setIndentation( 15 )
+		self.clear()
 
 
 	def clear( self ):

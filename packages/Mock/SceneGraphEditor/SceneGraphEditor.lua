@@ -29,6 +29,7 @@ function SceneGraphEditor:closeScene()
 	self.scene:exitNow()
 	self.scene = false
 	mock.game:resetClock()
+	MOAISim.forceGarbageCollection()
 end
 
 function SceneGraphEditor:saveScene( path )
@@ -42,6 +43,7 @@ function SceneGraphEditor:refreshScene()
 	self.scene:stop()
 	self.scene:clear( true )
 	mock.game:resetClock()
+	MOAISim.forceGarbageCollection()
 	if pcall( mock.deserializeScene, data, self.scene ) then
 		self.failedRefreshData = false
 		self:postLoadScene()

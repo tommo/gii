@@ -31,17 +31,17 @@ class StringDialog(QtGui.QDialog):
 		return self.lineEdit.text()
 	
 def confirmDialog(title, msg, level='normal'):
-	f=None
-	if level=='warning':
-		f=QMessageBox.warning
-	elif level=='critical':
-		f=QMessageBox.critical
+	f = None
+	if level == 'warning':
+		f = QMessageBox.warning
+	elif level == 'critical':
+		f = QMessageBox.critical
 	else:
-		f=QMessageBox.queston
-	res=f(None, title, msg, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
-	if ret==QMessageBox.Yes: return True
-	if ret==QMessageBox.Cancel: return None
-	if ret==QMessageBox.No: return False
+		f = QMessageBox.question
+	res = f(None, title, msg, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
+	if res == QMessageBox.Yes:    return True
+	if res == QMessageBox.Cancel: return None
+	if res == QMessageBox.No:     return False
 
 def alertMessage(title, msg, level='warning'):
 	f=None

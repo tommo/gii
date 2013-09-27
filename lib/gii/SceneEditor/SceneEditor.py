@@ -73,7 +73,7 @@ class SceneEditor( SceneEditorModule ):
 		self.mainWindow.setStatusBar(self.statusBar)
 
 	def onLoad( self ):
-		self.commands = self.createCommandStack( 'scene_editor' )
+		self.commands = self._app.createCommandStack( 'scene_editor' )
 
 		self.setupMainWindow()
 		self.containers  = {}

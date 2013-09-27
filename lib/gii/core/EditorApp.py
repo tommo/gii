@@ -128,6 +128,11 @@ class EditorApp(object):
 	def getCommandStack( self, stackName ):
 		return self.commandRegistry.getCommandStack( stackName )
 
+	def clearCommandStack( self, stackName ):
+		stack = self.commandRegistry.getCommandStack( stackName )
+		if stack:
+			stack.clear()
+
 	def doCommand( self, fullname, *args, **kwargs ):
 		self.commandRegistry.doCommand( fullname, *args, **kwargs )
 

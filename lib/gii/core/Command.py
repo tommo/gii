@@ -34,7 +34,7 @@ class EditorCommandStack( object ):
 		self.redoStack    = []
 		self.stackLimit = stackLimit
 
-	def clear():
+	def clear( self ):
 		self.undoStack = []
 		self.redoStack    = []
 

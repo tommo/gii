@@ -44,9 +44,6 @@ class EditorModule( object ):
 	def doCommand( self, fullname, *args, **kwargs ):
 		self._app.doCommand( fullname, *args, **kwargs )
 
-	def createCommandStack( self, stackName ):
-		return self._app.createCommandStack( stackName )
-
 	def getProject( self ):
 		return Project.get()
 
