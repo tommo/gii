@@ -16,7 +16,7 @@ from gii.SearchView       import requestSearchView, registerSearchEnumerator
 
 ##----------------------------------------------------------------##
 from PyQt4           import QtCore, QtGui, uic
-from PyQt4.QtCore    import Qt
+from PyQt4.QtCore    import Qt, QObject
 
 ##----------------------------------------------------------------##
 from mock import _MOCK, isMockInstance
@@ -26,6 +26,7 @@ def getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 
+
 ##----------------------------------------------------------------##
 class SceneGraphEditor( SceneEditorModule ):
 	def __init__(self):
@@ -34,6 +35,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.activeSceneNode  = None
 		self.refreshScheduled = False
 		self.previewing       = False
+		
 	def getName( self ):
 		return 'scenegraph_editor'
 
@@ -42,9 +44,8 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def onLoad( self ):
 		#UI
-		sceneEditor = self.getModule( 'scene_editor' )
 		self.windowTitle = 'Scenegraph'
-		self.container = sceneEditor.requestDockWindow( 'SceneGraphEditor',
+		self.container = self.requestDockWindow( 'SceneGraphEditor',
 			title     = 'Scenegraph',
 			size      = (200,200),
 			minSize   = (200,200),
@@ -54,13 +55,13 @@ class SceneGraphEditor( SceneEditorModule ):
 		#Components
 		self.tree = self.container.addWidget( 
 				SceneGraphTreeWidget( 
+					self.container,
 					# sorting  = True,
 					# editable = True,
 					multiple_selection = False,
 					drag_mode = 'internal'
 				)
 			)
-		
 		self.tree.module = self
 		self.tool = self.addToolBar( 'scene_graph', self.container.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )
@@ -122,7 +123,7 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
-		# signals.connect( 'selection.changed', self.onSelectionChanged)
+		signals.connect( 'selection.changed', self.onSelectionChanged)
 		signals.connect( 'selection.hint', self.onSelectionHint )
 
 		signals.connect( 'preview.start', self.onPreviewStart )

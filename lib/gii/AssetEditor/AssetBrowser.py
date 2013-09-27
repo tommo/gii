@@ -31,7 +31,13 @@ class AssetBrowser( AssetEditorModule ):
 				minSize=(250,250)
 			)
 		
-		self.treeView  = self.container.addWidget(AssetBrowserTreeView())
+		self.treeView  = self.container.addWidget(
+				AssetBrowserTreeView(
+					sorting   = True,
+					multiple_selection = True,
+					drag_mode = 'internal'
+				)
+			)
 		toolbar = self.container.addWidget( QtGui.QToolBar(), expanding = False )
 		self.toolbar = self.addToolBar( 'asset_browser', toolbar )
 
@@ -233,8 +239,8 @@ class AssetBrowser( AssetEditorModule ):
 
 ##----------------------------------------------------------------##
 class AssetBrowserTreeView( AssetTreeView ):
-	def __init__( self, *args ):
-		super( AssetBrowserTreeView, self ).__init__( *args )
+	def __init__( self, *args, **option ):
+		super( AssetBrowserTreeView, self ).__init__( *args, **option )
 		self.refreshingSelection = False
 
 	def onClicked(self, item, col):

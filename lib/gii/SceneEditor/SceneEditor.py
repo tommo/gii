@@ -16,7 +16,6 @@ from PyQt4.QtCore    import Qt
 ##----------------------------------------------------------------##
 
 from gii.moai.MOAIRuntime import MOAILuaDelegate
-from gii.SearchView       import requestSearchView
 ##----------------------------------------------------------------##
 
 signals.register( 'scene.modified' )

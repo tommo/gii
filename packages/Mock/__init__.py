@@ -1,5 +1,8 @@
 import mock
 ##----------------------------------------------------------------##
+import SceneGraphEditor
+import SceneView
+
 import TextureManager
 import TexturePreview
 
@@ -12,9 +15,6 @@ import FontPreview
 import StyleSheetEditor
 
 import AnimPreview
-
-import SceneGraphEditor
-import SceneView
 
 import LayerManager
 import GlobalObjectManager

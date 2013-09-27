@@ -108,7 +108,10 @@ class TextureManager( AssetEditorModule ):
 		)
 		
 		self.treeTextures = addWidgetWithLayout(
-			TextureTreeWidget( window.containerTextureTree )
+			TextureTreeWidget( 
+				window.containerTextureTree,
+				drag_mode = 'internal'
+			)
 		)
 		self.treeTextures.module = self
 

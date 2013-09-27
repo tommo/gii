@@ -55,7 +55,15 @@ class LayerManager( SceneEditorModule ):
 			)
 
 		#Components
-		self.tree = self.window.addWidget( LayerTreeWidget( multiple_selection = False, sorting = False, editable = True ) )
+		self.tree = self.window.addWidget( 
+			LayerTreeWidget(
+				self.window,
+				multiple_selection = False,
+				sorting            = False,
+				editable           = True,
+				drag_mode          = 'internal'
+				)
+			)
 
 		self.tool = self.addToolBar( 'layer_manager', self.window.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )
