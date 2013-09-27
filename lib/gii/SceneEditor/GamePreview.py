@@ -143,12 +143,15 @@ class GamePreview( SceneEditorModule ):
 		self.viewWidth  = w
 		self.viewHeight = h
 		getAKU().setScreenSize(w,h)
-		getAKU().setViewSize(w,h)		
+		getAKU().setViewSize(w,h)
 
 	def renderView(self):
+		w = self.viewWidth
+		h = self.viewHeight
 		runtime = self.getRuntime()
-		runtime.setBufferSize( self.viewWidth, self.viewHeight )
-		runtime.changeRenderContext( 'game', self.viewWidth, self.viewHeight )
+		getAKU().setViewSize(w,h)
+		# runtime.setBufferSize( w, h )
+		runtime.changeRenderContext( 'game', w, h )
 		runtime.renderAKU()		
 
 	def onMoaiReset( self ):

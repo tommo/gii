@@ -81,7 +81,10 @@ class AssetNode(object):
 		return self.nodePath	
 
 	def getDir(self):
-		return os.path.dirname(self.getNodePath())
+		return os.path.dirname( self.getNodePath() )
+
+	def getFileDir( self ):
+		return os.path.dirname( self.getFilePath() )
 
 	def isRegistered( self ):
 		return AssetLibrary.get().hasAssetNode( self.nodePath )
@@ -89,6 +92,12 @@ class AssetNode(object):
 	def getSiblingPath(self,name):
 		if self.getDir():
 			return self.getDir() + '/' + name
+		else:
+			return name
+
+	def getSiblingFilePath( self, name ):
+		if self.getFileDir():
+			return self.getFileDir() + '/' + name
 		else:
 			return name
 

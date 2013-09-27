@@ -1,2 +1,2 @@
-from MockBridge import _MOCK, isMockInstance, getMockClassName
+from MockRuntime import _MOCK, isMockInstance, getMockClassName
 import asset

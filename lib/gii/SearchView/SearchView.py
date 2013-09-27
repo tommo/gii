@@ -182,6 +182,10 @@ class SearchViewTree(GenericTreeWidget):
 			for node in self.getSelection():
 				self.browser.setSelection( node.obj )
 				return
+		if int(key) >= int(Qt.Key_0) and int(key) <= int(Qt.Key_Z):
+			self.browser.textTerms.setFocus()
+			self.browser.textTerms.keyPressEvent( event )
+			return
 
 		return super( SearchViewTree, self ).keyPressEvent( event )
 

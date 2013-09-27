@@ -84,6 +84,7 @@ class SceneView( SceneEditorModule ):
 		self.canvas.safeCall( 'openScene', scene )
 		self.scheduleUpdate()
 		self.setFocus()
+		# self.preview.update
 
 	def onSceneClose( self, node ):
 		self.window.setDocumentName( None )

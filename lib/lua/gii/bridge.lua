@@ -3,9 +3,11 @@ local rawget,rawset= rawget,rawset
 local bridge = GII_PYTHON_BRIDGE
 module('gii',package.seeall)
 _M.bridge = bridge
+
 --------------------------------------------------------------------
 -- CORE FUNCTIONS
 --------------------------------------------------------------------
+
 --communication
 _M.emitPythonSignal     = bridge.emitPythonSignal
 _M.emitPythonSignalNow  = bridge.emitPythonSignalNow
@@ -41,7 +43,7 @@ function tableToList(table)
 	return list
 end
 
-function dictToTable(dict) --just one level?
+function dictToTable(dict)
 	local json = encodeDict(dict)
 	return MOAIJsonParser.decode(json)
 end

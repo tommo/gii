@@ -3,6 +3,7 @@ import sys
 import imp
 import os
 import os.path
+import re
 import shutil
 
 import hashlib
@@ -29,6 +30,7 @@ _GII_ENV_CONFIG_DIR     = _GII_ENV_DIR  + '/config'
 
 _GII_INFO_FILE          = 'project.json'
 _GII_CONFIG_FILE        = 'config.json'
+
 
 ####----------------------------------------------------------------##
 _default_config = {
@@ -218,8 +220,13 @@ class Project(object):
 	def deploy( self, **option ):
 		base    = self.getPath( option.get( 'path', 'output' ) )
 		context = DeployContext( base )
+		context.cleanPath()
+		hostResPath = self.getHostPath('resource')
+		gameLibPath = self.getGamePath('lib')
 
 		logging.info( 'deploy current project' )
+		context.copyFilesInDir( hostResPath )
+		context.copyFile( gameLibPath, 'lib' )
 		signals.emitNow( 'project.pre_deploy', context )
 		#deploy asset library
 		objectFiles = []
@@ -237,7 +244,8 @@ class Project(object):
 			)
 		context.flushTask()
 		signals.emitNow( 'project.post_deploy', context )
-
+		print( 'Deploy building done!' )
+		signals.emitNow( 'project.done_deploy', context )
 
 	def save( self ):
 		logging.info( 'saving current project' )
@@ -318,16 +326,27 @@ Project()
 
 ##----------------------------------------------------------------##
 class DeployContext():
+
+	_ignoreFilePattern = [
+		'\.git',
+		'\.assetmeta',
+		'^\..*',
+	]
+
 	def __init__( self, path ):
 		self.taskQueue   = []
 		self.path        = path
 		self.assetPath   = path + '/asset'
 		self.fileMapping = {}
 		self.meta        = {}
-
+	
+	def cleanPath( self ):
+		logging.info( 'removing output path: %s' %  self.path )
+		if os.path.isdir( self.path ):
+			shutil.rmtree( self.path )
 		_affirmPath( self.path )
 		_affirmPath( self.assetPath )
-		
+
 	def getAssetPath( self, path = None ):
 		return _makePath( self.assetPath, path )
 
@@ -338,6 +357,24 @@ class DeployContext():
 	def addTask( self, stage, func, *args ):
 		task = ( func, args )
 		self.taskQueue.append( task )
+
+	def copyFile( self, srcPath, dstPath = None ):
+		if not dstPath:
+			dstPath = os.path.basename( srcPath )
+		absDstPath = self.getPath( dstPath )
+		if os.path.exists( absDstPath ): return #force?
+		if os.path.isdir( srcPath ):
+			shutil.copytree( srcPath, absDstPath )
+		else:
+			shutil.copy( srcPath, absDstPath )
+
+	def copyFilesInDir( self, srcDir, dstDir = None ):
+		if not os.path.isdir( srcDir ):
+			raise Exception( 'Directory expected' )
+		for fname in os.listdir( srcDir ):
+			if self.checkFileIgnorable( fname ): continue
+			fpath = srcDir + '/' + fname
+			self.copyFile( fpath )
 
 	def addFile( self, srcPath, dstPath = None, **option ):
 		newPath = self.fileMapping.get( srcPath, None )
@@ -360,6 +397,9 @@ class DeployContext():
 	def getFile( self, srcPath ):
 		return self.fileMapping.get( srcPath, None )
 
+	def getAbsFile( self, srcPath ):
+		return self.getPath( self.getFile( srcPath ) )
+
 	def replaceInFile( self, srcFile, strFrom, strTo ):
 		try:
 			fp = open( srcFile, 'r' )
@@ -378,3 +418,9 @@ class DeployContext():
 		for t in q:
 			func, args = t
 			func( *args )
+
+	def checkFileIgnorable(self, name):
+		for pattern in DeployContext._ignoreFilePattern:
+			if re.match(pattern, name):
+				return True
+		return False

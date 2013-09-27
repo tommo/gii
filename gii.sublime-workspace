@@ -1115,7 +1115,7 @@
 		"/Volumes/prj/gii/gii.sublime-project",
 		"/Volumes/prj/gii/data/theme/dark.qss",
 		"/Volumes/prj/gii/lib/gii/moai/MOAIRuntime.py",
-		"/Volumes/prj/gii/lib/mock/MockBridge.py",
+		"/Volumes/prj/gii/lib/mock/MockRuntime.py",
 		"/Volumes/prj/gii/lib/gii/qt/controls/prop/PropEditor.py",
 		"/Volumes/prj/gii/lib/gii/qt/controls/prop/PropGrid.py",
 		"/Volumes/prj/gii/template/host/wscript",
@@ -1131,7 +1131,7 @@
 		"/Volumes/prj/gii/lib/gii/SceneEditor/SceneEditor.py",
 		"/Volumes/prj/gii/packages/Mock/SceneView/SceneView.py",
 		"/Volumes/prj/gii/lib/gii/core/tool.py",
-		"/Volumes/prj/gii/lib/mock/MockBridge.lua",
+		"/Volumes/prj/gii/lib/mock/MockRuntime.lua",
 		"/Volumes/prj/gii/lib/gii/__init__.py",
 		"/Volumes/prj/gii/lib/gii/core/EditorApp.py",
 		"/Volumes/prj/gii/lib/gii/core/package.py",
@@ -1150,7 +1150,7 @@
 		"/Volumes/prj/gii/test/env/lib/mock/asset/SceneAsset.py",
 		"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreview.py",
 		"/Volumes/prj/gii/lib/gii/core/globalSignals.py",
-		"/Volumes/prj/gii/test/env/lib/mock/MockBridge.lua",
+		"/Volumes/prj/gii/test/env/lib/mock/MockRuntime.lua",
 		"/Volumes/prj/gii/test/env/packages/-DeckEditor/Deck2DEditor.py",
 		"/Volumes/prj/gii/packages/ScriptView/ScriptView.py",
 		"/Volumes/prj/gii/test/game/lib/mock/component/Camera.lua",
@@ -1165,7 +1165,7 @@
 		"/Volumes/prj/gii/lib/gii/moai/MOAICanvasBase.py",
 		"/Volumes/prj/gii/test/env/lib/mock/editor/__init__.py",
 		"/Volumes/prj/gii/test/env/packages/TexturePreview/TexturePreview2.lua",
-		"/Volumes/prj/gii/test/env/lib/mock/MockBridge.py",
+		"/Volumes/prj/gii/test/env/lib/mock/MockRuntime.py",
 		"/Volumes/prj/gii/test/env/lib/editor/MOCKEditCanvas.py",
 		"/Volumes/prj/gii/test/env/packages/DeckEditor/Deck2DEditor.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/component/InputScript.lua",
@@ -2244,11 +2244,11 @@
 			],
 			[
 				"mockb",
-				"lib/mock/MockBridge.py"
+				"lib/mock/MockRuntime.py"
 			],
 			[
 				"mockbr",
-				"lib/mock/MockBridge.lua"
+				"lib/mock/MockRuntime.lua"
 			],
 			[
 				"proj",

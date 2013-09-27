@@ -108,7 +108,7 @@ class AssetBrowser( AssetEditorModule ):
 			if not isinstance(contextNode, AssetNode):
 				contextNode = app.getAssetLibrary().getRootNode()
 
-			name = requestString('Create Asset <%s>' % assetType, 'Enter asset name' )
+			name = requestString('Create Asset <%s>' % assetType, 'Enter asset name: <%s>' % assetType )
 			if not name: return
 
 			try:

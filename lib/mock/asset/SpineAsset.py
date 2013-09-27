@@ -1,6 +1,6 @@
 import os.path
 from gii.core import AssetManager, AssetLibrary, getProjectPath, app
-
+import logging
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
 	import os.path
@@ -36,6 +36,21 @@ class SpineAssetManager(AssetManager):
 
 	def deployAsset( self, node, context ):
 		super( SpineAssetManager, self ).deployAsset( node, context )
+		if not node.isType( 'spine' ): return
+		#replace texture		
+		try:
+			absAtlasPath = node.getAbsObjectFile('atlas')
+			fp = file( absAtlasPath )
+			fp.readline()
+			textureName = fp.readline().strip()
+			fp.close()
+			texturePath = os.path.dirname( node.getAbsFilePath() ) + '/' + textureName
+			if os.path.exists( texturePath ):
+				newPath   = context.addFile( texturePath )
+				exportedAtlasPath = context.getAbsFile( node.getObjectFile( 'atlas' ) )
+				context.replaceInFile( exportedAtlasPath, textureName, os.path.basename( newPath ) )
+		except Exception, e:
+			logging.exception( e )
 		
 
 SpineAssetManager().register()

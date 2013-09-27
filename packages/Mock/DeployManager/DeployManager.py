@@ -113,6 +113,10 @@ class DeployManager( SceneEditorModule ):
 		self.addMenuItem( 'main/file/deploy_manager', 
 			dict( label = 'Deploy Manager', shortcut = 'F9' )
 			)
+
+		self.addMenuItem( 'main/file/deploy_build', 
+			dict( label = 'Deploy Build', shortcut = 'Ctrl+F9' )
+			)
 		
 		
 		# self.container.show()
@@ -120,6 +124,10 @@ class DeployManager( SceneEditorModule ):
 
 		#other
 		registerSearchEnumerator( deployTargetSearchEnumerator )
+
+		signals.connect( 'project.pre_deploy', self.preDeploy )
+		signals.connect( 'project.deploy', self.onDeploy )
+		signals.connect( 'project.post_deploy', self.postDeploy )
 
 
 	def onStart( self ):
@@ -168,6 +176,26 @@ class DeployManager( SceneEditorModule ):
 		scenes =  self.delegate.safeCallMethod( 'config', 'getScenes' )
 		return [ obj for obj in scenes.values() ]
 
+	def preDeploy( self, context ):
+		scenes =  self.delegate.safeCallMethod( 'config', 'getScenes' )
+		exportScenes = {}
+		entryScene   = False
+		for s in scenes.values():
+			alias   = s.alias
+			isEntry = s.entry
+			path    = s.path
+			exportScenes[ alias ] = path
+			if isEntry:
+				entryScene = path
+		context.meta[ 'mock_scenes' ]      = exportScenes
+		context.meta[ 'mock_entry_scene' ] = entryScene
+
+	def onDeploy( self, context ):
+		pass
+
+	def postDeploy( self, context ):
+		pass
+
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'add_target':
@@ -208,8 +236,6 @@ class DeployManager( SceneEditorModule ):
 				self.treeScene.selectNode( target )
 				break
 
-
-
 		elif name == 'move_down_scene':
 			for target in self.treeScene.getSelection():
 				self.delegate.safeCallMethod( 'config', 'moveSceneDown', target )
@@ -221,6 +247,8 @@ class DeployManager( SceneEditorModule ):
 		name = node.name
 		if name == 'deploy_manager' :
 			self.onSetFocus()
+		elif name == 'deploy_build':
+			app.getProject().deploy()
 
 	def onSetFocus( self ):
 		self.container.show()
