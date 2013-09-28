@@ -43,18 +43,15 @@ class SceneView( SceneEditorModule ):
 		self.previewUpdateTimer = False
 		self.preview = self.getModule( 'scene_preview' )
 
-		signals.connect( 'entity.modified', self.onEntityModified )
-		signals.connect( 'scene.open',  self.onSceneOpen )
-		signals.connect( 'scene.close', self.onSceneClose )
-		signals.connect( 'scene.update', self.onSceneUpdate )
+		signals.connect( 'entity.modified',   self.onEntityModified   )
+		signals.connect( 'scene.open',        self.onSceneOpen        )
+		signals.connect( 'scene.close',       self.onSceneClose       )
+		signals.connect( 'scene.update',      self.onSceneUpdate      )
 		signals.connect( 'selection.changed', self.onSelectionChanged )
 
-		# signals.connect( 'preview.resume', self.onPreviewResume )
-		# signals.connect( 'preview.pause', self.onPreviewStop )
-		# signals.connect( 'preview.stop', self.onPreviewStop )
-
-		self.skipFrameIdx = 1
-		self.skipFrame    = 5
+		signals.connect( 'preview.resume', self.onPreviewResume )
+		signals.connect( 'preview.pause', self.onPreviewStop )
+		signals.connect( 'preview.stop', self.onPreviewStop )
 
 	def onStart( self ):
 		self.canvas.makeCurrent()

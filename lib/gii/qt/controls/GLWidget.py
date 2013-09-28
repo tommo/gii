@@ -11,7 +11,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 			fmt.setAlpha(True)
 			fmt.setDepth(True)
 			fmt.setDoubleBuffer(True)
-			fmt.setSwapInterval(1)
+			fmt.setSwapInterval(0)
 			QtOpenGL.QGLFormat.setDefaultFormat(fmt)
 			
 			hiddenWindow = QtOpenGL.QGLWidget( QtOpenGL.QGLContext(fmt, None) )
