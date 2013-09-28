@@ -39,6 +39,11 @@ class SelectionManager(object):
 		self.currentSelection = selection
 		signals.emit('selection.changed', selection, self.key )
 
+	def addSelection( self, selection ):
+		if not selction: return
+		if not isinstance(selection, list): selection = [ selection ]
+		return self.changeSelection( self.currentSelection + selection )
+
 	def historyBack(self):
 		hisSize = len(self.history)
 		if self.historyPos < hisSize:

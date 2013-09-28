@@ -121,8 +121,9 @@ function CanvasHandleLayer:onMouseMove( x, y )
 end
 
 function CanvasHandleLayer:addHandle( handle )
-	self:addChild( handle )
+	self:addSibling( handle )
 	table.insert(self.handles, 1, handle )
+	handle.handleLayer = self
 	return handle
 end
 
@@ -140,10 +141,10 @@ function CanvasHandle:onMouseMove( x, y )
 end
 
 function CanvasHandle:onDestroy()
-	local parent = self.parent
-	if not parent then return end
-	for i, h in ipairs( parent.handles ) do
-		if h == self then table.remove( self.parent.handles, i ) return end
+	local handleLayer = self.handleLayer
+	if not handleLayer then return end
+	for i, h in ipairs( handleLayer.handles ) do
+		if h == self then return table.remove( self.handleLayer.handles, i )  end
 	end
 end
 

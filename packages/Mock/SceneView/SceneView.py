@@ -37,7 +37,7 @@ class SceneView( SceneEditorModule ):
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
 		self.canvas.setDelegateEnv( '_view', self )
 
-		self.updateTimer = self.window.startTimer( 30, self.onUpdateTimer )
+		self.updateTimer = self.window.startTimer( 60, self.onUpdateTimer )
 		self.updatePending = False
 
 		self.previewUpdateTimer = False
@@ -89,6 +89,7 @@ class SceneView( SceneEditorModule ):
 	def onSceneClose( self, node ):
 		self.window.setDocumentName( None )
 		self.canvas.hide()
+		self.canvas.makeCurrent()
 		self.canvas.safeCall( 'closeScene' )
 
 	def onSelectionChanged( self, selection, key ):

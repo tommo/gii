@@ -106,7 +106,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/entity/clone_entity',     dict( label = 'Clone',  shortcut = 'ctrl+d' ) )
 		
 		self.addMenuItem( 'main/entity/----' )
-		self.addMenuItem( 'main/entity/add_component',    dict( label = 'Add Component', shortcut = 'ctrl+alt++' ) )
+		self.addMenuItem( 'main/entity/add_component',    dict( label = 'Add Component', shortcut = 'ctrl+alt+=' ) )
 		self.addMenuItem( 'main/entity/assign_layer',        dict( label = 'Assign Layer', shortcut = 'ctrl+alt+L' ) )
 
 		self.addMenuItem( 'main/entity/----' )
@@ -167,6 +167,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.setFocus()
 
 	def closeScene( self ):
+		self.tree.clear()
 		self.getApp().clearCommandStack( 'scene_editor' )
 		signals.emitNow( 'scene.close', self.activeSceneNode )
 		scene = self.delegate.safeCallMethod( 'editor', 'closeScene' )
@@ -388,12 +389,12 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def onPreviewStart( self ):
 		if not self.activeScene: return
-		self.delegate.safeCallMethod( 'editor', 'retainScene' )
+		self.delegate.safeCallMethod( 'editor', 'startScenePreview' )
 		self.previewing = True
 
 	def onPreviewStop( self ):
 		if not self.activeScene: return
-		self.delegate.safeCallMethod( 'editor', 'restoreScene' )
+		self.delegate.safeCallMethod( 'editor', 'stopScenePreview' )
 		self.previewing = False
 
 	def updateEntityPriority( self ):

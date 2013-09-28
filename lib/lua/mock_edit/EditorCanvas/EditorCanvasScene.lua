@@ -96,7 +96,7 @@ function EditorCanvasScene:getEnv()
 	return self.env
 end
 
-function EditorCanvasScene:onEnter()
+function EditorCanvasScene:onLoad()
 	self.cameraCom = EditorCanvasCamera( self.env )
 	self.camera    = mock.SingleEntity( self.cameraCom )
 	self.camera.FLAG_EDITOR_OBJECT = true
@@ -171,7 +171,8 @@ function createEditorCanvasScene()
 	end
 
 	scn.inputDevice = inputDevice
-	scn:enter()
+	scn:init()
+	scn:start()
 	return scn
 end 
 

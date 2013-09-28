@@ -131,11 +131,11 @@ class GamePreview( SceneEditorModule ):
 
 	def updateView(self):
 		if self.paused: return
+		w = self.viewWidth
+		h = self.viewHeight
 		runtime = self.getRuntime()
-
-		runtime.setBufferSize( self.viewWidth, self.viewHeight )
-		runtime.changeRenderContext( 'game', self.viewWidth, self.viewHeight )
-		
+		# runtime.setBufferSize( w, h )
+		runtime.changeRenderContext( 'game', w, h )
 		if runtime.updateAKU():
 			self.canvas.forceUpdateGL()
 
@@ -149,7 +149,7 @@ class GamePreview( SceneEditorModule ):
 		w = self.viewWidth
 		h = self.viewHeight
 		runtime = self.getRuntime()
-		getAKU().setViewSize(w,h)
+		getAKU().setViewSize( w, h )
 		# runtime.setBufferSize( w, h )
 		runtime.changeRenderContext( 'game', w, h )
 		runtime.renderAKU()		

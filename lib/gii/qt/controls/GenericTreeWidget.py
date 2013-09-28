@@ -31,7 +31,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		self.setSortingEnabled( option.get('sorting', True) )
 		if option.get( 'multiple_selection', False ):
-			self.setSelectionMode( QtGui.QAbstractItemView.ContiguousSelection )
+			self.setSelectionMode( QtGui.QAbstractItemView.ExtendedSelection )
 
 		dragMode = option.get( 'drag_mode', None )
 		if dragMode:

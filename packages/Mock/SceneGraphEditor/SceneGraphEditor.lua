@@ -15,10 +15,7 @@ function SceneGraphEditor:__init()
 end
 
 function SceneGraphEditor:openScene( path )
-	local ctx = gii.getCurrentRenderContext()
-	gii.setCurrentRenderContextActionRoot( game:getActionRoot() )
 	local scene = mock.loadAsset( path )
-	-- scene.timer:attach( ctx.actionRoot )
 	self.scene = scene
 	self:postLoadScene()
 	return scene
@@ -57,11 +54,14 @@ function SceneGraphEditor:postLoadScene()
 	scene:setEntityListener( function( ... ) return self:onEntityEvent( ... ) end )
 end
 
-function SceneGraphEditor:retainScene()
+
+function SceneGraphEditor:startScenePreview()
 	self.retainedSceneData = mock.serializeScene( self.scene )
+	mock.game:resetClock()
+	self.scene:start()
 end
 
-function SceneGraphEditor:restoreScene()
+function SceneGraphEditor:stopScenePreview()
 	if not self.retainedSceneData then return end
 	self.scene:stop()
 	self.scene:clear( true )
@@ -240,7 +240,7 @@ function CmdCreateEntity:createEntity()
 end
 
 function CmdCreateEntity:undo()
-	self.created:destroyNow()
+	self.created:destroyWithChildrenNow()
 	gii.emitPythonSignal('entity.removed', self.created )
 end
 
@@ -257,7 +257,7 @@ end
 function CmdRemoveEntity:redo()
 	for _, target in ipairs( self.selection ) do
 		if target.scene then 
-			target:destroyNow()
+			target:destroyWithChildrenNow()
 			gii.emitPythonSignal('entity.removed', target )
 		end
 	end
@@ -342,7 +342,7 @@ end
 function CmdCloneEntity:undo()
 	--todo:
 	gii.emitPythonSignal('entity.removed', self.created )
-	self.created:destroyNow()
+	self.created:destroyWithChildrenNow()
 end
 
 --------------------------------------------------------------------
@@ -359,7 +359,7 @@ function CmdReparentEntity:redo()
 	for i, e in ipairs( self.children ) do
 		local e1 = mock.cloneEntity(e)
 		self.target:addChild( e1 )
-		e:destroyNow()
+		e:destroyWithChildrenNow()
 	end	
 end
 

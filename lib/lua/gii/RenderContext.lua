@@ -43,7 +43,6 @@ end
 
 function changeRenderContext( key, w, h )
 	if currentContextKey == key then return end
-
 	local context = renderContextTable[key]
 	assert ( context, 'no render context for:'..tostring(key) )
 	for f in pairs( ContextChangeListeners ) do
