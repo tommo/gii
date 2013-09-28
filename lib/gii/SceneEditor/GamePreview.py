@@ -189,6 +189,7 @@ class GamePreview( SceneEditorModule ):
 	def startPreview( self ):
 		if self.paused == False: return
 		runtime = self.getRuntime()
+		runtime.changeRenderContext( 'game', self.viewWidth, self.viewHeight )
 		self.canvas.setInputDevice( runtime.getInputDevice('device') )
 
 		self.enableMenu( 'main/preview/pause_game', True )
