@@ -165,6 +165,10 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.activeSceneNode = node
 		self.tree.rebuild()
 		self.setFocus()
+		retainedState = self.activeSceneNode.getMetaData( 'tree_state', None )
+		if retainedState:
+			self.tree.loadFoldState( retainedState )
+
 
 	def closeScene( self ):
 		self.tree.clear()
@@ -179,6 +183,9 @@ class SceneGraphEditor( SceneEditorModule ):
 	def saveScene( self ):
 		if not self.activeSceneNode: return
 		self.delegate.safeCallMethod( 'editor', 'saveScene', self.activeSceneNode.getAbsFilePath() )
+		self.retainedState = None
+		retainedState = self.tree.saveFoldState()
+		self.activeSceneNode.setMetaData( 'tree_state', retainedState )
 
 	def refreshScene( self ):
 		if not self.activeScene: return
@@ -389,7 +396,8 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def onPreviewStart( self ):
 		if not self.activeScene: return
-		self.tree.saveFoldState()
+		self.retainedState = self.tree.saveFoldState()
+		self.delegate.safeCallMethod( 'editor', 'retainScene' )
 		self.delegate.safeCallMethod( 'editor', 'startScenePreview' )
 		self.previewing = True
 
@@ -397,6 +405,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		if not self.activeScene: return
 		self.delegate.safeCallMethod( 'editor', 'stopScenePreview' )
 		self.previewing = False
+		if self.delegate.safeCallMethod( 'editor', 'restoreScene' ):
+			self.tree.loadFoldState( self.retainedState )
 
 	def updateEntityPriority( self ):
 		if not self.activeScene: return
@@ -439,8 +449,23 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		return self.module.activeScene
 
 	def saveFoldState( self ):
-		pass
+		#TODO: other state?
+		result = {}
+		for node, item in self.nodeDict.items():
+			if not isMockInstance( node, 'Entity' ): continue
+			if not item: continue
+			guid     = node['__guid']
+			expanded = item.isExpanded()
+			result[ guid ] = { 'expanded': expanded }
+		return result
 
+	def loadFoldState( self, data ):
+		for node, item in self.nodeDict.items():
+			if not isMockInstance( node, 'Entity' ): continue
+			if not item: continue
+			guid  = node['__guid']
+			state = data[ guid ]
+			item.setExpanded( state['expanded'] )
 
 	def saveTreeStates( self ):
 		pass

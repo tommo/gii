@@ -104,7 +104,6 @@ end
 
 
 function SceneGraphEditor:startScenePreview()
-	self:retainScene()
 	mock.game:resetClock()
 	self.scene:start()
 end
@@ -113,7 +112,6 @@ function SceneGraphEditor:stopScenePreview()
 	self.scene:stop()
 	self.scene:clear( true )
 	mock.game:resetClock()
-	self:restoreScene()
 end
 
 function SceneGraphEditor:retainScene()
@@ -125,12 +123,11 @@ function SceneGraphEditor:retainScene()
 	self.retainedSceneSelection = guids
 	self.retainedSceneData = mock.serializeScene( self.scene )
 	--keep node fold state
-	
 end
 
 
 function SceneGraphEditor:restoreScene()
-	if not self.retainedSceneData then return end
+	if not self.retainedSceneData then return true end
 	if pcall( mock.deserializeScene, self.retainedSceneData, self.scene ) then
 		self.retainedSceneData = false
 		self:postLoadScene()
@@ -141,8 +138,10 @@ function SceneGraphEditor:restoreScene()
 		end
 		gii.changeSelection( 'scene', unpack( result ) )
 		self.retainedSceneSelection = false
+		return true
 	else
 		self.failedRefreshData = self.retainedSceneData
+		return false
 	end
 end
 
