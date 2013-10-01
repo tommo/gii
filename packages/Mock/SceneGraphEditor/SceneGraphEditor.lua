@@ -104,22 +104,33 @@ end
 
 
 function SceneGraphEditor:startScenePreview()
-	self.retainedSceneData = mock.serializeScene( self.scene )
+	self:retainScene()
+	mock.game:resetClock()
+	self.scene:start()
+end
+
+function SceneGraphEditor:stopScenePreview()
+	self.scene:stop()
+	self.scene:clear( true )
+	mock.game:resetClock()
+	self:restoreScene()
+end
+
+function SceneGraphEditor:retainScene()
 	--keep current selection
 	local guids = {}
 	for i, e in ipairs( gii.getSelection( 'scene' ) ) do
 		guids[ i ] = e.__guid
 	end
 	self.retainedSceneSelection = guids
-	mock.game:resetClock()
-	self.scene:start()
+	self.retainedSceneData = mock.serializeScene( self.scene )
+	--keep node fold state
+	
 end
 
-function SceneGraphEditor:stopScenePreview()
+
+function SceneGraphEditor:restoreScene()
 	if not self.retainedSceneData then return end
-	self.scene:stop()
-	self.scene:clear( true )
-	mock.game:resetClock()
 	if pcall( mock.deserializeScene, self.retainedSceneData, self.scene ) then
 		self.retainedSceneData = false
 		self:postLoadScene()

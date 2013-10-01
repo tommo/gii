@@ -389,6 +389,7 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def onPreviewStart( self ):
 		if not self.activeScene: return
+		self.tree.saveFoldState()
 		self.delegate.safeCallMethod( 'editor', 'startScenePreview' )
 		self.previewing = True
 
@@ -436,6 +437,10 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 
 	def getRootNode( self ):
 		return self.module.activeScene
+
+	def saveFoldState( self ):
+		pass
+
 
 	def saveTreeStates( self ):
 		pass

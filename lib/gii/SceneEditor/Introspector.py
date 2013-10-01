@@ -218,7 +218,7 @@ class IntrospectorInstance(object):
 		layout.addStretch()
 		scroll.setWidget( body )
 
-		self.updateTimer = self.container.startTimer( 3, self.onUpdateTimer )
+		self.updateTimer = self.container.startTimer( 5, self.onUpdateTimer )
 		self.updatePending = False
 	
 	def getTarget(self):

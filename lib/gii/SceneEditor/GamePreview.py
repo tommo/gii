@@ -22,6 +22,8 @@ class GamePreview( SceneEditorModule ):
 		self.viewWidth      = 0
 		self.viewHeight     = 0
 		self.pendingScript  = None
+		self.activeFPS      = 60
+		self.nonActiveFPS   = 10
 
 	def getName(self):
 		return 'scene_preview'
@@ -70,9 +72,8 @@ class GamePreview( SceneEditorModule ):
 			dock  = 'right'
 			)
 
-
 		self.canvas = self.window.addWidget( GamePreviewCanvas( self.window, sync = True )  )
-		self.canvas.startRefreshTimer()
+		self.canvas.startRefreshTimer( self.nonActiveFPS )
 		self.paused = None
 		
 		tool = self.window.addWidget( QtGui.QToolBar( self.window ), expanding = False )
@@ -191,6 +192,7 @@ class GamePreview( SceneEditorModule ):
 		runtime = self.getRuntime()
 		runtime.changeRenderContext( 'game', self.viewWidth, self.viewHeight )
 		self.canvas.setInputDevice( runtime.getInputDevice('device') )
+		self.canvas.startRefreshTimer( self.activeFPS )
 
 		self.enableMenu( 'main/preview/pause_game', True )
 		self.enableMenu( 'main/preview/stop_game',  True )
@@ -228,6 +230,7 @@ class GamePreview( SceneEditorModule ):
 
 		self.paused = None
 		self.updateTimer = None
+		self.canvas.startRefreshTimer( self.nonActiveFPS )
 
 	# def onUpdate( self ):
 	# 	if self.paused != False: return
@@ -246,6 +249,7 @@ class GamePreview( SceneEditorModule ):
 
 		self.paused = True
 		self.getRuntime().pause()
+		self.canvas.startRefreshTimer( self.nonActiveFPS )
 
 	def onAppActivate(self):
 		if self.waitActivate:
