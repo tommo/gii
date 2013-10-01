@@ -1,5 +1,29 @@
 local generateGUID = MOAIEnvironment.generateGUID
 
+local function findTopLevelEntities( entities )
+	local found = {}
+	for e in pairs( entities ) do
+		local p = e.parent
+		local isTop = true
+		while p do
+			if entities[ p ] then isTop = false break end
+			p = p.parent
+		end
+		if isTop then found[e] = true end
+	end
+	return found
+end
+
+local function getTopLevelEntitySelection()
+	local entities = {}
+	for i, e in ipairs( gii.getSelection( 'scene' ) ) do
+		if isInstanceOf( e, mock.Entity ) then 
+			entities[ e ] = true
+		end
+	end
+	return findTopLevelEntities( entities )
+end
+
 local function isEditorEntity( e )
 	while e do
 		if e.FLAG_EDITOR_OBJECT then return true end
@@ -264,12 +288,12 @@ function CmdCreateEntityBase:redo()
 	entity.__guid = generateGUID()
 	self.created = entity
 	editor.scene:addEntity( entity )
-	gii.emitPythonSignal('entity.added', self.created )
+	gii.emitPythonSignal( 'entity.added', self.created, 'new' )
 end
 
 function CmdCreateEntityBase:undo()
 	self.created:destroyNow()
-	gii.emitPythonSignal('entity.removed', self.created )
+	gii.emitPythonSignal( 'entity.removed', self.created )
 end
 
 --------------------------------------------------------------------
@@ -370,20 +394,25 @@ CLASS: CmdCloneEntity ( mock_edit.EditorCommand )
 	:register( 'scene_editor/clone_entity' )
 
 function CmdCloneEntity:init( option )
-	local target = gii.getSelection( 'scene' )[1]
-	if not isInstanceOf( target, mock.Entity ) then return false end
-	self.target = target
+	local targets = getTopLevelEntitySelection()
+	self.targets = targets
+	if not next( targets ) then return false end
 end
 
 function CmdCloneEntity:redo()
-	self.created = mock.cloneEntity( self.target )
-	local parent = self.target.parent
-	if parent then
-		parent:addChild( self.created )
-	else
-		editor.scene:addEntity( self.created )
+	local createdList = {}
+	for target in pairs( self.targets ) do
+		local created = mock.cloneEntity( target )
+		local parent = target.parent
+		if parent then
+			parent:addChild( created )
+		else
+			editor.scene:addEntity( created )
+		end
+		gii.emitPythonSignal('entity.added', created, 'clone' )
+		table.insert( createdList, created )
 	end
-	gii.emitPythonSignal('entity.added', self.created )
+	gii.changeSelection( 'scene', unpack( createdList ) )
 end
 
 function CmdCloneEntity:undo()
@@ -397,15 +426,24 @@ CLASS: CmdReparentEntity ( mock_edit.EditorCommand )
 	:register( 'scene_editor/reparent_entity' )
 
 function CmdReparentEntity:init( option )
-	self.target = option['target']
+	self.target   = option['target']
 	self.children = gii.getSelection( 'scene' )
 	self.oldParents = {}
 end
 
 function CmdReparentEntity:redo()
+	local target = self.target
 	for i, e in ipairs( self.children ) do
 		local e1 = mock.cloneEntity(e)
-		self.target:addChild( e1 )
+		local tx, ty ,tz = e1:getWorldLoc()
+		if target == 'root' then
+			editor.scene:addEntity( e1 )
+			e1:setLoc( tx, ty, tz )
+		else
+			target:addChild( e1 )
+			local x, y, z = target:worldToModel( tx, ty, tz )
+			e1:setLoc( x, y, z )
+		end
 		e:destroyWithChildrenNow()
 	end	
 end

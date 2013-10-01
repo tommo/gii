@@ -403,11 +403,12 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onEntityRenamed( self, entity, newname ):
 		self.tree.refreshNodeContent( entity )
 
-	def onEntityAdded( self, entity ):
-		self.setFocus()
-		self.tree.setFocus()
-		self.tree.selectNode( entity )
-		self.tree.editNode( entity )	
+	def onEntityAdded( self, entity, context = None ):
+		if context == 'new':
+			self.setFocus()
+			self.tree.setFocus()
+			self.tree.selectNode( entity )
+			self.tree.editNode( entity )
 
 	def onEntityRemoved( self, entity ):
 		pass
@@ -505,6 +506,9 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		target = self.itemAt( ev.pos() )
 		if pos == 'on':
 			self.module.doCommand( 'scene_editor/reparent_entity', target = target.node )
+		elif pos == 'viewport':
+			self.module.doCommand( 'scene_editor/reparent_entity', target = 'root' )
+
 		super( GenericTreeWidget, self ).dropEvent( ev )
 
 	def onDeletePressed( self ):

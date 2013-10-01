@@ -109,7 +109,7 @@ class SceneIntrospector( SceneEditorModule ):
 	def getDependency(self):
 		return ['qt', 'scene_editor']
 	
-	def onLoad(self):
+	def onLoad(self):		
 		signals.connect( 'selection.changed', self.onSelectionChanged )
 		self.requestInstance()
 		signals.connect( 'component.added',   self.onComponentAdded )
@@ -189,9 +189,9 @@ class SceneIntrospector( SceneEditorModule ):
 		if context != 'introspector' :
 			for ins in self.instances:
 				if ins.target == entity:
-					ins.refresh()
+					ins.scheduleUpdate()
 
-
+		
 ##----------------------------------------------------------------##
 class IntrospectorInstance(object):
 	def __init__(self, id):
@@ -217,6 +217,9 @@ class IntrospectorInstance(object):
 		layout.setMargin(0)
 		layout.addStretch()
 		scroll.setWidget( body )
+
+		self.updateTimer = self.container.startTimer( 3, self.onUpdateTimer )
+		self.updatePending = False
 	
 	def getTarget(self):
 		return self.target
@@ -297,6 +300,14 @@ class IntrospectorInstance(object):
 		for editor in self.editors:
 			editor.refresh()
 
+	def onUpdateTimer( self ):
+		if self.updatePending == True:
+			self.updatePending = False
+			self.refresh()
+
+	def scheduleUpdate( self ):
+		self.updatePending = True
+	
 
 ##----------------------------------------------------------------##
 class ObjectEditor( object ):	

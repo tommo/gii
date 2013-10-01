@@ -38,7 +38,8 @@ class SearchViewWidget( QtGui.QWidget ):
 				SearchViewTree(
 					self.ui.containerResultTree,
 					multiple_selection = False,
-					editable = False
+					editable = False,
+					sorting  = False
 				) 
 			)
 		self.textTerms = addWidgetWithLayout (
@@ -64,18 +65,10 @@ class SearchViewWidget( QtGui.QWidget ):
 		self.entries = self.module.enumerateSearch( typeId, context )
 		self.treeResult.rebuild()
 		self.searchState = None
+		self.treeResult.sortItems( 0, Qt.AscendingOrder )
 		self.selectFirstItem()
 
-
-	def setSelection( self, obj ):
-		self.selected = True
-		self.module.selectObject( obj )
-
-	def setFocus( self ):
-		QtGui.QWidget.setFocus( self )
-		self.textTerms.setFocus()
-
-	def onTermsChanged( self, text ):
+	def updateSearchTerms( self, text ):
 		if text:
 			globs = text.split()
 			globs1 = []
@@ -92,13 +85,26 @@ class SearchViewWidget( QtGui.QWidget ):
 				entry.visible = True
 				self.treeResult.setNodeVisible( entry, True )
 
+		self.treeResult.sortItems( 0, Qt.AscendingOrder )
 		self.selectFirstItem()
 
+	def setSelection( self, obj ):
+		self.selected = True
+		self.module.selectObject( obj )
+
+	def setFocus( self ):
+		QtGui.QWidget.setFocus( self )
+		self.textTerms.setFocus()
+
+	def onTermsChanged( self, text ):
+		self.updateSearchTerms( text )		
+
 	def selectFirstItem( self ):
-		if not self.treeResult.getSelection():
-			item = self.treeResult.itemAt( 0, 0 )
-			if item:
-				item.setSelected( True )
+		# if not self.treeResult.getSelection():
+		self.treeResult.clearSelection()
+		item = self.treeResult.itemAt( 0, 0 )
+		if item:
+			item.setSelected( True )
 
 	def onTermsReturn( self ):
 		for node in self.treeResult.getSelection():
@@ -166,6 +172,13 @@ class SearchViewTree(GenericTreeWidget):
 	# 	for node in self.getSelection():
 	# 		self.browser.setSelection( node.obj )
 	# 		return
+	def createItem( self, node ):
+		item = SearchViewItem()
+		flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled
+		if self.option.get( 'editable', False ):
+			flags |= Qt.ItemIsEditable 
+		item.setFlags ( flags )
+		return item
 
 	def onClicked( self, item, col ):
 		node = item.node
@@ -194,26 +207,29 @@ class SearchViewTree(GenericTreeWidget):
 class SearchEntry(object):
 	def __init__( self, obj, name, typeName, iconName ):
 		self.visible    = True
-
+		self.matchScore = 0
 		self.obj      = obj
 		self.name     = name
 		self.typeName = typeName
 		self.iconName = iconName
 
 	def matchQuery( self, globs ):
-		findInName = True
-		for t in globs:
-			if not t in self.name.upper():
-				findInName = False
-				break
+		score = 0
+		name = self.name.upper()
+		typeName = self.typeName.upper()
+		for i, t in enumerate( globs ):
+			pos = name.find( t )
+			if pos >= 0:
+				score += 10.0/(i+1)/(pos+1)
 
-		findInType = False
-		for t in globs:
+		for i, t in enumerate( globs ):
 			if t in self.typeName.upper():
 				findInType = True
+				score += 1
 				break
 
-		return findInName or findInType
+		self.matchScore = score
+		return score > 0
 
 
 ##----------------------------------------------------------------##
@@ -276,6 +292,22 @@ class SearchView( EditorModule ):
 				allResult += result
 		return [ SearchEntry( *r ) for r in allResult ]
 
+##----------------------------------------------------------------##
+class SearchViewItem( QtGui.QTreeWidgetItem ):
+	def __lt__( self, other ):
+		node0 = self.node
+		node1 = hasattr(other, 'node') and other.node or None
+		if not node1:
+			return True
+		tree = self.treeWidget()
+
+		t0 = - node0.matchScore
+		t1 = - node1.matchScore
+		if t0 < t1: return True
+		if t0 == t1 : return node0.name < node1.name
+		return False
+		
+##----------------------------------------------------------------##
 ##----------------------------------------------------------------##
 searchView = SearchView()
 searchView.register()
