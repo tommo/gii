@@ -15,8 +15,8 @@ def convertKeyCode(k):
 
 
 class MOAICanvasBase(GLWidget):
-	def __init__( self, parentWidget = None ):
-		super(MOAICanvasBase,self).__init__(parentWidget)		
+	def __init__( self, parentWidget = None, **option ):
+		super(MOAICanvasBase,self).__init__( parentWidget, **option )		
 		self.inputDevice = None
 
 	def setInputDevice(self, device):

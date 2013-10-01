@@ -22,6 +22,10 @@ class QtEditorModule( EditorModule ):
 	def getQtSupport( self ):
 		return self.getModule( 'qt' )
 
+	def getQApplication( self ):
+		qt = self.getModule( 'qt' )
+		return qt.qtApp
+
 	def requestDockWindow( self, id = None, **windowOption ):
 		if not id: id = self.getName()
 		mainWindow = self.getMainWindow()

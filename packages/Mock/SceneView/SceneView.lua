@@ -35,9 +35,9 @@ addColor( 'black', 0,0,0,1 )
 
 local alpha = 0.8
 addColor( 'selection', 0,1,1, alpha )
-addColor( 'handle-x', 1,0,0, alpha )
-addColor( 'handle-y', 0,1,0, alpha )
-addColor( 'handle-z', 0,0,1, alpha )
+addColor( 'handle-x',  1,0,0, alpha )
+addColor( 'handle-y',  0,1,0, alpha )
+addColor( 'handle-z',  0,0,1, alpha )
 addColor( 'handle-all', 1,1,0, alpha )
 addColor( 'handle-active', 1,1,0, alpha )
 
@@ -73,7 +73,7 @@ function SceneView:onLoad()
 	self.gizmos  = {}
 	self.handles = {}
 	
-	self.currentHandle = 'rotation'
+	self.currentHandle = 'translation'
 
 	self:addHandle( SelectionHandle() )
 	self:connect( 'scene.serialize', 'preSceneSerialize' )
@@ -134,6 +134,7 @@ function SceneView:clearSelection()
 	--clear handle
 	self.handles = {}
 	self.gizmos = {}
+	self.editTarget  = false
 end
 
 
@@ -162,16 +163,16 @@ function SceneView:onSelectionChanged( selection )
 	if next( entities ) then
 		local topEntities = findTopLevelEntities( entities )
 		local target
-		local count = table.len( topEntities )
-		if count > 1 then
-			target = TransformProxy()
-			target:setTargets( topEntities )
-		else
-			target = next( topEntities )
-		end
-		local handle = self:addHandle( self:getCurrentHandle() )
-		handle:setTarget( target )
-		self.handles[ handle ] = true
+		target = TransformProxy()
+		target:setTargets( topEntities )
+		-- local count = table.len( topEntities )
+		-- if count > 1 then
+		-- 	target = TransformProxy()
+		-- 	target:setTargets( topEntities )
+		-- else
+		-- 	target = next( topEntities )
+		-- end
+		self.editTarget = target 		
 	end
 	--gizmo
 	for e in pairs( entities ) do
@@ -179,6 +180,8 @@ function SceneView:onSelectionChanged( selection )
 		gizmo:setTarget( e )
 		self.gizmos[ gizmo ] = true
 	end
+
+	self:refreshEditHandle()
 	scheduleUpdate()
 end
 
@@ -204,14 +207,30 @@ function SceneView:preSceneSerialize( scene )
 	}
 end
 
-function SceneView:onKeyDown( key )
-	if key == 'w' then --translation
-		self.currentHandle = 'translation'
-	elseif key == 'e' then --rotation
-		self.currentHandle = 'rotation'
-	elseif key == 'r' then --rescale
-		self.currentHandle = 'scale'
+function SceneView:changeEditTool( name )
+	local targetTool
+	if name == 'translation' then --translation
+		targetTool = 'translation'
+	elseif name == 'rotation' then --rotation
+		targetTool = 'rotation'
+	elseif name == 'scale' then --rescale
+		targetTool = 'scale'
 	end
+	if not targetTool then return _error( 'unknown edit tool', name ) end
+	self.currentHandle = targetTool
+	self:refreshEditHandle()
+end
+
+function SceneView:refreshEditHandle()
+	for handle in pairs( self.handles ) do
+		handle:destroyNow()
+	end
+	self.handles = {}
+	if not self.editTarget then return end
+	local handle = self:addHandle( self:getCurrentHandle() )
+	handle:setTarget( self.editTarget )
+	self.handles[ handle ] = true
+	scheduleUpdate()
 end
 
 --------------------------------------------------------------------
@@ -244,29 +263,38 @@ function TransformProxy:setTargets( targets )
 		proxies[e] = proxy
 		inheritTransform( proxy, trans )
 		e:forceUpdate()
-		local x, y = trans:worldToModel( e:getWorldLoc( 0, 0 ) )
-		proxy:setLoc( x, y )
+		local x, y, z = trans:worldToModel( e:getWorldLoc( 0, 0, 0 ) )
+		proxy:setLoc( x, y, z )
+		proxy:setScl( e:getScl() )
+		proxy:setRot( e:getRot() )
 	end
 	self.proxies = proxies
 	self:onUpdate()
 end
 
-local function setWorldLoc( e, x, y )
+local function setWorldLoc( e, x, y, z )
 	local p = e.parent
+	local x0,y0,z0 = e:getLoc()
 	if p then
-		x, y = p:worldToModel( x, y )
-		e:setLoc( x, y )
+		x, y, z = p:worldToModel( x, y, z )
+		e:setLoc( x, y, z0 )
 	else
-		e:setLoc( x, y )
+		e:setLoc( x, y, z0 )
 	end
 end
 
 function TransformProxy:onUpdate()
+	local sx,sy,sz = self:getScl()
+	local rx,ry,rz = self:getRot()
 	for e, proxy in pairs( self.proxies ) do
 		proxy:forceUpdate()
-		local x,y = proxy:modelToWorld( 0,0,0 )
-		setWorldLoc( e, x, y )
-
+		local x,y,z = proxy:modelToWorld( 0,0,0 )
+		setWorldLoc( e, x, y, z )
+		local sx1,sy1,sz1 = proxy:getScl()
+		local rx1,ry1,rz1 = proxy:getRot()
+		e:setScl( sx*sx1, sy*sy1, sz1 )
+		e:setRot( rx+rx1, ry+ry1, rz+rz1 )
+		gii.emitPythonSignal( 'entity.modified', e )
 	end
 end
 
@@ -519,10 +547,12 @@ function ScaleHandle:setTarget( target )
 end
 
 function ScaleHandle:onMouseDown( btn, x, y )
-	if btn~='left' then return end
-	x, y = self:wndToModel( x, y )
+	if btn~='left' then return end	
 	self.x0 = x
 	self.y0 = y
+	x,y = self:wndToModel( x, y )
+	self.sx, self.sy, self.sz = self.target:getScl()
+
 	if x >= -5 and y >= -5 and x <= handleArrowSize + 5 and y <= handleArrowSize + 5 then
 		self.activeAxis = 'all'
 		return true
@@ -549,36 +579,33 @@ function ScaleHandle:onMouseMove( x, y )
 	local target = self.target
 	target:forceUpdate()
 	self:forceUpdate()
-	x, y = self:wndToTarget( x, y )
+	
 	local dx = x - self.x0
 	local dy = y - self.y0
-	self.x0, self.y0 = x, y 
-	local tx, ty = self.target:getLoc()
-	
+
 	local mode = 'global'
 	local parent = target.parent
 	if parent and mode == 'global' then
-		local wx, wy   = target:getWorldLoc( 0,0,0 )
-		local wx1, wy1 = parent:modelToWorld( tx + dx, ty + dy )
 		if self.activeAxis == 'all' then
-			--pass			
+			--pass
+			local k = 1 + math.magnitude( dx, dy ) / 100 * math.sign(dx) 
+			self.target:setScl( 
+				self.sx * k,
+				self.sy * k,
+				self.sz * 1 )
 		elseif self.activeAxis == 'x' then
-			wy1 = wy
+			-- pass
 		elseif self.activeAxis == 'y' then
-			wx1 = wx
+			-- pass
 		end
-		tx, ty = parent:worldToModel( wx1, wy1 )
+		
 	else
-		if self.activeAxis == 'all' then
-			tx = tx + dx
-			ty = ty + dy
-		elseif self.activeAxis == 'x' then
-			tx = tx + dx
-		elseif self.activeAxis == 'y' then
-			ty = ty + dy
-		end
+		local k = 1 + math.magnitude( dx, dy ) / 100 * math.sign(dx) 
+		self.target:setScl( 
+			self.sx * k,
+			self.sy * k,
+			self.sz * 1 )
 	end
-	target:setLoc( tx, ty )
 	
 	gii.emitPythonSignal( 'entity.modified', target, 'view' )
 	scheduleUpdate()

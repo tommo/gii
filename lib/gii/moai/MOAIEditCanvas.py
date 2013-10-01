@@ -1,5 +1,6 @@
 import os.path
 import time
+from time import time as getTime
 
 from PyQt4 import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
@@ -9,6 +10,7 @@ from gii import *
 from gii.qt.controls.GLWidget import GLWidget
 from MOAIRuntime              import getAKU, MOAIRuntime, MOAILuaDelegate
 from MOAICanvasBase           import MOAICanvasBase
+
 
 import ContextDetection
 
@@ -200,11 +202,11 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.updateTimer = QtCore.QTimer(self)
 		self.viewWidth   = 0
 		self.viewHeight  = 0
-		self.updateStep  = 0
 		
 		self.scriptEnv   = None
 		self.scriptPath  = None
-
+		self.lastUpdateTime = 0 
+		self.updateStep  = 0
 
 		self.updateTimer.timeout.connect( self.updateCanvas )
 		signals.connect('moai.reset', self.onMoaiReset)
@@ -222,10 +224,11 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 	def getCanvasSize(self):
 		return self.width(), self.height()
 
-	def startUpdateTimer(self, fps):
-		step = 1.0 / fps
-		self.updateStep = step
+	def startUpdateTimer( self, fps ):
+		step = 1000 / fps
 		self.updateTimer.start( step )
+		self.updateStep = 1.0/fps
+		self.lastUpdateTime = getTime()
 
 	def stopUpdateTimer(self):
 		self.updateTimer.stop()
@@ -306,12 +309,18 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.delegate.postDraw()
 
 	def updateCanvas( self, forced = False ):
-		step    = self.updateStep
+		currentTime = getTime()
+		step = currentTime - self.lastUpdateTime
+		step = self.updateStep
+		self.lastUpdateTime = currentTime
+		
 		runtime = self.runtime
 		runtime.setBufferSize( self.viewWidth, self.viewHeight )
+		
 		self.makeCurrent()
 		runtime.stepSim( step )
 		self.delegate.onUpdate( step )
+
 		if forced:
 			self.forceUpdateGL()
 		else:

@@ -308,7 +308,7 @@ class MOAIRuntime( EditorModule ):
 		# 	getAKU().runScript( scriptInit )
 
 	def onUnload(self):
-		self.cleanLuaReferences()
+		# self.cleanLuaReferences()
 		self.AKUReady   = False
 		pass
 

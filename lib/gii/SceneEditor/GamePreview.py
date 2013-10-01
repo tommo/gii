@@ -71,7 +71,7 @@ class GamePreview( SceneEditorModule ):
 			)
 
 
-		self.canvas = self.window.addWidget( GamePreviewCanvas( self.window )  )
+		self.canvas = self.window.addWidget( GamePreviewCanvas( self.window, sync = True )  )
 		self.canvas.startRefreshTimer()
 		self.paused = None
 		

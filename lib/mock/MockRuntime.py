@@ -109,6 +109,7 @@ class MockRuntime( EditorModule ):
 		pass
 
 	def initMockGame( self ):
+		self.runtime.changeRenderContext( 'game', 100, 100 )
 		_MOCK.init( self.configPath, True )
 		signals.emit( 'mock.init' )
 

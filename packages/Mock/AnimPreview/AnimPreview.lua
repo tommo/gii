@@ -41,30 +41,30 @@ function AnimPreview:setAnimClip( name )
 	self.sprite:play( name, MOAITimer.LOOP )
 end
 
-function AnimPreview:onMouseDown( btn )
-	if btn=='left' then 
-		self.sprite:pause( true ) --unpause
-		self.dragging = true
-	end
-end
+-- function AnimPreview:onMouseDown( btn )
+-- 	if btn=='left' then 
+-- 		self.sprite:pause( true ) --unpause
+-- 		self.dragging = true
+-- 	end
+-- end
 
-function AnimPreview:onMouseUp( btn )
-	if btn=='left' then 
-		self.sprite:pause(false)
-		self.dragging = false
-	end
-end
+-- function AnimPreview:onMouseUp( btn )
+-- 	if btn=='left' then 
+-- 		self.sprite:pause(false)
+-- 		self.dragging = false
+-- 	end
+-- end
 
-function AnimPreview:onMouseMove( x, y )
-	if not self.dragging then return end
-	if self.currentAnimClipLength then
-		local size = getCanvasSize()
-		local w, h = size[0], size[1]
-		local t = x / w * self.currentAnimClipLength 
-		self.sprite:apply( t )		
-		updateCanvas()
-	end
-end
+-- function AnimPreview:onMouseMove( x, y )
+-- 	if not self.dragging then return end
+-- 	if self.currentAnimClipLength then
+-- 		local size = getCanvasSize()
+-- 		local w, h = size[0], size[1]
+-- 		local t = x / w * self.currentAnimClipLength 
+-- 		self.sprite:apply( t )		
+-- 		updateCanvas()
+-- 	end
+-- end
 
 --------------------------------------------------------------------
 preview = scn:addEntity( AnimPreview() )

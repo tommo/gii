@@ -104,6 +104,16 @@ function setCurrentRenderContextActionRoot( root )
 	MOAIActionMgr.setRoot( root )
 end
 
+function setRenderContextActionRoot( key, root )
+	local context =  getRenderContext( key )
+	if key == currentContextKey then
+		MOAIActionMgr.setRoot( root )
+	end
+	if context then
+		context.actionRoot = root
+	end
+end
+
 local keymap_GII={
 	["alt"]        = 163 ;
 	["pause"]      = 168 ;
