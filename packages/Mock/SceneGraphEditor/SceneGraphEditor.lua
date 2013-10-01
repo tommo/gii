@@ -1,3 +1,4 @@
+local generateGUID = MOAIEnvironment.generateGUID
 
 local function isEditorEntity( e )
 	while e do
@@ -5,6 +6,20 @@ local function isEditorEntity( e )
 		e = e.parent
 	end
 	return false
+end
+
+local function affirmGUID( entity )
+	if not entity.__guid then
+		entity.__guid = generateGUID()
+	end
+	for com in pairs( entity.components ) do
+		if not com.__guid then
+			com.__guid = generateGUID()
+		end
+	end
+	for child in pairs( entity.children ) do
+		affirmGUID( child )
+	end
 end
 
 --------------------------------------------------------------------
@@ -17,6 +32,11 @@ end
 function SceneGraphEditor:openScene( path )
 	local scene = mock.loadAsset( path )
 	self.scene = scene
+	--affirm guid
+	for entity in pairs( scene.entities ) do
+		affirmGUID( entity )
+	end
+	--
 	self:postLoadScene()
 	return scene
 end
@@ -25,6 +45,10 @@ function SceneGraphEditor:closeScene()
 	if not self.scene then return end
 	self.scene:exitNow()
 	self.scene = false
+	
+	self.retainedSceneData = false
+	self.retainedSceneSelection = false
+
 	mock.game:resetClock()
 	MOAISim.forceGarbageCollection()
 end
@@ -57,6 +81,12 @@ end
 
 function SceneGraphEditor:startScenePreview()
 	self.retainedSceneData = mock.serializeScene( self.scene )
+	--keep current selection
+	local guids = {}
+	for i, e in ipairs( gii.getSelection( 'scene' ) ) do
+		guids[ i ] = e.__guid
+	end
+	self.retainedSceneSelection = guids
 	mock.game:resetClock()
 	self.scene:start()
 end
@@ -69,9 +99,26 @@ function SceneGraphEditor:stopScenePreview()
 	if pcall( mock.deserializeScene, self.retainedSceneData, self.scene ) then
 		self.retainedSceneData = false
 		self:postLoadScene()
+		local result = {}
+		for i, guid in ipairs( self.retainedSceneSelection ) do
+			local e = self:findEntityByGUID( guid )
+			if e then table.insert( result, e ) end			
+		end
+		gii.changeSelection( 'scene', unpack( result ) )
+		self.retainedSceneSelection = false
 	else
 		self.failedRefreshData = self.retainedSceneData
 	end
+end
+
+function SceneGraphEditor:findEntityByGUID( id )
+	local result = false
+	for e in pairs( self.scene.entities ) do
+		if e.__guid == id then
+			result = e
+		end
+	end
+	return result
 end
 
 local function collectEntity( e, typeId, collection )
@@ -214,7 +261,7 @@ end
 function CmdCreateEntityBase:redo()
 	local entity = self:createEntity()
 	if not entity then return false end
-	entity.__guid = MOAIEnvironment.generateGUID()
+	entity.__guid = generateGUID()
 	self.created = entity
 	editor.scene:addEntity( entity )
 	gii.emitPythonSignal('entity.added', self.created )
@@ -283,7 +330,7 @@ function CmdCreateComponent:redo()
 	local comType = mock.getComponentType( self.componentName )
 	assert( comType )
 	local component = comType()
-	component.__guid = MOAIEnvironment.generateGUID()
+	component.__guid = generateGUID()
 	self.createdComponent = component
 	self.targetEntity:attach( component )
 	gii.emitPythonSignal( 'component.added', component, self.targetEntity )	

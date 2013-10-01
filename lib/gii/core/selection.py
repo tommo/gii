@@ -40,7 +40,7 @@ class SelectionManager(object):
 		signals.emit('selection.changed', selection, self.key )
 
 	def addSelection( self, selection ):
-		if not selction: return
+		if not selection: return
 		if not isinstance(selection, list): selection = [ selection ]
 		return self.changeSelection( self.currentSelection + selection )
 

@@ -233,6 +233,7 @@ function SceneView:refreshEditHandle()
 	scheduleUpdate()
 end
 
+
 --------------------------------------------------------------------
 CLASS: TransformProxy( mock.Entity )
 
@@ -305,7 +306,11 @@ function SelectionHandle:onMouseUp( btn, x, y )
 	if btn == 'left' then
 		local x1, y1 = view:wndToWorld( x, y )
 		local e = view:pick( x1, y1 )
-		gii.changeSelection( 'scene', e )
+		if inputDevice:isKeyDown( 'ctrl' ) then			
+			gii.addSelection( 'scene', e )
+		else
+			gii.changeSelection( 'scene', e )
+		end
 	end
 end
 
