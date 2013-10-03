@@ -48,8 +48,9 @@ class ModuleFileWatcher( EditorModule ):
 				options.get( 'ignoreDirectories', False ),
 				options.get( 'caseSensitive', True )
 			)
-		watch=self.observer.schedule( handler, path, options.get( 'recursive', True ) )
-		self.watches[path]=watch
+
+		watch = self.observer.schedule( handler, path, options.get( 'recursive', True ) )
+		self.watches[ path ]=watch
 		return watch
 
 	def onStop( self ):
@@ -64,10 +65,9 @@ class ModuleFileWatcher( EditorModule ):
 
 	def stopAllWatches(self):
 		logging.info('stop all file watchers')
-		for path in self.watches:
-			self.stopWatch(path)
+		self.observer.unschedule_all()
+		self.watches = {}
 
-	
 	def onFileMoved(self, path, newpath):
 		# print('asset moved:',path, newpath)
 		app.getAssetLibrary().scheduleScanProject()

@@ -75,7 +75,7 @@ function CanvasNavigate:setZoom( zoom )
 	self.zoom = zoom
 	local cameraCom = self.targetCamera:getComponent( EditorCanvasCamera )
 	cameraCom:setZoom( zoom )
-	cameraCom:updateCanvas()	
+	cameraCom:updateCanvas()
 end
 
 --------------------------------------------------------------------
@@ -90,10 +90,11 @@ function CanvasHandleLayer:onLoad()
 	local option = self.option or {}
 	local inputDevice = option.inputDevice or self:getScene().inputDevice
 	self.targetCamera = assert( option.camera or self:getScene().camera )
+	self.targetCameraCom = self.targetCamera:com('EditorCanvasCamera')
 	self:attach( mock.InputScript{ 
 			device = inputDevice
 		} )
-	self.zoom = 1
+	self.targetCameraCom.onZoomChanged = function( zoom ) return self:onZoomChanged( zoom ) end
 end
 
 function CanvasHandleLayer:onMouseDown( btn, x, y )
@@ -120,10 +121,19 @@ function CanvasHandleLayer:onMouseMove( x, y )
 	end
 end
 
+function CanvasHandleLayer:onZoomChanged( zoom )
+	local scl = 1/zoom
+	for i, handle in ipairs( self.handles ) do
+		handle:setScl( scl, scl, 1 )
+	end
+end	
+
 function CanvasHandleLayer:addHandle( handle )
 	self:addSibling( handle )
 	table.insert(self.handles, 1, handle )
 	handle.handleLayer = self
+	local scl = 1/self.targetCameraCom:getZoom()
+		handle:setScl( scl, scl, 1 )
 	return handle
 end
 

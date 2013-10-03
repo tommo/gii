@@ -124,7 +124,9 @@ class AssetRefFieldEditor( FieldEditor ):
 		return p
 
 	def gotoObject( self ):
-		signals.emit( 'selection.hint', self.target )
+		assetBrowser = app.getModule( 'asset_browser' )
+		if assetBrowser:
+			assetBrowser.locateAsset( self.target )
 
 	def clearObject( self ):
 		self.setValue( None )

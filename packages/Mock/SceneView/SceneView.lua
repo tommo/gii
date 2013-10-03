@@ -250,6 +250,7 @@ function TransformProxy:setTargets( targets )
 
 	local totalX, totalY = 0, 0
 	for e in pairs( targets ) do
+		e:forceUpdate()
 		local x1,y1 = e:getWorldLoc()
 		totalX = totalX + x1
 		totalY = totalY + y1

@@ -110,8 +110,8 @@ class SceneIntrospector( SceneEditorModule ):
 		return ['qt', 'scene_editor']
 	
 	def onLoad(self):		
-		signals.connect( 'selection.changed', self.onSelectionChanged )
 		self.requestInstance()
+		signals.connect( 'selection.changed', self.onSelectionChanged )
 		signals.connect( 'component.added',   self.onComponentAdded )
 		signals.connect( 'component.removed', self.onComponentRemoved )
 		signals.connect( 'entity.modified',   self.onEntityModified ) 

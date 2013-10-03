@@ -72,6 +72,7 @@ class FmodAssetManager(AssetManager):
 		fmodDesignerPath = '/Users/tommo/dev/fmod/FMOD Designer'
 		output = node.getCacheFile( 'export', is_dir = True )
 		node.setObjectFile( 'export', output )
+		# target = '-ios'
 		target = '-pc'
 		arglist = [ 
 				fmodDesignerPath+'/fmod_designercl',

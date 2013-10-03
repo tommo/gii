@@ -98,8 +98,11 @@ class AssetBrowser( AssetEditorModule ):
 	def setAssetIcon(self, assetType, iconName):
 		self.assetIconMap[assetType] = iconName
 
-	def locateAsset( self, assetNode ):
-		item = self.treeView.getItemByNode( assetNode )
+	def locateAsset( self, asset ):
+		if isinstance( asset, ( str, unicode ) ): #path
+			asset = self.getAssetLibrary().getAssetNode( asset )
+		if not asset: return
+		item = self.treeView.getItemByNode( asset )
 		if item:
 			self.treeView.clearSelection()
 			item.setSelected( True )

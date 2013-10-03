@@ -80,6 +80,12 @@ function EditorCanvasCamera:onAttach( entity )
 	return mock.Camera.onAttach( self, entity)
 end
 
+
+function EditorCanvasCamera:setZoom( zoom )
+	mock.Camera.setZoom( self, zoom )
+	if self.onZoomChanged then self.onZoomChanged( self:getZoom() ) end
+end
+
 --------------------------------------------------------------------
 --EditorCanvasScene
 --------------------------------------------------------------------

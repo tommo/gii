@@ -181,7 +181,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			self._removeItem( child )
 		node = item.node
 		item.node = None
-		self.nodeDict[ node ] = None
+		del self.nodeDict[ node ]
 		( item.parent() or self.rootItem ).removeChild( item )
 		return True
 
