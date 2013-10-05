@@ -22,12 +22,15 @@ def run( **option ):
 		arglist.append( 'clean' )
 	
 	else:
-		arglist.append( 'build' )
-		arglist.append( 'install' )
+		target = 'osx'
+		config = 'debug'
+		suffix = '-%s-%s' % ( target, config )
+		arglist.append( 'build' + suffix )
+		arglist.append( 'install' + suffix )
 
 	targets = option.get( 'targets', [] )
 	#todo, targets
-	print arglist
+	# print arglist
 	try:
 		code = subprocess.call( arglist )
 	except Exception, e:

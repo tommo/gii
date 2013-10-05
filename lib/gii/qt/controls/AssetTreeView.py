@@ -28,7 +28,12 @@ class AssetTreeView( GenericTreeWidget ):
 		return node.getParent()
 
 	def getNodeChildren( self, node ):
-		return node.getChildren()
+		if node.isBundle(): return []
+		result = []
+		for node in node.getChildren():
+			if node.getProperty( 'hidden', False ): continue
+			result.append( node )
+		return result
 
 	def createItem( self, node ):
 		return AssetTreeItem()

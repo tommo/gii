@@ -35,16 +35,14 @@ class AssetNode(object):
 		self.name = os.path.basename( nodePath )
 		
 		self.children = []
-		self.rDep     = {}     #runtime level dependency
-		self.pDep     = {}		 #project level dependency
-		self.rDepBy   = {}     #runtime level dependency
-		self.pDepBy   = {}		 #project level dependency
+		self.dependency     = {}     #runtime level dependency
+		self.depBy   = {}     #runtime level dependency
 
 		self.cacheFiles  = {}
 		self.objectFiles = {}
 
 		self.deployState = None
-		self.modifyState = 'new'
+		self.modifyState = 'new'		
 
 		self.filePath = kwargs.get( 'filePath', nodePath )
 		self.fileTime = kwargs.get( 'fileTime', 0 )
@@ -148,6 +146,14 @@ class AssetNode(object):
 			pass
 		return node
 
+	def setBundle( self, isBundle = True ):
+		self.setProperty( 'is_bundle', isBundle )
+		if isBundle:
+			pass
+
+	def isBundle( self ):
+		return self.getProperty( 'is_bundle', False )
+
 	def setManager(self, assetManager, forceReimport=False):
 		prevManager = self.getManager()
 		if prevManager != assetManager:
@@ -160,16 +166,22 @@ class AssetNode(object):
 		self.children.pop(idx)
 		node.parentNode=None
 
-	def addDependencyP(self, depNode):
-		self.pDep[depNode]=True
-		depNode.pDepBy[self]=True
+	def addDependency( self, key, depNode ):
+		self.dependency[ key ] = depNode.getNodePath()
+		depNode.depBy[ self.getNodePath() ] = True
 
-	def addDependencyR(self, depNode):
-		self.rDep[depNode]=True
-		depNode.rDepBy[self]=True
+	def getDependency( self, key ):
+		return self.dependency.get( key, None )
+		
+	def getDependencyNode( self, key ):
+		path = self.dependency.get( key, None )
+		return path and AssetLibrary.get().getAssetNode( path )
 
-	def hasDependency(self, depNode):
-		return self.pDep.has_key(depNode) or self.rDep.has_key(depNode)
+	def findDependencyKey( self, node ):
+		path = node.getNodePath()
+		for k, v in self.dependency.items():
+			if v==path: return k
+		return None
 
 	def getDeployState(self):
 		if self.deployState == False:
@@ -180,10 +192,11 @@ class AssetNode(object):
 		pstate = self.parentNode.getDeployState()
 		if pstate == False: return False
 		if pstate: return 'parent'
-		for node in self.rDepBy:
-			s = node.getDeployState()
-			if s:
-				return 'dep'
+		lib = AssetLibrary.get()
+		for nodePath in self.depBy:
+			node = lib.getAssetNode( nodePath )
+			if node and node.getDeployState():
+				return 'dependency'
 		return None
 
 	def setDeployState(self, state):
@@ -308,6 +321,14 @@ class AssetNode(object):
 		if path:
 			AssetUtils.openFileInOS(path)
 
+	def _updateFileTime( self ):
+		if self.isVirtual(): return
+		if self.isBundle():
+			# self.fileTime = _getBundleFileTime( self )
+			self.fileTime = os.path.getmtime( self.getAbsFilePath() )
+		else:
+			self.fileTime = os.path.getmtime( self.getAbsFilePath() )
+
 	#just a shortcut for configuration type asset
 	def loadAsJson(self):
 		if self.isVirtual(): return None
@@ -331,6 +352,7 @@ class AssetNode(object):
 
 		self.markModified()
 		return True
+
 
 ##----------------------------------------------------------------##
 class AssetManager(object):	
@@ -590,24 +612,24 @@ class AssetLibrary(object):
 		absFilePath = os.path.abspath( self.rootAbsPath + '/' + path )
 		fileTime = os.path.getmtime(absFilePath)
 		filePath = self.rootPath + '/' + path
+		
+		#if inside bundle, skip
+		if self._getParentBundle( path ): return None
 
-		node = self.getAssetNode(path)
-		assert not node
+		assert not self.getAssetNode( path )
 		#create a common asset node first
-		if not node:
-			ppath      = os.path.dirname(path)
-			parentNode = self.getAssetNode(ppath)			
+		parentNode = self.getAssetNode( os.path.dirname( path ) )
 
-			node = AssetNode( 
-				path,
-				os.path.isfile(absFilePath) and 'file' or 'folder', 
-				fileTime = fileTime,
-				filePath = filePath,
-				**kwargs )
-			node.setManager( self.rawAssetManager )
-			self.registerAssetNode( node )
-			parentNode.addChild(node)	
-			node.markModified()
+		node = AssetNode( 
+			path,
+			os.path.isfile(absFilePath) and 'file' or 'folder', 
+			fileTime = fileTime,
+			filePath = filePath,
+			**kwargs )
+		node.setManager( self.rawAssetManager )
+		self.registerAssetNode( node )
+		parentNode.addChild(node)	
+		node.markModified()
 
 		return node
 
@@ -615,7 +637,13 @@ class AssetLibrary(object):
 		#TODO:should this be done by a asset index rebuilding (by restarting editor)?
 		pass
 
-	def importModifiedAssets(  self ):
+	def importModifiedAssets( self ):
+		def _removeChildrenNode( node ):
+			for child in node.getChildren()[:]:
+				_removeChildrenNode( child )
+				child.modifyState = 'removed'
+				self.unregisterAssetNode( child )
+
 		#collect 'modifyState' 	 asset
 		modifiedAssets = {}
 		for node in self.assetTable.values():
@@ -626,6 +654,9 @@ class AssetLibrary(object):
 			if not modifiedAssets: break
 			done = []
 			for node in modifiedAssets:
+				if node.modifyState == 'removed':
+					done.append( node )
+					continue
 				if not node.modifyState: #might get imported as a sub asset 
 					done.append( node )
 					continue
@@ -634,19 +665,24 @@ class AssetLibrary(object):
 				isNew = node.modifyState == 'new'
 				if not isNew:
 					for n in node.getChildren()[:]:
-						self.unregisterAssetNode(n)
+						if n.isVirtual():
+							self.unregisterAssetNode(n)
 						#TODO: add failed state to node				
 				if node.getManager() != manager: node.setManager( manager )
 				if manager.importAsset( node, reload = not isNew ):
 					node.modifyState  =  False
 					done.append( node )
+
 				if not isNew:
 					signals.emitNow( 'asset.modified',  node )
+
+				if node.isBundle():
+					_removeChildrenNode( node )
 					
 			for node in done:
-				if not node.isVirtual():
-					node.fileTime = os.path.getmtime( node.getAbsFilePath() )
 				del modifiedAssets[ node ]
+				if node.modifyState == 'removed': continue
+				node._updateFileTime()
 		signals.emitNow( 'asset.post_import_all' )
 		logging.info( 'modified assets imported' )
 
@@ -756,15 +792,13 @@ class AssetLibrary(object):
 			pnode.addChild(node)
 			data = dataTable[path]
 
-			for dpath in data.get('rDep',[]):
+			for key, dpath in data.get( 'dependency', {} ).items() :
 				dnode = assetTable[dpath]
-				assert dnode
-				node.addDependencyR(dnode)
-
-			for dpath in data.get('pDep',[]):
-				dnode = assetTable[dpath]
-				assert dnode
-				node.addDependencyP(dnode)
+				if not dnode:
+					logging.warn('missing dependency asset node', dpath )
+					node.markModified()
+				else:
+					node.addDependency( key, dnode )
 
 		self.assetTable=assetTable
 		logging.info("asset library loaded")
@@ -788,13 +822,13 @@ class AssetLibrary(object):
 				item['objectFiles'] = mapped
 			else:
 				item['objectFiles'] = node.objectFiles
+
+			item['dependency']  = node.dependency
+			item['fileTime']    = node.getFileTime()
 			#non deploy information
 			if not deployContext:
 				item['manager']     = node.managerName
-				item['fileTime']    = node.getFileTime()
 				item['deploy']      = node.deployState
-				item['pDep']        = [ dnode.getNodePath() for dnode in node.pDep ]
-				item['rDep']        = [ dnode.getNodePath() for dnode in node.rDep ]
 				item['cacheFiles']  = node.cacheFiles
 				item['properties']  = node.properties
 		 		item['modifyState'] = node.modifyState
@@ -830,3 +864,12 @@ class AssetLibrary(object):
 						logging.info( 'remove metadata: %s' % metaPath )
 						os.remove( metaPath )
 				#TODO: remove meta folder if it's empty
+
+	def _getParentBundle ( self, path ):
+		while True:
+			path1 = os.path.dirname(path)
+			if not path1 or path1 == path: return None
+			path  = path1
+			pnode = self.getAssetNode( path )
+			if pnode and pnode.isBundle(): return pnode
+

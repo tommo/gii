@@ -12,27 +12,27 @@ class SpineAssetManager(AssetManager):
 		return 'asset_manager.spine'
 
 	def acceptAssetFile(self, filepath):
-		if not os.path.isfile(filepath): return False
-		if not filepath.endswith( '.spine.json' ): return False
+		if not os.path.isdir(filepath): return False
+		if not filepath.endswith( '.spine' ): return False
 		return True
 
 	def importAsset(self, node, reload = False ):
+		if not node.assetType in [ 'folder', 'spine' ] : return True
 		node.assetType = 'spine'
-		node.setObjectFile( 'json', node.getFilePath() )
-
-		#TODO
-		#search bundled atlas  
-		baseName, ext = os.path.splitext( node.getNodePath() )
-		atlasPath   = baseName + '.atlas'
-		atlasNode = app.getAssetLibrary().getAssetNode( atlasPath )
-		
-		if atlasNode:
-			node.addDependencyR( atlasNode )
-			atlasNode.setManager( self )
-			atlasNode.assetType = 'spine_atlas'
-			node.setObjectFile( 'atlas', atlasNode.getFilePath() )
-
+		node.setBundle()
+		filePath = node.getFilePath()
+		nodePath = node.getNodePath()
+		for fileName in os.listdir( node.getAbsFilePath() ):
+			fullPath = filePath + '/' + fileName
+			name, ext = os.path.splitext( fileName )
+			if ext == '.json':
+				node.setObjectFile( 'json', fullPath )
+			elif ext == '.atlas':
+				node.setObjectFile( 'atlas', fullPath )
 		return True
+
+	def getPriority(self):
+		return 10
 
 	def deployAsset( self, node, context ):
 		super( SpineAssetManager, self ).deployAsset( node, context )
@@ -44,7 +44,7 @@ class SpineAssetManager(AssetManager):
 			fp.readline()
 			textureName = fp.readline().strip()
 			fp.close()
-			texturePath = os.path.dirname( node.getAbsFilePath() ) + '/' + textureName
+			texturePath = node.getAbsFilePath() + '/' + textureName
 			if os.path.exists( texturePath ):
 				newPath   = context.addFile( texturePath )
 				exportedAtlasPath = context.getAbsFile( node.getObjectFile( 'atlas' ) )
