@@ -113,10 +113,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/find/find_entity', dict( label = 'Find In Scene', shortcut = 'ctrl+g' ) )
 
 		#Toolbars
-		self.addTool( 'scene_graph/add_sibling', label = 'ent' )
-		self.addTool( 'scene_graph/add_child', label = '.ent' )
-		self.addTool( 'scene_graph/add_component', label = 'com' )
-		self.addTool( 'scene_graph/remove_entity', label = '-obj' )
+		self.addTool( 'scene_graph/fold_all', label = 'fold' )
+		self.addTool( 'scene_graph/unfold_all', label = 'unfold' )
 		self.addTool( 'scene_graph/load_prefab', label = 'prefab' )
 		self.addTool( 'scene_graph/save_prefab', label = '->prefab' )
 
@@ -249,31 +247,13 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def onTool( self, tool ):
 		name = tool.name
-		if name == 'add_sibling':
-			requestSearchView( 
-				info    = 'select entity type to create',
-				context = 'entity_creation',
-				on_selection = lambda obj: 
-					self.doCommand( 'scene_editor/create_entity', name = obj )
-				)
 		
-		elif name == 'add_child':
-			self.entityCreatorMenu.popUp()
-		
-		elif name == 'add_component':
-			requestSearchView( 
-				info    = 'select component type to create',
-				context = 'component_creation',
-				on_selection = lambda obj: 
-					self.doCommand( 'scene_editor/create_component', name = obj )
-				)
-		
-		elif name == 'remove_entity':
-			self.doCommand( 'scene_editor/remove_entity' )
-		
-		elif name == 'clone_entity':
-			self.doCommand( 'scene_editor/clone_entity' )
-		
+		if name == 'fold_all':
+			self.tree.foldAllItems()
+
+		elif name == 'unfold_all':
+			self.tree.expandAllItems()
+
 		elif name == 'refresh':
 			self.scheduleRefreshScene()
 		

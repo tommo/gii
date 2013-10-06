@@ -5,7 +5,7 @@ import os
 import os.path
 import re
 import shutil
-
+import sync
 import hashlib
 
 import signals
@@ -343,10 +343,13 @@ class DeployContext():
 	
 	def cleanPath( self ):
 		logging.info( 'removing output path: %s' %  self.path )
-		if os.path.isdir( self.path ):
-			shutil.rmtree( self.path )
+		# if os.path.isdir( self.path ):
+		# 	shutil.rmtree( self.path )
 		_affirmPath( self.path )
 		_affirmPath( self.assetPath )
+
+	def ignorePattern( self ):
+		return DeployContext._ignoreFilePattern
 
 	def getAssetPath( self, path = None ):
 		return _makePath( self.assetPath, path )
@@ -359,15 +362,11 @@ class DeployContext():
 		task = ( func, args )
 		self.taskQueue.append( task )
 
-	def copyFile( self, srcPath, dstPath = None ):
+	def copyFile( self, srcPath, dstPath = None, **option ):
 		if not dstPath:
 			dstPath = os.path.basename( srcPath )
 		absDstPath = self.getPath( dstPath )
-		if os.path.exists( absDstPath ): return #force?
-		if os.path.isdir( srcPath ):
-			shutil.copytree( srcPath, absDstPath )
-		else:
-			shutil.copy( srcPath, absDstPath )
+		sync.updateFile( srcPath, absDstPath )
 
 	def copyFilesInDir( self, srcDir, dstDir = None ):
 		if not os.path.isdir( srcDir ):
@@ -388,13 +387,7 @@ class DeployContext():
 			dstPath = 'asset/' + _hashPath( srcPath )
 		self.fileMapping[ srcPath ] = dstPath
 		#copy
-		absOutputFilePath = self.getPath( dstPath )
-		if os.path.isdir( srcPath ):
-			shutil.copytree( srcPath, absOutputFilePath )
-		else:
-			if not os.path.exists( absOutputFilePath ) \
-				or os.path.getmtime( srcPath ) > os.path.getmtime( absOutputFilePath ):
-				shutil.copy( srcPath, absOutputFilePath )
+		self.copyFile( srcPath, dstPath )
 		return dstPath
 
 	def getFile( self, srcPath ):

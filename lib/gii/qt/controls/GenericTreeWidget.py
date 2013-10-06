@@ -230,6 +230,17 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	
 	def getSelection( self )	:
 		return [ item.node for item in self.selectedItems() ]
+
+	def foldAllItems( self ):
+		for item in self.nodeDict.values():
+			if item:
+				item.setExpanded( False )
+
+	def expandAllItems( self ):
+		for item in self.nodeDict.values():
+			if item:
+				item.setExpanded( True )
+
 	##----------------------------------------------------------------##
 	## VIRTUAL Functions
 	##----------------------------------------------------------------##	
@@ -313,4 +324,5 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def onDeletePressed( self ):
 		pass
 	
+
 		

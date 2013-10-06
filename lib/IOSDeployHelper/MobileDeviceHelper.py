@@ -1,6 +1,6 @@
 import os
 import stat
-
+import logging
 import MobileDevice
 
 ##----------------------------------------------------------------##
@@ -14,14 +14,14 @@ def copyToDevice( afc, srcFile, tgtFile, **option ):
 		tgtMTime = 0
 
 	if tgtMTime < os.path.getmtime( srcFile ):
-		print 'copy new version:', srcFile, tgtFile
+		logging.info( 'copy new version: %s ' % srcFile )
 		tgtFP = afc.open( tgtFile, u'w' )
 		srcFP = open( srcFile, u'r' )
 		tgtFP.write( srcFP.read() )
 		srcFP.close()
 		tgtFP.close()
-	else:
-		print 'no newer file, skip', tgtFile
+	# else:
+	# 	print 'no newer file, skip', tgtFile
 
 ##----------------------------------------------------------------##
 def fileTypeOnDevice( afc, path ):
@@ -40,7 +40,7 @@ def cleanDirFromDevice( afc, path ):
 		if info.st_ifmt == stat.S_IFDIR:
 			removeTreeFromDevice( afc, fullPath )
 		else:
-			print 'rm', fullPath
+			logging.info( 'remove file :%s ' % fullPath )
 			afc.unlink( fullPath )
 	return True
 
@@ -48,7 +48,6 @@ def cleanDirFromDevice( afc, path ):
 def removeTreeFromDevice( afc, path ):
 	if not cleanDirFromDevice( afc, path ): return False
 	afc.unlink( path )
-	print 'rm', path
 	return True
 
 ##----------------------------------------------------------------##
@@ -77,6 +76,7 @@ def copyTreeToDevice( afc, srcDir, tgtDir, **option ):
 			srcFile = currentDir + '/' + f
 			tgtFile = currentTgtDir + '/' + f
 			copyToDevice( afc, srcFile, tgtFile, **option)
+		#todo:remove file not found in source
 
 ##----------------------------------------------------------------##
 def getAppAFC( dev, appName ):
