@@ -2,8 +2,8 @@ require 'mock.env'
 require 'mock_edit'
 
 function scheduleUpdate()
-	-- return _view:scheduleUpdate()
-	return updateCanvas()
+	return _view:scheduleUpdate()
+	-- return updateCanvas()
 end
 --------------------------------------------------------------------
 local inputDevice = mock_edit.createEditorCanvasInputDevice()

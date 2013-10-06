@@ -8,4 +8,5 @@ def main( argv ):
 	import gii.SceneEditor
 	import gii.AssetEditor
 	import gii.ScriptView
+	import gii.DeviceManager
 	app.run()

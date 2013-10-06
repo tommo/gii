@@ -308,7 +308,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		runtime.manualRenderAll()
 		self.delegate.postDraw()
 
-	def updateCanvas( self, forced = False ):
+	def updateCanvas( self, **option ):
 		currentTime = getTime()
 		step = currentTime - self.lastUpdateTime
 		step = self.updateStep
@@ -318,10 +318,13 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		runtime.setBufferSize( self.viewWidth, self.viewHeight )
 		
 		self.makeCurrent()
-		runtime.stepSim( step )
+
+		if not option.get( 'no_sim', False ):		
+			runtime.stepSim( step )
+
 		self.delegate.onUpdate( step )
 
-		if forced:
+		if option.get( 'forced', False ):
 			self.forceUpdateGL()
 		else:
 			self.updateGL()

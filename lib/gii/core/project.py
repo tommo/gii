@@ -147,7 +147,7 @@ class Project(object):
 		_affirmPath( self.hostPath )
 		_affirmPath( self.hostExtensionPath )
 		
-	def init( self, path ):
+	def init( self, path, name ):
 		info = Project.findProject( path )
 		if info:
 			raise ProjectException( 'Gii project already initialized:' + info['path'] )
@@ -175,6 +175,7 @@ class Project(object):
 
 		signals.emitNow('project.init', self)
 		logging.info( 'project initialized: %s' % path )
+		self.info['name'] = name
 
 		self.save()
 		return True	
@@ -391,7 +392,9 @@ class DeployContext():
 		if os.path.isdir( srcPath ):
 			shutil.copytree( srcPath, absOutputFilePath )
 		else:
-			shutil.copy( srcPath, absOutputFilePath )
+			if not os.path.exists( absOutputFilePath ) \
+				or os.path.getmtime( srcPath ) > os.path.getmtime( absOutputFilePath ):
+				shutil.copy( srcPath, absOutputFilePath )
 		return dstPath
 
 	def getFile( self, srcPath ):

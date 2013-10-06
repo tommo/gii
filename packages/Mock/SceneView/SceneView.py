@@ -39,7 +39,7 @@ class SceneView( SceneEditorModule ):
 
 		self.updateTimer = self.window.startTimer( 60, self.onUpdateTimer )
 		self.updatePending = False
-
+		self.previewing = False
 		self.previewUpdateTimer = False
 		self.preview = self.getModule( 'scene_preview' )
 
@@ -49,9 +49,9 @@ class SceneView( SceneEditorModule ):
 		signals.connect( 'scene.update',      self.onSceneUpdate      )
 		signals.connect( 'selection.changed', self.onSelectionChanged )
 
-		# signals.connect( 'preview.resume', self.onPreviewResume )
-		# signals.connect( 'preview.pause', self.onPreviewStop )
-		# signals.connect( 'preview.stop', self.onPreviewStop )
+		signals.connect( 'preview.resume', self.onPreviewResume )
+		signals.connect( 'preview.pause', self.onPreviewStop )
+		signals.connect( 'preview.stop', self.onPreviewStop )
 
 		self.addShortcut( 'W', self.changeEditTool, 'translation' )
 		self.addShortcut( 'E', self.changeEditTool, 'rotation' )
@@ -68,7 +68,7 @@ class SceneView( SceneEditorModule ):
 	def onUpdateTimer( self ):
 		if self.updatePending == True:
 			self.updatePending = False
-			self.canvas.updateCanvas()
+			self.canvas.updateCanvas( no_sim = self.previewing )
 			self.preview.refresh()
 
 	def onSetFocus( self ):
@@ -103,9 +103,11 @@ class SceneView( SceneEditorModule ):
 		self.canvas.safeCallMethod( 'view', 'onSelectionChanged', selection )
 
 	def onPreviewResume( self ):
-		self.previewUpdateTimer = self.window.startTimer( 2, self.scheduleUpdate )
+		self.previewing = True
+		self.previewUpdateTimer = self.window.startTimer( 3, self.scheduleUpdate )
 
 	def onPreviewStop( self ):
+		self.previewing = False
 		self.previewUpdateTimer.stop()
 
 	def scheduleUpdate( self ):
