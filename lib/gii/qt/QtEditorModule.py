@@ -110,8 +110,8 @@ class QtEditorModule( EditorModule ):
 		node.setValue(checked)
 
 	#TOOLBar control
-	def addToolBar( self, name, toolbar ):
-		node = ToolBarManager.get().addToolBar(name, toolbar, self)		
+	def addToolBar( self, name, toolbar, **option ):
+		node = ToolBarManager.get().addToolBar(name, toolbar, self, **option)	
 		return node
 
 	def addTool(self, path, **opiton ):

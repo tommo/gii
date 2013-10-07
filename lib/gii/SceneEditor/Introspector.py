@@ -115,7 +115,7 @@ class SceneIntrospector( SceneEditorModule ):
 		signals.connect( 'component.added',   self.onComponentAdded )
 		signals.connect( 'component.removed', self.onComponentRemoved )
 		signals.connect( 'entity.modified',   self.onEntityModified ) 
-
+		
 	def onStart( self ):
 		pass
 
@@ -187,11 +187,13 @@ class SceneIntrospector( SceneEditorModule ):
 
 	def onEntityModified( self, entity, context=None ):
 		if context != 'introspector' :
-			for ins in self.instances:
-				if ins.target == entity:
-					ins.scheduleUpdate()
+			self.refresh( entity, context )
 
-		
+	def refresh( self, target = None, context = None ):
+		for ins in self.instances:
+			if not target or ins.target == target:
+				ins.scheduleUpdate()
+
 ##----------------------------------------------------------------##
 class IntrospectorInstance(object):
 	def __init__(self, id):

@@ -43,7 +43,7 @@ end
 --EditorCanvasCamera
 --------------------------------------------------------------------
 CLASS: EditorCanvasCamera ( mock.Camera )
-function EditorCanvasCamera:__init( env )	
+function EditorCanvasCamera:__init( env )
 	self.FLAG_EDITOR_OBJECT = true
 	context = gii.getCurrentRenderContext()
 

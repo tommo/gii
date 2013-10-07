@@ -67,7 +67,7 @@ class AssetBrowser( AssetEditorModule ):
 				{'name':'create', 'label':'Create', 'link':self.creatorMenu},
 			])
 
-		self.addTool( 'asset_browser/create_asset', label = '+' )
+		self.addTool( 'asset_browser/create_asset', label = 'create', icon = 'add' )
 		signals.connect( 'selection.changed', self.onSelectionChanged )
 
 	def onStart( self ):

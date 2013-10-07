@@ -4,8 +4,8 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import QMenu, QMenuBar, QToolBar, QAction
 
 from gii.core import signals
-
 from Menu import MenuManager
+from gii.qt.IconCache import getIcon
 
 class ToolBarItem(object):
 	def __init__( self, name, **option ):
@@ -13,6 +13,10 @@ class ToolBarItem(object):
 		self.name     = name.lower()
 		self.label    = option.get( 'label', name )	
 		self.priority = option.get( 'priority', 0 )
+
+		iconName      = option.get( 'icon', None )
+		self.icon     = iconName and getIcon( iconName ) or None
+
 		self.module   = None
 		
 		self.onClick = None
@@ -26,7 +30,7 @@ class ToolBarItem(object):
 				self.qtaction = m.qtaction
 			else:
 				logging.error( 'not valid menu link:' + self.menuLink )
-				self.qtaction = QtGui.QAction( self.label, None )			
+				self.qtaction = QtGui.QAction( self.label, None )					
 		else:
 			self.itemType = option.get( 'type', False )
 			self.onClick  = option.get( 'on_click', None )
@@ -36,6 +40,9 @@ class ToolBarItem(object):
 				checkable = self.itemType == 'check',
 				triggered = self.handleEvent
 				)
+
+		if self.icon:
+			self.qtaction.setIcon( self.icon )
 
 	def setEnabled( self, enabled = True ):
 		self.qtaction.setEnabled( enabled )
@@ -67,11 +74,13 @@ class ToolBarItem(object):
 		
 class ToolBarNode(object):
 	"""docstring for ToolBar"""
-	def __init__(self, name, qtToolbar):
+	def __init__(self, name, qtToolbar, **option):
 		self.name = name
 		assert isinstance( qtToolbar, QToolBar )
 		self.qtToolbar = qtToolbar
 		self.items = {}
+		iconSize = option.get( 'icon_size', 16 )
+		qtToolbar.setIconSize( QtCore.QSize( iconSize, iconSize ) )
 
 	def addTool( self, name, **option ):
 		item = ToolBarItem( name, **option )
@@ -119,8 +128,8 @@ class ToolBarManager(object):
 		ToolBarManager._singleton = self
 		self.toolbars = {}
 
-	def addToolBar( self, name, toolbar, module ):
-		tb = ToolBarNode( name, toolbar )
+	def addToolBar( self, name, toolbar, module, **option ):
+		tb = ToolBarNode( name, toolbar, **option )
 		self.toolbars[ name ] = tb
 		tb.module = module
 		return tb

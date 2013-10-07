@@ -118,7 +118,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addTool( 'scene_graph/load_prefab', label = 'prefab' )
 		self.addTool( 'scene_graph/save_prefab', label = '->prefab' )
 
-		self.addTool( 'scene/refresh', label = 'REFRESH')
+		self.addTool( 'scene/refresh', label = 'refresh', icon='refresh' )
 
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
@@ -131,6 +131,9 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'entity.added', self.onEntityAdded )
 		signals.connect( 'entity.removed', self.onEntityRemoved )
 		signals.connect( 'entity.renamed', self.onEntityRenamed )
+
+		signals.connect( 'component.added', self.onComponentAdded )
+		signals.connect( 'component.removed', self.onComponentRemoved )
 
 		#editor
 		if self.getModule('introspector'):
@@ -400,9 +403,16 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.tree.setFocus()
 			self.tree.selectNode( entity )
 			self.tree.editNode( entity )
+		signals.emit( 'scene.update' )
 
 	def onEntityRemoved( self, entity ):
-		pass
+		signals.emit( 'scene.update' )
+
+	def onComponentAdded( self, com, entity ):
+		signals.emit( 'scene.update' )
+
+	def onComponentRemoved( self, com, entity ):
+		signals.emit( 'scene.update' )
 
 	def createPrefab( self, targetPrefab ):
 		selection = self.getSelection()
@@ -444,8 +454,9 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			if not isMockInstance( node, 'Entity' ): continue
 			if not item: continue
 			guid  = node['__guid']
-			state = data[ guid ]
-			item.setExpanded( state['expanded'] )
+			state = data.get( guid )
+			if state:
+				item.setExpanded( state['expanded'] )
 
 	def saveTreeStates( self ):
 		pass

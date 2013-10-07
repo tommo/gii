@@ -69,10 +69,10 @@ class LayerManager( SceneEditorModule ):
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( _getModulePath( 'LayerManager.lua' ) )
 
-		self.addTool( 'layer_manager/add',    label = '+')
-		self.addTool( 'layer_manager/remove', label = '-')
-		self.addTool( 'layer_manager/up',     label = 'up')
-		self.addTool( 'layer_manager/down',   label = 'down')
+		self.addTool( 'layer_manager/add',    label = 'add',  icon = 'add' )
+		self.addTool( 'layer_manager/remove', label = 'remove', icon = 'remove' )
+		self.addTool( 'layer_manager/up',     label = 'up', icon = 'arrow-up' )
+		self.addTool( 'layer_manager/down',   label = 'down', icon = 'arrow-down' )
 
 		
 		#SIGNALS
@@ -117,6 +117,11 @@ class LayerManager( SceneEditorModule ):
 		self.tree.refreshNodeContent( layer )
 		signals.emit( 'scene.update' )
 
+	def toggleEditVisible( self, layer ):
+		layer.setEditorVisible( layer, not layer.isEditorVisible( layer ) )
+		self.tree.refreshNodeContent( layer )
+		signals.emit( 'scene.update' )
+
 	def toggleLock( self, layer ):
 		layer.locked = not layer.locked
 		self.tree.refreshNodeContent( layer )
@@ -125,7 +130,7 @@ class LayerManager( SceneEditorModule ):
 ##----------------------------------------------------------------##
 class LayerTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		return [ ('Name',150), ('Show', 30), ('Edit',30), ('',-1) ]
+		return [ ('Name',150), ('View', 30), ('Edit',30), ('Active',30), ('',-1) ]
 
 	def getRootNode( self ):
 		return _MOCK.game
@@ -155,19 +160,24 @@ class LayerTreeWidget( GenericTreeWidget ):
 		if isMockInstance( node, 'Layer' ):
 			item.setText( 0, node.name )
 			if node.default :
-				item.setIcon( 0, getIcon('obj_blue') )
+				item.setIcon( 0, getIcon('layer_default') )
 			else:
-				item.setIcon( 0, getIcon('obj') )
+				item.setIcon( 0, getIcon('layer') )
 
+			if node.editorVisible:
+				item.setIcon( 1, getIcon('ok') )
+			else:
+				item.setIcon( 1, getIcon('no'))
+
+			if not node.locked:
+				item.setIcon( 2, getIcon('ok') )
+			else:
+				item.setIcon( 2, getIcon('no'))
+				
 			if node.visible:
-				item.setIcon( 1, getIcon(None) )
+				item.setIcon( 3, getIcon('ok') )
 			else:
-				item.setIcon( 1, getIcon('state_no') )
-
-			if node.locked:
-				item.setIcon( 2, getIcon('state_no'))
-			else:
-				item.setIcon( 2, getIcon(None) )
+				item.setIcon( 3, getIcon('no') )
 
 		else:
 			item.setText( 0, '' )
@@ -181,11 +191,13 @@ class LayerTreeWidget( GenericTreeWidget ):
 		layer = self.getNodeByItem( item )
 		app.getModule('layer_manager').changeLayerName( layer, item.text(0) )
 
-	def onDClicked(self, item, col):
-		if col == 1: #hide toggle
-			app.getModule('layer_manager').toggleHidden( self.getNodeByItem(item) )
+	def onClicked(self, item, col):
+		if col == 1: #editor view toggle
+			app.getModule('layer_manager').toggleEditVisible( self.getNodeByItem(item) )
 		elif col == 2: #lock toggle
 			app.getModule('layer_manager').toggleLock( self.getNodeByItem(item) )
+		elif col == 3:
+			app.getModule('layer_manager').toggleHidden( self.getNodeByItem(item) )
 
 ##----------------------------------------------------------------##
 LayerManager().register()

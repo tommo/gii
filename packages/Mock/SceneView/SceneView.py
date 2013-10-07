@@ -102,9 +102,15 @@ class SceneView( SceneEditorModule ):
 		self.canvas.makeCurrent()
 		self.canvas.safeCallMethod( 'view', 'onSelectionChanged', selection )
 
+	def updateInPreview( self ):
+		self.scheduleUpdate()
+		introspector = self.getModule('introspector')
+		if introspector:
+			introspector.refresh()
+
 	def onPreviewResume( self ):
 		self.previewing = True
-		self.previewUpdateTimer = self.window.startTimer( 3, self.scheduleUpdate )
+		self.previewUpdateTimer = self.window.startTimer( 3, self.updateInPreview )
 
 	def onPreviewStop( self ):
 		self.previewing = False
