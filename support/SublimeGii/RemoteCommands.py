@@ -2,7 +2,7 @@ import sys
 import logging
 import os
 import socket
-
+import time
 import sublime_plugin
 import sublime
 
@@ -48,7 +48,9 @@ class GiiEvalCommand(sublime_plugin.WindowCommand):
 class GiiPreviewStartCommand(sublime_plugin.WindowCommand):
 	def run(self, **kwargs):
 		sublime.active_window().run_command( 'save_all' )
+		time.sleep(0.1)
 		send_to_server( 'reload_script' )
+		time.sleep(0.2)
 		send_to_server( 'preview_start' )
 
 

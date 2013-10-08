@@ -180,7 +180,10 @@ def getAssetSelectionManager():
 def assetSearchEnumerator( typeId, context ):
 		if not context in [ 'all', 'asset' ] : return
 		result = []
+		lib = AssetLibrary.get()
 		for node in AssetLibrary.get().enumerateAsset( typeId ):
-			entry = ( node, node.getNodePath(), node.getType(), None )
+			assetType = node.getType()
+			iconName = lib.getAssetIcon( assetType ) or 'normal'
+			entry = ( node, node.getNodePath(), node.getType(), iconName )
 			result.append( entry )
 		return result

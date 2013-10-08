@@ -17,17 +17,6 @@ from PyQt4.QtGui    import QKeyEvent
 ##----------------------------------------------------------------##
 
 from gii.moai.MOAIRuntime import MOAILuaDelegate
-##----------------------------------------------------------------##
-
-signals.register( 'scene.modified' )
-
-signals.register( 'entity.added' )
-signals.register( 'entity.removed' )
-signals.register( 'entity.modified' )
-signals.register( 'entity.renamed' )
-
-signals.register( 'component.added' )
-signals.register( 'component.removed' )
 
 
 ##----------------------------------------------------------------##

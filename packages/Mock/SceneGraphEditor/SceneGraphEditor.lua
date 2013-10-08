@@ -53,8 +53,13 @@ function SceneGraphEditor:__init()
 	self.failedRefreshData = false
 end
 
+function SceneGraphEditor:getScene()
+	return self.scene
+end
+
 function SceneGraphEditor:openScene( path )
-	local scene = mock.loadAsset( path )
+	local scene = mock.game:openSceneByPath( path ) --dont start
+	assert( scene )
 	self.scene = scene
 	--affirm guid
 	for entity in pairs( scene.entities ) do
@@ -67,14 +72,11 @@ end
 
 function SceneGraphEditor:closeScene()
 	if not self.scene then return end
-	self.scene:exitNow()
+	self.scene:clear()
 	self.scene = false
-	
 	self.retainedSceneData = false
 	self.retainedSceneSelection = false
-
 	mock.game:resetClock()
-	MOAISim.forceGarbageCollection()
 end
 
 function SceneGraphEditor:saveScene( path )
@@ -85,9 +87,7 @@ end
 
 function SceneGraphEditor:refreshScene()
 	local data = self.failedRefreshData or mock.serializeScene( self.scene )
-	self.scene:stop()
 	self.scene:clear( true )
-	mock.game:resetClock()
 	MOAISim.forceGarbageCollection()
 	if pcall( mock.deserializeScene, data, self.scene ) then
 		self.failedRefreshData = false
@@ -104,14 +104,11 @@ end
 
 
 function SceneGraphEditor:startScenePreview()
-	mock.game:resetClock()
-	self.scene:start()
+	mock.game:start()
 end
 
 function SceneGraphEditor:stopScenePreview()
-	self.scene:stop()
-	self.scene:clear( true )
-	mock.game:resetClock()
+	mock.game:stop()
 end
 
 function SceneGraphEditor:retainScene()

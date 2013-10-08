@@ -2,7 +2,8 @@ from gii.core import *
 from gii.core.model import *
 
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
-from gii.qt.helpers import addWidgetWithLayout
+from gii.qt.helpers    import addWidgetWithLayout
+from gii.qt.IconCache  import getIcon
 
 from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt
@@ -167,7 +168,8 @@ class SearchViewTree(GenericTreeWidget):
 		if node == self.getRootNode(): return
 		item.setText( 0, node.name )
 		item.setText( 1, node.typeName )
-		
+		if node.iconName:
+			item.setIcon( 0, getIcon( node.iconName ) )
 	# def onItemSelectionChanged(self):
 	# 	for node in self.getSelection():
 	# 		self.browser.setSelection( node.obj )

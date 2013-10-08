@@ -15,6 +15,9 @@ local function onAssetRegister( node )
 			filePath    = node.filePath,
 			type        = node.assetType,
 			objectFiles = gii.dictToTable( node.objectFiles ),
+			properties  = gii.dictToTable( node.properties ),
+			dependency  = gii.dictToTable( node.dependency ),
+			fileTime    = node.fileTime
 		})
 end
 

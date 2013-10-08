@@ -31,7 +31,6 @@ def getModulePath( path ):
 class SceneGraphEditor( SceneEditorModule ):
 	def __init__(self):
 		super( SceneGraphEditor, self ).__init__()
-		self.activeScene      = None
 		self.activeSceneNode  = None
 		self.refreshScheduled = False
 		self.previewing       = False
@@ -122,6 +121,9 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
+
+		signals.connect( 'scene.change', self.onSceneChanged )
+
 		signals.connect( 'selection.changed', self.onSelectionChanged)
 		signals.connect( 'selection.hint', self.onSelectionHint )
 
@@ -152,35 +154,38 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.container.raise_()
 		self.container.setFocus()
 
+	def getActiveScene( self ):
+		return self.delegate.safeCallMethod( 'editor', 'getScene' )
+
 	def openScene( self, node ):
 		if self.activeSceneNode == node:			
 			if self.getModule('scene_view'):
 				self.getModule('scene_view').setFocus()
 			return
 		if not self.closeScene(): return
-
+		self.activeSceneNode = node
 		signals.emitNow( 'scene.pre_open', node )
 		scene = self.delegate.safeCallMethod( 'editor', 'openScene', node.getPath() )
-		signals.emitNow( 'scene.open', node, scene )
-		self.activeScene     = scene
-		self.activeSceneNode = node
-		self.tree.rebuild()
+		signals.emitNow( 'scene.open', self.activeSceneNode, scene )
 		self.setFocus()
+		self.tree.rebuild()
 		retainedState = self.activeSceneNode.getMetaData( 'tree_state', None )
 		if retainedState:
 			self.tree.loadFoldState( retainedState )
-
 
 	def closeScene( self ):
 		self.tree.clear()
 		self.getApp().clearCommandStack( 'scene_editor' )
 		signals.emitNow( 'scene.close', self.activeSceneNode )
-		scene = self.delegate.safeCallMethod( 'editor', 'closeScene' )
-		self.activeScene     = None
+		self.delegate.safeCallMethod( 'editor', 'closeScene' )		
 		self.activeSceneNode = None
 		#TODO: save confirmation
 		return True
 
+	def onSceneChanged( self, scene ):
+		print('scene changed!!')
+		self.tree.rebuild()
+		
 	def saveScene( self ):
 		if not self.activeSceneNode: return
 		self.delegate.safeCallMethod( 'editor', 'saveScene', self.activeSceneNode.getAbsFilePath() )
@@ -189,7 +194,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.activeSceneNode.setMetaData( 'tree_state', retainedState )
 
 	def refreshScene( self ):
-		if not self.activeScene: return
+		if not self.activeSceneNode: return
+		if self.previewing: return
 		self.refreshScheduled = False
 		node = self.activeSceneNode
 		self.delegate.safeCallMethod( 'editor', 'refreshScene' )
@@ -199,7 +205,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.refreshCreatorMenu()
 
 	def scheduleRefreshScene( self ):
-		if not self.activeScene: return
+		if not self.activeSceneNode: return
 		self.refreshScheduled = True
 
 	def refreshCreatorMenu( self ):
@@ -378,21 +384,21 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.changeSelection( selection )
 
 	def onPreviewStart( self ):
-		if not self.activeScene: return
+		if not self.activeSceneNode: return
 		self.retainedState = self.tree.saveFoldState()
 		self.delegate.safeCallMethod( 'editor', 'retainScene' )
 		self.delegate.safeCallMethod( 'editor', 'startScenePreview' )
 		self.previewing = True
 
 	def onPreviewStop( self ):
-		if not self.activeScene: return
+		if not self.activeSceneNode: return
 		self.delegate.safeCallMethod( 'editor', 'stopScenePreview' )
 		self.previewing = False
 		if self.delegate.safeCallMethod( 'editor', 'restoreScene' ):
 			self.tree.loadFoldState( self.retainedState )
 
 	def updateEntityPriority( self ):
-		if not self.activeScene: return
+		if not self.activeSceneNode: return
 
 	def onEntityRenamed( self, entity, newname ):
 		self.tree.refreshNodeContent( entity )
@@ -436,7 +442,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		return [('Name',200), ( 'Layer', 50 ), ('Type', 50)]
 
 	def getRootNode( self ):
-		return self.module.activeScene
+		return self.module.getActiveScene()
 
 	def saveFoldState( self ):
 		#TODO: other state?

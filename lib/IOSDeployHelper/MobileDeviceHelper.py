@@ -85,6 +85,9 @@ def getAppAFC( dev, appName ):
 ##----------------------------------------------------------------##
 def deployDataFiles( appName, localDataPath, remoteDataPath ):
 	devices = MobileDevice.list_devices()
+	if not devices:
+		logging.warn( 'no device found' )
+		return False
 	dev = devices.values()[0]
 	dev.connect()	
 	afc = getAppAFC( dev, appName )
@@ -92,6 +95,7 @@ def deployDataFiles( appName, localDataPath, remoteDataPath ):
 	copyTreeToDevice( afc, localDataPath, remoteDataPath )	
 	afc.disconnect()
 	dev.disconnect()
+	return True
 
 	# name = u''
 	# try:
