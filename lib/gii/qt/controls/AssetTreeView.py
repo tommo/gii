@@ -69,7 +69,7 @@ class AssetTreeView( GenericTreeWidget ):
 		super( AssetTreeView, self )._updateItem( node, updateLog, **option )
 
 		if option.get('updateDependency',False):
-			for dep in node.rDep:
+			for dep in node.dependency:
 				self._updateItem(dep, updateLog, **option)
 	
 ##----------------------------------------------------------------##

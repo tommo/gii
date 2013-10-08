@@ -64,6 +64,7 @@ class LayerManager( SceneEditorModule ):
 				drag_mode          = 'internal'
 				)
 			)
+		self.tree.hasSoloLayer = False
 
 		self.tool = self.addToolBar( 'layer_manager', self.window.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )
@@ -126,11 +127,36 @@ class LayerManager( SceneEditorModule ):
 		layer.locked = not layer.locked
 		self.tree.refreshNodeContent( layer )
 		signals.emit( 'scene.update' )
+
+	def toggleSolo( self, layer ):
+		solo = layer.isEditorSolo( layer )
+		if solo:
+			self.tree.hasSoloLayer = False
+			for l in _MOCK.game.layers.values():
+				if l.name == '_GII_EDITOR_LAYER' : continue
+				if l != layer:
+					l.editorSolo = False
+			layer.setEditorSolo( layer, False )
+		else:
+			self.tree.hasSoloLayer = True
+			for l in _MOCK.game.layers.values():
+				if l.name == '_GII_EDITOR_LAYER' : continue
+				if l != layer:
+					l.editorSolo = 'hidden'
+			layer.setEditorSolo( layer, True )
+		self.tree.refreshAllContent()
+		signals.emit( 'scene.update' )
 	
+
+##----------------------------------------------------------------##
+_BrushLayerHidden = QtGui.QBrush( QColorF( 0.6,0.6,0.6 ) )
+_BrushLayerNormal = QtGui.QBrush()
+_BrushLayerSolo   = QtGui.QBrush( QColorF( 1,1,0 ) )
+
 ##----------------------------------------------------------------##
 class LayerTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		return [ ('Name',150), ('View', 30), ('Edit',30), ('Active',30), ('',-1) ]
+		return [ ('Name',150), ('View', 30), ('Edit',30), ('Solo',30), ('',-1) ]
 
 	def getRootNode( self ):
 		return _MOCK.game
@@ -158,6 +184,7 @@ class LayerTreeWidget( GenericTreeWidget ):
 	def updateItemContent( self, item, node, **option ):
 		name = None
 		if isMockInstance( node, 'Layer' ):
+			style = _BrushLayerNormal
 			item.setText( 0, node.name )
 			if node.default :
 				item.setIcon( 0, getIcon('layer_default') )
@@ -168,17 +195,24 @@ class LayerTreeWidget( GenericTreeWidget ):
 				item.setIcon( 1, getIcon('ok') )
 			else:
 				item.setIcon( 1, getIcon('no'))
+				style = _BrushLayerHidden
 
 			if not node.locked:
 				item.setIcon( 2, getIcon('ok') )
 			else:
 				item.setIcon( 2, getIcon('no'))
 				
-			if node.visible:
+			if node.editorSolo == 'solo':
 				item.setIcon( 3, getIcon('ok') )
+				style = _BrushLayerSolo
 			else:
-				item.setIcon( 3, getIcon('no') )
+				item.setIcon( 3, getIcon(None) )
+				if self.hasSoloLayer: style = _BrushLayerHidden
 
+			item.setForeground( 0, style )
+			item.setForeground( 1, style )
+			item.setForeground( 2, style )
+			item.setForeground( 3, style )
 		else:
 			item.setText( 0, '' )
 			item.setIcon( 0, getIcon('normal') )
@@ -197,7 +231,7 @@ class LayerTreeWidget( GenericTreeWidget ):
 		elif col == 2: #lock toggle
 			app.getModule('layer_manager').toggleLock( self.getNodeByItem(item) )
 		elif col == 3:
-			app.getModule('layer_manager').toggleHidden( self.getNodeByItem(item) )
+			app.getModule('layer_manager').toggleSolo( self.getNodeByItem(item) )
 
 ##----------------------------------------------------------------##
 LayerManager().register()

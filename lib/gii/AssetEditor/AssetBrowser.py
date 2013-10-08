@@ -5,6 +5,7 @@ from gii.core         import *
 from gii.qt.dialogs   import requestString, alertMessage, confirmDialog
 from gii.qt.controls.AssetTreeView import AssetTreeView
 from gii.qt.helpers   import setClipboardText
+from gii.SearchView   import requestSearchView, registerSearchEnumerator
 
 from AssetEditor      import AssetEditorModule, getAssetSelectionManager
 
@@ -48,9 +49,12 @@ class AssetBrowser( AssetEditorModule ):
 		self.treeView.customContextMenuRequested.connect( self.onTreeViewContextMenu)
 
 		self.creatorMenu=self.addMenu(
-			'main/asset/asset_create',
+			'asset_create_context',
 			{ 'label':'Create' }
-			)
+		)
+		self.addMenuItem(
+			'main/asset/asset_create', dict( label = 'Create', shortcut ='Ctrl+N' )
+		)
 
 		self.assetContextMenu=self.addMenu('asset_context')
 		self.assetContextMenu.addChild([
@@ -69,6 +73,7 @@ class AssetBrowser( AssetEditorModule ):
 
 		self.addTool( 'asset_browser/create_asset', label = 'create', icon = 'add' )
 		signals.connect( 'selection.changed', self.onSelectionChanged )
+		registerSearchEnumerator( assetCreatorSearchEnumerator  )
 
 	def onStart( self ):
 		self.getAssetLibrary().scheduleScanProject()
@@ -135,6 +140,23 @@ class AssetBrowser( AssetEditorModule ):
 				'on_click' : creatorFunc
 			})
 
+	def createAsset( self, creator ):
+		label       = creator.getLabel()
+		assetType   = creator.getAssetType()		
+		contextNode = getAssetSelectionManager().getSingleSelection()
+		if not isinstance(contextNode, AssetNode):
+			contextNode = app.getAssetLibrary().getRootNode()
+
+		name = requestString('Create Asset <%s>' % assetType, 'Enter asset name: <%s>' % assetType )
+		if not name: return
+
+		try:
+			finalpath=creator.createAsset(name, contextNode, assetType)
+			self.newCreateNodePath=finalpath
+		except Exception,e:
+			logging.exception( e )
+			alertMessage( 'Asset Creation Error', repr(e) )
+	
 	def onTreeViewContextMenu( self, point ):
 		item = self.treeView.itemAt(point)
 		if item:			
@@ -193,14 +215,14 @@ class AssetBrowser( AssetEditorModule ):
 				if isinstance(n,AssetNode):
 					n.setDeployState(newstate)
 					
-		if name == 'reimport':
+		elif name == 'reimport':
 			s = getAssetSelectionManager().getSelection()
 			for n in s:
 				if isinstance( n, AssetNode ):
 					n.markModified()
 			app.getAssetLibrary().importModifiedAssets()
 
-		if name == 'show_in_browser':
+		elif name == 'show_in_browser':
 			if not getAssetSelectionManager().getSelection():
 				return AssetUtils.showFileInBrowser( getProjectPath() )
 				
@@ -209,23 +231,36 @@ class AssetBrowser( AssetEditorModule ):
 					n.showInBrowser()
 					break
 
-		if name == 'open_in_system':
+		elif name == 'open_in_system':
 			for n in getAssetSelectionManager().getSelection():
 				if isinstance( n, AssetNode ):
 					n.openInSystem()
 					break
 
-		if name == 'copy_node_path':
+		elif name == 'copy_node_path':
 			text = ''
 			for n in getAssetSelectionManager().getSelection():
 				if text: text += '\n'
 				text += n.getNodePath()
 			setClipboardText( text )
 
+		elif name == 'asset_create':
+			requestSearchView( 
+				info    = 'select asset type to create',
+				context = 'asset_creator',
+				type    = 'scene',
+				on_selection = self.createAsset
+			)
+
 	def onTool( self, toolNode ):
 		name = toolNode.name
 		if name == 'create_asset':
-			self.creatorMenu.popUp()
+			requestSearchView( 
+				info    = 'select asset type to create',
+				context = 'asset_creator',
+				type    = 'scene',
+				on_selection = self.createAsset
+			)
 
 	def onSelectionChanged( self, selection, context ):
 		if context == 'asset':
@@ -270,6 +305,14 @@ class AssetBrowserTreeView( AssetTreeView ):
 					path = node.getAbsFilePath()
 					os.remove( path )
 
+##----------------------------------------------------------------##
+def assetCreatorSearchEnumerator( typeId, context ):
+	if not context in [ 'asset_creator' ] : return None
+	result = []
+	for creator in AssetLibrary.get().assetCreators:
+		entry = ( creator, creator.getLabel(), 'asset_creator', None )
+		result.append( entry )
+	return result
 
 
 ##----------------------------------------------------------------##

@@ -31,10 +31,7 @@ class FSMSchemeAssetManager(AssetManager):
 		subprocess.call(arglist)
 		node.assetType = 'fsm_scheme'
 		return True
-
-	def editAsset( self, node ):
-		pass
-
+	
 # ##----------------------------------------------------------------##
 # class FSMSchemeCreator(AssetCreator):
 # 	def getAssetType( self ):

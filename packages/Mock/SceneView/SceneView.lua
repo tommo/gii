@@ -107,9 +107,11 @@ end
 local function isEntityPickable( ent )
 	if ent.FLAG_EDITOR_OBJECT then return false end
 	if not ent:isVisible() then return false end
-	if not ent.layer.source:isVisible() then return false end
-	if not ent.layer.source:isEditorVisible() then return false end
-	if ent.layer.source:isLocked() then return false end
+	local layerSrc = ent.layer.source
+	if not layerSrc:isVisible() then return false end
+	if not layerSrc:isEditorVisible() then return false end
+	if layerSrc.editorSolo == 'hidden' then return false end
+	if layerSrc:isLocked() then return false end
 	return true
 end
 
