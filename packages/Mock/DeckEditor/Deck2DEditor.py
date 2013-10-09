@@ -214,7 +214,7 @@ class Deck2DEditor( AssetEditorModule ):
 		self.canvas.safeCall( 'updateDeck' )
 
 
-
+##----------------------------------------------------------------##
 Deck2DEditor().register()
 
 ##----------------------------------------------------------------##

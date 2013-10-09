@@ -182,9 +182,11 @@ class LayerTreeWidget( GenericTreeWidget ):
 		return []
 
 	def updateItemContent( self, item, node, **option ):
+		pal = self.palette()
+		defaultBrush = QColorF( .8,.8,.8 )
 		name = None
 		if isMockInstance( node, 'Layer' ):
-			style = _BrushLayerNormal
+			style = defaultBrush
 			item.setText( 0, node.name )
 			if node.default :
 				item.setIcon( 0, getIcon('layer_default') )
@@ -210,9 +212,6 @@ class LayerTreeWidget( GenericTreeWidget ):
 				if self.hasSoloLayer: style = _BrushLayerHidden
 
 			item.setForeground( 0, style )
-			item.setForeground( 1, style )
-			item.setForeground( 2, style )
-			item.setForeground( 3, style )
 		else:
 			item.setText( 0, '' )
 			item.setIcon( 0, getIcon('normal') )

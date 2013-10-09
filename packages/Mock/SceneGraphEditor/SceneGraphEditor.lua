@@ -88,7 +88,6 @@ end
 function SceneGraphEditor:refreshScene()
 	local data = self.failedRefreshData or mock.serializeScene( self.scene )
 	self.scene:clear( true )
-	MOAISim.forceGarbageCollection()
 	if pcall( mock.deserializeScene, data, self.scene ) then
 		self.failedRefreshData = false
 		self:postLoadScene()

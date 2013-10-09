@@ -1,3 +1,4 @@
+
 QWidget
 {
 	font-size:11px;
@@ -5,6 +6,8 @@ QWidget
 	color:#cacaca;
 	background-color:#333;
 }
+
+
 
 QFrame
 {
@@ -285,9 +288,9 @@ QTreeView, QListView
 	border:1px solid #222;
 }
 
-QTreeView::item
+QTreeWidget
 {
-	color:#dcdcdc;
+	color:#ddd;
 	border:0 solid green;
 }
 
@@ -723,8 +726,6 @@ QCheckBox::indicator{
 	margin-top: 2px;	
 }
 
-
-
 QTreeView::indicator:unchecked,QCheckBox::indicator:unchecked
 {
 	image:url(theme:checkbox_unchecked.png);
@@ -774,3 +775,55 @@ QToolButton::checked,QToolButton::menu-button:hover
 	background-color:#444;
 }
 
+QSplitter#TimelineSplitter::handle{
+	background-color:#333;
+	border-right: 1px solid #222;
+	border-left: 1px solid #444;
+}
+
+#TimelineRuler, #TimelineToolBar {
+	color: #666;
+	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1, stop:0#252525, stop:0.75#333, stop:0.85#353535, stop:1#222);
+	border-bottom:1px solid #111;
+}
+
+#TimelineTrack {
+	background-color:#282828;
+	border-bottom:1px solid #151515;
+}
+
+#TimelineSpan {
+	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#348, stop:0.2 #79b, stop:1 #348);
+	border: 1px solid #223;
+	border-radius: 1px;
+	text-align: left;
+}
+
+#TimelineSpan:hover {
+	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#569, stop:0.1 #9bd, stop:1 #67b);
+}
+
+#TimelineSpan:pressed {
+	background-color:#98acac;
+}
+
+#spaceHeaders, #spaceTracks {
+	border-top: 1px solid #444;
+	/*background-color: #222;*/
+	/*qlineargradient( x1:0,y1:0, x2:0,y2:0.3, stop:0#333, stop:0.3#444, stop:1#333);*/
+}
+
+#scrollTracks {
+	background-color:#333;
+}
+
+#TimelineTrackHeader {
+	text-align: right;
+	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#444, stop:0.2 #454545, stop:1 #333);
+	border: 1px solid #222;
+}
+
+#TimelineTrackHeader:hover {
+	background-color:#466dc6;
+	/*background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#348, stop:0.2 #79b, stop:1 #348);*/
+}

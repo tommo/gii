@@ -18,6 +18,7 @@ class MOAICanvasBase(GLWidget):
 	def __init__( self, parentWidget = None, **option ):
 		super(MOAICanvasBase,self).__init__( parentWidget, **option )		
 		self.inputDevice = None
+		self.buttonCount = 0
 
 	def setInputDevice(self, device):
 		self.inputDevice = device
@@ -26,6 +27,9 @@ class MOAICanvasBase(GLWidget):
 		inputDevice = self.inputDevice
 		if not inputDevice: return
 		button = event.button()		
+		if self.buttonCount == 0:
+			self.grabMouse()
+		self.buttonCount += 1
 		inputDevice.getSensor('pointer').enqueueEvent(event.x(), event.y())
 		if   button == Qt.LeftButton:
 			inputDevice.getSensor('mouseLeft').enqueueEvent(True)
@@ -37,7 +41,10 @@ class MOAICanvasBase(GLWidget):
 	def mouseReleaseEvent(self, event):
 		inputDevice=self.inputDevice
 		if not inputDevice: return
-		button = event.button()		
+		self.buttonCount -= 1
+		if self.buttonCount == 0:
+			self.releaseMouse()
+		button = event.button()
 		inputDevice.getSensor('pointer').enqueueEvent(event.x(), event.y())
 		if   button == Qt.LeftButton:
 			inputDevice.getSensor('mouseLeft').enqueueEvent(False)
