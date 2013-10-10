@@ -40,7 +40,7 @@ class QtSupport( QtEditorModule ):
 		QtCore.QDir.setSearchPaths( 'theme', [ self.getApp().getPath( 'data/theme' ) ] )
 		try:
 			# styleSheetName = 'dark.qss'
-			styleSheetName = 'xn.qss'
+			styleSheetName = 'gii.qss'
 			self.qtApp.setStyleSheet(
 					open( self.getApp().getPath( 'data/theme/' + styleSheetName ) ).read() 
 				)

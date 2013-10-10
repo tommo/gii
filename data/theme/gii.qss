@@ -1,3 +1,4 @@
+/*based on qss from xnview*/
 
 QWidget
 {
@@ -6,7 +7,6 @@ QWidget
 	color:#cacaca;
 	background-color:#333;
 }
-
 
 
 QFrame
@@ -787,6 +787,11 @@ QSplitter#TimelineSplitter::handle{
 	border-top:1px solid #111;
 	border-bottom:1px solid #111;
 }
+
+#TimelineRuler::disabled {
+	color: #333;
+}
+
 
 #TimelineTrack {
 	background-color:#282828;

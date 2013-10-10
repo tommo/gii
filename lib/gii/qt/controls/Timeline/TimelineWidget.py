@@ -412,7 +412,17 @@ class TimelineWidget( QtGui.QFrame ):
 		self.ui.scrollHeaders.verticalScrollBar().setStyleSheet('width:2px')
 		
 		self.timelineCursor = QtGui.QLabel( self.ui.containerRight )
-		self.timelineCursor.setStyleSheet( 'background-color:#5c6; opacity: 80;' )
+		self.timelineCursor.setStyleSheet( 
+			'''
+			QLabel{
+				background-color:#5c6; width:1px;
+			}
+
+			QLabel::disabled{
+				background-color:#222; width:0px;
+			}
+			''' 
+			)
 		self.updateScrollTrackSize()
 		self.setCursorPos( 0 )
 
