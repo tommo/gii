@@ -104,7 +104,7 @@ class PropertyEditor( QtGui.QWidget ):
 		self.refreshing = True
 		#install field info
 		for field in model.fieldList:
-			if field.getOption('noedit'): continue
+			if field.getOption('no_edit'): continue
 			label = field.label
 			ft    = field._type
 			if field.getOption( 'objtype', None) == 'ref' :

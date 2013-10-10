@@ -80,6 +80,7 @@ class AssetBrowser( AssetEditorModule ):
 		signals.connect( 'asset.register',   self.onAssetRegister )
 		signals.connect( 'asset.unregister', self.onAssetUnregister )
 		signals.connect( 'asset.moved',      self.onAssetMoved )
+		signals.connect( 'asset.modified',   self.onAssetModified )
 
 		self.treeView.rebuild()
 

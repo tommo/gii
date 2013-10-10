@@ -3,9 +3,9 @@ module 'mock_edit'
 --------------------------------------------------------------------
 CLASS: DeployTarget ()
 	:MODEL{		
-		Field "name"      :string() :noedit();
-		Field "lastBuild" :int()    :noedit(); --timestamp
-		Field "state"     :string() :noedit();		
+		Field "name"      :string() :no_edit();
+		Field "lastBuild" :int()    :no_edit(); --timestamp
+		Field "state"     :string() :no_edit();		
 	}
 function DeployTarget:__init()
 	self.name = 'TARGET'

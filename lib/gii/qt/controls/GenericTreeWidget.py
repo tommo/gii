@@ -3,7 +3,7 @@ from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import Qt
 
 ##----------------------------------------------------------------##
-class NoEditItemDelegate( QtGui.QStyledItemDelegate ):
+class no_editItemDelegate( QtGui.QStyledItemDelegate ):
 	def createEditor( *args ):
 		return None
 
@@ -11,12 +11,11 @@ class NoEditItemDelegate( QtGui.QStyledItemDelegate ):
 class GenericTreeWidget( QtGui.QTreeWidget ):
 	def __init__( self, *args, **option ):
 		super(GenericTreeWidget, self).__init__(*args)
-		self.noEditItemDelegate = NoEditItemDelegate( self )
+		self.no_editItemDelegate = no_editItemDelegate( self )
 		self.refreshing = False
 		self.option = option
+		self.initRootItem()
 
-		self.rootItem = self.invisibleRootItem()
-		
 		headerInfo = self.getHeaderInfo()
 		headerItem = QtGui.QTreeWidgetItem()
 		self.setHeaderItem(headerItem)
@@ -27,7 +26,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			if w>0:
 				self.setColumnWidth ( i, info[1] )
 			if i > 0:
-				self.setItemDelegateForColumn( i, self.noEditItemDelegate )
+				self.setItemDelegateForColumn( i, self.no_editItemDelegate )
 
 		self.setSortingEnabled( option.get('sorting', True) )
 		if option.get( 'multiple_selection', False ):
@@ -52,9 +51,17 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.setIndentation( 15 )
 		self.clear()
 
+	def initRootItem( self ):
+		option = self.option
+		if option.get( 'show_root', False ):
+			self.rootItem = self.createItem( None )
+			self.invisibleRootItem().addChild( self.rootItem )
+		else:
+			self.rootItem = self.invisibleRootItem()
 
 	def clear( self ):
 		super( GenericTreeWidget, self ).clear()
+		self.initRootItem()
 		self.rootItem.node = None
 		self.nodeDict = {}
 
@@ -72,6 +79,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		assert pnode != node, 'parent is item itself'
 		if not pnode :
 			item = self.rootItem
+			item.node = node
 		else:
 			pitem = self.getItemByNode( pnode )
 			if not pitem:
@@ -228,8 +236,13 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		headerView = self.header()
 		return headerView.sortIndicatorOrder()
 	
-	def getSelection( self )	:
+	def getSelection( self ):
 		return [ item.node for item in self.selectedItems() ]
+
+	def getFirstSelection( self ):
+		for item in self.selectedItems():
+			return item.node
+		return None
 
 	def foldAllItems( self ):
 		for item in self.nodeDict.values():

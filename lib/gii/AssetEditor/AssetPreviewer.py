@@ -23,7 +23,7 @@ class ModAssetPreviewer( AssetEditorModule ):
 		super(ModAssetPreviewer, self).__init__()
 		self.previewers        = []
 		self.activePreviewer   = None		
-
+		self.target = None
 
 	def onLoad( self ):
 		self.container = self.requestDockWindow('AssetPreview',
@@ -42,6 +42,7 @@ class ModAssetPreviewer( AssetEditorModule ):
 		self.nullPreviewer = self.registerPreviewer( NullAssetPreviewer() )		
 
 		signals.connect( 'selection.changed', self.onSelectionChanged )
+		signals.connect( 'asset.modified', self.onAssetModified )
 
 
 	def onStart( self ):
@@ -52,6 +53,7 @@ class ModAssetPreviewer( AssetEditorModule ):
 		if key != 'asset': return
 		if self.activePreviewer:
 			self.activePreviewer.onStop()
+			self.target = None
 
 		if selection and isinstance( selection[0], AssetNode ) :
 			target = selection[0]
@@ -62,17 +64,27 @@ class ModAssetPreviewer( AssetEditorModule ):
 
 		self._startPreview(self.nullPreviewer, None)
 
+	def onAssetModified( self, assetNode ):
+		if assetNode == self.target:
+			self.refreshPreviewr()
+
+	def refreshPreviewr( self ):
+		if self.activePreviewer:
+			self.activePreviewer.onStop()
+			self._startPreview( self.activePreviewer, self.target )
+
 	def _startPreview(self, previewer, selection):
-		idx=previewer._stackedId
+		idx = previewer._stackedId
+		self.target = selection
 		self.previewerContainer.setCurrentIndex(idx)
 		self.activePreviewer=previewer		
 		previewer.onStart(selection)
 
 
 	def _loadPreviewer(self, previewer):
-		widget=previewer.createWidget(self.previewerContainer)
+		widget = previewer.createWidget(self.previewerContainer)
 		assert isinstance(widget,QtGui.QWidget), 'widget expected from previewer'
-		idx=self.previewerContainer.addWidget(widget)
+		idx = self.previewerContainer.addWidget(widget)
 		previewer._stackedId=idx
 		previewer._widget=widget
 

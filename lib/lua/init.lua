@@ -43,6 +43,6 @@ require 'gii'
 --------------------------------------------------------------------
 --DEFAULT RUNTIME MODULES
 --------------------------------------------------------------------
-require 'GameModule'
+require 'gamelib'
 GameModule.addGameModulePath( GII_PROJECT_ASSET_PATH .. '/?.lua' )
 GameModule.addGameModulePath( GII_PROJECT_ASSET_PATH .. '/?/init.lua' )

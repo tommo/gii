@@ -776,14 +776,15 @@ QToolButton::checked,QToolButton::menu-button:hover
 }
 
 QSplitter#TimelineSplitter::handle{
-	background-color:#333;
-	border-right: 1px solid #222;
-	border-left: 1px solid #444;
+	background-color:#282828;
+	border-left: 1px solid #111;
+	border-right: 1px solid #444;
 }
 
 #TimelineRuler, #TimelineToolBar {
 	color: #666;
 	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1, stop:0#252525, stop:0.75#333, stop:0.85#353535, stop:1#222);
+	border-top:1px solid #111;
 	border-bottom:1px solid #111;
 }
 
@@ -805,6 +806,10 @@ QSplitter#TimelineSplitter::handle{
 
 #TimelineSpan:pressed {
 	background-color:#98acac;
+}
+
+#TimelineSpan[selected="true"] {
+	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#384, stop:0.2 #7b9, stop:1 #384);
 }
 
 #spaceHeaders, #spaceTracks {

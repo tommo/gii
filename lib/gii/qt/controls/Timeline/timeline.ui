@@ -34,7 +34,7 @@
      <widget class="QWidget" name="containerLeft" native="true">
       <property name="minimumSize">
        <size>
-        <width>80</width>
+        <width>150</width>
         <height>0</height>
        </size>
       </property>

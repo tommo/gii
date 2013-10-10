@@ -83,6 +83,9 @@ class ToolBarNode(object):
 		qtToolbar.setIconSize( QtCore.QSize( iconSize, iconSize ) )
 
 	def addTool( self, name, **option ):
+		if name == '----':
+			self.qtToolbar.addSeparator()
+			return
 		item = ToolBarItem( name, **option )
 		self.items[ name ] = item
 		self.qtToolbar.addAction( item.qtaction )
@@ -155,7 +158,7 @@ class ToolBarManager(object):
 		toolbar = self.find( blobs[0] )
 		if toolbar:
 			tool = toolbar.addTool( blobs[1], **option )
-			tool.module = module or toolbar.module
+			if tool: tool.module = module or toolbar.module
 			return tool
 		logging.error( 'toolbar not found:' + blobs[0] )
 		return None
