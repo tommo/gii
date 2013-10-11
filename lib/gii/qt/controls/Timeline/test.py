@@ -56,7 +56,7 @@ class TestTimeline( TimelineWidget ):
 		return '%d:%02d' % ( i, f/10 )
 
 	def getRulerParam( self ):
-		return dict( zoom = 10 )
+		return dict( zoom = 1 )
 		# return dict( zoom = 5 )
 
 

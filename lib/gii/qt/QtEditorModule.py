@@ -5,6 +5,10 @@ from gii.core   import EditorModule
 from gii.qt.controls.Menu      import MenuManager
 from gii.qt.controls.ToolBar   import ToolBarManager, ToolBarNode
 
+from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import Qt
+
+
 ##----------------------------------------------------------------##
 _QT_SETTING_FILE = 'qt.ini'
 
@@ -16,6 +20,9 @@ class QtEditorModule( EditorModule ):
 	def getMainWindow( self ):
 		return None
 
+	def getModuleWindow( self ):
+		return None
+
 	def getDependency( self ):
 		return [ 'qt' ]
 
@@ -25,6 +32,36 @@ class QtEditorModule( EditorModule ):
 	def getQApplication( self ):
 		qt = self.getModule( 'qt' )
 		return qt.qtApp
+
+	def addShortcut( self, context, keySeq, target, *args, **option ):
+		contextWindow = None
+		shortcutContext = None
+		if context == 'main':
+			contextWindow = self.getMainWindow()
+			shortcutContext = Qt.WidgetWithChildrenShortcut
+		elif context == 'module':
+			contextWindow = self.getModuleWindow()
+			shortcutContext = Qt.WidgetWithChildrenShortcut
+		elif context == 'app':
+			contextWindow = self.getMainWindow()
+			shortcutContext = Qt.ApplicationShortcut
+		elif isinstance( context, QtGui.QWidget ):
+			contextWindow = context
+			shortcutContext = Qt.WidgetWithChildrenShortcut
+
+		action = QtGui.QAction( contextWindow )
+		action.setShortcut( QtGui.QKeySequence( keySeq ) )
+		action.setShortcutContext( shortcutContext )
+		contextWindow.addAction( action )
+
+		if isinstance( target, str ): #command
+			def onAction():
+				self.doCommand( target, **option )
+			action.triggered.connect( onAction )
+		else:
+			def onAction():
+				target( *args, **option )
+			action.triggered.connect( onAction )
 
 	def requestDockWindow( self, id = None, **windowOption ):
 		if not id: id = self.getName()

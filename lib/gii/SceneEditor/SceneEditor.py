@@ -42,9 +42,6 @@ class SceneEditorModule( QtEditorModule ):
 		self.getMainWindow().setFocus()
 		self.onSetFocus()
 
-	def addShortcut( self, keySeq, target, *args, **option ):
-		return self.getSceneEditor().addShortcut( keySeq, target, *args, **option )
-
 ##----------------------------------------------------------------##
 class SceneEditor( SceneEditorModule ):
 	def __init__( self ):
@@ -83,20 +80,6 @@ class SceneEditor( SceneEditorModule ):
 
 		signals.connect( 'app.start', self.postStart )
 		return True
-
-	def addShortcut( self, keySeq, target, *args, **option ):
-		action = QtGui.QAction( self.mainWindow )
-		action.setShortcut( QtGui.QKeySequence( keySeq) )
-		action.setShortcutContext( Qt.WidgetWithChildrenShortcut )
-		self.mainWindow.addAction( action )
-		if isinstance( target, str ): #command
-			def onAction():
-				self.doCommand( target, **option )
-			action.triggered.connect( onAction )
-		else:
-			def onAction():
-				target( *args, **option )
-			action.triggered.connect( onAction )
 
 	def postStart( self ):
 		logging.info('opening up scene editor')

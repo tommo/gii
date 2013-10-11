@@ -312,8 +312,9 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 	def updateCanvas( self, **option ):
 		currentTime = getTime()
 		step = currentTime - self.lastUpdateTime
-		# step = self.updateStep
 		self.lastUpdateTime = currentTime
+		
+		# step = self.updateStep #>>>>>>
 		
 		runtime = self.runtime
 		runtime.setBufferSize( self.viewWidth, self.viewHeight )

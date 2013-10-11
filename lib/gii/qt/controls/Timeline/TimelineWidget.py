@@ -172,19 +172,20 @@ class TimelineSpan( QtGui.QLabel ):
 	lengthChanged  = pyqtSignal( object, float )
 	clicked        = pyqtSignal( object, float )
 
-	def __init__( self, *args ):
-		super( TimelineSpan, self ).__init__( *args )
+	def __init__( self, track, *args ):
+		super( TimelineSpan, self ).__init__( track )
 		self.length   = 100
 		self.pos      = 0
 		self.mouseOp  = None
 		self.dragging = False
 		self.dragFrom = 0
+		self.track    = track
 		# self.setFocusPolicy( QtCore.Qt.WheelFocus )
 		self.setMouseTracking( True )
 		self.setObjectName( 'TimelineSpan' )
 
 	def setPos( self, pos ):
-		pos = max( 0, pos )
+		pos = self.track.correctSpanPos( self, self.pos, pos )
 		if pos == self.pos: return
 		self.pos = pos 
 		self.posChanged.emit( self, pos )
@@ -241,11 +242,13 @@ class TimelineSpan( QtGui.QLabel ):
 				oldLength = self.length
 				newLength = max( 0, self.length - delta / zoom )
 				newPos    = max( 0, self.pos - ( newLength - oldLength ) )
-				actualLength = (self.pos + self.length ) - newPos
+				right     = self.pos + self.length
 				self.setPos( newPos )
+				actualLength = right - self.pos
 				self.setLength( actualLength )
 			elif op == 'right-size':
-				self.setLength( self.length + delta / zoom )
+				newLength = self.track.correctSpanLength( self, self.length + delta / zoom  )
+				self.setLength( newLength )
 		else:
 			#determine action
 			x = ev.x()
@@ -269,7 +272,8 @@ class TimelineTrack( QtGui.QFrame ):
 	spanClicked        = pyqtSignal( object, float )
 	spanPosChanged     = pyqtSignal( object, float )
 	spanLengthChanged  = pyqtSignal( object, float )
-	def __init__( self, *args ):
+
+	def __init__( self, *args, **option ):
 		super( TimelineTrack, self ).__init__( *args )
 		self.setObjectName( 'TimelineTrack' )
 		self.scrollPos = 0
@@ -278,6 +282,7 @@ class TimelineTrack( QtGui.QFrame ):
 		self.spanNodeDict = {}
 		self.setMinimumSize( 80, _TRACK_SIZE )
 		self.setMaximumSize( 16777215, _TRACK_SIZE )
+		self.allowOverlap = option.get( 'allow_overlap', False )
 
 	def sizeHint( self ):
 		return QSize( 50, _TRACK_SIZE )
@@ -298,9 +303,41 @@ class TimelineTrack( QtGui.QFrame ):
 	def getSpanByNode( self, node ):
 		return self.spanNodeDict.get( node, None )
 
+	def correctSpanPos( self, span, oldPos, pos ):
+		delta = pos - oldPos
+		left  = pos
+		right = pos + span.length
+		if delta > 0:
+			for span1 in self.spans:
+				if span1==span: continue				
+				if span1.pos >= right: continue
+				if span1.pos + span1.length <= left: continue
+				right = min( right, span1.pos )
+			return right - span.length
+		elif delta < 0:
+			for span1 in self.spans:
+				if span1==span: continue
+				if span1.pos >= right: continue
+				if span1.pos + span1.length <= left: continue
+				left = max( left, span1.pos + span1.length )
+			return max( 0, left )
+		return pos
+
+	def correctSpanLength( self, span, length ):
+		oldLength = span.length
+		delta = length - oldLength
+		if delta == 0: return length
+		pos = span.pos
+		right = pos + length
+		for span1 in self.spans:
+			if span1==span: continue
+			if span1.pos >= right: continue			
+			if span1.pos + span1.length < right: continue			
+			right = min( right, span1.pos )
+		return right - pos
+
 	def addSpan( self, node ):
 		span = TimelineSpan( self )
-		span.track = self
 		self.spans.append( span )
 		self.updateSpanShape( span )
 		span.posChanged.connect( self.onSpanPosChanged )
@@ -350,7 +387,7 @@ class TimelineTrack( QtGui.QFrame ):
 		height = self.height() 
 		x      = ( span.pos - scrollPos ) * zoom
 		y      = 0
-		span.setGeometry( x, y, width, height-1 )
+		span.setGeometry( x, y, width + 1, height-1 )
 
 	def resizeEvent( self, size ):
 		for span in self.spans:
@@ -360,9 +397,9 @@ class TimelineTrack( QtGui.QFrame ):
 		self.updateSpanShape( span )
 		self.spanPosChanged.emit( span, pos )
 
-	def onSpanLengthChanged( self, span, zoom ):
+	def onSpanLengthChanged( self, span, length ):
 		self.updateSpanShape( span )
-		self.spanLengthChanged.emit( span, span.length )
+		self.spanLengthChanged.emit( span, length )
 
 	def getPosAt( self, x ):
 		return self.timeline.getPosAt( x )
@@ -640,7 +677,7 @@ class TimelineWidget( QtGui.QFrame ):
 
 	def getSpanByNode( self, spanNode ):
 		track = self.getParentTrack( spanNode )
-		return track.getSpanByNode( spanNode )
+		return track and track.getSpanByNode( spanNode ) or None
 
 	def selectTrack( self, trackNode ):
 		track = self.getTrackByNode( trackNode )

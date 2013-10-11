@@ -53,9 +53,9 @@ class SceneView( SceneEditorModule ):
 		signals.connect( 'preview.pause', self.onPreviewStop )
 		signals.connect( 'preview.stop', self.onPreviewStop )
 
-		self.addShortcut( 'W', self.changeEditTool, 'translation' )
-		self.addShortcut( 'E', self.changeEditTool, 'rotation' )
-		self.addShortcut( 'R', self.changeEditTool, 'scale' )
+		self.addShortcut( 'main', 'W', self.changeEditTool, 'translation' )
+		self.addShortcut( 'main', 'E', self.changeEditTool, 'rotation' )
+		self.addShortcut( 'main', 'R', self.changeEditTool, 'scale' )
 
 	def onStart( self ):
 		self.canvas.makeCurrent()

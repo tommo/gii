@@ -84,6 +84,9 @@ class PropertyEditor( QtGui.QWidget ):
 		self.model.setFieldValue( self.target, field.id, value )
 		self.propertyChanged.emit( self.target, field.id, value )
 
+	def getTarget( self ):
+		return self.target
+		
 	def setTarget( self, target, **kwargs ):
 		oldtarget = self.target
 

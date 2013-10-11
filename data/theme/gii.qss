@@ -804,9 +804,13 @@ QSplitter#TimelineSplitter::handle{
 
 #TimelineSpan {
 	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#348, stop:0.2 #79b, stop:1 #348);
-	border: 1px solid #223;
+	border-top: 1px solid #223;
+	border-bottom: 1px solid #223;
+	border-left: 1px solid #335;
+	border-right: 1px solid #223;
 	border-radius: 1px;
 	text-align: left;
+	margin:0;
 }
 
 #TimelineSpan:hover {
