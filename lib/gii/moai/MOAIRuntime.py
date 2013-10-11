@@ -347,7 +347,6 @@ class MOAILuaDelegate(object):
 		except Exception, e:
 			logging.exception( e )
 
-
 	def reload(self):
 		if self.scriptPath: 
 			self.load( self.scriptPath, self.scriptEnv )

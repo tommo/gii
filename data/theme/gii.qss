@@ -798,6 +798,10 @@ QSplitter#TimelineSplitter::handle{
 	border-bottom:1px solid #151515;
 }
 
+#TimelineTrack:hover {
+	background-color:#2a2e2a;
+}
+
 #TimelineSpan {
 	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#348, stop:0.2 #79b, stop:1 #348);
 	border: 1px solid #223;
@@ -814,7 +818,7 @@ QSplitter#TimelineSplitter::handle{
 }
 
 #TimelineSpan[selected="true"] {
-	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#384, stop:0.2 #7b9, stop:1 #384);
+	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#373, stop:0.2 #7a7, stop:1 #373);
 }
 
 #spaceHeaders, #spaceTracks {
@@ -834,6 +838,14 @@ QSplitter#TimelineSplitter::handle{
 }
 
 #TimelineTrackHeader:hover {
-	background-color:#466dc6;
+	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#343, stop:0.2 #454, stop:1 #343);
 	/*background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#348, stop:0.2 #79b, stop:1 #348);*/
+}
+
+#TimelineTrackHeader[selected="true"] {
+	background-color:#355c35;
+}
+
+#TimelineTrack[selected="true"] {
+	background-color:#252c25;
 }

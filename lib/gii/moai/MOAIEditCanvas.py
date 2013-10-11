@@ -207,6 +207,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.scriptPath  = None
 		self.lastUpdateTime = 0 
 		self.updateStep  = 0
+		self.alwaysForcedUpdate = False
 
 		self.updateTimer.timeout.connect( self.updateCanvas )
 		signals.connect('moai.reset', self.onMoaiReset)
@@ -311,7 +312,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 	def updateCanvas( self, **option ):
 		currentTime = getTime()
 		step = currentTime - self.lastUpdateTime
-		step = self.updateStep
+		# step = self.updateStep
 		self.lastUpdateTime = currentTime
 		
 		runtime = self.runtime
@@ -324,7 +325,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 
 		self.delegate.onUpdate( step )
 
-		if option.get( 'forced', False ):
+		if option.get( 'forced', self.alwaysForcedUpdate ):
 			self.forceUpdateGL()
 		else:
 			self.updateGL()
