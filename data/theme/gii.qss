@@ -57,8 +57,8 @@ QDialogButtonBox > QPushButton,QDialog > QPushButton,QWizard > QWidget > QPushBu
 
 QCheckBox
 {
-	margin-bottom: 5px;
-	margin-top: 6px;
+	margin-bottom: 1px;
+	margin-top: 4px;
 	background-color:none;
 }
 

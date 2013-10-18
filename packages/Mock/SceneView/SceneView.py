@@ -56,6 +56,7 @@ class SceneView( SceneEditorModule ):
 		self.addShortcut( 'main', 'W', self.changeEditTool, 'translation' )
 		self.addShortcut( 'main', 'E', self.changeEditTool, 'rotation' )
 		self.addShortcut( 'main', 'R', self.changeEditTool, 'scale' )
+		self.addShortcut( 'main', 'F', self.focusSelection )
 
 	def onStart( self ):
 		self.canvas.makeCurrent()
@@ -118,5 +119,10 @@ class SceneView( SceneEditorModule ):
 
 	def scheduleUpdate( self ):
 		self.updatePending = True
+
+	def focusSelection( self ):
+		self.canvas.makeCurrent()
+		self.canvas.safeCallMethod( 'view', 'focusSelection' )
+
 
 SceneView().register()

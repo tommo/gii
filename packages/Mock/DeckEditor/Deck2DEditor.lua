@@ -1,7 +1,6 @@
 --------------------------------------------------------------------
 scn = mock_edit.createEditorCanvasScene()
 --------------------------------------------------------------------
-
 CLASS: Deck2DEditor( mock_edit.EditorEntity )
 
 function Deck2DEditor:onLoad()
@@ -13,10 +12,16 @@ function Deck2DEditor:onLoad()
 	self.currentDeck = false
 	self.preview = self:addProp{}
 	self.previewGrid = MOAIGrid.new()
+
+	self.polygonEditor = self:addChild( PolygonEditor() )
+	self.alphaView = false
 end
 
 function Deck2DEditor:selectDeck( deck )
 	self.currentDeck = deck
+	
+	local previewDeck = deck and deck:getMoaiDeck()
+
 	if deck.type == 'tileset' then
 		self.preview:setGrid( self.previewGrid )
 	else
@@ -26,7 +31,17 @@ function Deck2DEditor:selectDeck( deck )
 	if deck.type == 'stretchpatch' then
 		self.preview:setScl( 2, 2, 2 )
 	end
-	self.preview:setDeck( deck and deck:getMoaiDeck() )	
+
+	if deck.type == 'polygon' then
+		self.polygonEditor:setEnabled( true )
+		self.polygonEditor:setDeck( deck )
+		previewDeck = self.polygonEditor:getPreviewDeck()
+	else
+		self.polygonEditor:setEnabled( false )
+		self.polygonEditor:setDeck( false )
+	end
+
+	self.preview:setDeck( previewDeck )
 	self:updateDeck()
 end
 
@@ -47,6 +62,7 @@ function Deck2DEditor:updateDeck( )
 			end
 		end
 	end
+	self:updatePreviewShader()
 	self.preview:forceUpdate()
 	updateCanvas()
 	updateEditor()
@@ -86,8 +102,7 @@ end
 
 --------------------------------------------------------------------
 function Deck2DEditor:onMouseMove()
-	if not self.currentDeck then return end
-
+	if not self.currentDeck then return end	
 	if scn.inputDevice:isMouseDown('right') then
 		local dx , dy = scn.inputDevice:getMouseDelta()
 		local zoom = scn:getCameraZoom()
@@ -98,7 +113,7 @@ function Deck2DEditor:onMouseMove()
 			self.currentDeck:setOrigin( ox + dx, oy - dy )
 		end
 		self:updateDeck()
-	end
+	end	
 	if scn.inputDevice:isMouseDown('left') then
 	end
 end
@@ -174,6 +189,357 @@ function Deck2DEditor:savePack( path )
 	mock.serializeToFile( self.editingPack, path )
 end
 
+function Deck2DEditor:toggleAlphaView( toggled )
+	self.alphaView = toggled
+	self:updatePreviewShader()
+	updateCanvas()
+end
+
+function Deck2DEditor:updatePreviewShader()
+	if self.alphaView then
+		self.preview:setShader( hardAlphaShader )
+	else
+		self.preview:setShader( MOAIShaderMgr.getShader( MOAIShaderMgr.DECK2D_SHADER ) )
+	end
+end
+
+--------------------------------------------------------------------
+local vertexSize = 5
+
+CLASS: VertexHandle( mock_edit.CanvasHandle )
+function VertexHandle:__init()
+	self.selected = false
+	self:attach( mock.DrawScript{ priority = 1000 } )
+end
+
+function VertexHandle:onDraw()
+	local z = scn.camera:com():getZoom()
+	local r = vertexSize / z
+	if self.selected then
+		MOAIGfxDevice.setPenColor( 1,1,0,1 )
+	else
+		MOAIGfxDevice.setPenColor( 0,1,0,1 )
+	end
+	MOAIDraw.fillCircle( 0, 0, r )
+	MOAIGfxDevice.setPenColor( 1,1,1,1 )
+	MOAIDraw.drawCircle( 0, 0, r )
+end
+
+function VertexHandle:inside( x, y )
+	local x0,y0 = self:getLoc()
+	return distance( x0,y0, x,y ) < vertexSize + 5
+end
+
+--------------------------------------------------------------------
+CLASS: Polygon ( mock_edit.EditorEntity )
+	:MODEL{}
+function Polygon:__init()
+	self.vertexList = {}
+	self.triangles  = false
+	self.closed = false
+	self:attach( mock.DrawScript{ priority = 500 } )
+end
+
+function Polygon:onLoad()
+end
+
+function Polygon:addVertex( x, y, index )
+	local v = self:addChild( VertexHandle() )
+	v:setLoc( x, y )
+	if index then
+		table.insert( self.vertexList, index, v )
+	else
+		table.insert( self.vertexList, v )
+	end
+	v:forceUpdate()
+	self:triangulate()
+	updateCanvas()
+	return v
+end
+
+
+-- function Polygon:tryClosePolygon( x, y )
+-- 	if #self.vertexList < 3 then return false end
+-- 	local v1 = self.vertexList[1]
+-- 	if v1:inside( x, y ) then 
+-- 		self.closed = true
+-- 		return true
+-- 	end
+-- end
+
+function Polygon:closePolygon()
+	if #self.vertexList < 3 then return false end
+	self.closed = true
+	self:triangulate()
+	return true
+end
+
+function Polygon:triangulate()
+	if not self.closed then return end
+	local coords = self:getVertexCoords()
+	local verts = triangulatePolygon( gii.tableToList( coords ) )
+	verts = gii.listToTable( verts )
+	local triangles = {}
+	for i = 1, #verts, 6 do
+		local tri = {}
+		for j = i, i + 6 do
+			table.insert( tri, verts[ j ] )
+		end
+		table.insert( triangles, tri )
+	end
+	self.triangles = triangles
+end
+
+function Polygon:findVertex( x, y )
+	for i, v in ipairs( self.vertexList ) do
+		if v:inside( x, y ) then
+			return v
+		end
+	end
+end
+
+function Polygon:removeVertex( v1 )
+	for i, v in ipairs( self.vertexList ) do
+		if v == v1 then 
+			v:destroy()
+			table.remove( self.vertexList, i )
+			if #self.vertexList < 3 then 
+				self.closed = false
+				self.triangles = false
+			else
+				self:triangulate()
+			end
+			updateCanvas()
+			return
+		end
+	end
+end
+
+function Polygon:tryInsertVertex( x, y )
+	local count = #self.vertexList
+	for i, v1 in ipairs( self.vertexList ) do
+		local v2 = self.vertexList[ i == 1 and count or i - 1 ]
+		local x1,y1 =v1:getLoc()
+		local x2,y2 =v2:getLoc()
+		local px,py = projectPointToLine( x1,y1, x2,y2, x,y )
+		local dst = distance( px,py, x,y )
+		if dst < 10 then
+			local newVertex = self:addVertex( px, py, i == 1 and count + 1 or i )
+			return newVertex
+		end
+	end
+end
+
+function Polygon:getVertexCoords( loop )
+	local verts = {}
+	for i, v in ipairs( self.vertexList ) do
+		local x, y = v:getLoc()
+		table.insert( verts, x )
+		table.insert( verts, y )
+	end
+	if loop and self.closed then
+		table.insert( verts, verts[1] )
+		table.insert( verts, verts[2] )
+	end
+	return verts
+end
+
+
+function Polygon:onDraw()
+	local triangles = self.triangles
+	if triangles then
+		MOAIGfxDevice.setPenWidth( 1 )
+		MOAIGfxDevice.setPenColor( 0,0,1,0.4 )
+		for i,tri in ipairs( self.triangles ) do
+			MOAIDraw.fillFan( unpack( tri ) )
+		end
+		-- MOAIGfxDevice.setPenColor( 0,0,1,0.2 )
+		-- for i,tri in ipairs( self.triangles ) do
+		-- 	MOAIDraw.drawLine( tri )
+		-- end
+	end
+	MOAIGfxDevice.setPenColor( 1,0,1,1 )
+	MOAIGfxDevice.setPenWidth( 2 )
+	local verts = self:getVertexCoords( true )
+	MOAIDraw.drawLine( verts )
+end
+
+--------------------------------------------------------------------
+CLASS: PolygonEditor( mock_edit.EditorEntity )
+function PolygonEditor:onLoad()
+	self.polygons = {}
+	self:attach( mock.InputScript{ device = scn.inputDevice } )
+	self.previewDeck    = false
+	self.currentPolygon = false
+	self.currentVertex  = false
+	self.dragging       = false
+	self.bounds         = {0,0,100,100}
+end
+
+function PolygonEditor:addPolygon()
+	local p = self:addChild( Polygon() )
+	return p
+end
+
+function PolygonEditor:pickPolygon( x, y )
+end
+
+function PolygonEditor:onMouseDown( btn, x, y )
+	if not self.enabled then return end
+	if btn == 'left' then
+		x, y = self:wndToWorld( x, y )
+		
+		if not self.currentPolygon then
+			self.currentPolygon = self:addPolygon()			
+		end	
+		
+		if self.currentVertex then
+			if self.currentVertex == self.currentPolygon.vertexList[1] then 
+				self.currentPolygon:closePolygon()
+				self:updateDeck()
+				updateCanvas()
+			end
+		else
+			x, y = self.currentPolygon:worldToModel( x, y )
+
+			if not self.currentPolygon.closed then
+				if not self:inside( x, y ) then return end
+				local v = self.currentPolygon:addVertex( x, y )
+				self:setCurrentVertex( v )
+				self:updateDeck()
+			else --try insert
+				local v = self.currentPolygon:tryInsertVertex( x, y )
+				if v then self:setCurrentVertex( v ) end
+				self:updateDeck()
+			end
+		end
+		self.dragging = self.currentVertex ~= false
+	end
+end
+
+function PolygonEditor:onKeyDown( key )
+	if self.dragging then return end
+	if key == 'delete' and self.currentVertex then
+		self.currentPolygon:removeVertex( self.currentVertex )
+		self:setCurrentVertex( false )
+		self:updateDeck()
+	end
+end
+
+
+function PolygonEditor:setCurrentVertex( v )
+	v = v or false
+	if self.currentVertex == v then return end
+	if self.currentVertex then self.currentVertex.selected = false end
+	self.currentVertex = v
+	if v then v.selected = true end
+	updateCanvas()
+end
+
+function PolygonEditor:limitPos( x, y )
+	local bounds = self.bounds
+	x = clamp( x, bounds[1], bounds[3] )
+	y = clamp( y, bounds[2], bounds[4] )
+	return x, y
+end
+
+function PolygonEditor:inside( x, y )
+	local bounds = self.bounds
+	return 
+		between( x, bounds[1], bounds[3] ) and 
+		between( y, bounds[2], bounds[4] )
+end
+
+
+function PolygonEditor:onMouseMove( x, y )
+	x, y = self:wndToWorld( x, y )
+	if not self.dragging then 		
+		local v = self:findVertex( x, y )
+		self:setCurrentVertex( v )
+	else
+		x, y = self:limitPos( x, y )
+		x, y = self.currentPolygon:worldToModel( x, y )
+		self.currentVertex:setLoc( x, y )
+		self.currentPolygon:triangulate()
+		updateCanvas()
+		self:updateDeck()
+	end
+end
+
+function PolygonEditor:onMouseUp( btn, x, y )
+	if btn == 'left' then
+		x, y = self:wndToWorld( x, y )
+		self.dragging = false
+		self:setCurrentVertex( self:findVertex( x, y ) )
+	end
+end
+
+function PolygonEditor:findVertex( x, y )
+	return self.currentPolygon and self.currentPolygon:findVertex( x, y )
+end
+
+function PolygonEditor:wndToWorld( x, y )
+	return scn.cameraCom:wndToWorld( x, y )
+end
+
+function PolygonEditor:setEnabled( e )
+	self.enabled = e
+	self:setVisible( e )
+end
+
+function PolygonEditor:setDeck( deck )
+	self.currentDeck = deck
+	if deck then
+		local previewDeck = mock.Quad2D()
+		local tex = self.currentDeck:getTexture()
+		previewDeck:setTexture( tex )
+		self.previewDeck = previewDeck
+		self.bounds = { previewDeck:getRect() }	
+		--load triangles
+		if self.currentPolygon then self.currentPolygon:destroy() end
+		local polyline = deck.polyline
+		if not polyline then return end
+		local poly = self:addPolygon()
+		self.currentPolygon = poly
+
+		for i = 1, #polyline, 2 do
+			local x, y = polyline[i], polyline[i+1]
+			poly:addVertex( x, y )
+		end
+		poly:closePolygon()
+
+	end
+end
+
+local insert = table.insert
+function PolygonEditor:updateDeck()
+	local poly = self.currentPolygon
+
+	self.currentDeck.polyline = poly:getVertexCoords()
+
+	local triangles = poly.triangles
+	if not triangles then return end
+
+	local w, h = self.previewDeck:getSize()
+	local verts = {}
+	for i, tri in ipairs( triangles ) do
+		for j = 1, 6, 2 do
+			local x,y = tri[j], tri[j+1]
+			insert( verts, x )
+			insert( verts, y )
+			local u,v = ( x + w/2 ) / w, ( y + h/2 ) / h
+			insert( verts, u )
+			insert( verts, v )
+		end
+	end
+	self.currentDeck.vertexList = verts
+	self.currentDeck:update()
+end
+
+function PolygonEditor:getPreviewDeck()
+	return self.previewDeck:getMoaiDeck()	
+end
+
 --------------------------------------------------------------------
 editor = scn:addEntity( Deck2DEditor() )
 
@@ -211,3 +577,36 @@ function renameDeck( deck, name )
 	deck:setName( name )
 	editor:updateDeck()
 end
+
+--------------------------------------------------------------------
+--res
+--------------------------------------------------------------------
+hardAlphaShader = mock_edit.loadShader{
+	vsh=[[
+		attribute vec4 position;
+		attribute vec2 uv;
+		attribute vec4 color;
+
+		varying MEDP vec2 uvVarying;
+
+		void main () {
+			gl_Position = position;
+			uvVarying = uv;
+		}
+	]],
+
+	fsh=[[
+		varying MEDP vec2 uvVarying;
+		uniform sampler2D sampler;
+
+		void main () {
+			LOWP vec4 tex = texture2D ( sampler, uvVarying );	
+			if( tex.a > 0.0 ) {
+				gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
+			} else {
+				gl_FragColor = vec4( 1.0, 0.0, 0.0, 0.2 );
+			}
+		}
+	]]
+};
+

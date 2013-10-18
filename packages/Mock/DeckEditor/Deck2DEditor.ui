@@ -292,6 +292,19 @@
              </item>
             </layout>
            </widget>
+           <widget class="QCheckBox" name="checkAlphaView">
+            <property name="geometry">
+             <rect>
+              <x>110</x>
+              <y>20</y>
+              <width>101</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>ALPHA VIEW</string>
+            </property>
+           </widget>
           </widget>
           <widget class="QWidget" name="page_2"/>
          </widget>

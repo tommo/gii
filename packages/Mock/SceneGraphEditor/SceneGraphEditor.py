@@ -137,6 +137,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'component.added', self.onComponentAdded )
 		signals.connect( 'component.removed', self.onComponentRemoved )
 
+		signals.connect( 'app.post_start', self.postStart )
+
 		#editor
 		if self.getModule('introspector'):
 			import EntityEditor
@@ -148,6 +150,19 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def onStart( self ):
 		self.refreshCreatorMenu()
+
+	def postStart( self ):
+		previousScene = self.getConfig( 'previous_scene', None )
+		if previousScene:
+			node = self.getAssetLibrary().getAssetNode( previousScene )
+			if node:
+				node.edit()
+
+	def onStop( self ):
+		if self.activeSceneNode:
+			self.setConfig( 'previous_scene', self.activeSceneNode.getNodePath() )
+		else:
+			self.setConfig( 'previous_scene', False )
 
 	def onSetFocus( self ):
 		self.container.show()

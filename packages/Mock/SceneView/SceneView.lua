@@ -236,6 +236,13 @@ function SceneView:refreshEditHandle()
 	scheduleUpdate()
 end
 
+function SceneView:focusSelection()
+	if not self.editTarget then return end
+	self.camera:setLoc( self.editTarget:getWorldLoc() )
+	--todo: fit viewport to entity bound
+	scheduleUpdate()
+end
+
 
 --------------------------------------------------------------------
 CLASS: TransformProxy( mock.Entity )

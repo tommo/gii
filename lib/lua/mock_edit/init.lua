@@ -25,3 +25,9 @@ require 'mock_edit.EditorCanvas'
 --DEPLOY TARGETs
 --------------------------------------------------------------------
 require 'mock_edit.deploy.DeployTargetIOS'
+
+
+--------------------------------------------------------------------
+--Editor Related Res
+--------------------------------------------------------------------
+require 'mock_edit.common.resloader'

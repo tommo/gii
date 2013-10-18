@@ -12,7 +12,12 @@ class Deck2DPreviewer(AssetPreviewer):
 		return self.canvas
 
 	def accept(self, assetNode):
-		return assetNode.getType() in [ 'deck2d.quad', 'deck2d.stretchpatch', 'deck2d.tileset' ]
+		return assetNode.getType() in [ 
+			'deck2d.quad',
+			'deck2d.stretchpatch',
+			'deck2d.tileset',
+			'deck2d.polygon'
+			]
 
 	def onStart(self, assetNode):
 		self.canvas.safeCall( 'show', assetNode.getPath() )		

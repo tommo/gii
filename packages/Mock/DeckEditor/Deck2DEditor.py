@@ -21,6 +21,7 @@ from gii.moai.MOAIEditCanvas    import MOAIEditCanvas
 from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
 
+from Triangulator import triangulatePolygon
 ##----------------------------------------------------------------##
 
 def _getModulePath( path ):
@@ -80,6 +81,7 @@ class Deck2DEditor( AssetEditorModule ):
 		)
 		self.canvas.loadScript( _getModulePath('Deck2DEditor.lua') )
 		self.canvas.setDelegateEnv( 'updateEditor', self.onCanvasUpdateRequested )
+		self.canvas.setDelegateEnv( 'triangulatePolygon',  triangulatePolygon )
 
 		#setup listwidget
 		treeSprites = addWidgetWithLayout( 
@@ -110,7 +112,7 @@ class Deck2DEditor( AssetEditorModule ):
 		window.toolOriginNE        .clicked. connect( lambda: self.setOrigin('NE') )
 		window.toolOriginNW        .clicked. connect( lambda: self.setOrigin('NW') )
 		window.toolOriginC         .clicked. connect( lambda: self.setOrigin('C') )
-
+		window.checkAlphaView      .stateChanged .connect( self.toggleAlphaView )
 
 		self.propEditor .propertyChanged .connect(self.onPropertyChanged)
 		signals.connect('asset.modified', self.onAssetModified)
@@ -207,9 +209,11 @@ class Deck2DEditor( AssetEditorModule ):
 	def onPreviewTextChanged( self ):
 		pass
 
+	def toggleAlphaView( self, state ):
+		self.canvas.safeCallMethod( 'editor', 'toggleAlphaView', state == Qt.Checked )
+
 	def onAssetModified( self, asset ):
 		pass
-
 
 	def onPropertyChanged( self, obj, id, value ):
 		self.canvas.safeCall( 'updateDeck' )
