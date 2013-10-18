@@ -100,7 +100,23 @@ class EnumType( DataType ):
 			if value == v: return i
 		return None
 
-	
+##----------------------------------------------------------------##
+class CollectionType( DataType ):
+	def __init__(self, name, itemType, defaultValue = None ):
+		self.name = name
+		self.itemType = itemType	
+		
+	def getName( self ):
+		return self.name
+
+	def getSuperType( self ):
+		return CollectionType
+
+	def repr( self, value ):
+		return '<%s> %s' %( self.name, repr( value ) ) 
+
+
+##----------------------------------------------------------------##
 class AssetRefType( DataType ):
 	def __init__( self, assetType ):
 		self.assetType = assetType

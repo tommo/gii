@@ -28,8 +28,8 @@ class FModPreviewer(AssetPreviewer):
 	def onStart(self, assetNode):
 		atype=assetNode.getType()
 		self.canvas.safeCallMethod( 'preview', 'setEvent', assetNode.getPath() )
-		
+
 	def onStop(self):
-		self.canvas.safeCallMethod( 'preview', 'setEvent', None )
+		self.canvas.safeCallMethod( 'preview', 'setEvent', None )		
 
 FModPreviewer().register()

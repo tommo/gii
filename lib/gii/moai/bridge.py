@@ -195,7 +195,7 @@ class LuaObjectModel(ObjectModel):
 			for k, v in meta.items():
 				if not setting.has_key( k ):
 					setting[k] = v
-		self.addFieldInfo( name, typeId, **setting )
+		return self.addFieldInfo( name, typeId, **setting )
 
 	def addLuaEnumFieldInfo(self, name, enumItems, data = None): #called by lua
 		enumType = LuaObjectModel._EnumCache.get( enumItems, None )
@@ -215,6 +215,10 @@ class LuaObjectModel(ObjectModel):
 			typeId = AssetRefType( assetType )
 			LuaObjectModel._AssetTypeCache[ assetType ] = typeId
 		return self.addLuaFieldInfo( name, typeId, data )
+
+	def addLuaCollectionFieldInfo( self, name, itemType, data = None ):
+		collectionType = CollectionType( name, itemType )
+		return self.addLuaFieldInfo( name, collectionType, data )
 
 	def serialize( self, obj, objMap = None ):
 		raise Exception('Serializing Lua object in python is not supported, yet')

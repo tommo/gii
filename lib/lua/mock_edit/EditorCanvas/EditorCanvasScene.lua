@@ -55,6 +55,14 @@ function EditorCanvasCamera:__init( env )
 	self.parallaxEnabled = false
 end
 
+function EditorCanvasCamera:tryBindSceneLayer( layer )
+	local name = layer.name
+	if name == '_GII_EDITOR_LAYER' then
+		layer:setViewport( self.viewport )
+		layer:setCamera( self._camera )
+	end
+end
+
 
 function EditorCanvasCamera:getScreenRect()
 	return 0, 0, self.screenWidth, self.screenHeight

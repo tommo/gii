@@ -38,12 +38,14 @@ class EditorApp(object):
 		self.debugging     = False
 		self.running       = False
 		self.basePath      = getMainModulePath()
-
+		self.dataPaths     = []
 		self.config        = {}
 		self.packageManager   = PackageManager()
 
 		self.commandRegistry       = EditorCommandRegistry.get()
 		self.remoteCommandRegistry = RemoteCommandRegistry.get()
+		
+		self.registerDataPath( self.getPath('data') )
 
 		signals.connect( 'module.register', self.onModuleRegister )
 
@@ -142,6 +144,16 @@ class EditorApp(object):
 		else:
 			return self.basePath
 
+	def findDataFile( self, fileName ):
+		for path in self.dataPaths:
+			f = path + '/' + fileName
+			if os.path.exists( f ):
+				return f
+		return None
+
+	def registerDataPath( self, dataPath ):
+		self.dataPaths.append( dataPath )
+
 	def getProject( self ):
 		return Project.get()
 
@@ -150,8 +162,10 @@ class EditorApp(object):
 		info = Project.findProject()
 		if not info:
 			raise Exception( 'no valid gii project found' )
-		Project.get().load( info['path'] )
+		proj = Project.get()
+		proj.load( info['path'] )
 		self.projectLoaded = True
+		self.registerDataPath( proj.getEnvPath('data') )
 
 	def getAssetLibrary( self ):
 		return self.getProject().getAssetLibrary()

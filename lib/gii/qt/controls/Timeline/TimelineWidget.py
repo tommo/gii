@@ -91,8 +91,7 @@ class TimelineRuler( QtGui.QFrame ):
 		return self.zoom
 
 	def paintEvent( self, event ):
-		painter = QtGui.QPainter()
-		painter.begin( self )
+		painter = QtGui.QPainter( self )
 		# painter.setBrush( TimelineRuler._brushLine )
 		formatter = self.formatter
 		width     = self.width()
@@ -111,7 +110,6 @@ class TimelineRuler( QtGui.QFrame ):
 			for subPos in range( pos, pos + posStep, subStep ):
 				x = ( subPos - scrollPos ) * zoom
 				painter.drawLine( QPoint( x, height/4*3 ), QPoint( x, height - 3 ) )
-		painter.end()
 
 	def sizeHint( self ):
 		return QSize( 100, 100 )
@@ -167,22 +165,31 @@ class TimelineRuler( QtGui.QFrame ):
 
 
 ##----------------------------------------------------------------##
-class TimelineSpan( QtGui.QLabel ):
+class TimelineSpan( QtGui.QWidget ):
 	posChanged     = pyqtSignal( object, float )
 	lengthChanged  = pyqtSignal( object, float )
 	clicked        = pyqtSignal( object, float )
 
-	def __init__( self, track, *args ):
+	def __init__( self, track, *args, **option ):
 		super( TimelineSpan, self ).__init__( track )
-		self.length   = 100
-		self.pos      = 0
-		self.mouseOp  = None
-		self.dragging = False
-		self.dragFrom = 0
-		self.track    = track
+		self.length    = 100
+		self.pos       = 0
+		self.spanWidth = 1
+		self.mouseOp   = None
+		self.dragging  = False
+		self.dragFrom  = 0
+		self.track     = track
+		self.text      = 'goo'
+		self.resizable = option.get( 'resizable', True )
 		# self.setFocusPolicy( QtCore.Qt.WheelFocus )
 		self.setMouseTracking( True )
 		self.setObjectName( 'TimelineSpan' )
+
+	def setText( self, text ):
+		self.text = text
+		tw = self.fontMetrics().width( self.text )
+		self.resize( max( self.width(), tw + 10 ) , self.height() )
+		self.update()
 
 	def setPos( self, pos ):
 		pos = self.track.correctSpanPos( self, self.pos, pos )
@@ -195,6 +202,11 @@ class TimelineSpan( QtGui.QLabel ):
 		if length == self.length: return
 		self.length = length
 		self.lengthChanged.emit( self, length )
+
+	def setShape( self, x, y, w, h ):
+		self.spanWidth = w
+		tw = self.fontMetrics().width( self.text )
+		self.setGeometry( x, y, max( w, tw + 10 ) , h )
 
 	def getStartPos( self ):
 		return self.pos
@@ -209,6 +221,22 @@ class TimelineSpan( QtGui.QLabel ):
 		self.style().unpolish( self )
 		self.style().polish( self )
 		self.update()
+
+	def paintEvent( self, ev ):
+		p = QtGui.QStylePainter( self )
+		opt = QtGui.QStyleOptionButton()
+		opt.init( self )
+		h  = self.height()
+		tw = self.fontMetrics().width( self.text )
+
+		if self.spanWidth>=8:
+			opt.rect= QtCore.QRect( 0,0,self.spanWidth,h )
+			p.drawControl( QtGui.QStyle.CE_PushButton, opt )
+			p.drawText( QtCore.QRect( 3,2,tw+10,h-2 ) , QtCore.Qt.AlignLeft, self.text )
+		else:
+			opt.rect = QtCore.QRect( 0, 0, 5, h )
+			p.drawControl( QtGui.QStyle.CE_PushButton, opt )
+			p.drawText( QtCore.QRect( 9,2,tw+10,h-2 ) , QtCore.Qt.AlignLeft, self.text )
 
 	def mousePressEvent( self, ev ):
 		button = ev.button()
@@ -251,18 +279,20 @@ class TimelineSpan( QtGui.QLabel ):
 				self.setLength( newLength )
 		else:
 			#determine action
-			x = ev.x()
-			width = self.width()
-			sizeHandle = max( 5, min( 12, width/5 ) )
-			if x < sizeHandle:
-				self.mouseOp = 'left-size'
-				self.setCursor( Qt.SizeHorCursor )
-			elif x > width-sizeHandle:
-				self.mouseOp = 'right-size'
-				self.setCursor( Qt.SizeHorCursor )
-			else:
-				self.mouseOp = 'move'
-				self.setCursor( Qt.OpenHandCursor )
+			if self.resizable:
+				x = ev.x()
+				width = self.width()
+				sizeHandle = max( 5, min( 12, width/5 ) )
+				if x < sizeHandle:
+					self.mouseOp = 'left-size'
+					self.setCursor( Qt.SizeHorCursor )
+					return
+				elif x > width-sizeHandle:
+					self.mouseOp = 'right-size'
+					self.setCursor( Qt.SizeHorCursor )
+					return
+			self.mouseOp = 'move'
+			self.setCursor( Qt.OpenHandCursor )
 
 ##----------------------------------------------------------------##
 class TimelineTrack( QtGui.QFrame ):
@@ -336,8 +366,8 @@ class TimelineTrack( QtGui.QFrame ):
 			right = min( right, span1.pos )
 		return right - pos
 
-	def addSpan( self, node ):
-		span = TimelineSpan( self )
+	def addSpan( self, node, **option ):
+		span = TimelineSpan( self, option )
 		self.spans.append( span )
 		self.updateSpanShape( span )
 		span.posChanged.connect( self.onSpanPosChanged )
@@ -383,11 +413,11 @@ class TimelineTrack( QtGui.QFrame ):
 	def updateSpanShape( self, span ):
 		scrollPos = self.scrollPos
 		zoom      = self.zoom
-		width  = max( span.length * zoom, 12 )
+		width  = max( span.length * zoom, 1 )
 		height = self.height() 
 		x      = ( span.pos - scrollPos ) * zoom
 		y      = 0
-		span.setGeometry( x, y, width + 1, height-1 )
+		span.setShape( x, y, width + 1, height-1 )
 
 	def resizeEvent( self, size ):
 		for span in self.spans:
@@ -427,7 +457,7 @@ class TimelineTrack( QtGui.QFrame ):
 		self.headerClicked.emit( self, header )
 
 ##----------------------------------------------------------------##
-class TimelineTrackHeader( QtGui.QLabel ):
+class TimelineTrackHeader( QtGui.QFrame ):
 	clicked = pyqtSignal( object )
 	def __init__( self, *args ):
 		super( TimelineTrackHeader, self ).__init__( *args )
@@ -437,6 +467,19 @@ class TimelineTrackHeader( QtGui.QLabel ):
 
 	def mousePressEvent( self, ev ):
 		self.clicked.emit( self )
+
+	def setIcon( self, icon ):
+		self.icon = icon
+
+	def setText( self, text):
+		self.text = text
+		self.update()
+
+	def paintEvent( self, ev ):
+		p = QtGui.QStylePainter( self )
+		if self.icon:
+			self.icon.paint( p, QtCore.QRect( 3,3,14,14 ) )
+		p.drawText( self.contentsRect().adjusted( 22, 2,-22, -2 ), QtCore.Qt.AlignLeft, self.text )
 
 ##----------------------------------------------------------------##
 class TimelineEventFilter(QObject):
@@ -568,14 +611,14 @@ class TimelineWidget( QtGui.QFrame ):
 		return ( pos - pos0 ) * zoom
 
 	def rebuild( self ):
-		self.setUpdatesEnabled( False )
 		self.clear()
+		self.hide()
 		self.rebuilding = True
 		for node in self.getTrackNodes():
 			self.addTrack( node )
 		self.updateScrollTrackSize()
-		self.setUpdatesEnabled( True )
 		self.rebuilding = False
+		self.show()
 
 	def clear( self ):		
 		def _clearLayout( layout ):
@@ -587,6 +630,7 @@ class TimelineWidget( QtGui.QFrame ):
 						w.setParent( None )
 				else:
 					break
+		self.hide()
 		for t in self.tracks:
 			t.clear()
 		_clearLayout( self.ui.containerTracks.layout() )
@@ -594,7 +638,8 @@ class TimelineWidget( QtGui.QFrame ):
 		self.tracks = []
 		self.trackNodeDict.clear()
 		self.updateScrollTrackSize()
-
+		self.show()
+		
 	def getTrackByNode( self, node ):
 		return self.trackNodeDict.get( node, None )
 
@@ -774,9 +819,10 @@ class TimelineWidget( QtGui.QFrame ):
 	def refreshSpan( self, spanNode, **option ):
 		span = self.getSpanByNode( spanNode )
 		if span:
-			pos, length = self.getSpanParam( spanNode )
+			pos, length, resizable = self.getSpanParam( spanNode )
 			span.setPos( pos )
 			span.setLength( length )
+			span.resizable = resizable
 			self.updateSpanContent( span, spanNode, **option )
 
 	def refreshTrack( self, trackNode, **option ):
@@ -824,7 +870,7 @@ class TimelineWidget( QtGui.QFrame ):
 		return []
 
 	def getSpanParam( self, spanNode ):
-		return ( 0, 10 )
+		return ( 0, 10, True )
 
 	def getParentTrackNode( self, spanNode ):
 		return None

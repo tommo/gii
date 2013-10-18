@@ -43,6 +43,7 @@ class SearchViewWidget( QtGui.QWidget ):
 					sorting  = False
 				) 
 			)
+		self.treeResult.hideColumn( 0 )
 		self.textTerms = addWidgetWithLayout (
 			SearchViewTextTerm(self.ui.containerTextTerm )
 			)
@@ -52,9 +53,13 @@ class SearchViewWidget( QtGui.QWidget ):
 
 		self.treeResult.browser = self
 		self.entries = None
-		self.setFixedSize( 400, 250 )		
+		self.setMinimumSize( 400, 300  )
+		self.setMaximumSize( 600, 600  )
+		self.multipleSelection = False
 
 		self.setInfo( None )
+		self.ui.buttonOK     .clicked .connect( self.onButtonOK )
+		self.ui.buttonCancel .clicked .connect( self.onButtonCancel )
 
 	def sizeHint( self ):
 		return QtCore.QSize( 300, 250 )
@@ -89,9 +94,16 @@ class SearchViewWidget( QtGui.QWidget ):
 		self.treeResult.sortItems( 0, Qt.AscendingOrder )
 		self.selectFirstItem()
 
-	def setSelection( self, obj ):
+	def confirmSelection( self, obj ):
 		self.selected = True
-		self.module.selectObject( obj )
+		if self.multipleSelection:
+			result = []
+			for entry in self.entries:
+				if entry.checked:
+					result.append( entry.obj )
+			self.module.selectMultipleObjects( result )
+		else:
+			self.module.selectObject( obj )
 
 	def setFocus( self ):
 		QtGui.QWidget.setFocus( self )
@@ -109,7 +121,7 @@ class SearchViewWidget( QtGui.QWidget ):
 
 	def onTermsReturn( self ):
 		for node in self.treeResult.getSelection():
-			self.setSelection( node.obj )
+			self.confirmSelection( node.obj )
 			return
 
 	def hideEvent( self, ev ):
@@ -129,6 +141,39 @@ class SearchViewWidget( QtGui.QWidget ):
 		else:
 			self.ui.labelInfo.hide()
 
+	def setInitialSelection( self, selection ):
+		if self.multipleSelection:
+			if not selection: return
+			for entry in self.entries:
+				if entry.obj in selection:
+					entry.checked = True
+					self.treeResult.refreshNodeContent( entry )
+		else:
+			for entry in self.entries:
+				if entry.obj == selection:
+					self.treeResult.selectNode( entry )
+
+	def setMultipleSelectionEnabled( self, enabled ):
+		self.multipleSelection = enabled
+		if enabled:
+			self.treeResult.showColumn( 0 )
+			self.treeResult.setColumnWidth( 0, 50 )
+			self.treeResult.setColumnWidth( 1, 250 )
+			self.treeResult.setColumnWidth( 2, 50 )
+			self.ui.containerBottom.show()
+		else:
+			self.treeResult.hideColumn( 0 )
+			self.treeResult.setColumnWidth( 0, 0 )
+			self.treeResult.setColumnWidth( 1, 300 )
+			self.treeResult.setColumnWidth( 2, 50 )
+			self.ui.containerBottom.hide()
+
+	def onButtonOK( self ):
+		if self.multipleSelection:
+			self.confirmSelection( None )
+
+	def onButtonCancel( self ):
+		self.hide()
 
 ##----------------------------------------------------------------##
 class SearchViewTextTerm( QtGui.QLineEdit):
@@ -143,7 +188,7 @@ class SearchViewTextTerm( QtGui.QLineEdit):
 ##----------------------------------------------------------------##
 class SearchViewTree(GenericTreeWidget):
 	def getHeaderInfo( self ):
-		return [('Name', 300), ('Type', 80)]
+		return [('Sel', 50), ('Name', 300), ('Type', 80)]
 
 	def getRootNode( self ):
 		return self.browser
@@ -166,14 +211,17 @@ class SearchViewTree(GenericTreeWidget):
 
 	def updateItemContent( self, item, node, **option ):
 		if node == self.getRootNode(): return
-		item.setText( 0, node.name )
-		item.setText( 1, node.typeName )
+		item.setIcon( 0, getIcon( node.checked and 'checkbox_checked' or 'checkbox_unchecked' ) )
+		item.setText( 1, node.name )
+		item.setText( 2, node.typeName )
 		if node.iconName:
-			item.setIcon( 0, getIcon( node.iconName ) )
+			item.setIcon( 1, getIcon( node.iconName ) )
+
 	# def onItemSelectionChanged(self):
 	# 	for node in self.getSelection():
-	# 		self.browser.setSelection( node.obj )
+	# 		self.browser.confirmSelection( node.obj )
 	# 		return
+
 	def createItem( self, node ):
 		item = SearchViewItem()
 		flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled
@@ -184,18 +232,21 @@ class SearchViewTree(GenericTreeWidget):
 
 	def onClicked( self, item, col ):
 		node = item.node
-		self.browser.setSelection( node.obj )
-
+		if self.browser.multipleSelection:
+			node.checked = not node.checked
+			self.refreshNodeContent( node )
+		else:
+			self.browser.confirmSelection( node.obj )
 
 	def onItemActivated( self, item, col ):
 		node = item.node
-		self.browser.setSelection( node.obj )
+		self.browser.confirmSelection( node.obj )
 
 	def keyPressEvent(self, event):
 		key = event.key()		
 		if key in ( Qt.Key_Return, Qt.Key_Enter ):
 			for node in self.getSelection():
-				self.browser.setSelection( node.obj )
+				self.browser.confirmSelection( node.obj )
 				return
 		if ( int(key) >= int(Qt.Key_0) and int(key) <= int(Qt.Key_Z) ) \
 			or key in [ Qt.Key_Delete, Qt.Key_Backspace, Qt.Key_Space ] :
@@ -210,10 +261,11 @@ class SearchEntry(object):
 	def __init__( self, obj, name, typeName, iconName ):
 		self.visible    = True
 		self.matchScore = 0
-		self.obj      = obj
-		self.name     = name
-		self.typeName = typeName
-		self.iconName = iconName
+		self.obj        = obj
+		self.name       = name
+		self.typeName   = typeName
+		self.iconName   = iconName
+		self.checked    = False
 
 	def matchQuery( self, globs ):
 		score = 0
@@ -233,7 +285,6 @@ class SearchEntry(object):
 		self.matchScore = score
 		return score > 0
 
-
 ##----------------------------------------------------------------##
 class SearchView( EditorModule ):	
 	def __init__( self ):
@@ -252,11 +303,13 @@ class SearchView( EditorModule ):
 		self.window.module = self
 
 	def request( self, **option ):
-		pos     = option.get( 'pos', QtGui.QCursor.pos() )
-		typeId  = option.get( 'type', None )
-		context = option.get( 'context', None )
-		action  = option.get( 'action', 'select' )
-		info    = option.get( 'info', None )
+		pos        = option.get( 'pos', QtGui.QCursor.pos() )
+		typeId     = option.get( 'type', None )
+		context    = option.get( 'context', None )
+		action     = option.get( 'action', 'select' )
+		info       = option.get( 'info', None )
+		initial    = option.get( 'initial', None )
+		multiple   = option.get( 'multiple_selection', False )
 
 		self.onSelection = option.get( 'on_selection', None )
 		self.onCancel    = option.get( 'on_cancel', None )
@@ -265,8 +318,11 @@ class SearchView( EditorModule ):
 		self.window.show()
 		self.window.raise_()
 		self.window.setFocus()
-		self.window.setQuery( typeId, context )
 		self.window.setInfo( info )
+		self.window.setQuery( typeId, context )
+		self.window.setMultipleSelectionEnabled( multiple )
+		if initial:
+			self.window.setInitialSelection( initial )
 
 	def selectObject( self, obj ):
 		if self.window.searchState: return
@@ -274,6 +330,13 @@ class SearchView( EditorModule ):
 		if self.onSelection:
 			self.onSelection( obj )
 		self.window.hide()
+
+	def selectMultipleObjects( self, objs ):
+		if self.window.searchState: return
+		self.window.searchState = 'selected'
+		if self.onSelection:
+			self.onSelection( objs )
+		self.window.hide()		
 
 	def cancelSearch( self ):
 		if self.window.searchState: return
@@ -309,7 +372,6 @@ class SearchViewItem( QtGui.QTreeWidgetItem ):
 		if t0 == t1 : return node0.name < node1.name
 		return False
 		
-##----------------------------------------------------------------##
 ##----------------------------------------------------------------##
 searchView = SearchView()
 searchView.register()

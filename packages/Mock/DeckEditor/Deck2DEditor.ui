@@ -52,9 +52,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="toolAddQuadArray">
+       <widget class="QToolButton" name="toolAddPoly">
         <property name="text">
-         <string>+Quad Array</string>
+         <string>+Poly</string>
         </property>
        </widget>
       </item>
@@ -68,7 +68,14 @@
       <item>
        <widget class="QToolButton" name="toolAddStretchPatch">
         <property name="text">
-         <string>+Stretch Patch</string>
+         <string>+Patch</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolAddQuadArray">
+        <property name="text">
+         <string>+QuadArray</string>
         </property>
        </widget>
       </item>

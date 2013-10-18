@@ -25,6 +25,7 @@ _GII_SCRIPT_LIB_DIR     = _GII_GAME_DIR + '/lib'
 _GII_HOST_EXTENSION_DIR = _GII_HOST_DIR  + '/extension'
 
 _GII_ENV_PACKAGE_DIR    = _GII_ENV_DIR  + '/packages'
+_GII_ENV_DATA_DIR       = _GII_ENV_DIR  + '/data'
 _GII_ENV_LIB_DIR        = _GII_ENV_DIR  + '/lib'
 _GII_ENV_CONFIG_DIR     = _GII_ENV_DIR  + '/config'
 
@@ -121,6 +122,7 @@ class Project(object):
 
 		self.envPath           = path + '/' + _GII_ENV_DIR
 		self.envPackagePath    = path + '/' + _GII_ENV_PACKAGE_DIR
+		self.envDataPath       = path + '/' + _GII_ENV_DATA_DIR
 		self.envConfigPath     = path + '/' + _GII_ENV_CONFIG_DIR
 		self.envLibPath        = path + '/' + _GII_ENV_LIB_DIR
 
@@ -137,6 +139,7 @@ class Project(object):
 
 		_affirmPath( self.envPath )
 		_affirmPath( self.envPackagePath )
+		_affirmPath( self.envDataPath )
 		_affirmPath( self.envLibPath )
 		_affirmPath( self.envConfigPath )
 
@@ -277,6 +280,9 @@ class Project(object):
 
 	def getEnvPath( self, path=None ):
 		return _makePath( self.envPath, path)
+
+	def getEnvDataPath( self, path=None ):
+		return _makePath( self.envDataPath, path)
 
 	def getEnvLibPath( self, path = None ):
 		return _makePath( self.envLibPath, path)

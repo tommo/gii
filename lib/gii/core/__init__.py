@@ -14,6 +14,7 @@ sip.setapi('QVariant', 2)
 import signals
 import globalSignals
 ##----------------------------------------------------------------##
+from helpers        import *
 from model          import *
 from cli            import CLICommand, parseCLI
 from tool           import ToolBase, startupTool

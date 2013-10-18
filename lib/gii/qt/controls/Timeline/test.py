@@ -7,7 +7,7 @@ class TestSpan():
 		global _spanid
 		_spanid += 1
 		self.name = 'span - %d' % _spanid
-		self.length = random()* 1000
+		self.length = 1
 		self.pos    = random()*1000 + 50
 		self.track  = track
 

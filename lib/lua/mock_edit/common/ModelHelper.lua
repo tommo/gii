@@ -12,6 +12,8 @@ local isTupleValue  = mock.isTupleValue
 local isAtomicValue = mock.isAtomicValue
 
 local unpackPythonList = gii.unpackPythonList
+local listToTable      = gii.listToTable
+local tableToList      = gii.tableToList
 local function buildGiiModel( model )
 	local pmodel = GII_PYTHON_BRIDGE.LuaObjectModel( model.__name )
 	
@@ -25,7 +27,7 @@ local function buildGiiModel( model )
 		}
 		local id     = f.__id
 		local typeid = f.__type
-
+		local meta = f.__meta
 		if typeid == '@enum' then
 			if type(f.__enum) == 'table' then
 				pmodel:addLuaEnumFieldInfo( id, f.__enum, option )
@@ -34,6 +36,28 @@ local function buildGiiModel( model )
 			end
 		elseif typeid == '@asset' then
 			pmodel:addLuaAssetFieldInfo( id, f.__assettype, option )
+		elseif typeid == '@array' and meta and meta['collection'] then
+			local _set = f.__setter
+			if _set~=true then
+				option.set = function( obj, list )
+					_set( obj, listToTable( list ) )
+				end
+			else
+				option.set = function( obj, list )
+					obj[ id ] = listToTable( list )
+				end
+			end
+			local _get = f.__getter
+			if _get~=true then
+				option.get = function( obj )
+					return tableToList( _get( obj ) or {} )
+				end
+			else
+				option.get = function( obj )
+					return tableToList( obj[ id ] or {} )
+				end
+			end
+			pmodel:addLuaCollectionFieldInfo( id, f.__itemtype, option )
 		else
 			if isTupleValue( typeid ) then
 				local _set = f.__setter

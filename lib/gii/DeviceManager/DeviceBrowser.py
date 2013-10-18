@@ -21,7 +21,7 @@ class DeviceBrowser( DeviceManagerModule ):
 	def getDependency( self ):
 		return [ 'device_manager' ]
 
-	def onLoad( self ):
+	def onLoad( self ):		
 		#UI
 		self.windowTitle = 'Devices'
 		self.window = self.requestDockWindow( 'DeviceBrowser',
@@ -46,13 +46,12 @@ class DeviceBrowser( DeviceManagerModule ):
 
 		self.tool = self.addToolBar( 'device_browser', self.window.addToolBar() )
 		self.addTool( 'device_browser/refresh',    label = 'Refresh')
-		
 
 	def onStart( self ):
 		self.tree.rebuild()
 
 	def enumerateDevice( self ):
-		return []
+		return [ dev for dev in self.getDeviceManager().devices.keys() ]
 
 	def onTool( self, tool ):
 		name = tool.name

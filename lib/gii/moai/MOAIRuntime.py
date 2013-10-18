@@ -1,6 +1,6 @@
 import logging
 import os.path
-from gii.core import signals, EditorModule, RemoteCommand, app
+from gii.core import signals, EditorModule, RemoteCommand, app, printTraceBack
 
 # from gii.core import Module, signals, getAppPath, unregisterModule, registerModule, App, Project
 
@@ -149,6 +149,9 @@ class MOAIRuntime( EditorModule ):
 	#TODO: move function below into bridge module
 	def stepSim(self, step):
 		_GII.stepSim(step)
+
+	def updateFmod( self ):
+		getAKU().updateFmod()
 
 	def setBufferSize(self, w,h):
 	#for setting edit canvas size (without sending resize event)
@@ -363,7 +366,8 @@ class MOAILuaDelegate(object):
 		return v
 
 	def safeCall(self, method, *args):
-		if not self.luaEnv: 			
+		if not self.luaEnv:
+			printTraceBack()
 			logging.error( 'trying call a empty lua delegate, owned by %s' % repr( self.owner ) )
 			return
 		m = self.luaEnv[method]
@@ -375,6 +379,7 @@ class MOAILuaDelegate(object):
 	
 	def safeCallMethod( self, objId, methodName, *args ):
 		if not self.luaEnv: 
+			printTraceBack()
 			logging.error( 'trying call a empty lua delegate, owned by %s' % repr( self.owner ) )
 			return
 		obj = self.luaEnv[objId]

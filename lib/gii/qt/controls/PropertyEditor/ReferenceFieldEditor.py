@@ -105,7 +105,8 @@ class ReferenceFieldEditor( FieldEditor ):
 			context      = 'scene',
 			type         = self.targetType,
 			on_selection = self.onSearchSelection,
-			on_cancel    = self.onSearchCancel
+			on_cancel    = self.onSearchCancel,
+			initial      = self.target
 			)
 
 	def onSearchSelection( self, target ):

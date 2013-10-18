@@ -102,12 +102,14 @@ class AssetRefFieldEditor( FieldEditor ):
 		widget.buttonClear.clicked.connect( self.clearObject )
 		return self.refWidget
 
-	def openBrowser( self ):			
+	def openBrowser( self ):
+		initial = self.target and AssetLibrary.get().getAssetNode( self.target ) or None
 		requestSearchView( 
 			context = 'asset',
 			type    = self.targetType,
 			on_selection = self.onSearchSelection,
-			on_cancel    = self.onSearchCancel
+			on_cancel    = self.onSearchCancel,
+			initial      = initial
 			)
 
 	def onSearchSelection( self, target ):

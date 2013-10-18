@@ -14,7 +14,20 @@ from gii.qt.QtEditorModule  import QtEditorModule
 from gii.SearchView       import requestSearchView, registerSearchEnumerator
 
 import MobileDevice
+from   MonitorThread import DeviceMonitorThread
 
+##----------------------------------------------------------------##
+# def getIOSDeviceName( dev ):
+# 	name = u''
+# 	try:
+# 		name = dev.get_value(name=u'DeviceName')
+# 	except:
+# 		pass
+# 	print( u'%s - "%s"' % ( dev.get_deviceid(), name.decode(u'utf-8') ) )
+
+
+signals.register( 'device.connected' )
+signals.register( 'device.disconnected' )
 
 ##----------------------------------------------------------------##
 class DeviceManagerModule( QtEditorModule ):
@@ -33,6 +46,7 @@ class DeviceManagerModule( QtEditorModule ):
 
 	def changeSelection( self, selection ):
 		self.getSelectionManager().changeSelection( selection )
+
 
 ##----------------------------------------------------------------##		
 class DeviceManager( DeviceManagerModule ):
@@ -68,6 +82,7 @@ class DeviceManager( DeviceManagerModule ):
 	def onLoad( self ):
 		self.setupMainWindow()
 		self.containers  = {}
+		self.devices     = {}
 		signals.connect( 'app.start', self.postStart )
 		registerSearchEnumerator( deviceSearchEnumerator )
 		
@@ -77,9 +92,26 @@ class DeviceManager( DeviceManagerModule ):
 
 	def onStart( self ):
 		self.restoreWindowState( self.mainWindow )
+		self.monitorThread = DeviceMonitorThread( self.onIOSDeviceEvent )
+		# self.monitorThread.start()
 	
 	def onStop( self ):
+		# self.monitorThread.stop()
 		self.saveWindowState( self.mainWindow )
+
+	def onIOSDeviceEvent( self, ev, device ):
+		if ev == 'connected':
+			name = ''
+			try:
+				name = device.get_value( name = u'DeviceName' )
+			except:
+				pass
+			device.name = name
+			signals.emit( 'device.connected', device )
+			self.devices[ device ] = True
+		elif ev == 'disconnected':
+			signals.emit( 'device.disconnected', device )
+			self.devices[ device ] = False
 
 	def setFocus(self):
 		self.mainWindow.show()
@@ -136,3 +168,5 @@ def deviceSearchEnumerator( typeId, context ):
 			entry = ( device, device.getName(), device.getType(), None )
 			result.append( entry )
 		return result
+
+##----------------------------------------------------------------##

@@ -323,6 +323,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 
 		if not option.get( 'no_sim', False ):		
 			runtime.stepSim( step )
+			runtime.updateFmod()
 
 		self.delegate.onUpdate( step )
 

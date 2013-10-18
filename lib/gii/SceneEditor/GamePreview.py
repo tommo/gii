@@ -302,7 +302,7 @@ class GamePreview( SceneEditorModule ):
 class GamePreviewCanvas(MOAICanvasBase):
 	def resizeGL(self, width, height):
 		self.module.resizeView(width,height)
-		self.updateGL()
+		MOAICanvasBase.resizeGL( self, width, height )
 
 	def onDraw(self):
 		self.module.renderView()

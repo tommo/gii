@@ -105,7 +105,6 @@ class ParticleEditor( AssetEditorModule ):
 		self.window.panelScript.setEnabled( False )
 
 		self.propEditor.propertyChanged.connect( self.onPropertyChanged )
-		self.container.startTimer( 3, self.checkScript )
 
 	def onStart( self ):
 		self.canvas.loadScript( _getModulePath('ParticleEditor.lua') )
@@ -120,6 +119,7 @@ class ParticleEditor( AssetEditorModule ):
 	def openAsset( self, node ):
 		self.setFocus()
 		if self.editingAsset == node: return
+		self.checkScriptTimer = self.container.startTimer( 3, self.checkScript )
 		
 		self.container.setDocumentName( node.getNodePath() )
 		self.editingAsset  = node
@@ -129,6 +129,9 @@ class ParticleEditor( AssetEditorModule ):
 		
 		self.tree.rebuild()
 		self.tree.setAllExpanded( True )
+
+	def closeAsset( self ):
+		self.checkScriptTimer.stop()
 
 	def changeState( self, state ):
 		self.editingState = state

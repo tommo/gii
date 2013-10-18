@@ -31,25 +31,44 @@ function FModPreview:togglePlaying()
 	end
 end
 
+function FModPreview:resetPlay()
+	if self.playingEvent then
+		self:stopPlaying()
+	end
+	self:startPlaying()		
+end 
+
 function FModPreview:stopPlaying()
 	if self.playingEvent then
-		_stat( 'stop playing preview' )
+		-- _stat( 'stop playing preview' )
 		self.playingEvent:stop()
 		self.playingEvent = false
 	end
+	stopUpdateTimer()
 end
 
 function FModPreview:startPlaying()
-	_stat( 'playing preview' )
+	-- _stat( 'playing preview' )
 	self.playingEvent = self.soundSource:playEvent2D( self.target )
+	startUpdateTimer( 10 )
 end
 
 
-function FModPreview:onMouseUp( btn )
+function FModPreview:onMouseDown( btn )
 	if btn == 'left' then
-		self:togglePlaying()
+		self:resetPlay()
+	elseif btn == 'right' then
+		self:stopPlaying()
 	end
 end
+
+
+function FModPreview:onUpdate()
+	if self.playingEvent and not self.playingEvent:isValid() then
+		self:stopPlaying()
+	end
+end
+
 
 -- function FModPreview:onMouseMove( x, y )
 -- 	if self.dragging then

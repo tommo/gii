@@ -96,6 +96,7 @@ class Deck2DEditor( AssetEditorModule ):
 		window.toolAddQuadArray    .clicked. connect( lambda: self.addItem('quad_array') )
 		window.toolAddTileset      .clicked. connect( lambda: self.addItem('tileset') )
 		window.toolAddStretchPatch .clicked. connect( lambda: self.addItem('stretchpatch') )
+		window.toolAddPoly         .clicked. connect( lambda: self.addItem('polygon') )
 
 		window.toolRemove          .clicked. connect( self.onRemoveItem )
 		window.toolClone           .clicked. connect( self.onCloneItem )
@@ -247,6 +248,8 @@ class SpriteTreeWidget( GenericTreeWidget ):
 			item.setIcon( 0, getIcon('deck_tileset'))
 		elif node['type'] == 'quad_array':
 			item.setIcon( 0, getIcon('deck_quad_array'))
+		elif node['type'] == 'polygon':
+			item.setIcon( 0, getIcon('deck_polygon'))
 		else:
 			item.setIcon( 0, getIcon('deck_quad'))
 
