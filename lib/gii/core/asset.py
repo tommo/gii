@@ -525,7 +525,7 @@ class AssetLibrary(object):
 			return result
 		#match patterns
 		if isinstance( patterns, ( str, unicode ) ):
-			patterns = [ patterns ]
+			patterns = patterns.split(';')
 		matchPatterns = []
 		for p in patterns:
 			pattern = re.compile( p )

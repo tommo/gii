@@ -16,3 +16,6 @@ import PexAsset
 import FmodAsset
 
 import FSMAsset
+
+import FrameBufferAsset
+import ShaderAsset
