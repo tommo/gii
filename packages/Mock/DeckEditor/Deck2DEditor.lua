@@ -177,6 +177,11 @@ function Deck2DEditor:addItem( item )
 	return deck
 end
 
+function Deck2DEditor:removeItem( item )
+	if not self.editingPack then return end
+	self.editingPack:removeDeck( item )
+end
+
 function Deck2DEditor:openPack( path )
 	local pack = mock.loadAsset( path )
 	if not pack then pack = mock.Deck2DPack() end
@@ -215,6 +220,7 @@ end
 function VertexHandle:onDraw()
 	local z = scn.camera:com():getZoom()
 	local r = vertexSize / z
+	MOAIGfxDevice.setPenWidth( 1 )
 	if self.selected then
 		MOAIGfxDevice.setPenColor( 1,1,0,1 )
 	else
@@ -256,16 +262,6 @@ function Polygon:addVertex( x, y, index )
 	updateCanvas()
 	return v
 end
-
-
--- function Polygon:tryClosePolygon( x, y )
--- 	if #self.vertexList < 3 then return false end
--- 	local v1 = self.vertexList[1]
--- 	if v1:inside( x, y ) then 
--- 		self.closed = true
--- 		return true
--- 	end
--- end
 
 function Polygon:closePolygon()
 	if #self.vertexList < 3 then return false end
@@ -494,21 +490,31 @@ function PolygonEditor:setDeck( deck )
 		local tex = self.currentDeck:getTexture()
 		previewDeck:setTexture( tex )
 		self.previewDeck = previewDeck
-		self.bounds = { previewDeck:getRect() }	
+		local bounds = { previewDeck:getRect() }	
+		self.bounds = bounds
 		--load triangles
 		if self.currentPolygon then self.currentPolygon:destroy() end
-		local polyline = deck.polyline
-		if not polyline then return end
+
 		local poly = self:addPolygon()
 		self.currentPolygon = poly
 
+		local polyline = deck.polyline
+		if not polyline then
+			local x,y,x1,y1 = unpack( bounds )
+			polyline = {
+				x, y,
+				x1, y,
+				x1, y1,
+				x, y1,
+			}
+		end
 		for i = 1, #polyline, 2 do
 			local x, y = polyline[i], polyline[i+1]
 			poly:addVertex( x, y )
 		end
 		poly:closePolygon()
-
 	end
+
 end
 
 local insert = table.insert

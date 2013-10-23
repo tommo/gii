@@ -75,12 +75,7 @@ class AssetEditor( AssetEditorModule ):
 			'main/asset/clear_free_meta', 
 			dict( label='Clear Metadata' )
 		)
-
-		self.addMenuItem(
-			'main/find/find_asset', 
-			dict( label = 'Find Asset', shortcut = 'ctrl+t' )
-		)
-
+		
 		self.projectScanTimer = self.mainWindow.startTimer( 1, self.checkProjectScan )
 		
 
@@ -141,19 +136,10 @@ class AssetEditor( AssetEditorModule ):
 			self.getAssetLibrary().reset()
 		elif name == 'clear_free_meta':
 			self.getAssetLibrary().clearFreeMetaData()
-		elif name == 'find_asset':
-			requestSearchView( 
-				info    = 'search for asset',
-				context = 'asset',
-				on_selection = self.selectAsset
-				)
-
+		
 	def onTool( self, tool ):
 		print tool.name
 
-	def selectAsset( self, obj ):
-		print( obj )
-		getAssetSelectionManager().changeSelection( obj )
 		
 AssetEditor().register()
 

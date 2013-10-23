@@ -8,6 +8,7 @@ from gii.core         import *
 from gii.qt           import *
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.dialogs   import *
+from gii.qt.IconCache import getIcon
 
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.qt.controls.PropertyEditor      import PropertyEditor
@@ -19,6 +20,7 @@ from gii.moai.MOAIEditCanvas import  MOAIEditCanvas
 from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
 
+from gii.SearchView   import requestSearchView, registerSearchEnumerator
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -39,49 +41,6 @@ def _fixDuplicatedName( names, name, id = None ):
 		return testName
 ##----------------------------------------------------------------##
 
-EnumTextureFilter = EnumType(
-	'TextureFilter',
-	[
-		( 'LINEAR',  'linear' ),
-		( 'NEAREST', 'nearest' )
-	])
-
-EnumTextureCompression = EnumType(
-	'TextureCompression',
-	[
-		( 'NONE',  False ),
-		( 'PVRTC', 'pvrtc' )
-	])
-
-EnumTextureSize = EnumType(
-	'TextureSize',
-	[
-		( '32',   32 ),
-		( '64',   64 ),
-		( '128',  128 ),
-		( '256',  256 ),
-		( '512',  512 ),
-		( '1024', 1024 ),
-		( '2048', 2048 ),
-		( '4096', 4096 ),
-	])
-
-TextureGroupModel = ObjectModel.fromList(
-	'TextureGroup',
-	[
-		( 'filter',             EnumTextureFilter ),
-		( 'compression'       , EnumTextureCompression, ),
-		( 'mipmap'            , bool,                  dict( label = 'Mipmap') ),
-		( 'wrap'              , bool,                  dict( label = 'Wrap') ),
-		( 'atlas_allowed'     , bool,                  dict( label = 'Allow atlas') ),
-		( 'atlas_max_width'   , EnumTextureSize,       dict( label = 'Max atlas width') ),
-		( 'atlas_max_height'  , EnumTextureSize,       dict( label = 'Max atlas height') ),
-		( 'atlas_force_single', bool,  dict( label = 'Single atlas') )
-	]
-	)
-
-
-##----------------------------------------------------------------##
 class TextureManager( AssetEditorModule ):
 	"""docstring for MockStyleSheetEditor"""
 	def __init__(self):
@@ -100,35 +59,32 @@ class TextureManager( AssetEditorModule ):
 				minSize     = (500,300),
 				# allowDock = False
 			)
-
-		self.container.hide()
+		self.toolbar = self.addToolBar( 'texture_manager', self.container.addToolBar() )
 
 		self.window = window = self.container.addWidgetFromFile(
 			_getModulePath('TextureManager.ui')
 		)
 		
-		self.treeTextures = addWidgetWithLayout(
+		self.tree = addWidgetWithLayout(
 			TextureTreeWidget( 
-				window.containerTextureTree,
-				drag_mode = 'internal'
+				window.containerTree,
+				drag_mode = 'internal',
+				editable  = True,
+				multiple_selection = True,
+				auto_expand = False
 			)
 		)
-		self.treeTextures.module = self
+		self.tree.module = self
 
-		self.groupProp = addWidgetWithLayout(
-			PropertyEditor(window.containerGroupProp)
+		self.propEditor = addWidgetWithLayout(
+			PropertyEditor( window.containerProp)
 		)
 
-		window.listGroup.setSortingEnabled(True)
-		window.listGroup.itemSelectionChanged.connect( self.onGroupSelectionChanged )
+		self.canvas = addWidgetWithLayout(
+			MOAIEditCanvas( window.containerPreview )
+		)
+		self.canvas.loadScript( _getModulePath('TextureManager.lua') )
 
-		window.buttonAddGroup    .clicked .connect( self.addGroup )
-		window.buttonRemoveGroup .clicked .connect( self.removeGroup )
-		window.buttonApplyGroup  .clicked .connect( self.applyGroup )
-		window.buttonRebuild     .clicked .connect( self.rebuildTexture )
-
-
-		# self.getModule( 'asset_editor' ).mainToolBar
 		self.addMenuItem(
 				'main/asset/texture_manager',
 				{
@@ -137,100 +93,165 @@ class TextureManager( AssetEditorModule ):
 				}
 			)
 
-
 		self.addTool( 
 			'asset/show_texture_manager',
 			label = 'Texture Manager',			
 			on_click = lambda item: self.setFocus()
 			)
 
-		signals.connect( 'asset.register', self.onAssetRegister )
-		signals.connect( 'asset.unregister', self.onAssetUnregister )
+		self.addTool(	'texture_manager/add_group',   label = 'Add Group', icon  = 'add' )
+		self.addTool(	'texture_manager/remove_group',label = 'Remove Group', icon  = 'remove' )
+		self.addTool( 'texture_manager/----' )
+		self.addTool(	'texture_manager/assign_group',   label = 'Assign Group', icon  = 'in' )
+		self.addTool( 'texture_manager/----' )
+		self.addTool(	'texture_manager/assign_processor',   label = 'Assign Processor', icon  = 'compose' )
+		self.addTool(	'texture_manager/clear_processor',   label = 'Clear Processor', icon  = 'remove' )
+		self.addTool( 'texture_manager/----' )
+		self.addTool(	'texture_manager/rebuild',   label = 'Rebuild', icon  = 'refresh' )
+
+		self.addShortcut( self.container, '=',  self.regroupTo )
+		self.addShortcut( self.container, '-',  self.regroup, 'default' )
+
+		self.propEditor.propertyChanged. connect( self.onPropertyChanged )
+
+		signals.connect( 'texture.add', self.onTextureAdd )
+		signals.connect( 'texture.remove', self.onTextureRemove )
+		
+		registerSearchEnumerator( textureGroupSearchEnumerator )
 
 	def onStart( self ):
-		library = self.getModule( 'texture_library' )
-		self.treeTextures.rebuild()
-		self.target = {}
-		for k, g in library.groups.items() :
-			self.window.listGroup.addItem( g.name )
-		defaultGroup = library.getGroup( 'default' )
+		self.setFocus()
+		#test data
+		lib = self.getModule('texture_library').getLibrary()
+		self.canvas.callMethod( 'preview', 'setLibrary', lib )
+		self.tree.rebuild()
 
 	def onSetFocus( self ):
 		self.container.show()
 		self.container.raise_()
 
-	def getTextureList( self ):
-		return self.getAssetLibrary().enumerateAsset( 'texture' )
-
-	def onGroupSelectionChanged( self ):
-		for item in self.window.listGroup.selectedItems():
-			groupName = item.text()
-			library = self.getModule( 'texture_library' )
-			group = library.getGroup( groupName )
-			self.groupProp.setTarget( group, model = TextureGroupModel )
-			return
-
-	def addGroup( self ):
-		name = requestString('Creating Texture Group', 'Enter group name')
-		if not name: return
-		library = self.getModule( 'texture_library' )
-		if library.getGroup( name ):
-			alertMessage( 'warning', 'group name duplicated')
-			return
-		g = library.addGroup( name )
-		item = QtGui.QListWidgetItem( name )
-		self.window.listGroup.addItem( item )
-		item.setSelected( True )
-
-	def removeGroup( self ):
-		listGroup = self.window.listGroup
-		for item in listGroup.selectedItems():
-			groupName = item.text()
-			if groupName == 'default':
-				alertMessage( 'warning', 'default texture group cannot be removed')
-				return
-			self.getModule( 'texture_library' ).removeGroup( groupName )
-			listGroup.takeItem( listGroup.row( item ) )
-			return
-		self.changeSelection( None )
-
-	def applyGroup( self ):
-		group = None
-		for item in self.window.listGroup.selectedItems():
-			group = item.text()
-			break
-		if not group: 
-			alertMessage( 'warning', 'no texture group specified')
-			return
-
-		for item in self.treeTextures.selectedItems():
-			node = item.node
-
-			node.setMetaData( 'group', group, save = True )
-			self.treeTextures.updateItem( node )
-
 	def onAssetRegister(self, node):
 		if not node.isType( 'texture' ) : return
-		self.treeTextures.addNode( node )		
+		# self.tree.addNode( node )		
 
 	def onAssetUnregister(self, node):
 		if not node.isType( 'texture' ) : return
-		self.treeTextures.removeNode( node )
+		# self.tree.removeNode( node )
 
-	def rebuildTexture( self ):
-		lib = self.getModule( 'texture_library' )
-		lib.saveIndex()
-		lib.forceRebuildTextures()
+	def onPropertyChanged( self, obj, id, value ):
+		if id in ( 'name', 'processor' ) :
+			self.tree.refreshNodeContent( obj )
 
-TextureManager().register()
+	def onTool( self, tool ):
+		name = tool.name
+		if name == 'add_group':
+			g = self.canvas.callMethod( 'preview', 'addGroup' )
+			self.tree.addNode( g )
+			self.tree.editNode( g )
+			self.tree.selectNode( g )
+
+		elif name == 'remove_group':
+			self.removeSelectedGroup()
+
+		elif name == 'assign_group':
+			self.regroupTo()
+
+		elif name == 'assign_processor':
+			requestSearchView( 
+				info    = 'select processor to assign',
+				context = 'asset',
+				type    = 'texture_processor',
+				on_selection = self.assignProcessor
+			)
+
+		elif name == 'clear_processor':
+			self.assignProcessor( None )
+			
+		elif name == 'rebuild':	
+			texLib = self.getModule( 'texture_library' )
+			assetLib = self.getAssetLibrary()
+			for node in self.tree.getSelection():
+				clasName = node.getClassName( node )
+				if clasName == 'TextureGroup':
+					for tex in node.textures.values():
+						assetNode = assetLib.getAssetNode( tex.path )
+						# if assetNode: texLib.scheduleImport( assetNode )
+						assetNode.touch()
+				else:
+					assetNode = assetLib.getAssetNode( node.path )
+					assetNode.touch()
+					# if assetNode: texLib.scheduleImport( assetNode )
+			# texLib.doPendingImports()
+
+	def onTextureAdd( self, texNode ):
+		self.tree.addNode( texNode )
+
+	def onTextureRemove( self, texNode ):
+		self.tree.removeNode( texNode )
+
+	def regroupTo( self ):
+		requestSearchView( 
+				info    = 'select texture group to assign',
+				context = 'texture_group',				
+				on_selection = self.regroup
+			)
+
+	def assignProcessor( self, assetNode ):
+		path = assetNode and assetNode.getNodePath() or False
+		for node in self.tree.getSelection():
+			node.processor = path
+			self.tree.refreshNodeContent( node )
+			if node == self.propEditor.getTarget():
+				self.propEditor.refreshAll()
+
+	def getLibrary( self ):
+		return self.canvas.callMethod( 'preview', 'getLibrary' )
+
+	def getTextureGroups( self ):
+		lib = self.getLibrary()
+		return [ group for group in lib.groups.values() ]
+
+	def changeSelection( self ):
+		selection = self.tree.getSelection()
+		if len( selection ) == 1:
+			self.propEditor.setTarget( selection[0] )
+		else:
+			self.propEditor.setTarget( None )
+		#TODO
+
+	def renameGroup( self, group, newName ):
+		group.name = newName
+
+	def removeSelectedGroup( self ):
+		for node in self.tree.getSelection():
+			clasName = node.getClassName( node )
+			if clasName == 'TextureGroup':				
+				if node.default: continue
+				pass
+				#remove groupp, put texutres to default
+			else:
+				#move selected texture to default
+				pass
+
+	def regroup( self, group, refreshTree = True ):
+		if group == 'default':
+			group = self.getLibrary().defaultGroup
+
+		for node in self.tree.getSelection():
+			clasName = node.getClassName( node )
+			if clasName == 'TextureGroup':	continue
+			self.canvas.callMethod( 'preview', 'regroup', node, group )
+
+		if refreshTree:
+			self.tree.rebuild()
 
 ##----------------------------------------------------------------##
 class TextureTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		return [('Name', 200), ('Group', 80), ('Size', 50)]
+		return [ ('Name', 200), ('folder', 80), ('processor', -1) ]
 
 	def getRootNode( self ):
-		return self.module
+		return self.module.getLibrary()
 
 	def saveTreeStates( self ):
 		pass
@@ -240,37 +261,86 @@ class TextureTreeWidget( GenericTreeWidget ):
 
 	def getNodeParent( self, node ): # reimplemnt for target node	
 		if node == self.getRootNode(): return None
-		return self.getRootNode()
+		return node.parent
 		
 	def getNodeChildren( self, node ):
-		if node == self.module:
-			return node.getTextureList()
-		else:
+		if node == self.getRootNode(): #lib
+			return [ group for group in node.groups.values() ]
+		elif node.getClassName( node ) == 'TextureGroup': #group
+			return [ item for item in node.textures.values() ]
+		else: #texture
 			return []
 
-	def createItem( self, node ):
-		return TextureTreeItem()
-
 	def updateItemContent( self, item, node, **option ):
-		if node == self.getRootNode(): return
+		if node == self.getRootNode(): return		
+		clasName = node.getClassName( node )
 
-		path  = node.getPath()
-		group = node.getMetaData( 'group', 'default' )
-		w = node.getProperty('width',  0)
-		h = node.getProperty('height', 0)
-		item.setText( 0, path )
-		item.setText( 1, group )
-		item.setText( 2, '%d*%d' % (w,h) )
-		
+		if clasName == 'TextureGroup':
+			if node.default:
+				item.setIcon( 0, getIcon('folder_cyan') )
+			else:
+				item.setIcon( 0, getIcon('folder') )
+			item.setText( 0, node.name )			
+			item.setExpanded( node.expanded )
+		else:
+			path = node.path
+			item.setIcon( 0, getIcon('texture') )
+			item.setText( 0, os.path.basename( path ) )
+			item.setText( 1, os.path.dirname( path ) )
+
+		if node.processor:
+			processorName, ext = os.path.splitext( os.path.basename( node.processor ) )
+			item.setText( 2, processorName )
+		else:
+			item.setText( 2, '' )
+
+	def getItemFlags( self, node ):
+		clasName = node.getClassName( node )
+		if clasName == 'TextureGroup':
+			return dict( editable = not node.default, draggable = False, droppable = True )
+		else:
+			return dict( editable = False, draggable = True, droppable = False )
+
+	def onDropEvent( self, targetNode, pos, ev ):
+		if pos == 'viewport': return
+		#regroup
+		clasName = targetNode.getClassName( targetNode )
+		if clasName == 'TextureGroup':
+			self.module.regroup( targetNode, False )
+		else:
+			self.module.regroup( targetNode.parent, False )
+
+	def onItemExpanded( self, item ):
+		node = item.node
+		if node.getClassName( node ) == 'TextureGroup':
+			node.expanded = True
+
+	def onItemCollapsed( self, item ):
+		node = item.node
+		if node.getClassName( node ) == 'TextureGroup':
+			node.expanded = False
+
+	def onItemChanged( self, item, col ):
+		node = item.node
+		self.module.renameGroup( node, item.text(0) )
+
 	def onItemSelectionChanged(self):
-		selection = [ item.node for item in self.selectedItems() ]
-		self.module.changeSelection( selection )
+		self.module.changeSelection()
 
 	def onItemActivated( self, item, col ):
 		node = item.node
-		self.module.getModule('asset_browser').locateAsset( node )
+		# self.module.getModule('asset_browser').locateAsset( node )
 
 
 ##----------------------------------------------------------------##
-class TextureTreeItem( QtGui.QTreeWidgetItem ):
-	pass
+def textureGroupSearchEnumerator( typeId, context ):
+	if not context in [ 'texture_group' ] : return None
+	result = []
+	for group in app.getModule('mock.texture_manager').getTextureGroups():		
+		entry = ( group, group.name, 'texture_group', 'folder' )
+		result.append( entry )
+	return result
+
+
+##----------------------------------------------------------------##
+TextureManager().register()

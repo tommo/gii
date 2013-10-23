@@ -101,9 +101,11 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenu( 'main/entity', dict( label = 'Entity' ) )
 		self.addMenuItem( 'main/entity/add_empty_entity', dict( label = 'Create Empty', shortcut = 'ctrl+alt+N' ) )
 		self.addMenuItem( 'main/entity/add_entity',       dict( label = 'Create', shortcut = 'ctrl+shift+N' ) )
+		self.addMenuItem( 'main/entity/----' )
+		self.addMenuItem( 'main/entity/load_prefab',        dict( label = 'Load Prefab', shortcut = 'ctrl+alt+shift+N' ) )
+		self.addMenuItem( 'main/entity/----' )
 		self.addMenuItem( 'main/entity/remove_entity',    dict( label = 'Remove'  ) )
 		self.addMenuItem( 'main/entity/clone_entity',     dict( label = 'Clone',  shortcut = 'ctrl+d' ) )
-		
 		self.addMenuItem( 'main/entity/----' )
 		self.addMenuItem( 'main/entity/add_component',    dict( label = 'Add Component', shortcut = 'ctrl+alt+=' ) )
 		self.addMenuItem( 'main/entity/assign_layer',        dict( label = 'Assign Layer', shortcut = 'ctrl+alt+L' ) )
@@ -343,6 +345,16 @@ class SceneGraphEditor( SceneEditorModule ):
 		elif name == 'add_empty_entity':
 			self.doCommand( 'scene_editor/create_entity', name = 'Entity' )
 
+		elif name == 'load_prefab':
+			requestSearchView( 
+				info    = 'select a perfab node to instantiate',
+				context = 'asset',
+				type    = 'prefab',
+				on_selection = 
+					lambda obj: 
+						self.doCommand( 'scene_editor/create_prefab_entity', prefab = obj.getNodePath() )
+				)
+
 		elif name == 'remove_entity':
 			self.doCommand( 'scene_editor/remove_entity' )
 
@@ -422,8 +434,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		if context == 'new':
 			self.setFocus()
 			self.tree.setFocus()
-			self.tree.selectNode( entity )
 			self.tree.editNode( entity )
+			self.tree.selectNode( entity )
 		signals.emit( 'scene.update' )
 
 	def onEntityRemoved( self, entity ):

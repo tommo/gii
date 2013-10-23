@@ -100,6 +100,7 @@ class Deck2DEditor( AssetEditorModule ):
 		window.toolAddStretchPatch .clicked. connect( lambda: self.addItem('stretchpatch') )
 		window.toolAddPoly         .clicked. connect( lambda: self.addItem('polygon') )
 
+		window.toolSave            .clicked. connect( self.saveAsset )
 		window.toolRemove          .clicked. connect( self.onRemoveItem )
 		window.toolClone           .clicked. connect( self.onCloneItem )
 
@@ -195,8 +196,8 @@ class Deck2DEditor( AssetEditorModule ):
 	def onRemoveItem( self ):
 		selection = self.treeSprites.getSelection()
 		for deck in selection:
-			#todo: remove from pack
 			self.treeSprites.removeNode( deck )
+			self.canvas.safeCallMethod( 'editor', 'removeItem', deck )
 		self.saveAsset()
 
 	def onCloneItem( self ):

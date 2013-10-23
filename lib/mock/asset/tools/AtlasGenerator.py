@@ -304,9 +304,9 @@ class AtlasGenerator:
 				expand = 1
 		return self.generateAtlasesOfSize( images, (w0,h0), False )
 
-	def generateAtlasesOfSize(self, images, size, expanding = False ):
+	def generateAtlasesOfSize(self, images, size, noNewAtlas = False ):
 		atlases = []
-		for img in images:
+		for i, img in enumerate( images ):
 			node = None
 			for atlas in atlases:
 				node = atlas.insert(img, self.spacing)
@@ -314,11 +314,11 @@ class AtlasGenerator:
 					break
 
 			if node is None:
-				if atlases and expanding: return None
+				if atlases and noNewAtlas: return None
 				new_atlas = Node(0, 0, size[0], size[1])
 				node = new_atlas.insert(img, self.spacing)
 				if node is None:
-					if expanding: return None
+					if noNewAtlas: return None
 					print("ERROR: failed to insert image {0}".format(img.path))
 				else:
 					atlases.append(new_atlas)

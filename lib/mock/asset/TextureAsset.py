@@ -6,8 +6,16 @@ import json
 
 from gii.core import *
 
+from TextureProcessor import applyTextureProcessor
+
+##----------------------------------------------------------------##
+signals.register( 'texture.add' )
+signals.register( 'texture.remove' )
+signals.register( 'texture.rebuild' )
+
 ##----------------------------------------------------------------##
 _TEXTURE_LIBRARY_INDEX_FILE = 'texture_library.json'
+_TEXTURE_LIBRARY_DATA_FILE = 'texture_library.data'
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -70,6 +78,17 @@ class TextureGroup( object ):
 
 
 ##----------------------------------------------------------------##
+def groupToJson( group ):
+	return {
+				'name'               : group.name,
+				'filter'             : group.filter,
+				'mipmap'             : group.mipmap,
+				'wrap'               : group.wrap ,
+				'atlas_mode'         : group.atlasMode ,
+				'cache'              : group.cache
+			}
+
+##----------------------------------------------------------------##
 class TextureAssetManager( AssetManager ):
 	def getName(self):
 		return 'asset_manager.texture'
@@ -90,9 +109,9 @@ class TextureAssetManager( AssetManager ):
 
 	def deployAsset( self, node, context ):
 		super( TextureAssetManager, self ).deployAsset( node, context )
-		groupName = node.getMetaData( 'group', 'default' )
-		group     = app.getModule( 'texture_library' ).getGroup( groupName )
-		if group.cache and group.atlas_allowed:
+		texNode = app.getModule( 'texture_library' ).findTextureNode( node )
+		group = texNode.parent
+		if group.cache and group.atlasMode:
 			newPath = context.addFile( group.cache )
 			mappedConfigFile = context.getFile( node.getObjectFile('config') )
 			context.replaceInFile( context.getPath( mappedConfigFile ), group.cache, newPath )
@@ -146,6 +165,7 @@ class TextureLibrary( EditorModule ):
 		TextureLibrary._singleton = self
 		self.groups   = {}
 		self.pendingImportGroups = {}
+		self.pendingImportTextures = {}
 
 	def getName( self ):
 		return 'texture_library'
@@ -155,17 +175,23 @@ class TextureLibrary( EditorModule ):
 
 	def onLoad( self ):
 		self.indexPath = self.getProject().getConfigPath( _TEXTURE_LIBRARY_INDEX_FILE )
+		self.dataPath  = self.getProject().getConfigPath( _TEXTURE_LIBRARY_DATA_FILE )
+		
+		self.delegate  = app.getModule('moai').loadLuaDelegate( _getModulePath('TextureLibrary.lua') )
+
 		if not self.groups.get( 'default' ):
 			self.addGroup( 'default' )
 
-		_G = self.getModule( 'mock' ).getLuaEnv()
-		_G['MOCK_TEXTURE_LIBRARY_INDEX'] = self.indexPath
 		signals.connect( 'asset.post_import_all', self.postAssetImportAll )
+		signals.connect( 'asset.unregister',      self.onAssetUnregister )
+
 		signals.connect( 'project.save', self.onSaveProject )
-		# signals.connect( 'project.post_deploy', self.postDeploy )
-		
-	def onStart( self ):
-		self.loadIndex()
+
+	def onStart( self ):		
+		self.loadIndex()		
+
+	def getLibrary( self ):
+		return self.lib
 
 	def addGroup( self, name ):
 		g = TextureGroup( name )
@@ -179,95 +205,86 @@ class TextureLibrary( EditorModule ):
 		if self.groups.has_key( name ):
 			del self.groups[ name ]
 
-	def getGroup( self, name ):
-		return self.groups.get( name, None )
-
-	def loadIndex( self ):
-		self.groups   = {}
-		self.textureTable = {}
-		indexPath = self.indexPath
-		data = jsonHelper.tryLoadJSON( indexPath, 'texture index' ) or {}
-		
-		logging.info( 'loading texture library index' )
-		groups = data.get( 'groups' )
-		if groups:
-			for name, gdata in groups.items():
-				g = TextureGroup( name )
-				g.fromJson( gdata )				
-				if g.cache:
-					CacheManager.get().touchCacheFile( g.cache )
-				self.groups[ name ] = g
-
-		#fix missing meta file
-		for node in self.getAssetLibrary().enumerateAsset( 'texture' ):
-			groupName = node.getMetaData( 'group' )
-			if not groupName:
-				node.setMetaData('group', 'default')
+	def loadIndex( self ):		
+		if os.path.exists( self.dataPath ):
+			self.lib = self.delegate.call( 'loadLibrary', self.dataPath )
+			for group in self.lib.groups.values():
+				if group.cache:
+					CacheManager.get().touchCacheFile( group.cache )
+		else:
+			self.lib = self.delegate.call( 'newLibrary' )
 			
 	def saveIndex( self ):
 		logging.info( 'saving texture library index' )
-		groupDatas = {}
-		for k, g in self.groups.items():			
-			groupDatas[ g.name ] = g.toJson()
+		self.delegate.call( 'saveLibrary', self.dataPath )
 
-		data = {
-			'groups' : groupDatas,
-		}
-		jsonHelper.trySaveJSON( data, self.indexPath, 'texture index' )
-
-	def postDeploy( self, context ):		
-		pass
-		# logging.info( 'saving texture library index for deploy' )
-		# logging.info( 'saving texture library index for deploy' )
-		# indexPath = context['asset_path'] + '/texture_library'
-		# groupDatas = {}
-		# for k, g in self.groups.items():			
-		# 	data = g.toJson()
-		# 	groupDatas[ g.name ] = data
-		# 	cache = data['cache']
-		# 	if cache:
-		# 		cache = mapping.get( cache, cache )
-		# 		data['cache'] = cache
-		# data = {
-		# 	'groups' : groupDatas,
-		# }
-		# jsonHelper.trySaveJSON( data, indexPath, 'texture index (deploy)' )
+	def findTextureNode( self, assetNode ):
+		lib = self.lib
+		t = lib.findTexture( lib, assetNode.getNodePath() )
+		return t
 
 	def scheduleImport( self, node ):
-		groupName = node.getMetaData( 'group' )		
-		group = self.getGroup( groupName )
-		assert group
-		n = self.pendingImportGroups.get( group )
-		if not n:
-			n = {}
-			self.pendingImportGroups[ group ] = n
-		n[ node ] = True
+		lib = self.lib
+		t = lib.findTexture( lib, node.getNodePath() )
+		if not t:
+			t = lib.addTexture( lib, node.getNodePath() )
+			assert t
+			signals.emit( 'texture.add', t )
+
+		self.pendingImportTextures[ node ] = t		
 		
 	def doPendingImports( self ):
-		pendingImportGroups = self.pendingImportGroups
-		self.pendingImportGroups = {}
-		for group, nodes in pendingImportGroups.items():
-			if group.atlas_allowed and group.wrapmode != 'wrap':
-				#atlas
-				self.buildAtlas( group, nodes )
+		pendingImportTextures = self.pendingImportTextures
+		self.pendingImportTextures = {}
+		lib = self.lib
+		pendingImportGroups = set()
+		for node, t in pendingImportTextures.items():
+			group = t.parent
+			if group.atlasMode:
+				pendingImportGroups.add( group )
 			else:
-				for node in nodes:
-					self.buildSingleTexture( group, node )
+				self.buildSingleTexture( t, node )
 
-	def buildAtlas( self, group, nodes ):
+		for group in pendingImportGroups:
+			self.buildAtlas( group )	
+
+	def processTexture( self, texNode, filePath ):		
+		group = texNode.parent
+		groupProcessor = group.processor
+		if groupProcessor:
+			applyTextureProcessor( groupProcessor, filePath )
+		nodeProcessor = texNode.processor
+		if nodeProcessor:
+			applyTextureProcessor( nodeProcessor, filePath )
+
+
+	def buildAtlas( self, group ):
 		logging.info( 'building atlas texture:' + group.name )
 		#packing atlas
+		assetLib = self.getAssetLibrary()
+		nodes = [] 
+		for t in group.textures.values():
+			node = assetLib.getAssetNode( t.path )
+			if node:
+				nodes.append( node )
+			else:
+				logging.warn( 'node not found: %s' % t.path )
+
 		sourceList = [ node.getAbsFilePath() for node in nodes ]
-		print( sourceList )
 		atlasName = 'atlas_' + group.name
 
 		tmpDir = CacheManager.get().getTempDir()
 		prefix = tmpDir( atlasName )
 
 		outputDir = CacheManager.get().getCacheDir( '<texture_group>/' + group.name  )
-		
+		for name in os.listdir( outputDir ): #clear target path
+			try:
+				os.remove( outputDir + '/' + name )
+			except Exception, e:
+				pass
+
 		arglist = [ 'python', _getModulePath('tools/AtlasGenerator.py'), '--prefix', prefix ]
-		arglist += [ str( group.atlas_max_width ) , str( group.atlas_max_height ) ]
+		arglist += [ str( group.maxAtlasWidth ) , str( group.maxAtlasHeight ) ]
 		arglist += sourceList
 		try:
 			ex = subprocess.call( arglist ) #run packer
@@ -278,7 +295,7 @@ class TextureLibrary( EditorModule ):
 			#copy generated atlas
 			for i in range( 0, len( data['atlases'] ) ):
 				src = '%s%d.png' % ( prefix, i )
-				dst = '%s/%s%d.png' % ( dstPath, atlasName, i )
+				dst = '%s/%s%d.png' % ( dstPath, atlasName, i )				
 				shutil.copy( src, dst )
 			#update texpack
 			data[ 'sources' ] = sourceList
@@ -292,6 +309,7 @@ class TextureLibrary( EditorModule ):
 			return False
 
 		group.cache = outputDir
+		self.delegate.call( 'releaseTexPack', outputDir )
 
 		#redirect asset node to sub_textures
 		for node in nodes:
@@ -299,11 +317,10 @@ class TextureLibrary( EditorModule ):
 		#TODO
 		return True
 
-	def buildSingleTexture( self, group, node ):
+	def buildSingleTexture( self, tex, node ):
 		#conversion using external tool (PIL & psd_tools here)
+		group = tex.parent
 		logging.info( 'building single texture: %s<%s>' % ( node.getPath(), group.name ) )
-		compression = group.compression
-
 		node.clearCacheFiles()
 		node.setObjectFile( 'pixmap', node.getCacheFile( 'pixmap' ) )
 		arglist = [
@@ -315,21 +332,34 @@ class TextureLibrary( EditorModule ):
 		 ]
 		subprocess.call(arglist)
 		node.setObjectFile( 'config', node.getCacheFile( 'config' ) )
-		jsonHelper.trySaveJSON( group.toJson(), node.getAbsObjectFile( 'config' ) )
+		jsonHelper.trySaveJSON( groupToJson( group ), node.getAbsObjectFile( 'config' ) )
+		self.processTexture( tex, node.getAbsObjectFile( 'pixmap' ) )
+		signals.emit( 'texture.rebuild', node )
 		#todo: check process result!
 
 	def buildSubTexture( self, group, node ):
 		node.clearCacheFiles()
 		node.setObjectFile( 'pixmap', None ) #remove single texture if any
 		node.setObjectFile( 'config', node.getCacheFile( 'config' ) )
-		jsonHelper.trySaveJSON( group.toJson(), node.getAbsObjectFile( 'config' ) )
+		jsonHelper.trySaveJSON( groupToJson( group ), node.getAbsObjectFile( 'config' ) )
+		signals.emit( 'texture.rebuild', node )
 
 	def postAssetImportAll( self ):
 		self.doPendingImports()
 
-	def forceRebuildTextures( self ):
+	def onAssetUnregister( self, node ):
+		if node.isType( 'texture' ):
+			t = self.lib.removeTexture( self.lib, node.getNodePath() )
+			if t:
+				signals.emit( 'texture.remove', t )
+
+	def forceRebuildAllTextures( self ):
 		for node in self.getAssetLibrary().enumerateAsset( 'texture' ):
 			self.scheduleImport( node )
+		self.doPendingImports()
+
+	def forceRebuildTexture( assetNode ):
+		self.scheduleImport( assetNode )
 		self.doPendingImports()
 
 	def onSaveProject( self, prj ):

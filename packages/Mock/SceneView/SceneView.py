@@ -43,7 +43,8 @@ class SceneView( SceneEditorModule ):
 		self.previewUpdateTimer = False
 		self.preview = self.getModule( 'scene_preview' )
 
-		signals.connect( 'entity.modified',   self.onEntityModified   )
+		# signals.connect( 'entity.modified',   self.onEntityModified   )
+		signals.connect( 'asset.post_import_all',   self.onAssetReimport  )
 		signals.connect( 'scene.open',        self.onSceneOpen        )
 		signals.connect( 'scene.close',       self.onSceneClose       )
 		signals.connect( 'scene.update',      self.onSceneUpdate      )
@@ -78,6 +79,9 @@ class SceneView( SceneEditorModule ):
 		self.window.setFocus()
 
 	def onEntityModified( self, entity, context = None ):
+		self.scheduleUpdate()
+
+	def onAssetReimport( self ):
 		self.scheduleUpdate()
 
 	def onSceneUpdate( self ):

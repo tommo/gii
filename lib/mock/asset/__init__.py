@@ -2,6 +2,8 @@ import SceneAsset
 import PrefabAsset
 
 import TextureAsset
+import TextureProcessor
+
 import Deck2DAsset
 import FontAsset
 import StyleSheetAsset

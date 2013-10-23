@@ -23,11 +23,11 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			info =  headerInfo[i]
 			headerItem.setText ( i, info[0] )
 			w = info[1]
-			if w > 0:
-				self.setColumnWidth ( i, info[1] )
 			if i > 0:
 				self.setItemDelegateForColumn( i, self.no_editItemDelegate )
-
+			if w > 0:
+				self.setColumnWidth ( i, info[1] )
+			
 		self.setSortingEnabled( option.get('sorting', True) )
 		if option.get( 'multiple_selection', False ):
 			self.setSelectionMode( QtGui.QAbstractItemView.ExtendedSelection )
@@ -44,6 +44,8 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		self.itemDoubleClicked    .connect( self.onDClicked )
 		self.itemClicked          .connect( self.onClicked )
+		self.itemExpanded         .connect( self.onItemExpanded )
+		self.itemCollapsed        .connect( self.onItemCollapsed )
 		self.itemSelectionChanged .connect( self.onItemSelectionChanged )
 		self.itemActivated        .connect( self.onItemActivated )
 		self.itemChanged          .connect( self._onItemChanged )
@@ -105,7 +107,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		self.nodeDict[ node ]=item
 
-		if option.get( 'expand', True ):
+		if self.option.get( 'auto_expand', True ):
 			item.setExpanded( True )
 			
 		# if pnode:
@@ -211,11 +213,14 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 					item.setSelected( True )
 			if item and kw.get('goto',True):
 				self.scrollToItem( item )
+				self.setCurrentItem( item )
 		else:
 			item=self.getItemByNode(node)
 			if item:
 				item.setSelected(True)
-				if kw.get('goto',True) : self.scrollToItem(item)
+				if kw.get('goto',True) : 
+					self.scrollToItem( item )
+					self.setCurrentItem( item )
 
 	def editNode( self, node, col = 0 ):
 		item = self.getItemByNode( node )
@@ -272,11 +277,18 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def getNodeChildren( self, node ):
 		return []
 
+	def getItemFlags( self, node ):
+		return {}
+		
 	def createItem( self, node ):
-		item = QtGui.QTreeWidgetItem()
-		flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled | Qt.ItemIsDropEnabled
+		flags = Qt.ItemIsEnabled 
+		flagNames = self.getItemFlags( node )
+		if flagNames.get( 'selectable', True ): flags |= Qt.ItemIsSelectable
+		if flagNames.get( 'draggable',  True ): flags |= Qt.ItemIsDragEnabled
+		if flagNames.get( 'droppable',  True ): flags |= Qt.ItemIsDropEnabled
 		if self.option.get( 'editable', False ):
-			flags |= Qt.ItemIsEditable 
+			if flagNames.get( 'editable',   True ): flags |= Qt.ItemIsEditable
+		item  = QtGui.QTreeWidgetItem()
 		item.setFlags ( flags )
 		return item
 
@@ -290,21 +302,24 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		return False
 
 
-	# def dropEvent( self, ev ):		
-	# 	p = self.dropIndicatorPosition()
-	# 	pos = False
-	# 	if p == QtGui.QAbstractItemView.OnItem: #reparent
-	# 		pos = 'on'
-	# 	elif p == QtGui.QAbstractItemView.AboveItem:
-	# 		pos = 'above'
-	# 	elif p == QtGui.QAbstractItemView.BelowItem:
-	# 		pos = 'below'
-	# 	else:
-	# 		pos = 'viewport'
+	def dropEvent( self, ev ):		
+		p = self.dropIndicatorPosition()
+		pos = False
+		if p == QtGui.QAbstractItemView.OnItem: #reparent
+			pos = 'on'
+		elif p == QtGui.QAbstractItemView.AboveItem:
+			pos = 'above'
+		elif p == QtGui.QAbstractItemView.BelowItem:
+			pos = 'below'
+		else:
+			pos = 'viewport'
 
-	# 	target = self.itemAt( ev.pos() )
-	# 	self.onDropEvent( target, pos, ev )
-	# 	super( GenericTreeWidget, self ).dropEvent( ev )
+		targetItem = self.itemAt( ev.pos() )
+		if self.onDropEvent( targetItem.node, pos, ev ) != False:
+			super( GenericTreeWidget, self ).dropEvent( ev )
+
+	def onDropEvent( self, targetNode, pos, ev ):
+		pass
 		
 	##----------------------------------------------------------------##
 	# Event Callback
@@ -319,6 +334,12 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		pass
 
 	def onItemActivated(self, item, col):
+		pass
+
+	def onItemExpanded( self, item ):
+		pass
+
+	def onItemCollapsed( self, item ):
 		pass
 
 	def _onItemChanged( self, item, col ):

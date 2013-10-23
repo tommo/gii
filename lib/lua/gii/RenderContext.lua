@@ -86,7 +86,6 @@ function changeRenderContext( key, w, h )
 	MOAIActionMgr.setRoot        ( currentContext.actionRoot )
 end
 
-
 function getCurrentRenderContextKey()
 	return currentContextKey
 end

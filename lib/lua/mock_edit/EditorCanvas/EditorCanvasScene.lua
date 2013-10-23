@@ -1,45 +1,5 @@
 module 'mock_edit'
 --------------------------------------------------------------------
-function createEditorCanvasInputDevice( env )
-	local env = env or getfenv( 2 )
-	local inputDevice = mock.InputDevice( env.contextName, true )
-
-	function env.onMouseDown( btn, x, y )
-		inputDevice:sendMouseEvent( 'down', x, y, btn )
-	end
-
-	function env.onMouseUp( btn, x, y )
-		inputDevice:sendMouseEvent( 'up', x, y, btn )
-	end
-
-	function env.onMouseMove( x, y )
-		inputDevice:sendMouseEvent( 'move', x, y, false )
-	end
-
-	function env.onScroll( dx, dy, x, y )
-		inputDevice:sendMouseEvent( 'scroll', dx, dy, false )
-	end
-
-	function env.onMouseEnter()
-		inputDevice:sendMouseEvent( 'enter' )
-	end
-
-	function env.onMouseLeave()
-		inputDevice:sendMouseEvent( 'leave' )
-	end
-
-	function env.onKeyDown( key )
-		inputDevice:sendKeyEvent( key, true )
-	end
-
-	function env.onKeyUp( key )
-		inputDevice:sendKeyEvent( key, false )
-	end
-
-	return inputDevice
-end
-
---------------------------------------------------------------------
 --EditorCanvasCamera
 --------------------------------------------------------------------
 CLASS: EditorCanvasCamera ( mock.Camera )
@@ -110,6 +70,13 @@ function EditorCanvasScene:getEnv()
 	return self.env
 end
 
+function EditorCanvasScene:initLayers()
+	self.layerSource = mock.Layer( '_GII_EDITOR_LAYER' )
+	local l = self.layerSource:makeMoaiLayer()
+	self.layers = { l }
+	self.defaultLayer = l
+end
+
 function EditorCanvasScene:onLoad()
 	self.cameraCom = EditorCanvasCamera( self.env )
 	self.camera    = mock.SingleEntity( self.cameraCom )
@@ -117,10 +84,6 @@ function EditorCanvasScene:onLoad()
 	self:addEntity( self.camera )
 end
 
-function EditorCanvasScene:getLayer( name )
-	if name == '_GII_EDITOR_LAYER' then return self.defaultLayer end
-	return self.__super.getLayer( self, name )
-end
 
 function EditorCanvasScene:getActionRoot()
 	local ctx = gii.getCurrentRenderContext()
@@ -164,6 +127,47 @@ function EditorCanvasScene:setCameraZoom( zoom )
 	self.cameraCom:setCameraZoom( zoom )
 end
 
+--------------------------------------------------------------------
+function createEditorCanvasInputDevice( env )
+	local env = env or getfenv( 2 )
+	local inputDevice = mock.InputDevice( env.contextName, true )
+
+	function env.onMouseDown( btn, x, y )
+		inputDevice:sendMouseEvent( 'down', x, y, btn )
+	end
+
+	function env.onMouseUp( btn, x, y )
+		inputDevice:sendMouseEvent( 'up', x, y, btn )
+	end
+
+	function env.onMouseMove( x, y )
+		inputDevice:sendMouseEvent( 'move', x, y, false )
+	end
+
+	function env.onScroll( dx, dy, x, y )
+		inputDevice:sendMouseEvent( 'scroll', dx, dy, false )
+	end
+
+	function env.onMouseEnter()
+		inputDevice:sendMouseEvent( 'enter' )
+	end
+
+	function env.onMouseLeave()
+		inputDevice:sendMouseEvent( 'leave' )
+	end
+
+	function env.onKeyDown( key )
+		inputDevice:sendKeyEvent( key, true )
+	end
+
+	function env.onKeyUp( key )
+		inputDevice:sendKeyEvent( key, false )
+	end
+
+	return inputDevice
+end
+
+
 ---------------------------------------------------------------------
 function createEditorCanvasScene()
 	local env = getfenv( 2 )
@@ -186,8 +190,8 @@ function createEditorCanvasScene()
 
 	scn.inputDevice = inputDevice
 	scn:init()
+	scn.defaultLayer.name = '_GII_EDITOR_LAYER'
 	scn:start()
 	return scn
 end 
 
---------------------------------------------------------------------

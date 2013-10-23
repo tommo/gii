@@ -97,9 +97,13 @@ class AssetRefFieldEditor( FieldEditor ):
 
 	def initEditor( self, container ):
 		self.refWidget = widget = ReferenceFieldWidget( container )
-		widget.buttonRef.clicked.connect( self.openBrowser )
+		if self.getOption( 'readonly', False ):
+			widget.buttonRef.setEnabled( False )
+			widget.buttonClear.setEnabled( False )
+		else:
+			widget.buttonRef.clicked.connect( self.openBrowser )
+			widget.buttonClear.clicked.connect( self.clearObject )
 		widget.buttonGoto.clicked.connect( self.gotoObject )
-		widget.buttonClear.clicked.connect( self.clearObject )
 		return self.refWidget
 
 	def openBrowser( self ):

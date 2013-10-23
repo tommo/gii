@@ -208,6 +208,12 @@ class AssetNode(object):
 		logging.info( 'modified: %s', repr(self) )
 		self.modifyState = 'modified'
 
+	def touch( self ):
+		fname = self.getAbsFilePath()
+		if fname:
+			with file(fname, 'a'):
+				os.utime(fname, None)
+
 	def getFilePath(self):
 		return self.filePath
 
@@ -746,7 +752,6 @@ class AssetLibrary(object):
 				nodePath = self.fixPath( relDir + '/' + dirname )
 				if not self.getAssetNode( nodePath ):
 					self.initAssetNode( nodePath )	
-			
 
 		self.importModifiedAssets()
 		self.saveAssetTable()

@@ -25,7 +25,9 @@ def getMainModulePath():
 			return os.path.dirname( mainfile )
 
 giipath = getMainModulePath() + '/lib'
+thirdPartyPath = getMainModulePath() + '/lib/3rdparty'
 sys.path.insert( 0, giipath )
+sys.path.insert( 1, thirdPartyPath )
 
 ##----------------------------------------------------------------##
 import gii_cfg

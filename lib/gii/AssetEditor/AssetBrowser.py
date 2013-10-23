@@ -39,9 +39,7 @@ class AssetBrowser( AssetEditorModule ):
 					drag_mode = 'internal'
 				)
 			)
-		toolbar = self.container.addWidget( QtGui.QToolBar(), expanding = False )
-		self.toolbar = self.addToolBar( 'asset_browser', toolbar )
-
+		
 		signals.connect( 'module.loaded',        self.onModuleLoaded )		
 		signals.connect( 'asset.deploy.changed', self.onAssetDeployChanged )
 
@@ -54,6 +52,9 @@ class AssetBrowser( AssetEditorModule ):
 		)
 		self.addMenuItem(
 			'main/asset/asset_create', dict( label = 'Create', shortcut ='Ctrl+N' )
+		)
+		self.addMenuItem(
+			'main/find/find_asset',   dict( label = 'Find Asset', shortcut = 'ctrl+T' )
 		)
 
 		self.assetContextMenu=self.addMenu('asset_context')
@@ -71,7 +72,6 @@ class AssetBrowser( AssetEditorModule ):
 				{'name':'create', 'label':'Create', 'link':self.creatorMenu},
 			])
 
-		self.addTool( 'asset_browser/create_asset', label = 'create', icon = 'add' )
 		signals.connect( 'selection.changed', self.onSelectionChanged )
 		registerSearchEnumerator( assetCreatorSearchEnumerator  )
 
@@ -253,15 +253,12 @@ class AssetBrowser( AssetEditorModule ):
 				on_selection = self.createAsset
 			)
 
-	def onTool( self, toolNode ):
-		name = toolNode.name
-		if name == 'create_asset':
+		elif name == 'find_asset':
 			requestSearchView( 
-				info    = 'select asset type to create',
-				context = 'asset_creator',
-				type    = 'scene',
-				on_selection = self.createAsset
-			)
+				info    = 'search for asset',
+				context = 'asset',
+				on_selection = self.selectAsset
+				)
 
 	def onSelectionChanged( self, selection, context ):
 		if context == 'asset':
@@ -275,6 +272,10 @@ class AssetBrowser( AssetEditorModule ):
 			if firstObj: self.treeView.scrollToNode( firstObj )
 
 			self.treeView.refreshingSelection = False
+
+	def selectAsset( self, asset ):
+		if asset: self.treeView.selectNode( asset )
+
 
 ##----------------------------------------------------------------##
 class AssetBrowserTreeView( AssetTreeView ):

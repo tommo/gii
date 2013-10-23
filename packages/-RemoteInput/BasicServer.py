@@ -3,6 +3,7 @@ from SocketServer import ThreadingMixIn
 import time
 import threading
 
+_LISTENER_PORT = 8080
 
 def _getModulePath( path ):
 	import os.path
@@ -36,9 +37,10 @@ _Running = False
 
 def _startServer():
 	global _Running
-	server = ThreadedHTTPServer(('0.0.0.0', 8080), Handler)
+	server = ThreadedHTTPServer(('0.0.0.0', _LISTENER_PORT), Handler)
 	_Running = True
 	server.timeout = 0
+	print 'start remote input listener at port: %d' % _LISTENER_PORT 
 	while _Running:
 		server.handle_request()
 		time.sleep(0.05)
