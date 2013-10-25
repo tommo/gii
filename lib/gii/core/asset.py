@@ -281,7 +281,6 @@ class AssetNode(object):
 	def setNewMetaData( self, key, value, **option ):
 		option[ 'no_overwrite' ] = True
 		return self.setMetaData( key, value, **option )
-		
 
 	def getCacheFile( self, name, **option ):
 		cacheFile = self.cacheFiles.get( name, None )
@@ -289,6 +288,11 @@ class AssetNode(object):
 		cacheFile = CacheManager.get().getCacheFile( self.getPath(), name, **option )
 		self.cacheFiles[ name ] = cacheFile
 		return cacheFile
+
+	def getAbsCacheFile( self, name, **option ):
+		path = self.getCacheFile( name, **option )
+		if not path: return None
+		return AssetLibrary.get().getAbsProjectPath( path )
 
 	def clearCacheFiles( self ):
 		self.cacheFiles = {}
@@ -308,6 +312,9 @@ class AssetNode(object):
 		if not path: return None
 		return AssetLibrary.get().getAbsProjectPath( path )
 
+	def clearObjectFiles( self ):
+		self.objectFiles = {}
+		
 	def edit(self):
 		self.getManager().editAsset(self)
 

@@ -24,6 +24,9 @@ class DeviceItem():
 	def deploy( self, deployContext ):
 		pass
 
+	def clearData( self ):
+		pass
+
 	def disconnect( self ):
 		pass
 

@@ -46,7 +46,7 @@ class DeviceBrowser( DeviceManagerModule ):
 		self.tree.module = self
 
 		self.tool = self.addToolBar( 'device_browser', self.window.addToolBar() )
-		self.addTool( 'device_browser/refresh',    label = 'Refresh' )
+		self.addTool( 'device_browser/clear_data',    label = 'Clear Data' )
 		signals.connect( 'device.connected', self.onDeviceConnected )
 		signals.connect( 'device.disconnected', self.onDeviceDisconnected )
 		signals.connect( 'device.activated', self.onDeviceActivated )
@@ -74,8 +74,11 @@ class DeviceBrowser( DeviceManagerModule ):
 
 	def onTool( self, tool ):
 		name = tool.name
-		if name == 'refresh':
-			pass
+		if name == 'clear_data':
+			for dev in self.tree.getSelection():
+				print 'clear data from', dev
+				dev.clearData()
+				print 'cleared!'
 			#TODO
 
 ##----------------------------------------------------------------##

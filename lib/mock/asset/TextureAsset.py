@@ -122,26 +122,25 @@ def _fixPath( path ):
 		return path	
 		
 ##----------------------------------------------------------------##
-def _convertAtlas( inputfile,  basepath ):
+def _convertAtlas( inputfile,  srcToAssetDict ):
 	f = open( inputfile, 'r' )
 	items   = []
 	atlases = []
 	for line in f.readlines():
-		parts = line.split('\t')
-		path  = _fixPath( parts[1] )
-		if path.startswith('\"'):
-			path = path[1:-1]
-		path = _fixPath( os.path.relpath( path, basepath ) )
-		name = os.path.basename( path )
-		name = path
+		parts       = line.split('\t')
+		sourcePath  = _fixPath( parts[1] )
+		if sourcePath.startswith('\"'):
+			sourcePath = sourcePath[1:-1]		
+		# name = os.path.basename( sourcePath )
+		assetPath = srcToAssetDict[ sourcePath ]
 		atlasName = parts[0]
 		if not atlasName in atlases:
 			atlases.append( atlasName )
 		atlasId = atlases.index( atlasName )
 		data = {
 			'atlas'  : atlasId,
-			'name'   : name,
-			'source' : path,
+			'name'   : assetPath,
+			'source' : sourcePath,
 			'rect'   : [ int(x) for x in parts[2:] ]
 		}
 		items.append(data)
@@ -240,6 +239,7 @@ class TextureLibrary( EditorModule ):
 		pendingImportGroups = set()
 		for node, t in pendingImportTextures.items():
 			group = t.parent
+			self.processTexture( node, t )
 			if group.atlasMode:
 				pendingImportGroups.add( group )
 			else:
@@ -248,14 +248,27 @@ class TextureLibrary( EditorModule ):
 		for group in pendingImportGroups:
 			self.buildAtlas( group )	
 
-	def processTexture( self, texNode, filePath ):		
+	def processTexture( self, assetNode, texNode ):
+		logging.info( 'processing texture: %s' % assetNode.getNodePath() )
+		assetNode.clearCacheFiles()
+		src = assetNode.getAbsFilePath()
+		dst = assetNode.getAbsCacheFile( 'pixmap' )
+		arglist = [
+			'python', 
+			_getModulePath( 'tools/PNGConverter.py' ),
+			src,
+			dst,
+			'png' #format
+		 ]
+		subprocess.call(arglist)
+		#apply processor on dst file
 		group = texNode.parent
 		groupProcessor = group.processor
 		if groupProcessor:
-			applyTextureProcessor( groupProcessor, filePath )
+			applyTextureProcessor( groupProcessor, dst )
 		nodeProcessor = texNode.processor
 		if nodeProcessor:
-			applyTextureProcessor( nodeProcessor, filePath )
+			applyTextureProcessor( nodeProcessor, dst )
 
 
 	def buildAtlas( self, group ):
@@ -270,7 +283,13 @@ class TextureLibrary( EditorModule ):
 			else:
 				logging.warn( 'node not found: %s' % t.path )
 
-		sourceList = [ node.getAbsFilePath() for node in nodes ]
+		sourceList     = []
+		srcToAssetDict = {}
+		for node in nodes:
+			path = node.getAbsCacheFile('pixmap')
+			srcToAssetDict[ path ] = node.getNodePath()
+			sourceList.append( path )
+
 		atlasName = 'atlas_' + group.name
 
 		tmpDir = CacheManager.get().getTempDir()
@@ -290,7 +309,7 @@ class TextureLibrary( EditorModule ):
 			ex = subprocess.call( arglist ) #run packer
 			#conversion
 			srcFile = prefix + '.txt'
-			data    = _convertAtlas( srcFile,  self.getProject().getAssetPath() )
+			data    = _convertAtlas( srcFile,  srcToAssetDict )
 			dstPath = outputDir
 			#copy generated atlas
 			for i in range( 0, len( data['atlases'] ) ):
@@ -321,29 +340,21 @@ class TextureLibrary( EditorModule ):
 		#conversion using external tool (PIL & psd_tools here)
 		group = tex.parent
 		logging.info( 'building single texture: %s<%s>' % ( node.getPath(), group.name ) )
-		node.clearCacheFiles()
+		node.clearObjectFiles()
 		node.setObjectFile( 'pixmap', node.getCacheFile( 'pixmap' ) )
-		arglist = [
-			'python', 
-			_getModulePath( 'tools/PNGConverter.py' ),
-			node.getAbsFilePath(), #input file
-			node.getAbsObjectFile( 'pixmap' ), #output file
-			'png' #format
-		 ]
-		subprocess.call(arglist)
 		node.setObjectFile( 'config', node.getCacheFile( 'config' ) )
 		jsonHelper.trySaveJSON( groupToJson( group ), node.getAbsObjectFile( 'config' ) )
-		self.processTexture( tex, node.getAbsObjectFile( 'pixmap' ) )
 		signals.emit( 'texture.rebuild', node )
 		#todo: check process result!
 
 	def buildSubTexture( self, group, node ):
-		node.clearCacheFiles()
+		node.clearObjectFiles()
+		logging.info( 'building sub texture: %s<%s>' % ( node.getPath(), group.name ) )
 		node.setObjectFile( 'pixmap', None ) #remove single texture if any
 		node.setObjectFile( 'config', node.getCacheFile( 'config' ) )
 		jsonHelper.trySaveJSON( groupToJson( group ), node.getAbsObjectFile( 'config' ) )
-		signals.emit( 'texture.rebuild', node )
-
+		signals.emit( 'texture.rebuild', node )	
+		
 	def postAssetImportAll( self ):
 		self.doPendingImports()
 
