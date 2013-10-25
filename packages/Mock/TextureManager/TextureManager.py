@@ -120,7 +120,6 @@ class TextureManager( AssetEditorModule ):
 		registerSearchEnumerator( textureGroupSearchEnumerator )
 
 	def onStart( self ):
-		self.setFocus()
 		#test data
 		lib = self.getModule('texture_library').getLibrary()
 		self.canvas.callMethod( 'preview', 'setLibrary', lib )

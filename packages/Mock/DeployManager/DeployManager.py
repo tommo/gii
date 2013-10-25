@@ -246,7 +246,11 @@ class DeployManager( SceneEditorModule ):
 	def onMenu( self, node ):
 		name = node.name
 		if name == 'deploy_manager' :
-			self.onSetFocus()
+			if self.container.isVisible():
+				self.container.hide()
+			else:
+				self.onSetFocus()
+
 		elif name == 'deploy_build':
 			app.getProject().deploy()
 

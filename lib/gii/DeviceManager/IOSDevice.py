@@ -1,6 +1,9 @@
 import os
 import stat
 import logging
+
+from Device import DeviceItem
+
 import MobileDevice
 
 ##----------------------------------------------------------------##
@@ -83,21 +86,62 @@ def getAppAFC( dev, appName ):
 	return  MobileDevice.AFCApplicationDirectory( dev, appName.decode( u'utf-8' ) )
 
 ##----------------------------------------------------------------##
-def deployDataFiles( appName, localDataPath, remoteDataPath ):
-	devices = MobileDevice.list_devices()
-	if not devices:
-		logging.warn( 'no device found' )
-		return False
-	dev = devices.values()[0]
-	dev.connect()	
-	afc = getAppAFC( dev, appName )
-	# cleanDirFromDevice( afc, 'Documents' )
-	copyTreeToDevice( afc, localDataPath, remoteDataPath )	
-	afc.disconnect()
-	dev.disconnect()
-	return True
 
-	# name = u''
+
+##----------------------------------------------------------------##
+class IOSDeviceItem( DeviceItem ):
+	def __init__( self, device, connected = True ):
+		self._device = device
+		device.connect()
+		name = ''
+		try:
+			name = device.get_value( name = u'DeviceName' )
+		except Exception, e :
+			logging.exception( e )
+		self.name = name
+		self.id   = device.get_deviceid()
+		self.connected = connected
+
+	def getName( self ):
+		return self.name
+
+	def getType( self ):
+		return 'ios'
+
+	def getId( self ):
+		return self.id
+	
+	def isConnected( self ):
+		return self.connected
+
+	def deploy( self, deployContext, **option ):
+		appName        = 'com.hatrixgames.yaka'
+		localDataPath  = deployContext.getPath()
+		remoteDataPath = 'Documents/game'
+		try:
+			return self.deployDataFiles( appName, localDataPath, remoteDataPath, **option )
+		except Exception, e:
+			logging.exception( e )
+			return False
+
+	def disconnect( self ):
+		if self.connected:
+			self._device.disconnect()
+			self.connected = False
+
+	def deployDataFiles( self, appName, localDataPath, remoteDataPath, **option ):
+		# devices = MobileDevice.list_devices()
+		if not self.isConnected():
+			logging.warn( 'no device found' )
+			return False
+		dev = self._device
+		afc = getAppAFC( dev, appName )
+		# cleanDirFromDevice( afc, 'Documents' )
+		copyTreeToDevice( afc, localDataPath, remoteDataPath, **option )	
+		afc.disconnect()
+		return True
+
+# name = u''
 	# try:
 	# 	name = dev.get_value(name=u'DeviceName')
 	# except:

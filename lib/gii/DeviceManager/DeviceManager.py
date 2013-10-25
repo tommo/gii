@@ -14,7 +14,8 @@ from gii.qt.QtEditorModule  import QtEditorModule
 from gii.SearchView       import requestSearchView, registerSearchEnumerator
 
 import MobileDevice
-from   MonitorThread import DeviceMonitorThread
+import Device
+from   MonitorThread import startDeviceMonitorThread, stopDeviceMonitorThread
 
 ##----------------------------------------------------------------##
 # def getIOSDeviceName( dev ):
@@ -24,10 +25,12 @@ from   MonitorThread import DeviceMonitorThread
 # 	except:
 # 		pass
 # 	print( u'%s - "%s"' % ( dev.get_deviceid(), name.decode(u'utf-8') ) )
-
+##----------------------------------------------------------------##
 
 signals.register( 'device.connected' )
 signals.register( 'device.disconnected' )
+signals.register( 'device.activated' )
+signals.register( 'device.deactivated' )
 
 ##----------------------------------------------------------------##
 class DeviceManagerModule( QtEditorModule ):
@@ -81,37 +84,40 @@ class DeviceManager( DeviceManagerModule ):
 
 	def onLoad( self ):
 		self.setupMainWindow()
-		self.containers  = {}
-		self.devices     = {}
-		signals.connect( 'app.start', self.postStart )
+		self.containers   = {}
+		self.devices      = {}
+
+		self.activeDevice = None
 		registerSearchEnumerator( deviceSearchEnumerator )
-		
+		#load device history
+		signals.connect( 'app.start', self.postStart )
+		signals.connect( 'project.done_deploy', self.onDoneDeploy )
+
 	def postStart( self ):
 		self.mainWindow.show()
 		self.mainWindow.raise_()
 
 	def onStart( self ):
 		self.restoreWindowState( self.mainWindow )
-		self.monitorThread = DeviceMonitorThread( self.onIOSDeviceEvent )
-		# self.monitorThread.start()
+		startDeviceMonitorThread( self.onDeviceEvent )
 	
 	def onStop( self ):
-		# self.monitorThread.stop()
+		stopDeviceMonitorThread()
 		self.saveWindowState( self.mainWindow )
 
-	def onIOSDeviceEvent( self, ev, device ):
+	def onDeviceEvent( self, ev, device ):
 		if ev == 'connected':
-			name = ''
-			try:
-				name = device.get_value( name = u'DeviceName' )
-			except:
-				pass
-			device.name = name
 			signals.emit( 'device.connected', device )
 			self.devices[ device ] = True
+			device.setActive( False )
+			if not self.activeDevice:
+				self.setActiveDevice( device )
+
 		elif ev == 'disconnected':
 			signals.emit( 'device.disconnected', device )
 			self.devices[ device ] = False
+			if device == self.activeDevice:
+				self.activeDevice = None
 
 	def setFocus(self):
 		self.mainWindow.show()
@@ -142,6 +148,24 @@ class DeviceManager( DeviceManagerModule ):
 
 	def onTool( self, tool ):
 		pass
+
+	def setActiveDevice( self, device ):
+		if self.activeDevice:
+			self.activeDevice.setActive( False )
+			signals.emit( 'device.deactivated', self.activeDevice )
+
+		self.activeDevice = device
+		if device:
+			self.activeDevice.setActive( True )
+			signals.emit( 'device.activated', device )
+
+	def onDoneDeploy( self, context ):
+		if not self.devices: return
+		activeDevice = self.activeDevice or self.devices[0]
+		print 'deploy on device', activeDevice
+		activeDevice.deploy( context )
+		print 'deploy done!'
+	
 		
 DeviceManager().register()
 

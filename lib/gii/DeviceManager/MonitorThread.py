@@ -5,12 +5,16 @@ import logging
 from MobileDevice.MobileDevice import *
 import MobileDevice
 
+from IOSDevice import IOSDeviceItem
+
+##----------------------------------------------------------------##
 class DeviceMonitorThread( threading.Thread ):
 	def __init__( self, callback, *args ):
 		super( DeviceMonitorThread, self ).__init__( *args )
 		self.devices = {}
 		self.callback = callback
 		self.active   = False
+		self.deamon   = True
 
 	def run( self ):		
 		self.active   = True
@@ -18,7 +22,7 @@ class DeviceMonitorThread( threading.Thread ):
 		def cbFunc(info, cookie):
 			info = info.contents
 			if info.message == ADNCI_MSG_CONNECTED:
-				dev = MobileDevice.AMDevice(info.device)
+				dev = IOSDeviceItem( MobileDevice.AMDevice(info.device), True )
 				devices[info.device] = dev
 				self.callback( 'connected', dev )
 
@@ -26,7 +30,7 @@ class DeviceMonitorThread( threading.Thread ):
 				dev = devices[info.device]
 				self.callback( 'disconnected', dev )
 				dev.disconnect()
-				del devices[info.device]			
+				del devices[info.device]
 
 		notify = AMDeviceNotificationRef()
 		notifyFunc = AMDeviceNotificationCallback(cbFunc)
@@ -46,4 +50,16 @@ class DeviceMonitorThread( threading.Thread ):
 
 	def stop( self ):
 		self.active = False
+
+##----------------------------------------------------------------##
+_monitorThread = None
+def startDeviceMonitorThread( callback, *args ):
+	global _monitorThread
+	_monitorThread = DeviceMonitorThread( callback, *args )
+	_monitorThread.start()
+
+def stopDeviceMonitorThread():
+	global _monitorThread
+	_monitorThread.stop()
+	_monitorThread = None
 

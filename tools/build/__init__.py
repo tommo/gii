@@ -13,7 +13,7 @@ cli = argparse.ArgumentParser(
 cli.add_argument( 'targets', 
 	type = str, 
 	nargs = '*',
-	default = 'all'
+	default = 'native'
 	)
 
 cli.add_argument( '--configure', 
@@ -41,7 +41,7 @@ def main( argv ):
 	app.openProject()
 	args = cli.parse_args( argv[1:] )		
 	code = Build.run( 
-		**vars( args )		
+		**vars( args )
 		)
 	exit( code )
 	

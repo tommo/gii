@@ -164,8 +164,8 @@ class MOAIRuntime( EditorModule ):
 	def changeRenderContext(self, contextId, w, h ):
 		_GII.changeRenderContext( contextId or False, w or False, h or False )
 
-	def createRenderContext(self, s):
-		_GII.createRenderContext(s)
+	def createRenderContext( self, key, clearColor = (0,0,0,0) ):
+		_GII.createRenderContext( key, *clearColor )
 
 	#### Delegate Related
 	def loadLuaDelegate( self, scriptPath , owner = None, **option ):

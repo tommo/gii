@@ -17,13 +17,19 @@ local currentContextKey = false
 
 local ContextChangeListeners = {}
 
-function createRenderContext( key )
+function createRenderContext( key, cr,cg,cb,ca )
+	local clearColor = {0,0,0,0}
+	if cr==false then
+		clearColor = false
+	else
+		clearColor = { cr or 0, cg or 0, cb or 0, ca or 0 }
+	end
 	local root = MOAICoroutine.new()
 	local context = {
 		key              = key,
 		w                = false,
 		h                = false,
-		clearColor       = { 0,0,0,0 },
+		clearColor       = clearColor,
 		actionRoot       = root,
 		bufferTable      = {},
 		renderTableMap   = {},
@@ -63,8 +69,6 @@ function changeRenderContext( key, w, h )
 		currentContext.renderTableMap    = renderTableMap
 		currentContext.deviceRenderTable = deviceBuffer:getRenderTable()
 		currentContext.actionRoot        = MOAIActionMgr.getRoot()		
-		-- local res = gii.bridge.GLHelper.getClearColor()
-		-- currentContext.clearColor=gii.listToTable(res)
 	end
 
 	--TODO: persist clear depth& color flag(need to modify moai)
@@ -74,8 +78,13 @@ function changeRenderContext( key, w, h )
 	currentContext.w  = w
 	currentContext.h  = h
 
-	-- local r,g,b,a=unpack(currentContext.clearColor)
-	-- MOAIGfxDevice.getFrameBuffer():setClearColor(r,g,b,a)
+	local clearColor = currentContext.clearColor
+	if clearColor then 
+		MOAIGfxDevice.getFrameBuffer():setClearColor( unpack( clearColor ) )
+	else
+		MOAIGfxDevice.getFrameBuffer():setClearColor( )
+	end
+
 	for i, p in ipairs( currentContext.renderTableMap ) do
 		local fb = p[1]
 		local rt = p[2]

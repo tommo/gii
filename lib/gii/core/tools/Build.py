@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 import subprocess
 
@@ -22,18 +23,18 @@ def run( **option ):
 		arglist.append( 'clean' )
 	
 	else:
-		target = 'osx'
-		config = 'debug'
-		suffix = '-%s-%s' % ( target, config )
-		arglist.append( 'build' + suffix )
-		arglist.append( 'install' + suffix )
-
-	targets = option.get( 'targets', [] )
-	#todo, targets
-	# print arglist
-	try:
-		code = subprocess.call( arglist )
-	except Exception, e:
-		logging.error( 'cannot build host: %s ' % e)
-		return 1
-	return code
+		targets = option.get( 'targets', [ 'osx' ] )
+		if targets == 'native':
+			if sys.platform == 'darwin':
+				targets = [ 'osx', 'python' ]
+			else:
+				targets = [ 'win', 'python' ]
+		config = option.get( 'profile', 'debug' )
+		for target in targets:
+			suffix = '-%s-%s' % ( target, config )
+			arglist.append( 'build' + suffix )
+			arglist.append( 'install' + suffix )
+			try:
+				code = subprocess.call( arglist )
+			except Exception, e:
+				logging.error( 'cannot build host: %s ' % e)

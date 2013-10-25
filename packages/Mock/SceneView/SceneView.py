@@ -43,7 +43,7 @@ class SceneView( SceneEditorModule ):
 		self.previewUpdateTimer = False
 		self.preview = self.getModule( 'scene_preview' )
 
-		# signals.connect( 'entity.modified',   self.onEntityModified   )
+		signals.connect( 'entity.modified',   self.onEntityModified   )
 		signals.connect( 'asset.post_import_all',   self.onAssetReimport  )
 		signals.connect( 'scene.open',        self.onSceneOpen        )
 		signals.connect( 'scene.close',       self.onSceneClose       )
