@@ -38,3 +38,5 @@ def run( **option ):
 				code = subprocess.call( arglist )
 			except Exception, e:
 				logging.error( 'cannot build host: %s ' % e)
+				return -1
+	

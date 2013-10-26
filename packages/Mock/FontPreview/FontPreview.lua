@@ -14,7 +14,8 @@ function onLoad()
 	textbox:setYFlip( true )
 	textbox:setBlendMode( MOAIProp.GL_SRC_ALPHA,MOAIProp.GL_ONE_MINUS_SRC_ALPHA ) 
 	textbox:setShader( MOAIShaderMgr.getShader(MOAIShaderMgr.FONT_SHADER) )
-
+	textbox:setStyle( gii.getDefaultStyle() )
+	textbox:setString( currentText )
 	context:insertProp(textbox)	
 end
 

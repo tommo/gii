@@ -149,10 +149,7 @@ class MOAIRuntime( EditorModule ):
 	#TODO: move function below into bridge module
 	def stepSim(self, step):
 		_GII.stepSim(step)
-
-	def updateFmod( self ):
-		getAKU().updateFmod()
-
+		
 	def setBufferSize(self, w,h):
 	#for setting edit canvas size (without sending resize event)
 		_GII.setBufferSize(w,h) 

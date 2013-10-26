@@ -1,15 +1,28 @@
 module('gii')
 
-local defaultFont = false
+local defaultFont  = false
+local defaultStyle = false
+		
+local function initDefaultStyle()
+	defaultFont = MOAIFont.new()
+	defaultFont:load( app:findDataFile('default_font.ttf') )
+	defaultStyle = MOAITextStyle.new()
+	defaultStyle:setFont( defaultFont )
+	defaultStyle:setSize( 11 )
+end
+
 function getDefaultFont()
-	if not defaultFont then
-		defaultFont = MOAIFont.new()
-		defaultFont:load( getAppPath('data/VeraBd.ttf') )
-		local defaultStyle = MOAITextStyle.new()
-		defaultStyle:setFont( defaultFont )
-		defaultStyle:setSize( 11 )
+	if not defaultStyle then
+		initDefaultStyle()
 	end
 	return defaultFont
+end
+
+function getDefaultStyle()
+	if not defaultStyle then
+		initDefaultStyle()
+	end
+	return defaultStyle
 end
 
 local function makeBackgroundProp( )
@@ -70,7 +83,7 @@ function EditCanvasContext:createHUDText()
 	box:setPriority( 10000 )
 	box:setYFlip( true )
 	box:setAlignment( MOAITextBox.CENTER_JUSTIFY )
-	box:setStyle( defaultStyle )
+	box:setStyle( getDefaultStyle() )
 	self.layer:insertProp(box)
 	box:setParent(self.camera)
 	self.hudProps[box] = true

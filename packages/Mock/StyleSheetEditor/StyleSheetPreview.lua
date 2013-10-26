@@ -6,11 +6,12 @@ currentFontSize = 20
 currentText  ='Hello, Gii!'
 currentDefault = false
 function recreateTextBox()
-	textbox=MOAITextBox.new()
+	textbox = MOAITextBox.new()
 	textbox:setYFlip( true )
-
+	textbox:setString( ' ' )
 	textbox:setBlendMode( MOAIProp.GL_SRC_ALPHA,MOAIProp.GL_ONE_MINUS_SRC_ALPHA ) 
 	textbox:setShader( MOAIShaderMgr.getShader(MOAIShaderMgr.FONT_SHADER) )
+	textbox:setStyle( gii.getDefaultStyle() )
 	local w,h =context:getSize()
 	textbox:setRect(-w/2 ,-h/2, w/2, h/2)	
 	context:insertProp(textbox)	

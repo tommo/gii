@@ -106,7 +106,6 @@ class MockStyleSheetEditor( AssetEditorModule ):
 		signals.connect('asset.modified', self.onAssetModified)
 		self.container.setEnabled( False )
 
-
 	def refreshFontNames(self):
 		self.window.comboFont.clear()
 		for node in AssetLibrary.get().enumerateAsset( ( 'font_ttf', 'font_bmfont' ) ):

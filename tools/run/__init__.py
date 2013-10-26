@@ -28,7 +28,7 @@ def main( argv ):
 	if args.build:
 		from gii.core.tools import Build
 		code = Build.run()
-		if code != 0:
+		if code and code != 0:
 			exit( code )
 
 	from gii.core.tools import RunHost

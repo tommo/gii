@@ -5,14 +5,17 @@ currentFontSize = 20
 currentFontColor = {1,1,1,1}
 currentText  ='Hello, Gii!'
 
+textbox      = false
+
 function onLoad()
 	context = gii.createEditCanvasContext()
 	context.layer:showDebugLines( false )
-	textbox=MOAITextBox.new()
+	textbox = MOAITextBox.new()
+	textbox:setString( '' )
+	textbox:setStyle( gii.getDefaultStyle() )
 	textbox:setYFlip( true )
 	textbox:setBlendMode( MOAIProp.GL_SRC_ALPHA,MOAIProp.GL_ONE_MINUS_SRC_ALPHA ) 
 	textbox:setShader( MOAIShaderMgr.getShader(MOAIShaderMgr.FONT_SHADER) )
-
 	context:insertProp(textbox)	
 end
 
