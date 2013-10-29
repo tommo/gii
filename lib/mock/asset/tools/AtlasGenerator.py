@@ -293,7 +293,7 @@ class AtlasGenerator:
 			w = 32
 			h = w / r
 		
-		while w < w0 and h < h0: #try each size
+		while w < w0 and h < h0: #determine max atlas size
 			atlases = self.generateAtlasesOfSize( images, (w,h), True ) 
 			if atlases: return atlases
 			if expand == 1:
@@ -415,9 +415,14 @@ def main():
 		meta_fname = options.prefix+'.txt'
 		with open(meta_fname, 'wb') as f:
 			metawriter = csv.writer(f, delimiter='\t')#, quotechar='|', quoting=csv.QUOTE_MINIMAL)
+			f.write('[atlas]\n')
+			for (name, w, h, xx) in  atlases_info:
+				r = [ name, w, h ]
+				metawriter.writerow( r )
+			f.write('[sprite]\n')
 			for (atl, img, (x, y, w, h, fw, fh), bbox) in images_info:
 				r = [atl, img, x, y, w, h]
-				metawriter.writerow(r)
+				metawriter.writerow( r )
 
 			D("Metadata saved to file '{0}'", meta_fname)
 

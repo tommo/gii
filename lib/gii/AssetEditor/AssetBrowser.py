@@ -14,16 +14,12 @@ from PyQt4.QtCore     import Qt
 
 ##----------------------------------------------------------------##
 class AssetBrowser( AssetEditorModule ):
-	"""docstring for AssetBrowser"""
+	name       = 'asset_browser'
+	dependency = ['qt', 'asset_editor']
+
 	def __init__(self):
-		super(AssetBrowser, self).__init__()
+		AssetEditorModule.__init__( self )
 		self.newCreateNodePath = None
-
-	def getName(self):
-		return 'asset_browser'
-
-	def getDependency(self):
-		return ['qt']
 
 	def onLoad(self):
 		self.container = self.requestDockWindow('AssetBrowser',
@@ -317,7 +313,4 @@ def assetCreatorSearchEnumerator( typeId, context ):
 	return result
 
 
-##----------------------------------------------------------------##
 
-
-AssetBrowser().register()

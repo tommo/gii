@@ -38,15 +38,12 @@ class AssetEditorModule( QtEditorModule ):
 		
 ##----------------------------------------------------------------##
 class AssetEditor( AssetEditorModule ):
+	name       = 'asset_editor'
+	dependency = ['qt']
+
 	def __init__( self ):
 		self.selectionManager = SelectionManager( 'asset' )
 		self.projectScanScheduled = False
-		
-	def getName( self ):
-		return 'asset_editor'
-
-	def getDependency( self ):
-		return ['qt']
 
 	def getMainWindow( self ):
 		return self.mainWindow
@@ -141,8 +138,6 @@ class AssetEditor( AssetEditorModule ):
 		print tool.name
 
 		
-AssetEditor().register()
-
 
 ##----------------------------------------------------------------##
 class QtMainWindow( MainWindow ):

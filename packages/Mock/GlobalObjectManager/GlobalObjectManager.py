@@ -14,6 +14,9 @@ from PyQt4           import QtCore, QtGui, uic
 from PyQt4.QtCore    import Qt
 
 ##----------------------------------------------------------------##
+from gii.SearchView       import requestSearchView, registerSearchEnumerator
+
+##----------------------------------------------------------------##
 from mock import _MOCK, isMockInstance
 ##----------------------------------------------------------------##
 
@@ -60,26 +63,29 @@ class GlobalObjectManager( SceneEditorModule ):
 
 		#Components
 		self.tree = self.window.addWidget( 
-				GlobalObjectTreeWidget( multiple_selection = False, editable = True )
+				GlobalObjectTreeWidget( 
+					multiple_selection = True,
+					editable           = True,
+					drag_mode          = 'internal'
+				)
 			)
 
 		self.tool = self.addToolBar( 'global_object_manager', self.window.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( _getModulePath( 'GlobalObjectManager.lua' ) )
 
-		self.creatorMenu=self.addMenu(
-			'global_object_create',
-			{ 'label':'Create Global Object' }
-			)
+		# self.creatorMenu=self.addMenu(
+		# 	'global_object_create',
+		# 	{ 'label':'Create Global Object' }
+		# 	)
 
-		self.addTool( 'global_object_manager/add',    label = '+')
-		self.addTool( 'global_object_manager/remove', label = '-')
-		self.addTool( 'global_object_manager/add_group',    label = '+group')
+		self.addTool( 'global_object_manager/add',    label = 'Add', icon = 'add' )
+		self.addTool( 'global_object_manager/remove', label = 'Remove', icon = 'remove' )
+		self.addTool( 'global_object_manager/clone',  label = 'Clone', icon = 'clone' )
+		self.addTool( 'global_object_manager/add_group',    label = 'Add Group', icon = 'add_folder' )
 		
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
-		signals.connect( 'script.reload', self.refreshCreatorMenu )
-		signals.connect( 'mock.init', self.refreshCreatorMenu )
 
 		signals.connect( 'global_object.added', self.onObjectAdded )
 		signals.connect( 'global_object.removed', self.onObjectRemoved )
@@ -87,31 +93,22 @@ class GlobalObjectManager( SceneEditorModule ):
 		if self.getModule('introspector'):
 			import GlobalObjectNodeEditor
 
+		registerSearchEnumerator( globalObjectNameSearchEnumerator )
+
 	def onStart( self ):
 		self.tree.rebuild()
 
 	def onMoaiClean( self ):
 		self.tree.clear()
 
-	def refreshCreatorMenu( self ):
-		self.creatorMenu.clear()
-		registry = _MOCK.getGlobalObjectClassRegistry()
-		for objName in sorted( registry.keys() ):
-			self.creatorMenu.addChild({
-					'name'     : 'create_global_object_'+objName,
-					'label'    : objName,
-					'command'  : 'scene_editor/create_global_object',
-					'command_args' : dict( name = objName )
-				})
-
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'add':
-			self.creatorMenu.popUp()
-			# obj = self.delegate.safeCall( 'addObject' )
-			# self.tree.addNode( obj )
-			# self.tree.editNode( obj )
-			# self.tree.selectNode( obj )
+			requestSearchView( 
+				info    = 'select global object class to create',
+				context = 'global_object_class',
+				on_selection = lambda objName: self.createGlobalObject( objName )				
+				)
 
 		if name == 'add_group':
 			group = self.delegate.safeCall( 'addGroup' )
@@ -121,16 +118,20 @@ class GlobalObjectManager( SceneEditorModule ):
 
 		elif name == 'remove':
 			for node in self.tree.getSelection():
-				self.delegate.safeCall( 'remove', node )
+				self.doCommand( 'scene_editor/remove_global_object', target = node )
 				self.tree.removeNode( node )
 
 	def renameObject( self, obj, name ):
 		obj.setName( obj, name )
 
-	def onObjectAdded( self, node ):
+	def createGlobalObject( self, objName ):
+		self.doCommand( 'scene_editor/create_global_object', name = objName )
+
+	def onObjectAdded( self, node, reason = 'new' ):
 		self.tree.addNode( node )
-		self.tree.editNode( node )
-		self.tree.selectNode( node )
+		if reason == 'new':
+			self.tree.editNode( node )
+			self.tree.selectNode( node )
 
 	def onObjectRemoved( self, node ):
 		self.tree.removeNode( node )
@@ -179,3 +180,14 @@ class GlobalObjectTreeWidget( GenericTreeWidget ):
 
 ##----------------------------------------------------------------##
 GlobalObjectManager().register()
+
+##----------------------------------------------------------------##
+		
+def globalObjectNameSearchEnumerator( typeId, context ):
+	if not context in [ 'global_object_class' ] : return None
+	registry = _MOCK.getGlobalObjectClassRegistry()
+	result = []
+	for name in registry.keys():
+		entry = ( name, name, 'GlobalObject', None )
+		result.append( entry )
+	return result

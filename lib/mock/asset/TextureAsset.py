@@ -124,28 +124,45 @@ def _fixPath( path ):
 ##----------------------------------------------------------------##
 def _convertAtlas( inputfile,  srcToAssetDict ):
 	f = open( inputfile, 'r' )
-	items   = []
-	atlases = []
+	items      = []
+	atlasNames = []
+	atlasInfos = []
+	readingMode = 'sprite'
+
 	for line in f.readlines():
-		parts       = line.split('\t')
-		sourcePath  = _fixPath( parts[1] )
-		if sourcePath.startswith('\"'):
-			sourcePath = sourcePath[1:-1]		
-		# name = os.path.basename( sourcePath )
-		assetPath = srcToAssetDict[ sourcePath ]
-		atlasName = parts[0]
-		if not atlasName in atlases:
-			atlases.append( atlasName )
-		atlasId = atlases.index( atlasName )
-		data = {
-			'atlas'  : atlasId,
-			'name'   : assetPath,
-			'source' : sourcePath,
-			'rect'   : [ int(x) for x in parts[2:] ]
-		}
-		items.append(data)
+		if line.startswith( '[atlas]' ):
+			readingMode = 'atlas'
+			continue
+		if line.startswith( '[sprite]' ):
+			readingMode = 'sprite'
+			continue
+		if readingMode == 'atlas':
+			parts       = line.split('\t')
+			name        = parts[ 0 ]
+			atlasNames.append( name )
+			atlasInfos.append( {
+					'name': os.path.basename(name),
+					'size':[ int(parts[1]), int(parts[2]) ]
+				} )
+		else:
+			parts       = line.split('\t')
+			sourcePath  = _fixPath( parts[1] )
+			if sourcePath.startswith('\"'):
+				sourcePath = sourcePath[1:-1]		
+			# name = os.path.basename( sourcePath )
+			assetPath = srcToAssetDict[ sourcePath ]
+			atlasName = parts[0]		
+			atlasId = atlasNames.index( atlasName )
+			data = {
+				'atlas'  : atlasId,
+				'name'   : assetPath,
+				'source' : sourcePath,
+				'rect'   : [ int(x) for x in parts[2:] ]
+			}
+			items.append(data)
+
 	output = {
-		'atlases' : [ os.path.basename(atlasPath) for atlasPath in atlases ],
+		'atlases' : atlasInfos,
 		'items'   : items,
 	}
 

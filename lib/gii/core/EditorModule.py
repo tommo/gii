@@ -10,20 +10,29 @@ from Command import EditorCommandRegistry
 
 
 ##----------------------------------------------------------------##
+class EditorModuleMeta( ABCMeta ):
+	def __init__( cls, name, bases, dict ):
+		super( EditorModuleMeta, cls ).__init__( name, bases, dict )
+		name       = dict.get( 'name', None )
+		dependency = dict.get( 'dependency', [] )
+		if name:
+			m = cls()
+			m._dependency = dependency
+			m._name       = name
+			EditorModuleManager.get().registerModule(	m )
+##----------------------------------------------------------------##
 ## EDITORMODULE
 ##----------------------------------------------------------------##
 class EditorModule( object ):
-	__metaclass__ = ABCMeta
+	__metaclass__ = EditorModuleMeta	
 	def __repr__(self):
 		return '<module: %s>'%self.getName()
 
-	@abstractmethod
 	def getDependency(self):
-		raise Exception('getDependency not implemented')
+		return self._dependency or []
 
-	@abstractmethod
-	def getName(self):
-		raise Exception('getName not implemented')	
+	def getName(self):		
+		return self._name or '???'
 
 	def getModulePath( self, path = None ):
 		modName = self.__class__.__module__		
@@ -246,7 +255,7 @@ class EditorModuleManager(object):
 						print(m.getName())
 				raise Exception('Cyclic Dependency')
 
-	def registerModule(self, module):
+	def registerModule( self, module, **option ):
 		if not isinstance(module, EditorModule):
 			raise Exception('Module expected, given:%s' % type(module))
 

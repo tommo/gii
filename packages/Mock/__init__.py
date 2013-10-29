@@ -11,6 +11,8 @@ import DeckEditor
 import ParticleEditor
 import ParticlePreview
 
+import ShaderEditor
+
 import FontPreview
 import StyleSheetEditor
 

@@ -16,11 +16,8 @@ from PyQt4.QtCore    import Qt
 import Device
 
 class DeviceBrowser( DeviceManagerModule ):
-	def getName( self ):
-		return 'device_browser'
-
-	def getDependency( self ):
-		return [ 'device_manager' ]
+	name       = 'device_browser'
+	dependency = [ 'device_manager' ]
 
 	def onLoad( self ):		
 		#UI
@@ -116,4 +113,4 @@ class DeviceTreeWidget( GenericTreeWidget ):
 		app.getModule('device_manager').setActiveDevice( device )
 		
 ##----------------------------------------------------------------##
-DeviceBrowser().register()
+# DeviceBrowser().register()

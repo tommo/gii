@@ -22,7 +22,7 @@ class DeviceMonitorThread( threading.Thread ):
 		def cbFunc(info, cookie):
 			info = info.contents
 			if info.message == ADNCI_MSG_CONNECTED:
-				dev = IOSDeviceItem( MobileDevice.AMDevice(info.device), True )
+				dev = IOSDeviceItem( info.device, True )
 				devices[info.device] = dev
 				self.callback( 'connected', dev )
 

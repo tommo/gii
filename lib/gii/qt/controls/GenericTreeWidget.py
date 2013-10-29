@@ -349,14 +349,33 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def onItemChanged( self, item, col ):
 		pass
 
+
+	def onDeletePressed( self ):
+		pass
+
+	##----------------------------------------------------------------##
+	#custom control
 	def keyPressEvent( self, ev ):
 		key = ev.key()
 		if key in ( Qt.Key_Delete, Qt.Key_Backspace ):			
 			self.onDeletePressed()
+		elif key == Qt.Key_Left: #move to parent node
+			item = self.currentItem() 
+			if item:
+				pitem = item.parent()
+			if pitem and not pitem.isHidden():
+				self.setCurrentItem( pitem )
+				return False
 		return super( GenericTreeWidget, self ).keyPressEvent( ev )
 
-	def onDeletePressed( self ):
-		pass
+	def mousePressEvent( self, ev ):
+		if ev.button() == Qt.LeftButton:
+			item = self.itemAt( ev.pos() )
+			if not item and ev.modifiers() != Qt.NoModifier: #root
+				self.clearSelection()
+				return 
+		return super( GenericTreeWidget, self ).mousePressEvent( ev )
+
 	
 
 		

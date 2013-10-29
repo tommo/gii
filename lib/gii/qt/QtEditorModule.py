@@ -14,8 +14,6 @@ _QT_SETTING_FILE = 'qt.ini'
 
 ##----------------------------------------------------------------##
 class QtEditorModule( EditorModule ):
-	__metaclass__ = ABCMeta
-
 	@abstractmethod
 	def getMainWindow( self ):
 		return None
