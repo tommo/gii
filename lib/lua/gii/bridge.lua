@@ -139,7 +139,16 @@ function loadLuaWithEnv(file, env, ...)
 	if not succ then
 		error('Failed start script:'.. file, 2)
 	end
+
+	local dir = env._path
+	function env.dofile( path )
+
+	end
+
 	return env
+end
+
+function loadLuaDelegate( file, env, ... )
 end
 
 --------------------------------------------------------------------

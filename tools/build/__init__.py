@@ -23,6 +23,13 @@ cli.add_argument( '--configure',
 	default = False
 	)
 
+cli.add_argument( '--profile', 
+	dest   = 'profile',
+	help   = 'Release/Debug ',
+	default = 'debug'
+	)
+
+
 cli.add_argument( '--clean', 
 	dest   = 'clean',
 	help   = 'Clean build files',

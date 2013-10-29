@@ -3,7 +3,7 @@ from PropertyEditor     import PropertyEditor, registerFieldEditor, registerMode
 
 ##----------------------------------------------------------------##
 from CommonFieldEditors import \
-	StringFieldEditor, IntFieldEditor, FloatFieldEditor, BoolFieldEditor
+	StringFieldEditor, NumberFieldEditor, BoolFieldEditor
 
 from EnumFieldEditor      import EnumFieldEditor
 from ColorFieldEditor     import ColorFieldEditor

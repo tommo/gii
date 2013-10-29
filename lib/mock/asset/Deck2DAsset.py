@@ -34,9 +34,9 @@ class Deck2DAssetManager(AssetManager):
 		if not editor: 
 			return alertMessage( 'Editor not load', 'Deck2D Editor not found!' )
 		if not node.isType( 'deck2d' ):
-			editor.startEdit( node.getParent(), node )			
+			editor.openAsset( node.getParent(), node )			
 		else:
-			editor.startEdit( node )
+			editor.openAsset( node )
 
 ##----------------------------------------------------------------##
 class Deck2DCreator(AssetCreator):

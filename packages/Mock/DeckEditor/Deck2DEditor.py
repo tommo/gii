@@ -133,7 +133,7 @@ class Deck2DEditor( AssetEditorModule ):
 		if not self.editingAsset or not self.editingPack: return
 		self.canvas.callMethod( 'editor', 'savePack' , self.editingAsset.getAbsFilePath() )
 		
-	def startEdit(self, node, subnode=None):
+	def openAsset(self, node, subnode=None):
 		self.setFocus()
 		
 		if self.editingAsset != node:

@@ -9,6 +9,7 @@ import TexturePreview
 import DeckEditor
 
 import ParticleEditor
+import SimpleParticleEditor
 import ParticlePreview
 
 import ShaderEditor

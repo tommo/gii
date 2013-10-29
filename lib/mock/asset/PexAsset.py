@@ -21,6 +21,7 @@ class PexAssetManager(AssetManager):
 		node.setObjectFile( 'def', node.getFilePath() )
 		return True
 
+
 PexAssetManager().register()
 
 AssetLibrary.get().setAssetIcon( 'particle_pex', 'pex' )

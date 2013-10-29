@@ -51,14 +51,27 @@ class PropertyEditor( QtGui.QWidget ):
 		self.context    = None
 		self.clear()
 
-	def _buildSubEditor( self, field, label, editorClas ):
-		editor = editorClas( self, field )
+	def _buildSubEditor( self, field, label, editorClas, fieldType ):
+		editor = editorClas( self, field, fieldType )
 		labelWidget  = editor.initLabel( label, self )
 		editorWidget = editor.initEditor( self )
-		self.layout.addRow ( labelWidget, editorWidget )
-
+		if not labelWidget:
+			self.layout.addRow ( editorWidget )
+		else:
+			self.layout.addRow ( labelWidget, editorWidget )
 		self.editors[ field ] = editor
 		return editor
+
+	def _addSeparator( self ):
+		line = QtGui.QFrame( self )
+		line.setSizePolicy(
+			QtGui.QSizePolicy.Expanding,
+			QtGui.QSizePolicy.Fixed
+		)
+		# line.setStyleSheet('background:none; border:none; ')
+		line.setStyleSheet('background:none; border-top:1px solid #333; margin: 2px 0 4px 0;')
+		line.setMinimumSize( 30, 7 )
+		self.layout.addRow( line )
 
 	def clear( self ):
 		for editor in self.editors.values():
@@ -107,14 +120,17 @@ class PropertyEditor( QtGui.QWidget ):
 		self.refreshing = True
 		#install field info
 		for field in model.fieldList:
-			if field.getOption('no_edit'): continue
+			if field.getOption('no_edit'):
+				if field.id == '----':
+					self._addSeparator()
+				continue
 			label = field.label
 			ft    = field._type
 			if field.getOption( 'objtype', None) == 'ref' :
 				ft    = ReferenceType
 			editorClas  =  getFieldEditor( ft )
 			if not editorClas: continue
-			editor = self._buildSubEditor( field, label, editorClas )
+			editor = self._buildSubEditor( field, label, editorClas, ft )
 		self.refreshing = False
 		
 		self.refreshAll()
@@ -139,12 +155,16 @@ class PropertyEditor( QtGui.QWidget ):
 
 ##----------------------------------------------------------------##
 class FieldEditor( object ):
-	def __init__( self, parent, field ):
+	def __init__( self, parent, field, fieldType ):
 		self.setTarget( parent, field )
+		self.fieldType = fieldType
 		
 	def setTarget( self, parent, field ):
 		self.field   = field
 		self.parent  = parent
+
+	def getFieldType( self ):
+		return self.fieldType
 
 	def getContext( self ):
 		return self.parent.context

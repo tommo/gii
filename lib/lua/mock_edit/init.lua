@@ -1,7 +1,7 @@
 require 'mock.env'
 
 --------------------------------------------------------------------
-mock.setLogLevel( 'status' )
+-- mock.setLogLevel( 'status' )
 
 module( 'mock_edit', package.seeall )
 

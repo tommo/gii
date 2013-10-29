@@ -174,11 +174,11 @@ class MOAIRuntime( EditorModule ):
 		self.luaDelegates[ scriptPath ] = delegate
 		return delegate
 
-	def loadLuaWithEnv( self, file, env = None ):
+	def loadLuaWithEnv( self, file, env = None, **option ):
 		try:
 			if env:
 				assert isinstance( env, dict )
-			return _GII.loadLuaWithEnv( file, env )
+			return _GII.loadLuaWithEnv( file, env, option.get( 'isdelegate', False ) )
 		except Exception, e:
 			logging.error( 'error loading lua:\n' + str(e) )
 
@@ -336,14 +336,14 @@ class MOAILuaDelegate(object):
 		runtime = MOAIRuntime.get()
 		try:
 			env = {
-				'_owner'    : self.owner,
-				'_delegate' : self
+				'_owner'      : self.owner,
+				'_delegate'   : self
 			}
 			if self.scriptEnv:
 				env.update( self.scriptEnv )
 			if self.name:
 				env['_NAME'] = env.name
-			self.luaEnv = runtime.loadLuaWithEnv( scriptPath, env )
+			self.luaEnv = runtime.loadLuaWithEnv( scriptPath, env, isdelegate = True )
 		except Exception, e:
 			logging.exception( e )
 

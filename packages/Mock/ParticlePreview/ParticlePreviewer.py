@@ -18,7 +18,7 @@ class ParticlePreviewer(AssetPreviewer):
 		return self.canvas
 
 	def accept(self, assetNode):
-		return assetNode.getType() in [ 'particle_system', 'particle_pex'  ]
+		return assetNode.getType() in [ 'particle_system', 'particle_pex', 'particle_simple'  ]
 
 	def onStart(self, assetNode):
 		atype = assetNode.getType()

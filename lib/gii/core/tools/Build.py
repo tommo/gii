@@ -16,8 +16,8 @@ def run( **option ):
 	if option.get( 'verbose', False ):
 		arglist.append( '-v' )
 	
-	if option.get( 'configure', False ):
-		arglist.append( 'configure' )
+	# if option.get( 'configure', False ):
+	# 	arglist.append( 'configure' )
 
 	elif option.get( 'clean', False ):
 		arglist.append( 'clean' )

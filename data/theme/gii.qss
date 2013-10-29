@@ -449,20 +449,26 @@ QToolBar:separator
 	margin:1px 5px;
 }
 
+QSlider{
+	background: transparent;
+}
+
 QSlider::groove:horizontal
 {
-	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#b4b4b4,stop:1#8c8c8c);
-	border:1px solid #3c3c3c;
-	height:4px;
+	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#111,stop:1#333);
+	border:1px solid #222;
+	height:2px;
+	margin-left:7px;
+	margin-right:7px;
 }
 
 QSlider::handle:horizontal
 {
-	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#b4b4b4,stop:1#8c8c8c);
-	border:1px solid #3c3c3c;
-	width:8px;
+	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#777,stop:1#444);
+	border:1px solid #222;
+	width:6px;
 	border-radius:2px;
-	margin:-2px 0;
+	margin:-7px -7px -7px -7px;
 }
 
 QSlider::handle:horizontal:hover
@@ -586,11 +592,16 @@ QLineEdit:read-only, QTextEdit:read-only, QPlainTextEdit:read-only, QSpinBox:rea
 
 QComboBox
 {
-	border:1px solid #000;
+	border:1px solid #222;
 	background-color: qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#343434,stop:1#1d1d1d) ;
 	color:#dcdcdc;
-	padding:0 18px 0 3px;
+	padding:0 18px 0px 5px;
 	margin-left: 3px;
+	margin-right: 3px;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	
+	border-radius: 2px;
 }
 
 QComboBox:editable
