@@ -94,7 +94,7 @@ class FieldEditorSliderBox(QtGui.QWidget):
 
 	def onSliderChanged( self, v ):
 		if self.refreshing: return
-		self.setValue( v*self.sliderUnit )
+		self.setValue( v*self.sliderUnit + self.minValue )
 
 	def setRange( self, minv, maxv ):		
 		self.minValue = minv or 0
@@ -116,7 +116,7 @@ class FieldEditorSliderBox(QtGui.QWidget):
 		self._value = v
 		self.valueChanged.emit( self._value )
 		self.refreshing = True
-		self.slider.setValue( int( v/self.sliderUnit ) )
+		self.slider.setValue( int( (v - self.minValue)/self.sliderUnit ) )
 		if self.numberType == int:
 			self.text.setText( '%d' % v )
 		else:

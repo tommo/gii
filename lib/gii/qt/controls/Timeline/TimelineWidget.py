@@ -45,6 +45,10 @@ class TimelineRuler( QtGui.QFrame ):
 		self.formatter = self.defaultFormatter
 		self.posStep = 1000
 		self.subStep = 100
+		self.cursorDraggable = True
+
+	def setCursorDraggable( self, draggable = True ):
+		self.cursorDraggable = draggable
 
 	def setScrollPos( self, pos ):
 		p = max( pos, 0 )
@@ -124,6 +128,7 @@ class TimelineRuler( QtGui.QFrame ):
 			self.targetDragPos = self.scrollPos
 			self.dragFrom = ev.x()
 		elif button == Qt.RightButton:
+			if not self.cursorDraggable: return
 			self.grabMouse()
 			self.dragging = 'cursor'
 			self.setCursorPos( self.getPosAt( ev.x() ) )
@@ -501,6 +506,7 @@ class TimelineWidget( QtGui.QFrame ):
 	spanPosChanged        = pyqtSignal( object, float )
 	spanLengthChanged     = pyqtSignal( object, float )
 	trackDClicked         = pyqtSignal( object, float )
+	cursorPosChanged      = pyqtSignal( float )
 
 	def __init__( self, *args, **option ):
 		super(TimelineWidget, self).__init__( *args )
@@ -769,8 +775,12 @@ class TimelineWidget( QtGui.QFrame ):
 	def updateTimelineCursor( self ):
 		self.timelineCursor.move( self.mapPos( self.getCursorPos() ), 0 )
 
+	def setCursorDraggable( self, draggable = True ):
+		self.ruler.setCursorDraggable( draggable )
+
 	def onCursorPosChanged( self, pos ):
 		self.updateTimelineCursor()
+		self.cursorPosChanged.emit( pos )
 
 	def onScrollPosChanged( self, pos ):
 		if self.updating: return
@@ -838,13 +848,13 @@ class TimelineWidget( QtGui.QFrame ):
 
 	def syncScrollBarToTracks( self, value ):
 		self.ui.scrollTracks.verticalScrollBar().setValue( value )
-
-	def getRulerParam( self ):
-		return {}
-
+	
 	#####
 	#VIRUTAL functions
 	#####
+	def getRulerParam( self ):
+		return {}
+
 	def formatPos( self, pos ):
 		return '%.1f' % pos
 

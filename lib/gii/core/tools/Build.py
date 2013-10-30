@@ -36,6 +36,7 @@ def run( **option ):
 			arglist.append( 'install' + suffix )
 			try:
 				code = subprocess.call( arglist )
+				if code!=0: return code
 			except Exception, e:
 				logging.error( 'cannot build host: %s ' % e)
 				return -1
