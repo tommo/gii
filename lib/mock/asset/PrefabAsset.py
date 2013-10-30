@@ -10,8 +10,9 @@ class PrefabAssetManager(AssetManager):
 		if not os.path.isfile(filePath): return False		
 		name,ext = os.path.splitext(filePath)
 		if not ext in ['.prefab']: return False
-		data = jsonHelper.tryLoadJSON( filePath )
-		return data and data.get( '_assetType', None ) == 'prefab'
+		return True
+		# data = jsonHelper.tryLoadJSON( filePath )
+		# return data and data.get( '_assetType', None ) == 'prefab'
 
 	def importAsset( self, node, reload = False ):
 		node.assetType = 'prefab'

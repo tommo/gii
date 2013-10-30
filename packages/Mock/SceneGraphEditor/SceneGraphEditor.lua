@@ -164,7 +164,7 @@ end
 local function collectComponent( entity, typeId, collection )
 	if isEditorEntity( entity ) then return end
 	for com in pairs( entity.components ) do
-		if isInstanceOf( com, typeId ) then
+		if not com.FLAG_INTERNAL and isInstanceOf( com, typeId ) then
 			collection[ com ] = true
 		end
 	end

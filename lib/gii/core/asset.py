@@ -205,7 +205,7 @@ class AssetNode(object):
 		signals.emit('asset.deploy.changed', self)
 
 	def markModified( self ):
-		logging.info( 'modified: %s', repr(self) )
+		logging.info( 'mark modified: %s', repr(self) )
 		self.modifyState = 'modified'
 
 	def touch( self ):
@@ -682,10 +682,9 @@ class AssetLibrary(object):
 							self.unregisterAssetNode(n)
 						#TODO: add failed state to node				
 				if node.getManager() != manager: node.setManager( manager )
-				if manager.importAsset( node, reload = not isNew ):
+				if manager.importAsset( node, reload = not isNew ) != False:
 					node.modifyState  =  False
 					done.append( node )
-
 				if not isNew:
 					signals.emitNow( 'asset.modified',  node )
 
@@ -696,6 +695,11 @@ class AssetLibrary(object):
 				del modifiedAssets[ node ]
 				if node.modifyState == 'removed': continue
 				node._updateFileTime()
+
+		for node in modifiedAssets.keys(): #nodes without manager
+			node.modifyState = False
+			node._updateFileTime()
+		#end of for
 		signals.emitNow( 'asset.post_import_all' )
 		logging.info( 'modified assets imported' )
 

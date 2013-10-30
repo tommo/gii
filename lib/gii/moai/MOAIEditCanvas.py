@@ -324,6 +324,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 
 		if not option.get( 'no_sim', False ):		
 			runtime.stepSim( step )
+			getAKU().updateFMOD()
 
 		self.delegate.onUpdate( step )
 
