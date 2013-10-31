@@ -34,8 +34,13 @@ local function buildGiiModel( model )
 			else
 				_error('invalid enum type')
 			end
+
 		elseif typeid == '@asset' then
 			pmodel:addLuaAssetFieldInfo( id, f.__assettype, option )
+
+		elseif typeid == '@action' then
+			pmodel:addLuaActionFieldInfo( id, f.__actionname, option )
+
 		elseif typeid == '@array' and meta and meta['collection'] then
 			local _set = f.__setter
 			if _set~=true then
@@ -58,6 +63,7 @@ local function buildGiiModel( model )
 				end
 			end
 			pmodel:addLuaCollectionFieldInfo( id, f.__itemtype, option )
+
 		else
 			if isTupleValue( typeid ) then
 				local _set = f.__setter

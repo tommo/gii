@@ -55,7 +55,7 @@ class PropertyEditor( QtGui.QWidget ):
 		editor = editorClas( self, field, fieldType )
 		labelWidget  = editor.initLabel( label, self )
 		editorWidget = editor.initEditor( self )
-		if not labelWidget:
+		if labelWidget in (None, False):
 			self.layout.addRow ( editorWidget )
 		else:
 			self.layout.addRow ( labelWidget, editorWidget )

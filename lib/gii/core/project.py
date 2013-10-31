@@ -5,7 +5,6 @@ import os
 import os.path
 import re
 import shutil
-import sync
 import hashlib
 
 import signals
@@ -340,6 +339,7 @@ class DeployContext():
 		'^\..*',
 	]
 
+
 	def __init__( self, path ):
 		self.taskQueue   = []
 		self.path        = path
@@ -368,11 +368,23 @@ class DeployContext():
 		task = ( func, args )
 		self.taskQueue.append( task )
 
+	def _copyFile( self, src, dst ):
+		if os.path.isdir( src ): #dir
+			if not os.path.exists( dst ): os.mkdir( dst )
+			if os.path.isdir( dst ):
+				for f in os.listdir( src ):
+					if self.checkFileIgnorable( f ): continue
+					self._copyFile( src + '/' + f, dst + '/' + f )
+		else: #file
+			if not os.path.exists( dst )\
+				or ( os.path.getmtime( src ) > os.path.getmtime( dst ) ):
+					shutil.copy( src, dst )
+			
 	def copyFile( self, srcPath, dstPath = None, **option ):
 		if not dstPath:
 			dstPath = os.path.basename( srcPath )
 		absDstPath = self.getPath( dstPath )
-		sync.updateFile( srcPath, absDstPath )
+		self._copyFile( srcPath, absDstPath )
 
 	def copyFilesInDir( self, srcDir, dstDir = None ):
 		if not os.path.isdir( srcDir ):

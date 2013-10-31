@@ -84,7 +84,7 @@ class FmodAssetManager(AssetManager):
 		try:
 			subprocess.call( arglist )
 		except Exception, e:
-			logging.exception( e )			
+			logging.exception( e )
 
 		#TODO:check bank files( delete banks unavailable )
 		banks = project['banks']

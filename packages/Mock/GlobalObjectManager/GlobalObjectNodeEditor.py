@@ -16,19 +16,19 @@ def getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 		
 class EntityEditor( ObjectEditor ): #a generic property grid 
-	def initWidget( self, container ):		
-		self.grid = PropertyEditor( container )
-		self.grid.setContext( 'scene_editor' )
-		return self.grid
+	# def initWidget( self, container ):		
+	# 	self.grid = PropertyEditor( container )
+	# 	self.grid.setContext( 'scene_editor' )
+	# 	return self.grid
 
 	def setTarget( self, target, introspectorInstance ):
 		if target.type == 'object':
 			introspectorInstance.addObjectEditor( target.object )
 		
-	def refresh( self ):
-		self.grid.refreshAll()
+	# def refresh( self ):
+	# 	self.grid.refreshAll()
 
-	def unload( self ):
-		self.grid.clear()
+	# def unload( self ):
+	# 	self.grid.clear()
 
 registerObjectEditor( _MOCK.GlobalObjectNode, EntityEditor )

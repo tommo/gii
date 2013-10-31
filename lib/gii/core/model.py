@@ -137,6 +137,20 @@ class FlagsValueType( DataType ):
 		super(FlagsValueType, self).__init__()
 		self.arg = arg
 
+##----------------------------------------------------------------##
+class ActionType( DataType ):
+	def __init__(self, name, actionName, defaultValue = None ):
+		self.name = name
+		self.actionName = actionName	
+		
+	def getName( self ):
+		return self.name
+
+	def getSuperType( self ):
+		return ActionType
+
+	def repr( self, value ):
+		return '<%s> %s' %( self.name, repr( value ) ) 
 
 ##----------------------------------------------------------------##
 class ObjectModel( DataType ):

@@ -92,7 +92,7 @@ class MOAIRuntime( EditorModule ):
 
 		logging.info( 'loading gii lua runtime' )
 		aku.runScript(
-			self.getApp().getPath( 'lib/lua/MOAInterfaces.lua' )
+			self.getApp().getPath( 'lib/lua/MOAIInterfaces.lua' )
 			)
 
 		aku.runScript(

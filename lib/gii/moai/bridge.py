@@ -216,6 +216,10 @@ class LuaObjectModel(ObjectModel):
 			LuaObjectModel._AssetTypeCache[ assetType ] = typeId
 		return self.addLuaFieldInfo( name, typeId, data )
 
+	def addLuaActionFieldInfo(self, name, actionName, data = None): #called by lua
+		actionType = ActionType( name, actionName )
+		return self.addLuaFieldInfo( name, actionType, data )
+
 	def addLuaCollectionFieldInfo( self, name, itemType, data = None ):
 		collectionType = CollectionType( name, itemType )
 		return self.addLuaFieldInfo( name, collectionType, data )

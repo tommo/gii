@@ -10,6 +10,8 @@ from ColorFieldEditor     import ColorFieldEditor
 from ReferenceFieldEditor import ReferenceFieldEditor
 from AssetRefFieldEditor  import AssetRefFieldEditor 
 
+import ActionFieldEditor
 import VecFieldEditor
 import CollectionFieldEditor
+
 ##----------------------------------------------------------------##
