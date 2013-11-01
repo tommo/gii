@@ -215,7 +215,9 @@ class SceneGraphEditor( SceneEditorModule ):
 		if self.previewing: return
 		self.refreshScheduled = False
 		node = self.activeSceneNode
-		self.delegate.safeCallMethod( 'editor', 'refreshScene' )
+		self.retainedState = self.tree.saveFoldState()
+		if self.delegate.safeCallMethod( 'editor', 'refreshScene' ):
+			self.tree.loadFoldState( self.retainedState )
 		#TODO:remove this
 		# self.closeScene()
 		# self.openScene( node )

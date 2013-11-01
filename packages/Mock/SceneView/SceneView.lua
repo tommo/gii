@@ -259,6 +259,7 @@ view = false
 
 function openScene( scene )
 	local ctx = gii.getCurrentRenderContext()	
+	local gameActionRoot = game:getActionRoot()
 	gii.setCurrentRenderContextActionRoot( game:getActionRoot() )
 	view = scene:addEntity( SceneView() )
 end

@@ -56,7 +56,7 @@ class NumberFieldEditor( FieldEditor ):
 			spineBox = FieldEditorSpinBox( container )
 			step = int(self.step)
 			if step <= 0: step = 1
-			spineBox.setSingleStep( step)
+			spineBox.setSingleStep( step )
 		else:
 			spineBox = FieldEditorDoubleSpinBox( container )
 			spineBox.setDecimals( self.getOption( 'decimals', 5 )	)

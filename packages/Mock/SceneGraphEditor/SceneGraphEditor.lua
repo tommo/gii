@@ -86,14 +86,16 @@ function SceneGraphEditor:saveScene( path )
 end
 
 function SceneGraphEditor:refreshScene()
-	local data = self.failedRefreshData or mock.serializeScene( self.scene )
+	self:retainScene()
 	self.scene:clear( true )
-	if pcall( mock.deserializeScene, data, self.scene ) then
-		self.failedRefreshData = false
-		self:postLoadScene()
-	else
-		self.failedRefreshData = data
-	end
+	return self:restoreScene()
+	-- local data = self.failedRefreshData or mock.serializeScene( self.scene )
+	-- if pcall( mock.deserializeScene, data, self.scene ) then
+	-- 	self.failedRefreshData = false
+	-- 	self:postLoadScene()
+	-- else
+	-- 	self.failedRefreshData = data
+	-- end
 end
 
 function SceneGraphEditor:postLoadScene()

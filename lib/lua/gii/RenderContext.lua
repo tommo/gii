@@ -68,7 +68,7 @@ function changeRenderContext( key, w, h )
 		currentContext.bufferTable       = bufferTable
 		currentContext.renderTableMap    = renderTableMap
 		currentContext.deviceRenderTable = deviceBuffer:getRenderTable()
-		currentContext.actionRoot        = MOAIActionMgr.getRoot()		
+		currentContext.actionRoot        = currentContext.actionRoot or MOAIActionMgr.getRoot()		
 	end
 
 	--TODO: persist clear depth& color flag(need to modify moai)

@@ -56,10 +56,10 @@ _monitorThread = None
 def startDeviceMonitorThread( callback, *args ):
 	global _monitorThread
 	_monitorThread = DeviceMonitorThread( callback, *args )
-	# _monitorThread.start()
+	_monitorThread.start()
 
 def stopDeviceMonitorThread():
 	global _monitorThread
-	# _monitorThread.stop()
+	_monitorThread.stop()
 	_monitorThread = None
 

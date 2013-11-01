@@ -361,11 +361,11 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			self.onDeletePressed()
 		elif key == Qt.Key_Left: #move to parent node
 			item = self.currentItem() 
-			if item:
+			if item and not item.isExpanded():
 				pitem = item.parent()
-			if pitem and not pitem.isHidden():
-				self.setCurrentItem( pitem )
-				return False
+				if pitem and not pitem.isHidden():
+					self.setCurrentItem( pitem )
+					return False
 		return super( GenericTreeWidget, self ).keyPressEvent( ev )
 
 	def mousePressEvent( self, ev ):
