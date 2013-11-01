@@ -39,6 +39,14 @@ local function buildGiiModel( model )
 			pmodel:addLuaAssetFieldInfo( id, f.__assettype, option )
 
 		elseif typeid == '@action' then
+			option.set = function( obj )
+				local f = obj[id]
+				if f then 
+					f( obj )
+				else
+					_warn( 'no action named in model', id, model.__name )
+				end
+			end
 			pmodel:addLuaActionFieldInfo( id, f.__actionname, option )
 
 		elseif typeid == '@array' and meta and meta['collection'] then

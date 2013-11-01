@@ -42,7 +42,7 @@ class ActionFieldEditor( FieldEditor ):
 		return self.button
 
 	def doAction( self ):
-		print 'action!!!', self.actionName
+		self.notifyChanged( True )
 
 	def setFocus( self ):
 		self.button.setFocus()
