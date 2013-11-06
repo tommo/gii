@@ -24,12 +24,12 @@ class DeviceMonitorThread( threading.Thread ):
 			if info.message == ADNCI_MSG_CONNECTED:
 				dev = IOSDeviceItem( info.device, True )
 				devices[info.device] = dev
+				print( info.device )
 				self.callback( 'connected', dev )
 
 			elif info.message == ADNCI_MSG_DISCONNECTED:
 				dev = devices[info.device]
 				self.callback( 'disconnected', dev )
-				dev.disconnect()
 				del devices[info.device]
 
 		notify = AMDeviceNotificationRef()

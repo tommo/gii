@@ -89,10 +89,8 @@ def getAppAFC( dev, appName ):
 class IOSDeviceItem( DeviceItem ):
 	def __init__( self, devId, connected = True ):
 		self._deviceId = devId
-
-		dev = MobileDevice.AMDevice( devId )
+		self._device   = dev = MobileDevice.AMDevice( devId )
 		dev.connect()
-
 		name = ''
 		try:
 			name = dev.get_value( name = u'DeviceName' )
@@ -101,7 +99,7 @@ class IOSDeviceItem( DeviceItem ):
 		self.name = name
 		self.id   = dev.get_deviceid()
 		self.connected = connected
-		dev.disconnect()
+		# dev.disconnect()
 
 	def getName( self ):
 		return self.name
@@ -127,14 +125,17 @@ class IOSDeviceItem( DeviceItem ):
 
 	def disconnect( self ):
 		if self.connected:
+			self._device.disconnect()
 			self._deviceId = None
+			self._device   = None
 			self.connected = False
 
 	def clearData( self ):
 		appName        = 'com.hatrixgames.yaka'
-		devId = self._deviceId
-		dev = MobileDevice.AMDevice( devId )
-		dev.connect()
+		dev   = self._device
+		# devId = self._deviceId
+		# dev = MobileDevice.AMDevice( devId )
+		# dev.connect()
 		remoteDataPath = 'Documents/game'
 		if not self.isConnected():
 			logging.warn( 'device not connected' )
@@ -142,7 +143,7 @@ class IOSDeviceItem( DeviceItem ):
 		afc = getAppAFC( dev, appName )
 		cleanDirFromDevice( afc, remoteDataPath )
 		afc.disconnect()
-		dev.disconnect()
+		# dev.disconnect()
 
 
 	def deployDataFiles( self, appName, localDataPath, remoteDataPath, **option ):
@@ -150,14 +151,17 @@ class IOSDeviceItem( DeviceItem ):
 		if not self.isConnected():
 			logging.warn( 'device not connected' )
 			return False
-		devId = self._deviceId
-		dev = MobileDevice.AMDevice( devId )
-		dev.connect()
+		dev   = self._device
+		dev.stop_session()
+		dev.start_session()
+		# devId = self._deviceId
+		# dev = MobileDevice.AMDevice( devId )
+		# dev.connect()
 		afc = getAppAFC( dev, appName )
 		# cleanDirFromDevice( afc, 'Documents' )
 		copyTreeToDevice( afc, localDataPath, remoteDataPath, **option )	
 		afc.disconnect()
-		dev.disconnect()
+		# dev.disconnect()
 		return True
 
 # name = u''

@@ -55,6 +55,7 @@ class ParticleEditor( AssetEditorModule ):
 		super(ParticleEditor, self).__init__()
 		self.editingAsset  = None		
 		self.editingConfig = None
+		self.editingState  = None
 
 		self.emitters = Box()
 		self.emitters.items=[]
@@ -79,10 +80,15 @@ class ParticleEditor( AssetEditorModule ):
 			)
 
 		self.tool = self.addToolBar( 'particle_editor', self.container.addToolBar() )
-		self.addTool( 'particle_editor/add_state',   label = '+ State')
-		self.addTool( 'particle_editor/add_emitter', label = '+ Emitter')
-		self.addTool( 'particle_editor/remove',      label = 'Delete')
-		self.addTool( 'particle_editor/update',      label = 'Update')
+		self.addTool( 'particle_editor/save',   label = 'Save', icon = 'save' )
+		self.addTool( 'particle_editor/----' )
+		self.addTool( 'particle_editor/add_state',   label = '+ State' )
+		self.addTool( 'particle_editor/add_emitter', label = '+ Emitter' )
+		self.addTool( 'particle_editor/remove',      label = 'Delete', icon = 'remove' )
+		self.addTool( 'particle_editor/update',      label = 'Update', icon = 'refresh' )
+		self.addTool( 'particle_editor/----' )
+		self.addTool( 'particle_editor/start_preview', icon = 'play' )
+		self.addTool( 'particle_editor/stop_preview', icon = 'stop' )
 
 		
 		self.window = window = self.container.addWidgetFromFile(
@@ -129,6 +135,10 @@ class ParticleEditor( AssetEditorModule ):
 		
 		self.tree.rebuild()
 		self.tree.setAllExpanded( True )
+
+	def saveAsset( self ):
+		if not self.editingAsset: return
+		self.canvas.safeCallMethod( 'preview', 'save', self.editingAsset.getAbsFilePath() )
 
 	def closeAsset( self ):
 		self.checkScriptTimer.stop()
@@ -184,12 +194,36 @@ class ParticleEditor( AssetEditorModule ):
 		if tool.name == 'update':
 			if self.editingAsset:				
 				self.canvas.safeCallMethod( 'preview', 'rebuildSystem' )			
+
 		elif tool.name == 'add_state':
-			pass
+			if self.editingAsset:				
+				stConfig = self.canvas.safeCallMethod( 'preview', 'addState' )
+				if stConfig:
+					self.tree.addNode( stConfig )
+					self.tree.selectNode( stConfig )
+					self.tree.editNode( stConfig )
+
 		elif tool.name == 'add_emitter':
-			pass
+			if self.editingAsset:				
+				emConfig = self.canvas.safeCallMethod( 'preview', 'addEmitter' )
+				if emConfig:
+					self.tree.addNode( emConfig )
+					self.tree.selectNode( emConfig )
+					self.tree.editNode( emConfig )
+
 		elif tool.name == 'remove':
 			pass
+
+		elif tool.name == 'save':
+			self.saveAsset()
+
+		elif tool.name == 'start_preview':
+			self.canvas.safeCallMethod( 'preview', 'startPreview' )
+
+		elif tool.name == 'stop_preview':
+			self.canvas.safeCallMethod( 'preview', 'stopPreview' )
+		
+
 
 ##----------------------------------------------------------------##
 class ParticleTreeWidget( GenericTreeWidget ):

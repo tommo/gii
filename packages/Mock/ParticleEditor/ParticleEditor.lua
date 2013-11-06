@@ -11,36 +11,38 @@ function ParticlePreview:onLoad()
 	self:attach( mock.InputScript{ device = scn.inputDevice } )
 	self:attach( mock.DrawScript{ priority = 1000 } )
 
-	self.testSystem  = false
-	self.testEmitter = false 
+	self.previewing = false 
+	self.previewSystem  = false
+	self.previewEmitter = false 
 
 	self.editingConfig  = false
 	self.editingEmitter = false
 	self.editingState   = false
-	-- startUpdateTimer( 60 )
 
 end
 
 function ParticlePreview:onMouseDown( btn, x, y )
-	if btn == 'left' and  self.testEmitter then
-		self.testEmitter:setLoc( self:wndToWorld( x, y ) )		
+	if btn == 'left' and  self.previewEmitter then
+		self.previewEmitter:setLoc( self:wndToWorld( x, y ) )		
 	end
 end
 
 function ParticlePreview:onMouseMove( x, y )
-	if self.testEmitter then
+	if self.previewEmitter then
 		if scn.inputDevice:isMouseDown('left') then
-			self.testEmitter:setLoc( self:wndToWorld( x, y ) )
+			self.previewEmitter:setLoc( self:wndToWorld( x, y ) )
 		end
 	end
 end
 
 function ParticlePreview:rebuildSystem()
-	if self.testSystem then
-		self:detach( self.testSystem )		
+	if not self.previewing then return end
+	if self.previewSystem then
+		self:detach( self.previewSystem )		
 	end
-	self.testSystem =  self:attach( mock.ParticleSystem( self.editingConfig ) )
-	self.testSystem:start()
+	self.previewSystem =  self:attach( mock.ParticleSystem() )
+	self.previewSystem:setConfigData( self.editingConfig )
+	self.previewSystem:start()
 	self:updateEmitter( true )	
 end
 
@@ -50,18 +52,19 @@ function ParticlePreview:updateState( )
 end
 
 function ParticlePreview:updateEmitter( rebuild )
+	if not self.previewing then return end
 	local item = self.editingEmitter
 	if not item then return end
 	if rebuild then
-		if self.testEmitter then self.testEmitter:stop() end
-		self.testEmitter = self.testSystem:addEmitter( item.name )		
+		if self.previewEmitter then self.previewEmitter:stop() end
+		self.previewEmitter = self.previewSystem:addEmitter( item.name )		
 	else
-		item:updateEmitter( self.testEmitter )
+		item:updateEmitter( self.previewEmitter )
 	end
 end
 
 function ParticlePreview:activateEmitter( item )
-	if not self.testSystem then return end
+	if self.editingEmitter == item then return end
 	self.editingEmitter = item
 	self:updateEmitter( true )	
 end
@@ -85,8 +88,8 @@ function ParticlePreview:update( obj, field, value )
 	elseif isInstanceOf( obj, mock.ParticleStateConfig ) then
 		self:updateState()
 	else --system		
-		if field == 'blend' and self.testSystem then
-			return setPropBlend( self.testSystem._system, value )
+		if field == 'blend' and self.previewSystem then
+			return setPropBlend( self.previewSystem._system, value )
 		end
 		return self:rebuildSystem()
 	end
@@ -105,21 +108,48 @@ function ParticlePreview:open( path )
 
 	self.editingConfig = mock.loadAsset( path )
 	self.editingConfig.allowPool = false
-	self.editingConfig:addEmitterConfig().name = 'timed'
-	local config2 = self.editingConfig:addEmitterConfig()
-	config2.name = 'distance'
-	config2.type = 'distance'
-
 	
-	local state = self.editingConfig:addStateConfig()
-	state.renderScript = 'sprite()'
+	-- self.editingConfig:addEmitterConfig().name = 'timed'
+	-- self.editingConfig.deck = mock.findAsset( 'particle.deck2d/111' )
+	-- local config2 = self.editingConfig:addEmitterConfig()
+	-- config2.name = 'distance'
+	-- config2.type = 'distance'
+	
+	-- local state = self.editingConfig:addStateConfig()
+	-- state.renderScript = 'sprite()'
 
 	self:rebuildSystem()
 	
 	return self.editingConfig
 end
 
-function ParticlePreview:save( path )
+function ParticlePreview:save( filePath )
+	mock.serializeToFile( self.editingConfig, filePath )
+end
+
+function ParticlePreview:startPreview()
+	self.previewing = true
+	self:rebuildSystem()
+	startUpdateTimer( 60 )
+end
+
+function ParticlePreview:stopPreview()
+	self.previewing = false
+	self.previewSystem:stop()
+	updateCanvas()
+	stopUpdateTimer()
+end
+
+function ParticlePreview:addEmitter()
+	local emitterConfig = self.editingConfig:addEmitterConfig()
+	emitterConfig.name = 'emitter'
+	return emitterConfig
+end
+
+function ParticlePreview:addState()
+	local stateConfig = self.editingConfig:addStateConfig()
+	stateConfig.name = 'state'
+	return stateConfig
 end
 
 preview = scn:addEntity( ParticlePreview() )

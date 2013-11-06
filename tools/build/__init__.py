@@ -16,14 +16,14 @@ cli.add_argument( 'targets',
 	default = 'native'
 	)
 
-cli.add_argument( '--configure', 
+cli.add_argument( '-c, --configure', 
 	dest   = 'configure',
 	help   = 'Configure waf buildtool',
 	action = 'store_true',
 	default = False
 	)
 
-cli.add_argument( '--profile', 
+cli.add_argument( '-p, --profile', 
 	dest   = 'profile',
 	help   = 'Release/Debug ',
 	default = 'debug'
