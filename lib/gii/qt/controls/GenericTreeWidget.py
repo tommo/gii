@@ -167,6 +167,11 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def updateItem(self, node, **option ):
 		return self._updateItem( node, None, **option )
 
+	def setFocusedItem(self, item ):
+		idx = self.indexFromItem( item )
+		if idx:
+			self.setCurrentIndex( idx )
+
 	def _updateItem(self, node, updateLog=None, **option):
 		item = self.getItemByNode(node)
 		if not item: return False

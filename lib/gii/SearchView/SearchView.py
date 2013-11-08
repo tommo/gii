@@ -118,6 +118,7 @@ class SearchViewWidget( QtGui.QWidget ):
 		item = self.treeResult.itemAt( 0, 0 )
 		if item:
 			item.setSelected( True )
+			self.treeResult.scrollToItem( item )
 
 	def onTermsReturn( self ):
 		for node in self.treeResult.getSelection():
@@ -151,7 +152,8 @@ class SearchViewWidget( QtGui.QWidget ):
 		else:
 			for entry in self.entries:
 				if entry.obj == selection:
-					self.treeResult.selectNode( entry )
+					self.treeResult.selectNode( entry, goto = False )
+					break
 
 	def setMultipleSelectionEnabled( self, enabled ):
 		self.multipleSelection = enabled
