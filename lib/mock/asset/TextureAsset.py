@@ -110,6 +110,9 @@ class TextureAssetManager( AssetManager ):
 	def deployAsset( self, node, context ):
 		super( TextureAssetManager, self ).deployAsset( node, context )
 		texNode = app.getModule( 'texture_library' ).findTextureNode( node )
+		if not texNode:
+			logging.warn( 'texture node not found:' + node.getNodePath() )
+			return
 		group = texNode.parent
 		if group.cache and group.atlasMode:
 			newPath = context.addFile( group.cache )

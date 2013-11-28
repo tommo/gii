@@ -18,7 +18,7 @@ local currentContextKey = false
 local ContextChangeListeners = {}
 
 function createRenderContext( key, cr,cg,cb,ca )
-	local clearColor = {0,0,0,0}
+	local clearColor = {0,0,0,1}
 	if cr==false then
 		clearColor = false
 	else
@@ -60,14 +60,17 @@ function changeRenderContext( key, w, h )
 	if currentContext then --persist context
 		local bufferTable  = MOAIRenderMgr.getBufferTable()
 		local renderTableMap = {}
+		local hasDeviceBuffer = false
 		for i, fb in pairs( bufferTable ) do
-			if fb ~= deviceBuffer then
-				renderTableMap[i] = { fb, fb:getRenderTable() } 
-			end
-		end
+			renderTableMap[fb] = fb:getRenderTable()
+		end		
 		currentContext.bufferTable       = bufferTable
 		currentContext.renderTableMap    = renderTableMap
-		currentContext.deviceRenderTable = deviceBuffer:getRenderTable()
+
+		if currentContext.deviceRenderTable ~= false then
+			currentContext.deviceRenderTable = deviceBuffer:getRenderTable()
+		end
+
 		currentContext.actionRoot        = currentContext.actionRoot or MOAIActionMgr.getRoot()		
 	end
 
@@ -85,13 +88,13 @@ function changeRenderContext( key, w, h )
 		MOAIGfxDevice.getFrameBuffer():setClearColor( )
 	end
 
-	for i, p in ipairs( currentContext.renderTableMap ) do
-		local fb = p[1]
-		local rt = p[2]
+	for fb, rt in pairs( currentContext.renderTableMap ) do
 		fb:setRenderTable( rt )
 	end
 	MOAIRenderMgr.setBufferTable ( currentContext.bufferTable )	
-	deviceBuffer:setRenderTable  ( currentContext.deviceRenderTable )
+	if currentContext.deviceRenderTable then
+		deviceBuffer:setRenderTable  ( currentContext.deviceRenderTable )
+	end
 	MOAIActionMgr.setRoot        ( currentContext.actionRoot )
 end
 

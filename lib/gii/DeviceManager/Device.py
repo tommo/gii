@@ -27,6 +27,12 @@ class DeviceItem():
 	def clearData( self ):
 		pass
 
+	def startDebug( self ):
+		pass
+
+	def stopDebug( self ):
+		pass
+
 	def disconnect( self ):
 		pass
 

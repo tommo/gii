@@ -3,6 +3,7 @@ import stat
 import logging
 
 from Device import DeviceItem
+from gii.core import app
 
 import MobileDevice
 
@@ -99,7 +100,6 @@ class IOSDeviceItem( DeviceItem ):
 		self.name = name
 		self.id   = dev.get_deviceid()
 		self.connected = connected
-		# dev.disconnect()
 
 	def getName( self ):
 		return self.name
@@ -118,7 +118,7 @@ class IOSDeviceItem( DeviceItem ):
 		localDataPath  = deployContext.getPath()
 		remoteDataPath = 'Documents/game'
 		try:
-			return self.deployDataFiles( appName, localDataPath, remoteDataPath, **option )
+			return self._deployDataFiles( appName, localDataPath, remoteDataPath, **option )
 		except Exception, e:
 			logging.exception( e )
 			return False
@@ -133,49 +133,52 @@ class IOSDeviceItem( DeviceItem ):
 	def clearData( self ):
 		appName        = 'com.hatrixgames.yaka'
 		dev   = self._device
-		# devId = self._deviceId
-		# dev = MobileDevice.AMDevice( devId )
-		# dev.connect()
 		remoteDataPath = 'Documents/game'
 		if not self.isConnected():
 			logging.warn( 'device not connected' )
 			return False
+
+		dev.refresh_session()		
 		afc = getAppAFC( dev, appName )
 		cleanDirFromDevice( afc, remoteDataPath )
 		afc.disconnect()
 		# dev.disconnect()
 
+	def startDebug( self ):
+		self.debugSession = IOSDeviceDebugSession( self._device )
+		
 
-	def deployDataFiles( self, appName, localDataPath, remoteDataPath, **option ):
+
+	def _deployDataFiles( self, appName, localDataPath, remoteDataPath, **option ):
 		# devices = MobileDevice.list_devices()
 		if not self.isConnected():
 			logging.warn( 'device not connected' )
 			return False
 		dev   = self._device
-		dev.stop_session()
-		dev.start_session()
-		# devId = self._deviceId
-		# dev = MobileDevice.AMDevice( devId )
-		# dev.connect()
+		dev.refresh_session()
 		afc = getAppAFC( dev, appName )
 		# cleanDirFromDevice( afc, 'Documents' )
 		copyTreeToDevice( afc, localDataPath, remoteDataPath, **option )	
 		afc.disconnect()
-		# dev.disconnect()
 		return True
 
-# name = u''
-	# try:
-	# 	name = dev.get_value(name=u'DeviceName')
-	# except:
-	# 	pass
-	# print( u'%s - "%s"' % ( dev.get_deviceid(), name.decode(u'utf-8') ) )
-	# localPath  = None
-	# remotePath = None
-	# # remotePath = '/private/var/mobile/Applications/A9BB6740-D016-4800-A345-CBF0B909EBA7/YAKA.app'
+class IOSDeviceDebugSession(object):
+	def __init__(self, dev):
+		self.dev = dev
+		self.load_developer_dmg()
+		localPath = app.getProject().getHostPath( 'ios/build/Release-iphoneos/YAKA.app' )
+		print localPath
+		self.gdb = MobileDevice.GDB( dev, None, localPath )
+		self.gdb.set_run()
+		self.gdb.run()
 
-	# localPath = '../../moai/yaka/bin/ios/YAKA.app'
-
-	# gdb = MobileDevice.GDB( dev, None, localPath, remotePath )
-	# gdb.set_run()
-	# gdb.run()
+	def load_developer_dmg( self ):
+		dev = self.dev
+		try:
+			applist = MobileDevice.DebugAppList(dev)
+			applist.disconnect()
+		except:
+			im = MobileDevice.ImageMounter(dev)
+			imagepath = dev.find_developer_disk_image_path()
+			im.mount(imagepath)
+			im.disconnect()

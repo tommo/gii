@@ -44,6 +44,7 @@ class DeviceBrowser( DeviceManagerModule ):
 
 		self.tool = self.addToolBar( 'device_browser', self.window.addToolBar() )
 		self.addTool( 'device_browser/clear_data',    label = 'Clear Data' )
+		self.addTool( 'device_browser/debug',    label = 'Debug' )
 		signals.connect( 'device.connected', self.onDeviceConnected )
 		signals.connect( 'device.disconnected', self.onDeviceDisconnected )
 		signals.connect( 'device.activated', self.onDeviceActivated )
@@ -76,7 +77,10 @@ class DeviceBrowser( DeviceManagerModule ):
 				print 'clear data from', dev
 				dev.clearData()
 				print 'cleared!'
-			#TODO
+		elif name == 'debug':
+			for dev in self.tree.getSelection():
+				dev.startDebug()
+
 
 ##----------------------------------------------------------------##
 class DeviceTreeWidget( GenericTreeWidget ):

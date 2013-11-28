@@ -207,7 +207,14 @@ end
 
 
 function SceneGraphEditor:onEntityEvent( action, entity, scene, layer )
+	if action == 'clear' then
+		_owner.tree:clear()
+		gii.emitPythonSignal( 'scene.update' )
+		return 
+	end
+
 	if isEditorEntity( entity ) then return end
+
 	if action == 'add' then
 		_owner.tree:addNode( entity )
 		gii.emitPythonSignal( 'scene.update' )
