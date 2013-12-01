@@ -59,6 +59,9 @@ class SceneView( SceneEditorModule ):
 		self.addShortcut( 'main', 'R', self.changeEditTool, 'scale' )
 		self.addShortcut( 'main', 'F', self.focusSelection )
 
+		self.addShortcut( 'main', '/', self.toggleDebugLines )
+
+
 	def onStart( self ):
 		self.canvas.makeCurrent()
 		self.scheduleUpdate()
@@ -66,6 +69,10 @@ class SceneView( SceneEditorModule ):
 	def changeEditTool( self, name ):
 		self.canvas.makeCurrent()
 		self.canvas.safeCallMethod( 'view', 'changeEditTool', name )
+
+	def toggleDebugLines( self ):
+		self.canvas.makeCurrent()
+		self.canvas.safeCallMethod( 'view', 'toggleDebugLines' )
 
 	def onUpdateTimer( self ):
 		if self.updatePending == True:

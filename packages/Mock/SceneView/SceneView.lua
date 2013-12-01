@@ -221,6 +221,12 @@ function SceneView:changeEditTool( name )
 	self:refreshEditHandle()
 end
 
+function SceneView:toggleDebugLines()
+	local camCom = self.camera:getComponent( mock_edit.EditorCanvasCamera )
+	camCom:setShowDebugLines( not camCom.showDebugLines )
+	scheduleUpdate()
+end
+
 function SceneView:refreshEditHandle()
 	for handle in pairs( self.handles ) do
 		handle:destroyNow()

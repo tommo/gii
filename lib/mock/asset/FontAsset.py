@@ -21,12 +21,12 @@ class FontAssetManager(AssetManager):
 	def acceptAssetFile( self, filepath ):
 		if not os.path.isfile(filepath): return False		
 		name,ext=os.path.splitext(filepath)
-		return ext in ['.ttf','.fnt','.bdf']
+		return ext in ['.ttf','.fnt','.bdf', '.otf']
 
 	def importAsset( self, node, reload = False ):
 		filePath = node.getAbsFilePath()
 		name,ext = os.path.splitext(filePath)
-		if ext == '.ttf':
+		if ext == '.ttf' or ext == '.otf':
 			node.assetType='font_ttf'
 			node.setObjectFile( 'font', node.getFilePath() )		
 		elif ext == '.fnt':

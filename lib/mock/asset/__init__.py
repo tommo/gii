@@ -19,3 +19,6 @@ import FSMAsset
 
 import FrameBufferAsset
 import ShaderAsset
+
+import DataXLSAsset
+import DataJSONAsset

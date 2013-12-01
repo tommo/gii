@@ -6,6 +6,7 @@ from Device import DeviceItem
 from gii.core import app
 
 import MobileDevice
+import subprocess
 
 ##----------------------------------------------------------------##
 def copyToDevice( afc, srcFile, tgtFile, **option ):	
@@ -145,9 +146,7 @@ class IOSDeviceItem( DeviceItem ):
 		# dev.disconnect()
 
 	def startDebug( self ):
-		self.debugSession = IOSDeviceDebugSession( self._device )
-		
-
+		self.debugSession = IOSDeviceDebugSession( self )
 
 	def _deployDataFiles( self, appName, localDataPath, remoteDataPath, **option ):
 		# devices = MobileDevice.list_devices()
@@ -163,22 +162,37 @@ class IOSDeviceItem( DeviceItem ):
 		return True
 
 class IOSDeviceDebugSession(object):
-	def __init__(self, dev):
-		self.dev = dev
-		self.load_developer_dmg()
+	def __init__( self, deviceItem ):
+		tool = app.getPath( 'support/deploy/ios-deploy' )
+		arglist = [ tool ]
 		localPath = app.getProject().getHostPath( 'ios/build/Release-iphoneos/YAKA.app' )
-		print localPath
-		self.gdb = MobileDevice.GDB( dev, None, localPath )
-		self.gdb.set_run()
-		self.gdb.run()
-
-	def load_developer_dmg( self ):
-		dev = self.dev
+		arglist += ['--id', deviceItem.getId() ]
+		arglist += ['--bundle', localPath ]
+		arglist += ['--debug']
 		try:
-			applist = MobileDevice.DebugAppList(dev)
-			applist.disconnect()
-		except:
-			im = MobileDevice.ImageMounter(dev)
-			imagepath = dev.find_developer_disk_image_path()
-			im.mount(imagepath)
-			im.disconnect()
+			code = subprocess.call( arglist )
+			if code!=0: return code
+		except Exception, e:
+			logging.error( 'error in debugging device: %s ' % e)
+			return -1		
+
+# class IOSDeviceDebugSession(object):
+# 	def __init__(self, dev):
+# 		self.dev = dev
+# 		self.load_developer_dmg()
+# 		localPath = app.getProject().getHostPath( 'ios/build/Release-iphoneos/YAKA.app' )
+# 		print localPath
+# 		self.gdb = MobileDevice.GDB( dev, None, localPath )
+# 		self.gdb.set_run()
+# 		self.gdb.run()
+
+# 	def load_developer_dmg( self ):
+# 		dev = self.dev
+# 		try:
+# 			applist = MobileDevice.DebugAppList(dev)
+# 			applist.disconnect()
+# 		except:
+# 			im = MobileDevice.ImageMounter(dev)
+# 			imagepath = dev.find_developer_disk_image_path()
+# 			im.mount(imagepath)
+# 			im.disconnect()
