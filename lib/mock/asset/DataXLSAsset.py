@@ -10,6 +10,8 @@ import xlrd
 def cellValue( cell ):
 	if cell.ctype == xlrd.XL_CELL_BOOLEAN:
 		return cell.value == 1
+	elif cell.ctype == xlrd.XL_CELL_EMPTY:
+		return None
 	else:
 		return cell.value
 
@@ -32,6 +34,21 @@ def convertSheetToData( sheet ):
 					cell = sheet.cell( row, i )
 					rowData[key] = cellValue( cell )
 			data.append( rowData )
+		return sheetId, data
+
+	elif typeName == 'vlist':
+		data = []
+		cols = sheet.ncols
+		rows = sheet.nrows
+		if cols<2: return False
+		keys = [ cell.value for cell in sheet.col( 0 ) ]
+		for col in range( 1, cols ):
+			colData = {}
+			for i, key in enumerate( keys ):
+				if key:
+					cell = sheet.cell( i, col )
+					colData[key] = cellValue( cell )
+			data.append( colData )
 		return sheetId, data
 
 	elif typeName == 'dict':

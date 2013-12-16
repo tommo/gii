@@ -18,3 +18,5 @@ test/bin
 test/env/config/cache
 .waf*
 .lock-*
+dist
+build

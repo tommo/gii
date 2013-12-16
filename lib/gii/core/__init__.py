@@ -21,7 +21,7 @@ from tool           import ToolBase, startupTool
 from project        import Project
 from asset          import AssetLibrary, AssetException, AssetNode, AssetManager, AssetCreator
 from cache          import CacheManager
-from target         import Target, DeployManager
+# from target         import Target, DeployManager
 
 from MainModulePath import getMainModulePath
 

@@ -157,9 +157,9 @@ class EditorApp(object):
 	def getProject( self ):
 		return Project.get()
 
-	def openProject( self ):
+	def openProject( self, basePath = None ):
 		if self.projectLoaded: return
-		info = Project.findProject()
+		info = Project.findProject( basePath )
 		if not info:
 			raise Exception( 'no valid gii project found' )
 		proj = Project.get()

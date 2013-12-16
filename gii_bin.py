@@ -2,6 +2,7 @@
 #find gii library
 import os
 import os.path
+import platform
 import sys
 
 try:
@@ -15,7 +16,13 @@ def isPythonFrozen():
 
 def getMainModulePath():
 		if isPythonFrozen():
-			return os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding( )))
+			p = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding( )))
+			if platform.system() == u'Darwin':
+				return os.path.realpath( p + '/../../..' )
+			elif platform.system() == u'Windows':
+				return p
+			else:
+				return p
 		if __name__ == 'main':
 			mainfile = os.path.realpath( __file__ )
 			return os.path.dirname( mainfile )
@@ -51,4 +58,6 @@ def main():
 		gii.startup()
 
 if __name__ == '__main__':
+	if isPythonFrozen():
+		sys.argv = ['gii', 'stub']
 	main()
