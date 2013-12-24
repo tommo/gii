@@ -1,6 +1,9 @@
 import os.path
 from gii.core import AssetManager, AssetLibrary, getProjectPath, app
 import logging
+
+from WebP import convertToWebP
+
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
 	import os.path
@@ -49,6 +52,10 @@ class SpineAssetManager(AssetManager):
 				newPath   = context.addFile( texturePath )
 				exportedAtlasPath = context.getAbsFile( node.getObjectFile( 'atlas' ) )
 				context.replaceInFile( exportedAtlasPath, textureName, os.path.basename( newPath ) )
+				#webp conversion
+				fn = context.getAbsFile( texturePath )
+				if context.isNewFile( fn ):
+					convertToWebP( fn )
 		except Exception, e:
 			logging.exception( e )
 		

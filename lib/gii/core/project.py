@@ -6,6 +6,7 @@ import os.path
 import re
 import shutil
 import hashlib
+import time
 
 import signals
 import jsonHelper
@@ -346,7 +347,8 @@ class DeployContext():
 		self.assetPath   = path + '/asset'
 		self.fileMapping = {}
 		self.meta        = {}
-	
+		self.startTime   = time.time()
+
 	def cleanPath( self ):
 		logging.info( 'removing output path: %s' %  self.path )
 		# if os.path.isdir( self.path ):
@@ -379,7 +381,10 @@ class DeployContext():
 			if not os.path.exists( dst )\
 				or ( os.path.getmtime( src ) > os.path.getmtime( dst ) ):
 					shutil.copy( src, dst )
-			
+
+	def isNewFile( self, absPath ):
+		return int( os.path.getmtime( absPath ) ) >=  int(self.startTime)
+
 	def copyFile( self, srcPath, dstPath = None, **option ):
 		if not dstPath:
 			dstPath = os.path.basename( srcPath )
@@ -393,6 +398,9 @@ class DeployContext():
 			if self.checkFileIgnorable( fname ): continue
 			fpath = srcDir + '/' + fname
 			self.copyFile( fpath )
+
+	def hasFile( self, srcPath ):
+		return self.fileMapping.has_key( srcPath )
 
 	def addFile( self, srcPath, dstPath = None, **option ):
 		newPath = self.fileMapping.get( srcPath, None )

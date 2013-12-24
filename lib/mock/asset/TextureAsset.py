@@ -7,6 +7,7 @@ import json
 from gii.core import *
 
 from TextureProcessor import applyTextureProcessor
+from WebP import convertToWebP
 
 ##----------------------------------------------------------------##
 signals.register( 'texture.add' )
@@ -16,6 +17,7 @@ signals.register( 'texture.rebuild' )
 ##----------------------------------------------------------------##
 _TEXTURE_LIBRARY_INDEX_FILE = 'texture_library.json'
 _TEXTURE_LIBRARY_DATA_FILE = 'texture_library.data'
+_ATLAS_JSON_NAME = 'atlas.json'
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -115,9 +117,28 @@ class TextureAssetManager( AssetManager ):
 			return
 		group = texNode.parent
 		if group.cache and group.atlasMode:
-			newPath = context.addFile( group.cache )
+			if not context.hasFile( group.cache ):
+				newPath = context.addFile( group.cache )
+				atlasData = jsonHelper.tryLoadJSON( context.getPath( newPath ) + '/' + _ATLAS_JSON_NAME )
+				if atlasData:
+					#convert webp
+					for atlasEntry in atlasData['atlases']:
+						texName = atlasEntry['name']
+						fn = context.getPath( newPath ) + '/' + texName
+						if context.isNewFile( fn ):
+							convertToWebP( fn )
+			else:
+				newPath = context.getFile( group.cache )
+
 			mappedConfigFile = context.getFile( node.getObjectFile('config') )
-			context.replaceInFile( context.getPath( mappedConfigFile ), group.cache, newPath )
+			context.replaceInFile( context.getPath( mappedConfigFile ), group.cache, newPath )			
+		else:			
+			#convert webp
+			fn = context.getAbsFile( node.getObjectFile( 'pixmap' ) )
+			if context.isNewFile( fn ):				
+				convertToWebP( fn )
+
+
 
 def _fixPath( path ):
 		path = path.replace( '\\', '/' ) #for windows
@@ -288,8 +309,7 @@ class TextureLibrary( EditorModule ):
 			applyTextureProcessor( groupProcessor, dst )
 		nodeProcessor = texNode.processor
 		if nodeProcessor:
-			applyTextureProcessor( nodeProcessor, dst )
-
+			applyTextureProcessor( nodeProcessor, dst )		
 
 	def buildAtlas( self, group ):
 		logging.info( 'building atlas texture:' + group.name )
@@ -332,13 +352,15 @@ class TextureLibrary( EditorModule ):
 			data    = _convertAtlas( srcFile,  srcToAssetDict )
 			dstPath = outputDir
 			#copy generated atlas
-			for i in range( 0, len( data['atlases'] ) ):
-				src = '%s%d.png' % ( prefix, i )
-				dst = '%s/%s%d.png' % ( dstPath, atlasName, i )				
-				shutil.copy( src, dst )
+			for i, entry in enumerate( data['atlases'] ):
+				src = entry['name']
+				dstName = 'tex_%d' % i
+				# dst = '%s/%s%d' % ( dstPath, atlasName, i )
+				entry['name'] = dstName
+				shutil.copy( tmpDir( src ), dstPath +'/' + dstName )
 			#update texpack
 			data[ 'sources' ] = sourceList
-			cfgPath = outputDir + '/atlas.json'
+			cfgPath = outputDir + '/' + _ATLAS_JSON_NAME
 			fp = open( cfgPath, 'w' )
 			json.dump( data, fp, sort_keys=True, indent=2 )
 			fp.close()
@@ -354,6 +376,7 @@ class TextureLibrary( EditorModule ):
 		for node in nodes:
 			self.buildSubTexture( group, node )
 		#TODO
+	
 		return True
 
 	def buildSingleTexture( self, tex, node ):
