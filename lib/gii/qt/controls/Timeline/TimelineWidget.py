@@ -121,13 +121,13 @@ class TimelineRuler( QtGui.QFrame ):
 	def mousePressEvent(self, ev):
 		if self.dragging: return
 		button = ev.button()
-		if button == Qt.LeftButton:
+		if button == Qt.RightButton:
 			self.grabMouse()
 			self.dragging = 'scroll'
 			self.setCursor( Qt.ClosedHandCursor )
 			self.targetDragPos = self.scrollPos
 			self.dragFrom = ev.x()
-		elif button == Qt.RightButton:
+		elif button == Qt.LeftButton:
 			if not self.cursorDraggable: return
 			self.grabMouse()
 			self.dragging = 'cursor'

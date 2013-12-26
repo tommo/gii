@@ -15,6 +15,7 @@ class Deck2DPreviewer(AssetPreviewer):
 		return assetNode.getType() in [ 
 			'deck2d.quad',
 			'deck2d.stretchpatch',
+			'deck2d.quad_array',
 			'deck2d.tileset',
 			'deck2d.polygon'
 			]

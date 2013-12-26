@@ -26,7 +26,6 @@ def getFieldEditor( dataType ):
 		if editor: return editor
 		dataType = getSuperType( dataType )
 		if not dataType: return None
-	
 
 def registerModelEditor( model, clas ):
 	_ModelEditorRegistry[ model ] = clas
@@ -34,9 +33,14 @@ def registerModelEditor( model, clas ):
 ##----------------------------------------------------------------##
 class PropertyEditor( QtGui.QWidget ):
 	propertyChanged = QtCore.pyqtSignal( object, str, object )
+	
+	_fieldEditorCacheWidget = None
+	_fieldEditorCache = {}
 
 	def __init__( self, parent ):
 		super( PropertyEditor, self ).__init__( parent )
+		if not PropertyEditor._fieldEditorCacheWidget:
+			PropertyEditor._fieldEditorCacheWidget = QtGui.QWidget()
 		layout = QtGui.QFormLayout( )
 		self.setLayout( layout )
 		self.layout = layout
@@ -50,7 +54,7 @@ class PropertyEditor( QtGui.QWidget ):
 		self.refreshing = False
 		self.context    = None
 		self.clear()
-
+		
 	def _buildSubEditor( self, field, label, editorClas, fieldType ):
 		editor = editorClas( self, field, fieldType )
 		labelWidget  = editor.initLabel( label, self )
@@ -151,7 +155,6 @@ class PropertyEditor( QtGui.QWidget ):
 			self.refreshing = True #avoid duplicated update
 			editor.set( v )
 			self.refreshing = False
-
 
 ##----------------------------------------------------------------##
 class FieldEditor( object ):

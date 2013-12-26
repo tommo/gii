@@ -21,18 +21,20 @@ function Deck2DEditor:selectDeck( deck )
 	self.currentDeck = deck
 	
 	local previewDeck = deck and deck:getMoaiDeck()
+	local dtype = deck.type
 
-	if deck.type == 'tileset' then
+	if dtype == 'tileset' or dtype == 'quad_array' then
 		self.preview:setGrid( self.previewGrid )
 	else
 		self:detach( self.preview )
 		self.preview = self:addProp{}
 	end
-	if deck.type == 'stretchpatch' then
+
+	if dtype == 'stretchpatch' then
 		self.preview:setScl( 2, 2, 2 )
 	end
 
-	if deck.type == 'polygon' then
+	if dtype == 'polygon' then
 		self.polygonEditor:setEnabled( true )
 		self.polygonEditor:setDeck( deck )
 		previewDeck = self.polygonEditor:getPreviewDeck()
@@ -58,6 +60,25 @@ function Deck2DEditor:updateDeck( )
 		for j = row, 1, -1 do
 			for i = 1, col do
 				grid:setTile( i, j, t )
+				t=t+1
+			end
+		end
+	elseif deck.type == 'quad_array' then
+		local grid = self.previewGrid
+		local col, row = deck.col, deck.row
+		local tw , th  = deck.tw , deck.th
+		local sp = deck.spacing
+		grid:setSize( col, row, tw + sp, th + sp, 0, 0, 1, 1)
+		local t = 1
+		local count = deck.count
+		if count <= 0 then count = col*row end
+		for j = row, 1, -1 do
+			for i = 1, col do				
+				if t <= count then
+					grid:setTile( i, j, t )
+				else
+					grid:setTile( i, j, 0 )
+				end
 				t=t+1
 			end
 		end
@@ -128,7 +149,7 @@ end
 function Deck2DEditor:onDraw()
 	local deck = self.currentDeck
 	if not deck then return end
-	if deck.type == 'tileset' then
+	if deck.type == 'tileset' or deck.type == 'quad_array' then
 		local col, row = deck.col, deck.row
 		local tw , th  = deck.tw , deck.th
 		local sp = deck.spacing
