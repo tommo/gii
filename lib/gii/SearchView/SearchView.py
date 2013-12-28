@@ -75,6 +75,7 @@ class SearchViewWidget( QtGui.QWidget ):
 		self.selectFirstItem()
 
 	def updateSearchTerms( self, text ):
+		self.treeResult.hide()
 		if text:
 			globs = text.split()
 			globs1 = []
@@ -92,6 +93,7 @@ class SearchViewWidget( QtGui.QWidget ):
 				self.treeResult.setNodeVisible( entry, True )
 
 		self.treeResult.sortItems( 0, Qt.AscendingOrder )
+		self.treeResult.show()
 		self.selectFirstItem()
 
 	def confirmSelection( self, obj ):

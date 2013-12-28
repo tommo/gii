@@ -68,11 +68,13 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.nodeDict = {}
 
 	def rebuild( self ):
+		self.hide()
 		self.clear()
 		rootNode = self.getRootNode()
 		if rootNode:
 			self.addNode( rootNode )
 			self.loadTreeStates()
+		self.show()
 
 	def addNode( self, node, addChildren = True, **option ):
 		assert not node is None, 'attempt to insert null node '

@@ -1,10 +1,12 @@
 #!/usr/bin/env python
+#original author: Vladimir Kozbin ( http://github.com/wawaka/texture-atlas-generator )
 
 import os
 import time
 import pickle
 import hashlib
 import subprocess
+import math
 
 from PIL import Image
 
@@ -202,6 +204,7 @@ class AtlasGenerator:
 		self.spacing = kwargs.get('spacing', 0) # minimal space between images in atlas, in pixels
 		self.dry_run = kwargs.get('dry_run', False)
 		self.quiet = kwargs.get('quiet', False)
+		self.allowBigTexture = kwargs.get( 'allow_big_texture', True )
 		self.pixel_type = 'RGBA'
 
 		self.cache_hits = 0
@@ -283,26 +286,84 @@ class AtlasGenerator:
 		return bb
 
 	def generateAtlases(self, images):
+		if not images:
+			print( "ERROR: no images to insert " )
+			return []
+		confirmedAtlases = []
+		while len( images )>0:
+			atlas = self.generateOneAtlas( images, confirmedAtlases )
+			if atlas:
+				confirmedAtlases.append( atlas )
+			else:
+				break
+		return confirmedAtlases
+	
+	def generateOneAtlas(self, images, confirmedAtlases ):
 		w0, h0 = self.size
 		r = w0 / h0
-		expand = 1
 		if r > 1:
 			h = 32
 			w = r * h
 		else:
 			w = 32
 			h = w / r
-		
-		while w < w0 and h < h0: #determine max atlas size
-			atlases = self.generateAtlasesOfSize( images, (w,h), True ) 
-			if atlases: return atlases
+		newAtlas = None
+		insertedNew = None
+		done  = False
+		expand = 1
+		while w <= w0 and h <= h0: #determine max atlas size
+			if insertedNew: #reinsert images not accepted
+				images.reverse()
+				images+=insertedNew
+				images.reverse()
+
+			newAtlas, insertedNew = self.generateOneAtlasOfSize( images, (w,h), confirmedAtlases )
+			if insertedNew is None: #all done
+				return newAtlas
 			if expand == 1:
 				w *= 2
 				expand = 2
 			else:
 				h *= 2
 				expand = 1
-		return self.generateAtlasesOfSize( images, (w0,h0), False )
+		#not
+		if insertedNew: #not empty
+			return newAtlas			
+		else: #image too large to insert
+			if self.allowBigTexture: #build a atlas to contain the big one
+				img = images.pop(0)
+				w = int( math.pow( 2, math.ceil( math.log( img.w, 2 ) ) ) )
+				h = int( math.pow( 2, math.ceil( math.log( img.h, 2 ) ) ) )
+				newAtlas = Node( 0, 0, w, h )
+				node = newAtlas.insert( img, 0 )
+				print("INFO:Big texture {0}".format( img.path ))
+				return newAtlas
+			else:#skip				
+				print("ERROR: failed to insert image {0}".format(images[0].path))
+				images.pop(0)
+			return None
+
+	def generateOneAtlasOfSize(self, images, size, confirmedAtlases ):		
+		insertedNew  = [] #images inserted into new atlas, might be reinserted
+		new_atlas = Node(0, 0, size[0], size[1])		
+		while len( images ) > 0:
+			img = images[0]			
+			node = None
+			for atlas in confirmedAtlases: #try prev atlas first
+				node = atlas.insert(img, self.spacing)
+				if node is not None:
+					images.pop( 0 )
+					break
+
+			if node is None: #try new atlas
+				node = new_atlas.insert(img, self.spacing)
+				if node is None: #no more space
+					return new_atlas, insertedNew
+				else:
+					insertedNew.insert( 0, img )
+				images.pop( 0 )
+
+		return new_atlas, None #done
 
 	def generateAtlasesOfSize(self, images, size, noNewAtlas = False ):
 		atlases = []
