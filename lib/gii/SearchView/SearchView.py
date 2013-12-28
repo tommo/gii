@@ -9,6 +9,10 @@ from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
+
+_SEARCHVIEW_ITEM_LIMIT = 100
+
+# import difflib
 ##----------------------------------------------------------------##
 def getModulePath( path ):
 	import os.path
@@ -22,6 +26,13 @@ class WindowAutoHideEventFilter(QObject):
 		if e == QEvent.WindowDeactivate:
 			obj.hide()
 		return QObject.eventFilter( self, obj, event )
+
+##----------------------------------------------------------------##
+def _sortMatchScore( e1, e2 ):
+	v = e2.matchScore - e1.matchScore
+	if v < 0: return -1
+	if v > 0: return 1
+	return 0
 
 ##----------------------------------------------------------------##
 class SearchViewWidget( QtGui.QWidget ):
@@ -69,13 +80,31 @@ class SearchViewWidget( QtGui.QWidget ):
 		self.textTerms.setFocus()
 		self.targetType = typeId
 		self.entries = self.module.enumerateSearch( typeId, context )
-		self.treeResult.rebuild()
+		# self.treeResult.rebuild()		
 		self.searchState = None
-		self.treeResult.sortItems( 0, Qt.AscendingOrder )
+		self.updateVisibleEntries( self.entries )
 		self.selectFirstItem()
 
+	def updateVisibleEntries( self, entries ):
+		tree = self.treeResult
+		tree.hide()
+		root = tree.rootItem
+		root.takeChildren()
+		entries1 = entries
+		# self.visEntries  = entries
+		if entries != self.entries:
+			entries1 = sorted( entries, cmp = _sortMatchScore )
+		if len( entries1 ) > _SEARCHVIEW_ITEM_LIMIT:
+			entries1 = entries1[:_SEARCHVIEW_ITEM_LIMIT]
+		for e in entries1:
+			if not e.treeItem:
+				e.treeItem = tree.addNode( e )				 
+			else:
+				root.addChild( e.treeItem )
+		tree.show()
+
 	def updateSearchTerms( self, text ):
-		self.treeResult.hide()
+		tree = self.treeResult
 		if text:
 			globs = text.split()
 			globs1 = []
@@ -84,16 +113,13 @@ class SearchViewWidget( QtGui.QWidget ):
 					if len(g) > 1: globs1.append( g.upper() )
 			else:
 				globs1 = [ g.upper() for g in globs ]
+			visEntries = []
 			for entry in self.entries:
-				entry.visible = entry.matchQuery( globs1 )
-				self.treeResult.setNodeVisible( entry, entry.visible )
+				if entry.matchQuery( globs1 ):
+					visEntries.append( entry )				
+			self.updateVisibleEntries( visEntries )
 		else:
-			for entry in self.entries:
-				entry.visible = True
-				self.treeResult.setNodeVisible( entry, True )
-
-		self.treeResult.sortItems( 0, Qt.AscendingOrder )
-		self.treeResult.show()
+			self.updateVisibleEntries( self.entries )			
 		self.selectFirstItem()
 
 	def confirmSelection( self, obj ):
@@ -263,28 +289,29 @@ class SearchViewTree(GenericTreeWidget):
 ##----------------------------------------------------------------##
 class SearchEntry(object):
 	def __init__( self, obj, name, typeName, iconName ):
-		self.visible    = True
+		self.visible    = False
+		self.treeItem   = None
 		self.matchScore = 0
 		self.obj        = obj
 		self.name       = name
 		self.typeName   = typeName
 		self.iconName   = iconName
+		self.typeNameU  = typeName.upper()
+		self.nameU      = name.upper()
 		self.checked    = False
 
 	def matchQuery( self, globs ):
 		score = 0
-		name = self.name.upper()
-		typeName = self.typeName.upper()
+		name = self.nameU
+		typeName = self.typeNameU
 		for i, t in enumerate( globs ):
 			pos = name.find( t )
 			if pos >= 0:
-				score += 10.0/(i+1)/(pos+1)
-
-		for i, t in enumerate( globs ):
-			if t in self.typeName.upper():
-				findInType = True
-				score += 1
-				break
+				score += ( 2 + len(t) + i*0.5 )
+		
+		if globs[0] in typeName:
+			findInType = True
+			score += 1
 
 		self.matchScore = score
 		return score > 0
@@ -295,6 +322,7 @@ class SearchView( EditorModule ):
 		self.enumerators = []
 		self.onCancel    = None
 		self.onSelection = None
+		self.visEntries  = None
 
 	def getName( self ):
 		return 'search_view'
@@ -368,8 +396,6 @@ class SearchViewItem( QtGui.QTreeWidgetItem ):
 		node1 = hasattr(other, 'node') and other.node or None
 		if not node1:
 			return True
-		tree = self.treeWidget()
-
 		t0 = - node0.matchScore
 		t1 = - node1.matchScore
 		if t0 < t1: return True

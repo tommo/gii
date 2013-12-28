@@ -209,6 +209,18 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			return True
 		return False
 
+	# def _detachNode( self, node ): #dangerous method
+	# 	item = self.getItemByNode( node )
+	# 	if item and item != self.rootItem:
+	# 		( item.parent() or self.rootItem ).removeChild( item )
+	# 		item.detachedParent = True
+
+	# def _attachNode( self, node ):
+	# 	item = self.getItemByNode( node )
+	# 	if item and item != self.rootItem:
+	# 		( item.parent() or self.rootItem ).removeChild( item )
+	# 		item.detached = False
+
 	def selectNode( self, node, **kw ):
 		if not kw.get( 'add', False ):
 				self.selectionModel().clearSelection()
