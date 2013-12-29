@@ -114,32 +114,32 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/find/find_entity', dict( label = 'Find In Scene', shortcut = 'ctrl+g' ) )
 
 		#Toolbars
-		self.addTool( 'scene_graph/fold_all', label = 'fold' )
-		self.addTool( 'scene_graph/unfold_all', label = 'unfold' )
+		self.addTool( 'scene_graph/fold_all',    label = 'fold' )
+		self.addTool( 'scene_graph/unfold_all',  label = 'unfold' )
 		self.addTool( 'scene_graph/load_prefab', label = 'prefab' )
 		self.addTool( 'scene_graph/save_prefab', label = '->prefab' )
 
 		self.addTool( 'scene/refresh', label = 'refresh', icon='refresh' )
 
 		#SIGNALS
-		signals.connect( 'moai.clean', self.onMoaiClean )
+		signals.connect( 'moai.clean',        self.onMoaiClean        )
 
-		signals.connect( 'scene.change', self.onSceneChanged )
+		signals.connect( 'scene.change',      self.onSceneChanged     )
 
-		signals.connect( 'selection.changed', self.onSelectionChanged)
-		signals.connect( 'selection.hint', self.onSelectionHint )
+		signals.connect( 'selection.changed', self.onSelectionChanged )
+		signals.connect( 'selection.hint',    self.onSelectionHint    )
 
-		signals.connect( 'preview.start', self.onPreviewStart )
-		signals.connect( 'preview.stop' , self.onPreviewStop )
+		signals.connect( 'preview.start',     self.onPreviewStart     )
+		signals.connect( 'preview.stop' ,     self.onPreviewStop      )
 
-		signals.connect( 'entity.added', self.onEntityAdded )
-		signals.connect( 'entity.removed', self.onEntityRemoved )
-		signals.connect( 'entity.renamed', self.onEntityRenamed )
+		signals.connect( 'entity.added',      self.onEntityAdded      )
+		signals.connect( 'entity.removed',    self.onEntityRemoved    )
+		signals.connect( 'entity.renamed',    self.onEntityRenamed    )
 
-		signals.connect( 'component.added', self.onComponentAdded )
+		signals.connect( 'component.added',   self.onComponentAdded   )
 		signals.connect( 'component.removed', self.onComponentRemoved )
 
-		signals.connect( 'app.post_start', self.postStart )
+		signals.connect( 'app.post_start',    self.postStart          )
 
 		#editor
 		if self.getModule('introspector'):

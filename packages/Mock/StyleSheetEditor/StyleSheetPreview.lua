@@ -1,97 +1,89 @@
-context        = false
--------
-currentSheet = false
-currentFont = false
-currentFontSize = 20
-currentText  ='Hello, Gii!'
-currentDefault = false
-function recreateTextBox()
-	textbox = MOAITextBox.new()
-	textbox:setYFlip( true )
-	textbox:setString( ' ' )
-	textbox:setBlendMode( MOAIProp.GL_SRC_ALPHA,MOAIProp.GL_ONE_MINUS_SRC_ALPHA ) 
-	textbox:setShader( MOAIShaderMgr.getShader(MOAIShaderMgr.FONT_SHADER) )
-	textbox:setStyle( gii.getDefaultStyle() )
-	local w,h =context:getSize()
-	textbox:setRect(-w/2 ,-h/2, w/2, h/2)	
-	context:insertProp(textbox)	
+--------------------------------------------------------------------
+scn = mock_edit.createEditorCanvasScene()
+--------------------------------------------------------------------
+
+CLASS: StyleSheetPreview ( mock_edit.EditorEntity )
+	:MODEL{}
+
+function StyleSheetPreview:onLoad()
+	self:addSibling( mock_edit.CanvasGrid() )
+	self:addSibling( mock_edit.CanvasNavigate() )
+	self:attach( mock.InputScript{ device = scn.inputDevice } )
+	self:attach( mock.DrawScript{ priority = 1000 } )
+
+	self.styleSheet = false
+	self.textLabel = self:attach( mock.TextLabel() )
+	self.textLabel:setSize( 200, 200 )
+	self.textLabel:setText( 'hello!' )
+	self:setVisible( false )
 end
 
-function onLoad()
-	context = gii.createEditCanvasContext()
-	context.layer:showDebugLines( true )
-	-- MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX, 1, 1, 1, 1, 1 )
-	-- MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX_LAYOUT, 1, 0, 0, 1, 1 )
-	-- MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX_BASELINES, 1, 1, 0, 0, 1 )
-	recreateTextBox()
-end
-
-function onResize(w,h)
-	context:resize(w,h)
-	textbox:setRect(-w/2 ,-h/2, w/2, h/2)	
-end
-
-function updateText()
-	if currentAlign=='Align Left' then
-		textbox:setAlignment( MOAITextBox.LEFT_JUSTIFY )
-	elseif currentAlign=='Align Right' then
-		textbox:setAlignment( MOAITextBox.RIGHT_JUSTIFY )
-	elseif currentAlign=='Align Center' then
-		textbox:setAlignment( MOAITextBox.CENTER_JUSTIFY )
+function StyleSheetPreview:open( path )
+	self.styleSheet = mock.loadAsset( path )
+	if self.styleSheet then
+		self.textLabel:setStyleSheet( path )
 	end
-
-	textbox:setString( currentText or '' )
-	textbox:forceUpdate()
-
-	_owner:updateCanvas()
+	self:setVisible( true )
+	updateCanvas()
+	return self.styleSheet
 end
 
-function setText( text )
-	currentText = text
-	updateText()
+function StyleSheetPreview:save( path )
+	if not self.styleSheet then return end
+	mock.serializeToFile( self.styleSheet, path )
 end
 
-function setAlign( align )
-	currentAlign = align
-	updateText()
+function StyleSheetPreview:close()
+	self.styleSheet = false
+	self:setVisible( false )
 end
 
-
-local function createStyle( data )
-	local style = MOAITextStyle.new()
-	local name = data.name
-	local font = mock.loadAsset( data.font ) 
-	local size = data.size
-	local color = gii.listToTable(data.color)
-	style:setFont( font or mock.getFontPlaceHolder() )
-	style:setSize( size )
-	style:setColor( unpack(color) )
-	return name, style
+function StyleSheetPreview:setPreviewText( t )
+	self.textLabel:setText( t )
+	updateCanvas()
 end
 
-function setStyleSheet( sheet )
-	recreateTextBox()
-	currentSheet = sheet
-	local styles = sheet.styles
-	currentDefault = false
-	for data in python.iter( styles ) do
-		local name, style = createStyle( data )
-		if not currentDefault or name == 'default' then
-			currentDefault = name
-			textbox:setStyle( style )
-		end
-		textbox:setStyle( name, style )
+function StyleSheetPreview:setAlignment( a )
+	self.textLabel:setAlignment( a )
+	updateCanvas()
+end
+
+local getBuiltinShader          = MOAIShaderMgr. getShader
+local DECK2D_TEX_ONLY_SHADER    = MOAIShaderMgr. DECK2D_TEX_ONLY_SHADER
+local DECK2D_SHADER             = MOAIShaderMgr. DECK2D_SHADER
+local FONT_SHADER               = MOAIShaderMgr. FONT_SHADER
+
+function StyleSheetPreview:setShader( s )
+	if s == 'tex' then
+		self.textLabel.box:setShader( getBuiltinShader( DECK2D_SHADER ) )
+	else
+		self.textLabel.box:setShader( getBuiltinShader( FONT_SHADER ) )
 	end
-	updateText()
 end
 
-function updateStyle( data )
-	if not currentSheet then return end
-	local name, style = createStyle( data )
-	textbox:setStyle( name, style )
-	if currentDefault == name then
-		textbox:setStyle( style )
-	end
-	textbox:forceUpdate()
-	_owner:updateCanvas()
+----
+
+function StyleSheetPreview:addStyle()
+	return self.styleSheet:addStyle()
 end
+
+function StyleSheetPreview:removeStyle( s )
+	return self.styleSheet:removeStyle( s )
+end
+
+function StyleSheetPreview:cloneStyle( s )
+	return self.styleSheet:cloneStyle( s )
+end
+
+function StyleSheetPreview:renameStyle( s, name )
+	s.name = name
+end
+
+function StyleSheetPreview:updateStyles()
+	self.styleSheet:updateStyles()
+	self.textLabel.box:setYFlip( false ) --hacking to force re-layout
+	updateCanvas()
+end
+
+--------------------------------------------------------------------
+preview = scn:addEntity( StyleSheetPreview() )

@@ -1,6 +1,9 @@
 import os.path
-from gii.core import AssetManager, AssetLibrary, AssetCreator, app
-import json
+
+from gii.core         import AssetManager, AssetLibrary, AssetCreator, app
+from gii.qt.dialogs   import requestString, alertMessage, confirmDialog
+
+from mock import _MOCK
 
 ##----------------------------------------------------------------##
 class StyleSheetAssetManager(AssetManager):
@@ -9,18 +12,8 @@ class StyleSheetAssetManager(AssetManager):
 
 	def acceptAssetFile(self, filepath):
 		if not os.path.isfile(filepath): return False		
-		name,ext=os.path.splitext(filepath)
-		if not ext in ['.stylesheet']: return False
-		#validation 
-		try:
-			fp = open( filepath, 'r' )
-			text = fp.read()
-			fp.close()
-			data = json.loads( text )
-			return data.get( '_assetType', None ) == 'stylesheet'
-		except Exception, e:
-			pass
-		return False
+		if not filepath.endswith( '.stylesheet' ): return False
+		return True
 
 	def importAsset(self, node, reload = False ):
 		node.assetType = 'stylesheet'
@@ -32,7 +25,7 @@ class StyleSheetAssetManager(AssetManager):
 		if not editor: 
 			return alertMessage( 'Editor not load', 'Style Editor not found!' )
 		editor.setFocus()
-		editor.startEdit( node )
+		editor.openAsset( node )
 
 ##----------------------------------------------------------------##
 class StyleSheetCreator( AssetCreator ):
@@ -53,18 +46,11 @@ class StyleSheetCreator( AssetCreator ):
 			nodepath = contextNode.getSiblingPath(filename)
 
 		fullpath = AssetLibrary.get().getAbsPath( nodepath )
-		data={
-			'_assetType':'stylesheet', #checksum
-			'styles':[]
-		}
-		print fullpath
-		if os.path.exists( fullpath ):
-			raise Exception( 'File already exist: %s' % fullpath )
-		fp = open( fullpath, 'w' )
-		json.dump(data, fp, sort_keys=True,indent=2)
-		fp.close()
+		modelName = _MOCK.Model.findName( 'StyleSheet' )
+		assert( modelName )
+		_MOCK.createEmptySerialization( fullpath, modelName )
 		return nodepath
-
+		
 
 ##----------------------------------------------------------------##
 StyleSheetAssetManager().register()

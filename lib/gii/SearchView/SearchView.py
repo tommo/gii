@@ -30,8 +30,10 @@ class WindowAutoHideEventFilter(QObject):
 ##----------------------------------------------------------------##
 def _sortMatchScore( e1, e2 ):
 	v = e2.matchScore - e1.matchScore
-	if v < 0: return -1
 	if v > 0: return 1
+	if v < 0: return -1
+	if e2.name > e1.name: return 1
+	if e2.name < e1.name: return -1
 	return 0
 
 ##----------------------------------------------------------------##

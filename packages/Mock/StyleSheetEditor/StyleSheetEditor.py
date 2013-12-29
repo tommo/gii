@@ -4,17 +4,23 @@ import shutil
 import time
 import json
 
-from gii.core         import *
-from gii.qt           import *
-from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
-from gii.qt.dialogs   import requestString, alertMessage, requestColor
+from gii.core                            import *
 
-from gii.AssetEditor  import AssetEditorModule
+from gii.qt                              import *
+from gii.qt.IconCache                    import getIcon
+from gii.qt.helpers                      import addWidgetWithLayout, QColorF, unpackQColor
+from gii.qt.dialogs                      import requestString, alertMessage, requestColor
+from gii.qt.controls.Timeline            import TimelineWidget
+from gii.qt.controls.GenericTreeWidget   import GenericTreeWidget
+from gii.qt.controls.PropertyEditor      import PropertyEditor
+from gii.AssetEditor                     import AssetEditorModule
+from gii.moai.MOAIEditCanvas             import MOAIEditCanvas
 
-from gii.moai.MOAIEditCanvas import  MOAIEditCanvas
+from PyQt4                               import QtCore, QtGui, QtOpenGL
+from PyQt4.QtCore                        import Qt
 
-from PyQt4  import QtCore, QtGui, QtOpenGL
-from PyQt4.QtCore import Qt
+from gii.SearchView   import requestSearchView, registerSearchEnumerator
+
 
 def _getModulePath( path ):
 	import os.path
@@ -33,16 +39,12 @@ def _fixDuplicatedName( names, name, id = None ):
 	else:
 		return testName
 ##----------------------------------------------------------------##
-
 _LOREM = '''Lorem ipsum dolor sit amet, consectetur adipisicing elit, '''
-
 ##----------------------------------------------------------------##
 class MockStyleSheetEditor( AssetEditorModule ):
-	"""docstring for MockStyleSheetEditor"""
 	def __init__(self):
 		super(MockStyleSheetEditor, self).__init__()
-		self.editingAsset = None
-		self.styleList={}
+		self.editingNode = None
 		self.styleSheetData = None
 		self.currentStyle   = None
 	
@@ -50,7 +52,7 @@ class MockStyleSheetEditor( AssetEditorModule ):
 		return 'mock.stylesheet_editor'
 
 	def getDependency(self):
-		return [ 'qt', 'moai' ]
+		return [ 'qt', 'mock' ]
 
 	def onLoad(self):
 		self.container = self.requestDocumentWindow( 'MockStyleSheetEditor',
@@ -58,58 +60,52 @@ class MockStyleSheetEditor( AssetEditorModule ):
 				size        = (500,300),
 				minSize     = (500,300),
 				dock        = 'right'
-				# allowDock = False
 			)
+		self.toolBar = self.addToolBar( 'style_sheet', self.container.addToolBar() )
 
 		self.window = window = self.container.addWidgetFromFile(
 			_getModulePath('styleEditor.ui')
 		)
 		
-		self.previewCanvas = addWidgetWithLayout(
-			MOAIEditCanvas(window.canvasContainer),
-			window.canvasContainer
-		)
-
-		self.previewCanvas.loadScript( _getModulePath('StyleSheetPreview.lua') )
-
-		self.singlePreviewCanvas = addWidgetWithLayout(
-			MOAIEditCanvas(window.singlePreviewContainer),
-			window.singlePreviewContainer
-		)
-
-		self.singlePreviewCanvas.loadScript( _getModulePath('SingleStylePreview.lua') )
-
-		window.listStyles.itemSelectionChanged.connect(self.onItemSelectionChanged)
-		window.listStyles.setSortingEnabled(True)
-
-		window.toolAdd.clicked.connect(self.onAddStyle)
-		window.toolRemove.clicked.connect(self.onRemoveStyle)
-		window.toolClone.clicked.connect(self.onCloneStyle)
-		
-		window.buttonColor.clicked.connect( 
-			lambda : self.onPickColor( 
-					requestColor( 'Font Color', 
-						QColorF( *self.currentStyle.get('color', [1,1,1,1]) ),
-						onColorChanged = self.onPickColor
-						)
+		self.tree = addWidgetWithLayout( 
+			StyleTreeWidget( self.window.containerTree, 
+				multiple_selection = False,
+				editable  = True,
+				show_root = False,
+				sorting   = True,
+				drag_mode = False
 				)
 			)
-		window.spinFontSize.valueChanged.connect(self.onSizeChanged)
-		window.comboFont.currentIndexChanged.connect(self.onFontChanged)
-		window.checkAllowScale.stateChanged.connect(self.onAllowScaleChanged)
+		self.tree.module = self
 
-		window.textPreview.textChanged.connect( self.onPreviewTextChanged )
+		self.propEditor = addWidgetWithLayout(
+			PropertyEditor( window.containerProp )
+		)
 
-		window.comboAlign.addItems(['Align Left','Align Center','Align Right'])
-		window.comboAlign.currentIndexChanged.connect( self.onAlignChanged )
+		#Previews
+		self.canvasPreviewSheet = addWidgetWithLayout(
+			MOAIEditCanvas(window.previewSheet)
+		)
+		self.canvasPreviewSheet.loadScript( _getModulePath('StyleSheetPreview.lua') )
 
-		signals.connect('asset.modified', self.onAssetModified)
-		self.container.setEnabled( False )
+		self.canvasPreviewStyle = addWidgetWithLayout(
+			MOAIEditCanvas(window.previewStyle)
+		)
+		self.canvasPreviewStyle.loadScript( _getModulePath('SingleStylePreview.lua') )
 
-	def refreshFontNames(self):
-		self.window.comboFont.clear()
-		for node in AssetLibrary.get().enumerateAsset( ( 'font_ttf', 'font_bmfont' ) ):
-			self.window.comboFont.addItem( node.getPath(), node )		
+		#Tools
+		self.addTool( 'style_sheet/save',         label = 'Save', icon = 'save' )
+		self.addTool( 'style_sheet/add_style',    label = 'Add Style', icon = 'add' )
+		self.addTool( 'style_sheet/remove_style', label = 'Remove Style', icon = 'remove' )
+		self.addTool( 'style_sheet/clone_style',  label = 'Clone Style', icon = 'clone' )
+
+		#signals
+		self.propEditor .propertyChanged .connect(self.onPropertyChanged)
+
+		window.textStylePreview.textChanged.connect( self.onStylePreviewTextChanged )
+		window.textSheetPreview.textChanged.connect( self.onSheetPreviewTextChanged )
+
+# 		window.comboAlign.currentIndexChanged.connect( self.onAlignChanged )
 		
 	def onSetFocus(self):
 		self.container.show()
@@ -117,160 +113,131 @@ class MockStyleSheetEditor( AssetEditorModule ):
 		self.container.activateWindow()
 		self.container.setFocus()
 
-	def startEdit( self, node, subnode=None ):
+	def openAsset( self, node ):
 		self.setFocus()
-
-		if node == self.editingAsset: return
-		self.saveAsset()
+		if self.editingNode == node: return
+		self.closeAsset()
 		self.container.setEnabled( True )
-		
-		self.editingAsset = node
-		self.container.setDocumentName( node.getPath() )
+		self.editingNode = node
+		self.container.setDocumentName( node.getNodePath() )
+		self.editingSheet = self.canvasPreviewSheet.safeCallMethod( 'preview', 'open', node.getNodePath() )
+		self.tree.rebuild()
+		self.previewText = self.editingNode.getMetaData( 'previewText', _LOREM )
+		self.window.textSheetPreview.setPlainText( self.previewText )
+		self.window.textStylePreview.setText( "Hello, Gii!" )
 
-		self.window.settingPanel.setEnabled( False )
-		self.previewText = node.getMetaData( 'previewText', _LOREM )
-		listStyles = self.window.listStyles
-		self.window.textPreview.setPlainText( self.previewText )
-
-		self.styleSheetData = node.loadAsJson()
-		listStyles.clear()
-		for style in self.styleSheetData.get('styles', []):
-			listStyles.addItem( style.get('name','unamed') )
-
-		self.previewCanvas.safeCall('setStyleSheet', self.styleSheetData)
-
-	def stopEdit( self ):
-		if self.editingAsset:
+	def closeAsset( self ):
+		if self.editingNode:
 			self.saveAsset()
 			self.container.setEnabled( False )
-			self.editingAsset = None
-			self.listStyles.clear()
+			self.editingNode  = None
+			self.editingSheet = None
+			self.tree.clear()
+			self.propEditor.clear()
 
 	def saveAsset(self):
-		if not self.styleSheetData: return
-		self.editingAsset.saveAsJson(self.styleSheetData)
-
-	def findStyle(self, name):
-		if not self.styleSheetData: return None
-		for style in self.styleSheetData.get('styles', []):
-			if style.get('name') == name : return style
-		return None
-
-	def addStyle( self, name, item ):
-		styleItems = self.styleSheetData['styles']
-		names = [ item0['name'] for item0 in styleItems ]
-		name = _fixDuplicatedName( names , item['name'] )
-		item['name'] = name
-		styleItems.append( item )
-		
-		self.saveAsset()
-
-		listItem = QtGui.QListWidgetItem( name )
-		self.window.listStyles.addItem( listItem )
-		listItem.setSelected( True )
-
-	def onStart( self ):
-		self.refreshFontNames()
-		pass
+		if not self.editingNode: return
+		style = self.canvasPreviewSheet.callMethod( 'preview', 'save', self.editingNode.getAbsFilePath() )
 
 	def onStop( self ):
 		self.saveAsset()
 
-	def onAddStyle( self ):
-		name = requestString('Creating Text Style', 'Enter style name')
-		if not name: return 
-		item = { 'name':name, 'font':None, 'size':12, 'color':[1,1,1,1], 'allowScale':True }
-		self.addStyle( name, item )
-
-	def onRemoveStyle( self ):
-		listStyles=self.window.listStyles
-		selected=listStyles.selectedItems()
-		if not selected: return
-		items = self.styleSheetData.get('styles',[])
-		for item in selected:
-			name = item.text()
-			sp = self.findStyle( name )
-			assert sp
-			idx =  items.index( sp )
-			items.pop(idx)
-			row = listStyles.row( item )
-			listStyles.takeItem( row )
-		self.saveAsset()
-		pass
-
-	def onCloneStyle( self ):
-		if not self.currentStyle: return
-		newStyle = self.currentStyle.copy()
-		self.addStyle( newStyle['name'], newStyle )
-
 	def updateCurrentStyle( self ):
-		self.previewCanvas.safeCall( 'updateStyle', self.currentStyle )
-		self.singlePreviewCanvas.safeCall( 'updatePreview' )
+		self.canvasPreviewSheet.safeCall( 'updateStyle', self.currentStyle )
+		self.canvasPreviewStyle.safeCall( 'updatePreview' )
 
-	def onAssetModified( self, asset ):
-		pass
+	def addStyle( self ):
+		style = self.canvasPreviewSheet.callMethod( 'preview', 'addStyle' )
+		self.tree.addNode( style )
+		self.tree.selectNode( style )
+		self.tree.editNode( style )
 
-	def onItemSelectionChanged( self ):
-		for item in self.window.listStyles.selectedItems():
-			style = self.findStyle( item.text() )
-			self.currentStyle = style
-			break
+	def renameStyle( self, style, name ):
+		self.canvasPreviewSheet.callMethod( 'preview', 'renameStyle', style, name )
+		self.propEditor.refreshAll()
+	
+	def removeStyle( self, style = None ):
+		if not style: style = self.tree.getFirstSelection()
+		if self.canvasPreviewSheet.callMethod( 'preview', 'removeStyle', style ):
+			self.tree.removeNode( style )
 
-		if style:
-			self.window.settingPanel.setEnabled( True )			
-			fontIdx = self.window.comboFont.findText( style['font'] )
-			if fontIdx < 0: fontIdx = 0 #TODO: use default?
-			self.window.comboFont.setCurrentIndex( -1 )
-			self.window.comboFont.setCurrentIndex( fontIdx )
-			self.window.spinFontSize.setValue( style.get('size', 12) )
-			self.window.checkAllowScale.setChecked( style.get('allowScale', True) )
-			color = style.get('color', [1,1,1,1])
-			self.onPickColor( QColorF( *color ) )
-			self.singlePreviewCanvas.safeCall( 'updatePreview' )		
+	def cloneStyle( self, style = None ):
+		if not style: style = self.tree.getFirstSelection()
+		cloned = self.canvasPreviewSheet.callMethod( 'preview', 'cloneStyle', style )
+		if cloned:
+			self.tree.addNode( cloned )
+			self.tree.selectNode( cloned )
+			self.tree.editNode( cloned )
 
-	def onSizeChanged(self, size):
-		self.singlePreviewCanvas.safeCall( 'setFontSize', size )
-		self.currentStyle['size'] = size
+	def selectStyle( self, style ):
+		self.propEditor.setTarget( style )
+		self.canvasPreviewStyle.callMethod( 'preview', 'setStyle', style )
 
-		self.updateCurrentStyle()
-		pass
+	def getStyleList( self ):
+		if not self.editingSheet: return []
+		return [ style for style in self.editingSheet['styles'].values() ]
 
+	def onPropertyChanged( self, obj, id, value ):
+		if id == 'size' or id == 'name':
+			self.tree.refreshNodeContent( obj )		
+		self.canvasPreviewSheet.callMethod( 'preview', 'updateStyles' )
+		self.canvasPreviewStyle.callMethod( 'preview', 'updateStyle' )
 
-	def onPickColor( self, col ):
-		if not col: return
-		self.updateCurrentStyle()
-		self.window.buttonColor.setStyleSheet('''
-			background-color: %s;
-			border: 1px solid rgb(179, 179, 179);
-			''' % col.name()
-			)
-		self.currentStyle[ 'color' ] = list( unpackQColor(col) )
-		self.singlePreviewCanvas.safeCall( 'setFontColor', *unpackQColor(col) )
-		self.updateCurrentStyle()
+	def onTool( self, tool ):
+		name = tool.name
+		if name == 'save':
+			self.saveAsset()
+		elif name == 'add_style':
+			self.addStyle()
+		elif name == 'remove_style':
+			self.removeStyle()
+		elif name == 'clone_style':
+			self.cloneStyle()
 
-	def onFontChanged( self, index ):
-		fontNode = self.window.comboFont.itemData(index)
-		if self.currentStyle and fontNode:
-			self.singlePreviewCanvas.safeCall( 'setFont', fontNode.getPath().encode('utf-8') )
-			self.currentStyle['font'] = fontNode.getPath()
-			self.updateCurrentStyle()
+# 	def onAlignChanged( self, index ):
+# 		text = self.window.comboAlign.itemText( index )
+# 		if text:
+# 			self.canvasPreviewSheet.safeCall('setAlign', text.encode('utf-8'))
 
-	def onAllowScaleChanged( self, state ):
-		checked = self.window.checkAllowScale.isChecked() 
-		self.singlePreviewCanvas.safeCall( 'setAllowScale', checked )
-		self.currentStyle['allowScale'] = checked 
-		self.updateCurrentStyle()
+	def onSheetPreviewTextChanged( self ):
+		if not self.editingNode: return
+		self.previewText = self.window.textSheetPreview.toPlainText() 
+		self.editingNode.setMetaData( 'previewText', self.previewText )
+		self.canvasPreviewSheet.callMethod( 'preview', 'setPreviewText', self.previewText )
 
-	def onAlignChanged( self, index ):
-		text = self.window.comboAlign.itemText( index )
-		if text:
-			self.previewCanvas.safeCall('setAlign', text.encode('utf-8'))
+	def onStylePreviewTextChanged( self, text ):
+		if not self.editingNode: return
+		self.canvasPreviewStyle.callMethod( 'preview', 'setPreviewText', text )
+		
+##----------------------------------------------------------------##
+class StyleTreeWidget( GenericTreeWidget ):
+	def getHeaderInfo( self ):
+		return [ ('Name', 110), ('Size', 30) ]
 
-	def onPreviewTextChanged( self ):
-		self.previewText = self.window.textPreview.toPlainText() 
-		self.previewCanvas.safeCall( 'setText',  self.previewText )
-		self.editingAsset.setMetaData('previewText', self.previewText )
+	def getRootNode( self ):
+		return self.module
 
+	def getNodeParent( self, node ):
+		if node == self.getRootNode(): return None
+		return self.getRootNode()
+
+	def getNodeChildren( self, node ):		
+		if node == self.module:
+			return self.module.getStyleList()
+		else:
+			return []
+
+	def updateItemContent( self, item, node, **option ):
+		if node == self.getRootNode(): return
+		item.setText( 0, node['name'] )
+		item.setText( 1, '%d' % node['size'] )
+		
+	def onItemSelectionChanged(self):
+		self.module.selectStyle( self.getFirstSelection() )
+
+	def onItemChanged( self, item, col ):
+		node = item.node
+		self.module.renameStyle( node, item.text(0) )
 
 ##----------------------------------------------------------------##
 

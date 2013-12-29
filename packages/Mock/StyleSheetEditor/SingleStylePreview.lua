@@ -1,75 +1,44 @@
-context        = false
--------
-currentFont = false
-currentFontSize = 20
-currentFontColor = {1,1,1,1}
-currentText  ='Hello, Gii!'
+--------------------------------------------------------------------
+scn = mock_edit.createEditorCanvasScene()
+--------------------------------------------------------------------
 
-textbox      = false
+local fallbackTextStyle = MOAITextStyle.new()
+fallbackTextStyle:setFont( mock.getFontPlaceHolder() )
+fallbackTextStyle:setSize( 10 )
 
-function onLoad()
-	context = gii.createEditCanvasContext()
-	context.layer:showDebugLines( false )
-	textbox = MOAITextBox.new()
-	textbox:setString( '' )
-	textbox:setStyle( gii.getDefaultStyle() )
-	textbox:setYFlip( true )
-	textbox:setBlendMode( MOAIProp.GL_SRC_ALPHA,MOAIProp.GL_ONE_MINUS_SRC_ALPHA ) 
-	textbox:setShader( MOAIShaderMgr.getShader(MOAIShaderMgr.FONT_SHADER) )
-	context:insertProp(textbox)	
+--------------------------------------------------------------------
+CLASS: StyleItemPreview ( mock_edit.EditorEntity )
+	:MODEL{}
+
+function StyleItemPreview:onLoad()
+	self:addSibling( mock_edit.CanvasGrid() )
+	self:addSibling( mock_edit.CanvasNavigate() )
+	self.textLabel = self:attach( mock.TextLabel() )
+	self.textLabel:setSize( 500, 100 )
+	self.textLabel:setAlignment( 'center' )
+	self.textLabel:setText( 'hello!, gii' )
+	self:setVisible( false )
+
 end
 
-function onResize(w,h)
-	context:resize(w,h)
-	textbox:setRect(-w/2 ,-h/2, w/2, h/2)	
-end
-
-function updateText()
-	if not currentFont then return end
-
-	local style = MOAITextStyle.new()
-	style:setFont( currentFont )
-	style:setSize( currentFontSize )
-	style:setColor( unpack(currentFontColor) )
-	textbox:setStyle( style )
-	textbox:setString( currentText )
-	textbox:forceUpdate()
-	_owner:updateCanvas()
-end
-
-function updatePreview()
-end
-
-
-function updateStyle( data )
-	currentFont, node = mock.loadAsset( path )
-	if not currentFont then return end
-	if node.type == 'font_bmfont' then
-		textbox:setShader( MOAIShaderMgr.getShader(MOAIShaderMgr.DECK2D_SHADER) )
+function StyleItemPreview:setStyle( s )
+	if not s then
+		self:setVisible( false )
 	else
-		textbox:setShader( MOAIShaderMgr.getShader(MOAIShaderMgr.FONT_SHADER) )
+		self:setVisible( true )
+		self.textLabel.box:setStyle( s:getMoaiTextStyle() or fallbackTextStyle )
 	end
-
-	currentFontSize = currentFont.size or currentFontSize
-	updateText()
+	updateCanvas()
 end
 
-function setFont( fontPath )
-	currentFont = mock.loadAsset(fontPath)
-	updateText()
+function StyleItemPreview:setPreviewText( t )
+	self.textLabel:setText( t )
+	updateCanvas()
 end
 
-function setFontSize( size )
-	currentFontSize = size
-	updateText()
+function StyleItemPreview:updateStyle()
+	self.textLabel.box:setYFlip( false ) --hacking to force re-layout
+	updateCanvas()
 end
 
-function setText( text )
-	currentText = text
-	updateText()
-end
-
-function setFontColor( r,g,b,a )
-	currentFontColor = {r,g,b,a}
-	updateText()
-end
+preview = scn:addEntity( StyleItemPreview() )
