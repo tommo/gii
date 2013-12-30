@@ -1,12 +1,6 @@
 --------------------------------------------------------------------
 scn = mock_edit.createEditorCanvasScene()
 --------------------------------------------------------------------
-
-local fallbackTextStyle = MOAITextStyle.new()
-fallbackTextStyle:setFont( mock.getFontPlaceHolder() )
-fallbackTextStyle:setSize( 10 )
-
---------------------------------------------------------------------
 CLASS: StyleItemPreview ( mock_edit.EditorEntity )
 	:MODEL{}
 
@@ -24,9 +18,10 @@ end
 function StyleItemPreview:setStyle( s )
 	if not s then
 		self:setVisible( false )
+		self.textLabel.box:setStyle( mock.getFallbackTextStyle() )
 	else
 		self:setVisible( true )
-		self.textLabel.box:setStyle( s:getMoaiTextStyle() or fallbackTextStyle )
+		self.textLabel.box:setStyle( s:getMoaiTextStyle() or mock.getFallbackTextStyle() )
 	end
 	updateCanvas()
 end

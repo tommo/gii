@@ -96,9 +96,11 @@ class TextureAssetManager( AssetManager ):
 		return 'asset_manager.texture'
 
 	def acceptAssetFile(self, filepath):
-		if not os.path.isfile(filepath): return False		
-		name,ext=os.path.splitext(filepath)
-		return ext in [ '.png', '.psd', '.jpg', '.bmp', '.jpeg' ]
+		name,ext = os.path.splitext(filepath)
+		if os.path.isfile(filepath):
+			return ext in [ '.png', '.psd', '.jpg', '.bmp', '.jpeg' ]
+		else:
+			return ext in ['.texstrip' ]
 
 	def importAsset(self, node, reload = False ):
 		node.assetType = 'texture'
@@ -106,6 +108,8 @@ class TextureAssetManager( AssetManager ):
 		if not group:
 			group = 'default'
 			node.setNewMetaData( 'group', group )
+		if os.path.isdir( node.getAbsFilePath() ):
+			node.setBundle()
 		TextureLibrary.get().scheduleImport( node ) #let texture library handle real import
 		return True
 
@@ -304,12 +308,15 @@ class TextureLibrary( EditorModule ):
 		subprocess.call(arglist)
 		#apply processor on dst file
 		group = texNode.parent
-		groupProcessor = group.processor
-		if groupProcessor:
-			applyTextureProcessor( groupProcessor, dst )
-		nodeProcessor = texNode.processor
-		if nodeProcessor:
-			applyTextureProcessor( nodeProcessor, dst )		
+		if group:
+			groupProcessor = group.processor
+			if groupProcessor:
+				applyTextureProcessor( groupProcessor, dst )
+			nodeProcessor = texNode.processor
+			if nodeProcessor:
+				applyTextureProcessor( nodeProcessor, dst )		
+		else:
+			logging.warn( 'texture group missing: %s' % assetNode.getNodePath() ) 
 
 	def buildAtlas( self, group ):
 		logging.info( 'building atlas texture:' + group.name )
