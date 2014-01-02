@@ -69,6 +69,27 @@
        <number>2</number>
       </property>
       <item>
+       <widget class="QToolButton" name="buttonAll">
+        <property name="text">
+         <string>A</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="buttonNone">
+        <property name="text">
+         <string>N</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="buttonInverse">
+        <property name="text">
+         <string>I</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>

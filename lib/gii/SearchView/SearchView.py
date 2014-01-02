@@ -74,6 +74,10 @@ class SearchViewWidget( QtGui.QWidget ):
 		self.ui.buttonOK     .clicked .connect( self.onButtonOK )
 		self.ui.buttonCancel .clicked .connect( self.onButtonCancel )
 
+		self.ui.buttonAll     .clicked .connect( self.onButtonAll )
+		self.ui.buttonInverse .clicked .connect( self.onButtonInverse )
+		self.ui.buttonNone    .clicked .connect( self.onButtonNone )
+
 	def sizeHint( self ):
 		return QtCore.QSize( 300, 250 )
 
@@ -206,6 +210,27 @@ class SearchViewWidget( QtGui.QWidget ):
 
 	def onButtonCancel( self ):
 		self.hide()
+
+	def onButtonAll( self ):
+		if not self.multipleSelection: return
+		for entry in self.entries:
+			if not entry.checked:
+				entry.checked = True
+				self.treeResult.refreshNodeContent( entry )
+
+	def onButtonInverse( self ):
+		if not self.multipleSelection: return
+		for entry in self.entries:
+			entry.checked = not entry.checked
+			self.treeResult.refreshNodeContent( entry )
+
+	def onButtonNone( self ):
+		if not self.multipleSelection: return
+		for entry in self.entries:
+			if entry.checked:
+				entry.checked = False
+				self.treeResult.refreshNodeContent( entry )
+
 
 ##----------------------------------------------------------------##
 class SearchViewTextTerm( QtGui.QLineEdit):
