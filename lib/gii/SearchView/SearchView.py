@@ -274,18 +274,30 @@ class SearchViewTree(GenericTreeWidget):
 		node = item.node
 		self.browser.confirmSelection( node.obj )
 
+	def onClipboardCopy( self ):
+		clip = QtGui.QApplication.clipboard()
+		out = None
+		for node in self.getSelection():
+			if out:
+				out += "\n"
+			else:
+				out = ""
+			out += node.name
+		clip.setText( out )
+		return True
+
 	def keyPressEvent(self, event):
 		key = event.key()		
-		if key in ( Qt.Key_Return, Qt.Key_Enter ):
-			for node in self.getSelection():
-				self.browser.confirmSelection( node.obj )
+		if event.modifiers() == Qt.NoModifier:
+			if key in ( Qt.Key_Return, Qt.Key_Enter ):
+				for node in self.getSelection():
+					self.browser.confirmSelection( node.obj )
+					return
+			if ( int(key) >= int(Qt.Key_0) and int(key) <= int(Qt.Key_Z) ) \
+				or key in [ Qt.Key_Delete, Qt.Key_Backspace, Qt.Key_Space ] :
+				self.browser.textTerms.setFocus()
+				self.browser.textTerms.keyPressEvent( event )
 				return
-		if ( int(key) >= int(Qt.Key_0) and int(key) <= int(Qt.Key_Z) ) \
-			or key in [ Qt.Key_Delete, Qt.Key_Backspace, Qt.Key_Space ] :
-			self.browser.textTerms.setFocus()
-			self.browser.textTerms.keyPressEvent( event )
-			return
-
 		return super( SearchViewTree, self ).keyPressEvent( event )
 
 ##----------------------------------------------------------------##

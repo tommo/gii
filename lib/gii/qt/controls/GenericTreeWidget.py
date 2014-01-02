@@ -393,16 +393,16 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 				pitem = item.parent()
 				if pitem and not pitem.isHidden():
 					self.setCurrentItem( pitem )
-					return False
+					return
 		elif key == Qt.Key_Escape: #deselect all
 			self.selectNode( [] )
 		#copy&paste
 		elif ( key, ev.modifiers() ) == ( Qt.Key_C, Qt.ControlModifier ):
-			if self.onClipboardCopy(): return False
+			if self.onClipboardCopy(): return
 		elif ( key, ev.modifiers() ) == ( Qt.Key_X, Qt.ControlModifier ):
-			if self.onClipboardCut(): return False
+			if self.onClipboardCut(): return
 		elif ( key, ev.modifiers() ) == ( Qt.Key_V, Qt.ControlModifier ):
-			if self.onClipboardPaste(): return False
+			if self.onClipboardPaste(): return
 
 		return super( GenericTreeWidget, self ).keyPressEvent( ev )
 
