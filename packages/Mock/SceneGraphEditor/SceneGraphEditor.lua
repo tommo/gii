@@ -26,7 +26,7 @@ end
 
 local function isEditorEntity( e )
 	while e do
-		if e.FLAG_EDITOR_OBJECT then return true end
+		if e.FLAG_EDITOR_OBJECT or e.FLAG_INTERNAL then return true end
 		e = e.parent
 	end
 	return false
@@ -294,6 +294,13 @@ gii.registerObjectEnumerator{
 --- COMMAND
 --------------------------------------------------------------------
 CLASS: CmdCreateEntityBase ( mock_edit.EditorCommand )
+function CmdCreateEntityBase:init( option )
+	local parent = gii.getSelection( 'scene' )[1]
+	if isInstanceOf( parent, mock.Entity ) then
+		self.parentEntity = parent
+	end
+end
+
 function CmdCreateEntityBase:createEntity()
 end
 
@@ -302,7 +309,11 @@ function CmdCreateEntityBase:redo()
 	if not entity then return false end
 	entity.__guid = generateGUID()
 	self.created = entity
-	editor.scene:addEntity( entity )
+	if self.parentEntity then
+		self.parentEntity:addChild( entity )
+	else
+		editor.scene:addEntity( entity )
+	end
 	gii.emitPythonSignal( 'entity.added', self.created, 'new' )
 end
 
@@ -316,6 +327,7 @@ CLASS: CmdCreateEntity ( CmdCreateEntityBase )
 	:register( 'scene_editor/create_entity' )
 
 function CmdCreateEntity:init( option )
+	CmdCreateEntityBase.init( self, option )
 	self.entityName = option.name
 end
 
@@ -497,6 +509,7 @@ CLASS: CmdCreatePrefabEntity ( CmdCreateEntityBase )
 	:register( 'scene_editor/create_prefab_entity' )
 
 function CmdCreatePrefabEntity:init( option )
+	CmdCreateEntityBase.init( self, option )
 	self.prefabPath = option['prefab']
 end
 

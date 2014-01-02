@@ -514,14 +514,14 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		if isMockInstance( node, 'Scene' ):
 			output = []
 			for ent in node.entities:
-				if ( not ent.parent ) and ( not ent.FLAG_EDITOR_OBJECT ):
+				if ( not ent.parent ) and ( not ( ent.FLAG_EDITOR_OBJECT or ent.FLAG_INTERNAL ) ):
 					output.append( ent )
 			output = sorted( output, cmp = _sortEntity )
 			return output
 
 		output = []
 		for ent in node.children:
-			if not ent.FLAG_EDITOR_OBJECT:
+			if not ( ent.FLAG_EDITOR_OBJECT or ent.FLAG_INTERNAL ):
 				output.append( ent )
 		return output
 

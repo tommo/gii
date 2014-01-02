@@ -180,6 +180,34 @@ local function convertGraphML(fn)
 
 	end
 
+	local function generateJumpTarget( from, to )
+		if from.parent == to.parent then
+			return string.format( '%q', to.fullname )
+		end
+		local exits  = ""
+		local enters = ""
+		local node = from.parent
+		while true do --find group crossing path
+			local found = false
+			enters = ""
+			local node1 = to.parent
+			while node1 ~= root do
+				if node1 == node then	found = true break end
+				enters = string.format( '%q,', node1.funcname .. '__jumpin' ) .. enters
+				node1 = node1.parent				
+			end
+			if found then
+				break
+			end
+			if node == root then break end
+			exits = exits .. string.format( '%q,', node.funcname .. '__jumpout' )
+			node = node.parent	
+		end
+		local output = exits .. enters
+		--format: [ list of func needed to be called ] .. 'next state name'
+		return string.format( "{ %s%q }", output, to.fullname)		
+	end
+
 	--overwrite according to parent-level-priority
 	local function updateJump(node,src)
 		if not node or node==root then return end
@@ -231,14 +259,15 @@ local function convertGraphML(fn)
 			writef('nodelist[%q].jump={\n',n.fullname)
 			for msg, target in pairs(n.jump) do
 				local jumpto=target.fullname
-				writef('\t[%q]=nodelist[%q];\n',msg,jumpto)
+				writef( '\t[%q]=%s;\n', msg, generateJumpTarget( n, target ) )
 			end
 			write('}\n')
 		else
 			writef('nodelist[%q].jump=false\n',n.fullname)
 		end
+
 		if n.__next then
-			writef('nodelist[%q].next={\n',n.fullname, jumpto)
+			writef('nodelist[%q].next={\n', n.fullname )
 			local count=0
 			for target,targetType in pairs(n.__next) do
 			-- local target=n.__next
@@ -246,14 +275,14 @@ local function convertGraphML(fn)
 				local targetName=target.value
 				--add a symbol for better distinction
 				if targetType=='group' then targetName=target.parent.value end
-				writef('["$%s"]=nodelist[%q];\n',targetName, jumpto) 
+				writef('["$%s"]=%q;\n',targetName, generateJumpTarget( n, target ) ) 
 				count=count+1
 			end
 			
 			if count==1 then --only one, give it a 'true' transition
 				local target=next(n.__next)
 				local jumpto=target.fullname
-				writef('[true]=nodelist[%q];\n', jumpto)
+				writef('[true]=%s;\n', generateJumpTarget( n, target ) )
 			end
 
 			writef('}\n')

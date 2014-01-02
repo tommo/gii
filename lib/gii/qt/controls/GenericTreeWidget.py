@@ -361,6 +361,15 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def onItemCollapsed( self, item ):
 		pass
 
+	def onClipboardCopy( self ):
+		pass
+
+	def onClipboardCut( self ):
+		pass
+
+	def onClipboardPaset( self ):
+		pass
+
 	def _onItemChanged( self, item, col ):
 		if self.refreshing: return
 		return self.onItemChanged( item, col )
@@ -385,6 +394,16 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 				if pitem and not pitem.isHidden():
 					self.setCurrentItem( pitem )
 					return False
+		elif key == Qt.Key_Escape: #deselect all
+			self.selectNode( [] )
+		#copy&paste
+		elif ( key, ev.modifiers() ) == ( Qt.Key_C, Qt.ControlModifier ):
+			if self.onClipboardCopy(): return False
+		elif ( key, ev.modifiers() ) == ( Qt.Key_X, Qt.ControlModifier ):
+			if self.onClipboardCut(): return False
+		elif ( key, ev.modifiers() ) == ( Qt.Key_V, Qt.ControlModifier ):
+			if self.onClipboardPaste(): return False
+
 		return super( GenericTreeWidget, self ).keyPressEvent( ev )
 
 	def mousePressEvent( self, ev ):

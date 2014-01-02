@@ -62,6 +62,18 @@ class AssetTreeView( GenericTreeWidget ):
 			else: #'dep' or 'parent'
 				item.setIcon(1, getIcon('deploy_dep'))
 
+	def onClipboardCopy( self ):
+		clip = QtGui.QApplication.clipboard()
+		out = None
+		for node in self.getSelection():
+			if out:
+				out += "\n"
+			else:
+				out = ""
+			out += node.getNodePath()
+		clip.setText( out )
+		return True
+
 	def getHeaderInfo( self ):
 		return [('Name',200), ('Deploy',30), ('Type',60)]
 
