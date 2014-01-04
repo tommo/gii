@@ -216,7 +216,6 @@ class TextureManager( AssetEditorModule ):
 			self.propEditor.setTarget( selection[0] )
 		else:
 			self.propEditor.setTarget( None )
-		#TODO
 
 	def renameGroup( self, group, newName ):
 		group.name = newName

@@ -48,7 +48,6 @@ class MOAIInputDevice(object):
 ##----------------------------------------------------------------##
 ## Input SENSOR
 ##----------------------------------------------------------------##
-#TODO: add polled API for sensors
 class MOAIInputSensor(object):
 	def __init__(self, device, id, name):
 		self.device=device
