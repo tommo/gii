@@ -100,15 +100,17 @@ class AssetBrowser( AssetEditorModule ):
 	def setAssetIcon(self, assetType, iconName):
 		self.assetIconMap[assetType] = iconName
 
-	def locateAsset( self, asset ):
+	def locateAsset( self, asset, **options ):
 		if isinstance( asset, ( str, unicode ) ): #path
 			asset = self.getAssetLibrary().getAssetNode( asset )
 		if not asset: return
+		self.treeView.setFocus( Qt.MouseFocusReason)
 		item = self.treeView.getItemByNode( asset )
 		if item:
 			self.treeView.clearSelection()
 			item.setSelected( True )
 			self.treeView.scrollToItem( item )
+
 
 	def loadAssetCreator(self, creator):
 		label     = creator.getLabel()

@@ -230,16 +230,16 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 				item = self.getItemByNode( n )
 				if item:
 					item.setSelected( True )
-			if item and kw.get('goto',True):
-				self.scrollToItem( item )
-				self.setCurrentItem( item )
+			if kw.get('goto',True) : 
+				first = len( node ) > 0 and node[0]
+				if first:
+					self.gotoNode( first )
 		else:
-			item=self.getItemByNode(node)
+			item = self.getItemByNode( node )
 			if item:
-				item.setSelected(True)
+				item.setSelected( True )
 				if kw.get('goto',True) : 
-					self.scrollToItem( item )
-					self.setCurrentItem( item )
+					self.gotoNode( node )
 
 	def editNode( self, node, col = 0 ):
 		item = self.getItemByNode( node )
@@ -250,6 +250,12 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		item = self.getItemByNode( node )
 		if item:
 			self.scrollToItem( item )
+
+	def gotoNode( self, node ):
+		item = self.getItemByNode( node )
+		if item:
+			self.scrollToItem( item )
+			self.setCurrentItem( item )
 
 	def setNodeVisible( self, node, visible = True ):
 		item = self.getItemByNode( node )

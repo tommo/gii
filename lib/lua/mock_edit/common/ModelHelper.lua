@@ -20,14 +20,16 @@ local function buildGiiModel( model )
 	for i, f in ipairs( model:getFieldList( true ) ) do
 		--todo: array/ list field type
 		local option = {
-			get = f.__getter,
-			set = f.__setter,
+			get   = f.__getter,
+			set   = f.__setter,
 			label = f.__label,
 			meta  = f.__meta
 		}
+		
 		local id     = f.__id
 		local typeid = f.__type
-		local meta = f.__meta
+		local meta   = f.__meta
+
 		if typeid == '@enum' then
 			if type(f.__enum) == 'table' then
 				pmodel:addLuaEnumFieldInfo( id, f.__enum, option )

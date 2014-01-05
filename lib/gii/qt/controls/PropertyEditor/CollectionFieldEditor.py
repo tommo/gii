@@ -26,6 +26,10 @@ class CollectionFieldEditor( FieldEditor ):
 		
 	def set( self, value ):
 		self.value = value
+		if value:
+			self.button.setText( '[...]' )
+		else:
+			self.button.setText( '[]' )
 		
 	def setValue( self, value ):		
 		self.set( value )
@@ -37,7 +41,7 @@ class CollectionFieldEditor( FieldEditor ):
 			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Expanding
 			)
-		self.button.setText( '[...]' )
+		self.button.setText( '[]' )
 		if self.getOption( 'readonly', False ):
 			self.button.setEnabled( False )
 		self.button.clicked.connect( self.openSearchView )

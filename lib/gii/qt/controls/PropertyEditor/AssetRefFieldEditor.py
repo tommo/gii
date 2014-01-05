@@ -8,6 +8,12 @@ from SearchFieldEditor import SearchFieldEditorBase
 ##----------------------------------------------------------------##
 class AssetRefFieldEditor( SearchFieldEditorBase ):	
 	def getValueRepr( self, value ): #virtual
+		lib = AssetLibrary.get()
+		if value:
+			node = lib.getAssetNode( value )
+			if node:
+				icon = lib.getAssetIcon( node.getType() )
+				return ( value, icon )
 		return value #str
 
 	def getSearchType( self ): #virtual
@@ -19,9 +25,6 @@ class AssetRefFieldEditor( SearchFieldEditorBase ):
 
 	def getSearchInitial( self ): #virtual
 		return self.target and AssetLibrary.get().getAssetNode( self.target ) or None
-
-	def gotoObject( self ): #virutal
-		signals.emit( 'selection.hint', self.target )
 
 	def setValue( self, node ): #virtual
 		if node:

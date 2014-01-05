@@ -334,7 +334,9 @@ end
 function CmdCreateEntity:createEntity()
 	local entType = mock.getEntityType( self.entityName )
 	assert( entType )
-	return entType()
+	local e = entType()
+	if not e.name then e.name = self.entityName end
+	return e
 end
 
 function CmdCreateEntity:undo()

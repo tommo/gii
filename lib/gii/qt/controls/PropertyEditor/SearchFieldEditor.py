@@ -3,6 +3,7 @@ from gii.core.model import *
 from PropertyEditor import FieldEditor, registerFieldEditor
 from gii.qt.helpers import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
+from gii.qt.IconCache  import getIcon
 
 from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt
@@ -25,6 +26,7 @@ class SearchFieldWidget( QtGui.QWidget ):
 		self.buttonRef   = buttonRef   = SearchFieldButton( self )
 		self.buttonGoto  = buttonGoto  = SearchFieldButton( self )
 		self.buttonClear = buttonClear = SearchFieldButton( self )
+		self.buttonRef.setToolButtonStyle( Qt.ToolButtonTextBesideIcon )
 		buttonRef.setSizePolicy(
 			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Fixed
@@ -39,8 +41,8 @@ class SearchFieldWidget( QtGui.QWidget ):
 			)
 		buttonRef.setText( '<None>' )
 		buttonRef.setStyleSheet ("text-align: left;"); 
-		buttonGoto.setText( '...' )
-		buttonClear.setText( 'x' )
+		buttonGoto.setIcon( getIcon('search-2') )
+		buttonClear.setIcon( getIcon('remove') )
 		layout.addWidget( buttonRef )
 		layout.addWidget( buttonGoto )
 		layout.addWidget( buttonClear )
@@ -66,6 +68,10 @@ class SearchFieldWidget( QtGui.QWidget ):
 			logging.error('unknown ref name type:' + repr( name ) )
 			self.buttonRef.setText( repr( name ) )
 
+	def setRefIcon( self, iconName ):
+		icon = getIcon( iconName )
+		self.buttonRef.setIcon( icon )
+
 ##----------------------------------------------------------------##
 class SearchFieldEditorBase( FieldEditor ):	
 	def setTarget( self, parent, field ):
@@ -79,21 +85,33 @@ class SearchFieldEditorBase( FieldEditor ):
 		#TODO
 		return None
 
-	def set( self, value ):
+	def set( self, value ): #update button text
 		self.target = value
 		self.refWidget.setRef( value )
-		if value:			
-			self.refWidget.setRefName( self.getValueRepr( value ) )
+		if value:
+			r = self.getValueRepr( value )
+			if isinstance( r, tuple ):
+				( name, icon ) = r
+				self.refWidget.setRefIcon( icon )
+				self.refWidget.setRefName( name )
+			else:
+				self.refWidget.setRefIcon( None )
+				self.refWidget.setRefName( r )
 	
 	def initEditor( self, container ):
-		self.refWidget = widget = SearchFieldWidget( container )
+		widget = SearchFieldWidget( container )
+		widget.buttonRef   .clicked .connect( self.openBrowser )
+		widget.buttonClear .clicked .connect( self.clearObject )
+		widget.buttonGoto  .clicked .connect( self.gotoObject  )
+
 		if self.getOption( 'readonly', False ):
 			widget.buttonRef.setEnabled( False )
-			widget.buttonClear.setEnabled( False )
+			widget.buttonClear.setEnabled( False )		
 		else:
-			widget.buttonRef.clicked.connect( self.openBrowser )
-			widget.buttonClear.clicked.connect( self.clearObject )
-		widget.buttonGoto.clicked.connect( self.gotoObject )
+			if self.getOption( 'no_nil', False ):
+				widget.buttonClear.setEnabled( False )
+		
+		self.refWidget = widget
 		return self.refWidget
 
 	def openBrowser( self ):
@@ -127,6 +145,9 @@ class SearchFieldEditorBase( FieldEditor ):
 
 	def getValueRepr( self, value ): #virtual
 		return ModelManager.get().getObjectRepr( value )
+
+	def getIcon( self, value ): #virtual
+		return None
 
 	def getSearchType( self ): #virtual
 		return self.field.getType()

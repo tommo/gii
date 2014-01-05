@@ -81,12 +81,10 @@ class SearchViewWidget( QtGui.QWidget ):
 	def sizeHint( self ):
 		return QtCore.QSize( 300, 250 )
 
-	def setQuery( self, typeId, context = None ):
+	def initEntries( self, entries ):
+		self.entries = entries or []
 		self.textTerms.setText('')
-		self.textTerms.setFocus()
-		self.targetType = typeId
-		self.entries = self.module.enumerateSearch( typeId, context )
-		# self.treeResult.rebuild()		
+		self.textTerms.setFocus()		
 		self.searchState = None
 		self.updateVisibleEntries( self.entries )
 		self.selectFirstItem()
@@ -186,7 +184,7 @@ class SearchViewWidget( QtGui.QWidget ):
 		else:
 			for entry in self.entries:
 				if entry.obj == selection:
-					self.treeResult.selectNode( entry, goto = False )
+					self.treeResult.selectNode( entry, goto = True )
 					break
 
 	def setMultipleSelectionEnabled( self, enabled ):
@@ -361,6 +359,7 @@ class SearchView( EditorModule ):
 		self.enumerators = []
 		self.onCancel    = None
 		self.onSelection = None
+		self.onSearch    = None
 		self.visEntries  = None
 
 	def getName( self ):
@@ -383,14 +382,17 @@ class SearchView( EditorModule ):
 		multiple   = option.get( 'multiple_selection', False )
 
 		self.onSelection = option.get( 'on_selection', None )
-		self.onCancel    = option.get( 'on_cancel', None )
+		self.onCancel    = option.get( 'on_cancel',    None )
+		self.onSearch    = option.get( 'on_search',    None )
 
 		self.window.move( pos )
 		self.window.show()
 		self.window.raise_()
 		self.window.setFocus()
 		self.window.setInfo( info )
-		self.window.setQuery( typeId, context )
+		entries = self.enumerateSearch( typeId, context )
+		self.window.initEntries( entries )
+	
 		self.window.setMultipleSelectionEnabled( multiple )
 		if initial:
 			self.window.setInitialSelection( initial )
@@ -422,10 +424,13 @@ class SearchView( EditorModule ):
 
 	def enumerateSearch( self, typeId, context ):
 		allResult = []
-		for e in self.enumerators:
-			result = e( typeId, context )
-			if result:
-				allResult += result
+		if self.onSearch:
+			allResult = self.onSearch( typeId, context )
+		else:
+			for e in self.enumerators:
+				result = e( typeId, context )
+				if result:
+					allResult += result
 		return [ SearchEntry( *r ) for r in allResult ]
 
 ##----------------------------------------------------------------##
