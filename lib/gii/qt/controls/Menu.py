@@ -87,7 +87,7 @@ class MenuNode(object):
 			return parent.getFullName()+'/'+self.name
 		return self.name
 		
-	def addChild(self, option, module=None):
+	def addChild( self, option, module=None ):
 		if option=='----':
 			if self.qtmenu:
 				self.qtmenu.addSeparator()
@@ -106,8 +106,8 @@ class MenuNode(object):
 			return node
 
 	def addChildControl(self, child):
-		childType=child.menuType
-		selfType=self.menuType
+		childType = child.menuType
+		selfType  = self.menuType
 
 		if selfType=='menu':
 			if childType=='menu':
@@ -175,7 +175,7 @@ class MenuNode(object):
 				node.remove()
 		
 	def findChild(self,name):
-		name=name.lower()
+		name = name.lower()
 		for c in self.children:
 			if c.name==name: return c
 		return None

@@ -20,6 +20,10 @@ def copyToDevice( afc, srcFile, tgtFile, **option ):
 
 	if tgtMTime < os.path.getmtime( srcFile ):
 		logging.info( 'copy new version: %s ' % srcFile )
+		try:
+			afc.unlink( tgtFile )
+		except Exception, e:
+			pass
 		tgtFP = afc.open( tgtFile, u'w' )
 		srcFP = open( srcFile, u'r' )
 		tgtFP.write( srcFP.read() )

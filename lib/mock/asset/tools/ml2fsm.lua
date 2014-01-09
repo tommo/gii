@@ -275,7 +275,7 @@ local function convertGraphML(fn)
 				local targetName=target.value
 				--add a symbol for better distinction
 				if targetType=='group' then targetName=target.parent.value end
-				writef('["$%s"]=%q;\n',targetName, generateJumpTarget( n, target ) ) 
+				writef('["$%s"]=%s;\n',targetName, generateJumpTarget( n, target ) ) 
 				count=count+1
 			end
 			

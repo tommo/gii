@@ -19,6 +19,10 @@ function BoundGizmo:onDraw()
 		return self:destroy()
 	end
 	MOAIGfxDevice.setPenWidth(1)
+	local drawBounds = target.drawBounds
+	if drawBounds then 
+		drawBounds( target )
+	end
 	for com in pairs( target.components ) do
 		if not com.FLAG_INTERNAL then
 			local drawBounds = com.drawBounds

@@ -77,10 +77,12 @@ class QtSupport( QtEditorModule ):
 		self.menu.addChild('&File').addChild([
 			'System Status',
 			'----',
+			'Asset Editor|F2',
+			'Scene Editor|F3',
+			'----',
 			'E&xit',
 			]
 		)	
-		# requestColor('lll')
 		self.menu.addChild('&Find')
 
 	def getSharedMenubar( self ):
@@ -144,6 +146,10 @@ class QtSupport( QtEditorModule ):
 			self.getApp().stop()
 		elif name == 'system_status':
 			self.showSystemStatusWindow()
+		elif name == 'asset_editor':
+			self.getModule('asset_editor').setFocus()
+		elif name == 'scene_editor':
+			self.getModule('scene_editor').setFocus()
 
 QtSupport().register()
 

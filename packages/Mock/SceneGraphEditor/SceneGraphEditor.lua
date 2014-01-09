@@ -464,12 +464,13 @@ function CmdReparentEntity:redo()
 	local target = self.target
 	for i, e in ipairs( self.children ) do
 		local e1 = mock.cloneEntity(e)
-		local tx, ty ,tz = e1:getWorldLoc()
+		local tx, ty ,tz = e:getWorldLoc()
 		if target == 'root' then
 			editor.scene:addEntity( e1 )
 			e1:setLoc( tx, ty, tz )
 		else
 			target:addChild( e1 )
+			target:forceUpdate()
 			local x, y, z = target:worldToModel( tx, ty, tz )
 			e1:setLoc( x, y, z )
 		end
