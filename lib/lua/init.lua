@@ -35,6 +35,8 @@ function lupaErrFunc( msg )
 	return msg .. '\n' ..debug.traceback(2)
 end
 
+_collectgarbage = collectgarbage --keep a copy of original collectgarbage
+
 python.seterrfunc( lupaErrFunc ) --lupa err func
 --------------------------------------------------------------------
 require 'gii'

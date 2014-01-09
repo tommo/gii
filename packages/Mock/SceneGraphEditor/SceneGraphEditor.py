@@ -124,6 +124,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		#SIGNALS
 		signals.connect( 'moai.clean',        self.onMoaiClean        )
 
+		signals.connect( 'scene.clear',       self.onSceneClear      )
 		signals.connect( 'scene.change',      self.onSceneChanged     )
 
 		signals.connect( 'selection.changed', self.onSelectionChanged )
@@ -202,6 +203,10 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onSceneChanged( self, scene ):
 		print('scene changed!!')
 		self.tree.rebuild()
+
+	def onSceneClear( self ):
+		pass
+		# self.tree.clear()
 		
 	def saveScene( self ):
 		if not self.activeSceneNode: return
@@ -423,6 +428,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		if not self.activeSceneNode: return
 		self.delegate.safeCallMethod( 'editor', 'stopScenePreview' )
 		self.previewing = False
+		self.tree.clear()
 		if self.delegate.safeCallMethod( 'editor', 'restoreScene' ):
 			self.tree.loadFoldState( self.retainedState )
 

@@ -123,9 +123,12 @@ class PropertyEditor( QtGui.QWidget ):
 
 		self.refreshing = True
 		#install field info
+		currentId = None
 		for field in model.fieldList:
+			lastId = currentId
+			currentId = field.id
 			if field.getOption('no_edit'):
-				if field.id == '----':
+				if field.id == '----' and lastId != '----':
 					self._addSeparator()
 				continue
 			label = field.label

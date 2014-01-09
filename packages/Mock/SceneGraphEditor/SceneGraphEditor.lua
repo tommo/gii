@@ -72,7 +72,7 @@ end
 
 function SceneGraphEditor:closeScene()
 	if not self.scene then return end
-	self.scene:clear()
+	self:clearScene()
 	self.scene = false
 	self.retainedSceneData = false
 	self.retainedSceneSelection = false
@@ -85,17 +85,17 @@ function SceneGraphEditor:saveScene( path )
 	return true
 end
 
+function SceneGraphEditor:clearScene( keepEditorEntity )
+	self.scene:setEntityListener( false )
+	-- _collectgarbage( 'stop' )
+	self.scene:clear( keepEditorEntity )
+	-- _collectgarbage( 'restart' )
+end
+
 function SceneGraphEditor:refreshScene()
 	self:retainScene()
-	self.scene:clear( true )
-	return self:restoreScene()
-	-- local data = self.failedRefreshData or mock.serializeScene( self.scene )
-	-- if pcall( mock.deserializeScene, data, self.scene ) then
-	-- 	self.failedRefreshData = false
-	-- 	self:postLoadScene()
-	-- else
-	-- 	self.failedRefreshData = data
-	-- end
+	self:clearScene( true )
+	return self:restoreScene()	
 end
 
 function SceneGraphEditor:postLoadScene()
@@ -109,6 +109,7 @@ function SceneGraphEditor:startScenePreview()
 end
 
 function SceneGraphEditor:stopScenePreview()
+	_collectgarbage( 'collect' )
 	mock.game:stop()
 end
 
@@ -208,9 +209,7 @@ end
 
 function SceneGraphEditor:onEntityEvent( action, entity, scene, layer )
 	if action == 'clear' then
-		_owner.tree:clear()
-		gii.emitPythonSignal( 'scene.update' )
-		return 
+		return gii.emitPythonSignal( 'scene.clear' )
 	end
 
 	if isEditorEntity( entity ) then return end
