@@ -64,14 +64,13 @@ function TranslationHandle:onMouseDown( btn, x, y )
 	x, y = self:wndToModel( x, y )
 	if x >= 0 and y >= 0 and x <= handleArrowSize + 5 and y <= handleArrowSize + 5 then
 		self.activeAxis = 'all'
-		return true
-	end
-	if math.abs( y ) < 5 and x <= handleSize + handleArrowSize then
+	elseif math.abs( y ) < 5 and x <= handleSize + handleArrowSize then
 		self.activeAxis = 'x'
-		return true
-	end
-	if math.abs( x ) < 5 and y <= handleSize + handleArrowSize then
+	elseif math.abs( x ) < 5 and y <= handleSize + handleArrowSize then
 		self.activeAxis = 'y'
+	end
+	if self.activeAxis then
+		self.target:refresh()
 		return true
 	end
 end
@@ -165,10 +164,13 @@ function RotationHandle:onMouseDown( btn, x, y )
 	local x1, y1 = self:wndToModel( x, y )
 	local r = distance( 0,0, x1,y1 )
 	if r > 80 then return end
+
 	local rx,ry,rz = self.target:getRot()
 	self.rot0 = rz
 	self.dir0 = direction( 0,0, x1,y1 )
 	self.active = true
+
+	self.target:refresh()	
 	self.r0 = self.target:getRotZ()
 	self:updateCanvas()
 	return true
@@ -239,16 +241,17 @@ function ScaleHandle:onMouseDown( btn, x, y )
 
 	if x >= -5 and y >= -5 and x <= handleArrowSize + 5 and y <= handleArrowSize + 5 then
 		self.activeAxis = 'all'
-		return true
-	end
-	if math.abs( y ) < 5 and x <= handleSize + handleArrowSize then
+	elseif math.abs( y ) < 5 and x <= handleSize + handleArrowSize then
 		self.activeAxis = 'x'
-		return true
-	end
-	if math.abs( x ) < 5 and y <= handleSize + handleArrowSize then
+	elseif math.abs( x ) < 5 and y <= handleSize + handleArrowSize then
 		self.activeAxis = 'y'
+	end
+
+	if self.activeAxis then
+		self.target:refresh()
 		return true
 	end
+
 end
 
 function ScaleHandle:onMouseUp( btn, x, y )
