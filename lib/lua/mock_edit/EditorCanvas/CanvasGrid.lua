@@ -29,7 +29,7 @@ function CanvasGrid:onDraw()
 		for x = cx0, cx0 + col*gs, gs do
 			MOAIDraw.drawLine( x, y0, x, y1 )
 		end
-		for y = cy0, cy0 + col*gs, gs do
+		for y = cy0, cy0 + row*gs, gs do
 			MOAIDraw.drawLine( x0, y, x1, y )
 		end
 	else

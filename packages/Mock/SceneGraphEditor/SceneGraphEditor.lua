@@ -51,6 +51,11 @@ CLASS:  SceneGraphEditor()
 
 function SceneGraphEditor:__init()
 	self.failedRefreshData = false
+	connectSignalMethod( 'mainscene.open',  self, 'onMainSceneOpen' )
+	connectSignalMethod( 'mainscene.close', self, 'onMainSceneClose' )
+end
+
+function SceneGraphEditor:getScene()
 end
 
 function SceneGraphEditor:getScene()
@@ -105,12 +110,20 @@ end
 
 
 function SceneGraphEditor:startScenePreview()
+	-- _collectgarbage( 'collect' )
+	GIIHelper.forceGC()
 	mock.game:start()
 end
 
 function SceneGraphEditor:stopScenePreview()
-	_collectgarbage( 'collect' )
+	-- _collectgarbage( 'collect' )
+	GIIHelper.forceGC()
 	mock.game:stop()
+	--recover layer visiblity
+	for i, l in pairs( mock.game:getLayers() ) do 
+		l:setVisible( true )
+	end
+
 end
 
 function SceneGraphEditor:retainScene()
@@ -129,7 +142,8 @@ function SceneGraphEditor:restoreScene()
 	if not self.retainedSceneData then return true end
 	if pcall( mock.deserializeScene, self.retainedSceneData, self.scene ) then
 		self.retainedSceneData = false
-		self:postLoadScene()
+		self:postLoadScene()		
+		_owner.tree:rebuild()
 		local result = {}
 		for i, guid in ipairs( self.retainedSceneSelection ) do
 			local e = self:findEntityByGUID( guid )
@@ -222,6 +236,14 @@ function SceneGraphEditor:onEntityEvent( action, entity, scene, layer )
 		gii.emitPythonSignal( 'scene.update' )
 	end
 
+end
+
+function SceneGraphEditor:onMainSceneOpen( scn )
+	gii.emitPythonSignal( 'scene.change' )
+end
+
+function SceneGraphEditor:onMainSceneClose( scn )
+	gii.emitPythonSignal( 'scene.change' )
 end
 
 editor = SceneGraphEditor()
@@ -374,7 +396,10 @@ CLASS: CmdCreateComponent ( mock_edit.EditorCommand )
 function CmdCreateComponent:init( option )
 	self.componentName = option.name	
 	local target = gii.getSelection( 'scene' )[1]
-	if not isInstanceOf( target, mock.Entity ) then return false end
+	if not isInstanceOf( target, mock.Entity ) then
+		_warn( 'attempt to attach component to non Entity object', target:getClassName() )
+		return false
+	end	
 	self.targetEntity  = target
 end
 
@@ -493,7 +518,7 @@ end
 
 function CmdCreatePrefab:redo()
 	local data = mock.serializeEntity( self.entity )
-	local str  = MOAIJsonParser.encode( data )
+	local str  = encodeJSON( data )
 	local file = io.open( self.prefabPath, 'wb' )
 	if file then
 		file:write( str )

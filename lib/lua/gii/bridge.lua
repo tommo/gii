@@ -31,7 +31,7 @@ local encodeDict=bridge.encodeDict
 local decodeDict=bridge.decodeDict
 
 function tableToDict(table)
-	local json=MOAIJsonParser.encode(table)
+	local json = MOAIJsonParser.encode(table)
 	return decodeDict(json)
 end
 

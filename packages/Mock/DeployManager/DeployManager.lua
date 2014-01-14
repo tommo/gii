@@ -5,7 +5,7 @@ function loadDeployManagerConfig( configFile )
 	local file = io.open( configFile, 'rb' )
 	
 	if not file then 
-		mock._info('no deploy config file found')
+		mock._stat('no deploy config file found')
 		return
 	end
 

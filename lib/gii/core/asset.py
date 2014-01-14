@@ -211,8 +211,9 @@ class AssetNode(object):
 	def touch( self ):
 		fname = self.getAbsFilePath()
 		if fname:
-			with file(fname, 'a'):
-				os.utime(fname, None)
+			if os.path.isfile( fname ):
+				with file(fname, 'a'):
+					os.utime(fname, None)
 
 	def getFilePath(self):
 		return self.filePath

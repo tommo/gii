@@ -125,7 +125,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'moai.clean',        self.onMoaiClean        )
 
 		signals.connect( 'scene.clear',       self.onSceneClear      )
-		signals.connect( 'scene.change',      self.onSceneChanged     )
+		signals.connect( 'scene.change',      self.onSceneChange     )
 
 		signals.connect( 'selection.changed', self.onSelectionChanged )
 		signals.connect( 'selection.hint',    self.onSelectionHint    )
@@ -185,12 +185,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.emitNow( 'scene.pre_open', node )
 		scene = self.delegate.safeCallMethod( 'editor', 'openScene', node.getPath() )
 		signals.emitNow( 'scene.open', self.activeSceneNode, scene )
-		self.setFocus()
-		self.tree.rebuild()
-		retainedState = self.activeSceneNode.getMetaData( 'tree_state', None )
-		if retainedState:
-			self.tree.loadFoldState( retainedState )
-
+		self.setFocus()		
+		
 	def closeScene( self ):
 		self.tree.clear()
 		self.getApp().clearCommandStack( 'scene_editor' )
@@ -200,13 +196,15 @@ class SceneGraphEditor( SceneEditorModule ):
 		#TODO: save confirmation
 		return True
 
-	def onSceneChanged( self, scene ):
-		print('scene changed!!')
-		self.tree.rebuild()
-
 	def onSceneClear( self ):
-		pass
 		# self.tree.clear()
+		pass
+
+	def onSceneChange( self ):
+		self.tree.rebuild()
+		retainedState = self.activeSceneNode.getMetaData( 'tree_state', None )
+		if retainedState:
+			self.tree.loadFoldState( retainedState )
 		
 	def saveScene( self ):
 		if not self.activeSceneNode: return
@@ -222,10 +220,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		node = self.activeSceneNode
 		self.retainedState = self.tree.saveFoldState()
 		if self.delegate.safeCallMethod( 'editor', 'refreshScene' ):
-			self.tree.loadFoldState( self.retainedState )
-		#TODO:remove this
-		# self.closeScene()
-		# self.openScene( node )
+			self.tree.loadFoldState( self.retainedState )	
 		self.refreshCreatorMenu()
 
 	def scheduleRefreshScene( self ):
@@ -536,10 +531,10 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 
 	def updateItemContent( self, item, node, **option ):
 		name = None
-		if isMockInstance( node,'Scene' ):
+		if isMockInstance( node, 'Scene' ):
 			item.setText( 0, node.name or '<unnamed>' )
 			item.setIcon( 0, getIcon('scene') )
-		else:
+		elif isMockInstance( node, 'Entity' ):
 			item.setText( 0, node.name or '<unnamed>' )
 			item.setIcon( 0, getIcon('obj') )
 			item.setText( 1, node.getLayer( node ) )
