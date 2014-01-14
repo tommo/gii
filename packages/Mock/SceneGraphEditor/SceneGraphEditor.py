@@ -137,6 +137,10 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'entity.removed',    self.onEntityRemoved    )
 		signals.connect( 'entity.renamed',    self.onEntityRenamed    )
 
+		signals.connect( 'prefab.unlink',     self.onPrefabUnlink    )
+		signals.connect( 'prefab.relink',     self.onPrefabRelink    )
+
+
 		signals.connect( 'component.added',   self.onComponentAdded   )
 		signals.connect( 'component.removed', self.onComponentRemoved )
 
@@ -450,6 +454,12 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onComponentRemoved( self, com, entity ):
 		signals.emit( 'scene.update' )
 
+	def onPrefabUnlink( self, entity ):
+		self.tree.refreshNodeContent( entity )
+
+	def onPrefabRelink( self, entity ):
+		self.tree.refreshNodeContent( entity )
+
 	def createPrefab( self, targetPrefab ):
 		selection = self.getSelection()
 		if not selection: return
@@ -458,14 +468,20 @@ class SceneGraphEditor( SceneEditorModule ):
 		target = selection[0]
 		self.doCommand( 'scene_editor/create_prefab', 
 			entity = target, 
-			prefab = targetPrefab.getAbsFilePath()
+			prefab = targetPrefab.getNodePath(),
+			file   = targetPrefab.getAbsFilePath()
 		)
 
 
 ##----------------------------------------------------------------##
 def _sortEntity( a, b ):
 	return b._priority - a._priority
-	
+
+# _BrushEntityNormal = QtGui.QBrush()
+# _BrushEntityLocked = QtGui.QBrush( QColorF( 0.6,0.6,0.6 ) )
+# _BrushEntityHidden = QtGui.QBrush( QColorF( 1,1,0 ) )
+# _BrushEntityPrefab = QtGui.QBrush( QColorF( .5,.5,1 ) )
+
 ##----------------------------------------------------------------##
 class SceneGraphTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
@@ -535,9 +551,17 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			item.setText( 0, node.name or '<unnamed>' )
 			item.setIcon( 0, getIcon('scene') )
 		elif isMockInstance( node, 'Entity' ):
+			if node['__prefabId']:
+				item.setIcon( 0, getIcon('obj_blue') )
+			else:
+				item.setIcon( 0, getIcon('obj') )
 			item.setText( 0, node.name or '<unnamed>' )
-			item.setIcon( 0, getIcon('obj') )
-			item.setText( 1, node.getLayer( node ) )
+			layerName = node.getLayer( node )
+			if isinstance( layerName, tuple ):
+				print layerName
+				item.setText( 1, '????' )
+			else:
+				item.setText( 1, layerName )
 			item.setText( 2, node.getClassName( node ) )
 		
 	def onItemSelectionChanged(self):

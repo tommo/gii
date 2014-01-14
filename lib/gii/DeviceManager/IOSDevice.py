@@ -4,21 +4,33 @@ import logging
 
 from Device import DeviceItem
 from gii.core import app
+import json
 
 import MobileDevice
 import subprocess
 
+_FILE_INDEX = '_FILE_INDEX'
+
 ##----------------------------------------------------------------##
 def copyToDevice( afc, srcFile, tgtFile, **option ):	
 	force = option.get( 'force', False )
-	
-	try:
-		tgtInfo = afc.lstat( tgtFile )
-		tgtMTime = int( tgtInfo.st_mtime )
-	except Exception, e:
-		tgtMTime = 0
+	index = option['index']
 
-	if tgtMTime < os.path.getmtime( srcFile ):
+	srcMTime = os.path.getmtime( srcFile )
+	if force:
+		tgtMTime = 0
+	else:
+		tgtMTime = index.get( tgtFile, None )
+
+	if not tgtMTime:
+		try:
+			tgtInfo = afc.lstat( tgtFile )
+			tgtMTime = int( tgtInfo.st_mtime )
+		except Exception, e:
+			tgtMTime = 0
+
+	index[ tgtFile ] = srcMTime
+	if tgtMTime < srcMTime:
 		logging.info( 'copy new version: %s ' % srcFile )
 		try:
 			afc.unlink( tgtFile )
@@ -29,9 +41,7 @@ def copyToDevice( afc, srcFile, tgtFile, **option ):
 		tgtFP.write( srcFP.read() )
 		srcFP.close()
 		tgtFP.close()
-	# else:
-	# 	print 'no newer file, skip', tgtFile
-
+	
 ##----------------------------------------------------------------##
 def fileTypeOnDevice( afc, path ):
 	try:
@@ -67,12 +77,47 @@ def affirmDirOnDevice( afc, path ):
 	try:
 		afc.mkdir( path )
 	except Exception, e:
+		print 'cannot save device file index', repr( e )
 		return False
 	return True	
 
 ##----------------------------------------------------------------##
+def loadDeviceFileIndex( afc, tgtDir ):
+	print 'loading index'
+	path = tgtDir + '/' + _FILE_INDEX
+	try:
+		fp = afc.open( path, u'r' )
+		if fp:
+			data = fp.read()
+			fp.close()
+		return json.loads( data )
+	except Exception, e:
+		# print 'cannot open device file index', repr( e )
+		return None
+
+def saveDeviceFileIndex( afc, index, tgtDir ):
+	# print 'saving index'
+	path = tgtDir + '/' + _FILE_INDEX
+	try:
+		afc.unlink( path )
+	except Exception, e:
+		pass
+
+	try:
+		fp = afc.open( path, u'w' )
+		data = json.dumps( index ).encode( 'utf-8' )
+		fp.write( data )
+		fp.close()
+	except Exception, e:
+		# print 'cannot save device file index', repr( e )
+		return None
+
+##----------------------------------------------------------------##
 def copyTreeToDevice( afc, srcDir, tgtDir, **option ):
 	if not os.path.isdir( srcDir ): raise Exception('dir expected')
+	#retreive file index		
+	option['index'] = loadDeviceFileIndex( afc, tgtDir ) or {}
+
 	for currentDir, dirs, files in os.walk( srcDir ):
 		relDir = os.path.relpath( currentDir, srcDir )
 		if relDir == '.':
@@ -81,11 +126,13 @@ def copyTreeToDevice( afc, srcDir, tgtDir, **option ):
 			currentTgtDir = tgtDir + '/' + relDir			
 		if not affirmDirOnDevice( afc, currentTgtDir ): raise Exception('invalid target directory')
 		for f in files:
+			if f == _FILE_INDEX: continue
 			#TODO:ignore pattern
 			srcFile = currentDir + '/' + f
 			tgtFile = currentTgtDir + '/' + f
 			copyToDevice( afc, srcFile, tgtFile, **option)
 		#todo:remove file not found in source
+	saveDeviceFileIndex( afc, option['index'], tgtDir )
 
 ##----------------------------------------------------------------##
 def getAppAFC( dev, appName ):
@@ -159,8 +206,7 @@ class IOSDeviceItem( DeviceItem ):
 			return False
 		dev   = self._device
 		dev.refresh_session()
-		afc = getAppAFC( dev, appName )
-		# cleanDirFromDevice( afc, 'Documents' )
+		afc = getAppAFC( dev, appName )				
 		copyTreeToDevice( afc, localDataPath, remoteDataPath, **option )	
 		afc.disconnect()
 		return True

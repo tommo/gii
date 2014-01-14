@@ -15,5 +15,10 @@ register( 'entity.removed' )
 register( 'entity.modified' )
 register( 'entity.renamed' )
 
+register( 'prefab.unlink' )
+register( 'prefab.relink' )
+register( 'prefab.push' )
+register( 'prefab.pull' )
+
 register( 'component.added' )
 register( 'component.removed' )

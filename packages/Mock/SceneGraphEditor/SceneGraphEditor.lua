@@ -456,6 +456,7 @@ function CmdCloneEntity:redo()
 	local createdList = {}
 	for target in pairs( self.targets ) do
 		local created = mock.cloneEntity( target )
+		created.__prefabId = target.__prefabId
 		local parent = target.parent
 		if parent then
 			parent:addChild( created )
@@ -506,32 +507,57 @@ function CmdReparentEntity:undo()
 	--todo:
 end
 
+--------------------------------------------------------------------
+local function saveEntityToPrefab( entity, prefabFile )
+	local data = mock.serializeEntity( entity )
+	local str  = encodeJSON( data )
+	local file = io.open( prefabFile, 'wb' )
+	if file then
+		file:write( str )
+		file:close()
+	else
+		_error( 'can not write to scene file', prefabFile )
+		return false
+	end
+	return true
+end
+
+local function reloadPrefabEntity( entity )
+	local guid = entity.__guid
+	local prefabPath = entity.__prefabId
+	--Just recreate entity from prefab
+	local prefab, node = mock.loadAsset( prefabPath )
+	if not prefab then return false end
+	local newEntity = prefab:createInstance()
+	--only perserve location?
+	newEntity:setLoc( entity:getLoc() )
+	newEntity.__guid = guid
+	newEntity.__prefabId = prefabPath
+	--TODO: just marked as deleted
+	entity:addSibling( newEntity )
+	entity:destroyWithChildrenNow()	
+end
 
 --------------------------------------------------------------------
 CLASS: CmdCreatePrefab ( mock_edit.EditorCommand )
 	:register( 'scene_editor/create_prefab' )
 
 function CmdCreatePrefab:init( option )
+	self.prefabFile = option['file']
 	self.prefabPath = option['prefab']
 	self.entity     = option['entity']
 end
 
 function CmdCreatePrefab:redo()
-	local data = mock.serializeEntity( self.entity )
-	local str  = encodeJSON( data )
-	local file = io.open( self.prefabPath, 'wb' )
-	if file then
-		file:write( str )
-		file:close()
+	if saveEntityToPrefab( self.entity, self.prefabFile ) then
+		self.entity.__prefabId = self.prefabPath
+		return true
 	else
-		_error( 'can not write to scene file', self.prefabPath )
 		return false
 	end
-	return true
 end
 
 --------------------------------------------------------------------
-
 CLASS: CmdCreatePrefabEntity ( CmdCreateEntityBase )
 	:register( 'scene_editor/create_prefab_entity' )
 
@@ -544,6 +570,71 @@ function CmdCreatePrefabEntity:createEntity()
 	local prefab, node = mock.loadAsset( self.prefabPath )
 	if not prefab then return false end
 	return prefab:createInstance()
+end
+
+--------------------------------------------------------------------
+CLASS: CmdUnlinkPrefab ( mock_edit.EditorCommand )
+	:register( 'scene_editor/unlink_prefab' )
+
+function CmdUnlinkPrefab:init( option )
+	self.entity     = option['entity']
+	self.prefabId = self.entity.__prefabId
+end
+
+function CmdUnlinkPrefab:redo()
+	self.entity.__prefabId = nil
+	gii.emitPythonSignal( 'prefab.unlink', self.entity )
+end
+
+function CmdUnlinkPrefab:undo()
+	self.entity.__prefabId = self.prefabId --TODO: other process
+	gii.emitPythonSignal( 'prefab.relink', self.entity )
+end
+
+
+--------------------------------------------------------------------
+CLASS: CmdPushPrefab ( mock_edit.EditorCommand )
+	:register( 'scene_editor/push_prefab' )
+
+function CmdPushPrefab:init( option )
+	self.entity     = option['entity']
+end
+
+function CmdPushPrefab:redo()
+	local entity = self.entity
+	local prefabPath = entity.__prefabId
+	local node = mock.getAssetNode( prefabPath )
+	local filePath = node:getAbsObjectFile( 'def' )
+	if saveEntityToPrefab( entity, filePath ) then
+		gii.emitPythonSignal( 'prefab.push', entity )
+		--Update all entity in current scene
+		local scene = entity.scene
+		local toReload = {}
+		for e in pairs( scene.entities ) do
+			if e.__prefabId == prefabPath and e~=entity then
+				toReload[ e ] = true
+			end
+		end
+		for e in pairs( toReload ) do
+			reloadPrefabEntity( e )
+		end
+	else
+		return false
+	end
+end
+
+--------------------------------------------------------------------
+CLASS: CmdPullPrefab ( mock_edit.EditorCommand )
+	:register( 'scene_editor/pull_prefab' )
+
+function CmdPullPrefab:init( option )
+	self.entity     = option['entity']
+end
+
+function CmdPullPrefab:redo()
+	reloadPrefabEntity( self.entity )
+	gii.emitPythonSignal( 'prefab.pull', self.newEntity )
+	--TODO: reselect it ?
 end
 
 --------------------------------------------------------------------

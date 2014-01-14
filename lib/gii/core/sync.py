@@ -19,3 +19,19 @@ def updateFile( src, dst, ignore = None, **option ):
 		if os.path.getmtime( src ) > os.path.getmtime( dst ):
 			shutil.copy( src, dst )
 
+
+# class SyncPackage(object):
+# 	pass
+
+# class SyncPackageFileSystem(object):
+# 	def getMTime( self, path ):
+# 		pass
+
+# 	def getType( self, path ):
+# 		pass
+
+# 	def copy( self, path ):
+# 		pass
+
+# 	def mkdir( self, path ):
+# 		
