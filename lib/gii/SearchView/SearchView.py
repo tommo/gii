@@ -9,8 +9,25 @@ from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
+import re
+
+from subdist import get_score
 
 _SEARCHVIEW_ITEM_LIMIT = 100
+
+class FuzzyMatcher():
+	def __init__(self):
+		self.pattern = ''
+
+	def setPattern(self, pattern):
+		self.pattern = '.*?'.join(map(re.escape, list(pattern)))
+
+	def score(self, string):
+		match = re.search(self.pattern, string)
+		if match is None:
+			return 0
+		else:
+			return 100.0 / ((1 + match.start()) * (match.end() - match.start() + 1))
 
 # import difflib
 ##----------------------------------------------------------------##
@@ -29,13 +46,13 @@ class WindowAutoHideEventFilter(QObject):
 
 ##----------------------------------------------------------------##
 def _sortMatchScore( e1, e2 ):
-	v = e2.matchScore - e1.matchScore
-	if v > 0: return 1
-	if v < 0: return -1
+	diff = e2.matchScore - e1.matchScore
+	if diff > 0 : return 1
+	if diff < 0 : return -1
 	if e2.name > e1.name: return 1
 	if e2.name < e1.name: return -1
 	return 0
-
+	
 ##----------------------------------------------------------------##
 class SearchViewWidget( QtGui.QWidget ):
 	def __init__(self, *args ):
@@ -89,14 +106,14 @@ class SearchViewWidget( QtGui.QWidget ):
 		self.updateVisibleEntries( self.entries )
 		self.selectFirstItem()
 
-	def updateVisibleEntries( self, entries ):
+	def updateVisibleEntries( self, entries, forceSort = False ):
 		tree = self.treeResult
 		tree.hide()
 		root = tree.rootItem
 		root.takeChildren()
 		entries1 = entries
-		# self.visEntries  = entries
-		if entries != self.entries:
+		# self.visEntries  = entries		
+		if entries != self.entries or forceSort:
 			entries1 = sorted( entries, cmp = _sortMatchScore )
 		if len( entries1 ) > _SEARCHVIEW_ITEM_LIMIT:
 			entries1 = entries1[:_SEARCHVIEW_ITEM_LIMIT]
@@ -110,18 +127,13 @@ class SearchViewWidget( QtGui.QWidget ):
 	def updateSearchTerms( self, text ):
 		tree = self.treeResult
 		if text:
-			globs = text.split()
-			globs1 = []
-			if len( globs ) > 1:
-				for g in globs:
-					if len(g) > 1: globs1.append( g.upper() )
-			else:
-				globs1 = [ g.upper() for g in globs ]
+			textU = text.upper()
+			globs = textU.split()
 			visEntries = []
 			for entry in self.entries:
-				if entry.matchQuery( globs1 ):
+				if entry.matchQuery( globs, textU ):
 					visEntries.append( entry )				
-			self.updateVisibleEntries( visEntries )
+			self.updateVisibleEntries( visEntries, True )
 		else:
 			self.updateVisibleEntries( self.entries )			
 		self.selectFirstItem()
@@ -335,21 +347,39 @@ class SearchEntry(object):
 		self.iconName   = iconName
 		self.typeNameU  = typeName.upper()
 		self.nameU      = name.upper()
-		self.checked    = False
+		self.compareStr = typeName + ': ' + name
+		self.checked    = False	
 
-	def matchQuery( self, globs ):
+	def matchQuery( self, globs, text ):
+		#method 1
+		# score = 0
+		# name = self.nameU
+		# typeName = self.typeNameU
+		# for i, t in enumerate( globs ):
+		# 	pos = name.find( t )
+		# 	if pos >= 0:
+		# 		score += ( 2 + len(t) + i*0.5 )
+		# if globs[0] in typeName:
+		# 	findInType = True
+		# 	score += 1		
 		score = 0
 		name = self.nameU
 		typeName = self.typeNameU
 		for i, t in enumerate( globs ):
 			pos = name.find( t )
 			if pos >= 0:
-				score += ( 2 + len(t) + i*0.5 )
+				score += 2
+			else:
+				score += get_score( t, name ) * 1
 		
 		if globs[0] in typeName:
 			findInType = True
-			score += 1
+			score += 0.5
 
+		# score1 = SequenceMatcher( None, self.typeNameU, text ).ratio()
+		# score2 = SequenceMatcher( None, self.nameU, text ).ratio()
+		# score = score1 + score2 * 5		
+		
 		self.matchScore = score
 		return score > 0
 

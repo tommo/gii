@@ -22,7 +22,7 @@ local function unloadRegistredObject( registry, m, info )
 		_statf( 'unload registered %s: %s', info, k )
 		registry[ k ] = nil
 	end
-
+	return toRemove
 end
 
 
@@ -35,18 +35,29 @@ local function onModuleReleased( path, m )
 		--todo: release registered component		
 	end
 
-	unloadRegistredObject( mock.getEntityRegistry(), m, 'entity' )
+	local removedEntityClasses = 
+		unloadRegistredObject( mock.getEntityRegistry(), m, 'entity' )
+
+	local removedComClasses = 
 	unloadRegistredObject( mock.getComponentRegistry(), m, 'component' )
 
-	local editor = 	gii.app:getModule( 'scenegraph_editor' )
-	if editor then
-		editor:scheduleRefreshScene()
+	local removedGlobalClasses = 
+	unloadRegistredObject( mock.getGlobalObjectClassRegistry(), m, 'global object' )
+
+	--reload Scene Graph
+	if next( removedEntityClasses ) or next( removedComClasses ) then
+		local editor = 	gii.app:getModule( 'scenegraph_editor' )
+		if editor then
+			editor:scheduleRefreshScene()
+		end
 	end
 
 	--reload GlobalObject
-	local globalObjectEditor = gii.app:getModule( 'scenegraph_editor' )
-	if globalObjectEditor then
-		globalObjectEditor:scheduleRefreshScene()
+	if next( removedGlobalClasses ) then
+		local globalObjectManager = gii.app:getModule( 'global_object_manager' )
+		if globalObjectManager then
+			globalObjectManager:scheduleRefreshObject()
+		end
 	end
 end
 

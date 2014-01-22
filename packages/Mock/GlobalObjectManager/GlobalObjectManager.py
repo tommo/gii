@@ -42,6 +42,7 @@ def _fixDuplicatedName( names, name, id = None ):
 class GlobalObjectManager( SceneEditorModule ):
 	def __init__(self):
 		super( GlobalObjectManager, self ).__init__()
+		self.refreshScheduled = False
 
 	def getName( self ):
 		return 'global_object_manager'
@@ -68,6 +69,7 @@ class GlobalObjectManager( SceneEditorModule ):
 			)
 
 		self.tool = self.addToolBar( 'global_object_manager', self.window.addToolBar() )
+		self.getModule( 'moai' ).runScript( _getModulePath('commands.lua') )
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( _getModulePath( 'GlobalObjectManager.lua' ) )
 
@@ -80,7 +82,12 @@ class GlobalObjectManager( SceneEditorModule ):
 		self.addTool( 'global_object_manager/remove', label = 'Remove', icon = 'remove' )
 		self.addTool( 'global_object_manager/clone',  label = 'Clone', icon = 'clone' )
 		self.addTool( 'global_object_manager/add_group',    label = 'Add Group', icon = 'add_folder' )
+		self.addTool( 'global_object_manager/----' )
+		self.addTool( 'global_object_manager/refresh',    label = 'Refresh', icon = 'refresh' )
 		
+		self.addMenuItem( 'main/find/find_global_object', 
+			dict( label = 'Find In Global Objects', shortcut = 'ctrl+g' ) )
+
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
 
@@ -92,6 +99,7 @@ class GlobalObjectManager( SceneEditorModule ):
 			import GlobalObjectNodeEditor
 
 		registerSearchEnumerator( globalObjectNameSearchEnumerator )
+		registerSearchEnumerator( globalObjectSearchEnumerator )
 
 	def onStart( self ):
 		self.tree.rebuild()
@@ -119,6 +127,38 @@ class GlobalObjectManager( SceneEditorModule ):
 				self.doCommand( 'scene_editor/remove_global_object', target = node )
 				self.tree.removeNode( node )
 
+		elif name == 'refresh':
+			self.scheduleRefreshObject()
+
+	def onMenu( self, menu ):
+		if menu.name == 'find_global_object':
+			requestSearchView( 
+				info    = 'search for global object',
+				context = 'global_object',				
+				on_selection = lambda node: self.selectObject( node, True )
+				)
+
+	def onUpdate( self ):
+		if self.refreshScheduled :
+			self.refreshScheduled = False
+			self.delegate.safeCall( 'reloadObjects' )
+			self.tree.rebuild()
+
+	def scheduleRefreshObject( self ):
+		self.refreshScheduled = True
+
+	def selectObject( self, target, updateTree = False ):
+		self.changeSelection( target )
+		if updateTree:
+			self.tree.blockSignals( True )
+			self.tree.selectNode( None )
+			if isinstance( target, list ):
+				for e in target:
+					self.tree.selectNode( e, add = True)
+			else:
+				self.tree.selectNode( target )
+			self.tree.blockSignals( False )
+
 	def renameObject( self, obj, name ):
 		obj.setName( obj, name )
 
@@ -137,6 +177,7 @@ class GlobalObjectManager( SceneEditorModule ):
 	def onObjectRenamed( self, node, name ):
 		self.tree.refreshNodeContent( node )
 
+	
 ##----------------------------------------------------------------##
 class GlobalObjectTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
@@ -146,10 +187,13 @@ class GlobalObjectTreeWidget( GenericTreeWidget ):
 		return _MOCK.game.globalObjectLibrary.root
 
 	def saveTreeStates( self ):
-		pass
+		for node, item in self.nodeDict.items():
+			node.__folded = item.isExpanded()
 
 	def loadTreeStates( self ):
-		pass
+		for node, item in self.nodeDict.items():
+			folded = node.__folded or False
+			item.setExpanded( not folded )
 
 	def getNodeParent( self, node ): # reimplemnt for target node	
 		return node.parent
@@ -173,7 +217,7 @@ class GlobalObjectTreeWidget( GenericTreeWidget ):
 		
 	def onItemSelectionChanged(self):
 		selections = self.getSelection()
-		getSceneSelectionManager().changeSelection( selections )
+		app.getModule('global_object_manager').selectObject( selections )
 
 	def onItemChanged( self, item, col ):
 		obj = self.getNodeByItem( item )
@@ -189,6 +233,17 @@ def globalObjectNameSearchEnumerator( typeId, context ):
 	registry = _MOCK.getGlobalObjectClassRegistry()
 	result = []
 	for name in registry.keys():
-		entry = ( name, name, 'GlobalObject', None )
+		entry = ( name, name, 'GlobalObjectCls', None )
+		result.append( entry )
+	return result
+
+def globalObjectSearchEnumerator( typeId, context ):
+	if not context in [ 'global_object' ] : return None
+	game = _MOCK.game
+	lib = game.getGlobalObjectLibrary( game )
+	nodeList = lib.getNodeList( lib )
+	result = []
+	for node in nodeList.values() :
+		entry = ( node, node.fullName, 'GlobalObject', None )
 		result.append( entry )
 	return result

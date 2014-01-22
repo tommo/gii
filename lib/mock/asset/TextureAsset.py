@@ -15,7 +15,6 @@ signals.register( 'texture.remove' )
 signals.register( 'texture.rebuild' )
 
 ##----------------------------------------------------------------##
-_TEXTURE_LIBRARY_INDEX_FILE = 'texture_library.json'
 _TEXTURE_LIBRARY_DATA_FILE = 'texture_library.data'
 _ATLAS_JSON_NAME = 'atlas.json'
 
@@ -218,7 +217,6 @@ class TextureLibrary( EditorModule ):
 		return ['mock']
 
 	def onLoad( self ):
-		self.indexPath = self.getProject().getConfigPath( _TEXTURE_LIBRARY_INDEX_FILE )
 		self.dataPath  = self.getProject().getConfigPath( _TEXTURE_LIBRARY_DATA_FILE )
 		
 		self.delegate  = app.getModule('moai').loadLuaDelegate( _getModulePath('TextureLibrary.lua') )

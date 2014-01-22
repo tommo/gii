@@ -111,7 +111,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/entity/assign_layer',        dict( label = 'Assign Layer', shortcut = 'ctrl+alt+L' ) )
 
 		self.addMenuItem( 'main/entity/----' )
-		self.addMenuItem( 'main/find/find_entity', dict( label = 'Find In Scene', shortcut = 'ctrl+g' ) )
+		self.addMenuItem( 'main/find/find_entity', dict( label = 'Find In Scene', shortcut = 'ctrl+f' ) )
 
 		#Toolbars
 		self.addTool( 'scene_graph/fold_all',    label = 'fold' )
