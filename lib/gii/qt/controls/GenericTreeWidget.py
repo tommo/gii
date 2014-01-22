@@ -157,6 +157,8 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			self.refreshNodeContent( node )
 
 	def refreshNodeContent( self, node, **option ):
+		prevRefreshing = self.refreshing
+		self.refreshing = True
 		item=self.getItemByNode( node )
 		if item:
 			self.updateItemContent( item, node, **option )
@@ -165,6 +167,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 				if children:
 					for child in children:
 						self.refreshNodeContent( child , **option )
+		self.refreshing = prevRefreshing
 
 	def updateItem(self, node, **option ):
 		return self._updateItem( node, None, **option )
@@ -382,7 +385,6 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 	def onItemChanged( self, item, col ):
 		pass
-
 
 	def onDeletePressed( self ):
 		pass

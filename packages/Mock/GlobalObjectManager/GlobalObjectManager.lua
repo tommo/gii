@@ -12,7 +12,7 @@ function addGroup()
 end
 
 function renameObject( node, name )
-	
+	node:setName( name )
 end
 
 function remove( node )

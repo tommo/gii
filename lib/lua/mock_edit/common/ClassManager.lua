@@ -38,13 +38,16 @@ local function onModuleReleased( path, m )
 	unloadRegistredObject( mock.getEntityRegistry(), m, 'entity' )
 	unloadRegistredObject( mock.getComponentRegistry(), m, 'component' )
 
-	local editor = 	gii.app:getModule('scenegraph_editor')
+	local editor = 	gii.app:getModule( 'scenegraph_editor' )
 	if editor then
 		editor:scheduleRefreshScene()
 	end
 
 	--reload GlobalObject
-
+	local globalObjectEditor = gii.app:getModule( 'scenegraph_editor' )
+	if globalObjectEditor then
+		globalObjectEditor:scheduleRefreshScene()
+	end
 end
 
 local function onModuleLoaded( path, m )

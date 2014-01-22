@@ -192,7 +192,7 @@ class AssetBrowser( AssetEditorModule ):
 		pass
 
 	def onAssetModified(self, node):
-		pass
+		self.treeView.refreshNodeContent( node )
 
 	def onAssetDeployChanged(self, node):
 		self.treeView.updateItem( node, 

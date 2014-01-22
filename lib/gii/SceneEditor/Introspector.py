@@ -271,6 +271,9 @@ class IntrospectorInstance(object):
 				self.body.mainLayout.insertWidget( count - 1, container )
 				menuName = option.get( 'context_menu', editor.getContextMenu() )
 				container.setContextMenu( menuName )
+			else:
+				container.hide()
+				
 			editor.container = container
 			editor.setTarget( target, self )
 			self.body.show()
@@ -334,6 +337,7 @@ class CommonObjectEditor( ObjectEditor ): #a generic property grid
 		return self.grid
 
 	def setTarget( self, target, introspectorInstance ):
+		self.target = target
 		self.grid.setTarget( target )
 
 	def onPropertyChanged( self, obj, id, value ):
@@ -344,6 +348,7 @@ class CommonObjectEditor( ObjectEditor ): #a generic property grid
 
 	def unload( self ):
 		self.grid.clear()
+		self.target = None
 
 
 ##----------------------------------------------------------------##

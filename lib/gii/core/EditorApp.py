@@ -85,15 +85,21 @@ class EditorApp(object):
 	def run( self, **kwargs ):
 		if not self.initialized: self.init()
 		sleepTime = kwargs.get( 'sleep', 0.005 )
-		EditorModuleManager.get().startAllModules()
 		
-		signals.emitNow('app.start')
-		signals.dispatchAll()
-		signals.emit('app.post_start')
+		try:
+			EditorModuleManager.get().startAllModules()
+			
+			signals.emitNow('app.start')
+			signals.dispatchAll()
+			signals.emit('app.post_start')
 
-		while self.running:
-			self.doMainLoop( sleepTime )
+			while self.running:
+					self.doMainLoop( sleepTime )
 
+		except Exception, e:
+			#TODO: popup a alert window?
+			logging.exception( e )
+		
 		signals.emitNow('app.close')
 
 		signals.dispatchAll()

@@ -21,9 +21,6 @@ from mock import _MOCK, isMockInstance
 ##----------------------------------------------------------------##
 
 
-signals.register ( 'global_object.added' )
-signals.register ( 'global_object.removed' )
-
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
 	import os.path
@@ -87,8 +84,9 @@ class GlobalObjectManager( SceneEditorModule ):
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
 
-		signals.connect( 'global_object.added', self.onObjectAdded )
+		signals.connect( 'global_object.added',   self.onObjectAdded )
 		signals.connect( 'global_object.removed', self.onObjectRemoved )
+		signals.connect( 'global_object.renamed', self.onObjectRenamed )
 
 		if self.getModule('introspector'):
 			import GlobalObjectNodeEditor
@@ -135,6 +133,9 @@ class GlobalObjectManager( SceneEditorModule ):
 
 	def onObjectRemoved( self, node ):
 		self.tree.removeNode( node )
+
+	def onObjectRenamed( self, node, name ):
+		self.tree.refreshNodeContent( node )
 
 ##----------------------------------------------------------------##
 class GlobalObjectTreeWidget( GenericTreeWidget ):

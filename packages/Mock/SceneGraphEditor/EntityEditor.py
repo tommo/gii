@@ -68,7 +68,8 @@ class EntityEditor( ObjectEditor ): #a generic property grid
 			'scene_editor/unlink_prefab',
 			entity = self.target	
 		)
-
+		self.header.containerPrefab.hide()
+		
 	def onPushPrefab( self ):
 		app.doCommand(
 			'scene_editor/push_prefab',
@@ -85,6 +86,7 @@ class EntityEditor( ObjectEditor ): #a generic property grid
 		self.grid.refreshAll()
 
 	def unload( self ):
+		self.target = None
 		self.grid.clear()
 
 registerObjectEditor( _MOCK.Entity, EntityEditor )

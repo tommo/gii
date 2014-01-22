@@ -1,1 +1,3 @@
+
+import GlobalObjectSignals
 import GlobalObjectManager

@@ -22,9 +22,14 @@ library.MagickGaussianBlurImageChannel.argtypes = [
 def GaussianBlur( img, radius ):
 	k = max( 1, radius/3 )
 	w, h = img.width, img.height
-	img.resize( int(w/k), int(h/k) )
-	library.MagickGaussianBlurImageChannel( img.wand, CHANNELS['all_channels'], radius, radius/3 )
-	img.resize( w, h )
+	w1,h1 = int(w/k), int(h/k)
+	img.resize( w1, h1 )
+	tmpImg = Image( width = w1+radius*2, height = h1+radius*2 )
+	tmpImg.composite( img, radius, radius )
+	library.MagickGaussianBlurImageChannel( tmpImg.wand, CHANNELS['all_channels'], radius, radius/3 )
+	tmpImg.resize( w, h )
+	tmpImg.format = img.format
+	return tmpImg
 
 ##----------------------------------------------------------------##
 procPath  = sys.argv[1]

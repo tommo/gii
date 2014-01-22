@@ -1,5 +1,5 @@
 from gii.core import  *
-from gii.SceneEditor.Introspector   import ObjectEditor, registerObjectEditor
+from gii.SceneEditor.Introspector   import CommonObjectEditor, registerObjectEditor
 from gii.qt.controls.PropertyEditor import PropertyEditor
 
 from PyQt4 import QtGui, QtCore, uic
@@ -15,20 +15,14 @@ def getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 		
-class EntityEditor( ObjectEditor ): #a generic property grid 
-	# def initWidget( self, container ):		
-	# 	self.grid = PropertyEditor( container )
-	# 	self.grid.setContext( 'scene_editor' )
-	# 	return self.grid
-
+class GlobalObjectEditor( CommonObjectEditor ): #a generic property grid 	
 	def setTarget( self, target, introspectorInstance ):
+		super( GlobalObjectEditor, self ).setTarget( target, introspectorInstance )
 		if target.type == 'object':
 			introspectorInstance.addObjectEditor( target.object )
 		
-	# def refresh( self ):
-	# 	self.grid.refreshAll()
+	def onPropertyChanged( self, obj, id, value ):
+		if id == 'name':
+			signals.emit( 'global_object.renamed', obj, value )
 
-	# def unload( self ):
-	# 	self.grid.clear()
-
-registerObjectEditor( _MOCK.GlobalObjectNode, EntityEditor )
+registerObjectEditor( _MOCK.GlobalObjectNode, GlobalObjectEditor )

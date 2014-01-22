@@ -61,7 +61,7 @@ def convertSheetToData( sheet ):
 		for row in range( 0, rows ):
 			key = sheet.cell( row, 0 ).value
 			if not key: continue
-			value = sheet.cell( row, 0 ).value
+			value = sheet.cell( row, 1 ).value
 			if data.has_key( key ):
 				logging.warn( 'skip duplicated key: %s' % key.encode('utf-8') )
 				continue

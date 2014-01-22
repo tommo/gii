@@ -41,8 +41,9 @@ local function buildGiiModel( model )
 			pmodel:addLuaAssetFieldInfo( id, f.__assettype, option )
 
 		elseif typeid == '@action' then
+			local actionMethodName = f.__actionname or id
 			option.set = function( obj )
-				local f = obj[id]
+				local f = obj[actionMethodName]
 				if f then 
 					f( obj )
 				else
