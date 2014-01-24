@@ -18,3 +18,4 @@ require 'mock_edit.EditorCanvas.TransformTool'
 --------------------------------------------------------------------
 --GIZMOS
 require 'mock_edit.EditorCanvas.BoundGizmo'
+require 'mock_edit.EditorCanvas.IconGizmo'

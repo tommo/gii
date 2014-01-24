@@ -50,7 +50,10 @@ local handleArrowSize = 20
 CLASS:SceneView ( mock_edit.EditorEntity )
 
 function SceneView:onLoad()
-	self.gizmos = {}
+	self.normalGizmos   = {}
+	self.selectedGizmos = {}
+	self.handles = {}
+
 	self.cameraCom = mock_edit.EditorCanvasCamera( _M )
 	self.camera = self:addChild( 
 			mock.SingleEntity( self.cameraCom )
@@ -72,16 +75,16 @@ function SceneView:onLoad()
 		end
 	)
 	self:attach( mock.InputScript{ device = inputDevice } )
-
-	self.gizmos  = {}
-	self.handles = {}
 	
 	self.currentHandle = 'translation'
 
 	self:addHandle( SelectionHandle() )
 	self:connect( 'scene.serialize', 'preSceneSerialize' )
+	self:connect( 'scene.deserialize', 'postSceneDeserialize' )
+	self:connect( 'scene.entity_event', 'onEntityEvent' )
 
 	self:readConfig()
+	self:scanSceneGizmo()
 end
 
 function SceneView:readConfig()
@@ -143,8 +146,7 @@ function SceneView:pick( x, y )
 end
 
 function SceneView:clearSelection()
-	--clear gizmo
-	for gizmo in pairs( self.gizmos ) do
+	for ent, gizmo in pairs( self.selectedGizmos ) do
 		gizmo:destroyNow()
 	end
 
@@ -153,7 +155,7 @@ function SceneView:clearSelection()
 	end
 	--clear handle
 	self.handles = {}
-	self.gizmos = {}
+	self.selectedGizmos = {}
 	self.editTarget  = false
 end
 
@@ -188,11 +190,15 @@ function SceneView:onSelectionChanged( selection )
 		self.editTarget = target 		
 	end
 
-	--gizmo
 	for e in pairs( entities ) do
-		local gizmo = self:addHandle( mock_edit.BoundGizmo() )
-		gizmo:setTarget( e )
-		self.gizmos[ gizmo ] = true
+		if not ( e.FLAG_INTERNAL or e.FLAG_EDITOR_OBJECT ) then
+			self:buildSelectedGizmo( e )
+			for c in pairs( e.components ) do
+				if not ( c.FLAG_INTERNAL or c.FLAG_EDITOR_OBJECT ) then
+					self:buildSelectedGizmo( c )
+				end
+			end
+		end
 	end
 
 	self:refreshEditHandle()
@@ -219,6 +225,11 @@ function SceneView:preSceneSerialize( scene )
 			zoom = cam:getComponent( mock_edit.EditorCanvasCamera ):getZoom(),
 		}
 	}
+end
+
+function SceneView:postSceneDeserialize( scene )
+	if scene ~= self.scene then return end
+	self:scanSceneGizmo()
 end
 
 function SceneView:changeEditTool( name )
@@ -260,6 +271,80 @@ function SceneView:focusSelection()
 	scheduleUpdate()
 end
 
+
+--------------------------------------------------------------------
+function SceneView:buildNormalGizmo( e, entity )
+	local onBuildGizmo = e.onBuildGizmo
+	if onBuildGizmo then
+		local giz = onBuildGizmo( e )
+		if giz then
+			self.normalGizmos[ e ] = self:addHandle( giz )
+			inheritVisible( giz:getProp(), entity:getProp() )
+		end
+	end
+end
+
+function SceneView:buildSelectedGizmo( e, entity )
+	local onBuildSelectedGizmo = e.onBuildSelectedGizmo
+	if onBuildSelectedGizmo then
+		local giz = onBuildSelectedGizmo( e )
+		if giz then
+			self.selectedGizmos[ e ] = self:addHandle( giz )
+		end
+	end
+end
+
+function SceneView:removeNormalGizmo( e )
+	local giz = self.normalGizmos[ e ]
+	if giz then
+		giz:destroyNow()
+		self.normalGizmos[ e ] = nil
+	end
+end
+
+function SceneView:scanSceneGizmo()
+	for e in pairs( self.scene.entities ) do
+		if not ( e.FLAG_INTERNAL or e.FLAG_EDITOR_OBJECT ) then
+			self:buildNormalGizmo( e, e )
+			for c in pairs( e.components ) do
+				if not ( c.FLAG_INTERNAL or c.FLAG_EDITOR_OBJECT ) then
+					self:buildNormalGizmo( c, e )
+				end
+			end
+		end
+	end
+end
+
+function SceneView:clearGizmos()
+	for e, giz in pairs( self.normalGizmos ) do
+		giz:destroyNow()
+	end
+	for e, giz in pairs( self.selectedGizmos ) do
+		giz:destroyNow()
+	end
+	self.normalGizmos = {}
+	self.selectedGizmos = {}
+end
+--------------------------------------------------------------------
+function SceneView:onEntityEvent( action, entity, com )
+	if action == 'clear' then
+		self:clearGizmos()
+		return
+	end
+
+	if entity.FLAG_EDITOR_OBJECT then return end
+
+	if action == 'add' then
+		self:buildNormalGizmo( entity, entity )
+	elseif action == 'remove' then
+		self:removeNormalGizmo( entity, entity )
+	elseif action == 'attach' then
+		self:buildNormalGizmo( com, entity )
+	elseif action == 'detach' then
+		self:removeNormalGizmo( com, entity )
+	end
+end
+
 --------------------------------------------------------------------
 CLASS: SelectionHandle ( mock_edit.CanvasHandle )
 function SelectionHandle:onMouseUp( btn, x, y )
@@ -297,3 +382,4 @@ end
 function getScene()
 	return scn
 end
+

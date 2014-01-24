@@ -15,20 +15,6 @@ from subdist import get_score
 
 _SEARCHVIEW_ITEM_LIMIT = 100
 
-class FuzzyMatcher():
-	def __init__(self):
-		self.pattern = ''
-
-	def setPattern(self, pattern):
-		self.pattern = '.*?'.join(map(re.escape, list(pattern)))
-
-	def score(self, string):
-		match = re.search(self.pattern, string)
-		if match is None:
-			return 0
-		else:
-			return 100.0 / ((1 + match.start()) * (match.end() - match.start() + 1))
-
 # import difflib
 ##----------------------------------------------------------------##
 def getModulePath( path ):
@@ -52,7 +38,7 @@ def _sortMatchScore( e1, e2 ):
 	if e2.name > e1.name: return 1
 	if e2.name < e1.name: return -1
 	return 0
-	
+
 ##----------------------------------------------------------------##
 class SearchViewWidget( QtGui.QWidget ):
 	def __init__(self, *args ):
@@ -343,6 +329,10 @@ class SearchEntry(object):
 		self.matchScore = 0
 		self.obj        = obj
 		self.name       = name
+		if isinstance( name, str ):
+			name = unicode( name )
+		if isinstance( typeName, str ):
+			typeName = unicode( typeName )
 		self.typeName   = typeName
 		self.iconName   = iconName
 		self.typeNameU  = typeName.upper()

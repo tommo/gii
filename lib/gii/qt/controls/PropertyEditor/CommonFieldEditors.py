@@ -1,3 +1,5 @@
+import logging
+
 from PropertyEditor import FieldEditor, registerFieldEditor
 from FieldEditorControls import *
 

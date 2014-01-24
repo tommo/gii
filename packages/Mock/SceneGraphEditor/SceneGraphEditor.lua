@@ -91,21 +91,22 @@ function SceneGraphEditor:saveScene( path )
 end
 
 function SceneGraphEditor:clearScene( keepEditorEntity )
-	self.scene:setEntityListener( false )
 	-- _collectgarbage( 'stop' )
 	self.scene:clear( keepEditorEntity )
+	self.scene:setEntityListener( false )
 	-- _collectgarbage( 'restart' )
 end
 
 function SceneGraphEditor:refreshScene()
 	self:retainScene()
 	self:clearScene( true )
-	return self:restoreScene()	
+	local r = self:restoreScene()	
+	return r
 end
 
 function SceneGraphEditor:postLoadScene()
 	local scene = self.scene
-	scene:setEntityListener( function( ... ) return self:onEntityEvent( ... ) end )
+	scene:setEntityListener( function( action, ... ) return self:onEntityEvent( action, ... ) end )
 end
 
 
@@ -150,7 +151,7 @@ function SceneGraphEditor:restoreScene()
 			if e then table.insert( result, e ) end			
 		end
 		gii.changeSelection( 'scene', unpack( result ) )
-		self.retainedSceneSelection = false
+		self.retainedSceneSelection = false		
 		return true
 	else
 		self.failedRefreshData = self.retainedSceneData
@@ -221,7 +222,9 @@ function SceneGraphEditor:enumerateObjects( typeId )
 end
 
 
-function SceneGraphEditor:onEntityEvent( action, entity, scene, layer )
+function SceneGraphEditor:onEntityEvent( action, entity, com )
+	emitSignal( 'scene.entity_event', action, entity, com )
+	
 	if action == 'clear' then
 		return gii.emitPythonSignal( 'scene.clear' )
 	end

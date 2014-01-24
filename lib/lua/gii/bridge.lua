@@ -103,6 +103,17 @@ end
 -- getAppPath        = bridge.getAppPath
 app = bridge.app
 
+function getProject()
+	return app:getProject()
+end
+
+function getApp()
+	return app
+end
+
+function findDataFile( name )
+	return app:findDataFile( name )
+end
 
 --------------------------------------------------------------------
 -- PYTHON-LUA DELEGATION CREATION

@@ -1,32 +1,36 @@
 module 'mock_edit'
-
 --------------------------------------------------------------------
-CLASS: BoundGizmo( CanvasHandle )
-function BoundGizmo:onLoad()
+CLASS: SimpleBoundGizmo( CanvasHandle )
+function SimpleBoundGizmo:__init()
 	self.target = false
+end
+
+function SimpleBoundGizmo:onLoad()
 	self:attach( mock.DrawScript() )
 end
 
-function BoundGizmo:setTarget( e )
-	self.target = e
+function SimpleBoundGizmo:setTarget( target )
+	self.target = target
+	self.drawBounds = target.drawBounds
 end
 
-function BoundGizmo:onDraw()
-	local target = self.target
-	if not target then return end
-	applyColor 'selection'
-	if not target.components then 
-		return self:destroy()
-	end
-	MOAIGfxDevice.setPenWidth(1)
-	local drawBounds = target.drawBounds
-	if drawBounds then 
-		drawBounds( target )
-	end
-	for com in pairs( target.components ) do
-		if not com.FLAG_INTERNAL then
-			local drawBounds = com.drawBounds
-			if drawBounds then drawBounds( com ) end
-		end
+function SimpleBoundGizmo:onDraw()
+	local drawBounds = self.drawBounds
+	if drawBounds then
+		applyColor 'selection'	
+		MOAIGfxDevice.setPenWidth(1)
+		return drawBounds( self.target )
+	end	
+end
+--------------------------------------------------------------------
+--Bind to core components
+local function methodBuildBoundGizmo( self )
+	if self.drawBounds then		
+		local giz = SimpleBoundGizmo()
+		giz:setTarget( self )
+		return giz
 	end
 end
+
+mock.DeckComponent.onBuildSelectedGizmo = methodBuildBoundGizmo
+mock.TextLabel.onBuildGizmo = methodBuildBoundGizmo
