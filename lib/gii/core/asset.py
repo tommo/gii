@@ -411,6 +411,8 @@ class AssetManager(object):
 	def editAsset(self, assetNode):
 		assetNode.openInSystem()
 
+	def getDependency( self, assetNode ):
+		pass
 
 ##----------------------------------------------------------------##
 class RawAssetManager(AssetManager):	

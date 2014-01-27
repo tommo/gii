@@ -84,6 +84,7 @@ function SceneView:onLoad()
 	self:connect( 'scene.entity_event', 'onEntityEvent' )
 
 	self:readConfig()
+	
 	self:scanSceneGizmo()
 end
 
@@ -147,11 +148,11 @@ end
 
 function SceneView:clearSelection()
 	for ent, gizmo in pairs( self.selectedGizmos ) do
-		gizmo:destroyNow()
+		gizmo:destroyWithChildrenNow()
 	end
 
 	for handle in pairs( self.handles ) do
-		handle:destroyNow()
+		handle:destroyWithChildrenNow()
 	end
 	--clear handle
 	self.handles = {}
@@ -191,11 +192,13 @@ function SceneView:onSelectionChanged( selection )
 	end
 
 	for e in pairs( entities ) do
-		if not ( e.FLAG_INTERNAL or e.FLAG_EDITOR_OBJECT ) then
-			self:buildSelectedGizmo( e )
-			for c in pairs( e.components ) do
-				if not ( c.FLAG_INTERNAL or c.FLAG_EDITOR_OBJECT ) then
-					self:buildSelectedGizmo( c )
+		if e.components then
+			if not ( e.FLAG_INTERNAL or e.FLAG_EDITOR_OBJECT ) then
+				self:buildSelectedGizmo( e )
+				for c in pairs( e.components ) do
+					if not ( c.FLAG_EDITOR_OBJECT ) then
+						self:buildSelectedGizmo( c )
+					end
 				end
 			end
 		end
@@ -229,6 +232,7 @@ end
 
 function SceneView:postSceneDeserialize( scene )
 	if scene ~= self.scene then return end
+	self:clearGizmos()
 	self:scanSceneGizmo()
 end
 
@@ -254,7 +258,7 @@ end
 
 function SceneView:refreshEditHandle()
 	for handle in pairs( self.handles ) do
-		handle:destroyNow()
+		handle:destroyWithChildrenNow()
 	end
 	self.handles = {}
 	if not self.editTarget then return end
@@ -278,7 +282,8 @@ function SceneView:buildNormalGizmo( e, entity )
 	if onBuildGizmo then
 		local giz = onBuildGizmo( e )
 		if giz then
-			self.normalGizmos[ e ] = self:addHandle( giz )
+			self:addHandle( giz )
+			self.normalGizmos[ e ] = giz
 			inheritVisible( giz:getProp(), entity:getProp() )
 		end
 	end
@@ -289,7 +294,8 @@ function SceneView:buildSelectedGizmo( e, entity )
 	if onBuildSelectedGizmo then
 		local giz = onBuildSelectedGizmo( e )
 		if giz then
-			self.selectedGizmos[ e ] = self:addHandle( giz )
+			self:addHandle( giz )
+			self.selectedGizmos[ e ] = giz
 		end
 	end
 end
@@ -297,7 +303,7 @@ end
 function SceneView:removeNormalGizmo( e )
 	local giz = self.normalGizmos[ e ]
 	if giz then
-		giz:destroyNow()
+		giz:destroyWithChildrenNow()
 		self.normalGizmos[ e ] = nil
 	end
 end
@@ -307,7 +313,7 @@ function SceneView:scanSceneGizmo()
 		if not ( e.FLAG_INTERNAL or e.FLAG_EDITOR_OBJECT ) then
 			self:buildNormalGizmo( e, e )
 			for c in pairs( e.components ) do
-				if not ( c.FLAG_INTERNAL or c.FLAG_EDITOR_OBJECT ) then
+				if not ( c.FLAG_EDITOR_OBJECT ) then
 					self:buildNormalGizmo( c, e )
 				end
 			end
@@ -317,10 +323,10 @@ end
 
 function SceneView:clearGizmos()
 	for e, giz in pairs( self.normalGizmos ) do
-		giz:destroyNow()
+		giz:destroyWithChildrenNow()
 	end
 	for e, giz in pairs( self.selectedGizmos ) do
-		giz:destroyNow()
+		giz:destroyWithChildrenNow()
 	end
 	self.normalGizmos = {}
 	self.selectedGizmos = {}

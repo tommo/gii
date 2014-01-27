@@ -72,6 +72,7 @@ function SceneGraphEditor:openScene( path )
 	end
 	--
 	self:postLoadScene()
+	print('open!!!')
 	return scene
 end
 
@@ -460,12 +461,16 @@ function CmdCloneEntity:redo()
 	for target in pairs( self.targets ) do
 		local created = mock.cloneEntity( target )
 		created.__prefabId = target.__prefabId
+		local n = created:getName()
+		if n then
+			created:setName( n .. '_1' )
+		end
 		local parent = target.parent
 		if parent then
 			parent:addChild( created )
 		else
 			editor.scene:addEntity( created )
-		end
+		end		
 		gii.emitPythonSignal('entity.added', created, 'clone' )
 		table.insert( createdList, created )
 	end

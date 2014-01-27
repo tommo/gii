@@ -11,6 +11,7 @@ class no_editItemDelegate( QtGui.QStyledItemDelegate ):
 class GenericTreeWidget( QtGui.QTreeWidget ):
 	def __init__( self, *args, **option ):
 		super(GenericTreeWidget, self).__init__(*args)
+		self.nodeDict = {}
 		self.no_editItemDelegate = no_editItemDelegate( self )
 		self.refreshing = False
 		self.option = option
@@ -62,10 +63,12 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			self.rootItem = self.invisibleRootItem()
 
 	def clear( self ):
+		for item in self.nodeDict.values():
+			item.node = None
+		self.nodeDict = {}
 		super( GenericTreeWidget, self ).clear()
 		self.initRootItem()
 		self.rootItem.node = None
-		self.nodeDict = {}
 
 	def rebuild( self ):
 		self.hide()

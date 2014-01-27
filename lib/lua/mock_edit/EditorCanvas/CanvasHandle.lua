@@ -90,7 +90,9 @@ function CanvasHandle:onDestroy()
 	local handleLayer = self.handleLayer
 	if not handleLayer then return end
 	for i, h in ipairs( handleLayer.handles ) do
-		if h == self then return table.remove( self.handleLayer.handles, i )  end
+		if h == self then
+			return table.remove( self.handleLayer.handles, i )
+		end
 	end
 end
 
