@@ -138,6 +138,7 @@ class PropertyEditor( QtGui.QWidget ):
 			editorClas  =  getFieldEditor( ft )
 			if not editorClas: continue
 			editor = self._buildSubEditor( field, label, editorClas, ft )
+		assert self.refreshing
 		self.refreshing = False
 		
 		self.refreshAll()

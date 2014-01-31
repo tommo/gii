@@ -9,7 +9,7 @@ from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.qt.controls.PropertyEditor  import PropertyEditor
 
 from gii.moai.MOAIRuntime import MOAILuaDelegate
-from gii.SceneEditor      import SceneEditorModule
+from gii.AssetEditor      import AssetEditorModule
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 
 from gii.SearchView       import requestSearchView, registerSearchEnumerator
@@ -34,7 +34,7 @@ def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 
 ##----------------------------------------------------------------##
-class DeployManager( SceneEditorModule ):
+class DeployManager( AssetEditorModule ):
 	def __init__(self):
 		super( DeployManager, self ).__init__()
 
@@ -47,8 +47,8 @@ class DeployManager( SceneEditorModule ):
 	def onLoad( self ):
 		self.configPath = self.getProject().getConfigPath( _DEPLOY_CONFIG_FILE )
 		#UI
-		self.container = self.requestSubWindow( 'DeployManager',
-			title     = 'Deployment',
+		self.container = self.requestDocumentWindow( 'DeployManager',
+			title     = 'Deployment Manager',
 			allowDock = False,
 			minSize   = ( 600, 600 ),
 			maxSize   = ( 600, 600 )
@@ -78,11 +78,11 @@ class DeployManager( SceneEditorModule ):
 		sceneToolbar = QtGui.QToolBar( self.window.containerSceneTree )
 		layout.addWidget( sceneToolbar )
 		self.sceneTool = self.addToolBar( 'deploy_scene', sceneToolbar )
-		self.addTool( 'deploy_scene/add_scene',         label = '+')
-		self.addTool( 'deploy_scene/remove_scene',      label = '-')
-		self.addTool( 'deploy_scene/move_up_scene',     label = 'up')
-		self.addTool( 'deploy_scene/move_down_scene',   label = 'down')
-		self.addTool( 'deploy_scene/set_entry_scene',   label = '->ENTRY')
+		self.addTool( 'deploy_scene/add_scene',         label = 'add'     ,icon = 'add'    )
+		self.addTool( 'deploy_scene/remove_scene',      label = 'remove'  ,icon = 'remove' )
+		self.addTool( 'deploy_scene/move_up_scene',     label = 'up'      ,icon = 'arrow-up'     )
+		self.addTool( 'deploy_scene/move_down_scene',   label = 'down'    ,icon = 'arrow-down'   )
+		self.addTool( 'deploy_scene/set_entry_scene',   label = 'set as entry' ,icon = 'flag'   )
 
 		#deploy target tree
 		layout = QtGui.QVBoxLayout()
@@ -128,6 +128,12 @@ class DeployManager( SceneEditorModule ):
 		signals.connect( 'project.pre_deploy', self.preDeploy )
 		signals.connect( 'project.deploy', self.onDeploy )
 		signals.connect( 'project.post_deploy', self.postDeploy )
+
+		self.addTool( 
+			'asset/show_deploy_manager',
+			label = 'Deploy Manager',			
+			on_click = lambda item: self.setFocus()
+			)
 
 
 	def onStart( self ):
@@ -246,10 +252,7 @@ class DeployManager( SceneEditorModule ):
 	def onMenu( self, node ):
 		name = node.name
 		if name == 'deploy_manager' :
-			if self.container.isVisible():
-				self.container.hide()
-			else:
-				self.onSetFocus()
+			self.onSetFocus()
 
 		elif name == 'deploy_build':
 			app.getProject().deploy()

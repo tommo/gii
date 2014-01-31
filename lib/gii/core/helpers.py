@@ -1,6 +1,9 @@
 import traceback
+# def printTraceBack():
+# 	try:
+# 		1/0
+# 	except Exception as e:
+# 		traceback.print_stack()
+
 def printTraceBack():
-	try:
-		1/0
-	except Exception as e:
-		traceback.print_stack()
+	traceback.print_stack()

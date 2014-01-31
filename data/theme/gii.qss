@@ -582,7 +582,7 @@ QLineEdit, QTextEdit, QPlainTextEdit, QSpinBox, QDoubleSpinBox
 	/*selection-background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#787878,stop:1#5a5a5a);*/
 	/*selection-color:#000;*/
 	padding:1px;
-	border-radius: 2px;
+	/*border-radius: 2px;*/
 }
 
 QLineEdit:read-only, QTextEdit:read-only, QPlainTextEdit:read-only, QSpinBox:read-only, QDoubleSpinBox:read-only {
@@ -773,9 +773,13 @@ QMenuBar::item:selected,QDialog WScrollArea
 	color:#dcdcdc;
 }
 
-QToolButton::checked,QToolButton::menu-button:hover
+QToolButton::menu-button:hover
 {
 	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#b4b4b4,stop:1#969696);
+}
+
+QToolButton::checked{
+	background-color:#466dc6;
 }
 
 #ObjectHeader {

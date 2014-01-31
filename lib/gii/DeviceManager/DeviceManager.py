@@ -32,27 +32,8 @@ signals.register( 'device.disconnected' )
 signals.register( 'device.activated' )
 signals.register( 'device.deactivated' )
 
-##----------------------------------------------------------------##
-class DeviceManagerModule( QtEditorModule ):
-	def getDeviceManager( self ):
-		return self.getModule('device_manager')
-
-	def getMainWindow( self ):
-		return self.getModule('device_manager').getMainWindow()
-
-	def getSelectionManager( self ):
-		selectionManager = self.getDeviceManager().selectionManager
-		return selectionManager
-
-	def getSelection( self ):
-		return self.getSelectionManager().getSelection()
-
-	def changeSelection( self, selection ):
-		self.getSelectionManager().changeSelection( selection )
-
-
 ##----------------------------------------------------------------##		
-class DeviceManager( DeviceManagerModule ):
+class DeviceManager( EditorModule ):
 	def __init__( self ):
 		pass
 		
@@ -60,50 +41,22 @@ class DeviceManager( DeviceManagerModule ):
 		return 'device_manager'
 
 	def getDependency( self ):
-		return ['qt']
-
-	def getMainWindow( self ):
-		return self.mainWindow
-
-	def setupMainWindow( self ):
-		self.mainWindow = QtMainWindow(None)
-		self.mainWindow.setBaseSize( 600, 400 )
-		self.mainWindow.resize( 600, 400 )
-		self.mainWindow.setWindowTitle( 'GII - Device Manager' )
-		self.mainWindow.setMenuWidget( self.getQtSupport().getSharedMenubar() )
-
-		self.mainWindow.module = self
-
-		self.statusBar = QtGui.QStatusBar()
-		self.mainWindow.setStatusBar(self.statusBar)
-
-		self.mainToolBar = self.addToolBar( 'device', self.mainWindow.requestToolBar( 'main' ) )
-
-		####
-		self.addMenu('main/device', {'label':'&Device'})
-
+		return []
+		
 	def onLoad( self ):
-		self.setupMainWindow()
 		self.containers   = {}
 		self.devices      = {}
 
 		self.activeDevice = None
 		registerSearchEnumerator( deviceSearchEnumerator )
 		#load device history
-		signals.connect( 'app.start', self.postStart )
 		signals.connect( 'project.done_deploy', self.onDoneDeploy )
 
-	def postStart( self ):
-		self.mainWindow.show()
-		self.mainWindow.raise_()
-
 	def onStart( self ):
-		self.restoreWindowState( self.mainWindow )
 		startDeviceMonitorThread( self.onDeviceEvent )
 	
 	def onStop( self ):
 		stopDeviceMonitorThread()
-		self.saveWindowState( self.mainWindow )
 
 	def onDeviceEvent( self, ev, device ):
 		if ev == 'connected':
@@ -118,36 +71,6 @@ class DeviceManager( DeviceManagerModule ):
 			self.devices[ device ] = False
 			if device == self.activeDevice:
 				self.activeDevice = None
-
-	def setFocus(self):
-		self.mainWindow.show()
-		self.mainWindow.raise_()
-		self.mainWindow.setFocus()
-
-	def requestDockWindow( self, id, dockOptions ):
-		container = self.mainWindow.requestDockWindow(id, dockOptions)		
-		self.containers[id] = container
-		return container
-
-	def requestSubWindow( self, id, windowOption ):
-		container = self.mainWindow.requestSubWindow(id, windowOption)		
-		self.containers[id] = container
-		return container
-
-	def requestDocumentWindow( self, id, windowOption ):
-		container = self.mainWindow.requestDocuemntWindow(id, windowOption)
-		self.containers[id] = container
-		return container
-
-	def getMainWindow( self ):
-		return self.mainWindow
-
-	def onMenu(self, node):
-		# name = node.name
-		pass
-
-	def onTool( self, tool ):
-		pass
 
 	def setActiveDevice( self, device ):
 		if self.activeDevice:
@@ -168,21 +91,6 @@ class DeviceManager( DeviceManagerModule ):
 	
 		
 DeviceManager().register()
-
-
-##----------------------------------------------------------------##
-class QtMainWindow( MainWindow ):
-	"""docstring for QtMainWindow"""
-	def __init__(self, parent,*args):
-		super(QtMainWindow, self).__init__(parent, *args)
-	
-	def closeEvent(self,event):
-		if self.module.alive:
-			self.hide()
-			event.ignore()
-		else:
-			pass
-
 ##----------------------------------------------------------------##
 def deviceSearchEnumerator( typeId, context ):
 		if not context in [ 'device' ]: return

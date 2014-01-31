@@ -584,6 +584,8 @@ class TimelineWidget( QtGui.QFrame ):
 		self.ruler.subStep = rulerParam.get( 'sub_step', 100 )
 		self.onZoomChanged( rulerParam.get( 'zoom', 1 ) )
 
+		self.shiftMode = False
+
 	def setZoom( self, zoom ):
 		self.ruler.setZoom( zoom )
 
@@ -616,6 +618,9 @@ class TimelineWidget( QtGui.QFrame ):
 		pos0 = self.getPos()
 		return ( pos - pos0 ) * zoom
 
+	def setShiftMode( self, enabled = True ):
+		self.shiftMode = enabled
+		
 	def rebuild( self ):
 		self.clear()
 		self.hide()

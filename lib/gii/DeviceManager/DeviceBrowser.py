@@ -6,7 +6,7 @@ from gii.qt          import QtEditorModule
 from gii.qt.IconCache                  import getIcon
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.moai.MOAIRuntime import MOAILuaDelegate
-from DeviceManager        import DeviceManagerModule
+from gii.AssetEditor      import AssetEditorModule
 from gii.qt.helpers       import addWidgetWithLayout, QColorF, unpackQColor
 
 ##----------------------------------------------------------------##
@@ -15,7 +15,7 @@ from PyQt4.QtCore    import Qt
 
 import Device
 
-class DeviceBrowser( DeviceManagerModule ):
+class DeviceBrowser( AssetEditorModule ):
 	name       = 'device_browser'
 	dependency = [ 'device_manager' ]
 
@@ -54,6 +54,9 @@ class DeviceBrowser( DeviceManagerModule ):
 
 	def onStart( self ):
 		self.tree.rebuild()
+
+	def getDeviceManager( self ):
+		return self.getModule('device_manager')
 
 	def enumerateDevice( self ):
 		return [ dev for dev in self.getDeviceManager().devices.keys() ]

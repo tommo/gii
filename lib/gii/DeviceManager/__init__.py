@@ -1,2 +1,2 @@
-from DeviceManager import DeviceManagerModule, DeviceManager
+import DeviceManager
 import DeviceBrowser

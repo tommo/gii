@@ -72,7 +72,6 @@ function SceneGraphEditor:openScene( path )
 	end
 	--
 	self:postLoadScene()
-	print('open!!!')
 	return scene
 end
 

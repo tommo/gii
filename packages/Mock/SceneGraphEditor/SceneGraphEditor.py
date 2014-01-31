@@ -1,12 +1,12 @@
 import random
 ##----------------------------------------------------------------##
-from gii.core        import app, signals
+from gii.core        import app, signals ,printTraceBack
 from gii.core.model  import *
 
 from gii.qt          import QtEditorModule
 
 from gii.qt.IconCache                  import getIcon
-from gii.qt.dialogs                    import alertMessage
+from gii.qt.dialogs                    import alertMessage, confirmDialog
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 
 from gii.moai.MOAIRuntime import MOAILuaDelegate
@@ -31,6 +31,7 @@ def getModulePath( path ):
 class SceneGraphEditor( SceneEditorModule ):
 	def __init__(self):
 		super( SceneGraphEditor, self ).__init__()
+		self.sceneDirty = False
 		self.activeSceneNode  = None
 		self.refreshScheduled = False
 		self.previewing       = False
@@ -136,6 +137,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'entity.added',      self.onEntityAdded      )
 		signals.connect( 'entity.removed',    self.onEntityRemoved    )
 		signals.connect( 'entity.renamed',    self.onEntityRenamed    )
+		signals.connect( 'entity.modified',    self.onEntityModified    )
+
 
 		signals.connect( 'prefab.unlink',     self.onPrefabUnlink    )
 		signals.connect( 'prefab.relink',     self.onPrefabRelink    )
@@ -192,17 +195,29 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.setFocus()		
 		
 	def closeScene( self ):
+		if self.sceneDirty:
+			res = confirmDialog( 'scene modified!', 'save scene before close?' )
+			if res == True:   #save
+				self.saveScene()
+			elif res == None: #cancel
+				return
+			elif res == False: #no save
+				pass
+
+		self.markSceneDirty( False )
 		self.tree.clear()
 		self.getApp().clearCommandStack( 'scene_editor' )
 		signals.emitNow( 'scene.close', self.activeSceneNode )
 		self.delegate.safeCallMethod( 'editor', 'closeScene' )		
 		self.activeSceneNode = None
-		#TODO: save confirmation
 		return True
 
 	def onSceneClear( self ):
 		# self.tree.clear()
 		pass
+
+	def markSceneDirty( self, dirty = True ):
+		self.sceneDirty = dirty
 
 	def onSceneChange( self ):
 		self.tree.rebuild()
@@ -212,6 +227,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		
 	def saveScene( self ):
 		if not self.activeSceneNode: return
+		self.markSceneDirty( False )
 		self.delegate.safeCallMethod( 'editor', 'saveScene', self.activeSceneNode.getAbsFilePath() )
 		self.retainedState = None
 		retainedState = self.tree.saveFoldState()
@@ -400,6 +416,7 @@ class SceneGraphEditor( SceneEditorModule ):
 	def selectEntity( self, target ):
 		self.changeSelection( target )
 
+	##----------------------------------------------------------------##
 	def renameEntity( self, target, name ):
 		#TODO:command pattern
 		target.setName( target, name )
@@ -431,11 +448,14 @@ class SceneGraphEditor( SceneEditorModule ):
 		if self.delegate.safeCallMethod( 'editor', 'restoreScene' ):
 			self.tree.loadFoldState( self.retainedState )
 
+	##----------------------------------------------------------------##
 	def updateEntityPriority( self ):
 		if not self.activeSceneNode: return
+		self.markSceneDirty()
 
 	def onEntityRenamed( self, entity, newname ):
 		self.tree.refreshNodeContent( entity )
+		self.markSceneDirty()
 
 	def onEntityAdded( self, entity, context = None ):
 		if context == 'new':
@@ -444,16 +464,27 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.tree.editNode( entity )
 			self.tree.selectNode( entity )
 		signals.emit( 'scene.update' )
+		self.markSceneDirty()
 
 	def onEntityRemoved( self, entity ):
 		signals.emit( 'scene.update' )
+		self.markSceneDirty()
 
+	def onEntityModified( self, entity ):
+		self.markSceneDirty()
+
+	##----------------------------------------------------------------##
 	def onComponentAdded( self, com, entity ):
 		signals.emit( 'scene.update' )
+		self.markSceneDirty()
+
 
 	def onComponentRemoved( self, com, entity ):
 		signals.emit( 'scene.update' )
+		self.markSceneDirty()
 
+
+	##----------------------------------------------------------------##
 	def onPrefabUnlink( self, entity ):
 		self.tree.refreshNodeContent( entity )
 
