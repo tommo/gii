@@ -212,6 +212,7 @@ class TextureManager( AssetEditorModule ):
 
 	def changeSelection( self ):
 		selection = self.tree.getSelection()
+		self.canvas.callMethod( 'preview', 'changeSelection', selection )
 		if len( selection ) == 1:
 			self.propEditor.setTarget( selection[0] )
 		else:
@@ -225,11 +226,15 @@ class TextureManager( AssetEditorModule ):
 			clasName = node.getClassName( node )
 			if clasName == 'TextureGroup':				
 				if node.default: continue
-				pass
 				#remove groupp, put texutres to default
+				self.canvas.callMethod( 'preview', 'removeGroup', node )
+				defaultGroup = self.getLibrary().defaultGroup
+				self.tree.removeNode( node )
+				self.tree.refreshNode( defaultGroup )
 			else:
 				#move selected texture to default
-				pass
+				self.canvas.callMethod( 'preview', 'moveTextureToDefaultGroup', node )
+				self.tree.refreshNode( node )
 
 	def regroup( self, group, refreshTree = True ):
 		if group == 'default':
@@ -327,7 +332,9 @@ class TextureTreeWidget( GenericTreeWidget ):
 
 	def onItemActivated( self, item, col ):
 		node = item.node
-		# self.module.getModule('asset_browser').locateAsset( node )
+		if node.getClassName( node ) == 'TextureGroup': return
+		path = node['path']
+		self.module.getModule('asset_browser').locateAsset( path )
 
 
 ##----------------------------------------------------------------##

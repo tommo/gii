@@ -1,3 +1,16 @@
+local function getTextureUV( tex )
+	local ttype = tex.type
+	local t, uv
+	if ttype == 'sub_texture' then
+		t = tex.atlas
+		uv = tex.uv
+	else
+		t = tex
+		uv = { 0,1,1,0 }
+	end
+	return t, uv
+end
+
 --------------------------------------------------------------------
 scn = mock_edit.createEditorCanvasScene()
 --------------------------------------------------------------------
@@ -9,6 +22,7 @@ function TextureManagerPreview:onLoad()
 	self:addSibling( mock_edit.CanvasNavigate() )
 	self:attach( mock.InputScript{ device = scn.inputDevice } )
 	self:attach( mock.DrawScript{ priority = 1000 } )
+	self.previewProps = {}
 end
 
 function TextureManagerPreview:setLibrary( lib )
@@ -27,12 +41,63 @@ function TextureManagerPreview:setGroup()
 end
 
 function TextureManagerPreview:removeGroup( group )
-	self.lib:removeGroup( group )
+	self.lib:removeGroup( group, true )
+end
+
+function TextureManagerPreview:moveTextureToDefaultGroup( texture )
+	return self:regroup( texture, self.lib.defaultGroup )
 end
 
 function TextureManagerPreview:regroup( texture, group )
 	group:addTexture( texture )
 end
 
+function TextureManagerPreview:changeSelection( selection )
+	selection = gii.listToTable( selection )
+	self:clearPreview()
+	for i, node in ipairs( selection ) do
+		self:addPreview( node )
+	end
+	-- self:layoutPreview()
+	updateCanvas()
+end
+
+function TextureManagerPreview:addPreview( node )
+	local prop = MOAIProp.new()
+	local deck = MOAIGfxQuad2D.new()
+	prop:setDeck( deck )
+
+	if node:getClassName() == 'TextureGroup' then
+		--draw atlas
+		if node.atlasMode then
+			local child = node.textures[1]
+			local tex = mock.loadAsset( child.path ) --load first sub texture and preview full rect
+			local t, uv = getTextureUV( tex )
+			deck:setTexture( t )
+			deck:setRect( 0,0, t:getSize() )
+			deck:setUVRect( 0,1,1,0 )
+		end
+	else
+		--draw texture
+		local path = node.path
+		mock.loadAsset( path )
+		local tex = mock.loadAsset( path )
+		local t, uv = getTextureUV( tex )
+		deck:setTexture( t )
+		deck:setRect( 0,0, tex:getSize() )
+		deck:setUVRect( unpack( uv ) )
+	end
+	self:_insertPropToLayer( prop )
+	self.previewProps[ prop ] = true
+end
+
+function TextureManagerPreview:clearPreview()
+	for n in pairs( self.previewProps ) do
+		self:_detachProp( n )
+	end
+	self.previewProps = {}
+end
 
 preview = scn:addEntity( TextureManagerPreview() )
+
+

@@ -53,11 +53,11 @@ class MainWindow(QtGui.QMainWindow):
 	"""docstring for MainWindow"""
 	def __init__(self, parent):
 		super(MainWindow, self).__init__(parent)		
-		# self.setDocumentMode(True)
+		self.setDocumentMode(True)
 		self.setUnifiedTitleAndToolBarOnMac( False )
 		self.setDockOptions(
 			QtGui.QMainWindow.AllowNestedDocks | QtGui.QMainWindow.AllowTabbedDocks  )
-		# self.setTabPosition( Qt.AllDockWidgetAreas, QtGui.QTabWidget.North)
+		self.setTabPosition( Qt.AllDockWidgetAreas, QtGui.QTabWidget.North)
 		font=QtGui.QFont()
 		font.setPointSize(11)
 		self.setFont(font)
