@@ -3,3 +3,4 @@ import LuaScriptAsset
 # from MOAIEditCanvas  import  MOAIEditCanvas, MOAIEditCanvasLuaDelegate
 # from MOAIGameView    import  MOAIGameView
 # from LuaUtils        import  *
+import MOAIJoystickHook

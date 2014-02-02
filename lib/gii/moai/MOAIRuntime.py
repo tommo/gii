@@ -294,6 +294,8 @@ class MOAIRuntime( EditorModule ):
 		device.addSensor('mouseMiddle', 'button')
 		device.addSensor('level',       'level')
 		device.addSensor('compass',     'compass')
+		for i in range( 0, 4 ):
+			device.addJoystickSensors( i + 1 )
 		return device
 
 	#----------

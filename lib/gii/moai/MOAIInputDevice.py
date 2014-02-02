@@ -11,16 +11,30 @@ class MOAIInputDevice(object):
 		self.lastSensorId = 0
 		self.registered   = False
 
+	def addJoystickSensors( self, joyId ):
+		joyName = 'joy-%d' % joyId
+		
+		#button - keyboard sensor
+		buttonSensorName = joyName + '.button'
+		self.addSensor( buttonSensorName, 'keyboard' )
+		
+		#vectors
+		maxJoystickAxisCount = 6
+		for axisId in range( 1, maxJoystickAxisCount + 1 ):
+			axisSensorName = joyName + ( '.axis-%d' % axisId )
+			self.addSensor( axisSensorName, 'wheel' )
+
 	def addSensor(self, name, sensorType='touch'):
 		assert not self.registered, 'input device already registered !!'
-		assert sensorType in ('touch', 'pointer', 'button', 'keyboard', 'level', 'compass'), 'unsupported sensor type'
+		assert sensorType in ( 'touch', 'pointer', 'button', 'keyboard', 'level', 'compass', 'joystick', 'wheel'), 'unsupported sensor type'
 		assert not self.sensors.has_key(name), 'duplicated sensor name'
 
 		clas={
 			'touch'    : MOAITouchSensor,
 			'pointer'  : MOAIPointerSensor,
+			'wheel'    : MOAIWheelSensor,
 			'button'   : MOAIButtonSensor,
-			'keyboard' : MOAIKeyboardSensor,
+			'keyboard' : MOAIKeyboardSensor,			
 			'level'    : MOAILevelSensor,
 			'compass'  : MOAICompassSensor
 			} [sensorType]
@@ -90,6 +104,18 @@ class MOAIPointerSensor(MOAIInputSensor):
 	def onRegister(self):
 		getAKU().setInputDevicePointer(self.device.id, self.id, self.name)
 
+##----------------------------------------------------------------##
+class MOAIWheelSensor(MOAIInputSensor):
+	"""docstring for MOAIWheelSensor"""
+	def enqueueEvent(self, value):
+		getAKU().enqueueWheelEvent(
+				self.device.id,
+				self.id,
+				value
+			)
+
+	def onRegister(self):
+		getAKU().setInputDeviceWheel(self.device.id, self.id, self.name)
 
 ##----------------------------------------------------------------##
 class MOAIButtonSensor(MOAIInputSensor):
@@ -128,6 +154,14 @@ class MOAICompassSensor(MOAIInputSensor):
 	def onRegister(self):
 		getAKU().setInputDeviceCompass(self.device.id, self.id, self.name)
 
+
+##----------------------------------------------------------------##
+class MOAIJoystickSensor(MOAIInputSensor):
+	def enqueueAxisEvent( self, axis, value ):
+		pass
+
+	def enqueueButtonEvent( self, axis, value ):
+		pass
 
 ##----------------------------------------------------------------##
 class MOAIKeyboardSensor(MOAIInputSensor):

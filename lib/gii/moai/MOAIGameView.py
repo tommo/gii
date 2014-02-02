@@ -199,11 +199,14 @@ class MOAIGameView( QtEditorModule ):
 	def onMoaiReset( self ):
 		runtime = self.getRuntime()
 		runtime.createRenderContext( 'game' )
-		self.canvas.setInputDevice(
-			runtime.addDefaultInputDevice()
-			)
 		getAKU().setFuncOpenWindow(self.onOpenWindow)
 
+		inputDevice = runtime.addDefaultInputDevice()
+		self.canvas.setInputDevice(	inputDevice )
+		jhook = self.getModule( 'joystick_hook' )
+		if jhook:
+			jhook.refreshJoysticks()
+			jhook.setInputDevice( inputDevice )
 		
 	def onAppCommand(self, cmd, data=None, *args):
 		if cmd=='exec':

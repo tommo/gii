@@ -16,6 +16,8 @@ from cache import CacheManager
 GII_ASSET_INDEX_PATH = 'asset_table.json'
 GII_ASSET_META_DIR   = '.assetmeta'
 
+
+
 ##----------------------------------------------------------------##
 class AssetException(Exception):
 	pass
@@ -335,13 +337,9 @@ class AssetNode(object):
 		if path:
 			AssetUtils.openFileInOS(path)
 
-	def _updateFileTime( self ):
+	def _updateFileTime( self, mtime = None ):
 		if self.isVirtual(): return
-		if self.isBundle():
-			# self.fileTime = _getBundleFileTime( self )
-			self.fileTime = os.path.getmtime( self.getAbsFilePath() )
-		else:
-			self.fileTime = os.path.getmtime( self.getAbsFilePath() )
+		self.fileTime = mtime or os.path.getmtime( self.getAbsFilePath() )
 
 	#just a shortcut for configuration type asset
 	def loadAsJson(self):
@@ -686,6 +684,7 @@ class AssetLibrary(object):
 						#TODO: add failed state to node				
 				if node.getManager() != manager: node.setManager( manager )
 				if manager.importAsset( node, reload = not isNew ) != False:
+					logging.info( 'assets imported: {0}'.format( node.getNodePath() ) )
 					node.modifyState  =  False
 					done.append( node )
 				if not isNew:
@@ -697,11 +696,17 @@ class AssetLibrary(object):
 			for node in done:
 				del modifiedAssets[ node ]
 				if node.modifyState == 'removed': continue
-				node._updateFileTime()
+				if node.isBundle():
+					node._updateFileTime( self._getBundleMTime( node.getAbsFilePath() ) )					
+				else:
+					node._updateFileTime()
 
 		for node in modifiedAssets.keys(): #nodes without manager
 			node.modifyState = False
-			node._updateFileTime()
+			if node.isBundle():
+				node._updateFileTime( self._getBundleMTime( node.getAbsFilePath() ) )					
+			else:
+				node._updateFileTime()
 		#end of for
 		signals.emitNow( 'asset.post_import_all' )
 		logging.info( 'modified assets imported' )
@@ -749,14 +754,22 @@ class AssetLibrary(object):
 			for filename in files:
 				if self.checkFileIgnorable(filename):
 					continue
+				
 				nodePath = self.fixPath( relDir + '/' + filename )
-				if not self.getAssetNode( nodePath ): #new
-					self.initAssetNode( nodePath )
+				absPath  = self.getAbsPath( nodePath )
+				mtime    = os.path.getmtime( absPath )
+				bundle   = self._getParentBundle( nodePath )
+
+				if bundle:
+					if mtime > bundle.getFileTime():
+						bundle.markModified()
 				else:
-					node = self.getAssetNode( nodePath )
-					absPath = self.getAbsPath( nodePath )
-					if os.path.getmtime( absPath ) > node.getFileTime():
-						node.markModified()
+					if not self.getAssetNode( nodePath ): #new
+						self.initAssetNode( nodePath )
+					else:
+						node = self.getAssetNode( nodePath )
+						if mtime > node.getFileTime():
+							node.markModified()
 
 			dirs2 = dirs[:]
 			for dirname in dirs2:
@@ -892,3 +905,21 @@ class AssetLibrary(object):
 			pnode = self.getAssetNode( path )
 			if pnode and pnode.isBundle(): return pnode
 
+	def _getBundleMTime( self, path ):
+		mtime = 0
+		for currentDir, dirs, files in os.walk( path ):
+			for filename in files:
+				if self.checkFileIgnorable(filename):
+					continue
+				mtime1 = os.path.getmtime( currentDir + '/' + filename )
+				if mtime1 > mtime:
+					mtime = mtime1
+			dirs2 = dirs[:]
+			for dirname in dirs2:
+				if self.checkFileIgnorable(dirname):
+					dirs.pop(dirs.index(dirname)) #skip walk this
+					continue
+				mtime1 = os.path.getmtime( currentDir + '/' + dirname )
+				if mtime1 > mtime:
+					mtime = mtime1
+		return mtime

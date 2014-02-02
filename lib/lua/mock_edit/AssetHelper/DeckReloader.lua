@@ -9,13 +9,11 @@ local function onTextureRebuilt( node )
 
 	for item in pairs( mock.getLoadedDecks() ) do
 		if item:getTexture() == path then
-			-- print( 'update deck!!', item )
 			item:setTexture( path, false )
 		end
 	end
 	gii.emitPythonSignal( 'scene.update' )
 end
 
--- connectSignalFunc( 'asset.modified', onAssetModified )
 gii.connectPythonSignal( 'texture.rebuild',   onTextureRebuilt )
 
