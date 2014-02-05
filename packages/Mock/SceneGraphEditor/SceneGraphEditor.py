@@ -470,7 +470,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.emit( 'scene.update' )
 		self.markSceneDirty()
 
-	def onEntityModified( self, entity ):
+	def onEntityModified( self, entity, context = None ):
 		self.markSceneDirty()
 
 	##----------------------------------------------------------------##

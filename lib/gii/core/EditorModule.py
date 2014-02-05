@@ -50,6 +50,9 @@ class EditorModule( object ):
 	def getApp( self ):
 		return self._app
 
+	def findDataFile( self, fileName ):
+		return self.getApp().findDataFile( filename )
+
 	def doCommand( self, fullname, *args, **kwargs ):
 		self._app.doCommand( fullname, *args, **kwargs )
 

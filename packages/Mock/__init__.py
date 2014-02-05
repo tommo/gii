@@ -26,3 +26,5 @@ import DeployManager
 import FModPreview
 
 # import ActionTrack
+
+import EffectEditor

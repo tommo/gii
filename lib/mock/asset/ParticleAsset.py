@@ -44,6 +44,7 @@ class ParticleSystemAssetManager( AssetManager ):
 				return alertMessage( 'Editor not load', 'Particle Editor not found!' )
 			editor.openAsset( node )
 
+
 ##----------------------------------------------------------------##
 class ParticleSystemCreator(AssetCreator):
 	def getAssetType( self ):
@@ -64,6 +65,7 @@ class ParticleSystemCreator(AssetCreator):
 		
 		_MOCK.createEmptySerialization( fullpath, 'mock.ParticleSystemConfig' )
 		return nodepath
+
 
 ##----------------------------------------------------------------##
 class SimpleParticleSystemCreator(AssetCreator):
