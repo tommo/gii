@@ -17,7 +17,7 @@ end
 local function getTopLevelEntitySelection()
 	local entities = {}
 	for i, e in ipairs( gii.getSelection( 'scene' ) ) do
-		if isInstanceOf( e, mock.Entity ) then 
+		if isInstance( e, mock.Entity ) then 
 			entities[ e ] = true
 		end
 	end
@@ -171,7 +171,7 @@ end
 
 local function collectEntity( e, typeId, collection )
 	if isEditorEntity( e ) then return end
-	if isInstanceOf( e, typeId ) then
+	if isInstance( e, typeId ) then
 		collection[ e ] = true
 	end
 	for child in pairs( e.children ) do
@@ -182,7 +182,7 @@ end
 local function collectComponent( entity, typeId, collection )
 	if isEditorEntity( entity ) then return end
 	for com in pairs( entity.components ) do
-		if not com.FLAG_INTERNAL and isInstanceOf( com, typeId ) then
+		if not com.FLAG_INTERNAL and isInstance( com, typeId ) then
 			collection[ com ] = true
 		end
 	end
@@ -258,7 +258,7 @@ function enumerateSceneObjects( enumerator, typeId, context )
 end
 
 function getSceneObjectRepr( enumerator, obj )
-	if isInstanceOf( obj, mock.Entity ) then
+	if isInstance( obj, mock.Entity ) then
 		return obj:getName() or '<unnamed>'
 	end
 	--todo: component
@@ -320,7 +320,7 @@ gii.registerObjectEnumerator{
 CLASS: CmdCreateEntityBase ( mock_edit.EditorCommand )
 function CmdCreateEntityBase:init( option )
 	local parent = gii.getSelection( 'scene' )[1]
-	if isInstanceOf( parent, mock.Entity ) then
+	if isInstance( parent, mock.Entity ) then
 		self.parentEntity = parent
 	end
 end
@@ -374,7 +374,7 @@ CLASS: CmdRemoveEntity ( mock_edit.EditorCommand )
 
 function CmdRemoveEntity:init( option )
 	local target = gii.getSelection( 'scene' )[1]
-	if not isInstanceOf( target, mock.Entity ) then return false end
+	if not isInstance( target, mock.Entity ) then return false end
 	self.selection = gii.getSelection( 'scene' )
 end
 
@@ -399,7 +399,7 @@ CLASS: CmdCreateComponent ( mock_edit.EditorCommand )
 function CmdCreateComponent:init( option )
 	self.componentName = option.name	
 	local target = gii.getSelection( 'scene' )[1]
-	if not isInstanceOf( target, mock.Entity ) then
+	if not isInstance( target, mock.Entity ) then
 		_warn( 'attempt to attach component to non Entity object', target:getClassName() )
 		return false
 	end	

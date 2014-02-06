@@ -36,7 +36,7 @@ def convertColor(c, alpha=1):
 		return QtGui.QColor(c)
 
 	
-class CodeBox(ScintillaCompat, Qsci.QsciScintilla):
+class CodeBox( ScintillaCompat, Qsci.QsciScintilla ):
 	"""docstring for CodeBox"""
 	def __init__(self, arg):
 		super(CodeBox, self).__init__(arg)		
@@ -52,31 +52,26 @@ class CodeBox(ScintillaCompat, Qsci.QsciScintilla):
 		# if wx.Platform == '__WXMAC__':
 		# 	self.Bind(wx.EVT_MOUSEWHEEL, self.onMouseWheel)
 		self.setUtf8(True)
-		self.refreshing=False
-		self.path=''
-
+		self.refreshing = False
+		self.path = ''
 
 	def refreshCode(self):
-		self.refreshing=True
-		code='Not Load'
+		self.refreshing = True
+		code = 'Not Load'
 		with file(self.path,'r') as f:
-			code=f.read()
-			self.fileTime=os.path.getmtime(self.path)
+			code = f.read()
+			self.fileTime = os.path.getmtime(self.path)
 		try:
-			code=code.decode('utf-8')
+			code = code.decode('utf-8')
 		except Exception, e:
 			pass
-		readOnly=self.isReadOnly()
+		readOnly = self.isReadOnly()
 		self.setReadOnly(False)
-
 		self.setText(code)
-
 		self.setReadOnly(readOnly)
 		# self.SetSavePoint()
 		# self.EmptyUndoBuffer()
-
 		self.refreshing=False
-
 		#self.checkModifyState()
 
 	def checkFileModified(self):
@@ -225,7 +220,7 @@ class CodeBox(ScintillaCompat, Qsci.QsciScintilla):
 		# self.markerDefine(Sci.SC_MARKNUM_FOLDERMIDTAIL, Sci.SC_MARK_EMPTY)
 		# self.markerDefine(Sci.SC_MARKNUM_FOLDERTAIL, Sci.SC_MARK_EMPTY)
 		
-		self.markerDefine(MARKER_BREAKPOINT, Sci.SC_MARK_CIRCLE)
+		self.markerDefine( MARKER_BREAKPOINT, Sci.SC_MARK_CIRCLE )
 		self.markerSetBackground(MARKER_BREAKPOINT, "RED")
 		self.markerSetForeground(MARKER_BREAKPOINT, "BLACK")
 		
@@ -258,32 +253,31 @@ class CodeBox(ScintillaCompat, Qsci.QsciScintilla):
 		self._send(Sci.SCI_SETKEYWORDS, id, keywords)
 
 	def applyStyle(self, style):
-		lexer=self.lexer()
-		id=style['id']
-
+		lexer = self.lexer()
+		id = style['id']
 		lexer.setColor(
-				convertColor(style.get('fg',{'r':0,'g':0,'b':0})), id
+				convertColor( style.get('fg',{'r':0,'g':0,'b':0}) ), id
 			)
 		lexer.setPaper(
-				convertColor(style.get('bg',{'r':1,'g':1,'b':1})), id
+				convertColor( style.get('bg',{'r':1,'g':1,'b':1}) ), id
 			)
-		font=QtGui.QFont()
-		font.setFamily(style.get('font','Consolas'))
-		font.setPointSize(style.get('size',12))
-		font.setBold(style.get('bold',False))
-		font.setItalic(style.get('italic',False))
-		font.setUnderline(style.get('underline',False))
-		lexer.setFont(font, id)
+		font = QtGui.QFont()
+		font.setFamily    ( style.get('font','Consolas' ) )
+		font.setPointSize ( style.get('size',12 )         )
+		font.setBold      ( style.get('bold',False )      )
+		font.setItalic    ( style.get('italic',False )    )
+		font.setUnderline ( style.get('underline',False ) )
+		lexer.setFont( font, id )
 		
 	def onMouseWheel(self,event):
 		if event.GetWheelAxis()==wx.MOUSE_WHEEL_HORIZONTAL:
-			x0=self.GetXOffset()
-			delta=event.GetWheelDelta() * 2
-			rotation=event.GetWheelRotation()
-			if rotation<0:
-				self.SetXOffset(x0+delta)
+			x0       = self.GetXOffset()
+			delta    = event.GetWheelDelta() * 4
+			rotation = event.GetWheelRotation()
+			if rotation < 0:
+				self.SetXOffset(x0 + delta)
 			else:
-				self.SetXOffset(max(x0-delta,0))
+				self.SetXOffset( max( x0 - delta, 0 ) )
 		else:
 			event.Skip()
 

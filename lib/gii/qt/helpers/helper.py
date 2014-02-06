@@ -11,7 +11,7 @@ def unpackQColor( c ):
 def QColorF( r, g, b, a =1 ):
 	return QtGui.QColor( r*255, g*255, b*255, a*255)
 
-def addWidgetWithLayout(child, parent = None, **option):
+def addWidgetWithLayout( child, parent = None, **option ):
 	#add a widget to parent along with a new layout
 	direction = option.get('direction','vertical')
 	layout    = None

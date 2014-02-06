@@ -179,7 +179,7 @@ function SceneView:onSelectionChanged( selection )
 	self:clearSelection()
 	local entities = {}
 	for i, e in ipairs( gii.listToTable( selection ) ) do
-		if isInstanceOf( e, mock.Entity ) then entities[ e ] = true end
+		if isInstance( e, mock.Entity ) then entities[ e ] = true end
 	end
 
 	--handle

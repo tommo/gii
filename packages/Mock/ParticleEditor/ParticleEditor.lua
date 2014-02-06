@@ -83,9 +83,9 @@ function ParticlePreview:updateScript( initScript, renderScript )
 end
 
 function ParticlePreview:update( obj, field, value )
-	if isInstanceOf( obj, mock.ParticleEmitterConfig ) then
+	if isInstance( obj, mock.ParticleEmitterConfig ) then
 		self:updateEmitter( field=='type' )
-	elseif isInstanceOf( obj, mock.ParticleStateConfig ) then
+	elseif isInstance( obj, mock.ParticleStateConfig ) then
 		self:updateState()
 	else --system		
 		if field == 'blend' and self.previewSystem then
@@ -96,9 +96,9 @@ function ParticlePreview:update( obj, field, value )
 end
 
 function ParticlePreview:changeSelection( node )
-	if isInstanceOf( node, mock.ParticleEmitterConfig ) then
+	if isInstance( node, mock.ParticleEmitterConfig ) then
 		self:activateEmitter( node )
-	elseif isInstanceOf( node, mock.ParticleStateConfig ) then
+	elseif isInstance( node, mock.ParticleStateConfig ) then
 		self:activateState( node )
 	end
 

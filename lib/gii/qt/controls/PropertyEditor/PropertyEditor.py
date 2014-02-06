@@ -148,9 +148,16 @@ class PropertyEditor( QtGui.QWidget ):
 		target=self.target
 		if not target: return
 		for field in self.model.fieldList: #todo: just use propMap to iter?
-			self.refreshField( field )
+			self._refreshField( field )
 
-	def refreshField( self, field ):
+	def refreshField( self, fieldId ):
+		for field in self.model.fieldList: #todo: just use propMap to iter?
+			if field.id == fieldId:
+				self._refreshField( field )
+				return True
+		return False
+
+	def _refreshField( self, field ):
 		target = self.target
 		if not target: return
 		editor = self.editors.get( field, None )
