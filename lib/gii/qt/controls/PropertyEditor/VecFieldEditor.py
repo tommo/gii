@@ -69,7 +69,7 @@ class GenericVecFieldEdtior( FieldEditor ):
 			field.valueChanged.connect( self.onValueChanged )
 			field.setRange( minValue, maxValue	)
 			field.setSingleStep( self.getOption( 'step', 1 ) )
-			field.setDecimals( self.getOption( 'decimals', 5 ) )
+			field.setDecimals( self.getOption( 'decimals', 4 ) )
 
 		return self.editor
 

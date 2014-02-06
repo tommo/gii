@@ -61,9 +61,8 @@ class NumberFieldEditor( FieldEditor ):
 			spineBox.setSingleStep( step )
 		else:
 			spineBox = FieldEditorDoubleSpinBox( container )
-			spineBox.setDecimals( self.getOption( 'decimals', 5 )	)
+			spineBox.setDecimals( self.getOption( 'decimals', 4 )	)
 			spineBox.setSingleStep( self.step	)
-
 		#common part
 		spineBox.setMinimumSize( 50, 16 )
 		spineBox.setSizePolicy(
