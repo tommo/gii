@@ -54,7 +54,7 @@ class ToolBarItem(object):
 
 	def setValue( self, value ):
 		if self.itemType in ('check','radio'):
-			self.qtaction.setChecked(v and True or False)
+			self.qtaction.setChecked( value and True or False )
 
 	def handleEvent( self ):
 		value = self.getValue()

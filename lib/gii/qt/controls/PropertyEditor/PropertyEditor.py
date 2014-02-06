@@ -48,7 +48,10 @@ class PropertyEditor( QtGui.QWidget ):
 		self.layout.setVerticalSpacing( 1 )
 		self.layout.setLabelAlignment( Qt.AlignLeft )
 		self.layout.setFieldGrowthPolicy( QtGui.QFormLayout.ExpandingFieldsGrow )
-
+		self.setSizePolicy( 
+			QtGui.QSizePolicy.Expanding,
+			QtGui.QSizePolicy.Minimum
+		)
 		self.editors    = {}
 		self.target     = None
 		self.refreshing = False

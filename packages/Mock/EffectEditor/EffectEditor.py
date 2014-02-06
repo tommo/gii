@@ -50,10 +50,12 @@ def _fixDuplicatedName( names, name, id = None ):
 class EffectEditor( AssetEditorModule ):
 	def __init__(self):
 		super(EffectEditor, self).__init__()
-		self.editingAsset = None
-		self.editConfig  = None
+		self.editingAsset     = None
+		self.editConfig       = None
+		self.previewing       = False
+		self.refreshFlag      = -1
+		self.scriptModifyFlag = -1
 		self.refreshingScript = False
-		self.previewing  = False
 
 	def getName(self):
 		return 'effect_editor'
@@ -74,14 +76,14 @@ class EffectEditor( AssetEditorModule ):
 		self.addTool( 'effect_editor/save',   label = 'Save', icon = 'save' )
 		self.addTool( 'effect_editor/----' )
 		self.addTool( 'effect_editor/remove_node', icon = 'remove' )
+		self.addTool( 'effect_editor/clone_node',  icon = 'clone'    )
 		self.addTool( 'effect_editor/add_system',  label = '+System' )
 		self.addTool( 'effect_editor/add_child',   label = '+Child' )
 		self.addTool( 'effect_editor/----' )
 		self.addTool( 'effect_editor/move_up',     icon = 'arrow-up' )
 		self.addTool( 'effect_editor/move_down',   icon = 'arrow-down' )
 		self.addTool( 'effect_editor/----' )
-		self.addTool( 'effect_editor/start_preview', icon = 'play' )
-		self.addTool( 'effect_editor/stop_preview', icon = 'stop' )
+		self.addTool( 'effect_editor/toggle_preview', icon = 'play', type = 'check' )
 
 		self.window = window = self.container.addWidgetFromFile(
 			_getModulePath('EffectEditor.ui')
@@ -127,7 +129,7 @@ class EffectEditor( AssetEditorModule ):
 		self.addShortcut( self.container, '-',  self.removeNode )
 		# self.addShortcut( self.container, ']',  self.moveNodeUp )
 		# self.addShortcut( self.container, '[',  self.moveNodeDown )
-		self.addShortcut( self.container, 'ctrl+d',  self.cloneNode )
+		self.addShortcut( self.container, 'ctrl+D',  self.cloneNode )
 		self.addShortcut( self.container, 'f5',      self.togglePreview )
 
 		#Signals
@@ -152,10 +154,15 @@ class EffectEditor( AssetEditorModule ):
 		self.container.setDocumentName( node.getNodePath() )
 		self.tree.rebuild()
 		self.selectEditTarget( None )
+		self.checkScriptTimer  = self.container.startTimer( 3, self.checkScript )
+		self.checkRefreshTimer = self.container.startTimer( 10, self.checkRefresh )
 
 	def saveAsset( self ):
 		if not self.editingAsset: return
 		self.canvas.safeCallMethod( 'editor', 'save', self.editingAsset.getAbsFilePath() )
+
+	def closeAsset( self ):
+		self.checkScriptTimer.stop()
 
 	def getEditingConfig( self ):
 		return self.editConfig
@@ -183,27 +190,30 @@ class EffectEditor( AssetEditorModule ):
 		self.tree.addNode( node )
 		self.tree.selectNode( node )
 		self.tree.editNode( node )
+		self.markNodeDirty( node )
 
 	def listParticleSystemChildTypes( self, typeId, context ):
 		entries = [
-			( 'state',            'State',              '', None ),
-			( 'emitter-timed',    'Emitter(Timed)',     '', None ),
-			( 'emitter-distance', 'Emitter(Distance)',  '', None ),
-			( 'force-attractor',  'Force(Attractor)',   '', None ),
-			( 'force-basin',      'Force(Basin)',       '', None ),
-			( 'force-linear',     'Force(Linear)',      '', None ),
-			( 'force-radial',     'Force(Radial)',      '', None ),
+			( 'state',            'State',              '', 'effect/state'            ),
+			( 'emitter-timed',    'Emitter Timed',     '', 'effect/emitter-timed'    ),
+			( 'emitter-distance', 'Emitter Distance',  '', 'effect/emitter-distance' ),
+			( 'force-attractor',  'Force Attractor',   '', 'effect/force-attractor'  ),
+			( 'force-basin',      'Force Basin',       '', 'effect/force-basin'      ),
+			( 'force-linear',     'Force Linear',      '', 'effect/force-linear'     ),
+			( 'force-radial',     'Force Radial',      '', 'effect/force-radial'     ),
 		]
 		return entries
 
 	def addChildNode( self, childType ):
-		node = self.canvas.callMethod( 'editor', 'addChild', self.editingTarget, childType )
-		self.postCreateNode( node )
+		if self.editingTarget:
+			node = self.canvas.callMethod( 'editor', 'addChildNode', self.editingTarget, childType )
+			self.postCreateNode( node )
 
 	def removeNode( self ):
 		if self.editingTarget:
-			self.canvas.callMethod( 'editor', 'removeNode', self.selectEditTarget )
-			self.tree.removeNode( self.selectEditTarget )
+			self.markNodeDirty( self.editingTarget )
+			self.canvas.callMethod( 'editor', 'removeNode', self.editingTarget )
+			self.tree.removeNode( self.editingTarget )
 
 	def promptAddChild( self ):
 		requestSearchView( 
@@ -215,8 +225,9 @@ class EffectEditor( AssetEditorModule ):
 		)
 
 	def cloneNode( self ):
-		#TODO
-		pass
+		if self.editingTarget:
+			node = self.canvas.callMethod( 'editor', 'cloneNode', self.editingTarget )
+			self.postCreateNode( node )
 
 	def addSystem( self ):
 		sys = self.canvas.callMethod( 'editor', 'addSystem' )
@@ -226,19 +237,29 @@ class EffectEditor( AssetEditorModule ):
 		self.refreshingScript = True
 		stateNode = self.editingTarget
 		self.codebox.setText( stateNode.script or '' )
-		self.paramProxy = stateNode.buildParamProxy( stateNode )
-		self.paramPropEditor.setTarget( self.paramProxy )
+		self.updateParamProxy()
 		self.refreshingScript = False
 		#TODO: param
+
+	def updateParamProxy( self ):
+		stateNode = self.editingTarget
+		self.paramProxy = stateNode.buildParamProxy( stateNode )
+		self.paramPropEditor.setTarget( self.paramProxy )		
 
 	def onScriptChanged( self ):
 		if self.refreshingScript: return
 		src = self.codebox.text()
 		stateNode = self.editingTarget
-		stateNode.script = src		
+		stateNode.script = src
+		self.scriptModifyFlag = 1
 
 	def togglePreview( self ):
-		pass
+		self.previewing = not self.previewing
+		if self.previewing:
+			self.canvas.callMethod( 'editor', 'startPreview' )
+		else:
+			self.canvas.callMethod( 'editor', 'stopPreview' )
+		self.checkTool( 'effect_editor/toggle_preview', self.previewing )
 
 	def onTool( self, tool ):
 		name = tool.name
@@ -256,13 +277,34 @@ class EffectEditor( AssetEditorModule ):
 		elif name == 'clone_node':
 			self.cloneNode()
 
+		elif name == 'toggle_preview':
+			self.togglePreview()
+
 	def onNodePropertyChanged( self, node, id, value ):
 		if id == 'name':
 			self.tree.refreshNodeContent( node )
+		else:
+			self.markNodeDirty( self.editingTarget )
 
 	def onParamPropertyChanged( self, node, id, value ):
-		pass
+		self.markNodeDirty( self.editingTarget )
 
+	def markNodeDirty( self, node ):
+		self.canvas.callMethod( 'editor', 'markDirty', node )
+		self.refreshFlag = 1
+
+	def checkScript( self ):
+		if self.scriptModifyFlag == 0:
+			self.updateParamProxy()
+			self.markNodeDirty( self.editingTarget )
+
+		if self.scriptModifyFlag >= 0:
+			self.scriptModifyFlag -= 1
+
+	def checkRefresh( self ):
+		if self.refreshFlag > 0 :
+			self.canvas.callMethod( 'editor', 'refreshPreview' )
+			self.refreshFlag = 0
 
 ##----------------------------------------------------------------##
 class EffectNodeTreeWidget( GenericTreeWidget ):

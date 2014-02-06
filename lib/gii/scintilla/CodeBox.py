@@ -242,6 +242,9 @@ class CodeBox( ScintillaCompat, Qsci.QsciScintilla ):
 		
 		self.setLayoutCache(Sci.SC_CACHE_PAGE)
 		self.setBufferedDraw(True)
+
+		#Brace Matching
+		self.setBraceMatching( Sci.NoBraceMatch )
 	
 		# # 'apply language setting
 		for s in styles:
@@ -249,6 +252,7 @@ class CodeBox( ScintillaCompat, Qsci.QsciScintilla ):
 		
 		# for d in LUA_KEYWORDS:
 			# self.SetKeyWords(d['id'], d['keywords'])
+
 	def setKeywords(id, keywords):
 		self._send(Sci.SCI_SETKEYWORDS, id, keywords)
 
