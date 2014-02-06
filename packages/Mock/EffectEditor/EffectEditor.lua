@@ -86,8 +86,10 @@ end
 
 function EffectEditor:addSystem()
 	local sys = mock.EffectNodeParticleSystem()
-	print( self.effectRoot:getClassName() )
+	-- print( self.effectRoot:getClassName() )
 	self.effectRoot:addChild( sys )
+	sys:addChild( mock.EffectNodeParticleState() )
+	sys:addChild( mock.EffectNodeParticleTimedEmitter() )
 	return sys
 end
 
