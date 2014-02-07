@@ -71,7 +71,7 @@ QDockWidget
 
 QDockWidget::title
 {
-  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #222);
+  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
 	padding-top: 5px;
 	padding-left: 5px;
 	border: 1px solid #222;
@@ -113,7 +113,7 @@ QHeaderView::up-arrow
 
 QScrollBar
 {
-	background-color: #444;
+	background-color: #333;
 }
 
 QScrollBar::add-page,QScrollBar::sub-page
@@ -124,21 +124,17 @@ QScrollBar::add-page,QScrollBar::sub-page
 QScrollBar::horizontal
 {
 	border:0px solid #303030;
-	border-left:0 solid red;
-	border-right:0 solid red;
 	margin:0 11px;
-	background-color: #444;
 	height: 10px;
+	background-color: #333;
 }
 
 QScrollBar::vertical
 {
 	border:0px solid #303030;
-	border-top:0 solid red;
-	border-bottom:0 solid red;
 	margin:11px 0;
-	background-color: #444;
 	width: 10px;
+	background-color: #333;
 }
 
 QScrollBar::handle
@@ -405,8 +401,8 @@ QTabBar::tab:first{
 
 QTabBar::tab:selected
 {
-	background-color:#666;
-	color:#c8c8c8;
+	background-color:#707070;
+	color:#c1c1c1;
 	padding:4px 5px;
 }
 
@@ -818,27 +814,31 @@ QSplitter#TimelineSplitter::handle{
 }
 
 #TimelineSpan {
-	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#348, stop:0.2 #79b, stop:1 #348);
-	border-top: 1px solid #223;
+	/*background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#348, stop:0.2 #79b, stop:1 #348);*/
+	background-color:#4360b4;
+	border: 1px solid #333;
+	/*border-top: 1px solid #223;
 	border-bottom: 1px solid #223;
 	border-left: 1px solid #335;
 	border-right: 1px solid #223;
-	border-radius: 2px;
+	border-radius: 2px;*/
 	text-align: left;
 	margin:0;
 }
 
 #TimelineSpan:hover {
 	color:#fff;
-	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#569, stop:0.1 #9bd, stop:1 #67b);
+	/*background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#569, stop:0.1 #9bd, stop:1 #67b);*/
+	background-color:#416198;
 }
 
 #TimelineSpan:pressed {
-	background-color:#98acac;
+	background-color:#558a2b;
 }
 
 #TimelineSpan[selected="true"] {
-	background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#383, stop:0.2 #7c7, stop:1 #383);
+	/*background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#383, stop:0.2 #7c7, stop:1 #383);*/
+	background-color:#558a2b;
 	color:#FF4;
 }
 
