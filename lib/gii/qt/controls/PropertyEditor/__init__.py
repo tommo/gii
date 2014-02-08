@@ -1,5 +1,6 @@
 ##----------------------------------------------------------------##
-from PropertyEditor     import PropertyEditor, registerFieldEditor, registerModelEditor
+from PropertyEditor     import \
+	PropertyEditor, FieldEditor, FieldEditorFactory, registerSimpleFieldEditorFactory, registerFieldEditorFactory
 
 ##----------------------------------------------------------------##
 from CommonFieldEditors import \
@@ -13,5 +14,5 @@ from AssetRefFieldEditor  import AssetRefFieldEditor
 import ActionFieldEditor
 import VecFieldEditor
 import CollectionFieldEditor
-
+import SelectionFieldEditor
 ##----------------------------------------------------------------##

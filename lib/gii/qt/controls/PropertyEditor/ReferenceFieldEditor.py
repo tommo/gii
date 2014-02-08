@@ -1,7 +1,7 @@
 from gii.core import *
 from gii.core.model import *
 
-from PropertyEditor import FieldEditor, registerFieldEditor
+from PropertyEditor import FieldEditor, registerSimpleFieldEditorFactory
 from SearchFieldEditor import SearchFieldEditorBase
 
 ##----------------------------------------------------------------##
@@ -14,4 +14,4 @@ class ReferenceFieldEditor( SearchFieldEditorBase ):
 
 ##----------------------------------------------------------------##
 
-registerFieldEditor( ReferenceType, ReferenceFieldEditor )
+registerSimpleFieldEditorFactory( ReferenceType, ReferenceFieldEditor )

@@ -158,6 +158,7 @@ class LuaObjectModelProvider(ModelProvider):
 	def clear( self ):
 		pass
 
+
 ##----------------------------------------------------------------##
 class LuaObjectEnumerator( ObjectEnumerator ):
 	def __init__( self, name, enumerateObject, getObjectRepr, getObjectTypeRepr ):
@@ -180,6 +181,7 @@ class LuaObjectEnumerator( ObjectEnumerator ):
 	def getObjectTypeRepr( self, obj ):
 		return self._getObjectTypeRepr( self, obj )
 
+
 ##----------------------------------------------------------------##
 class LuaObjectModel(ObjectModel):
 	_EnumCache = weakref.WeakValueDictionary()
@@ -189,7 +191,7 @@ class LuaObjectModel(ObjectModel):
 		#convert lua-typeId -> pythontype
 		typeId  = luaTypeToPyType( typeId )
 		setting = data and luaTableToDict(data) or {}
-		meta = setting.get('meta',None)
+		meta = setting.get( 'meta', None )
 		if meta:
 			del setting['meta']
 			for k, v in meta.items():

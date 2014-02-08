@@ -52,6 +52,9 @@ class AssetBrowser( AssetEditorModule ):
 		self.addMenuItem(
 			'main/find/find_asset',   dict( label = 'Find Asset', shortcut = 'ctrl+T' )
 		)
+		self.addMenuItem(
+			'main/find/open_asset',   dict( label = 'Open Asset', shortcut = 'ctrl+shift+O' )
+		)
 
 		self.assetContextMenu=self.addMenu('asset_context')
 		self.assetContextMenu.addChild([
@@ -258,6 +261,13 @@ class AssetBrowser( AssetEditorModule ):
 				on_selection = self.selectAsset
 				)
 
+		elif name == 'open_asset':
+			requestSearchView( 
+				info    = 'open asset',
+				context = 'asset',
+				on_selection = self.openAsset
+				)
+
 	def onSelectionChanged( self, selection, context ):
 		if context == 'asset':
 			self.setFocus()
@@ -274,6 +284,10 @@ class AssetBrowser( AssetEditorModule ):
 	def selectAsset( self, asset ):
 		if asset: self.treeView.selectNode( asset )
 
+	def openAsset( self, asset ):
+		if asset:
+			self.treeView.selectNode( asset )
+			asset.edit()
 
 ##----------------------------------------------------------------##
 class AssetBrowserTreeView( AssetTreeView ):

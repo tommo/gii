@@ -1,4 +1,4 @@
-from PropertyEditor import FieldEditor, registerFieldEditor
+from PropertyEditor import FieldEditor, registerSimpleFieldEditorFactory
 from FieldEditorControls import *
 
 from PyQt4 import QtGui, QtCore
@@ -78,11 +78,11 @@ class Vec2FieldEdtior( GenericVecFieldEdtior ):
 	def getDimension( self ):
 		return 2
 
-registerFieldEditor( 'vec2', Vec2FieldEdtior )
+registerSimpleFieldEditorFactory( 'vec2', Vec2FieldEdtior )
 
 ##----------------------------------------------------------------##
 class Vec3FieldEdtior( GenericVecFieldEdtior ):
 	def getDimension( self ):
 		return 3
 
-registerFieldEditor( 'vec3', Vec3FieldEdtior )
+registerSimpleFieldEditorFactory( 'vec3', Vec3FieldEdtior )

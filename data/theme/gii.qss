@@ -387,8 +387,8 @@ QTabWidget::tab-bar
 
 QTabBar::tab
 {
-  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
-	color:#a1a1a1;
+	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #555, stop:1 #444);
+	color:#888;
 	padding:4px 5px;
 	border-top: 1px solid #222;
 	border-right: 1px solid #222;
@@ -399,11 +399,17 @@ QTabBar::tab:first{
 	border-left: 1px solid #222;
 }
 
+QTabBar::tab:!selected:hover
+{
+	color:#aaa;
+}
+
 QTabBar::tab:selected
 {
-	background-color:#707070;
-	color:#c1c1c1;
+  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
+	color:#cdcdcd;
 	padding:4px 5px;
+	border-top: 1px solid #466dc6;
 }
 
 QProgressBar
@@ -718,7 +724,7 @@ QTreeView:active,QTreeView:!active
 	selection-background-color:#466dc6;
 }
 
-QTreeView::item:selected:!active,QTreeView::item:selected:active,QListView::item:selected:!active,QListView::item:selected:active,QTabBar::tab:!selected:hover
+QTreeView::item:selected:!active,QTreeView::item:selected:active,QListView::item:selected:!active,QListView::item:selected:active
 {
 	background-color:#466dc6;
 }

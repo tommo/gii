@@ -1,4 +1,4 @@
-from PropertyEditor import FieldEditor,registerFieldEditor
+from PropertyEditor import FieldEditor,registerSimpleFieldEditorFactory
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
@@ -141,4 +141,4 @@ class ColorFieldEditor( FieldEditor ):
 			self.colorBlock.setEnabled( False )
 		return self.colorBlock
 
-registerFieldEditor( 'color',    ColorFieldEditor )
+registerSimpleFieldEditorFactory( 'color',    ColorFieldEditor )

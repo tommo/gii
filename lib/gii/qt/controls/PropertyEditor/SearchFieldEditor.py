@@ -1,6 +1,6 @@
 from gii.core import *
 from gii.core.model import *
-from PropertyEditor import FieldEditor, registerFieldEditor
+from PropertyEditor import FieldEditor, registerSimpleFieldEditorFactory
 from gii.qt.helpers import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.qt.IconCache  import getIcon

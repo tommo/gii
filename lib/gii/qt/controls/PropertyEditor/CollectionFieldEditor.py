@@ -1,6 +1,6 @@
 from gii.core.model import *
 
-from PropertyEditor import FieldEditor, registerFieldEditor
+from PropertyEditor import FieldEditor, registerSimpleFieldEditorFactory
 from gii.SearchView import requestSearchView
 
 from PyQt4 import QtGui, QtCore
@@ -67,5 +67,5 @@ class CollectionFieldEditor( FieldEditor ):
 	def setFocus( self ):
 		self.button.setFocus()
 
-registerFieldEditor( CollectionType, CollectionFieldEditor )
+registerSimpleFieldEditorFactory( CollectionType, CollectionFieldEditor )
 

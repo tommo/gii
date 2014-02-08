@@ -93,11 +93,7 @@ class EffectEditor( AssetEditorModule ):
 		)
 		
 		self.tree = addWidgetWithLayout(
-				EffectNodeTreeWidget( 
-					window.containerTree, 
-					multiple_selection = False,
-					editable = True
-				)
+				EffectNodeTreeWidget( window.containerTree )
 			)
 		self.tree.module = self
 		
@@ -308,6 +304,13 @@ class EffectEditor( AssetEditorModule ):
 
 ##----------------------------------------------------------------##
 class EffectNodeTreeWidget( GenericTreeWidget ):
+	def getDefaultOptions( self ):
+		return dict(
+			multiple_selection = False,
+			editable  = True,
+			show_root = True
+		)
+
 	def getHeaderInfo( self ):
 		return [ ('Name', 140), ('Type', 50) ]
 
@@ -325,12 +328,22 @@ class EffectNodeTreeWidget( GenericTreeWidget ):
 	def updateItemContent( self, item, node, **option ):
 		if node == self.getRootNode():
 			item.setText( 0, node['name'] )
-			# item.setIcon( 0, getIcon('character') )
+			item.setIcon( 0, getIcon('effect/group') )
 		else:
 			typeName = node.getTypeName( node )
 			item.setText( 0, node['name'] )
 			item.setText( 1, typeName )
 			item.setIcon( 0, getIcon( 'effect/' + typeName.lower() ) )
+
+	def getItemFlags( self, node ):
+		if node == None or node == self.getRootNode():
+			return dict( 
+				draggable = False,
+				droppable = True,
+				editable  = False
+			)
+		else:
+			return {}
 
 	def onClicked(self, item, col):
 		self.module.selectEditTarget( item.node )

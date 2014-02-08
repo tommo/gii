@@ -522,6 +522,9 @@ class AssetLibrary(object):
 		if not nodePath: return self.rootNode
 		return self.assetTable.get(nodePath, None)
 
+	def findAssetNode( self, nodePathPattern ):
+		pass
+
 	def enumerateAsset( self, patterns, **options ):
 		noVirtualNode = options.get( 'no_virtual', False )
 		result = []

@@ -30,6 +30,38 @@ local function buildGiiModel( model )
 		local typeid = f.__type
 		local meta   = f.__meta
 
+		if meta and meta['selection'] then
+			local s = meta[ 'selection' ]
+			local selectionFunc
+			local tt = type( s )
+			if tt == 'string' then
+				local selectionMethodName = s
+				selectionFunc = function( obj )
+					local method = obj[ selectionMethodName ]
+					if method then
+						return method( obj )
+					end
+				end
+
+			elseif tt == 'table' then
+				local table = s
+				selectionFunc = function( obj )
+					return table
+				end
+
+			elseif tt == 'function' then
+				local func = s
+				selectionFunc = function( obj )
+					return func( obj )
+				end
+
+			else
+				error( 'invalid field selection type:' .. tt, 2 )
+			end
+			
+			option['selection'] = selectionFunc
+		end
+
 		if typeid == '@enum' then
 			if type(f.__enum) == 'table' then
 				pmodel:addLuaEnumFieldInfo( id, f.__enum, option )
@@ -85,7 +117,7 @@ local function buildGiiModel( model )
 				option['objtype'] = f.__objtype or 'ref'
 			end
 			pmodel:addLuaFieldInfo( id, typeid, option )
-		end
+		end		
 	end
 
 	local superModel = model:getSuperModel()

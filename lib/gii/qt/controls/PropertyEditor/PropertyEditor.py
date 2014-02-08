@@ -14,21 +14,58 @@ from PyQt4.QtCore import Qt
 '''
 ##----------------------------------------------------------------##
 		
+_FieldEditorFactories = []
 _FieldEditorRegistry = {}
 _ModelEditorRegistry = {}
 
-def registerFieldEditor( dataType, clas ):
-	_FieldEditorRegistry[ dataType ] = clas
+##----------------------------------------------------------------##
+class FieldEditorFactory():
+	def getPriority( self ):
+		return 0
 
-def getFieldEditor( dataType ):
-	while True:
-		editor = _FieldEditorRegistry.get( dataType, None )
-		if editor: return editor
-		dataType = getSuperType( dataType )
-		if not dataType: return None
+	def build( self, parentEditor, field, context = None ):
+		return None
 
-def registerModelEditor( model, clas ):
-	_ModelEditorRegistry[ model ] = clas
+##----------------------------------------------------------------##
+class SimpleFieldEditorFactory( FieldEditorFactory ):
+	def __init__( self, typeId, clas, priority = -1 ):
+		self.targetTypeId = typeId
+		self.clas = clas
+		self.priority = priority
+
+	def getPriority( self ):
+		return self.priority
+
+	def build( self,parentEditor, field, context = None ):
+		dataType  = field._type
+		if field.getOption( 'objtype', None) == 'ref' :
+			dataType    = ReferenceType
+		while True:
+			if dataType == self.targetTypeId: 
+				return self.clas( parentEditor, field )
+			dataType = getSuperType( dataType )
+			if not dataType: return None
+
+##----------------------------------------------------------------##
+def registerFieldEditorFactory( factory ):
+	assert isinstance( factory, FieldEditorFactory )
+	p = factory.getPriority()
+	for i, fe in enumerate( _FieldEditorFactories ):
+		if p >= fe.getPriority():
+			_FieldEditorFactories.insert( i, factory )
+			return
+	_FieldEditorFactories.append( factory )
+
+def registerSimpleFieldEditorFactory( dataType, clas, priority = -1 ):
+	factory = SimpleFieldEditorFactory( dataType, clas, priority )
+	registerFieldEditorFactory( factory )
+
+##----------------------------------------------------------------##
+def buildFieldEditor( parentEditor, field ):
+	for factory in _FieldEditorFactories:
+		editor = factory.build( parentEditor, field )
+		if editor : return editor
+	return None
 
 ##----------------------------------------------------------------##
 class PropertyEditor( QtGui.QWidget ):
@@ -58,8 +95,9 @@ class PropertyEditor( QtGui.QWidget ):
 		self.context    = None
 		self.clear()
 		
-	def _buildSubEditor( self, field, label, editorClas, fieldType ):
-		editor = editorClas( self, field, fieldType )
+	def addFieldEditor( self, field ):
+		label = field.label
+		editor  =  buildFieldEditor( self, field )
 		labelWidget  = editor.initLabel( label, self )
 		editorWidget = editor.initEditor( self )
 		if labelWidget in (None, False):
@@ -69,7 +107,7 @@ class PropertyEditor( QtGui.QWidget ):
 		self.editors[ field ] = editor
 		return editor
 
-	def _addSeparator( self ):
+	def addSeparator( self ):
 		line = QtGui.QFrame( self )
 		line.setSizePolicy(
 			QtGui.QSizePolicy.Expanding,
@@ -132,15 +170,9 @@ class PropertyEditor( QtGui.QWidget ):
 			currentId = field.id
 			if field.getOption('no_edit'):
 				if field.id == '----' and lastId != '----':
-					self._addSeparator()
+					self.addSeparator()
 				continue
-			label = field.label
-			ft    = field._type
-			if field.getOption( 'objtype', None) == 'ref' :
-				ft    = ReferenceType
-			editorClas  =  getFieldEditor( ft )
-			if not editorClas: continue
-			editor = self._buildSubEditor( field, label, editorClas, ft )
+			self.addFieldEditor( field )			
 		assert self.refreshing
 		self.refreshing = False
 		
@@ -172,13 +204,16 @@ class PropertyEditor( QtGui.QWidget ):
 
 ##----------------------------------------------------------------##
 class FieldEditor( object ):
-	def __init__( self, parent, field, fieldType ):
+	def __init__( self, parent, field, fieldType = None ):
 		self.setTarget( parent, field )
-		self.fieldType = fieldType
+		self.fieldType = fieldType or field._type
 		
 	def setTarget( self, parent, field ):
 		self.field   = field
 		self.parent  = parent
+
+	def getTarget( self ):
+		return self.parent.getTarget()
 
 	def getFieldType( self ):
 		return self.fieldType

@@ -1,6 +1,6 @@
 import logging
 
-from PropertyEditor import FieldEditor, registerFieldEditor
+from PropertyEditor import FieldEditor, registerSimpleFieldEditorFactory
 from FieldEditorControls import *
 
 from PyQt4 import QtGui, QtCore
@@ -114,9 +114,9 @@ class BoolFieldEditor( FieldEditor ):
 
 ##----------------------------------------------------------------##
 
-registerFieldEditor( str,     StringFieldEditor )
-registerFieldEditor( unicode, StringFieldEditor )
-registerFieldEditor( int,     NumberFieldEditor )
-registerFieldEditor( float,   NumberFieldEditor )
-registerFieldEditor( bool,    BoolFieldEditor )
+registerSimpleFieldEditorFactory( str,     StringFieldEditor )
+registerSimpleFieldEditorFactory( unicode, StringFieldEditor )
+registerSimpleFieldEditorFactory( int,     NumberFieldEditor )
+registerSimpleFieldEditorFactory( float,   NumberFieldEditor )
+registerSimpleFieldEditorFactory( bool,    BoolFieldEditor )
 

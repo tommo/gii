@@ -15,8 +15,6 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.no_editItemDelegate = no_editItemDelegate( self )
 		self.refreshing = False
 		self.option = option
-		self.initRootItem()
-
 		headerInfo = self.getHeaderInfo()
 		headerItem = QtGui.QTreeWidgetItem()
 		self.setHeaderItem(headerItem)
@@ -29,17 +27,17 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			if w > 0:
 				self.setColumnWidth ( i, info[1] )
 			
-		self.setSortingEnabled( option.get('sorting', True) )
-		if option.get( 'multiple_selection', False ):
+		self.setSortingEnabled( self.getOption('sorting', True) )
+		if self.getOption( 'multiple_selection', False ):
 			self.setSelectionMode( QtGui.QAbstractItemView.ExtendedSelection )
 		else:
 			self.setSelectionMode( QtGui.QAbstractItemView.SingleSelection )
 
-		dragMode = option.get( 'drag_mode', None )
+		dragMode = self.getOption( 'drag_mode', None )
 		if dragMode:
 			self.setDragDropMode( QtGui.QAbstractItemView.InternalMove )
 			
-		self.setAlternatingRowColors( option.get('alternating_color', False) )
+		self.setAlternatingRowColors( self.getOption('alternating_color', False) )
 		self.setExpandsOnDoubleClick( False )
 		self.sortByColumn( 0, 0 )
 
@@ -50,13 +48,24 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.itemSelectionChanged .connect( self.onItemSelectionChanged )
 		self.itemActivated        .connect( self.onItemActivated )
 		self.itemChanged          .connect( self._onItemChanged )
-
 		self.setIndentation( 15 )
-		self.clear()
 
+		self.initRootItem()
+
+	def getOption( self, k, v ):
+		defOption = self.getDefaultOptions()
+		option    = self.option
+		if defOption:
+			defValue = defOption.get( k, v )
+		else:
+			defValue = v
+		return option.get( k, defValue )
+
+	def getDefaultOptions( self ):
+		return None
+		
 	def initRootItem( self ):
-		option = self.option
-		if option.get( 'show_root', False ):
+		if self.getOption( 'show_root', False ):
 			self.rootItem = self.createItem( None )
 			self.invisibleRootItem().addChild( self.rootItem )
 		else:
@@ -112,7 +121,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		self.nodeDict[ node ]=item
 
-		if self.option.get( 'auto_expand', True ):
+		if self.getOption( 'auto_expand', True ):
 			item.setExpanded( True )
 			
 		# if pnode:
@@ -317,7 +326,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		if flagNames.get( 'selectable', True ): flags |= Qt.ItemIsSelectable
 		if flagNames.get( 'draggable',  True ): flags |= Qt.ItemIsDragEnabled
 		if flagNames.get( 'droppable',  True ): flags |= Qt.ItemIsDropEnabled
-		if self.option.get( 'editable', False ):
+		if self.getOption( 'editable', False ):
 			if flagNames.get( 'editable',   True ): flags |= Qt.ItemIsEditable
 		item  = QtGui.QTreeWidgetItem()
 		item.setFlags ( flags )
