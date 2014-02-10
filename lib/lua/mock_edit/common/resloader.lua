@@ -1,18 +1,18 @@
 function loadShader(option)
 	local vsh,fsh=option.vsh,option.fsh
 
-	local shader=MOAIShader.new()
-	shader:load(vsh,fsh)
-	if option.name then shader.name=option.name end
+	local program=MOAIShaderProgram.new()
+	program:load(vsh,fsh)
+	if option.name then program.name=option.name end
 
 	--setup variables
 
-	if option.onLoad then option.onLoad(shader)	end
+	if option.onLoad then option.onLoad(program)	end
 	local attrs = option.attributes or {'position', 'uv', 'color'}
 	if attrs then
 		for i, a in ipairs(attrs) do
 			assert(type(a)=='string')
-			shader:setVertexAttribute(i,a)
+			program:setVertexAttribute(i,a)
 		end
 	end
 
@@ -20,34 +20,36 @@ function loadShader(option)
 	local uniformTable = {}
 	if uniforms then
 		local count=#uniforms
-		shader:reserveUniforms(count)
+		program:reserveUniforms(count)
 		for i, u in ipairs(uniforms) do
 			local utype=u.type
 			local uvalue=u.value
 			local name=u.name
 
 			if utype=='float' then
-				shader:declareUniformFloat(i, name, uvalue or 0)
+				program:declareUniformFloat(i, name, uvalue or 0)
 			elseif utype=='int' then
-				shader:declareUniformInt(i, name, uvalue or 0)			
+				program:declareUniformInt(i, name, uvalue or 0)			
 			elseif utype=='color' then
-				shader:declareUniform(i,name,MOAIShader.UNIFORM_COLOR)
+				program:declareUniform(i,name,MOAIShaderProgram.UNIFORM_COLOR)
 			elseif utype=='sampler' then
-				shader:declareUniformSampler(i, name, uvalue or 1)
+				program:declareUniformSampler(i, name, uvalue or 1)
 			elseif utype=='transform' then
-				shader:declareUniform(i,name, MOAIShader.UNIFORM_TRANSFORM)
+				program:declareUniform(i,name, MOAIShaderProgram.UNIFORM_TRANSFORM)
 			elseif utype=='pen_color' then
-				shader:declareUniform(i,name,MOAIShader.UNIFORM_PEN_COLOR)
+				program:declareUniform(i,name,MOAIShaderProgram.UNIFORM_PEN_COLOR)
 			elseif utype=='view_proj' then
-				shader:declareUniform(i,name,MOAIShader.UNIFORM_VIEW_PROJ)
+				program:declareUniform(i,name,MOAIShaderProgram.UNIFORM_VIEW_PROJ)
 			elseif utype=='world_view_proj' then
-				shader:declareUniform(i,name,MOAIShader.UNIFORM_WORLD_VIEW_PROJ)
+				program:declareUniform(i,name,MOAIShaderProgram.UNIFORM_WORLD_VIEW_PROJ)
 			end
 			uniformTable[ name ] = i
 		end
 	end
-	shader.uniformTable = uniformTable
-
+	program.uniformTable = uniformTable
+	local shader = MOAIShader.new()
+	
+	shader:setProgram( program )
 	local _setAttr = shader.setAttr
 	function shader:setAttr( name, v )
 		local tt = type( name )

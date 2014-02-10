@@ -80,6 +80,8 @@ class EffectEditor( AssetEditorModule ):
 		self.addTool( 'effect_editor/add_system',  label = '+System' )
 		self.addTool( 'effect_editor/add_child',   label = '+Child' )
 		self.addTool( 'effect_editor/----' )
+		self.addTool( 'effect_editor/add_move',  label = '+Move' )
+		self.addTool( 'effect_editor/----' )
 		self.addTool( 'effect_editor/move_up',     icon = 'arrow-up' )
 		self.addTool( 'effect_editor/move_down',   icon = 'arrow-down' )
 		self.addTool( 'effect_editor/----' )
@@ -91,7 +93,7 @@ class EffectEditor( AssetEditorModule ):
 		self.canvas = addWidgetWithLayout(
 			MOAIEditCanvas( window.containerPreview )
 		)
-		
+		window.setFocusProxy( self.canvas )
 		self.tree = addWidgetWithLayout(
 				EffectNodeTreeWidget( window.containerTree )
 			)
@@ -229,6 +231,10 @@ class EffectEditor( AssetEditorModule ):
 		sys = self.canvas.callMethod( 'editor', 'addSystem' )
 		self.postCreateNode( sys )
 
+	def addMove( self ):
+		sys = self.canvas.callMethod( 'editor', 'addMove' )
+		self.postCreateNode( sys )
+
 	def updateScript( self ):
 		self.refreshingScript = True
 		stateNode = self.editingTarget
@@ -263,6 +269,9 @@ class EffectEditor( AssetEditorModule ):
 			self.saveAsset()
 		elif name == 'add_system':
 			self.addSystem()
+
+		elif name == 'add_move':
+			self.addMove()
 
 		elif name == 'add_child':
 			self.promptAddChild()			

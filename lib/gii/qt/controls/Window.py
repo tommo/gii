@@ -62,9 +62,12 @@ class MainWindow(QtGui.QMainWindow):
 		font.setPointSize(11)
 		self.setFont(font)
 		self.setIconSize( QtCore.QSize( 16, 16 ) )
+		self.setFocusPolicy( Qt.WheelFocus )
 		
-		self.centerTabWidget = QtGui.QTabWidget(self)
-		self.setCentralWidget(self.centerTabWidget)
+		self.centerTabWidget = QtGui.QTabWidget( self )
+		self.setCentralWidget( self.centerTabWidget )
+		
+		self.centerTabWidget.currentChanged.connect( self.onDocumentTabChanged )
 
 		# self.centerTabWidget.setDocumentMode(True)
 		self.centerTabWidget.setMovable(True)
@@ -210,7 +213,10 @@ class MainWindow(QtGui.QMainWindow):
 		self.addToolBar( toolbar )
 		return toolbar
 		
-
+	def onDocumentTabChanged( self, idx ):
+		w = self.centerTabWidget.currentWidget()
+		if w: w.setFocus()
+	
 
 ##----------------------------------------------------------------##
 class SubWindowMixin:	
@@ -261,7 +267,6 @@ class SubWindowMixin:
 	def ensureVisible(self):
 		ensureWindowVisible(self)
 
-	
 ##----------------------------------------------------------------##
 				
 class SubWindow(QtGui.QMainWindow, SubWindowMixin):

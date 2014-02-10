@@ -127,6 +127,10 @@ function EditorCanvasScene:setCameraZoom( zoom )
 	self.cameraCom:setCameraZoom( zoom )
 end
 
+-- function EditorCanvasScene:threadMain( dt )
+	
+-- end
+
 --------------------------------------------------------------------
 function createEditorCanvasInputDevice( env )
 	local env = env or getfenv( 2 )

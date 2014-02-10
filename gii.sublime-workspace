@@ -520,68 +520,10 @@
 	"buffers":
 	[
 		{
-			"contents": "Searching 678 files for \"PropertyGrid\"\n\n/Volumes/prj/gii/gii.sublime-workspace:\n 1116  		\"/Volumes/prj/gii/test/env/packages/-DeckEditor/Deck2DEditor.py\",\n 1117  		\"/Volumes/prj/gii/packages/ScriptView/ScriptView.py\",\n 1118: 		\"/Volumes/prj/gii/lib/gii/qt/controls/PropertyGrid.py\",\n 1119  		\"/Volumes/prj/gii/test/game/lib/mock/component/Camera.lua\",\n 1120  		\"/Volumes/prj/gii/test/env/lib/mock/editor/EditCamera.lua\",\n ....\n 2213  			[\n 2214  				\"propg\",\n 2215: 				\"lib/gii/qt/controls/PropertyGrid.py\"\n 2216  			],\n 2217  			[\n\n/Volumes/prj/gii/lib/gii/qt/controls/AssetTreeView.py:\n    7  \n    8  from gii.qt.IconCache                  import getIcon\n    9: from gii.qt.controls.PropertyGrid      import PropertyGrid\n   10  from gii.qt.controls.GenericTreeWidget import GenericTreeWidget\n   11  \n\n/Volumes/prj/gii/lib/gii/qt/controls/PropertyGrid.py:\n  181  \n  182  ##----------------------------------------------------------------##\n  183: class PropertyGrid(QtGui.QWidget):\n  184  	propertyChanged = QtCore.pyqtSignal( object, str, object )\n  185  \n  186  	def __init__(self, parentWidget, **option):\n  187: 		super(PropertyGrid, self).__init__(parentWidget)\n  188  		self.model= None\n  189  		self.target= None\n\n/Volumes/prj/gii/lib/gii/SceneEditor/Introspector.py:\n    2  ##----------------------------------------------------------------##\n    3  from gii.core     import *\n    4: from gii.qt.controls.PropertyGrid import PropertyGrid\n    5  \n    6  from PyQt4        import QtCore, QtGui\n    .\n   91  			getAppPath( 'data/ui/introspector.ui' ),\n   92  			expanding=False)\n   93: 		self.grid = container.addWidget(PropertyGrid(container))\n   94  		self.grid.manager.valueChanged.connect(self.onValueChanged)\n   95  		self.header.hide()\n\n/Volumes/prj/gii/packages/Mock/DeckEditor/Deck2DEditor.py:\n   12  from gii.qt.dialogs   import requestString, alertMessage, requestColor\n   13  \n   14: from gii.qt.controls.PropertyGrid  import PropertyGrid\n   15  \n   16  from gii.AssetEditor  import AssetEditorModule\n   ..\n   70  		\n   71  		self.propGrid = addWidgetWithLayout(\n   72: 			PropertyGrid(window.settingsContainer),\n   73  			window.settingsContainer\n   74  		)\n\n/Volumes/prj/gii/packages/Mock/TextureManager/TextureManager.py:\n   11  \n   12  from gii.qt.controls.GenericTreeWidget import GenericTreeWidget\n   13: from gii.qt.controls.PropertyGrid      import PropertyGrid\n   14  \n   15  from gii.AssetEditor  import AssetEditorModule\n   ..\n  114  \n  115  		self.groupProp = addWidgetWithLayout(\n  116: 			PropertyGrid(window.containerGroupProp)\n  117  		)\n  118  \n\n15 matches across 6 files\n",
-			"settings":
-			{
-				"buffer_size": 2607,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "lib/gii/qt/controls/PropertyEditor/CommonFieldEditors.py",
-			"settings":
-			{
-				"buffer_size": 3993,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/gii/qt/controls/PropertyEditor/EnumFieldEditor.py",
-			"settings":
-			{
-				"buffer_size": 1410,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "lib/gii/core/model.py",
 			"settings":
 			{
-				"buffer_size": 11919,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/gii/qt/controls/PropertyGrid.py",
-			"settings":
-			{
-				"buffer_size": 8900,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/gii/qt/controls/PropertyEditor/test.py",
-			"settings":
-			{
-				"buffer_size": 1550,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "packages/Mock/TextureManager/TextureManager.py",
-			"settings":
-			{
-				"buffer_size": 7434,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/gii/core/EditorApp.py",
-			"settings":
-			{
-				"buffer_size": 4505,
+				"buffer_size": 13015,
 				"line_ending": "Unix"
 			}
 		},
@@ -589,26 +531,18 @@
 			"file": "lib/gii/qt/QtSupport.py",
 			"settings":
 			{
-				"buffer_size": 4864,
+				"buffer_size": 5166,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/gii/SceneEditor/SceneEditor.py",
-			"settings":
-			{
-				"buffer_size": 4839,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Initializing Chipmunk v5.3.4 (Debug Enabled)\nCompile with -DNDEBUG defined to disable debug mode and runtime assertion checks\n[STATUS]  loading library from  /Volumes/prj/gii/test/env/config/asset_table.json \nlibpng warning: Interlace handling should be turned on when using png_read_image\n2013-08-07 22:32:53.107 Python[16871:f0b] invalid drawable\n2013-08-07 22:32:53.109 Python[16871:f0b] invalid drawable\n2013-08-07 22:32:53.110 Python[16871:f0b] invalid drawable\n2013-08-07 22:32:53.111 Python[16871:f0b] invalid drawable\n2013-08-07 22:32:53.112 Python[16871:f0b] invalid drawable\n\n[Finished in 2.6s]\n",
+			"contents": "Traceback (most recent call last):\n  File \"/Users/tommo/dev/shared/gii\", line 4, in <module>\n    gii_bin.main()\n  File \"/Volumes/prj/gii/gii_bin.py\", line 58, in main\n    gii.startup()\n  File \"/Volumes/prj/gii/lib/gii/__init__.py\", line 6, in startup\n    startupTool( info )\n  File \"/Volumes/prj/gii/lib/gii/core/tool.py\", line 138, in startupTool\n    return startTool( toolInfo )\n  File \"/Volumes/prj/gii/lib/gii/core/tool.py\", line 79, in startTool\n    m.main( sys.argv[ 1: ] )\n  File \"/Volumes/prj/gii/tools/ide/__init__.py\", line 12, in main\n    app.run()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorApp.py\", line 86, in run\n    if not self.initialized: self.init()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorApp.py\", line 74, in init\n    EditorModuleManager.get().loadAllModules()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 204, in loadAllModules\n    if not self.loadModule(m): \n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 192, in loadModule\n    m.load()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 102, in load\n    self.onLoad()\n  File \"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreview.py\", line 112, in onLoad\n    self.onMoaiReset()\n  File \"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreview.py\", line 161, in onMoaiReset\n    runtime.addDefaultInputDevice( 'device' )\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIRuntime.py\", line 298, in addDefaultInputDevice\n    device.addJoystickSensors( i + 1 )\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIInputDevice.py\", line 25, in addJoystickSensors\n    self.addSensor( axisSensorName, 'wheel' )\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIInputDevice.py\", line 49, in addSensor\n    sensor.onRegister()\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIInputDevice.py\", line 118, in onRegister\n    getAKU().setInputDeviceWheel(self.device.id, self.id, self.name)\nAttributeError: 'AKU.AKU' object has no attribute 'setInputDeviceWheel'\n\n[Finished in 1.6s with exit code 1]\n",
 			"file": "BUILD_RESULT",
 			"file_size": -1,
 			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 605,
+				"buffer_size": 1957,
 				"line_ending": "Unix",
 				"scratch": true
 			}
@@ -629,7 +563,7 @@
 			"file": "gii_cfg.py",
 			"settings":
 			{
-				"buffer_size": 364,
+				"buffer_size": 366,
 				"line_ending": "Unix"
 			}
 		}
@@ -637,9 +571,17 @@
 	"build_system": "Run",
 	"command_palette":
 	{
-		"height": 58.0,
+		"height": 375.0,
 		"selected_items":
 		[
+			[
+				"git diff",
+				"Git: Diff Current File"
+			],
+			[
+				"diff cu",
+				"Git: Diff Current File"
+			],
 			[
 				"checkout",
 				"Git: Checkout Current File"
@@ -662,10 +604,6 @@
 			],
 			[
 				"git dif",
-				"Git: Diff Current File"
-			],
-			[
-				"git diff",
 				"Git: Diff Current File"
 			],
 			[
@@ -1061,7 +999,7 @@
 				"Package Control: List Packages"
 			]
 		],
-		"width": 545.0
+		"width": 551.0
 	},
 	"console":
 	{
@@ -1078,6 +1016,19 @@
 	},
 	"file_history":
 	[
+		"/Volumes/prj/gii/lib/gii/qt/controls/PropertyEditor/CommonFieldEditors.py",
+		"/Volumes/prj/gii/lib/gii/qt/controls/PropertyEditor/EnumFieldEditor.py",
+		"/Volumes/prj/gii/lib/gii/DeviceManager/IOSDevice.py",
+		"/Volumes/prj/gii/lib/gii/core/EditorApp.py",
+		"/Volumes/prj/gii/packages/Mock/TextureManager/TextureManager.py",
+		"/Volumes/prj/gii/lib/gii/SceneEditor/SceneEditor.py",
+		"/Volumes/prj/gii/lib/gii/qt/controls/PropertyEditor/test.py",
+		"/Volumes/prj/gii/test/game/lib/mock/component/DeckComponent.lua",
+		"/Volumes/prj/gii/test/game/lib/character/Character.lua",
+		"/Volumes/prj/moai/jam/horse/host/ios/gii.xcodeproj/project.pbxproj",
+		"/Volumes/prj/moai/jam/horse/host/ios/app/Images.xcassets/LaunchImage.launchimage/Contents.json",
+		"/Volumes/prj/gii/lib/gii/qt/controls/PropertyGrid.py",
+		"/Volumes/prj/gii/test/game/lib/mock/core/utils.lua",
 		"/Volumes/prj/gii/lib/gii/qt/controls/PropertyEditor/PropertyEditor.py",
 		"/Volumes/prj/gii/lib/gii/AssetEditor/AssetEditor.py",
 		"/Volumes/prj/gii/lib/gii/core/model.py",
@@ -1087,10 +1038,8 @@
 		"/Volumes/prj/gii/lib/gii/qt/QtSupport.py",
 		"/Volumes/prj/gii/lib/gii/qt/controls/prop/ColorFieldEditor.py",
 		"/Volumes/prj/gii/lib/gii/qt/controls/prop/CommonFieldEditors.py",
-		"/Volumes/prj/gii/packages/Mock/TextureManager/TextureManager.py",
 		"/Volumes/prj/gii/lib/gii/SceneEditor/Introspector.py",
 		"/Volumes/prj/gii/lib/gii/qt/helpers/helper.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/PropertyGrid.py",
 		"/Volumes/prj/gii/lib/gii/qt/controls/prop/PropertyEditor.py",
 		"/Volumes/prj/gii/packages/Mock/DeckEditor/Deck2DEditor.py",
 		"/Volumes/prj/gii/packages/Mock/TextureManager/BUILD_RESULT",
@@ -1128,12 +1077,10 @@
 		"/Volumes/prj/gii/tools/run/__init__.py",
 		"/Volumes/prj/gii/start",
 		"/Volumes/prj/gii/data/lua/runtime.lua",
-		"/Volumes/prj/gii/lib/gii/SceneEditor/SceneEditor.py",
 		"/Volumes/prj/gii/packages/Mock/SceneView/SceneView.py",
 		"/Volumes/prj/gii/lib/gii/core/tool.py",
 		"/Volumes/prj/gii/lib/mock/MockRuntime.lua",
 		"/Volumes/prj/gii/lib/gii/__init__.py",
-		"/Volumes/prj/gii/lib/gii/core/EditorApp.py",
 		"/Volumes/prj/gii/lib/gii/core/package.py",
 		"/Volumes/prj/gii/template/host/osx/wscript",
 		"/Volumes/prj/gii/.gitignore",
@@ -1196,16 +1143,7 @@
 		"/Volumes/prj/gii/test/game/lib/mock/asset/Deck2D.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/asset/Scene.lua",
 		"/Volumes/prj/gii/data/lua/bridge.lua",
-		"/Volumes/prj/gii/test/game/script/sceneTest.lua",
-		"/Volumes/prj/gii/test/game/startup.lua",
-		"/Volumes/prj/gii/test/game/asset/scenes/main.scene",
-		"/Volumes/prj/gii/test/game/lib/mock/core/Entity.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/core/EntityHelper.lua",
-		"/Volumes/prj/gii/test/game/script/init.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/core/utils.lua",
-		"/Volumes/prj/gii/test/env/packages/SceneView/__init__.py",
-		"/Volumes/prj/gii/test/game/test.lua",
-		"/Volumes/prj/gii/lib/gii/core/CommonAsset/FolderCreator.py"
+		"/Volumes/prj/gii/test/game/script/sceneTest.lua"
 	],
 	"find":
 	{
@@ -1291,6 +1229,19 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"horse",
+			"yaka",
+			"mod",
+			"SRCROOT",
+			"EXTRA",
+			"EXTRA_LIB_PATH",
+			"SRCROOT",
+			"fmoddesigner",
+			"debug",
+			"SRC_PATH",
+			"MOAI_",
+			"$(SRCROOT)/../../../lib/",
+			"SRC_PATH",
 			"True",
 			"False",
 			"postStart",
@@ -1405,20 +1356,7 @@
 			"QColorF",
 			"pyqtSignal",
 			"Qsignal",
-			"QSignal",
-			"checkBox",
-			"ColorBlock",
-			"border",
-			"onColorChanged",
-			"request",
-			"color",
-			"window",
-			"buttonColor",
-			"args",
-			"arg",
-			"545454",
-			"background",
-			"555"
+			"QSignal"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1564,115 +1502,15 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
+					"file": "lib/gii/core/model.py",
 					"settings":
 					{
-						"buffer_size": 2607,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										265,
-										277
-									],
-									[
-										491,
-										503
-									],
-									[
-										686,
-										698
-									],
-									[
-										711,
-										723
-									],
-									[
-										955,
-										967
-									],
-									[
-										1126,
-										1138
-									],
-									[
-										1415,
-										1427
-									],
-									[
-										1435,
-										1447
-									],
-									[
-										1627,
-										1639
-									],
-									[
-										1923,
-										1935
-									],
-									[
-										1944,
-										1956
-									],
-									[
-										2091,
-										2103
-									],
-									[
-										2350,
-										2362
-									],
-									[
-										2375,
-										2387
-									],
-									[
-										2521,
-										2533
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								2358,
-								2358
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"detect_indentation": false,
-							"output_tag": 1,
-							"result_base_dir": "",
-							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 480.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "lib/gii/qt/controls/PropertyEditor/CommonFieldEditors.py",
-					"settings":
-					{
-						"buffer_size": 3993,
+						"buffer_size": 13015,
 						"regions":
 						{
 						},
@@ -1681,34 +1519,6 @@
 							[
 								0,
 								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 173.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "lib/gii/qt/controls/PropertyEditor/EnumFieldEditor.py",
-					"settings":
-					{
-						"buffer_size": 1410,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								718,
-								758
 							]
 						],
 						"settings":
@@ -1722,167 +1532,27 @@
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "lib/gii/core/model.py",
-					"settings":
-					{
-						"buffer_size": 11919,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 5,
+			"selected": 0,
 			"sheets":
 			[
 				{
-					"buffer": 4,
-					"file": "lib/gii/qt/controls/PropertyGrid.py",
-					"settings":
-					{
-						"buffer_size": 8900,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1549,
-								1549
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 394.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "lib/gii/qt/controls/PropertyEditor/test.py",
-					"settings":
-					{
-						"buffer_size": 1550,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 230.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "packages/Mock/TextureManager/TextureManager.py",
-					"settings":
-					{
-						"buffer_size": 7434,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 621.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "lib/gii/core/EditorApp.py",
-					"settings":
-					{
-						"buffer_size": 4505,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1127.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
+					"buffer": 1,
 					"file": "lib/gii/qt/QtSupport.py",
 					"settings":
 					{
-						"buffer_size": 4864,
+						"buffer_size": 5166,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1263,
+								1263
 							]
 						],
 						"settings":
@@ -1892,35 +1562,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2001.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "lib/gii/SceneEditor/SceneEditor.py",
-					"settings":
-					{
-						"buffer_size": 4839,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 593.0,
+						"translation.y": 436.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1932,19 +1574,19 @@
 			"sheets":
 			[
 				{
-					"buffer": 10,
+					"buffer": 2,
 					"file": "BUILD_RESULT",
 					"settings":
 					{
-						"buffer_size": 605,
+						"buffer_size": 1957,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								605,
-								605
+								1957,
+								1957
 							]
 						],
 						"settings":
@@ -1958,13 +1600,13 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 377.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 11,
+					"buffer": 3,
 					"file": "lib/gii/qt/controls/prop/BUILD_RESULT",
 					"settings":
 					{
@@ -1994,11 +1636,11 @@
 					"type": "text"
 				},
 				{
-					"buffer": 12,
+					"buffer": 4,
 					"file": "gii_cfg.py",
 					"settings":
 					{
-						"buffer_size": 364,
+						"buffer_size": 366,
 						"regions":
 						{
 						},
@@ -2102,6 +1744,22 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"iosde",
+				"lib/gii/DeviceManager/IOSDevice.py"
+			],
+			[
+				"char",
+				"test/game/lib/character/Character.lua"
+			],
+			[
+				"util.u",
+				"test/game/lib/mock/core/utils.lua"
+			],
+			[
+				"deckcom",
+				"test/game/lib/mock/component/DeckComponent.lua"
+			],
 			[
 				"asseted",
 				"lib/gii/AssetEditor/AssetEditor.py"
@@ -2597,22 +2255,6 @@
 			[
 				"scen",
 				"test/game/lib/mock/asset/Scene.lua"
-			],
-			[
-				"ent",
-				"test/game/lib/mock/core/Entity.lua"
-			],
-			[
-				"inm",
-				"test/game/lib/mock/core/InputManager.lua"
-			],
-			[
-				"uti",
-				"test/game/lib/mock/core/utils.lua"
-			],
-			[
-				"starup",
-				"test/game/startup.lua"
 			]
 		],
 		"width": 0.0
@@ -2622,6 +2264,14 @@
 		"height": 500.0,
 		"selected_items":
 		[
+			[
+				"yaka",
+				"/Volumes/prj/moai/yaka/giitest.sublime-project"
+			],
+			[
+				"giit",
+				"/Volumes/prj/yaka/giitest.sublime-project"
+			],
 			[
 				"gii",
 				"/Volumes/prj/archive/ging/gii.sublime-project"

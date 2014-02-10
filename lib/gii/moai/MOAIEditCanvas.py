@@ -281,24 +281,28 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 			self.updateCanvas()
 
 	def safeCall(self, method, *args):		 
+		self.makeCurrent()
 		return self.delegate.safeCall(method, *args)
 
 	def call(self, method, *args):		 
+		self.makeCurrent()
 		return self.delegate.call(method, *args)
 
 	def safeCallMethod(self, objId, method, *args):		 
+		self.makeCurrent()
 		return self.delegate.safeCallMethod(objId, method, *args)
 
 	def callMethod(self, objId, method, *args):		 
+		self.makeCurrent()
 		return self.delegate.callMethod(objId, method, *args)
 
-	def callMethodWithContext(self, objId, method, *args):		 
-		self.makeCurrent()
-		return self.delegate.safeCallMethod(objId, method, *args)
+	# def callMethodWithContext(self, objId, method, *args):		 
+	# 	self.makeCurrent()
+	# 	return self.delegate.safeCallMethod(objId, method, *args)
 
-	def callWithContext( self, method, *args):
-		self.makeCurrent()
-		return self.safeCall( method, *args )
+	# def callWithContext( self, method, *args):
+	# 	self.makeCurrent()
+	# 	return self.safeCall( method, *args )
 
 	def makeCurrent( self ):
 		self.runtime.changeRenderContext( self.contextName, self.viewWidth, self.viewHeight )
@@ -315,7 +319,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		step = currentTime - self.lastUpdateTime
 		self.lastUpdateTime = currentTime
 		
-		# step = self.updateStep #>>>>>>
+		step = self.updateStep #>>>>>>
 		
 		runtime = self.runtime
 		runtime.setBufferSize( self.viewWidth, self.viewHeight )

@@ -84,9 +84,14 @@ function EffectEditor:removeNode( node )
 	node.parent:removeChild( node )
 end
 
+function EffectEditor:addMove()
+	local mv = mock.EffectMove()
+	self.effectRoot:addChild( mv )	
+	return mv
+end
+
 function EffectEditor:addSystem()
 	local sys = mock.EffectNodeParticleSystem()
-	-- print( self.effectRoot:getClassName() )
 	self.effectRoot:addChild( sys )
 	sys:addChild( mock.EffectNodeParticleState() )
 	sys:addChild( mock.EffectNodeParticleTimedEmitter() )
