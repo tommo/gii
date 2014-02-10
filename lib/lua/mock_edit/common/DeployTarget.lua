@@ -147,3 +147,15 @@ function DeployManagerConfig:moveSceneDown( target )
 		end
 	end
 end
+
+function DeployManagerConfig:updateGameConfig()
+	local export = {}
+	local entryScene
+	for i, scn in ipairs( self.scenes ) do
+		local alias = scn.alias
+		if scn.entry then entryScene = scn.path end
+		export[ alias ] = scn.path
+	end
+	game.scenes = export
+	game.entryScene = entryScene
+end

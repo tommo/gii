@@ -47,6 +47,7 @@ class MockRuntime( EditorModule ):
 		signals.connect( 'moai.ready', self.onMoaiReady )
 
 		signals.connect( 'project.post_deploy', self.post_deploy )
+		signals.connect( 'project.save', self.onProjectSave )
 
 
 	def affirmConfigFile( self ):
@@ -77,10 +78,6 @@ class MockRuntime( EditorModule ):
 	def onStart( self ):
 		self.initMockGame()
 
-	def onStop( self ):
-		game = _MOCK.game
-		game.saveConfigToFile( game, self.configPath )
-
 	def post_deploy( self, context ):
 		configPath = context.getPath( 'game_config' )
 		game = _MOCK.game
@@ -93,14 +90,6 @@ class MockRuntime( EditorModule ):
 
 	def setupLuaModule( self ):
 		self.runtime.requireModule( 'mock_edit' )
-		# self.runtime.runScript( self.getModulePath( 'MockRuntime.lua' ) )
-		# self.runtime.runScript( self.getModulePath( 'ClassManager.lua' ) )
-		# self.runtime.runScript( self.getModulePath( 'MOAIModels.lua' ) )
-		# self.runtime.runScript( self.getModulePath( 'Commands.lua' ) )
-		# #TODO: use lua to handle editor modules
-		# self.runtime.runScript( self.getModulePath( 'EditorCanvasScene.lua' ) )
-		# self.runtime.runScript( self.getModulePath( 'EditorCanvasControls.lua' ) )
-
 		_MOCK._setTarget( _G['mock'] )
 		_MOCK.setBasePaths( self.getProject().getPath(), self.getProject().getAssetPath() )
 
@@ -118,6 +107,10 @@ class MockRuntime( EditorModule ):
 
 	def onProjectLoaded(self,prj):
 		self.syncAssetLibrary()
+
+	def onProjectSave( self, prj ):
+		game = _MOCK.game
+		game.saveConfigToFile( game, self.configPath )
 
 	def onMoaiReset(self):		
 		self.setupLuaModule()

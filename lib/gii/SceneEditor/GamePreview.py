@@ -11,6 +11,7 @@ from PyQt4                   import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore            import Qt
 
 from SceneEditor             import SceneEditorModule
+import ExternRun
 
 ##----------------------------------------------------------------##
 class GamePreview( SceneEditorModule ):
@@ -99,16 +100,19 @@ class GamePreview( SceneEditorModule ):
 		self.menu = self.addMenu( 'main/preview', dict( label = 'Game' ) )
 
 		self.menu.addChild([
-				{'name':'start_game',    'label':'Resume Game','shortcut':'meta+]' },
-				{'name':'pause_game',  'label':'Pause Game', 'shortcut':'meta+shit+]' },
-				{'name':'stop_game',   'label':'Stop Game',  'shortcut':'meta+[' },
+				{'name':'start_game',    'label':'Resume Preview','shortcut':'meta+]' },
+				{'name':'pause_game',  'label':'Pause Preview', 'shortcut':'meta+shit+]' },
+				{'name':'stop_game',   'label':'Stop Preview',  'shortcut':'meta+[' },
+				'----',
+				{'name':'start_external_scene',   'label':'Run Scene',  'shortcut':'meta+alt+]' },
+				{'name':'start_external_game',   'label':'Run Game',  'shortcut':'meta+alt+shift+]' },
 				'----',
 				{'name':'pause_on_leave','label':'Pause On Leave', 'type':'check', 'checked':self.getConfig('pause_on_leave')},
 				'----',
 				{'name':'reset_moai','label':'RESET MOAI', 'shortcut':'Ctrl+Shift+R'}
 			], self)
 
-		self.addTool( 'game_preview/stay_on_top', label = 'Stay Top' )
+		self.addTool( 'game_preview/toggle_stay_top', label = 'Stay Top', type = 'check' )
 		self.onMoaiReset()
 
 		self.enableMenu( 'main/preview/pause_game',  False )
@@ -306,6 +310,14 @@ class GamePreview( SceneEditorModule ):
 		elif name == 'pause_game':
 			self.pausePreview()
 
+		elif name == 'start_external_scene':
+			scnEditor = self.getModule( 'scenegraph_editor' )
+			if scnEditor and scnEditor.activeSceneNode:
+				path = scnEditor.activeSceneNode.getNodePath()
+				ExternRun.runScene( path )
+
+		elif name == 'start_external_game':
+			ExternRun.runGame()
 			
 
 ##----------------------------------------------------------------##

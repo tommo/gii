@@ -4,7 +4,7 @@ import subprocess
 
 from gii.core import Project, app
 
-def run( target ):
+def run( target, *args ):
 	project = app.getProject()
 	assert project.isLoaded()
 
@@ -20,6 +20,7 @@ def run( target ):
 		bin,
 		script
 	]
+	arglist += args
 	try:
 		code = subprocess.call( arglist )
 	except Exception, e:

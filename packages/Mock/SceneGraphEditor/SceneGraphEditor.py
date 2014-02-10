@@ -148,6 +148,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'component.removed', self.onComponentRemoved )
 
 		signals.connect( 'app.post_start',    self.postStart          )
+		signals.connect( 'project.presave',   self.preProjectSave )
 
 		#editor
 		if self.getModule('introspector'):
@@ -289,6 +290,10 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onUpdate( self ):
 		if self.refreshScheduled:
 			self.refreshScene()
+
+	def preProjectSave( self, prj ):
+		if self.activeSceneNode:
+			_MOCK.game.previewingScene = self.activeSceneNode.getNodePath()
 
 	def onMoaiClean( self ):
 		self.tree.clear()

@@ -150,7 +150,7 @@ class DeployManager( AssetEditorModule ):
 		self.delegate.safeCall( 'loadDeployManagerConfig', self.configPath )
 
 	def saveConfig( self ):
-		self.delegate.safeCall( 'saveDeployManagerConfig', self.configPath )
+		self.delegate.safeCall( 'saveDeployManagerConfig', self.configPath )		
 
 	def getDeployTargetTypes( self ):
 		registry = self.delegate.safeCall( 'getDeployTargetTypeRegistry' )
@@ -168,7 +168,6 @@ class DeployManager( AssetEditorModule ):
 	def renameDeployTarget( self, target, name ):
 		target.name = name #avoid duplicated name
 
-
 	def addDeployScene( self, sceneNode ):
 		if not sceneNode: return
 		entry = self.delegate.safeCallMethod( 'config', 'addDeployScene', sceneNode.getNodePath() )
@@ -182,19 +181,23 @@ class DeployManager( AssetEditorModule ):
 		scenes =  self.delegate.safeCallMethod( 'config', 'getScenes' )
 		return [ obj for obj in scenes.values() ]
 
+	def updateGameConfig( self ):
+		self.delegate.safeCallMethod( 'config', 'updateGameConfig' )
+
 	def preDeploy( self, context ):
-		scenes =  self.delegate.safeCallMethod( 'config', 'getScenes' )
-		exportScenes = {}
-		entryScene   = False
-		for s in scenes.values():
-			alias   = s.alias
-			isEntry = s.entry
-			path    = s.path
-			exportScenes[ alias ] = path
-			if isEntry:
-				entryScene = path
-		context.meta[ 'mock_scenes' ]      = exportScenes
-		context.meta[ 'mock_entry_scene' ] = entryScene
+		self.updateGameConfig()
+		# scenes =  self.delegate.safeCallMethod( 'config', 'getScenes' )
+		# exportScenes = {}
+		# entryScene   = False
+		# for s in scenes.values():
+		# 	alias   = s.alias
+		# 	isEntry = s.entry
+		# 	path    = s.path
+		# 	exportScenes[ alias ] = path
+		# 	if isEntry:
+		# 		entryScene = path
+		# context.meta[ 'mock_scenes' ]      = exportScenes
+		# context.meta[ 'mock_entry_scene' ] = entryScene
 
 	def onDeploy( self, context ):
 		pass
