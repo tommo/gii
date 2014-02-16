@@ -55,7 +55,9 @@ function CanvasHandleLayer:addHandle( handle )
 	table.insert(self.handles, 1, handle )
 	handle.handleLayer = self
 	local scl = 1/self.targetCameraCom:getZoom()
-		handle:setScl( scl, scl, 1 )
+	handle:setScl( scl, scl, 1 )
+	handle:setPriority( 1000 )
+	handle:setLoc( 0,0,self:getLocZ())
 	return handle
 end
 
@@ -69,6 +71,12 @@ function CanvasHandleLayer:setUpdateCallback( update )
 	self._onUpdate = update
 end
 
+
+function CanvasHandleLayer:clearHandles()
+	for i,h in ipairs( self.handles ) do	
+		h:destroyWithChildrenNow()
+	end
+end
 
 --------------------------------------------------------------------
 CLASS: CanvasHandle ( EditorEntity )

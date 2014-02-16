@@ -42,4 +42,5 @@ function CanvasGrid:onDraw()
 	MOAIDraw.drawLine( x0, 0, x1, 0 )
 	MOAIDraw.drawLine( 0, y0, 0, y1 )
 
+	MOAIGfxDevice.setPenWidth( 1 )
 end

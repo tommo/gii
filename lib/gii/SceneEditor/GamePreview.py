@@ -247,6 +247,18 @@ class GamePreview( SceneEditorModule ):
 	# 	if self.paused != False: return
 	# 	self.updateView()
 
+	def runGameExternal( self ):
+		#TODO: use a modal window to indicate external host state
+		ExternRun.runGame()
+
+
+	def runSceneExternal( self ):
+		#TODO: use a modal window to indicate external host state
+		scnEditor = self.getModule( 'scenegraph_editor' )
+		if scnEditor and scnEditor.activeSceneNode:
+			path = scnEditor.activeSceneNode.getNodePath()
+			ExternRun.runScene( path )
+
 	def pausePreview( self ):
 		if self.paused: return
 		self.canvas.setInputDevice( None )
@@ -311,13 +323,10 @@ class GamePreview( SceneEditorModule ):
 			self.pausePreview()
 
 		elif name == 'start_external_scene':
-			scnEditor = self.getModule( 'scenegraph_editor' )
-			if scnEditor and scnEditor.activeSceneNode:
-				path = scnEditor.activeSceneNode.getNodePath()
-				ExternRun.runScene( path )
-
+			self.runSceneExternal()
+			
 		elif name == 'start_external_game':
-			ExternRun.runGame()
+			self.runGameExternal()
 			
 
 ##----------------------------------------------------------------##
@@ -344,4 +353,16 @@ class RemoteCommandPreviewStart( RemoteCommand ):
 	def run( self, *args ):
 		preview = app.getModule('scene_preview')
 		preview.stopPreview()
+
+class RemoteCommandRunGame( RemoteCommand ):
+	name = 'run_game'
+	def run( self, *args ):
+		preview = app.getModule('scene_preview')
+		preview.runGameExternal()
+		
+class RemoteCommandRunScene( RemoteCommand ):
+	name = 'run_scene'
+	def run( self, *args ):
+		preview = app.getModule('scene_preview')
+		preview.runSceneExternal()
 		

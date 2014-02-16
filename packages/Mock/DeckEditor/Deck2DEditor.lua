@@ -379,6 +379,8 @@ function Polygon:onDraw()
 	MOAIGfxDevice.setPenWidth( 2 )
 	local verts = self:getVertexCoords( true )
 	MOAIDraw.drawLine( verts )
+
+	MOAIGfxDevice.setPenWidth( 1 )
 end
 
 --------------------------------------------------------------------

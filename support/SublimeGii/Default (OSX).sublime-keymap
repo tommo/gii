@@ -2,5 +2,7 @@
 	{ "keys": [ "ctrl+r" ], "command": "gii_reload_script" },
 	{ "keys": [ "ctrl+]" ], "command": "gii_preview_start" },
 	{ "keys": [ "ctrl+[" ], "command": "gii_preview_stop" },
+	{ "keys": [ "ctrl+alt+]" ], "command": "gii_run_scene" },
+	{ "keys": [ "ctrl+alt+shift+]" ], "command": "gii_run_game" },
 	{ "keys": [ "ctrl+e" ], "command": "gii_eval" }
 ]

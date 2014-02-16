@@ -2,7 +2,7 @@ import os.path
 from gii.core import AssetManager, AssetLibrary, getProjectPath, app
 import logging
 
-from WebP import convertToWebP
+from ImageHelpers import convertToWebP
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):

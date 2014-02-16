@@ -128,12 +128,7 @@ class ScriptLibrary( EditorModule ):
 
 	def compileScript( self, node, dstPath, version = 'lua' ):
 		if version == 'lua':
-			_GII.GameModule.compilePlainLua( node.getAbsFilePath(), dstPath ) #lua version problem
-			# 'luac -o $out $in'
-			# arglist =  [ 'luac' ]
-			# arglist += [ '-o', dstPath ]
-			# arglist += [ node.getAbsFilePath() ]
-			# subprocess.call( arglist )
+			_GII.GameModule.compilePlainLua( node.getAbsFilePath(), dstPath ) #lua version problem			
 			#TODO: error handle
 		elif version == 'luajit':
 			# 'luajit -b -g $in $out'
@@ -142,7 +137,6 @@ class ScriptLibrary( EditorModule ):
 			arglist += [ node.getAbsFilePath(), dstPath ]
 		else:
 			raise Exception( 'unknown lua version %s' % version )
-
 
 ##----------------------------------------------------------------##
 ScriptLibrary().register()

@@ -5,9 +5,8 @@ import shutil
 import json
 
 from gii.core import *
-
+from ImageHelpers import convertToPNG, convertToWebP
 from TextureProcessor import applyTextureProcessor
-from WebP import convertToWebP
 
 ##----------------------------------------------------------------##
 signals.register( 'texture.add' )
@@ -295,15 +294,9 @@ class TextureLibrary( EditorModule ):
 		logging.info( 'processing texture: %s' % assetNode.getNodePath() )
 		assetNode.clearCacheFiles()
 		src = assetNode.getAbsFilePath()
-		dst = assetNode.getAbsCacheFile( 'pixmap' )
-		arglist = [
-			'python', 
-			_getModulePath( 'tools/PNGConverter.py' ),
-			src,
-			dst,
-			'png' #format
-		 ]
-		subprocess.call(arglist)
+		dst = assetNode.getAbsCacheFile( 'pixmap' ) 
+		#convert single image
+		convertToPNG( src, dst )		
 		#apply processor on dst file
 		group = texNode.parent
 		if group:

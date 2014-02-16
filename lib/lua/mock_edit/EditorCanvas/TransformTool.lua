@@ -70,7 +70,7 @@ function TranslationHandle:onMouseDown( btn, x, y )
 		self.activeAxis = 'y'
 	end
 	if self.activeAxis then
-		self.target:refresh()
+		self.target:preTransform()
 		return true
 	end
 end
@@ -170,7 +170,7 @@ function RotationHandle:onMouseDown( btn, x, y )
 	self.dir0 = direction( 0,0, x1,y1 )
 	self.active = true
 
-	self.target:refresh()	
+	self.target:preTransform()	
 	self.r0 = self.target:getRotZ()
 	self:updateCanvas()
 	return true
@@ -248,7 +248,7 @@ function ScaleHandle:onMouseDown( btn, x, y )
 	end
 
 	if self.activeAxis then
-		self.target:refresh()
+		self.target:preTransform()
 		return true
 	end
 

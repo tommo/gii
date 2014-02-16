@@ -258,7 +258,7 @@ local function convertGraphML(fn)
 		if n.jump and next(n.jump) then
 			writef('nodelist[%q].jump={\n',n.fullname)
 			for msg, target in pairs(n.jump) do
-				local jumpto=target.fullname
+				local jumpto = target.fullname
 				writef( '\t[%q]=%s;\n', msg, generateJumpTarget( n, target ) )
 			end
 			write('}\n')

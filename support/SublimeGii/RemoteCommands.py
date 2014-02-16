@@ -32,7 +32,6 @@ class GiiReloadScriptCommand(sublime_plugin.WindowCommand):
 		send_to_server( 'reload_script' )
 
 
-
 class GiiRunGameCommand(sublime_plugin.WindowCommand):
 	def run(self, **kwargs):
 		send_to_server( 'run_game' )
@@ -58,3 +57,15 @@ class GiiPreviewStopCommand(sublime_plugin.WindowCommand):
 	def run(self, **kwargs):
 		send_to_server( 'preview_stop' )
 
+
+class GiiRunGameCommand(sublime_plugin.WindowCommand):
+	def run(self, **kwargs):
+		sublime.active_window().run_command( 'save_all' )
+		time.sleep(0.1)
+		send_to_server( 'run_game' )		
+
+class GiiRunSceneCommand(sublime_plugin.WindowCommand):
+	def run(self, **kwargs):
+		sublime.active_window().run_command( 'save_all' )
+		time.sleep(0.1)
+		send_to_server( 'run_scene' )		

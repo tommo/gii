@@ -7,6 +7,17 @@ function EffectEditor:onLoad()
 	self:addSibling( mock_edit.CanvasNavigate() )
 	self:attach( mock.InputScript{ device = scn.inputDevice } )
 	self:attach( mock.DrawScript{ priority = 1000 } )
+
+	self.handleLayer = self:addSibling( mock_edit.CanvasHandleLayer{
+			inputDevice = inputDevice
+		} )
+	self.handleLayer:setLoc( 0,0,1000 )
+	self.handleLayer:setUpdateCallback(
+		function()
+			scheduleUpdate()
+		end
+	)
+
 	self.previewing = false
 	self.previewEmitter = false
 end
@@ -112,6 +123,22 @@ function EffectEditor:cloneNode( node )
 	local n1 = _cloneEffectNode( node )
 	node.parent:addChild( n1 )
 	return n1
+end
+
+function EffectEditor:selectEditTarget( node )
+	self:clearGizmos()
+	if node then
+		local onBuildGizmo = node.onBuildGizmo
+		if onBuildGizmo then
+			local giz = onBuildGizmo( node )
+			if giz then self.handleLayer:addHandle( giz ) end
+		end
+	end
+	updateCanvas()
+end
+
+function EffectEditor:clearGizmos()
+	self.handleLayer:clearHandles()
 end
 
 local nameToNodeClass = {

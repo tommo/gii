@@ -178,7 +178,7 @@ class EffectEditor( AssetEditorModule ):
 			self.window.containerScript.setVisible( False )
 			self.paramPropEditor.setVisible( False )
 			self.paramPropEditor.setTarget( None )
-
+		self.canvas.callMethod( 'editor', 'selectEditTarget' )
 	def renameNode( self, node, name ):
 		node['name'] = name
 		if node == self.editingTarget:

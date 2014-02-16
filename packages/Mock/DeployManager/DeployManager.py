@@ -186,18 +186,6 @@ class DeployManager( AssetEditorModule ):
 
 	def preDeploy( self, context ):
 		self.updateGameConfig()
-		# scenes =  self.delegate.safeCallMethod( 'config', 'getScenes' )
-		# exportScenes = {}
-		# entryScene   = False
-		# for s in scenes.values():
-		# 	alias   = s.alias
-		# 	isEntry = s.entry
-		# 	path    = s.path
-		# 	exportScenes[ alias ] = path
-		# 	if isEntry:
-		# 		entryScene = path
-		# context.meta[ 'mock_scenes' ]      = exportScenes
-		# context.meta[ 'mock_entry_scene' ] = entryScene
 
 	def onDeploy( self, context ):
 		pass

@@ -705,8 +705,8 @@ QMainWindow::separator:hover
 QPushButton:pressed, QToolButton::pressed
 {
 	/*background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#787878,stop:1#5a5a5a);*/
-	background-color: #444;
-	color: #999;
+	background-color: #466dc6;
+	color: #eee;
 }
 
 QHeaderView::section:hover,QHeaderView::section:pressed

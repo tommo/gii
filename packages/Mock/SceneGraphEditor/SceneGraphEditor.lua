@@ -496,15 +496,31 @@ function CmdReparentEntity:redo()
 	local target = self.target
 	for i, e in ipairs( self.children ) do
 		local e1 = mock.cloneEntity(e)
+		e:forceUpdate()
 		local tx, ty ,tz = e:getWorldLoc()
+		local sx, sy ,sz = e:getWorldScl()
+		local rz = e:getWorldRot()
+		--TODO: world rotation X,Y	
 		if target == 'root' then
 			editor.scene:addEntity( e1 )
 			e1:setLoc( tx, ty, tz )
+			e1:setScl( sx, sy, sz )
+			e1:setRotZ( rz )
 		else
-			target:addChild( e1 )
 			target:forceUpdate()
 			local x, y, z = target:worldToModel( tx, ty, tz )
 			e1:setLoc( x, y, z )
+			
+			local sx1, sy1, sz1 = target:getWorldScl()
+			sx = ( sx1 == 0 ) and 0 or sx/sx1
+			sy = ( sy1 == 0 ) and 0 or sy/sy1
+			sz = ( sz1 == 0 ) and 0 or sz/sz1
+			e1:setScl( sx, sy, sz )
+
+			local rz1 = target:getWorldRot()
+			rz = rz1 == 0 and 0 or rz/rz1
+			e1:setRotZ( rz )
+			target:addChild( e1 )
 		end
 		e:destroyWithChildrenNow()
 	end	

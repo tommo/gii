@@ -84,8 +84,6 @@ class MockRuntime( EditorModule ):
 		data = json.loads( game.saveConfigToString( game ) )
 		data['asset_library']  = 'asset/asset_index'
 		data['script_library'] = context.meta.get( 'mock_script_library', False )
-		data['scenes']         = context.meta.get( 'mock_scenes', False )
-		data['entry_scene']    = context.meta.get( 'mock_entry_scene', False )
 		jsonHelper.trySaveJSON( data, configPath, 'deploy game info' )
 
 	def setupLuaModule( self ):
