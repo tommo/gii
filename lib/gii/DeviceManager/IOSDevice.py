@@ -149,7 +149,7 @@ class IOSDeviceItem( DeviceItem ):
 			name = dev.get_value( name = u'DeviceName' )
 		except Exception, e :
 			logging.exception( e )
-		self.name = name
+		self.name = name.decode('utf-8')
 		self.id   = dev.get_deviceid()
 		self.connected = connected
 
@@ -225,24 +225,3 @@ class IOSDeviceDebugSession(object):
 		except Exception, e:
 			logging.error( 'error in debugging device: %s ' % e)
 			return -1		
-
-# class IOSDeviceDebugSession(object):
-# 	def __init__(self, dev):
-# 		self.dev = dev
-# 		self.load_developer_dmg()
-# 		localPath = app.getProject().getHostPath( 'ios/build/Release-iphoneos/YAKA.app' )
-# 		print localPath
-# 		self.gdb = MobileDevice.GDB( dev, None, localPath )
-# 		self.gdb.set_run()
-# 		self.gdb.run()
-
-# 	def load_developer_dmg( self ):
-# 		dev = self.dev
-# 		try:
-# 			applist = MobileDevice.DebugAppList(dev)
-# 			applist.disconnect()
-# 		except:
-# 			im = MobileDevice.ImageMounter(dev)
-# 			imagepath = dev.find_developer_disk_image_path()
-# 			im.mount(imagepath)
-# 			im.disconnect()

@@ -79,7 +79,7 @@ img = None
 name, ext = os.path.splitext( inputPath )
 ##----------------------------------------------------------------##
 if os.path.isfile( inputPath ):
-	img = loadOneImage( inputPath )
+	img = loadOneImage( inputPath )slime.spine
 elif os.path.isdir( inputPath ):
 	if ext.lower() == '.texstrip':
 		img = buildTexStrip( inputPath )
