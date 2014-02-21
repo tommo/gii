@@ -6,6 +6,8 @@ from FieldEditorControls import *
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 
+import re
+
 ##----------------------------------------------------------------##
 class StringFieldEditor( FieldEditor ):
 	def get( self ):

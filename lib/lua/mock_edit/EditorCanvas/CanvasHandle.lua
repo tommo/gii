@@ -51,7 +51,7 @@ function CanvasHandleLayer:onZoomChanged( zoom )
 end	
 
 function CanvasHandleLayer:addHandle( handle )
-	self:addSibling( handle )
+	self:getScene():addEntity( handle )
 	table.insert(self.handles, 1, handle )
 	handle.handleLayer = self
 	local scl = 1/self.targetCameraCom:getZoom()
