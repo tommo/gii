@@ -110,6 +110,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/entity/----' )
 		self.addMenuItem( 'main/entity/add_component',    dict( label = 'Add Component', shortcut = 'ctrl+alt+=' ) )
 		self.addMenuItem( 'main/entity/assign_layer',        dict( label = 'Assign Layer', shortcut = 'ctrl+alt+L' ) )
+		self.addMenuItem( 'main/entity/toggle_visibility',        dict( label = 'Toggle Visibility', shortcut = 'ctrl+/' ) )
 
 		self.addMenuItem( 'main/entity/----' )
 		self.addMenuItem( 'main/find/find_entity', dict( label = 'Find In Scene', shortcut = 'ctrl+f' ) )
@@ -409,6 +410,10 @@ class SceneGraphEditor( SceneEditorModule ):
 				type    = _MOCK.Entity,
 				on_selection = self.assignEntityLayer
 				)
+
+		elif name == 'toggle_visibility':
+			self.doCommand( 'scene_editor/toggle_entity_visibility' )
+
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return

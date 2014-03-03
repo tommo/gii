@@ -100,18 +100,24 @@ class GamePreview( SceneEditorModule ):
 		self.menu = self.addMenu( 'main/preview', dict( label = 'Game' ) )
 
 		self.menu.addChild([
-				{'name':'start_game',    'label':'Resume Preview','shortcut':'meta+]' },
-				{'name':'pause_game',  'label':'Pause Preview', 'shortcut':'meta+shit+]' },
-				{'name':'stop_game',   'label':'Stop Preview',  'shortcut':'meta+[' },
+				{'name':'start_game',  'label':'Resume Preview', 'shortcut':'meta+]' },
+				{'name':'pause_game',  'label':'Pause Preview',  'shortcut':'meta+shit+]' },
+				{'name':'stop_game',   'label':'Stop Preview',   'shortcut':'meta+[' },
 				'----',
-				{'name':'start_external_scene',   'label':'Run Scene',  'shortcut':'meta+alt+]' },
+				{'name':'start_external_scene',  'label':'Run Scene',  'shortcut':'meta+alt+]' },
 				{'name':'start_external_game',   'label':'Run Game',  'shortcut':'meta+alt+shift+]' },
 				'----',
-				{'name':'pause_on_leave','label':'Pause On Leave', 'type':'check', 'checked':self.getConfig('pause_on_leave')},
-				'----',
-				{'name':'reset_moai','label':'RESET MOAI', 'shortcut':'Ctrl+Shift+R'}
+				{'name':'pause_on_leave', 'label':'Pause On Leave', 'type':'check', 'checked':self.getConfig('pause_on_leave')},
+				# '----',
+				# {'name':'reset_moai',     'label':'RESET MOAI', 'shortcut':'Ctrl+Shift+R'}
 			], self)
 
+		# label = QtGui.QLabel()
+		# label.setMinimumSize( 300, 20 )
+		# label.setMaximumSize( 300, 20 )
+		# self.toolbar.addWidget( label )
+		# self.labelScreen = label
+		# self.addTool( 'game_preview/----' )
 		self.addTool( 'game_preview/toggle_stay_top', label = 'Stay Top', type = 'check' )
 		self.onMoaiReset()
 
@@ -218,7 +224,7 @@ class GamePreview( SceneEditorModule ):
 			self.updateTimer = self.window.startTimer( 60, self.updateView )
 
 		self.window.setWindowTitle( 'Game Preview [ RUNNING ]')
-		self.qtool.setStyleSheet('QToolBar{ border-top: 1px solid rgb(0, 255, 0); }')
+		self.qtool.setStyleSheet('QToolBar{ border-top: 1px solid rgb(0, 120, 0); }')
 		self.paused = False
 		runtime.resume()
 		self.setFocus()

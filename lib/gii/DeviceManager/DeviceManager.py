@@ -85,7 +85,7 @@ class DeviceManager( EditorModule ):
 	def onDoneDeploy( self, context ):
 		if not self.devices: return
 		activeDevice = self.activeDevice or self.devices[0]
-		print 'deploy on device', activeDevice
+		print 'deploy on device: {0}'.format( repr( activeDevice ) )
 		activeDevice.deploy( context )
 		print 'deploy done!'
 	

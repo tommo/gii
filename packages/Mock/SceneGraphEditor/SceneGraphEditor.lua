@@ -548,12 +548,15 @@ end
 local function reloadPrefabEntity( entity )
 	local guid = entity.__guid
 	local prefabPath = entity.__prefabId
+
 	--Just recreate entity from prefab
 	local prefab, node = mock.loadAsset( prefabPath )
 	if not prefab then return false end
 	local newEntity = prefab:createInstance()
 	--only perserve location?
 	newEntity:setLoc( entity:getLoc() )
+	newEntity:setName( entity:getName() )
+	newEntity:setLayer( entity:getLayer() )
 	newEntity.__guid = guid
 	newEntity.__prefabId = prefabPath
 	--TODO: just marked as deleted
@@ -687,6 +690,38 @@ function CmdAssignEntityLayer:undo()
 		e:setLayer( layerName )
 		gii.emitPythonSignal( 'entity.renamed', e, '' )
 	end	
+end
+
+--------------------------------------------------------------------
+CLASS: CmdToggleEntityVisibility ( mock_edit.EditorCommand )
+	:register( 'scene_editor/toggle_entity_visibility' )
+
+function CmdToggleEntityVisibility:init( option )
+	self.entities  = gii.getSelection( 'scene' )	
+	self.originalVis  = {}
+end
+
+function CmdToggleEntityVisibility:redo()
+	local vis = false
+	local originalVis = self.originalVis
+	for i, e in ipairs( self.entities ) do
+		originalVis[ e ] = e:isLocalVisible()
+		if e:isLocalVisible() then vis = true end
+	end	
+	vis = not vis
+	for i, e in ipairs( self.entities ) do
+		e:setVisible( vis )
+		gii.emitPythonSignal( 'entity.modified', e, '' )
+	end
+end
+
+function CmdToggleEntityVisibility:undo()
+	local originalVis = self.originalVis
+	for i, e in ipairs( self.entities ) do
+		e:setVisible( originalVis[ e ] )
+		gii.emitPythonSignal( 'entity.modified', e, '' )
+	end	
+	self.originalVis  = {}
 end
 
 --------------------------------------------------------------------

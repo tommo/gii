@@ -1,7 +1,7 @@
 
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import Qt
-
+from PyQt4.QtGui import QApplication
 ##----------------------------------------------------------------##
 class no_editItemDelegate( QtGui.QStyledItemDelegate ):
 	def createEditor( *args ):
@@ -404,6 +404,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	##----------------------------------------------------------------##
 	#custom control
 	def keyPressEvent( self, ev ):
+		modifiers = QApplication.keyboardModifiers()
 		key = ev.key()
 		if key in ( Qt.Key_Delete, Qt.Key_Backspace ):			
 			self.onDeletePressed()
@@ -417,12 +418,18 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		elif key == Qt.Key_Escape: #deselect all
 			self.selectNode( [] )
 		#copy&paste
-		elif ( key, ev.modifiers() ) == ( Qt.Key_C, Qt.ControlModifier ):
+		elif ( key, modifiers ) == ( Qt.Key_C, Qt.ControlModifier ):
 			if self.onClipboardCopy(): return
-		elif ( key, ev.modifiers() ) == ( Qt.Key_X, Qt.ControlModifier ):
+		elif ( key, modifiers ) == ( Qt.Key_X, Qt.ControlModifier ):
 			if self.onClipboardCut(): return
-		elif ( key, ev.modifiers() ) == ( Qt.Key_V, Qt.ControlModifier ):
+		elif ( key, modifiers ) == ( Qt.Key_V, Qt.ControlModifier ):
 			if self.onClipboardPaste(): return
+		#open
+		elif ( key, modifiers ) == ( Qt.Key_Return, Qt.ShiftModifier ):
+			item = self.currentItem() 
+			if item:
+				self.onItemActivated( item, 0 )
+				return
 
 		return super( GenericTreeWidget, self ).keyPressEvent( ev )
 

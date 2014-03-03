@@ -46,7 +46,8 @@ class LongTextEditorWidget( QtGui.QWidget ):
 	def startEdit( self, editor, text ):
 		self.originalText = text or ''
 		self.editor = editor
-		return self.ui.textContent.setPlainText( text )
+		self.ui.textContent.setPlainText( text )
+		self.ui.textContent.selectAll()
 
 	def hideEvent( self, ev ):
 		self.apply( True )

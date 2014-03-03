@@ -37,5 +37,5 @@ class DeviceItem():
 		pass
 
 	def __repr__( self ):
-		return self.getType()
-		# return u'{0}({1})'.format( self.getName(), self.getType() )
+		# return self.getType()
+		return u'{0}({1})'.format( self.getName(), self.getType() )

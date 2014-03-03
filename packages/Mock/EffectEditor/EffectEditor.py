@@ -191,21 +191,25 @@ class EffectEditor( AssetEditorModule ):
 		self.markNodeDirty( node )
 
 	def listParticleSystemChildTypes( self, typeId, context ):
-		entries = [
-			( 'state',            'State',              '', 'effect/state'            ),
-			( 'emitter-timed',    'Emitter Timed',     '', 'effect/emitter-timed'    ),
-			( 'emitter-distance', 'Emitter Distance',  '', 'effect/emitter-distance' ),
-			( 'force-attractor',  'Force Attractor',   '', 'effect/force-attractor'  ),
-			( 'force-basin',      'Force Basin',       '', 'effect/force-basin'      ),
-			( 'force-linear',     'Force Linear',      '', 'effect/force-linear'     ),
-			( 'force-radial',     'Force Radial',      '', 'effect/force-radial'     ),
-		]
+		res = self.canvas.callMethod( 'editor', 'requestAvailSubNodeTypes', self.tree.getFirstSelection() )
+		entries = []
+		for n in res.values():
+			entry = ( n, n, 'FX Node', 'effect/'+n )
+			entries.append( entry )
+		# entries = [
+		# 	( 'state',            'State',              '', 'effect/state'            ),
+		# 	( 'emitter-timed',    'Emitter Timed',     '', 'effect/emitter-timed'    ),
+		# 	( 'emitter-distance', 'Emitter Distance',  '', 'effect/emitter-distance' ),
+		# 	( 'force-attractor',  'Force Attractor',   '', 'effect/force-attractor'  ),
+		# 	( 'force-basin',      'Force Basin',       '', 'effect/force-basin'      ),
+		# 	( 'force-linear',     'Force Linear',      '', 'effect/force-linear'     ),
+		# 	( 'force-radial',     'Force Radial',      '', 'effect/force-radial'     ),
+		# ]
 		return entries
 
 	def addChildNode( self, childType ):
-		if self.editingTarget:
-			node = self.canvas.callMethod( 'editor', 'addChildNode', self.editingTarget, childType )
-			self.postCreateNode( node )
+		node = self.canvas.callMethod( 'editor', 'addChildNode', self.editingTarget, childType )
+		self.postCreateNode( node )
 
 	def removeNode( self ):
 		if self.editingTarget:
@@ -364,6 +368,8 @@ class EffectNodeTreeWidget( GenericTreeWidget ):
 		node = item.node
 		self.module.renameNode( node, item.text(0) )
 
-
+	def onDeletePressed( self ):
+		self.module.removeNode()
+		
 ##----------------------------------------------------------------##
 EffectEditor().register()

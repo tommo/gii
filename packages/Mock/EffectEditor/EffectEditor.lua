@@ -151,14 +151,28 @@ local nameToNodeClass = {
 	[ 'force-radial'     ] = mock.EffectNodeForceRadial ;
 }
 function EffectEditor:addChildNode( parent, childType )
-	local clas = nameToNodeClass[ childType ]
-	local node = clas()
-	if not parent:isInstance( mock.EffectNodeParticleSystem ) then
-		parent = parent.parent
-		assert( parent:isInstance( mock.EffectNodeParticleSystem ) )
+	if not parent then
+		parent = self.effectRoot
 	end
+	
+	local clas = mock.getEffectNodeType( childType )
+	if not clas then
+		_error( 'no effect class found:', childType )
+	end
+	local node = clas()
 	parent:addChild( node )
+	
 	return node
+end
+
+function EffectEditor:requestAvailSubNodeTypes( parent )
+	if not parent then --root
+		parent = 'root'
+	end
+	local ename = parent.__effectName
+	local t = mock.getAvailSubEffectNodeTypes( ename )
+	table.foreach( t, print )
+	return t
 end
 
 --------------------------------------------------------------------
