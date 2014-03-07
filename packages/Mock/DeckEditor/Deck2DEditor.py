@@ -270,3 +270,14 @@ class SpriteTreeWidget( GenericTreeWidget ):
 		deck = self.getNodeByItem( item )
 		app.getModule('deck2d_editor').changeDeckName( deck, item.text(0) )
 
+	def onClipboardCopy( self ):
+		clip = QtGui.QApplication.clipboard()
+		out = None
+		for node in self.getSelection():
+			if out:
+				out += "\n"
+			else:
+				out = ""
+			out += node.getNodePath()
+		clip.setText( out )
+		return True

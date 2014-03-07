@@ -425,7 +425,8 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		elif ( key, modifiers ) == ( Qt.Key_V, Qt.ControlModifier ):
 			if self.onClipboardPaste(): return
 		#open
-		elif ( key, modifiers ) == ( Qt.Key_Return, Qt.ShiftModifier ):
+		elif key == Qt.Key_Down \
+			and ( modifiers in ( Qt.ControlModifier, Qt.ControlModifier | Qt.KeypadModifier ) ):
 			item = self.currentItem() 
 			if item:
 				self.onItemActivated( item, 0 )

@@ -196,15 +196,6 @@ class EffectEditor( AssetEditorModule ):
 		for n in res.values():
 			entry = ( n, n, 'FX Node', 'effect/'+n )
 			entries.append( entry )
-		# entries = [
-		# 	( 'state',            'State',              '', 'effect/state'            ),
-		# 	( 'emitter-timed',    'Emitter Timed',     '', 'effect/emitter-timed'    ),
-		# 	( 'emitter-distance', 'Emitter Distance',  '', 'effect/emitter-distance' ),
-		# 	( 'force-attractor',  'Force Attractor',   '', 'effect/force-attractor'  ),
-		# 	( 'force-basin',      'Force Basin',       '', 'effect/force-basin'      ),
-		# 	( 'force-linear',     'Force Linear',      '', 'effect/force-linear'     ),
-		# 	( 'force-radial',     'Force Radial',      '', 'effect/force-radial'     ),
-		# ]
 		return entries
 
 	def addChildNode( self, childType ):

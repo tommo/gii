@@ -141,15 +141,6 @@ function EffectEditor:clearGizmos()
 	self.handleLayer:clearHandles()
 end
 
-local nameToNodeClass = {
-	[ 'state'            ] = mock.EffectNodeParticleState ;
-	[ 'emitter-timed'    ] = mock.EffectNodeParticleTimedEmitter ;
-	[ 'emitter-distance' ] = mock.EffectNodeParticleDistanceEmitter ;
-	[ 'force-attractor'  ] = mock.EffectNodeForceAttractor ;
-	[ 'force-basin'      ] = mock.EffectNodeForceBasin ;
-	[ 'force-linear'     ] = mock.EffectNodeForceLinear ;
-	[ 'force-radial'     ] = mock.EffectNodeForceRadial ;
-}
 function EffectEditor:addChildNode( parent, childType )
 	if not parent then
 		parent = self.effectRoot
@@ -171,7 +162,7 @@ function EffectEditor:requestAvailSubNodeTypes( parent )
 	end
 	local ename = parent.__effectName
 	local t = mock.getAvailSubEffectNodeTypes( ename )
-	table.foreach( t, print )
+	-- table.foreach( t, print )
 	return t
 end
 

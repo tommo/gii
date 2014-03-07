@@ -40,6 +40,10 @@ def _sortMatchScore( e1, e2 ):
 	return 0
 
 ##----------------------------------------------------------------##
+def _sortName( e1, e2 ):
+	return cmp( e1.name, e2.name )
+
+##----------------------------------------------------------------##
 class SearchViewWidget( QtGui.QWidget ):
 	def __init__(self, *args ):
 		super( SearchViewWidget, self ).__init__( *args )
@@ -89,18 +93,20 @@ class SearchViewWidget( QtGui.QWidget ):
 		self.textTerms.setText('')
 		self.textTerms.setFocus()		
 		self.searchState = None
-		self.updateVisibleEntries( self.entries )
+		self.updateVisibleEntries( self.entries, True, sort_method = 'name' )
 		self.selectFirstItem()
 
-	def updateVisibleEntries( self, entries, forceSort = False ):
+	def updateVisibleEntries( self, entries, forceSort = False, **kwargs ):
 		tree = self.treeResult
 		tree.hide()
 		root = tree.rootItem
 		root.takeChildren()
 		entries1 = entries
 		# self.visEntries  = entries		
-		if entries != self.entries or forceSort:
-			entries1 = sorted( entries, cmp = _sortMatchScore )
+		sortMethod = kwargs.get( 'sort_method', 'score' )
+		if entries != self.entries or forceSort:			
+			cmpFunc = sortMethod == 'score' and _sortMatchScore or _sortName
+			entries1 = sorted( entries, cmp = cmpFunc )
 		if len( entries1 ) > _SEARCHVIEW_ITEM_LIMIT:
 			entries1 = entries1[:_SEARCHVIEW_ITEM_LIMIT]
 		for e in entries1:
@@ -119,9 +125,9 @@ class SearchViewWidget( QtGui.QWidget ):
 			for entry in self.entries:
 				if entry.matchQuery( globs, textU ):
 					visEntries.append( entry )				
-			self.updateVisibleEntries( visEntries, True )
+			self.updateVisibleEntries( visEntries, True, sort_method = 'score' )
 		else:
-			self.updateVisibleEntries( self.entries )			
+			self.updateVisibleEntries( self.entries, True, sort_method = 'name' )
 		self.selectFirstItem()
 
 	def confirmSelection( self, obj ):
@@ -135,6 +141,9 @@ class SearchViewWidget( QtGui.QWidget ):
 		else:
 			self.module.selectObject( obj )
 
+	def testSelection( self, obj ):
+		self.module.testSelection( obj )
+	
 	def setFocus( self ):
 		QtGui.QWidget.setFocus( self )
 		self.textTerms.setFocus()
@@ -227,7 +236,6 @@ class SearchViewWidget( QtGui.QWidget ):
 				entry.checked = False
 				self.treeResult.refreshNodeContent( entry )
 
-
 ##----------------------------------------------------------------##
 class SearchViewTextTerm( QtGui.QLineEdit):
 	def keyPressEvent( self, ev ):
@@ -240,6 +248,10 @@ class SearchViewTextTerm( QtGui.QLineEdit):
 
 ##----------------------------------------------------------------##
 class SearchViewTree(GenericTreeWidget):
+	def __init__( self, *args, **kwargs ):
+		super( SearchViewTree, self ).__init__( *args, **kwargs )
+		self.testingSelection = False
+
 	def getHeaderInfo( self ):
 		return [('Sel', 50), ('Name', 300), ('Type', 80)]
 
@@ -319,6 +331,11 @@ class SearchViewTree(GenericTreeWidget):
 				self.browser.textTerms.setFocus()
 				self.browser.textTerms.keyPressEvent( event )
 				return
+		else:			
+			if key in ( Qt.Key_Right, Qt.Key_Left ):
+				for node in self.getSelection():
+					self.browser.testSelection( node.obj )
+					return
 		return super( SearchViewTree, self ).keyPressEvent( event )
 
 ##----------------------------------------------------------------##
@@ -380,6 +397,7 @@ class SearchView( EditorModule ):
 		self.onCancel    = None
 		self.onSelection = None
 		self.onSearch    = None
+		self.onTest      = None
 		self.visEntries  = None
 
 	def getName( self ):
@@ -404,6 +422,7 @@ class SearchView( EditorModule ):
 		self.onSelection = option.get( 'on_selection', None )
 		self.onCancel    = option.get( 'on_cancel',    None )
 		self.onSearch    = option.get( 'on_search',    None )
+		self.onTest      = option.get( 'on_test',    None )
 
 		self.window.move( pos )
 		self.window.show()
@@ -430,6 +449,11 @@ class SearchView( EditorModule ):
 		if self.onSelection:
 			self.onSelection( objs )
 		self.window.hide()		
+
+	def testSelection( self, obj ):
+		if self.window.searchState: return
+		if self.onTest:
+			self.onTest( obj )	
 
 	def cancelSearch( self ):
 		if self.window.searchState: return

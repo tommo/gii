@@ -115,10 +115,13 @@ class SearchFieldEditorBase( FieldEditor ):
 		return self.refWidget
 
 	def openBrowser( self ):
+		self.prevValue = self.getSearchInitial()
+		self.testApplied = False
 		requestSearchView( 
 			context      = self.getSearchContext(),
 			type         = self.getSearchType(),
 			on_selection = self.onSearchSelection,
+			on_test      = self.onSearchSelectionTest,
 			on_cancel    = self.onSearchCancel,
 			initial      = self.getSearchInitial()
 			)
@@ -136,8 +139,15 @@ class SearchFieldEditorBase( FieldEditor ):
 		self.setValue( target )
 		self.setFocus()
 
+	def onSearchSelectionTest( self, target ):
+		self.setValue( target )
+		self.testApplied = True
+
 	def onSearchCancel( self ):
+		if self.testApplied:
+			self.setValue( self.prevValue )
 		self.setFocus()
+		self.prevValue = None		
 
 	def setValue( self, value ):	#virtual
 		self.set( value )

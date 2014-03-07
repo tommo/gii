@@ -19,9 +19,9 @@ function AnimPreview:showAnimSprite( path )
 	local anim, node = mock.loadAsset( path )
 	if node.type == 'aurora_sprite' then
 		self.spriteType = 'aurora'
-		self.sprite = self:attach( mock.AuroraSprite{ blend = 'alpha' } )
+		self.sprite = self:attach( mock.AuroraSprite() )
+		self.sprite:setSprite( path )
 		self.sprite:setFPS( 10 )
-		self.sprite:load( anim )	
 		local names = {}
 		for k in pairs( anim.animations ) do
 			table.insert( names, k )
