@@ -435,6 +435,7 @@ class SearchView( EditorModule ):
 		info       = option.get( 'info', None )
 		initial    = option.get( 'initial', None )
 		multiple   = option.get( 'multiple_selection', False )
+		terms      = option.get( 'terms', None )
 
 		self.onSelection = option.get( 'on_selection', None )
 		self.onCancel    = option.get( 'on_cancel',    None )
@@ -453,6 +454,10 @@ class SearchView( EditorModule ):
 		self.window.setMultipleSelectionEnabled( multiple )
 		if initial:
 			self.window.setInitialSelection( initial )
+		if terms:
+			self.window.textTerms.setText( terms )
+			self.window.updateSearchTerms( terms )
+
 
 	def selectObject( self, obj ):
 		if self.window.searchState: return

@@ -77,6 +77,7 @@ class SearchFieldEditorBase( FieldEditor ):
 	def setTarget( self, parent, field ):
 		FieldEditor.setTarget( self, parent, field )
 		self.target = None
+		self.defaultTerms = self.getOption( 'search_terms' )
 
 	def clear( self ):
 		pass
@@ -123,8 +124,10 @@ class SearchFieldEditorBase( FieldEditor ):
 			on_selection = self.onSearchSelection,
 			on_test      = self.onSearchSelectionTest,
 			on_cancel    = self.onSearchCancel,
-			initial      = self.getSearchInitial()
+			initial      = self.getSearchInitial(),
+			terms        = self.defaultTerms
 			)
+			#TODO: allow persist previous search terms
 
 	def getBrowserPos( self ):
 		size = self.refWidget.size()
