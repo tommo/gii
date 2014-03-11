@@ -69,7 +69,10 @@ class ToolBarItem(object):
 		if parent:
 			return parent.getFullName()+'/'+self.name
 		return self.name
-	
+
+	def trigger( self ):
+		if self.qtaction:
+			self.qtaction.trigger()
 
 		
 class ToolBarNode(object):

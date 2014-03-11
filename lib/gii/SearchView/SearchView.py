@@ -26,8 +26,11 @@ SearchViewForm,BaseClass = uic.loadUiType(getModulePath('SearchView.ui'))
 class WindowAutoHideEventFilter(QObject):
 	def eventFilter(self, obj, event):
 		e = event.type()		
-		if e == QEvent.WindowDeactivate:
+		if e == QEvent.KeyPress and event.key() == Qt.Key_Escape:
 			obj.hide()
+		elif e == QEvent.WindowDeactivate:
+			obj.hide()
+
 		return QObject.eventFilter( self, obj, event )
 
 ##----------------------------------------------------------------##
@@ -87,6 +90,10 @@ class SearchViewWidget( QtGui.QWidget ):
 
 	def sizeHint( self ):
 		return QtCore.QSize( 300, 250 )
+
+	def moveWindow( self, dx, dy ):
+		pos = self.pos()
+		self.move( pos.x() + dx, pos.y() + dy )
 
 	def initEntries( self, entries ):
 		self.entries = entries or []
@@ -321,7 +328,7 @@ class SearchViewTree(GenericTreeWidget):
 
 	def keyPressEvent(self, event):
 		key = event.key()		
-		if event.modifiers() == Qt.NoModifier:
+		if event.modifiers() in ( Qt.NoModifier, Qt.KeypadModifier) :
 			if key in ( Qt.Key_Return, Qt.Key_Enter ):
 				for node in self.getSelection():
 					self.browser.confirmSelection( node.obj )
@@ -331,11 +338,21 @@ class SearchViewTree(GenericTreeWidget):
 				self.browser.textTerms.setFocus()
 				self.browser.textTerms.keyPressEvent( event )
 				return
-		else:			
 			if key in ( Qt.Key_Right, Qt.Key_Left ):
 				for node in self.getSelection():
 					self.browser.testSelection( node.obj )
 					return
+		elif event.modifiers() in ( Qt.AltModifier, Qt.AltModifier | Qt.KeypadModifier ) \
+			and key in ( Qt.Key_Up, Qt.Key_Down, Qt.Key_Left, Qt.Key_Right ):
+			if key == Qt.Key_Up:
+				self.browser.moveWindow( 0, -50 )
+			elif key == Qt.Key_Down:
+				self.browser.moveWindow( 0, 50 )
+			elif key == Qt.Key_Left:
+				self.browser.moveWindow( -50, 0 )
+			elif key == Qt.Key_Right:
+				self.browser.moveWindow( 50, 0 )
+
 		return super( SearchViewTree, self ).keyPressEvent( event )
 
 ##----------------------------------------------------------------##
@@ -423,7 +440,8 @@ class SearchView( EditorModule ):
 		self.onCancel    = option.get( 'on_cancel',    None )
 		self.onSearch    = option.get( 'on_search',    None )
 		self.onTest      = option.get( 'on_test',    None )
-
+		#TODO: allow use list/dict for search candinates.
+		# if isinstance( onSearch, list ): pass
 		self.window.move( pos )
 		self.window.show()
 		self.window.raise_()

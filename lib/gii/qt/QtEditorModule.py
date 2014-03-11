@@ -3,7 +3,7 @@ from abc        import ABCMeta, abstractmethod
 from gii.core   import EditorModule
 
 from gii.qt.controls.Menu      import MenuManager
-from gii.qt.controls.ToolBar   import ToolBarManager, ToolBarNode
+from gii.qt.controls.ToolBar   import ToolBarManager, ToolBarNode, ToolBarItem
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import Qt
@@ -56,10 +56,20 @@ class QtEditorModule( EditorModule ):
 			def onAction():
 				self.doCommand( target, **option )
 			action.triggered.connect( onAction )
-		else:
+		elif isinstance( target, QtGui.QAction ):
+			def onAction():
+				target.trigger()
+			action.triggered.connect( onAction )
+		elif isinstance( target, ToolBarItem ):
+			def onAction():
+				target.trigger()
+			action.triggered.connect( onAction )
+		else: #callable
 			def onAction():
 				target( *args, **option )
 			action.triggered.connect( onAction )
+
+		return action
 
 	def requestDockWindow( self, id = None, **windowOption ):
 		if not id: id = self.getName()
