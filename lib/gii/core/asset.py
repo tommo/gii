@@ -687,7 +687,7 @@ class AssetLibrary(object):
 						#TODO: add failed state to node				
 				if node.getManager() != manager: node.setManager( manager )
 				if manager.importAsset( node, reload = not isNew ) != False:
-					logging.info( 'assets imported: {0}'.format( node.getNodePath() ) )
+					logging.info( u'assets imported: {0}'.format( node.getNodePath() ) )
 					node.modifyState  =  False
 					done.append( node )
 				if not isNew:

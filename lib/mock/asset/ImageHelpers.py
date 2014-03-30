@@ -68,7 +68,7 @@ def loadOneImage( path, **option ):
 ##----------------------------------------------------------------##
 def convertToPNG( inputPath, outputPath, **options ):
 	##----------------------------------------------------------------##
-	logging.info( 'converting image: {0} -> {1}'.format( inputPath, outputPath ) ) 
+	logging.info( u'converting image: {0} -> {1}'.format( inputPath, outputPath ) ) 
 
 	img = None
 

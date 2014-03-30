@@ -10,6 +10,8 @@ import math
 
 from PIL import Image
 
+from Bleeding import bleeding_image
+
 def openImage( filepath ):
 	name, ext = os.path.splitext( filepath )
 	if ext.lower() == '.psd':
@@ -121,11 +123,12 @@ class Img:
 		return self.bbox
 
 class Node:
-	def __init__(self, x, y, w, h):
+	def __init__(self, x, y, w, h, bleeding = False ):
 		self.x = x
 		self.y = y
 		self.w = w
 		self.h = h
+		self.bleeding = bleeding
 		self.img = None
 		self.child1 = None
 		self.child2 = None
@@ -136,37 +139,45 @@ class Node:
 	def isLeaf(self):
 		return not self.isParent()
 
-	def insert(self, img, spacing):
+	def insert(self, img, spacing, bleeding = False):
 		if self.isParent():
 			# try insert into one of the children
-			return self.child1.insert(img, spacing) or self.child2.insert(img, spacing)
+			return self.child1.insert(img, spacing, bleeding ) or self.child2.insert(img, spacing, bleeding )
 
 		else:
+			iw = img.w
+			ih = img.h
+			if bleeding:
+				iw += 2
+				ih += 2
 			if self.img is not None:
 				return # node is occupied
 
-			if self.w == img.w and self.h == img.h:
+			if self.w == iw and self.h == ih:
 				self.img = img
 				self.img.x = self.x
 				self.img.y = self.y
+				if bleeding:
+					self.img.x += 1
+					self.img.y += 1
 				return self # perfect fit
 
-			if self.w < img.w or self.h < img.h:
+			if self.w < iw or self.h < ih:
 				return # does not fit
 
-			dw = self.w - img.w
-			dh = self.h - img.h
+			dw = self.w - iw
+			dh = self.h - ih
 
 			if dw > dh:
 				# split horizontally
-				self.child1 = Node(self.x, self.y, img.w, self.h)
-				self.child2 = Node(self.x+img.w+spacing, self.y, self.w-img.w-spacing, self.h)
+				self.child1 = Node(self.x, self.y, iw, self.h, bleeding)
+				self.child2 = Node(self.x+iw+spacing, self.y, self.w-iw-spacing, self.h, bleeding)
 			else:
 				# split vertically
-				self.child1 = Node(self.x, self.y, self.w, img.h)
-				self.child2 = Node(self.x, self.y+img.h+spacing, self.w, self.h-img.h-spacing)
+				self.child1 = Node(self.x, self.y, self.w, ih, bleeding)
+				self.child2 = Node(self.x, self.y+ih+spacing, self.w, self.h-ih-spacing, bleeding)
 
-			return self.child1.insert(img, spacing)
+			return self.child1.insert(img, spacing, bleeding)
 
 	def paintOn(self, canvas):
 		if self.img is not None:
@@ -174,6 +185,8 @@ class Node:
 			im = im.crop(self.img.bbox)
 			if im.mode != canvas.mode:
 				im = im.convert(canvas.mode)
+			if self.bleeding:
+				im = bleeding_image( im )
 			canvas.paste(im, (self.x, self.y, self.x+self.w, self.y+self.h))
 
 		if self.child1 is not None:
@@ -206,6 +219,7 @@ class AtlasGenerator:
 		self.quiet = kwargs.get('quiet', False)
 		self.allowBigTexture = kwargs.get( 'allow_big_texture', True )
 		self.pixel_type = 'RGBA'
+		self.bleeding = True
 
 		self.cache_hits = 0
 		self.cache_misses = 0
@@ -335,7 +349,7 @@ class AtlasGenerator:
 				w = int( math.pow( 2, math.ceil( math.log( img.w, 2 ) ) ) )
 				h = int( math.pow( 2, math.ceil( math.log( img.h, 2 ) ) ) )
 				newAtlas = Node( 0, 0, w, h )
-				node = newAtlas.insert( img, 0 )
+				node = newAtlas.insert( img, 0, self.bleeding )
 				print("INFO:Big texture {0}".format( img.path ))
 				return newAtlas
 			else:#skip				
@@ -350,13 +364,13 @@ class AtlasGenerator:
 			img = images[0]			
 			node = None
 			for atlas in confirmedAtlases: #try prev atlas first
-				node = atlas.insert(img, self.spacing)
+				node = atlas.insert(img, self.spacing, self.bleeding)
 				if node is not None:
 					images.pop( 0 )
 					break
 
 			if node is None: #try new atlas
-				node = new_atlas.insert(img, self.spacing)
+				node = new_atlas.insert(img, self.spacing, self.bleeding)
 				if node is None: #no more space
 					return new_atlas, insertedNew
 				else:
@@ -370,14 +384,14 @@ class AtlasGenerator:
 		for i, img in enumerate( images ):
 			node = None
 			for atlas in atlases:
-				node = atlas.insert(img, self.spacing)
+				node = atlas.insert(img, self.spacing, self.bleeding)
 				if node is not None:
 					break
 
 			if node is None:
 				if atlases and noNewAtlas: return None
 				new_atlas = Node(0, 0, size[0], size[1])
-				node = new_atlas.insert(img, self.spacing)
+				node = new_atlas.insert(img, self.spacing, self.bleeding)
 				if node is None:
 					if noNewAtlas: return None
 					print("ERROR: failed to insert image {0}".format(img.path))
@@ -406,7 +420,7 @@ class AtlasGenerator:
 
 		with Stopwatch() as s:
 			image_infos = self.generateImagesInfo(image_files)
-			image_infos = sorted(image_infos, key=lambda ii: (ii.w * ii.h), reverse=True)
+			image_infos = sorted(image_infos, key=lambda ii: (ii.w*ii.w + ii.h*ii.h), reverse=True)
 			D("    done reading images metadata in {0} seconds", s)
 
 		with Stopwatch() as s:
