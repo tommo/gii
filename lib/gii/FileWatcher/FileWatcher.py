@@ -64,7 +64,8 @@ class ModuleFileWatcher( EditorModule ):
 		self.watches[path] = None
 
 	def stopAllWatches(self):
-		logging.info('stop all file watchers')
+		print( 'stop all file watchers' )
+		# logging.info('stop all file watchers')
 		self.observer.unschedule_all()
 		self.watches = {}
 
