@@ -28,5 +28,6 @@ import FModPreview
 # import ActionTrack
 
 import EffectEditor
+import EffectPreview
 
 import ScreenProfileManager

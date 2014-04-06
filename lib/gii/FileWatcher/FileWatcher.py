@@ -34,7 +34,7 @@ class ModuleFileWatcher( EditorModule ):
 		)
 		
 	def startWatch(self, path, **options):
-		path=os.path.realpath(path)
+		path = os.path.realpath(path)
 		if self.watches.get(path):
 			logging.warning( 'already watching: %s' % path )
 			return self.watches[path]
@@ -55,6 +55,7 @@ class ModuleFileWatcher( EditorModule ):
 
 	def onStop( self ):
 		self.stopAllWatches()
+		self.observer.stop()
 
 	def stopWatch(self, path):
 		path  = os.path.realpath(path)
@@ -64,7 +65,6 @@ class ModuleFileWatcher( EditorModule ):
 		self.watches[path] = None
 
 	def stopAllWatches(self):
-		print( 'stop all file watchers' )
 		# logging.info('stop all file watchers')
 		self.observer.unschedule_all()
 		self.watches = {}
