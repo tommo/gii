@@ -20,6 +20,16 @@ function CanvasNavigate:onLoad()
 
 end
 
+-- function CanvasNavigate:onKeyDown( key )
+-- 	if key == ']' then
+-- 		self.targetCamera:addRot( 0,10,0 )
+-- 		self:updateCanvas()
+-- 	elseif key == '[' then
+-- 		self.targetCamera:addRot( 0,-10,0 )
+-- 		self:updateCanvas()
+-- 	end
+-- end
+
 function CanvasNavigate:onMouseDown( btn, x, y )
 	if btn == 'middle' then
 		self.dragFrom = { x, y }
@@ -42,7 +52,7 @@ function CanvasNavigate:onMouseMove( x, y )
 	local cameraCom = self.targetCamera:getComponent( EditorCanvasCamera )
 	local zoom = cameraCom:getZoom()
 	self.targetCamera:setLoc( cx0 - dx/zoom, cy0 + dy/zoom )
-	cameraCom:updateCanvas()	
+	self:updateCanvas()
 end
 
 function CanvasNavigate:onScroll( x, y )
@@ -59,5 +69,10 @@ function CanvasNavigate:setZoom( zoom )
 	self.zoom = zoom
 	local cameraCom = self.targetCamera:getComponent( EditorCanvasCamera )
 	cameraCom:setZoom( zoom )
+	self:updateCanvas()
+end
+
+function CanvasNavigate:updateCanvas()
+	local cameraCom = self.targetCamera:getComponent( EditorCanvasCamera )
 	cameraCom:updateCanvas()
 end

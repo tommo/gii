@@ -118,7 +118,8 @@ class GamePreview( SceneEditorModule ):
 		# self.toolbar.addWidget( label )
 		# self.labelScreen = label
 		# self.addTool( 'game_preview/----' )
-		self.addTool( 'game_preview/toggle_stay_top', label = 'Stay Top', type = 'check' )
+		# self.addTool( 'game_preview/toggle_stay_top', label = 'Stay Top', type = 'check' )
+		self.addTool( 'game_preview/switch_screen_profile', label = 'Screen Profile' )
 		self.onMoaiReset()
 
 		self.enableMenu( 'main/preview/pause_game',  False )
@@ -333,6 +334,11 @@ class GamePreview( SceneEditorModule ):
 			
 		elif name == 'start_external_game':
 			self.runGameExternal()
+
+	def onTool( self, tool ):
+		name = tool.name
+		if name == 'switch_screen_profile':
+			pass
 			
 
 ##----------------------------------------------------------------##

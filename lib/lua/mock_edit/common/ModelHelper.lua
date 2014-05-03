@@ -108,7 +108,7 @@ local function buildGiiModel( model )
 			pmodel:addLuaCollectionFieldInfo( id, f.__itemtype, option )
 
 		else
-			if isTupleValue( typeid ) then
+			if f.__is_tuple or isTupleValue( typeid ) then
 				local _set = f.__setter
 				option.set = function( obj, tuple )
 					_set( obj, unpackPythonList( tuple ) )

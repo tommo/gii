@@ -38,4 +38,5 @@ class DeviceItem():
 
 	def __repr__( self ):
 		# return self.getType()
-		return u'{0}({1})'.format( self.getName(), self.getType() )
+		return ( u'{0}({1})'.format( self.getName(), self.getType() ) ).encode( 'utf-8' )
+

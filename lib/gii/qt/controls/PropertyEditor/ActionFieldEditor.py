@@ -37,7 +37,7 @@ class ActionFieldEditor( FieldEditor ):
 			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Expanding
 			)
-		self.button.setText( self.label )		
+		self.button.setText( self.label + ' >>')	
 		self.button.clicked.connect( self.doAction )
 		return self.button
 

@@ -50,12 +50,14 @@ class ModuleFileWatcher( EditorModule ):
 			)
 
 		watch = self.observer.schedule( handler, path, options.get( 'recursive', True ) )
-		self.watches[ path ]=watch
+		self.watches[ path ] = watch
 		return watch
 
 	def onStop( self ):
-		self.stopAllWatches()
+		# print 'stop file watcher'
 		self.observer.stop()
+		self.stopAllWatches()
+		# print 'stopped file watcher'
 
 	def stopWatch(self, path):
 		path  = os.path.realpath(path)

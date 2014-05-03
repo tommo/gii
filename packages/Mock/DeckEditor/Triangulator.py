@@ -2,8 +2,13 @@ import p2t
 
 def triangulatePolygon( verts, holes = None ):
 	polyline = []
+	x, y = None, None
 	for i in range( 0, len( verts ), 2 ):
-		polyline.append( p2t.Point( verts[i], verts[i+1] ) )
+		xx, yy = verts[i], verts[i+1]
+		if xx == x and yy == y: continue
+		polyline.append( p2t.Point( xx, yy ) )
+		x = xx
+		y = yy
 
 	cdt = p2t.CDT( polyline )
 	if holes:

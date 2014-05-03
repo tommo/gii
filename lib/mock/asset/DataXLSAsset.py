@@ -28,7 +28,10 @@ def convertSheetToData( sheet ):
 		if rows<2: return False
 		keys = [ cell.value for cell in sheet.row( 0 ) ]
 		for row in range( 1, rows ):
-			rowData = {}			
+			cell0 = sheet.cell( row, 0 )
+			k  = cellValue( cell0 )
+			if isinstance( k, str ) and k.startswith( '//' ): continue #skip comment line
+			rowData = {}
 			for i, key in enumerate( keys ):
 				if key:
 					cell = sheet.cell( row, i )
@@ -43,6 +46,9 @@ def convertSheetToData( sheet ):
 		if cols<2: return False
 		keys = [ cell.value for cell in sheet.col( 0 ) ]
 		for col in range( 1, cols ):
+			cell0 = sheet.cell( 0, col )
+			k  = cellValue( cell0 )
+			if isinstance( k, str ) and k.startswith( '//' ): continue #skip comment line
 			colData = {}
 			for i, key in enumerate( keys ):
 				if key:
@@ -61,7 +67,7 @@ def convertSheetToData( sheet ):
 		for row in range( 0, rows ):
 			key = sheet.cell( row, 0 ).value
 			if not key: continue
-			if key.startswith( '//' ): continue #skip comment line
+			if isinstance( key, str ) and k.startswith( '//' ): continue #skip comment line
 			value = sheet.cell( row, 1 ).value
 			if data.has_key( key ):
 				logging.warn( 'skip duplicated key: %s' % key.encode('utf-8') )
