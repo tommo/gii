@@ -249,6 +249,20 @@ function SceneGraphEditor:onMainSceneClose( scn )
 	gii.emitPythonSignal( 'scene.change' )
 end
 
+function SceneGraphEditor:makeEntityCopyData()
+	local targets = getTopLevelEntitySelection()
+	local dataList = {}
+	for ent in pairs( targets ) do
+		local data = mock.serializeEntity( ent )
+		table.insert( dataList, data )
+	end
+
+	return encodeJSON( { 
+		entities = dataList,
+		scene    = editor.scene.assetPath or '<unknown>',
+	} )
+end
+
 editor = SceneGraphEditor()
 
 --------------------------------------------------------------------
@@ -478,9 +492,49 @@ end
 
 function CmdCloneEntity:undo()
 	--todo:
-	gii.emitPythonSignal('entity.removed', self.created )
-	self.created:destroyWithChildrenNow()
+	for i, created in ipairs( self.createdList ) do
+		created:destroyWithChildrenNow()
+		gii.emitPythonSignal('entity.removed', created )
+	end
+	self.createdList = false
 end
+
+--------------------------------------------------------------------
+CLASS: CmdPasteEntity ( mock_edit.EditorCommand )
+	:register( 'scene_editor/paste_entity' )
+
+function CmdPasteEntity:init( option )
+	self.data = decodeJSON( option['data'] )
+	self.parent = gii.getSelection( 'scene' )[1] or false
+	self.createdList = false
+	if not self.data then _error( 'invalid entity data' ) return false end
+end
+
+function CmdPasteEntity:redo()
+	local createdList = {}
+	for i, entityData in ipairs( self.data.entities ) do
+		local created = mock.deserializeEntity( entityData )
+		if parent then
+			parent:addChild( created )
+		else
+			editor.scene:addEntity( created )
+		end		
+		gii.emitPythonSignal('entity.added', created, 'paste' )
+		table.insert( createdList, created )
+	end
+	self.createdList = createdList
+	gii.changeSelection( 'scene', unpack( createdList ) )
+end
+
+function CmdPasteEntity:undo()
+	--todo:
+	for i, created in ipairs( self.createdList ) do
+		created:destroyWithChildrenNow()
+		gii.emitPythonSignal('entity.removed', created )
+	end
+	self.createdList = false
+end
+
 
 --------------------------------------------------------------------
 CLASS: CmdReparentEntity ( mock_edit.EditorCommand )

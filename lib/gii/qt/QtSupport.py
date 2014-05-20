@@ -85,6 +85,12 @@ class QtSupport( QtEditorModule ):
 			'E&xit',
 			]
 		)	
+		# self.menu.addChild('&Edit').addChild( [
+		# 	'Copy|Ctrl+C',
+		# 	'Paste|Ctrl+V',
+		# 	'Cut|Ctrl+X',
+		# 	]
+		# )
 		self.menu.addChild('&Find')
 
 	def getSharedMenubar( self ):
@@ -154,6 +160,12 @@ class QtSupport( QtEditorModule ):
 			self.getModule('scene_editor').setFocus()
 		elif name == 'refresh_theme':
 			self.setupStyle()
+		elif name == 'copy':
+			print 'copy'
+		elif name == 'paste':
+			print 'paste'
+		elif name == 'cut':
+			print 'cut'
 
 QtSupport().register()
 

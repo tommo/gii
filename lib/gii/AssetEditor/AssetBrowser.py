@@ -258,6 +258,7 @@ class AssetBrowser( AssetEditorModule ):
 			requestSearchView( 
 				info    = 'search for asset',
 				context = 'asset',
+				on_test      = self.selectAsset,
 				on_selection = self.selectAsset
 				)
 
@@ -265,6 +266,7 @@ class AssetBrowser( AssetEditorModule ):
 			requestSearchView( 
 				info    = 'open asset',
 				context = 'asset',
+				on_test      = self.selectAsset,
 				on_selection = self.openAsset
 				)
 

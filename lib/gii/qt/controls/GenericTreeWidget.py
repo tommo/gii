@@ -388,7 +388,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def onClipboardCut( self ):
 		pass
 
-	def onClipboardPaset( self ):
+	def onClipboardPaste( self ):
 		pass
 
 	def _onItemChanged( self, item, col ):

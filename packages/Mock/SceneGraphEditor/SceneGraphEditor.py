@@ -22,6 +22,8 @@ from PyQt4.QtCore    import Qt, QObject
 from mock import _MOCK, isMockInstance
 ##----------------------------------------------------------------##
 
+_GII_ENTITY_DATA_MIME = 'application/gii_entity_data'
+
 def getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
@@ -394,7 +396,8 @@ class SceneGraphEditor( SceneEditorModule ):
 				info    = 'search for entity in current scene',
 				context = 'scene',
 				type    = _MOCK.Entity,
-				on_selection = self.selectEntity
+				on_selection = self.selectEntity,
+				on_test      = self.selectEntity
 				)
 
 		elif name == 'remove_component':
@@ -512,6 +515,32 @@ class SceneGraphEditor( SceneEditorModule ):
 			prefab = targetPrefab.getNodePath(),
 			file   = targetPrefab.getAbsFilePath()
 		)
+
+	##----------------------------------------------------------------##
+	def onCopyEntity( self ):
+		entityGroupData = self.delegate.callMethod( 'editor', 'makeEntityCopyData' )
+		if not entityGroupData: return False
+		clip = QtGui.QApplication.clipboard()
+		mime = QtCore.QMimeData()
+		text = ''
+		for s in self.getSelection():
+			if text == '':
+				text = text + s.name
+			else:
+				text = text + '\n' + s.name
+		mime.setText( text )
+		mime.setData( _GII_ENTITY_DATA_MIME, str(entityGroupData) )
+		clip.setMimeData( mime )
+		return True
+
+	def onPasteEntity( self ):
+		clip = QtGui.QApplication.clipboard()
+		mime = clip.mimeData()
+		if mime.hasFormat( _GII_ENTITY_DATA_MIME ):
+			data = mime.data( _GII_ENTITY_DATA_MIME )
+			self.doCommand( 'scene_editor/paste_entity',
+				data = str(data)
+			)
 
 
 ##----------------------------------------------------------------##
@@ -638,6 +667,15 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 
 	def onItemChanged( self, item, col ):
 		self.module.renameEntity( item.node, item.text(0) )
+
+	def onClipboardCopy( self ):
+		self.module.onCopyEntity()
+		return True
+
+	def onClipboardPaste( self ):
+		self.module.onPasteEntity()
+		return True
+
 
 
 ##----------------------------------------------------------------##

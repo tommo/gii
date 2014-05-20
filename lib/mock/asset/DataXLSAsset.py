@@ -30,7 +30,7 @@ def convertSheetToData( sheet ):
 		for row in range( 1, rows ):
 			cell0 = sheet.cell( row, 0 )
 			k  = cellValue( cell0 )
-			if isinstance( k, str ) and k.startswith( '//' ): continue #skip comment line
+			if isinstance( k, ( str, unicode ) ) and k.startswith( '//' ): continue #skip comment line
 			rowData = {}
 			for i, key in enumerate( keys ):
 				if key:
@@ -48,7 +48,7 @@ def convertSheetToData( sheet ):
 		for col in range( 1, cols ):
 			cell0 = sheet.cell( 0, col )
 			k  = cellValue( cell0 )
-			if isinstance( k, str ) and k.startswith( '//' ): continue #skip comment line
+			if isinstance( k, ( str, unicode ) ) and k.startswith( '//' ): continue #skip comment line
 			colData = {}
 			for i, key in enumerate( keys ):
 				if key:
