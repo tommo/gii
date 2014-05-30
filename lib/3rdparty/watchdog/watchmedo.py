@@ -37,14 +37,8 @@ except ImportError:
         from io import StringIO
 
 from argh import arg, alias, ArghParser
-
 from watchdog.version import VERSION_STRING
-
-from watchdog.utils import (
-    read_text_file,
-    load_class
-)
-
+from watchdog.utils import load_class
 from pathtools.path import absolute_path, parent_dir_path
 
 
@@ -92,7 +86,9 @@ def load_config(tricks_file_pathname):
     :returns:
         A dictionary of configuration information.
     """
-    content = read_text_file(tricks_file_pathname)
+    f = open(tricks_file_pathname, 'rb')
+    content = f.read()
+    f.close()
     config = yaml.load(content)
     return config
 
@@ -416,6 +412,12 @@ Example option usage::
      action='store_true',
      default=False,
      help="wait for process to finish to avoid multiple simultaneous instances")
+@arg('-W', '--drop',
+     dest='drop_during_process',
+     action='store_true',
+     default=False,
+     help="Ignore events that occur while command is still being executed " \
+          "to avoid multiple simultaneous instances")
 def shell_command(args):
     """
     Subcommand to execute shell commands in response to file system events.
@@ -435,7 +437,8 @@ def shell_command(args):
                                 patterns=patterns,
                                 ignore_patterns=ignore_patterns,
                                 ignore_directories=args.ignore_directories,
-                                wait_for_process=args.wait_for_process)
+                                wait_for_process=args.wait_for_process,
+                                drop_during_process=args.drop_during_process)
     observer = Observer(timeout=args.timeout)
     observe_with(observer, handler, args.directories, args.recursive)
 

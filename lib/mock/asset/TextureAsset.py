@@ -226,6 +226,7 @@ class TextureLibrary( EditorModule ):
 		signals.connect( 'asset.post_import_all', self.postAssetImportAll )
 		signals.connect( 'asset.unregister',      self.onAssetUnregister )
 
+		signals.connect( 'project.post_deploy', self.postDeploy )
 		signals.connect( 'project.save', self.onSaveProject )
 
 	def onStart( self ):		
@@ -289,6 +290,8 @@ class TextureLibrary( EditorModule ):
 
 		for group in pendingImportGroups:
 			self.buildAtlas( group )	
+			
+		self.saveIndex()
 
 	def processTexture( self, assetNode, texNode ):
 		logging.info( 'processing texture: %s' % assetNode.getNodePath() )
@@ -413,6 +416,11 @@ class TextureLibrary( EditorModule ):
 	def forceRebuildTexture( assetNode ):
 		self.scheduleImport( assetNode )
 		self.doPendingImports()
+
+	def postDeploy( self, context ):
+		self.saveIndex()
+		context.addFile( self.dataPath, 'asset/texture_index' )
+		context.meta['mock_texture_library'] = 'asset/texture_index' + _GII_SCRIPT_LIBRARY_EXPORT_NAME		
 
 	def onSaveProject( self, prj ):
 		self.saveIndex()

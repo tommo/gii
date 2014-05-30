@@ -46,7 +46,7 @@ class MockRuntime( EditorModule ):
 		signals.connect( 'moai.reset', self.onMoaiReset )
 		signals.connect( 'moai.ready', self.onMoaiReady )
 
-		signals.connect( 'project.post_deploy', self.post_deploy )
+		signals.connect( 'project.post_deploy', self.postDeploy )
 		signals.connect( 'project.save', self.onProjectSave )
 
 
@@ -78,12 +78,12 @@ class MockRuntime( EditorModule ):
 	def onStart( self ):
 		self.initMockGame()
 
-	def post_deploy( self, context ):
+	def postDeploy( self, context ):
 		configPath = context.getPath( 'game_config' )
 		game = _MOCK.game
 		data = json.loads( game.saveConfigToString( game ) )
-		data['asset_library']  = 'asset/asset_index'
-		data['script_library'] = context.meta.get( 'mock_script_library', False )
+		data[ 'asset_library'  ] = 'asset/asset_index'
+		data[ 'script_library' ] = context.meta.get( 'mock_script_library', False )
 		jsonHelper.trySaveJSON( data, configPath, 'deploy game info' )
 
 	def setupLuaModule( self ):
@@ -91,8 +91,7 @@ class MockRuntime( EditorModule ):
 		_MOCK._setTarget( _G['mock'] )
 		_MOCK.setBasePaths( self.getProject().getPath(), self.getProject().getAssetPath() )
 
-	def syncAssetLibrary(self):
-		#TODO:
+	def syncAssetLibrary(self): #TODO:
 		pass
 
 	def initMockGame( self ):

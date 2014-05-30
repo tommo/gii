@@ -3,6 +3,7 @@
 #
 # Copyright 2011 Yesudeep Mangalapilly <yesudeep@gmail.com>
 # Copyright 2012 Google, Inc.
+# Copyright 2014 Thomas Amland <thomas.amland@gmail.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,15 +32,6 @@
         the snapshot diff will represent file/directory movement as
         created and deleted events.
 
-        Windows does not have any concept of ``inodes``, which prevents
-        this snapshotter from determining file or directory renames/movement
-        on it. The snapshotter does not try to handle this on Windows.
-        File or directory movement will show up as creation and deletion
-        events.
-
-        Please do not use this on a virtual file system mapped to
-        a network share.
-
 Classes
 -------
 .. autoclass:: DirectorySnapshot
@@ -53,12 +45,9 @@ Classes
 """
 
 import os
-import sys
-import stat
-import itertools
-
-from pathtools.path import walk as path_walk, absolute_path
+from stat import S_ISDIR
 from watchdog.utils import platform
+from watchdog.utils import stat as default_stat
 
 
 class DirectorySnapshotDiff(object):
@@ -197,43 +186,49 @@ class DirectorySnapshot(object):
         ``bool``
     :param walker_callback:
         .. deprecated:: 0.7.2
+    :param stat:
+        Use custom stat function that returns a stat structure for path.
+        Currently only st_dev, st_ino, st_mode and st_mtime are needed.
         
         A function with the signature ``walker_callback(path, stat_info)``
         which will be called for every entry in the directory tree.
+    :param listdir:
+        Use custom listdir function. See ``os.listdir`` for details.
     """
     
-    def __init__(self, path, recursive=True, walker_callback=(lambda p, s: None)):
-        from watchdog.utils import stat
-        statf = stat
-        walker = path_walk
+    def __init__(self, path, recursive=True,
+                 walker_callback=(lambda p, s: None),
+                 stat=default_stat,
+                 listdir=os.listdir):
         self._stat_info = {}
         self._inode_to_path = {}
         
-        stat_info = statf(path)
+        stat_info = stat(path)
         self._stat_info[path] = stat_info
         self._inode_to_path[stat_info.st_ino] = self.path
-        
-        for root, directories, files in walker(path, recursive):
-            for directory_name in directories:
-                try:
-                    directory_path = os.path.join(root, directory_name)
-                    stat_info = statf(directory_path)
-                    self._stat_info[directory_path] = stat_info
-                    self._inode_to_path[stat_info.st_ino] = directory_path
-                    walker_callback(directory_path, stat_info)
-                except OSError:
-                    continue
 
-            for file_name in files:
+        def walk(root):
+            paths = [os.path.join(root, name) for name in listdir(root)]
+            entries = []
+            for p in paths:
                 try:
-                    file_path = os.path.join(root, file_name)
-                    stat_info = statf(file_path)
-                    self._stat_info[file_path] = stat_info
-                    self._inode_to_path[stat_info.st_ino] = file_path
-                    walker_callback(file_path, stat_info)
+                    entries.append((p, stat(p)))
                 except OSError:
                     continue
-    
+            for _ in entries:
+                yield _
+            if recursive:
+                for path, st in entries:
+                    if S_ISDIR(st.st_mode):
+                        for _ in walk(path):
+                            yield _
+
+        for p, st in walk(path):
+            i = (st.st_ino, st.st_dev)
+            self._inode_to_path[i] = p
+            self._stat_info[p] = st
+            walker_callback(p, st)
+
     @property
     def paths(self):
         """
@@ -248,17 +243,31 @@ class DirectorySnapshot(object):
         return self._inode_to_path.get(inode)
     
     def inode(self, path):
-        """
-        Returns inode for path.
-        """
-        return self._stat_info[path].st_ino
+        """ Returns an id for path. """
+        st = self._stat_info[path]
+        return (st.st_ino, st.st_dev)
     
     def isdir(self, path):
-        return stat.S_ISDIR(self._stat_info[path].st_mode)
+        return S_ISDIR(self._stat_info[path].st_mode)
     
     def mtime(self, path):
         return self._stat_info[path].st_mtime
     
+    def stat_info(self, path):
+        """
+        Returns a stat information object for the specified path from
+        the snapshot.
+
+        Attached information is subject to change. Do not use unless
+        you specify `stat` in constructor. Use :func:`inode`, :func:`mtime`,
+        :func:`isdir` instead.
+
+        :param path:
+            The path for which stat information should be obtained
+            from a snapshot.
+        """
+        return self._stat_info[path]
+
     def __sub__(self, previous_dirsnap):
         """Allow subtracting a DirectorySnapshot object instance from
         another.
@@ -281,25 +290,11 @@ class DirectorySnapshot(object):
     def stat_snapshot(self):
         """
         .. deprecated:: 0.7.2
-           Use :func:`inode`, :func:`isdir` and :func:`mtime` instead.
-        
+           Use :func:`stat_info` or :func:`inode`/:func:`mtime`/:func:`isdir`
+
         Returns a dictionary of stat information with file paths being keys.
         """
         return self._stat_info
-
-    def stat_info(self, path):
-        """
-        .. deprecated:: 0.7.2
-           Use :func:`inode`, :func:`isdir` and :func:`mtime` instead.
-        
-        Returns a stat information object for the specified path from
-        the snapshot.
-
-        :param path:
-            The path for which stat information should be obtained
-            from a snapshot.
-        """
-        return self._stat_info[path]
 
     def path_for_inode(self, inode):
         """

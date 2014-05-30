@@ -3,6 +3,7 @@ from gii.core import AssetManager, AssetLibrary, getProjectPath, app
 import logging
 
 from ImageHelpers import convertToWebP
+from mock import _MOCK
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -32,6 +33,10 @@ class SpineAssetManager(AssetManager):
 				node.setObjectFile( 'json', fullPath )
 			elif ext == '.atlas':
 				node.setObjectFile( 'atlas', fullPath )
+				jsonPath = node.getCacheFile( 'atlas_json' )
+				_MOCK.convertSpineAtlasToJson( fullPath, jsonPath )
+				node.setObjectFile( 'atlas_json', jsonPath )
+				
 		return True
 
 	def getPriority(self):

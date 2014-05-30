@@ -4,33 +4,23 @@ import os
 import sys
 import sys,imp
 
-os.environ['MAGICK_HOME'] = '/opt/local'
+from PIL import Image, ImageFilter, ImageEnhance
 
 ##----------------------------------------------------------------##
-from wand.image import Image, CHANNELS
-from wand.api   import library
-from wand.display import display
-
+#BUILTIN-functions
 ##----------------------------------------------------------------##
-library.MagickGaussianBlurImageChannel.argtypes = [
-	ctypes.c_void_p,
-	ctypes.c_int,
-	ctypes.c_double,
-	ctypes.c_double
-	]
-
 def GaussianBlur( img, radius ):
-	k = max( 1, radius/3 )
-	w, h = img.width, img.height
-	w1,h1 = int(w/k), int(h/k)
-	img.resize( w1, h1 )
-	tmpImg = Image( width = w1+radius*2, height = h1+radius*2 )
-	tmpImg.composite( img, radius, radius )
-	library.MagickGaussianBlurImageChannel( tmpImg.wand, CHANNELS['all_channels'], radius, radius/3 )
-	tmpImg.resize( w, h )
-	tmpImg.format = img.format
-	return tmpImg
+	blurFilter = ImageFilter.GaussianBlur( radius )
+	return img.filter( blurFilter )
 
+def ResizeRelative( img, sx, sy=-1 ):
+	w, h = img.size
+	if sy<0: sy = sx
+	newSize = ( int(w*sx), int(h*sy) )
+	return img.resize( newSize, Image.BILINEAR )
+
+##----------------------------------------------------------------##
+# STUB
 ##----------------------------------------------------------------##
 procPath  = sys.argv[1]
 imgPath   = sys.argv[2]
@@ -41,12 +31,11 @@ code = f.read()
 f.close()
 
 exec code
-img = Image( filename = imgPath )
+img = Image.open( imgPath )
 output = onProcess( img )
 if output:
-	output.save( filename = imgPath )
+	output.save( imgPath, 'PNG' )
 	sys.exit( 0 )
 else:
 	sys.exit( 1 )
-
 

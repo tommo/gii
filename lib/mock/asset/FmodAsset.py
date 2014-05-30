@@ -5,9 +5,33 @@ import shutil
 
 from gii.core import AssetManager, AssetLibrary, getProjectPath, app
 # import xml.parsers.expat
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree
 
 ##----------------------------------------------------------------##
+def _parseFDPGroup( node ):
+	groups = {}
+	for groupItem in node.iterfind( 'eventgroup' ):
+		name = groupItem.find('name').text
+		g = {}
+		groups[ name ] = g
+		events = {}
+		g['events'] = events
+		for eventItem in groupItem.iterfind( 'event' ):
+			eventName = eventItem.find('name').text
+			events[ eventName ] = {
+				'mode'    : eventItem.find('mode').text,
+				'oneshot' : eventItem.find('oneshot').text,
+			}
+		for simpleEventItem in groupItem.iterfind( 'simpleevent' ):
+			eventItem = simpleEventItem.find('event')
+			eventName = eventItem.find('name').text
+			events[ eventName ] = {
+				'mode'    : eventItem.find('mode').text,
+				'oneshot' : eventItem.find('oneshot').text,
+			}
+		g['groups'] = _parseFDPGroup( groupItem )
+	return groups
+
 def parseFDP( path ):
 	try:
 		fp = file( path, 'r' )
@@ -15,27 +39,8 @@ def parseFDP( path ):
 		fp.close()
 	except Exception, e :
 		return False
-	root = ET.fromstring( data )
-	groups = {}
-	for groudItem in root.iterfind( 'eventgroup' ):
-		name = groudItem.find('name').text
-		g = {}
-		groups[ name ] = g
-		events = {}
-		g['events'] = events
-		for eventItem in groudItem.iterfind( 'event' ):
-			eventName = eventItem.find('name').text
-			events[ eventName ] = {
-				'mode'    : eventItem.find('mode').text,
-				'oneshot' : eventItem.find('oneshot').text,
-			}
-		for simpleEventItem in groudItem.iterfind( 'simpleevent' ):
-			eventItem = simpleEventItem.find('event')
-			eventName = eventItem.find('name').text
-			events[ eventName ] = {
-				'mode'    : eventItem.find('mode').text,
-				'oneshot' : eventItem.find('oneshot').text,
-			}
+	root = xml.etree.ElementTree.fromstring( data )
+	groups = _parseFDPGroup( root )
 
 	banks = {}
 	for bankItem in root.iterfind( 'soundbank' ):
@@ -64,6 +69,16 @@ class FmodAssetManager(AssetManager):
 		if not ext in ['.fdp']: return False
 		return True
 
+	def _traverseGroup( self, node, data ):
+		groups = data.get( 'groups', None )
+		if groups:
+			for name, group in groups.items():
+				groupNode = node.createChildNode( name, 'fmod_group', manager = self )
+				events    = group['events']
+				for name, event in events.items():
+					eventNode = groupNode.createChildNode( name, 'fmod_event', manager = self )
+				self._traverseGroup( groupNode, group )
+
 	def importAsset(self, node, reload = False ):
 		node.assetType = 'fmod_project'		
 		
@@ -91,13 +106,7 @@ class FmodAssetManager(AssetManager):
 		for name, bank in banks.items():
 			pass
 
-		groups = project['groups']
-		for name, group in groups.items():
-			groupNode = node.createChildNode( name, 'fmod_group', manager = self )
-			events    = group['events']
-			for name, event in events.items():
-				eventNode = groupNode.createChildNode( name, 'fmod_event', manager = self )
-
+		self._traverseGroup( node, project )
 		return True
 
 FmodAssetManager().register()

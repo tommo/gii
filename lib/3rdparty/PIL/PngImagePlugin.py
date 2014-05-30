@@ -505,7 +505,7 @@ def _save(im, fp, filename, chunk=putchunk, check=0):
         else:
             # check palette contents
             if im.palette:
-                colors = len(im.palette.getdata()[1])//3
+                colors = max(min(len(im.palette.getdata()[1])//3, 256), 2)
             else:
                 colors = 256
 
@@ -561,7 +561,7 @@ def _save(im, fp, filename, chunk=putchunk, check=0):
 
     transparency = im.encoderinfo.get('transparency',im.info.get('transparency', None))
     
-    if transparency:
+    if transparency or transparency == 0:
         if im.mode == "P":
             # limit to actual palette size
             alpha_bytes = 2**bits
@@ -605,19 +605,14 @@ def _save(im, fp, filename, chunk=putchunk, check=0):
             chunk(fp, cid, data)
 
     # ICC profile writing support -- 2008-06-06 Florian Hoech
-    if "icc_profile" in im.info:
+    if im.info.get("icc_profile"):
         # ICC profile
         # according to PNG spec, the iCCP chunk contains:
         # Profile name  1-79 bytes (character string)
         # Null separator        1 byte (null character)
         # Compression method    1 byte (0)
         # Compressed profile    n bytes (zlib with deflate compression)
-        try:
-            import ICCProfile
-            p = ICCProfile.ICCProfile(im.info["icc_profile"])
-            name = p.tags.desc.get("ASCII", p.tags.desc.get("Unicode", p.tags.desc.get("Macintosh", p.tags.desc.get("en", {}).get("US", "ICC Profile")))).encode("latin1", "replace")[:79]
-        except ImportError:
-            name = b"ICC Profile"
+        name = b"ICC Profile"
         data = name + b"\0\0" + zlib.compress(im.info["icc_profile"])
         chunk(fp, b"iCCP", data)
 
