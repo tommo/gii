@@ -1,8 +1,8 @@
 import os.path
-from gii.core import AssetManager, AssetLibrary, getProjectPath, app
+from gii.core import *
 import logging
 
-from ImageHelpers import convertToWebP
+from ImageHelpers import convertToPNG, convertToWebP, getImageSize
 from mock import _MOCK
 
 ##----------------------------------------------------------------##
@@ -30,20 +30,29 @@ class SpineAssetManager(AssetManager):
 			fullPath = filePath + '/' + fileName
 			name, ext = os.path.splitext( fileName )
 			if ext == '.json':
-				node.setObjectFile( 'json', fullPath )
+				skelPath = node.getCacheFile( 'skel' )
+				node.setObjectFile( 'skel', skelPath )
+				self._optimizeAnimation( fullPath, skelPath )				
+
 			elif ext == '.atlas':
-				node.setObjectFile( 'atlas', fullPath )
-				jsonPath = node.getCacheFile( 'atlas_json' )
-				_MOCK.convertSpineAtlasToJson( fullPath, jsonPath )
-				node.setObjectFile( 'atlas_json', jsonPath )
+				internalAtlas = _MOCK.convertSpineAtlasToPrebuiltAtlas( fullPath )
+				for page in internalAtlas.pages.values():
+					page.source = filePath + '/' + page.texture
+				atlasNode = node.affirmChildNode( node.getBaseName()+'_spine_atlas', 'prebuilt_atlas', manager = 'asset_manager.prebuilt_atlas' )
+				atlasCachePath = atlasNode.getCacheFile( 'atlas' )
+				atlasNode.setObjectFile( 'atlas', atlasCachePath )
+				internalAtlas.save( internalAtlas, atlasCachePath )
+				app.getModule( 'texture_library' ).scheduleImport( atlasNode )
 				
 		return True
 
 	def getPriority(self):
 		return 10
 
-	def optimizeAnimation( self, node ):
-		pass
+	def _optimizeAnimation( self, inputPath, outputPath ):
+		data = jsonHelper.tryLoadJSON( inputPath )
+		#todo: optimization		
+		jsonHelper.trySaveJSON( data, outputPath )
 
 	def deployAsset( self, node, context ):
 		super( SpineAssetManager, self ).deployAsset( node, context )
@@ -79,4 +88,3 @@ class SpineAssetManager(AssetManager):
 SpineAssetManager().register()
 
 AssetLibrary.get().setAssetIcon( 'spine', 'clip' )
-AssetLibrary.get().setAssetIcon( 'spine_atlas', 'pack' )

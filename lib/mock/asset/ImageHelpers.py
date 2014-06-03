@@ -65,6 +65,11 @@ def loadOneImage( path, **option ):
 		img = Image.open( path )
 	return img
 
+def getImageSize( path ):
+	img = Image.open( path )
+	return img.size
+
+
 ##----------------------------------------------------------------##
 def convertToPNG( inputPath, outputPath, **options ):
 	##----------------------------------------------------------------##
@@ -87,15 +92,6 @@ def convertToPNG( inputPath, outputPath, **options ):
 
 	if not img.mode in [ 'RGB', 'RGBA' ]:
 		img = img.convert("RGB")
-
-	##----------------------------------------------------------------##
-	# pixdata = img.load()
-	# # Clean the background noise, if color != white, then set to black.
-	# # change with your color
-	# for y in xrange(img.size[1]):
-	#     for x in xrange(img.size[0]):
-	#         if pixdata[x, y] == (255, 0, 255, 255):
-	#             pixdata[x, y] = (255, 0, 255, 0)
 
 	format = 'PNG'
 	try:
@@ -129,3 +125,11 @@ def convertToWebP( src, dst = None, **option ):
 	# if src == dst: return #SKIP
 	return subprocess.call( arglist )
 
+
+##----------------------------------------------------------------##
+def convertToPVR( src, dst = None, **option ):
+	pass
+
+##----------------------------------------------------------------##
+def quantize( src, dst = None, **option ):
+	pass

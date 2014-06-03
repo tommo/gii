@@ -33,7 +33,8 @@ class AuroraSpriteAssetManager(AssetManager):
 		#TODO: need convert PNG		
 		defFile = node.getCacheFile('def')
 		
-		result = importer.call('convertAuroraSprite', 
+		result = importer.call(
+			'convertAuroraSprite', 
 			node.getAbsFilePath(),
 			getProjectPath( defFile )
 			)

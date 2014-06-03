@@ -5,7 +5,8 @@ import shutil
 import json
 
 from gii.core import *
-from ImageHelpers import convertToPNG, convertToWebP
+from mock import _MOCK
+from ImageHelpers import convertToPNG, convertToWebP, getImageSize
 from TextureProcessor import applyTextureProcessor
 
 ##----------------------------------------------------------------##
@@ -14,7 +15,7 @@ signals.register( 'texture.remove' )
 signals.register( 'texture.rebuild' )
 
 ##----------------------------------------------------------------##
-_TEXTURE_LIBRARY_DATA_FILE = 'texture_library.data'
+_TEXTURE_LIBRARY_DATA_FILE = 'texture_library.json'
 _ATLAS_JSON_NAME = 'atlas.json'
 
 ##----------------------------------------------------------------##
@@ -76,7 +77,6 @@ class TextureGroup( object ):
 		else:
 			self.cache = gdata.get( 'cache', None )
 
-
 ##----------------------------------------------------------------##
 def groupToJson( group ):
 	return {
@@ -87,6 +87,59 @@ def groupToJson( group ):
 				'atlas_mode'         : group.atlasMode ,
 				'cache'              : group.cache
 			}
+
+def _fixPath( path ):
+		path = path.replace( '\\', '/' ) #for windows
+		if path.startswith('./'): path = path[2:]
+		return path	
+		
+
+##----------------------------------------------------------------##
+def _convertAtlas( inputfile,  srcToAssetDict ):
+	f = open( inputfile, 'r' )
+	items      = []
+	atlasNames = []
+	atlasInfos = []
+	readingMode = 'sprite'
+
+	for line in f.readlines():
+		if line.startswith( '[atlas]' ):
+			readingMode = 'atlas'
+			continue
+		if line.startswith( '[sprite]' ):
+			readingMode = 'sprite'
+			continue
+		if readingMode == 'atlas':
+			parts       = line.split('\t')
+			name        = parts[ 0 ]
+			atlasNames.append( name )
+			atlasInfos.append( {
+					'name': os.path.basename(name),
+					'size':[ int(parts[1]), int(parts[2]) ]
+				} )
+		else:
+			parts       = line.split('\t')
+			sourcePath  = _fixPath( parts[1] )
+			if sourcePath.startswith('\"'):
+				sourcePath = sourcePath[1:-1]		
+			# name = os.path.basename( sourcePath )
+			assetPath = srcToAssetDict[ sourcePath ]
+			atlasName = parts[0]		
+			atlasId = atlasNames.index( atlasName )
+			data = {
+				'atlas'  : atlasId,
+				'name'   : assetPath,
+				'source' : sourcePath,
+				'rect'   : [ int(x) for x in parts[2:] ]
+			}
+			items.append(data)
+
+	output = {
+		'atlases' : atlasInfos,
+		'items'   : items,
+	}
+
+	return output
 
 ##----------------------------------------------------------------##
 class TextureAssetManager( AssetManager ):
@@ -140,60 +193,14 @@ class TextureAssetManager( AssetManager ):
 			if context.isNewFile( fn ):				
 				convertToWebP( fn )
 
-
-
-def _fixPath( path ):
-		path = path.replace( '\\', '/' ) #for windows
-		if path.startswith('./'): path = path[2:]
-		return path	
-		
 ##----------------------------------------------------------------##
-def _convertAtlas( inputfile,  srcToAssetDict ):
-	f = open( inputfile, 'r' )
-	items      = []
-	atlasNames = []
-	atlasInfos = []
-	readingMode = 'sprite'
+class PrebuiltAtlasAssetManager( AssetManager ):
+	def getName(self):
+		return 'asset_manager.prebuilt_atlas'
 
-	for line in f.readlines():
-		if line.startswith( '[atlas]' ):
-			readingMode = 'atlas'
-			continue
-		if line.startswith( '[sprite]' ):
-			readingMode = 'sprite'
-			continue
-		if readingMode == 'atlas':
-			parts       = line.split('\t')
-			name        = parts[ 0 ]
-			atlasNames.append( name )
-			atlasInfos.append( {
-					'name': os.path.basename(name),
-					'size':[ int(parts[1]), int(parts[2]) ]
-				} )
-		else:
-			parts       = line.split('\t')
-			sourcePath  = _fixPath( parts[1] )
-			if sourcePath.startswith('\"'):
-				sourcePath = sourcePath[1:-1]		
-			# name = os.path.basename( sourcePath )
-			assetPath = srcToAssetDict[ sourcePath ]
-			atlasName = parts[0]		
-			atlasId = atlasNames.index( atlasName )
-			data = {
-				'atlas'  : atlasId,
-				'name'   : assetPath,
-				'source' : sourcePath,
-				'rect'   : [ int(x) for x in parts[2:] ]
-			}
-			items.append(data)
-
-	output = {
-		'atlases' : atlasInfos,
-		'items'   : items,
-	}
-
-	return output
-
+	def importAsset(self, node, reload = False ):
+		print 'importing', node, reload
+		return True
 
 ##----------------------------------------------------------------##
 class TextureLibrary( EditorModule ):
@@ -205,7 +212,7 @@ class TextureLibrary( EditorModule ):
 	def __init__( self ):
 		assert not TextureLibrary._singleton
 		TextureLibrary._singleton = self
-		self.groups   = {}
+		self.lib = None
 		self.pendingImportGroups = {}
 		self.pendingImportTextures = {}
 
@@ -216,12 +223,8 @@ class TextureLibrary( EditorModule ):
 		return ['mock']
 
 	def onLoad( self ):
-		self.dataPath  = self.getProject().getConfigPath( _TEXTURE_LIBRARY_DATA_FILE )
-		
+		self.dataPath  = self.getProject().getConfigPath( _TEXTURE_LIBRARY_DATA_FILE )		
 		self.delegate  = app.getModule('moai').loadLuaDelegate( _getModulePath('TextureLibrary.lua') )
-
-		if not self.groups.get( 'default' ):
-			self.addGroup( 'default' )
 
 		signals.connect( 'asset.post_import_all', self.postAssetImportAll )
 		signals.connect( 'asset.unregister',      self.onAssetUnregister )
@@ -235,30 +238,15 @@ class TextureLibrary( EditorModule ):
 	def getLibrary( self ):
 		return self.lib
 
-	def addGroup( self, name ):
-		g = TextureGroup( name )
-		if name != 'default':
-			default = self.groups['default']
-			if default: g.copy( default )
-		self.groups[ name ] = g
-		return g
-
-	def removeGroup( self, name ):
-		if self.groups.has_key( name ):
-			del self.groups[ name ]
-
-	def loadIndex( self ):		
-		if os.path.exists( self.dataPath ):
-			self.lib = self.delegate.call( 'loadLibrary', self.dataPath )
-			for group in self.lib.groups.values():
-				if group.cache:
-					CacheManager.get().touchCacheFile( group.cache )
-		else:
-			self.lib = self.delegate.call( 'newLibrary' )
+	def loadIndex( self ):
+		self.lib = _MOCK.loadTextureLibrary( self.dataPath )
+		for group in self.lib.groups.values():
+			if group.atlasCachePath:
+				CacheManager.get().touchCacheFile( group.atlasCachePath )
 			
 	def saveIndex( self ):
 		logging.info( 'saving texture library index' )
-		self.delegate.call( 'saveLibrary', self.dataPath )
+		self.lib.save( self.lib, self.dataPath )
 
 	def findTextureNode( self, assetNode ):
 		lib = self.lib
@@ -279,41 +267,50 @@ class TextureLibrary( EditorModule ):
 		pendingImportTextures = self.pendingImportTextures
 		self.pendingImportTextures = {}
 		lib = self.lib
-		pendingImportGroups = set()
-		for node, t in pendingImportTextures.items():
+		pendingAtlasGroups = set()
+		for node, t in pendingImportTextures.items():			
 			group = t.parent
-			self.processTexture( node, t )
-			if group.atlasMode:
-				pendingImportGroups.add( group )
+			if group.isAtlas( group ):
+				self.processTextureNode( t, node )
+				pendingAtlasGroups.add( group )
+			elif node.isType( 'prebuilt_atlas' ):
+				self.buildPrebuiltAtlas( t, node )
 			else:
+				self.processTextureNode( t, node )
 				self.buildSingleTexture( t, node )
 
-		for group in pendingImportGroups:
+		for group in pendingAtlasGroups:
 			self.buildAtlas( group )	
 			
 		self.saveIndex()
 
-	def processTexture( self, assetNode, texNode ):
+	def processTextureNode( self, texture, assetNode ):
 		logging.info( 'processing texture: %s' % assetNode.getNodePath() )
 		assetNode.clearCacheFiles()
 		src = assetNode.getAbsFilePath()
 		dst = assetNode.getAbsCacheFile( 'pixmap' ) 
+		return self._processTexture( src, dst, texture )
+
+	def _processTexture( self, src, dst, texture ):
 		#convert single image
-		convertToPNG( src, dst )		
+		result = convertToPNG( src, dst )		
 		#apply processor on dst file
-		group = texNode.parent
+		group = texture.parent
 		if group:
 			groupProcessor = group.processor
 			if groupProcessor:
 				applyTextureProcessor( groupProcessor, dst )
-			nodeProcessor = texNode.processor
+			nodeProcessor = texture.processor
 			if nodeProcessor:
-				applyTextureProcessor( nodeProcessor, dst )		
-		else:
-			logging.warn( 'texture group missing: %s' % assetNode.getNodePath() ) 
+				applyTextureProcessor( nodeProcessor, dst )				
+
+	def explodePrebuiltAtlas( self, texItem ):
+		return []
 
 	def buildAtlas( self, group ):
+		logging.info( '' )
 		logging.info( 'building atlas texture:' + group.name )
+
 		#packing atlas
 		assetLib = self.getAssetLibrary()
 		nodes = [] 
@@ -326,11 +323,26 @@ class TextureLibrary( EditorModule ):
 
 		sourceList     = []
 		srcToAssetDict = {}
+		prebuiltAtlases = []
 		for node in nodes:
-			path = node.getAbsCacheFile('pixmap')
-			srcToAssetDict[ path ] = node.getNodePath()
-			sourceList.append( path )
+			if not node.isType( 'prebuilt_atlas' ):
+				path = node.getAbsCacheFile( 'pixmap' )
+				srcToAssetDict[ path ] = node.getNodePath()
+				sourceList.append( path )
+			else:
+				prebuiltAtlases.append( node )
+		
+		if group.repackPrebuiltAtlas:
+			pass
+			#TODO
+			# explodedAtlas = {}
+			# for t in prebuiltAtlases.values():
+			# 	explodedAtlas[ t ] = self.explodePrebuiltAtlas( t )
+		else:
+			for t in prebuiltAtlases.values():
+				pass
 
+		#use external packer
 		atlasName = 'atlas_' + group.name
 
 		tmpDir = CacheManager.get().getTempDir()
@@ -370,26 +382,44 @@ class TextureLibrary( EditorModule ):
 			logging.exception( e )
 			return False
 
-		group.cache = outputDir
+		group._loadBuiltAtlas( group, outputDir )
 		self.delegate.call( 'releaseTexPack', outputDir )
 
 		#redirect asset node to sub_textures
 		for node in nodes:
 			self.buildSubTexture( group, node )
-		#TODO
 	
 		return True
 
 	def buildSingleTexture( self, tex, node ):
-		#conversion using external tool (PIL & psd_tools here)
 		group = tex.parent
 		logging.info( 'building single texture: %s<%s>' % ( node.getPath(), group.name ) )
 		node.clearObjectFiles()
-		node.setObjectFile( 'pixmap', node.getCacheFile( 'pixmap' ) )
-		node.setObjectFile( 'config', node.getCacheFile( 'config' ) )
-		jsonHelper.trySaveJSON( groupToJson( group ), node.getAbsObjectFile( 'config' ) )
+		dst = node.getCacheFile( 'pixmap' )
+		node.setObjectFile( 'pixmap', dst )
+		w, h = getImageSize( dst )
+		tex._loadSingleTexture( tex, dst, w, h )
 		signals.emit( 'texture.rebuild', node )
 		#todo: check process result!
+
+	def buildPrebuiltAtlas( self, tex, node ):
+		group = tex.parent
+		logging.info( 'building prebuilt atlas: %s<%s>' % ( node.getPath(), group.name ) )
+		atlasPath = node.getCacheFile( 'atlas' )
+		atlas = self.delegate.call( 'loadPrebuiltAtlas', atlasPath )
+		pageId = 0
+		for page in atlas.pages.values():
+			pageId += 1
+			src = self.getAssetLibrary().getAbsProjectPath( page.source )
+			dst = node.getCacheFile( 'pixmap_%d' % pageId )
+			node.setObjectFile( 'pixmap_%d' % pageId, dst )
+			self._processTexture( src, dst, tex )
+			if page.w < 0:
+				w, h = getImageSize( dst )
+				page.w = w
+				page.h = h
+		atlas.save( atlas, atlasPath )
+		signals.emit( 'texture.rebuild', node )
 
 	def buildSubTexture( self, group, node ):
 		node.clearObjectFiles()
@@ -403,10 +433,9 @@ class TextureLibrary( EditorModule ):
 		self.doPendingImports()
 
 	def onAssetUnregister( self, node ):
-		if node.isType( 'texture' ):
-			t = self.lib.removeTexture( self.lib, node.getNodePath() )
-			if t:
-				signals.emit( 'texture.remove', t )
+		t = self.lib.removeTexture( self.lib, node.getNodePath() )
+		if t:
+			signals.emit( 'texture.remove', t )
 
 	def forceRebuildAllTextures( self ):
 		for node in self.getAssetLibrary().enumerateAsset( 'texture' ):
@@ -420,11 +449,15 @@ class TextureLibrary( EditorModule ):
 	def postDeploy( self, context ):
 		self.saveIndex()
 		context.addFile( self.dataPath, 'asset/texture_index' )
-		context.meta['mock_texture_library'] = 'asset/texture_index' + _GII_SCRIPT_LIBRARY_EXPORT_NAME		
+		context.meta['mock_texture_library'] = 'asset/texture_index'
 
 	def onSaveProject( self, prj ):
 		self.saveIndex()
 
 ##----------------------------------------------------------------##
 TextureAssetManager().register()
+PrebuiltAtlasAssetManager().register()
+
 TextureLibrary().register()
+
+AssetLibrary.get().setAssetIcon( 'prebuilt_atlas', 'cell' )

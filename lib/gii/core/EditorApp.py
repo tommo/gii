@@ -166,7 +166,7 @@ class EditorApp(object):
 		return Project.get()
 
 	def openProject( self, basePath = None ):
-		if self.projectLoaded: return
+		if self.projectLoaded: return Project.get()
 		info = Project.findProject( basePath )
 		if not info:
 			raise Exception( 'no valid gii project found' )
@@ -174,6 +174,7 @@ class EditorApp(object):
 		proj.load( info['path'] )
 		self.projectLoaded = True
 		self.registerDataPath( proj.getEnvPath('data') )
+		return proj
 
 	def getAssetLibrary( self ):
 		return self.getProject().getAssetLibrary()

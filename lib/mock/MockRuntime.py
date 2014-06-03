@@ -53,18 +53,19 @@ class MockRuntime( EditorModule ):
 	def affirmConfigFile( self ):
 		proj = self.getProject()
 		self.configPath = proj.getConfigPath( _MOCK_GAME_CONFIG_NAME )
-		indexPath = proj.getRelativePath( self.getAssetLibrary().assetIndexPath )
+		asetIndexPath = proj.getRelativePath( self.getAssetLibrary().assetIndexPath )
 
 		if os.path.exists( self.configPath ):
 			data = jsonHelper.loadJSON( self.configPath )
 			#fix invalid field
-			if data.get( 'asset_library', None ) != indexPath: #fix assetlibrary path
-				data['asset_library'] = indexPath
+			if data.get( 'asset_library', None ) != asetIndexPath: #fix assetlibrary path
+				data['asset_library'] = asetIndexPath
 				jsonHelper.trySaveJSON( data, self.configPath)
 			return
 		#create default config
 		defaultConfigData = {
-			"asset_library": indexPath ,
+			"asset_library": asetIndexPath ,
+			"texture_library": "env/config/texture_library.json",
 			"layers" : [
 				{ "name" : "default",
 					"sort" : "priority_ascending",
@@ -82,8 +83,9 @@ class MockRuntime( EditorModule ):
 		configPath = context.getPath( 'game_config' )
 		game = _MOCK.game
 		data = json.loads( game.saveConfigToString( game ) )
-		data[ 'asset_library'  ] = 'asset/asset_index'
-		data[ 'script_library' ] = context.meta.get( 'mock_script_library', False )
+		data[ 'asset_library'   ] = 'asset/asset_index'
+		data[ 'texture_library' ] = context.meta.get( 'mock_texture_library', False )
+		data[ 'script_library'  ] = context.meta.get( 'mock_script_library', False )
 		jsonHelper.trySaveJSON( data, configPath, 'deploy game info' )
 
 	def setupLuaModule( self ):

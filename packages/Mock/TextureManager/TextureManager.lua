@@ -58,7 +58,7 @@ function TextureManagerPreview:changeSelection( selection )
 	for i, node in ipairs( selection ) do
 		self:addPreview( node )
 	end
-	-- self:layoutPreview()
+	self:layoutPreview()
 	updateCanvas()
 end
 
@@ -72,7 +72,7 @@ function TextureManagerPreview:addPreview( node )
 		if node.atlasMode then
 			local child = node.textures[1]
 			local tex = mock.loadAsset( child.path ) --load first sub texture and preview full rect
-			local t, uv = getTextureUV( tex )
+			local t, uv = tex:getMoaiTextureUV()
 			deck:setTexture( t )
 			deck:setRect( 0,0, t:getSize() )
 			deck:setUVRect( 0,1,1,0 )
@@ -82,13 +82,17 @@ function TextureManagerPreview:addPreview( node )
 		local path = node.path
 		mock.loadAsset( path )
 		local tex = mock.loadAsset( path )
-		local t, uv = getTextureUV( tex )
+		local t, uv = tex:getMoaiTextureUV()
 		deck:setTexture( t )
 		deck:setRect( 0,0, tex:getSize() )
 		deck:setUVRect( unpack( uv ) )
 	end
 	self:_insertPropToLayer( prop )
 	self.previewProps[ prop ] = true
+end
+
+function TextureManagerPreview:layoutPreview()
+	--TODO
 end
 
 function TextureManagerPreview:clearPreview()

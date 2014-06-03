@@ -73,10 +73,10 @@ class FmodAssetManager(AssetManager):
 		groups = data.get( 'groups', None )
 		if groups:
 			for name, group in groups.items():
-				groupNode = node.createChildNode( name, 'fmod_group', manager = self )
+				groupNode = node.affirmChildNode( name, 'fmod_group', manager = self )
 				events    = group['events']
 				for name, event in events.items():
-					eventNode = groupNode.createChildNode( name, 'fmod_event', manager = self )
+					eventNode = groupNode.affirmChildNode( name, 'fmod_event', manager = self )
 				self._traverseGroup( groupNode, group )
 
 	def importAsset(self, node, reload = False ):

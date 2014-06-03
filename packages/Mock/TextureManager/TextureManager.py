@@ -287,7 +287,10 @@ class TextureTreeWidget( GenericTreeWidget ):
 			item.setExpanded( node.expanded )
 		else:
 			path = node.path
-			item.setIcon( 0, getIcon('texture') )
+			if node.isPrebuiltAtlas( node ):
+				item.setIcon( 0, getIcon('cell') )
+			else:
+				item.setIcon( 0, getIcon('texture') )
 			item.setText( 0, os.path.basename( path ) )
 			item.setText( 1, os.path.dirname( path ) )
 

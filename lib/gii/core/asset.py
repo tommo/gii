@@ -135,6 +135,13 @@ class AssetNode(object):
 		node.parentNode = self
 		return node
 
+	def affirmChildNode( self, name, assetType, **kwargs ):
+		node = self.getChild( name )
+		if not node:
+			return self.createChildNode( name, assetType, **kwargs )
+		node.modifyState = False
+		return node
+
 	def createChildNode(self, name, assetType, **kwargs):
 		path = self.nodePath + '/' + name
 		if not kwargs.has_key('filePath'): kwargs['filePath'] = False
@@ -225,7 +232,7 @@ class AssetNode(object):
 
 	def getAbsFilePath(self):
 		if self.filePath:
-			return AssetLibrary.get().projectAbsPath + '/' + self.filePath
+			return AssetLibrary.get().getAbsProjectPath( self.filePath )
 		else:
 			return ''
 
@@ -385,18 +392,7 @@ class AssetManager(object):
 
 	def importAsset(self, assetNode, reload = False):
 		return None
-
-	# def reimportAsset(self, assetNode, reload = None):
-	# 	lib = AssetLibrary.get()
-	# 	for n in assetNode.getChildren()[:]:
-	# 		lib.unregisterAssetNode(n)
-	# 	result = self.importAsset(assetNode, reload)
-	# 	if result: 
-	# 		assetNode.modifyState  =  False
-	# 		return True
-	# 	else:
-	# 		return False
-
+	
 	def forgetAsset( self, assetNode ):
 		pass
 
@@ -610,7 +606,7 @@ class AssetLibrary(object):
 	def unregisterAssetNode(self, oldnode):
 		assert oldnode
 		logging.info( 'unregister: %s' % repr(oldnode) )
-
+		
 		for child in oldnode.getChildren()[:]:
 			self.unregisterAssetNode(child)
 
@@ -655,17 +651,28 @@ class AssetLibrary(object):
 		pass
 
 	def importModifiedAssets( self ):
-		def _removeChildrenNode( node ):
+		def _ignoreBundleChildrenNode( node ):
 			for child in node.getChildren()[:]:
-				_removeChildrenNode( child )
-				child.modifyState = 'removed'
-				self.unregisterAssetNode( child )
+				if not child.isVirtual():
+					_ignoreBundleChildrenNode( child )
+					child.modifyState = 'ignored'
+					self.unregisterAssetNode( child )
 
-		#collect 'modifyState' 	 asset
+		def _markVirtualChildrenRemoving( node, removingAssets ):			
+			for child in node.getChildren()[:]:
+				if child.isVirtual():
+					_markVirtualChildrenRemoving( child, removingAssets )
+					child.modifyState = 'removing'
+					removingAssets[ child ] = True
+			
+
+		#collect modified state
 		modifiedAssets = {}
+		removingAssets = {}
 		for node in self.assetTable.values():
 			if node.modifyState:   #TODO: virtual node?
 				modifiedAssets[ node ] = True
+
 		#try importing with each asset manager, in priority order
 		for manager in self.assetManagers:
 			if not modifiedAssets: break
@@ -681,10 +688,8 @@ class AssetLibrary(object):
 					continue
 				isNew = node.modifyState == 'new'
 				if not isNew:
-					for n in node.getChildren()[:]:
-						if n.isVirtual():
-							self.unregisterAssetNode(n)
-						#TODO: add failed state to node				
+					_markVirtualChildrenRemoving( node, removingAssets )
+
 				if node.getManager() != manager: node.setManager( manager )
 				if manager.importAsset( node, reload = not isNew ) != False:
 					logging.info( u'assets imported: {0}'.format( node.getNodePath() ) )
@@ -694,11 +699,11 @@ class AssetLibrary(object):
 					signals.emitNow( 'asset.modified',  node )
 
 				if node.isBundle():
-					_removeChildrenNode( node )
+					_ignoreBundleChildrenNode( node )
 					
 			for node in done:
 				del modifiedAssets[ node ]
-				if node.modifyState == 'removed': continue
+				if node.modifyState == 'ignored': continue
 				if node.isBundle():
 					node._updateFileTime( self._getBundleMTime( node.getAbsFilePath() ) )					
 				else:
@@ -710,6 +715,12 @@ class AssetLibrary(object):
 				node._updateFileTime( self._getBundleMTime( node.getAbsFilePath() ) )					
 			else:
 				node._updateFileTime()
+
+		for node in removingAssets.keys():
+			if node.modifyState == 'removing':
+				self.unregisterAssetNode( node )
+				node.modifyState = 'removed'
+
 		#end of for
 		signals.emitNow( 'asset.post_import_all' )
 		logging.info( 'modified assets imported' )
@@ -743,10 +754,12 @@ class AssetLibrary(object):
 			filePath = node.getAbsFilePath()
 			#file deleted
 			if not os.path.exists( filePath ):
+				node.modifyState = 'removed'
 				self.unregisterAssetNode( node )
 				continue
 			#file become ignored
 			if self.checkFileIgnorable( filePath ):
+				node.modifyState = 'ignored'
 				self.unregisterAssetNode( node )
 				continue
 

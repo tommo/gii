@@ -23,7 +23,7 @@ class Deck2DAssetManager(AssetManager):
 		for item in pack.decks.values():
 			deckType = 'deck2d.' + item.type
 			name  =  item.name
-			node.createChildNode( name, deckType, manager = self )
+			node.affirmChildNode( name, deckType, manager = self )
 
 		node.setObjectFile( 'def', node.getFilePath() )
 		return True
