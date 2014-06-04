@@ -7,6 +7,7 @@ import json
 from gii.core import *
 from mock import _MOCK
 from ImageHelpers import convertToPNG, convertToWebP, getImageSize
+from PIL import Image
 from TextureProcessor import applyTextureProcessor
 
 ##----------------------------------------------------------------##
@@ -123,13 +124,14 @@ def _convertAtlas( inputfile,  srcToAssetDict ):
 			if sourcePath.startswith('\"'):
 				sourcePath = sourcePath[1:-1]		
 			# name = os.path.basename( sourcePath )
-			assetPath, index = srcToAssetDict[ sourcePath ]
+			assetPath, index, subId = srcToAssetDict[ sourcePath ]
 			atlasName = parts[0]		
 			atlasId = atlasNames.index( atlasName )
 			data = {
 				'atlas'  : atlasId,
 				'name'   : assetPath,
 				'index'  : index,
+				'subId'  : subId,
 				'source' : sourcePath,
 				'rect'   : [ int(x) for x in parts[2:] ]
 			}
@@ -141,6 +143,7 @@ def _convertAtlas( inputfile,  srcToAssetDict ):
 	}
 
 	return output
+
 
 ##----------------------------------------------------------------##
 class TextureAssetManager( AssetManager ):
@@ -330,8 +333,29 @@ class TextureLibrary( EditorModule ):
 			if nodeProcessor:
 				applyTextureProcessor( nodeProcessor, dst )				
 
-	def explodePrebuiltAtlas( self, texItem ):
-		return []
+	##----------------------------------------------------------------##
+	def _explodePrebuiltAtlas( self, node, srcToAssetDict, sourceList, outputDir, prefix ):
+		atlasSourcePath = node.getCacheFile( 'atlas_source' )
+		atlas = self.delegate.call( 'loadPrebuiltAtlas', atlasSourcePath )
+		nodePath = node.getNodePath()
+		pageId = 0
+		for page in atlas.pages.values():
+			pageId += 1
+			imagePath = node.getCacheFile( 'pixmap_%d' % pageId )
+			img = Image.open( imagePath )
+			itemId = 0
+			for item in page.getItems( page ).values():
+				itemId += 1
+				if item.rotated:
+					box  = ( item.x, item.y, item.x + item.h, item.y + item.w )
+				else:
+					box  = ( item.x, item.y, item.x + item.w, item.y + item.h )
+				part = img.crop( box )
+				partName = '%s_%d_%d.png' % ( prefix, pageId, itemId )
+				partPath = outputDir( partName )
+				part.save( partPath )
+				srcToAssetDict[ partPath ] = ( nodePath, pageId , item.name )
+				sourceList.append( partPath )
 
 	def buildAtlas( self, group ):
 		logging.info( '' )
@@ -353,23 +377,26 @@ class TextureLibrary( EditorModule ):
 		for node in nodes:
 			if node.isType( 'texture' ):
 				path = node.getAbsCacheFile( 'pixmap' )
-				srcToAssetDict[ path ] = ( node.getNodePath(), 0 )
+				srcToAssetDict[ path ] = ( node.getNodePath(), 0, False )
 				sourceList.append( path )
 			elif node.isType( 'prebuilt_atlas' ):
 				prebuiltAtlases.append( node )
-		
+
+		explodedAtlasDir = None
 		if group.repackPrebuiltAtlas:
-			pass
-			#TODO
-			# explodedAtlas = {}
-			# for t in prebuiltAtlases.values():
-			# 	explodedAtlas[ t ] = self.explodePrebuiltAtlas( t )
+			explodedAtlasDir = CacheManager.get().getTempDir()		
+			atlasId = 0
+			for node in prebuiltAtlases:
+				atlasId += 1
+				prefix = 'atlas%d' % atlasId
+				self._explodePrebuiltAtlas( node, srcToAssetDict, sourceList, explodedAtlasDir, prefix )				
 		else:
 			for node in prebuiltAtlases:
+				nodePath = node.getNodePath()
 				pageCount = node.getMetaData( 'page_count' )
 				for i in range( pageCount ):
 					path = node.getAbsCacheFile( 'pixmap_%d' % ( i + 1 ) )
-					srcToAssetDict[ path ] = ( node.getNodePath(), i + 1 )
+					srcToAssetDict[ path ] = ( nodePath, i + 1, False )
 					sourceList.append( path )
 
 		#use external packer
@@ -412,7 +439,7 @@ class TextureLibrary( EditorModule ):
 			logging.exception( e )
 			return False
 
-		self.delegate.call( 'fillAtlasTextureGroup', group, outputDir )
+		self.delegate.call( 'fillAtlasTextureGroup', group, outputDir, group.repackPrebuiltAtlas )
 		self.delegate.call( 'releaseTexPack', outputDir )
 
 		#redirect asset node to sub_textures

@@ -13,7 +13,7 @@ end
 -- local function fillPrebuiltAtlasInGroup( tex )
 -- end
 
-function fillAtlasTextureGroup( group, atlasCachePath )
+function fillAtlasTextureGroup( group, atlasCachePath, repackPrebuiltAtlas )
 	group.atlasCachePath = atlasCachePath
 	local atlasInfoPath = atlasCachePath .. '/atlas.json'
 	--reload texture parameters
@@ -36,16 +36,40 @@ function fillAtlasTextureGroup( group, atlasCachePath )
 		local tex = group:findTexture( name )
 
 		if tex:isPrebuiltAtlas() then
-			local atlasPath = tex.prebuiltAtlasPath
-			local atlas = prebuiltAtlases[ atlasPath ]
-			if not atlas then
-				atlas = mock.PrebuiltAtlas()
-				atlas:load( atlasPath )
-				prebuiltAtlases[ atlasPath ] = atlas				
+			if not repackPrebuiltAtlas then
+				local atlasPath = tex.prebuiltAtlasPath
+				local atlas = prebuiltAtlases[ atlasPath ]
+				if not atlas then
+					atlas = mock.PrebuiltAtlas()
+					atlas:load( atlasPath )
+					prebuiltAtlases[ atlasPath ] = atlas				
+				end
+				local page  = atlas.pages[ index ]			
+				page:updateTexture( item.atlas + 1, x, y, tw, th )
+			else
+				local atlasPath = tex.prebuiltAtlasPath
+				local atlas = prebuiltAtlases[ atlasPath ]
+				if not atlas then
+					atlas = mock.PrebuiltAtlas()
+					prebuiltAtlases[ atlasPath ] = atlas
+					local atlas0 = mock.PrebuiltAtlas()
+					atlas0:load( atlasPath )
+					atlas.originalItems = atlas0:buildItemLookupDict()
+				end				
+				local page = atlas:getPage( item.atlas + 1 )
+				if not page then
+					page = atlas:affirmPage( item.atlas + 1 )
+					page:updateTexture( item.atlas + 1, 0, 0, tw, th )
+				end
+				local newItem = page:addItem()
+				newItem.name = item.subId
+				local oldItem = atlas.originalItems[ item.subId ]
+				newItem.w,  newItem.h  = oldItem.w, oldItem.h  
+				newItem.x,  newItem.y  = x, y  
+				newItem.ow, newItem.oh = oldItem.ow, oldItem.oh 
+				newItem.ox, newItem.oy = oldItem.ox, oldItem.oy 
+				newItem.rotated = oldItem.rotated
 			end
-			local page = atlas.pages[ index ]
-			page:updateTexture( item.atlas + 1, x, y, tw, th )
-
 		else
 			--todo:  crop & rotated
 			local u0, v0, u1, v1 = x/tw, y/th, (x+w)/tw, (y+h)/th
@@ -76,4 +100,8 @@ function loadPrebuiltAtlas( path )
 	local atlas = mock.PrebuiltAtlas()
 	atlas:load( path )
 	return atlas
+end
+
+function explodePrebuiltAtlas( base, outputDir )
+	
 end
