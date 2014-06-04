@@ -1,36 +1,72 @@
--- function saveLibrary( path )
--- 	-- print( 'saving library', path )
--- 	if library then
--- 		return mock.serializeToFile( library, path )
--- 	end
+function fillSingleTexture( texture, pixmapPath, w,h, ow,oh )
+	texture.pixmapPath = pixmapPath
+	texture.w = w
+	texture.h = h
+	texture.ow = ow or w
+	texture.oh = oh or h
+	texture.u0 = 0
+	texture.v0 = 1
+	texture.u1 = 1
+	texture.v1 = 0
+end
+
+-- local function fillPrebuiltAtlasInGroup( tex )
 -- end
 
--- function loadLibrary( path )
--- 	local getAssetNode = mock.getAssetNode
--- 	-- print( 'loading library', path )
--- 	library = mock.deserializeFromFile( nil, path ) or newLibrary()
--- 	for i, group in ipairs( library.groups ) do
--- 		if group.default then library.defaultGroup = group end
--- 		local textures1 = {}
--- 		for i, tex in ipairs( group.textures ) do
--- 			if getAssetNode( tex.path ) then
--- 				table.insert( textures1, tex )
--- 			end
--- 		end
--- 		group.textures = textures1
--- 	end
--- 	return library 
--- end
+function fillAtlasTextureGroup( group, atlasCachePath )
+	group.atlasCachePath = atlasCachePath
+	local atlasInfoPath = atlasCachePath .. '/atlas.json'
+	--reload texture parameters
+	local f = io.open( atlasInfoPath, 'r' )
+	if not f then 
+		error( 'file not found:' .. atlasInfoPath, 2 )   --TODO: proper exception handle
+		return nil
+	end
+	local text = f:read( '*a' )
+	f:close()
+	local atlasData = MOAIJsonParser.decode( text )
+	local prebuiltAtlases = {}
+	local atlases = atlasData[ 'atlases' ]
+	for i, item in pairs( atlasData[ 'items' ] ) do
+		local name  = item.name
+		local index = item.index
+		local x, y, w, h = unpack( item.rect )
+		local atlas = atlases[ item.atlas + 1 ]
+		local tw, th = unpack( atlas.size )
+		local tex = group:findTexture( name )
 
--- function newLibrary()
--- 	library = mock.TextureLibrary()	
--- 	local defaultGroup = library:addGroup()
--- 	defaultGroup.name = 'DEFAULT'
--- 	defaultGroup.default = true
--- 	library.defaultGroup = defaultGroup
--- 	return library
--- end
+		if tex:isPrebuiltAtlas() then
+			local atlasPath = tex.prebuiltAtlasPath
+			local atlas = prebuiltAtlases[ atlasPath ]
+			if not atlas then
+				atlas = mock.PrebuiltAtlas()
+				atlas:load( atlasPath )
+				prebuiltAtlases[ atlasPath ] = atlas				
+			end
+			local page = atlas.pages[ index ]
+			page:updateTexture( item.atlas + 1, x, y, tw, th )
 
+		else
+			--todo:  crop & rotated
+			local u0, v0, u1, v1 = x/tw, y/th, (x+w)/tw, (y+h)/th
+			tex.u0 = u0
+			tex.v0 = v1
+			tex.u1 = u1
+			tex.v1 = v0
+			tex.x  = x
+			tex.y  = y
+			tex.w  = w
+			tex.h  = h
+			tex.ow = w
+			tex.oh = h
+			tex.atlasId = item.atlas + 1 
+		end
+	end
+
+	for path, atlas in pairs( prebuiltAtlases ) do
+		atlas:save( path )
+	end
+end
 
 function releaseTexPack( path )
 	mock.releaseTexPack( path )

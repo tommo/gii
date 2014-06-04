@@ -174,13 +174,12 @@ class TextureManager( AssetEditorModule ):
 				if clasName == 'TextureGroup':
 					for tex in node.textures.values():
 						assetNode = assetLib.getAssetNode( tex.path )
-						# if assetNode: texLib.scheduleImport( assetNode )
-						assetNode.touch()
+						assetNode.markModified()
+						assetLib.scheduleScanProject()						
 				else:
 					assetNode = assetLib.getAssetNode( node.path )
-					assetNode.touch()
-					# if assetNode: texLib.scheduleImport( assetNode )
-			# texLib.doPendingImports()
+					assetNode.markModified()
+					assetLib.scheduleScanProject()
 
 	def onTextureAdd( self, texNode ):
 		self.tree.addNode( texNode )

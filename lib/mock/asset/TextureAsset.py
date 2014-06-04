@@ -123,12 +123,13 @@ def _convertAtlas( inputfile,  srcToAssetDict ):
 			if sourcePath.startswith('\"'):
 				sourcePath = sourcePath[1:-1]		
 			# name = os.path.basename( sourcePath )
-			assetPath = srcToAssetDict[ sourcePath ]
+			assetPath, index = srcToAssetDict[ sourcePath ]
 			atlasName = parts[0]		
 			atlasId = atlasNames.index( atlasName )
 			data = {
 				'atlas'  : atlasId,
 				'name'   : assetPath,
+				'index'  : index,
 				'source' : sourcePath,
 				'rect'   : [ int(x) for x in parts[2:] ]
 			}
@@ -199,8 +200,11 @@ class PrebuiltAtlasAssetManager( AssetManager ):
 		return 'asset_manager.prebuilt_atlas'
 
 	def importAsset(self, node, reload = False ):
-		print 'importing', node, reload
+		TextureLibrary.get().scheduleImport( node ) #let texture library handle real import
 		return True
+
+	def deployAsset( self, node, context ):
+		pass
 
 ##----------------------------------------------------------------##
 class TextureLibrary( EditorModule ):
@@ -270,13 +274,10 @@ class TextureLibrary( EditorModule ):
 		pendingAtlasGroups = set()
 		for node, t in pendingImportTextures.items():			
 			group = t.parent
+			self.processTextureNode( t, node )			
 			if group.isAtlas( group ):
-				self.processTextureNode( t, node )
 				pendingAtlasGroups.add( group )
-			elif node.isType( 'prebuilt_atlas' ):
-				self.buildPrebuiltAtlas( t, node )
 			else:
-				self.processTextureNode( t, node )
 				self.buildSingleTexture( t, node )
 
 		for group in pendingAtlasGroups:
@@ -286,10 +287,35 @@ class TextureLibrary( EditorModule ):
 
 	def processTextureNode( self, texture, assetNode ):
 		logging.info( 'processing texture: %s' % assetNode.getNodePath() )
-		assetNode.clearCacheFiles()
-		src = assetNode.getAbsFilePath()
-		dst = assetNode.getAbsCacheFile( 'pixmap' ) 
-		return self._processTexture( src, dst, texture )
+
+		if assetNode.isType( 'texture' ):
+			assetNode.clearCacheFiles()
+			src = assetNode.getAbsFilePath()
+			dst = assetNode.getAbsCacheFile( 'pixmap' ) 
+			self._processTexture( src, dst, texture )
+
+		elif assetNode.isType( 'prebuilt_atlas' ):
+			atlasSourcePath = assetNode.getCacheFile( 'atlas_source' )
+			atlas = self.delegate.call( 'loadPrebuiltAtlas', atlasSourcePath )
+			pageId = 0
+			for page in atlas.pages.values():
+				pageId += 1
+				src = self.getAssetLibrary().getAbsProjectPath( page.source )
+				dst = assetNode.getCacheFile( 'pixmap_%d' % pageId )
+				assetNode.setObjectFile( 'pixmap_%d' % pageId, dst )
+				self._processTexture( src, dst, texture )
+				if page.w < 0:
+					w, h = getImageSize( dst )
+					page.w = w
+					page.h = h
+			assetNode.setMetaData( 'page_count', pageId )			
+			atlasOutputPath = assetNode.getCacheFile( 'atlas' )
+			assetNode.setObjectFile( 'atlas', atlasOutputPath )
+			texture.prebuiltAtlasPath = atlasOutputPath
+			atlas.save( atlas, atlasOutputPath )
+
+		else:
+			raise Exception( 'unknown texture node type!!' )
 
 	def _processTexture( self, src, dst, texture ):
 		#convert single image
@@ -325,11 +351,11 @@ class TextureLibrary( EditorModule ):
 		srcToAssetDict = {}
 		prebuiltAtlases = []
 		for node in nodes:
-			if not node.isType( 'prebuilt_atlas' ):
+			if node.isType( 'texture' ):
 				path = node.getAbsCacheFile( 'pixmap' )
-				srcToAssetDict[ path ] = node.getNodePath()
+				srcToAssetDict[ path ] = ( node.getNodePath(), 0 )
 				sourceList.append( path )
-			else:
+			elif node.isType( 'prebuilt_atlas' ):
 				prebuiltAtlases.append( node )
 		
 		if group.repackPrebuiltAtlas:
@@ -339,8 +365,12 @@ class TextureLibrary( EditorModule ):
 			# for t in prebuiltAtlases.values():
 			# 	explodedAtlas[ t ] = self.explodePrebuiltAtlas( t )
 		else:
-			for t in prebuiltAtlases.values():
-				pass
+			for node in prebuiltAtlases:
+				pageCount = node.getMetaData( 'page_count' )
+				for i in range( pageCount ):
+					path = node.getAbsCacheFile( 'pixmap_%d' % ( i + 1 ) )
+					srcToAssetDict[ path ] = ( node.getNodePath(), i + 1 )
+					sourceList.append( path )
 
 		#use external packer
 		atlasName = 'atlas_' + group.name
@@ -382,7 +412,7 @@ class TextureLibrary( EditorModule ):
 			logging.exception( e )
 			return False
 
-		group._loadBuiltAtlas( group, outputDir )
+		self.delegate.call( 'fillAtlasTextureGroup', group, outputDir )
 		self.delegate.call( 'releaseTexPack', outputDir )
 
 		#redirect asset node to sub_textures
@@ -394,39 +424,25 @@ class TextureLibrary( EditorModule ):
 	def buildSingleTexture( self, tex, node ):
 		group = tex.parent
 		logging.info( 'building single texture: %s<%s>' % ( node.getPath(), group.name ) )
-		node.clearObjectFiles()
-		dst = node.getCacheFile( 'pixmap' )
-		node.setObjectFile( 'pixmap', dst )
-		w, h = getImageSize( dst )
-		tex._loadSingleTexture( tex, dst, w, h )
-		signals.emit( 'texture.rebuild', node )
-		#todo: check process result!
-
-	def buildPrebuiltAtlas( self, tex, node ):
-		group = tex.parent
-		logging.info( 'building prebuilt atlas: %s<%s>' % ( node.getPath(), group.name ) )
-		atlasPath = node.getCacheFile( 'atlas' )
-		atlas = self.delegate.call( 'loadPrebuiltAtlas', atlasPath )
-		pageId = 0
-		for page in atlas.pages.values():
-			pageId += 1
-			src = self.getAssetLibrary().getAbsProjectPath( page.source )
-			dst = node.getCacheFile( 'pixmap_%d' % pageId )
-			node.setObjectFile( 'pixmap_%d' % pageId, dst )
-			self._processTexture( src, dst, tex )
-			if page.w < 0:
-				w, h = getImageSize( dst )
-				page.w = w
-				page.h = h
-		atlas.save( atlas, atlasPath )
+		if node.isType( 'texture' ):
+			node.clearObjectFiles()
+			dst = node.getCacheFile( 'pixmap' )
+			node.setObjectFile( 'pixmap', dst )
+			w, h = getImageSize( dst )
+			self.delegate.call( 'fillSingleTexture', tex, dst, w, h )
+		elif node.isType( 'prebuilt_atlas' ):
+			pass
 		signals.emit( 'texture.rebuild', node )
 
 	def buildSubTexture( self, group, node ):
-		node.clearObjectFiles()
 		logging.info( 'building sub texture: %s<%s>' % ( node.getPath(), group.name ) )
-		node.setObjectFile( 'pixmap', None ) #remove single texture if any
-		node.setObjectFile( 'config', node.getCacheFile( 'config' ) )
-		jsonHelper.trySaveJSON( groupToJson( group ), node.getAbsObjectFile( 'config' ) )
+		if node.isType( 'texture' ):
+			node.clearObjectFiles()
+			node.setObjectFile( 'pixmap', None ) #remove single texture if any
+			node.setObjectFile( 'config', node.getCacheFile( 'config' ) )
+			jsonHelper.trySaveJSON( groupToJson( group ), node.getAbsObjectFile( 'config' ) )
+		elif node.isType( 'prebuilt_atlas' ):
+			pass
 		signals.emit( 'texture.rebuild', node )	
 		
 	def postAssetImportAll( self ):

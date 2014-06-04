@@ -69,10 +69,9 @@ function TextureManagerPreview:addPreview( node )
 
 	if node:getClassName() == 'TextureGroup' then
 		--draw atlas
-		if node.atlasMode then
-			local child = node.textures[1]
-			local tex = mock.loadAsset( child.path ) --load first sub texture and preview full rect
-			local t, uv = tex:getMoaiTextureUV()
+		if node:isAtlas() then
+			node:loadAtlas()
+			local t = node.atlasTextures[ 1 ]
 			deck:setTexture( t )
 			deck:setRect( 0,0, t:getSize() )
 			deck:setUVRect( 0,1,1,0 )

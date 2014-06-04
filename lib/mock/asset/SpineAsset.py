@@ -23,7 +23,7 @@ class SpineAssetManager(AssetManager):
 	def importAsset(self, node, reload = False ):
 		if not node.assetType in [ 'folder', 'spine' ] : return True
 		node.assetType = 'spine'
-		node.setBundle()
+		node.setBundle()		
 		filePath = node.getFilePath()
 		nodePath = node.getNodePath()
 		for fileName in os.listdir( node.getAbsFilePath() ):
@@ -39,9 +39,8 @@ class SpineAssetManager(AssetManager):
 				for page in internalAtlas.pages.values():
 					page.source = filePath + '/' + page.texture
 				atlasNode = node.affirmChildNode( node.getBaseName()+'_spine_atlas', 'prebuilt_atlas', manager = 'asset_manager.prebuilt_atlas' )
-				atlasCachePath = atlasNode.getCacheFile( 'atlas' )
-				atlasNode.setObjectFile( 'atlas', atlasCachePath )
-				internalAtlas.save( internalAtlas, atlasCachePath )
+				atlasSourceCachePath = atlasNode.getCacheFile( 'atlas_source' )
+				internalAtlas.save( internalAtlas, atlasSourceCachePath )
 				app.getModule( 'texture_library' ).scheduleImport( atlasNode )
 				
 		return True

@@ -217,7 +217,7 @@ class AssetNode(object):
 		logging.info( 'mark modified: %s', repr(self) )
 		self.modifyState = 'modified'
 
-	def touch( self ):
+	def touch( self ):		
 		fname = self.getAbsFilePath()
 		if fname:
 			if os.path.isfile( fname ):
@@ -274,19 +274,42 @@ class AssetNode(object):
 		fp.close()
 		return True
 
+	def findNonVirtualParent( self ):
+		node = self.getParent()
+		while node:
+			if not node.isVirtual(): return node
+			node = node.getParent()
+		return None
+
 	def getMetaData( self, key, defaultValue = None ):
-		t = self.getMetaDataTable( False )
-		if not isinstance( t, dict ): return defaultValue
-		return t.get( key, defaultValue )
+		if self.isVirtual():
+			p = self.findNonVirtualParent()
+			if p:
+				profix = os.path.relpath( self.getNodePath(), p.getNodePath() )
+				subkey = '%s@%s' % ( key, profix )
+				return p.getMetaData( subkey, defaultValue )
+		else:
+			t = self.getMetaDataTable( False )
+			if not isinstance( t, dict ): return defaultValue
+			return t.get( key, defaultValue )
 
 	def setMetaData( self, key, value, **option ):
-		t = self.getMetaDataTable()
-		if not isinstance( t, dict ): return
-		if option.get( 'no_overwrite', False ) and t.has_key( key ):
-			return
-		t[ key ] = value
-		if option.get( 'save', False ): self.saveMetaDataTable()
-		if option.get( 'mark_modify', True ): self.markModified()
+		if self.isVirtual():
+			p = self.findNonVirtualParent()
+			if p:
+				profix = os.path.relpath( self.getNodePath(), p.getNodePath() )
+				subkey = '%s@%s' % ( key, profix )
+				return p.setMetaData( subkey, value, **option )
+		else:
+			t = self.getMetaDataTable()
+			if not isinstance( t, dict ): return
+			if option.get( 'no_overwrite', False ) and t.has_key( key ):
+				return
+			v0 = t.get( key, None )
+			if v0 != value:
+				t[ key ] = value
+				if option.get( 'save', False ): self.saveMetaDataTable()
+				if option.get( 'mark_modify', True ): self.markModified()
 
 	def setNewMetaData( self, key, value, **option ):
 		option[ 'no_overwrite' ] = True
@@ -386,6 +409,16 @@ class AssetManager(object):
 
 	def getPriority(self):
 		return 0
+
+	def acceptAsset( self, assetNode ):
+		if assetNode.isVirtual():
+			return self.acceptVirtualAsset( assetNode )
+		else:
+			return self.acceptAssetFile( assetNode.getAbsFilePath() )
+
+	def acceptVirtualAsset( self, assetNode ):
+		if assetNode.getManager() == self: return True
+		return False
 
 	def acceptAssetFile(self, filepath):
 		return False
@@ -670,8 +703,9 @@ class AssetLibrary(object):
 		modifiedAssets = {}
 		removingAssets = {}
 		for node in self.assetTable.values():
-			if node.modifyState:   #TODO: virtual node?
+			if node.modifyState:
 				modifiedAssets[ node ] = True
+				logging.info( u'asset modified: {0}'.format( node.getNodePath() ) )
 
 		#try importing with each asset manager, in priority order
 		for manager in self.assetManagers:
@@ -684,8 +718,9 @@ class AssetLibrary(object):
 				if not node.modifyState: #might get imported as a sub asset 
 					done.append( node )
 					continue
-				if not manager.acceptAssetFile( node.getAbsFilePath() ):
+				if not manager.acceptAsset( node ):
 					continue
+
 				isNew = node.modifyState == 'new'
 				if not isNew:
 					_markVirtualChildrenRemoving( node, removingAssets )
