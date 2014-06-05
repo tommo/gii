@@ -72,9 +72,11 @@ function TextureManagerPreview:addPreview( node )
 		if node:isAtlas() then
 			node:loadAtlas()
 			local t = node.atlasTextures[ 1 ]
-			deck:setTexture( t )
-			deck:setRect( 0,0, t:getSize() )
-			deck:setUVRect( 0,1,1,0 )
+			if t then
+				deck:setTexture( t )
+				deck:setRect( 0,0, t:getSize() )
+				deck:setUVRect( 0,1,1,0 )
+			end
 		end
 	else
 		--draw texture

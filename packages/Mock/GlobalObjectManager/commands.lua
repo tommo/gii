@@ -39,8 +39,8 @@ function CmdRemoveGlobalObject:redo()
 	local target = self.target
 	local parent = target and target.parent
 	if parent then
-		parent:removeNode( node.name )	
-		gii.emitPythonSignal('global_object.removed', target )
+		parent:removeNode( target.name )
+		gii.emitPythonSignal( 'global_object.removed', target )
 		return true
 	else
 		return false

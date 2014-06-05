@@ -5,37 +5,30 @@ scn = mock_edit.createEditorCanvasScene()
 CLASS: Preview ( mock_edit.EditorEntity )
 function Preview:onLoad()
 	self:addSibling( mock_edit.CanvasGrid() )
+	self:addSibling( mock_edit.CanvasNavigate() )
 	self.prop = self:addProp{
 		blend = 'alpha'
 	}
-	self:attach( mock.InputScript{ device = scn.inputDevice } )
+	-- self:attach( mock.InputScript{ device = scn.inputDevice } )
 	self.zoom = 1
-		self.dragging = false
-
+	self.dragging = false
 end
 
 function Preview:show( path )
-	local tex = mock.loadAsset(path)
-	if not tex then return false end 
+	local texture = mock.loadAsset(path)
+	if not texture then return false end 
 
 	local deck = MOAIGfxQuad2D.new()
-	local w, h = tex:getSize()
+	local w, h = texture:getSize()	
 	deck:setRect( -w/2, -h/2, w/2, h/2 )
-
-	if tex.type == 'sub_texture'  then
-		deck:setTexture( tex.atlas )
-		deck:setUVRect( unpack( tex.uv ) )
-	else
-		deck:setTexture( tex )
-	end
-
+	deck:setTexture( texture:getMoaiTexture() )
+	deck:setUVRect( texture:getUVRect() )
 	self.prop:setDeck( deck )
 	self.prop:forceUpdate()
 	updateCanvas()
 end
 
 function Preview:fitViewport()
-	
 end
 
 function Preview:onMouseDown( btn, x, y )

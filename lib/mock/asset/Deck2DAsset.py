@@ -15,6 +15,7 @@ class Deck2DAssetManager(AssetManager):
 		return _MOCK.checkSerializationFile( filePath, 'mock.Deck2DPack' )
 		
 	def importAsset(self, node, reload = False ):
+		if node.isVirtual(): return
 		node.assetType = 'deck2d'
 		pack = _MOCK.deserializeFromFile( None, node.getAbsFilePath() )
 		if not pack:

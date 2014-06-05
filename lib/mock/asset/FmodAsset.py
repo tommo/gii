@@ -80,6 +80,8 @@ class FmodAssetManager(AssetManager):
 				self._traverseGroup( groupNode, group )
 
 	def importAsset(self, node, reload = False ):
+		if node.isVirtual(): return
+		
 		node.assetType = 'fmod_project'		
 		
 		project = parseFDP( node.getAbsFilePath() )
