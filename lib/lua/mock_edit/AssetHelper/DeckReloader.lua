@@ -1,8 +1,11 @@
 module 'mock_edit'
 
 local function onTextureRebuilt( node )
-	if node:getType() ~= 'texture' then return end
-
+	local ntype = node:getType()
+	if ntype ~= 'texture' then
+		 -- and ntype ~= 'prebuilt_atlas' then 
+		return
+	end
 	local path = node:getNodePath()
 	local mockNode = mock.getAssetNode( path )
 	if mockNode then mock.updateAssetNode( mockNode, _pyAssetNodeToData( node ) ) end
@@ -13,6 +16,7 @@ local function onTextureRebuilt( node )
 		end
 	end
 	gii.emitPythonSignal( 'scene.update' )
+
 end
 
 gii.connectPythonSignal( 'texture.rebuild',   onTextureRebuilt )

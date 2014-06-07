@@ -432,7 +432,7 @@ class TextureLibrary( EditorModule ):
 		#redirect asset node to sub_textures
 		for node in nodes:
 			self.buildSubTexture( group, node )
-	
+		group.unloadAtlas( group )
 		return True
 
 	def buildSingleTexture( self, tex, node ):
