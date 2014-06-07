@@ -12,6 +12,55 @@ from PIL import Image
 
 from Bleeding import bleeding_image
 
+def md5_for_file(path, block_size=256*128, hr=False):
+	'''
+	Block size directly depends on the block size of your filesystem
+	to avoid performances issues
+	Here I have blocks of 4096 octets (Default NTFS)
+	'''
+	md5 = hashlib.md5()
+	with open(path,'rb') as f: 
+		for chunk in iter(lambda: f.read(block_size), b''): 
+			 md5.update(chunk)
+	if hr:
+		return md5.hexdigest()
+	return md5.digest()
+
+def generate_duplication_dict( flist ):
+	#we will be looking for excat same files only
+	#size pass
+	fileSizes   = {}
+	for path in flist:
+		size = os.path.getsize( path )
+		l = fileSizes.get( size, None )
+		if not l:
+			l = []
+			fileSizes[ size ] = l
+		l.append( path )
+
+	duplications = {}
+	uniques = []
+	for l in fileSizes.values():
+		if len( l ) == 1: 
+			uniques.append( l[0] )
+		else:
+			#do file hash
+			fileHashes = {}
+			for path in l:
+				hashvalue = md5_for_file( path )				
+				hashed = fileHashes.get( hashvalue, None )
+				if not hashed:
+					fileHashes[ hashvalue ] = path
+					uniques.append( path )
+				else:
+					dl = duplications.get( hashed, None )
+					if not dl:
+						dl = []
+						duplications[ hashed ] = dl
+					dl.append( path )
+	return uniques, duplications
+
+
 def openImage( filepath ):
 	name, ext = os.path.splitext( filepath )
 	if ext.lower() == '.psd':
@@ -260,7 +309,7 @@ class AtlasGenerator:
 
 		return bbox
 
-	def generateImagesInfo(self, files):
+	def generateImagesInfo(self, files, duplications):
 		infos = []
 		for f in files:
 			try:
@@ -275,6 +324,7 @@ class AtlasGenerator:
 			#bbox = self.getImageBBox(im) if self.crop_bbox else (0, 0, w, h)
 			bbox = self.getBBoxFromCache(f, im) if self.crop_bbox else (0, 0, w, h)
 			img = Img(f, w, h, bbox)
+			img.duplicatedFiles = duplications.get( f, None )
 			#img.bbox = bbox
 			#img.path = f
 			infos.append(img)
@@ -411,7 +461,7 @@ class AtlasGenerator:
 		D("Generating atlases with prefix '{0}'", self.prefix)
 
 		with Stopwatch() as s:
-			image_files = generate_files_list(paths)
+			image_files, duplications = generate_duplication_dict( generate_files_list(paths) )
 			if len(image_files) == 0:
 				D("No files found")
 				return
@@ -419,7 +469,7 @@ class AtlasGenerator:
 			D("    found {0} files in {1} seconds", len(image_files), s)
 
 		with Stopwatch() as s:
-			image_infos = self.generateImagesInfo(image_files)
+			image_infos = self.generateImagesInfo(image_files, duplications )
 			image_infos = sorted(image_infos, key=lambda ii: (ii.w*ii.w + ii.h*ii.h), reverse=True)
 			D("    done reading images metadata in {0} seconds", s)
 
@@ -438,7 +488,13 @@ class AtlasGenerator:
 			images = atlas.dumpImages()
 
 			tilesets_info += [(atlas_fname, atlas.w, atlas.h, 0)]
-			sprites_info += [(atlas_fname, ii.path, ii.getSpriteInfo(), ii.bbox) for ii in images]
+			for ii in images:
+				item = (atlas_fname, ii.path, ii.getSpriteInfo(), ii.bbox)
+				sprites_info.append( item )
+				if ii.duplicatedFiles:
+					for duplicatedFile in ii.duplicatedFiles:
+						item2 = ( atlas_fname, duplicatedFile, ii.getSpriteInfo(), ii.bbox )	
+						sprites_info.append( item2 )
 
 		if not self.dry_run:
 			MultitaskWorker().run_functions(params)

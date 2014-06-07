@@ -53,35 +53,35 @@ class SpineAssetManager(AssetManager):
 		#todo: optimization		
 		jsonHelper.trySaveJSON( data, outputPath )
 
-	def deployAsset( self, node, context ):
-		super( SpineAssetManager, self ).deployAsset( node, context )
-		if not node.isType( 'spine' ): return
-		#replace texture		
-		try:
-			absAtlasPath = node.getAbsObjectFile('atlas')
-			fp = open( absAtlasPath )
-			nextLineTexture = False
-			textures = []
-			for line in fp:
-				if nextLineTexture:
-					textureName = line.strip()
-					textures.append( textureName )
-					nextLineTexture = False
-				elif line.strip() == '':
-					nextLineTexture = True
-			fp.close()
-			for textureName in textures:
-				texturePath = node.getAbsFilePath() + '/' + textureName
-				if os.path.exists( texturePath ):
-					newPath   = context.addFile( texturePath )
-					exportedAtlasPath = context.getAbsFile( node.getObjectFile( 'atlas' ) )
-					context.replaceInFile( exportedAtlasPath, textureName, os.path.basename( newPath ) )
-					#webp conversion
-					fn = context.getAbsFile( texturePath )
-					if context.isNewFile( fn ):
-						convertToWebP( fn )
-		except Exception, e:
-			logging.exception( e )
+	# def deployAsset( self, node, context ):
+	# 	super( SpineAssetManager, self ).deployAsset( node, context )
+	# 	if not node.isType( 'spine' ): return
+	# 	#replace texture		
+	# 	# try:
+	# 	# 	absAtlasPath = node.getAbsObjectFile('atlas')
+	# 	# 	fp = open( absAtlasPath )
+	# 	# 	nextLineTexture = False
+	# 	# 	textures = []
+	# 	# 	for line in fp:
+	# 	# 		if nextLineTexture:
+	# 	# 			textureName = line.strip()
+	# 	# 			textures.append( textureName )
+	# 	# 			nextLineTexture = False
+	# 	# 		elif line.strip() == '':
+	# 	# 			nextLineTexture = True
+	# 	# 	fp.close()
+	# 	# 	for textureName in textures:
+	# 	# 		texturePath = node.getAbsFilePath() + '/' + textureName
+	# 	# 		if os.path.exists( texturePath ):
+	# 	# 			newPath   = context.addFile( texturePath )
+	# 	# 			exportedAtlasPath = context.getAbsFile( node.getObjectFile( 'atlas' ) )
+	# 	# 			context.replaceInFile( exportedAtlasPath, textureName, os.path.basename( newPath ) )
+	# 	# 			#webp conversion
+	# 	# 			fn = context.getAbsFile( texturePath )
+	# 	# 			if context.isNewFile( fn ):
+	# 	# 				convertToWebP( fn )
+	# 	# except Exception, e:
+	# 	# 	logging.exception( e )
 		
 
 SpineAssetManager().register()

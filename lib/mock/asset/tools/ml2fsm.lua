@@ -6,7 +6,7 @@ if not input or not output then
 	return
 end
 
-require 'lxp'
+lxp = require 'lxp'
 
 local match = string.match
 function string.trim(s)

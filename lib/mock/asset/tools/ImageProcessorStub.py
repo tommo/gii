@@ -11,7 +11,10 @@ from PIL import Image, ImageFilter, ImageEnhance
 ##----------------------------------------------------------------##
 def GaussianBlur( img, radius ):
 	blurFilter = ImageFilter.GaussianBlur( radius )
-	return img.filter( blurFilter )
+	#todo: de-premulitple alpha
+	preAlpha = img.convert( 'RGBa' )
+	preAlpha.mode = 'RGBA' #hacking
+	return preAlpha.filter( blurFilter )
 
 def ResizeRelative( img, sx, sy=-1 ):
 	w, h = img.size

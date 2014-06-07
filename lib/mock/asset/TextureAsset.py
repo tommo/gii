@@ -170,32 +170,12 @@ class TextureAssetManager( AssetManager ):
 
 	def deployAsset( self, node, context ):
 		super( TextureAssetManager, self ).deployAsset( node, context )
-		texNode = app.getModule( 'texture_library' ).findTextureNode( node )
-		if not texNode:
-			logging.warn( 'texture node not found:' + node.getNodePath() )
-			return
-		group = texNode.parent
-		if group.cache and group.atlasMode:
-			if not context.hasFile( group.cache ):
-				newPath = context.addFile( group.cache )
-				atlasData = jsonHelper.tryLoadJSON( context.getPath( newPath ) + '/' + _ATLAS_JSON_NAME )
-				if atlasData:
-					#convert webp
-					for atlasEntry in atlasData['atlases']:
-						texName = atlasEntry['name']
-						fn = context.getPath( newPath ) + '/' + texName
-						if context.isNewFile( fn ):
-							convertToWebP( fn )
-			else:
-				newPath = context.getFile( group.cache )
-
-			mappedConfigFile = context.getFile( node.getObjectFile('config') )
-			context.replaceInFile( context.getPath( mappedConfigFile ), group.cache, newPath )			
-		else:			
-			#convert webp
-			fn = context.getAbsFile( node.getObjectFile( 'pixmap' ) )
-			if context.isNewFile( fn ):				
-				convertToWebP( fn )
+		pixmapPath = node.getObjectFile( 'pixmap' )
+		if pixmapPath:
+			mappedPath = context.getAbsFile( pixmapPath )
+			if context.isNewFile( mappedPath ):
+				print( node.getNodePath(), mappedPath )
+				convertToWebP( mappedPath )
 
 ##----------------------------------------------------------------##
 class PrebuiltAtlasAssetManager( AssetManager ):
@@ -207,7 +187,14 @@ class PrebuiltAtlasAssetManager( AssetManager ):
 		return True
 
 	def deployAsset( self, node, context ):
-		pass
+		super( PrebuiltAtlasAssetManager, self ).deployAsset( node, context )
+		for key, value in node.objectFiles.items():
+			if not key.startswith( 'pixmap' ): continue
+			pixmapPath = value
+			mappedPath = context.getAbsFile( pixmapPath )
+			if context.isNewFile( mappedPath ):
+				print( node.getNodePath(), mappedPath )
+				convertToWebP( mappedPath )
 
 ##----------------------------------------------------------------##
 class TextureLibrary( EditorModule ):
@@ -236,7 +223,7 @@ class TextureLibrary( EditorModule ):
 		signals.connect( 'asset.post_import_all', self.postAssetImportAll )
 		signals.connect( 'asset.unregister',      self.onAssetUnregister )
 
-		signals.connect( 'project.post_deploy', self.postDeploy )
+		signals.connect( 'project.deploy', self.onDeploy )
 		signals.connect( 'project.save', self.onSaveProject )
 
 	def onStart( self ):		
@@ -489,11 +476,24 @@ class TextureLibrary( EditorModule ):
 		self.scheduleImport( assetNode )
 		self.doPendingImports()
 
-	def postDeploy( self, context ):
+	def onDeploy( self, context ):
 		self.saveIndex()
 		context.addFile( self.dataPath, 'asset/texture_index' )
 		context.meta['mock_texture_library'] = 'asset/texture_index'
-
+		#process atlas
+		for group in self.lib.groups.values():
+			if group.isAtlas( group ) and group.atlasCachePath:
+				oldPath = group.atlasCachePath
+				newPath = context.addFile( oldPath )
+				absNewPath = context.getPath( newPath )
+				for f in os.listdir( absNewPath ):
+					if not f.startswith( 'tex' ): continue
+					fullPath = absNewPath + '/' + f
+					if context.isNewFile( fullPath ):
+						convertToWebP( fullPath )
+				#replace in index file
+				context.replaceInFile( context.getPath( 'asset/texture_index' ), oldPath, newPath )
+		
 	def onSaveProject( self, prj ):
 		self.saveIndex()
 
