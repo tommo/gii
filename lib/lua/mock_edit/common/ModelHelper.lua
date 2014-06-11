@@ -123,7 +123,7 @@ local function buildGiiModel( model )
 	local superModel = model:getSuperModel()
 	if superModel then
 		local superPModel = buildGiiModel( superModel )
-		pmodel:setSuperType( superModel.__class )
+		pmodel:setSuperType( superModel.__src_class )
 	end
 
 	model.__gii_model = pmodel

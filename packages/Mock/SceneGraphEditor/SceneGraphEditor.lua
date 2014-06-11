@@ -72,6 +72,9 @@ function SceneGraphEditor:openScene( path )
 	end
 	--
 	self:postLoadScene()
+	mock.setAssetCacheWeak()
+	GIIHelper.forceGC()
+	mock.setAssetCacheStrong()
 	return scene
 end
 
@@ -86,7 +89,12 @@ end
 
 function SceneGraphEditor:saveScene( path )
 	if not self.scene then return false end
-	mock.serializeSceneToFile( self.scene, path )
+	mock.serializeSceneToFile( 
+		self.scene, path, 
+		{
+			save_dependency_list = true
+		}
+	)
 	return true
 end
 

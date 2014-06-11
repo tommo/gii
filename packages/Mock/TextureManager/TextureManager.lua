@@ -71,7 +71,7 @@ function TextureManagerPreview:addPreview( node )
 		--draw atlas
 		if node:isAtlas() then
 			node:loadAtlas()
-			local t = node.atlasTextures[ 1 ]
+			local t = node._atlasTexturesCache[ 1 ]
 			if t then
 				deck:setTexture( t )
 				deck:setRect( 0,0, t:getSize() )

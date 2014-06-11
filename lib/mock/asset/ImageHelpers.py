@@ -70,9 +70,11 @@ def getImageSize( path ):
 	return img.size
 
 
+
 ##----------------------------------------------------------------##
 def convertToPNG( inputPath, outputPath, **options ):
 	##----------------------------------------------------------------##
+	if not outputPath: outputPath = inputPath
 	logging.info( u'converting image: {0} -> {1}'.format( inputPath, outputPath ) ) 
 
 	img = None
@@ -127,8 +129,30 @@ def convertToWebP( src, dst = None, **option ):
 
 
 ##----------------------------------------------------------------##
+#texturetool -e PVRTC --channel-weighting-linear --bits-per-pixel-4 -o ImageL4.pvrtc Image.png
 def convertToPVR( src, dst = None, **option ):
-	pass
+	arglist = [
+		app.getPath( 'support/pvrtc/texturetool' ),
+		'-e', 'PVRTC',
+		'-f', 'PVR',
+		'--channel-weighting-linear',
+	]
+
+	bbp = option.get( 'bbp', 4 )
+	if bbp == 4 :
+		arglist += ['--bits-per-pixel-4']
+	else:
+		arglist += ['--bits-per-pixel-2']
+	
+	if not dst:
+		dst = src
+	arglist += [
+		'-o',
+		dst,
+		src,
+	 ]
+	print 'convert to pvr %s -> %s' % ( src, dst )
+	return subprocess.call( arglist )
 
 ##----------------------------------------------------------------##
 def quantize( src, dst = None, **option ):

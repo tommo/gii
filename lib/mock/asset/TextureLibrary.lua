@@ -64,7 +64,11 @@ function fillAtlasTextureGroup( group, atlasCachePath, repackPrebuiltAtlas )
 				local newItem = page:addItem()
 				newItem.name = item.subId
 				local oldItem = atlas.originalItems[ item.subId ]
-				newItem.w,  newItem.h  = oldItem.w, oldItem.h  
+				if oldItem.rotated then
+					newItem.w,  newItem.h  = h, w
+				else
+					newItem.w,  newItem.h  = w, h
+				end
 				newItem.x,  newItem.y  = x, y  
 				newItem.ow, newItem.oh = oldItem.ow, oldItem.oh 
 				newItem.ox, newItem.oy = oldItem.ox, oldItem.oy 

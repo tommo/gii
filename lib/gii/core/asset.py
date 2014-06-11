@@ -179,6 +179,24 @@ class AssetNode(object):
 		self.dependency[ key ] = depNode.getNodePath()
 		depNode.depBy[ self.getNodePath() ] = True
 
+	def removeDependency( self, key ):
+		depPath = self.dependency.get( key, None )
+		if not depPath: return
+		lib  = AssetLibrary.get()
+		dep = lib.getAssetNode( depPath )
+		if dep:
+			del dep.depBy[ self.getNodePath() ]
+		del self.dependency[ key ]
+
+	def clearDependency( self ):
+		lib  = AssetLibrary.get()
+		path = self.getNodePath()
+		for key, depPath in self.dependency.items():
+			dep = lib.getAssetNode( depPath )
+			if dep:
+				del dep.depBy[ path ]
+		self.dependency.clear()
+
 	def getDependency( self, key ):
 		return self.dependency.get( key, None )
 		

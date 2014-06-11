@@ -68,7 +68,9 @@ end
 
 function EffectEditor:stopPreview()
 	if not self.previewing then return end
-	self.previewEmitterEnt:destroy()
+	if self.previewEmitterEnt.scene then
+		self.previewEmitterEnt:destroy()
+	end
 	self.previewEmitter = false
 	self.previewEmitterEnt = false
 	self.previewing = false

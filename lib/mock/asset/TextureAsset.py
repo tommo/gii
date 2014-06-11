@@ -6,9 +6,10 @@ import json
 
 from gii.core import *
 from mock import _MOCK
-from ImageHelpers import convertToPNG, convertToWebP, getImageSize
-from PIL import Image
 from TextureProcessor import applyTextureProcessor
+
+import ImageHelpers 
+from PIL import Image
 
 ##----------------------------------------------------------------##
 signals.register( 'texture.add' )
@@ -23,60 +24,6 @@ _ATLAS_JSON_NAME = 'atlas.json'
 def _getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
-
-
-##----------------------------------------------------------------##
-class TextureGroup( object ):	
-	def __init__( self, name, config = None ):
-		self.name   = name
-		#default config
-		self.filter             = 'nearest'
-		self.compression        = None
-		self.mipmap             = False
-		self.wrapmode           = 'clamp'
-		self.atlas_allowed      = True
-		self.atlas_max_width    = 1024
-		self.atlas_max_height   = 1024
-		self.atlas_force_single = False
-		self.cache              = None
-
-	def copy( self, src ):
-		self.filter             = src.filter
-		self.compression        = src.compression
-		self.mipmap             = src.mipmap
-		self.wrapmode           = src.wrapmode
-		self.atlas_allowed      = src.atlas_allowed
-		self.atlas_max_width    = src.atlas_max_width
-		self.atlas_max_height   = src.atlas_max_height
-		self.atlas_force_single = src.atlas_force_single
-
-	def toJson( self ):
-		return {
-				'name'               : self.name,
-				'filter'             : self.filter ,
-				'compression'        : self.compression ,
-				'mipmap'             : self.mipmap ,
-				'wrapmode'           : self.wrapmode ,
-				'atlas_allowed'      : self.atlas_allowed ,
-				'atlas_max_width'    : self.atlas_max_width ,
-				'atlas_max_height'   : self.atlas_max_height ,
-				'atlas_force_single' : self.atlas_force_single ,
-				'cache'              : self.cache
-			}
-
-	def fromJson( self, gdata ):
-		self.filter             = gdata[ 'filter' ]
-		self.compression        = gdata[ 'compression' ]
-		self.mipmap             = gdata[ 'mipmap' ]
-		self.wrapmode           = gdata[ 'wrapmode' ]
-		self.atlas_allowed      = gdata[ 'atlas_allowed' ]
-		self.atlas_max_width    = gdata[ 'atlas_max_width' ]
-		self.atlas_max_height   = gdata[ 'atlas_max_height' ]
-		self.atlas_force_single = gdata[ 'atlas_force_single' ]
-		if not self.atlas_allowed:
-			self.cache = None
-		else:
-			self.cache = gdata.get( 'cache', None )
 
 ##----------------------------------------------------------------##
 def groupToJson( group ):
@@ -174,8 +121,8 @@ class TextureAssetManager( AssetManager ):
 		if pixmapPath:
 			mappedPath = context.getAbsFile( pixmapPath )
 			if context.isNewFile( mappedPath ):
-				print( node.getNodePath(), mappedPath )
-				convertToWebP( mappedPath )
+				# print( node.getNodePath(), mappedPath )
+				ImageHelpers.convertToWebP( mappedPath )
 
 ##----------------------------------------------------------------##
 class PrebuiltAtlasAssetManager( AssetManager ):
@@ -193,8 +140,8 @@ class PrebuiltAtlasAssetManager( AssetManager ):
 			pixmapPath = value
 			mappedPath = context.getAbsFile( pixmapPath )
 			if context.isNewFile( mappedPath ):
-				print( node.getNodePath(), mappedPath )
-				convertToWebP( mappedPath )
+				# print( node.getNodePath(), mappedPath )
+				ImageHelpers.convertToWebP( mappedPath )
 
 ##----------------------------------------------------------------##
 class TextureLibrary( EditorModule ):
@@ -295,7 +242,7 @@ class TextureLibrary( EditorModule ):
 				assetNode.setObjectFile( 'pixmap_%d' % pageId, dst )
 				self._processTexture( src, dst, texture )
 				if page.w < 0:
-					w, h = getImageSize( dst )
+					w, h = ImageHelpers.getImageSize( dst )
 					page.w = w
 					page.h = h
 			assetNode.setMetaData( 'page_count', pageId )			
@@ -309,7 +256,7 @@ class TextureLibrary( EditorModule ):
 
 	def _processTexture( self, src, dst, texture ):
 		#convert single image
-		result = convertToPNG( src, dst )		
+		result = ImageHelpers.convertToPNG( src, dst )		
 		#apply processor on dst file
 		group = texture.parent
 		if group:
@@ -321,11 +268,11 @@ class TextureLibrary( EditorModule ):
 				applyTextureProcessor( nodeProcessor, dst )				
 
 	##----------------------------------------------------------------##
-	def _explodePrebuiltAtlas( self, node, srcToAssetDict, sourceList, outputDir, prefix ):
+	def _explodePrebuiltAtlas( self, node, srcToAssetDict, sourceList, outputDir, prefix, scale ):
 		atlasSourcePath = node.getCacheFile( 'atlas_source' )
 		atlas = self.delegate.call( 'loadPrebuiltAtlas', atlasSourcePath )
 		nodePath = node.getNodePath()
-		pageId = 0
+		pageId = 0		
 		for page in atlas.pages.values():
 			pageId += 1
 			imagePath = node.getCacheFile( 'pixmap_%d' % pageId )
@@ -340,6 +287,10 @@ class TextureLibrary( EditorModule ):
 				part = img.crop( box )
 				partName = '%s_%d_%d.png' % ( prefix, pageId, itemId )
 				partPath = outputDir( partName )
+				if scale != 1:
+					w, h = part.size
+					newSize = ( max( 1, int(w*scale) ),  max( 1, int(h*scale) ) )
+					part = part.resize( newSize, Image.BILINEAR )
 				part.save( partPath )
 				srcToAssetDict[ partPath ] = ( nodePath, pageId , item.name )
 				sourceList.append( partPath )
@@ -375,8 +326,12 @@ class TextureLibrary( EditorModule ):
 			atlasId = 0
 			for node in prebuiltAtlases:
 				atlasId += 1
+				texture = group.findTexture( group, node.getNodePath() )				
+				scale  = texture.getScale( texture )
 				prefix = 'atlas%d' % atlasId
-				self._explodePrebuiltAtlas( node, srcToAssetDict, sourceList, explodedAtlasDir, prefix )				
+				self._explodePrebuiltAtlas(
+					node, srcToAssetDict, sourceList, explodedAtlasDir, prefix, scale
+				)
 		else:
 			for node in prebuiltAtlases:
 				nodePath = node.getNodePath()
@@ -442,10 +397,27 @@ class TextureLibrary( EditorModule ):
 			node.clearObjectFiles()
 			dst = node.getCacheFile( 'pixmap' )
 			node.setObjectFile( 'pixmap', dst )
-			w, h = getImageSize( dst )
+			img = Image.open( dst )
+			w, h = img.size
 			self.delegate.call( 'fillSingleTexture', tex, dst, w, h )
+			scale = tex.getScale( tex )
+			if scale != 1:
+				newSize = ( int(w*scale), int(h*scale) )
+				img = img.resize( newSize, Image.BILINEAR )
+				img.save( dst, 'PNG' )
+
 		elif node.isType( 'prebuilt_atlas' ):
-			pass
+			count = node.getMetaData( 'page_count' )
+			scale = tex.getScale( tex )
+			if scale != 1:
+				for i in range( count ):
+					dst = node.getCacheFile( 'pixmap_%d' % ( i + 1 ) )
+					img  = Image.open( dst )
+					w, h = img.size
+					newSize = ( int(w*scale), int(h*scale) )
+					img  = img.resize( newSize, Image.BILINEAR )
+					img.save( dst, 'PNG' )
+
 		signals.emit( 'texture.rebuild', node )
 
 	def buildSubTexture( self, group, node ):
@@ -476,6 +448,19 @@ class TextureLibrary( EditorModule ):
 		self.scheduleImport( assetNode )
 		self.doPendingImports()
 
+	def _convertTextureFormat( self, fullPath, format, outputPath = None ):
+		if format == 'auto':
+			format = 'webp'
+		print 'converting texture', fullPath, format
+		if format == 'webp':
+			ImageHelpers.convertToWebP( fullPath )
+		elif format == 'png':
+			pass
+		elif format == 'PVR-2':
+			ImageHelpers.convertToPVR( fullPath, outputPath, bbp = 2 )
+		elif format == 'PVR-4':
+			ImageHelpers.convertToPVR( fullPath, outputPath, bbp = 4 )
+
 	def onDeploy( self, context ):
 		self.saveIndex()
 		context.addFile( self.dataPath, 'asset/texture_index' )
@@ -490,7 +475,7 @@ class TextureLibrary( EditorModule ):
 					if not f.startswith( 'tex' ): continue
 					fullPath = absNewPath + '/' + f
 					if context.isNewFile( fullPath ):
-						convertToWebP( fullPath )
+						self._convertTextureFormat( fullPath, group.format )
 				#replace in index file
 				context.replaceInFile( context.getPath( 'asset/texture_index' ), oldPath, newPath )
 		

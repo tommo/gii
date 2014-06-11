@@ -129,6 +129,7 @@ class EffectEditor( AssetEditorModule ):
 		# self.addShortcut( self.container, '[',  self.moveNodeDown )
 		self.addShortcut( self.container, 'ctrl+D',  self.cloneNode )
 		self.addShortcut( self.container, 'f5',      self.togglePreview )
+		self.addShortcut( self.container, 'f4',      self.restartPreview )
 
 		#Signals
 		self.nodePropEditor   .propertyChanged  .connect( self.onNodePropertyChanged  )
@@ -174,11 +175,19 @@ class EffectEditor( AssetEditorModule ):
 			self.window.containerScript.setVisible( True )
 			self.paramPropEditor.setVisible( True )
 			self.updateScript()
+
+		elif isMockInstance( node, 'EffectScript' ):
+			self.window.containerScript.setVisible( True )
+			self.paramPropEditor.setVisible( False )
+			self.paramPropEditor.setTarget( None )
+			self.updateScript()
+
 		else:
 			self.window.containerScript.setVisible( False )
 			self.paramPropEditor.setVisible( False )
 			self.paramPropEditor.setTarget( None )
 		self.canvas.callMethod( 'editor', 'selectEditTarget' )
+
 	def renameNode( self, node, name ):
 		node['name'] = name
 		if node == self.editingTarget:
@@ -239,9 +248,10 @@ class EffectEditor( AssetEditorModule ):
 		#TODO: param
 
 	def updateParamProxy( self ):
-		stateNode = self.editingTarget
-		self.paramProxy = stateNode.buildParamProxy( stateNode )
-		self.paramPropEditor.setTarget( self.paramProxy )		
+		if isMockInstance( self.editingTarget, 'EffectNodeParticleState' ):
+			stateNode = self.editingTarget
+			self.paramProxy = stateNode.buildParamProxy( stateNode )
+			self.paramPropEditor.setTarget( self.paramProxy )
 
 	def onScriptChanged( self ):
 		if self.refreshingScript: return
@@ -258,6 +268,11 @@ class EffectEditor( AssetEditorModule ):
 			self.canvas.callMethod( 'editor', 'stopPreview' )
 		self.checkTool( 'effect_editor/toggle_preview', self.previewing )
 
+	def restartPreview( self ):
+		if self.previewing:
+			self.togglePreview()
+		self.togglePreview()
+					
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'save':

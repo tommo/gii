@@ -29,7 +29,7 @@ function AnimPreview:showAnimSprite( path )
 		return names
 	elseif node.type == 'spine' then
 		self.spriteType = 'spine'
-		self.sprite = self:attach( mock.SpineSprite() )
+		self.sprite = self:attach( mock.SpineSpriteSimple() )
 		self.sprite:setSprite( path )
 		local names = { anim:getAnimationNames() }
 		return names

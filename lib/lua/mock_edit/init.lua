@@ -1,7 +1,7 @@
 require 'mock.env'
 
 --------------------------------------------------------------------
-mock.setLogLevel( 'status' )
+-- mock.setLogLevel( 'status' )
 
 module( 'mock_edit', package.seeall )
 
@@ -37,3 +37,6 @@ require 'mock_edit.common.resloader'
 --------------------------------------------------------------------
 require 'mock_edit.AssetHelper.DeckReloader'
 require 'mock_edit.AssetHelper.FMODReloader'
+
+
+mock._allowAssetCacheWeakMode( false )
