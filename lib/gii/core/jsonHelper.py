@@ -1,9 +1,12 @@
 import logging
 import json
 
-def saveJSON( data, path ):
+def saveJSON( data, path, **option ):
 	outputString = json.dumps( data , 
-			indent=2, sort_keys=True, ensure_ascii=False).encode('utf-8')
+			indent    = option.get( 'indent' ,2 ),
+			sort_keys = option.get( 'sort_keys', True ),
+			ensure_ascii=False
+		).encode('utf-8')
 	fp = open( path, 'w' )
 	fp.write( outputString )
 	fp.close()
@@ -15,9 +18,9 @@ def loadJSON( path ):
 	fp.close()
 	return data
 
-def trySaveJSON( data, path, dataName = None ):
+def trySaveJSON( data, path, dataName = None, **option ):
 	try:
-		saveJSON( data, path )
+		saveJSON( data, path, **option )
 		return True
 	except Exception, e:
 		logging.warn( 'failed to save %s: %s' % ( dataName or 'JSON', path ) )

@@ -49,9 +49,49 @@ class SpineAssetManager(AssetManager):
 		return 10
 
 	def _optimizeAnimation( self, inputPath, outputPath ):
+		def _equalFrame( d1, d2 ):
+			n1 = len( d1 )
+			n2 = len( d2 )
+			if n1!=n2: return False
+			for k,v in d1.items():
+				if k == 'time' : continue
+				if d2.get( k,None ) != v: return False
+			return True
+
+		def _optimizeTimeline( srcTimeline ):
+			if len( srcTimeline ) < 3 : return srcTimeline
+			newTimeline = []
+			prevFrame   = None
+			dupCount    = 0
+			for frame in srcTimeline:
+				if prevFrame and _equalFrame( frame, prevFrame ):
+					dupCount = dupCount + 1
+					if dupCount >= 2: #give up duplicated middle frame( by overwrite )
+						newTimeline.pop()
+				else:
+					dupCount = 0
+				newTimeline.append( frame )
+				prevFrame = frame
+			return newTimeline
+
 		data = jsonHelper.tryLoadJSON( inputPath )
-		#todo: optimization		
-		jsonHelper.trySaveJSON( data, outputPath )
+		animations = data.get( 'animations', None )
+		if animations:
+			for ani in animations.values():
+				boneAnimations = ani.get( 'bones', None )
+				if boneAnimations:
+					for boneAnimation in boneAnimations.values():
+						for key, timeline in boneAnimation.items():
+							newtimeline = _optimizeTimeline( timeline )
+							boneAnimation[ key ] = newtimeline
+				slotAnimations = ani.get( 'slots', None )
+				if slotAnimations:
+					for slotAnimation in slotAnimations.values():
+						for key, timeline in slotAnimation.items():
+							newtimeline = _optimizeTimeline( timeline )
+							slotAnimation[ key ] = newtimeline
+
+		jsonHelper.trySaveJSON( data, outputPath, indent = 0, sort_keys = False )
 
 	# def deployAsset( self, node, context ):
 	# 	super( SpineAssetManager, self ).deployAsset( node, context )

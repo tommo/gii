@@ -301,11 +301,11 @@ class TextureLibrary( EditorModule ):
 
 		#packing atlas
 		assetLib = self.getAssetLibrary()
-		nodes = [] 
+		nodes = {}
 		for t in group.textures.values():
 			node = assetLib.getAssetNode( t.path )
 			if node:
-				nodes.append( node )
+				nodes[ node ] = t				
 			else:
 				logging.warn( 'node not found: %s' % t.path )
 
@@ -316,6 +316,15 @@ class TextureLibrary( EditorModule ):
 			if node.isType( 'texture' ):
 				path = node.getAbsCacheFile( 'pixmap' )
 				srcToAssetDict[ path ] = ( node.getNodePath(), 0, False )
+				tex = nodes[ node ]
+				scale = tex.getScale( tex )
+				if scale != 1 :
+					img = Image.open( path )
+					w, h = img.size
+					w1   = int( max( w*scale, 1 ) )
+					h1   = int( max( h*scale, 1 ) )
+					img.resize( (w1,h1), Image.BILINEAR )
+					img.save( path )
 				sourceList.append( path )
 			elif node.isType( 'prebuilt_atlas' ):
 				prebuiltAtlases.append( node )
@@ -410,13 +419,18 @@ class TextureLibrary( EditorModule ):
 			count = node.getMetaData( 'page_count' )
 			scale = tex.getScale( tex )
 			if scale != 1:
+				atlasOutputPath = node.getCacheFile( 'atlas' )
+				atlas = self.delegate.call( 'loadPrebuiltAtlas', atlasOutputPath )
+				atlas.rescale( atlas, scale )
 				for i in range( count ):
 					dst = node.getCacheFile( 'pixmap_%d' % ( i + 1 ) )
 					img  = Image.open( dst )
 					w, h = img.size
-					newSize = ( int(w*scale), int(h*scale) )
-					img  = img.resize( newSize, Image.BILINEAR )
+					w1   = max( int(w*scale), 1 )
+					h1   = max( int(h*scale), 1 )
+					img  = img.resize( ( w1, h1 ), Image.BILINEAR )
 					img.save( dst, 'PNG' )
+				atlas.save( atlas, atlasOutputPath )
 
 		signals.emit( 'texture.rebuild', node )
 
