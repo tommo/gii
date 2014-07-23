@@ -447,6 +447,12 @@ class AssetManager(object):
 	def forgetAsset( self, assetNode ):
 		pass
 
+	def removeAsset( self, assetNode ):
+		pass
+
+	def cloneAsset( self, assetNode ):
+		pass
+
 	#Process asset for deployment. eg.  Filepath replace, Extern file collection
 	def deployAsset( self, assetNode, context ):
 		for k, path in assetNode.objectFiles.items():
@@ -457,6 +463,9 @@ class AssetManager(object):
 		assetNode.openInSystem()
 
 	def getDependency( self, assetNode ):
+		pass
+
+	def onRegister( self ):
 		pass
 
 ##----------------------------------------------------------------##
@@ -623,6 +632,7 @@ class AssetLibrary(object):
 				return manager
 
 		self.assetManagers.append(manager)
+		manager.onRegister()
 		return manager
 
 	def registerAssetCreator(self, creator):

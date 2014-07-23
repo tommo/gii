@@ -62,6 +62,8 @@ class AssetBrowser( AssetEditorModule ):
 				{'name':'open_in_system', 'label':'Open In System'},
 				{'name':'copy_node_path', 'label':'Copy Asset Path'},
 				'----',
+				{'name':'clone', 'label':'Clone'},
+				'----',
 				{'name':'reimport', 'label':'Reimport'},
 				'----',
 				{'name':'deploy_set', 'label':'Set Deploy'},
@@ -223,6 +225,12 @@ class AssetBrowser( AssetEditorModule ):
 				if isinstance( n, AssetNode ):
 					n.markModified()
 			app.getAssetLibrary().importModifiedAssets()
+
+		elif name == 'clone':
+			pass
+
+		elif name == 'remove':
+			pass
 
 		elif name == 'show_in_browser':
 			if not getAssetSelectionManager().getSelection():

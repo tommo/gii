@@ -623,17 +623,17 @@ end
 --ditto for the file with no extension
 
 local function has_breakpoint(file, line)
-  if not breakpoints[line] then return false end
-  local noext = string.gsub(file,"(%..-)$",'',1)
-  if noext == file then noext = nil end
-  while file do
-    if breakpoints[line][file] then return true end
-    file = string.match(file,"[:/\](.+)$")
-  end
-  while noext do
-    if breakpoints[line][noext] then return true end
-    noext = string.match(noext,"[:/\](.+)$")
-  end
+  -- if not breakpoints[line] then return false end
+  -- local noext = string.gsub(file,"(%..-)$",'',1)
+  -- if noext == file then noext = nil end
+  -- while file do
+  --   if breakpoints[line][file] then return true end
+  --   file = string.match(file,"[:/\](.+)$")
+  -- end
+  -- while noext do
+  --   if breakpoints[line][noext] then return true end
+  --   noext = string.match(noext,"[:/\](.+)$")
+  -- end
   return false
 end
 

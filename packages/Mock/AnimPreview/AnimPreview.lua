@@ -31,7 +31,10 @@ function AnimPreview:showAnimSprite( path )
 		self.spriteType = 'spine'
 		self.sprite = self:attach( mock.SpineSpriteSimple() )
 		self.sprite:setSprite( path )
-		local names = { anim:getAnimationNames() }
+		local names = {}
+		for name, id in pairs( anim:getAnimationNames() ) do
+			names[ id ] = name
+		end
 		return names
 	end
 end

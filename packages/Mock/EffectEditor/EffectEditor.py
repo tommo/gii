@@ -352,7 +352,7 @@ class EffectNodeTreeWidget( GenericTreeWidget ):
 			typeName = node.getTypeName( node )
 			item.setText( 0, node['name'] )
 			item.setText( 1, typeName )
-			item.setIcon( 0, getIcon( 'effect/' + typeName.lower() ) )
+			item.setIcon( 0, getIcon( 'effect/' + typeName.lower(), 'effect/unknown' ) )
 
 	def getItemFlags( self, node ):
 		if node == None or node == self.getRootNode():

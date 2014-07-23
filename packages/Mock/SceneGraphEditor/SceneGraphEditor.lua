@@ -477,6 +477,15 @@ function CmdCloneEntity:init( option )
 	if not next( targets ) then return false end
 end
 
+local function extractNumberPrefix( name )
+	local numberPart = string.match( name, '%d+$' )
+	if numberPart then
+		local mainPart = string.sub( name, 1, -1 - #numberPart )
+		return mainPart, tonumber( numberPart )
+	end
+	return name, nil
+end
+
 function CmdCloneEntity:redo()
 	local createdList = {}
 	for target in pairs( self.targets ) do
@@ -484,8 +493,15 @@ function CmdCloneEntity:redo()
 		created.__prefabId = target.__prefabId
 		local n = created:getName()
 		if n then
-			created:setName( n .. '_1' )
+			--auto increase prefix
+			local mp, np = extractNumberPrefix( n )
+			if np then
+				created:setName( mp .. ( np+1 ) )
+			else
+				created:setName( n .. '_1' )
+			end
 		end
+
 		local parent = target.parent
 		if parent then
 			parent:addChild( created )
@@ -726,6 +742,21 @@ function CmdPullPrefab:redo()
 end
 
 --------------------------------------------------------------------
+CLASS: CmdCreatePrefabContainer ( CmdCreateEntityBase )
+	:register( 'scene_editor/create_prefab_container' )
+
+function CmdCreatePrefabContainer:init( option )
+	CmdCreateEntityBase.init( self, option )
+	self.prefabPath = option['prefab']
+end
+
+function CmdCreatePrefabContainer:createEntity()
+	local container = mock.PrefabContainer()
+	container:setPrefab( self.prefabPath )
+	return container	
+end
+
+--------------------------------------------------------------------
 CLASS: CmdAssignEntityLayer ( mock_edit.EditorCommand )
 	:register( 'scene_editor/assign_layer' )
 
@@ -801,3 +832,29 @@ end
 function CmdUnifyChildrenLayer:undo( )
 	--TODO
 end
+
+--------------------------------------------------------------------
+CLASS: CmdFreezePivot ( mock_edit.EditorCommand )
+	:register( 'scene_editor/freeze_entity_pivot' )
+
+function CmdFreezePivot:init( option )
+	self.entities  = gii.getSelection( 'scene' )
+	self.previousPivots = {}
+end
+
+function CmdFreezePivot:redo( )
+	local pivots = self.previousPivots
+	for i, e in ipairs( self.entities ) do
+		local px, py, pz = e:getPiv()
+		e:setPiv( 0,0,0 )
+		for child in pairs( e:getChildren() ) do
+			child:addLoc( -px, -py, -pz )
+		end
+		gii.emitPythonSignal( 'entity.modified', e, '' )
+	end
+end
+
+function CmdFreezePivot:undo( )
+	--TODO
+end
+

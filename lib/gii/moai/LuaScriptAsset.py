@@ -116,7 +116,7 @@ class ScriptLibrary( EditorModule ):
 		for node in self.getAssetLibrary().enumerateAsset( 'lua' ):
 			hashed = _hashPath( node.getFilePath() )
 			dstPath = context.getAssetPath( hashed )
-			self.compileScript( node, dstPath, version )
+			self.compileScript( node, dstPath, 'luajit' )
 			exportIndex[ _convertToGameModuleName( node.getNodePath() ) ] = 'asset/' + hashed
 
 		jsonHelper.trySaveJSON(
@@ -126,7 +126,8 @@ class ScriptLibrary( EditorModule ):
 			)
 		context.meta['mock_script_library'] = 'asset/' + _GII_SCRIPT_LIBRARY_EXPORT_NAME
 
-	def compileScript( self, node, dstPath, version = 'lua' ):
+	def compileScript( self, node, dstPath, version = 'luajit' ):
+		version = 'luajit'
 		if version == 'lua':
 			_GII.GameModule.compilePlainLua( node.getAbsFilePath(), dstPath ) #lua version problem			
 			#TODO: error handle
@@ -135,6 +136,11 @@ class ScriptLibrary( EditorModule ):
 			arglist =  [ 'luajit' ]
 			arglist += [ '-b', '-g' ]
 			arglist += [ node.getAbsFilePath(), dstPath ]
+			try:
+				code = subprocess.call( arglist )
+			except Exception, e:
+				raise Exception( 'error on luajit compliation: %s ' % e )
+
 		else:
 			raise Exception( 'unknown lua version %s' % version )
 

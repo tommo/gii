@@ -102,17 +102,19 @@ class SceneGraphEditor( SceneEditorModule ):
 			)
 
 		self.addMenu( 'main/entity', dict( label = 'Entity' ) )
-		self.addMenuItem( 'main/entity/add_empty_entity', dict( label = 'Create Empty', shortcut = 'ctrl+alt+N' ) )
-		self.addMenuItem( 'main/entity/add_entity',       dict( label = 'Create', shortcut = 'ctrl+shift+N' ) )
+		self.addMenuItem( 'main/entity/add_empty_entity',    dict( label = 'Create Empty', shortcut = 'ctrl+alt+N' ) )
+		self.addMenuItem( 'main/entity/add_entity',          dict( label = 'Create', shortcut = 'ctrl+shift+N' ) )
 		self.addMenuItem( 'main/entity/----' )
-		self.addMenuItem( 'main/entity/load_prefab',        dict( label = 'Load Prefab', shortcut = 'ctrl+alt+shift+N' ) )
+		self.addMenuItem( 'main/entity/load_prefab',         dict( label = 'Load Prefab', shortcut = 'ctrl+alt+shift+N' ) )
+		self.addMenuItem( 'main/entity/load_prefab_in_container', dict( label = 'Load Prefab In Container', shortcut = 'ctrl+shift+=' ) )
 		self.addMenuItem( 'main/entity/----' )
-		self.addMenuItem( 'main/entity/remove_entity',    dict( label = 'Remove'  ) )
-		self.addMenuItem( 'main/entity/clone_entity',     dict( label = 'Clone',  shortcut = 'ctrl+d' ) )
+		self.addMenuItem( 'main/entity/remove_entity',       dict( label = 'Remove'  ) )
+		self.addMenuItem( 'main/entity/clone_entity',        dict( label = 'Clone',  shortcut = 'ctrl+d' ) )
 		self.addMenuItem( 'main/entity/----' )
-		self.addMenuItem( 'main/entity/add_component',    dict( label = 'Add Component', shortcut = 'ctrl+alt+=' ) )
+		self.addMenuItem( 'main/entity/add_component',       dict( label = 'Add Component', shortcut = 'ctrl+alt+=' ) )
 		self.addMenuItem( 'main/entity/assign_layer',        dict( label = 'Assign Layer', shortcut = 'ctrl+alt+L' ) )
-		self.addMenuItem( 'main/entity/toggle_visibility',        dict( label = 'Toggle Visibility', shortcut = 'ctrl+/' ) )
+		self.addMenuItem( 'main/entity/toggle_visibility',   dict( label = 'Toggle Visibility', shortcut = 'ctrl+/' ) )
+		self.addMenuItem( 'main/entity/freeze_entity_pivot', dict( label = 'Freeze Pivot' ) )
 
 		self.addMenuItem( 'main/entity/----' )
 		self.addMenuItem( 'main/find/find_entity', dict( label = 'Find In Scene', shortcut = 'ctrl+f' ) )
@@ -385,6 +387,16 @@ class SceneGraphEditor( SceneEditorModule ):
 						self.doCommand( 'scene_editor/create_prefab_entity', prefab = obj.getNodePath() )
 				)
 
+		elif name == 'load_prefab_in_container':
+			requestSearchView( 
+				info    = 'select a perfab node to instantiate( PefabContainer )',
+				context = 'asset',
+				type    = 'prefab',
+				on_selection = 
+					lambda obj: 
+						self.doCommand( 'scene_editor/create_prefab_container', prefab = obj.getNodePath() )
+				)
+
 		elif name == 'remove_entity':
 			self.doCommand( 'scene_editor/remove_entity' )
 
@@ -416,6 +428,9 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		elif name == 'toggle_visibility':
 			self.doCommand( 'scene_editor/toggle_entity_visibility' )
+
+		elif name == 'freeze_entity_pivot':
+			self.doCommand( 'scene_editor/freeze_entity_pivot' )
 
 
 	def onSelectionChanged( self, selection, key ):

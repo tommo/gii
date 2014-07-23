@@ -33,8 +33,8 @@ function CanvasGrid:onDraw()
 			MOAIDraw.drawLine( x0, y, x1, y )
 		end
 	else
-		x0, y0 = -10000, -10000
-		x1, y1 =  10000,  10000
+		x0, y0 = -100000, -100000
+		x1, y1 =  100000,  100000
 	end
 	--Axis
 	MOAIGfxDevice.setPenWidth( 2 )

@@ -20,7 +20,7 @@ end
 
 function moveLayerUp( l )
 	local layers = mock.game.layers
-	local i = table.find( layers, l )
+	local i = table.index( layers, l )
 	assert ( i )
 	if i >= #layers then return end
 	if layers[ i + 1 ].name =='_GII_EDITOR_LAYER' then return end
@@ -31,7 +31,7 @@ end
 
 function moveLayerDown( l )
 	local layers = mock.game.layers
-	local i = table.find( layers, l )
+	local i = table.index( layers, l )
 	assert ( i )
 	if i <= 1 then return end
 	if layers[ i - 1 ].name =='_GII_EDITOR_LAYER' then return end
