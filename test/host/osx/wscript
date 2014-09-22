@@ -1,0 +1,44 @@
+def options( opt ):
+	pass
+	
+def configure( conf ):
+	pass
+
+def build( bld ):		
+	hostName = 'moai'
+	binPath = bld.env.GII_BINARY_PATH
+	import os.path
+	if not os.path.exists( binPath + '/osx' ):
+		os.mkdir( binPath + '/osx' )
+	output = binPath + '/osx'
+	LIBS_SYSTEM = [ 'System', 'crypto', 'ssl', 'objc', 'stdc++' ]
+	bld.program(
+		source   = 'ParticlePresets.cpp GlutHostMain.cpp GlutHost.cpp FolderWatcher-mac.mm',
+		target   = 'moai',
+		name     = 'host-osx',
+		use      = 'MOAI FMOD extension',
+
+		includes = '../extension',
+
+		framework = [ 
+			'CoreServices',
+			'CoreFoundation',
+			'Foundation',
+			'AudioUnit',
+			'AudioToolbox',
+			'GLUT',
+			'IOKit',
+			'OpenGL',
+		],
+
+		stlib      = LIBS_SYSTEM,
+		cxxflags   = [ 
+			'-DGLUTHOST_USE_LUAEXT', 
+			'-DGLUTHOST_USE_FMOD_DESIGNER' 
+		],
+
+		install_path = output
+	)
+
+
+

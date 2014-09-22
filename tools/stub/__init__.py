@@ -11,7 +11,7 @@ def main( argv ):
 		app.openProject( task['path'] )
 		import gii.SceneEditor
 		import gii.AssetEditor
-		import gii.ScriptView
+		# import gii.ScriptView
 		import gii.DeviceManager
 		app.run()
 

@@ -35,7 +35,7 @@ class MOAIJoystickHook( EditorModule ):
 			j = Joystick( i )
 			j.setButtonListener( self.onButtonEvent )
 			j.setAxisListener( self.onAxisEvent )
-			j.setContext( i )			
+			j.setContext( i )
 			self.joysticks.append( j )
 			getter = MOAIJoystickSensorGetter( i + 1 )
 			self.joystickSensorGetters.append( getter )

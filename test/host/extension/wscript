@@ -1,0 +1,4 @@
+def build( bld ):
+	bld( includes = '.' )
+	bld.stlib( source = bld.path.ant_glob( '*.cpp' ), target = 'extension', use = 'MOAI' )
+

@@ -78,7 +78,9 @@ class ScriptView( QtEditorModule ):
 
 
 	def onStart( self ):
-		self.restoreWindowState( self.getMainWindow() )
+		# self.restoreWindowState( self.getMainWindow() )
+		self.show()
+		pass
 
 	def show(self):
 		self.window.show()

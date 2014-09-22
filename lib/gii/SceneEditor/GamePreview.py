@@ -250,10 +250,7 @@ class GamePreview( SceneEditorModule ):
 		self.updateTimer = None
 		self.canvas.startRefreshTimer( self.nonActiveFPS )
 
-	# def onUpdate( self ):
-	# 	if self.paused != False: return
-	# 	self.updateView()
-
+	
 	def runGameExternal( self ):
 		#TODO: use a modal window to indicate external host state
 		ExternRun.runGame()

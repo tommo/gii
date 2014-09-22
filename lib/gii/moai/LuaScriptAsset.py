@@ -127,7 +127,8 @@ class ScriptLibrary( EditorModule ):
 		context.meta['mock_script_library'] = 'asset/' + _GII_SCRIPT_LIBRARY_EXPORT_NAME
 
 	def compileScript( self, node, dstPath, version = 'luajit' ):
-		version = 'luajit'
+		# version = 'luajit'
+		version = 'lua'
 		if version == 'lua':
 			_GII.GameModule.compilePlainLua( node.getAbsFilePath(), dstPath ) #lua version problem			
 			#TODO: error handle

@@ -91,9 +91,9 @@ class MOAIRuntime( EditorModule ):
 		_G['GII_VERSION_REV']              = 0
 
 		logging.info( 'loading gii lua runtime' )
-		aku.runScript(
-			self.getApp().getPath( 'lib/lua/MOAIInterfaces.lua' )
-			)
+		# aku.runScript(
+		# 	self.getApp().getPath( 'lib/lua/MOAIInterfaces.lua' )
+		# 	)
 
 		aku.runScript(
 			self.getApp().getPath( 'lib/lua/init.lua' )

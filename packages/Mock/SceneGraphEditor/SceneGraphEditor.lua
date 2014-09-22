@@ -536,6 +536,7 @@ end
 
 function CmdPasteEntity:redo()
 	local createdList = {}
+	local parent = self.parent
 	for i, entityData in ipairs( self.data.entities ) do
 		local created = mock.deserializeEntity( entityData )
 		if parent then

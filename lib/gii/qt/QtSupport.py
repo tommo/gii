@@ -26,7 +26,7 @@ class QtSupportEventFilter(QObject):
 ##----------------------------------------------------------------##
 class QtSupport( QtEditorModule ):
 	def __init__( self ):
-		pass
+		self.statusWindow = None
 
 	def getName( self ):
 		return 'qt'
@@ -79,6 +79,7 @@ class QtSupport( QtEditorModule ):
 			'----',
 			'Asset Editor|F2',
 			'Scene Editor|F3',
+			'Debug View|F9',
 			'----',
 			'Refresh Theme',
 			'----',
@@ -158,6 +159,8 @@ class QtSupport( QtEditorModule ):
 			self.getModule('asset_editor').setFocus()
 		elif name == 'scene_editor':
 			self.getModule('scene_editor').setFocus()
+		elif name == 'debug_view':
+			self.getModule('debug_view').setFocus()
 		elif name == 'refresh_theme':
 			self.setupStyle()
 		elif name == 'copy':
