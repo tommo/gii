@@ -29,8 +29,8 @@ cli.add_argument( '-p, --profile',
 	default = 'debug'
 	)
 
-cli.add_argument( '--clean_bin', 
-	dest   = 'clean',
+cli.add_argument( '--clean-bin', 
+	dest   = 'clean-bin',
 	help   = 'Clean built binary files',
 	action = 'store_true',
 	default = False

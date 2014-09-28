@@ -45,6 +45,7 @@ class ScriptNoteBook(QtGui.QTabWidget):
 		if idx>=0:
 			self.setCurrentIndex(idx)
 
+
 	def clearAllPages(self):
 		for k in self.pages:
 			p=self.pages[k]

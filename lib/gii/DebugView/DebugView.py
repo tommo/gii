@@ -45,12 +45,11 @@ class DebugView( TopEditorModule ):
 		self.addMenu( 'main/debug', dict( label = 'Debug' ) )
 
 	def onLoad( self ):
-		# signals.connect( 'app.start', self.postStart )
+		signals.connect( 'app.start', self.postStart )
 		return True
 
-	# def postStart( self ):
-		# self.mainWindow.show()
-		# self.mainWindow.setUpdatesEnabled( True )
+	def postStart( self ):
+		self.mainWindow.show()
 
 	def onMenu(self, node):
 		name = node.name

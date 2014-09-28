@@ -9,4 +9,7 @@ def main( argv ):
 	import gii.AssetEditor
 	import gii.DeviceManager
 	import gii.DebugView
+
+	import gii.ScriptView
+	
 	app.run()

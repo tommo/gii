@@ -99,13 +99,19 @@ local function _pick( ent, x, y ) --depth first search
 end
 
 function SceneView:pick( x, y )
+	--TODO: use layer order?
+	local candidates = {}
 	for ent in pairs( self:getScene().entities ) do
-		if not ent.parent then
-			local p = _pick( ent, x, y )
-			if p then return p end
+		if isEntityPickable( ent ) and ent:inside( x, y ) then
+			table.insert( candidates, ent )
 		end
+		-- if not ent.parent then
+		-- 	local p = _pick( ent, x, y )
+		-- 	if p then return p end
+		-- end
 	end
-	return nil
+	--TODO:sort and find
+	return candidates[1]
 end
 
 function SceneView:clearSelection()

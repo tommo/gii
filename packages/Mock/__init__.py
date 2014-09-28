@@ -31,3 +31,7 @@ import EffectEditor
 import EffectPreview
 
 import ScreenProfileManager
+
+##----------------------------------------------------------------##
+import DebugInfo
+import LuaProfiler

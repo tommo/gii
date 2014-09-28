@@ -24,3 +24,5 @@ import DataXLSAsset
 import DataJSONAsset
 
 import EffectAsset
+
+import PhysicsAsset

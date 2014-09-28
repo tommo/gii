@@ -41,9 +41,6 @@ class SceneEditor( TopEditorModule ):
 	def onSetupMainWindow( self, window ):
 		self.mainToolBar = self.addToolBar( 'scene', self.mainWindow.requestToolBar( 'main' ) )		
 		window.setMenuWidget( self.getQtSupport().getSharedMenubar() )
-		#MainTool 
-		self.addTool( 'scene/run',    label = 'Run' )
-		self.addTool( 'scene/deploy', label = 'Deploy' )
 		#menu
 		self.addMenu( 'main/scene', dict( label = 'Scene' ) )
 

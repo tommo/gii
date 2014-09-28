@@ -187,20 +187,22 @@ class QtEditorModule( EditorModule ):
 	def restoreWindowState(self, window, name=None):
 		if not name:
 			name  = window.objectName() or 'window'
-		geodata = self.getQtSetting('geom_'+name)
+		fullname = self.getName() + '_' + name
+		geodata = self.getQtSetting('geom_'+fullname)
 		if geodata:
 			window.restoreGeometry( geodata )
 		if hasattr( window, 'restoreState' ):
-			statedata = self.getQtSetting('state_'+name)
+			statedata = self.getQtSetting('state_'+fullname)
 			if statedata:
 				window.restoreState(statedata)
 
 	def saveWindowState(self, window, name=None):
 		if not name:
 			name = window.objectName() or 'window'
-		self.setQtSetting( 'geom_' + name, window.saveGeometry())
+		fullname = self.getName() + '_' + name
+		self.setQtSetting( 'geom_' + fullname, window.saveGeometry())
 		if hasattr(window,'saveState'):
-			self.setQtSetting( 'state_' + name, window.saveState())
+			self.setQtSetting( 'state_' + fullname, window.saveState())
 			
 	def onMenu(self, menuItem):
 		pass

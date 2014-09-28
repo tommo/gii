@@ -53,7 +53,7 @@ class Console( DebugViewModule ):
 		self.panel.appendText(text)		
 
 	def onLoad(self):
-		self.container = self.requestDockWindow('Console',
+		self.container = self.requestDocumentWindow('Console',
 				title   = 'Console',
 				minSize = (100,100),
 				dock    = 'bottom'

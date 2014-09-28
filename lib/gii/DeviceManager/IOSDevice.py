@@ -10,7 +10,7 @@ import MobileDevice
 import subprocess
 
 _FILE_INDEX = '_FILE_INDEX'
-
+_TEST_APP_ID = 'com.pixpil.giitest'
 ##----------------------------------------------------------------##
 def copyToDevice( afc, srcFile, tgtFile, **option ):	
 	force = option.get( 'force', False )
@@ -166,7 +166,7 @@ class IOSDeviceItem( DeviceItem ):
 		return self.connected
 
 	def deploy( self, deployContext, **option ):
-		appName        = 'com.hatrixgames.yaka'
+		appName        = _TEST_APP_ID
 		localDataPath  = deployContext.getPath()
 		remoteDataPath = 'Documents/game'
 		try:
@@ -183,7 +183,7 @@ class IOSDeviceItem( DeviceItem ):
 			self.connected = False
 
 	def clearData( self ):
-		appName        = 'com.hatrixgames.yaka'
+		appName        = _TEST_APP_ID
 		dev   = self._device
 		remoteDataPath = 'Documents/game'
 		if not self.isConnected():

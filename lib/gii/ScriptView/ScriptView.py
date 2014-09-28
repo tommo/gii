@@ -1,44 +1,32 @@
+import subprocess
+import os.path
+import shutil
+import time
+import json
+##----------------------------------------------------------------##
 from PyQt4 import QtGui, QtCore, Qsci
 from PyQt4.QtCore import Qt
 ##----------------------------------------------------------------##
 
 from gii.core               import *
-from gii.qt                 import QtEditorModule
 from gii.qt.controls.Window import MainWindow
+from gii.DebugView          import DebugViewModule
+from gii.scintilla import CodeBox
 
 
 ##----------------------------------------------------------------##
-from ScriptNoteBook  import ScriptNoteBook
+# from ScriptNoteBook  import ScriptNoteBook
 from DebuggerHandler import DebuggerHandler
 from ListStackView   import ListStackView
 from TreeScopeView   import TreeScopeView
 ##----------------------------------------------------------------##
 
-class ScriptView( QtEditorModule ):
-	"""docstring for ObjectEditor"""
-	def __init__(self):
-		super(ScriptView,self).__init__()
-	
-	def getName(self):
-		return 'script_view'
-
-	def getDependency(self):
-		return []
-
-	def getMainWindow( self ):
-		return self.window
-
+class ScriptView( DebugViewModule ):
+	name = 'script_view'
 	def onLoad(self):	
-		#init gui	
-		self.window = window = ScriptViewWindow(None)
-		window.resize( 600, 400 )
-		window.setWindowTitle('Script Viewer')
-		window.module = self
-		
-		self.menu = self.addMenuBar( 'script', self.window.menuBar() )
-		
+		window = self.getMainWindow()
+		self.menu = self.addMenuBar( 'script', window.menuBar() )
 		# self.menu.addChild('&File').addChild(['Open','E&xit'])
-
 		editMenu=self.menu.addChild( '&Goto' ).addChild([
 				{'name':'goto_line', 'label':'Goto Line', 'shortcut':'Meta+G'},
 				{'name':'goto_file', 'label':'Goto File', 'shortcut':'Ctrl+P'}
@@ -52,65 +40,44 @@ class ScriptView( QtEditorModule ):
 				{ 'name':'terminate', 'label':'Terminate', 'shortcut':'Meta+F5' }
 			])
 
-		self.book = ScriptNoteBook(window)
-		window.addChildWidget(self.book, 'ScriptView.NoteBook', 
-			title   = 'main',
-			dock    = 'main',
-			minSize = (200,200)
-		)
-		self.book.getPageByFile('picking.lua')
-		
 		self.panelDebug=PanelDebug()
 		self.panelDebug.module=self
-		window.addChildWidget(self.panelDebug, 'ScriptView.Debugger', 
-			title   = 'Debugger', 
-			dock    = 'bottom',
-			minSize = (200,200)
-		)
+
+		self.containerDebugger = self.requestDockWindow( 'Debugger',
+			title     = 'Debugger',
+			size      = (120,120),
+			minSize   = (120,120),
+			dock      = 'right'
+			)
+
+		self.containerDebugger.addWidget( self.panelDebug )
 		self.toggleDebug(False)
 
 		#init function component
 		self.debuggerHandler = DebuggerHandler(self)
-		self.book.getPageByFile('picking.lua')
-		
 		signals.connect('app.command', self.onAppCommand)
 		signals.connect('app.remote', self.onAppRemote)
 
+		#script page management
+		self.scriptPages = {}
+		self.defaultPageSetting=json.load(
+				file( app.getPath('data/script_settings.json'), 'r' )
+			)
 
 	def onStart( self ):
-		# self.restoreWindowState( self.getMainWindow() )
-		self.show()
-		pass
-
-	def show(self):
-		self.window.show()
-		self.window.raise_()
-
-	def hide(self):
-		# self.window.hide()
-		pass
+		self.locateFile( '/Volumes/prj/moai/yaka/game/main.lua' )
 
 	def onUnload(self):
 		if self.debuggerHandler.busy:
 				self.debuggerHandler.doStop()	#stop debug
-		self.window.close()
-		self.window = None
 
-	def onUpdate(self):
-		pass
-
-	def locateFile(self, filename, lineNumber=1, highLight = False):
+	def locateFile( self, filename, lineNumber=1, highLight = False ):
 		self.setFocus()
-		if not self.window.hasFocus():
-			if highLight:
-				# self.window.requestUserAttention()
-				pass
-			self.window.raise_()
-		page=self.book.getPageByFile(filename, True)
+		page = self.getPageByFile( filename, True )
 		if not page:
 			return False
-		self.book.selectPage(page)
-		page.locateLine(lineNumber, highLight)
+		page.setFocus()
+		page.locateLine( lineNumber, highLight )
 
 	def toggleDebug(self, toggle):
 		# if toggle:
@@ -125,7 +92,6 @@ class ScriptView( QtEditorModule ):
 		self.enableMenu('script/debug/continue',toggle)
 
 	def onMenu(self, node):
-
 		name=node.name
 		if name=='step_in':
 			self.debuggerHandler.doStepIn()
@@ -149,12 +115,38 @@ class ScriptView( QtEditorModule ):
 			pass
 			#TODO
 
+	def getPageByFile( self, path, createIfNotFound=True ):
+		path = path.encode('utf-8')
+		if not os.path.exists(path): return None
+		page = self.scriptPages.get(path, False)
+		if not page:
+			if not createIfNotFound: return None
+			#create
+			container = self.requestDocumentWindow( 
+				title = path
+			)
+			page = ScriptPage( path, container )
+			container.addWidget( page )
+			page.applySetting( self.defaultPageSetting )
+			self.scriptPages[ path ]=page
+		# else:
+		# 	page.checkFileModified()
+		return page
 
-	def onSetFocus(self):
-		self.window.show()
-		self.window.raise_()
-		self.window.setFocus()
-		self.getQtSupport().setActiveWindow( self.window )
+##----------------------------------------------------------------##
+class ScriptPage( CodeBox ):
+	def __init__( self, path, container ):
+		CodeBox.__init__( self, container )
+		self.path = path
+		self.container = container
+		self.setReadOnly(True)
+		self.refreshCode()
+
+	def setFocus( self ):
+		self.container.show()
+		self.container.raise_()
+		self.container.activateWindow()
+		self.container.setFocus()
 
 ##----------------------------------------------------------------##
 class ScriptViewWindow( MainWindow ):
@@ -232,8 +224,6 @@ class PanelDebug(QtGui.QWidget):
 	
 	def onContinue( self, event ):
 		self.module.debuggerHandler.doContinue()
-##----------------------------------------------------------------##
 
-ScriptView().register()
 
 
