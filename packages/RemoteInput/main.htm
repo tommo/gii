@@ -74,7 +74,7 @@
 		
 		<script> 
 
-		var wsUri = document.URL.replace("http", "ws");
+		var wsUri = "ws://" + location.hostname + ":" + 8037;
     var output;
     var websocket;
 
@@ -117,22 +117,22 @@
 
     function onOpen(evt)
     {
-        alert("Connected to " + wsUri);
+        console.log("Connected to " + wsUri);
     }
 
     function onClose(evt)
     {
-        alert("Disconnected");
+        console.log("Disconnected");
     }
 
     function onMessage(evt)
     {
-        alert('Received message : ' + evt.data);
+        console.log('Received message : ' + evt.data);
     }
 
     function onError(evt)
     {
-        alert("Error : " + evt.toString());
+        console.log("Error : " + evt.toString());
     }
 
     function doSend(message)
@@ -159,14 +159,15 @@
 
 
 		function sendInput( ev, id, x, y, z ) {
-			var query = "input/";
+			var query = "@";
 			query = query + ev;
 			query = query + ',' + id;
 			query = query + ',' + x;
 			query = query + ',' + y;
 			query = query + ',' + z;
-			request.open( "GET", query, false );
-			request.send(null);
+			// request.open( "GET", query, false );
+			// request.send(null);
+			doSend( query );
 		}
 
 			if (window.DeviceMotionEvent==undefined) {
