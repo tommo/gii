@@ -122,7 +122,7 @@ class SceneView( SceneEditorModule ):
 
 	def onPreviewResume( self ):
 		self.previewing = True
-		self.previewUpdateTimer = self.window.startTimer( 3, self.updateInPreview )
+		self.previewUpdateTimer = self.window.startTimer( 1, self.updateInPreview )
 
 	def onPreviewStop( self ):
 		self.previewing = False

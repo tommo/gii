@@ -1,20 +1,24 @@
 #ifndef	GIIHELPER_H
 #define	GIIHELPER_H
-#include <pch.h>
-#include <moaicore/MOAIActionMgr.h>
-#include <moaicore/MOAIDebugLines.h>
-#include <moaicore/MOAIFrameBuffer.h>
-#include <moaicore/MOAIGfxDevice.h>
-#include <moaicore/MOAIInputMgr.h>
-#include <moaicore/MOAILogMessages.h>
-#include <moaicore/MOAINodeMgr.h>
-#include <moaicore/MOAIProp.h>
-#include <moaicore/MOAISim.h>
-#include <moaicore/MOAITextureBase.h>
+#include <moai-core/pch.h>
+#include <moai-core/MOAILogMessages.h>
+
+#include <moai-sim/pch.h>
+#include <moai-sim/MOAIActionMgr.h>
+#include <moai-sim/MOAIGfxDevice.h>
+#include <moai-sim/MOAIInputMgr.h>
+#include <moai-sim/MOAINodeMgr.h>
+#include <moai-sim/MOAISim.h>
+#include <moai-sim/MOAITransform.h>
+#include <moai-sim/MOAITransformBase.h>
+// #include <moaicore/MOAITextureBase.h>
+// #include <moaicore/MOAIDebugLines.h>
+#include <moai-sim/MOAIFrameBuffer.h>
+#include <moai-sim/MOAIProp.h>
 
 
 class GIIHelper:
-	public MOAIGlobalClass < GIIHelper, MOAILuaObject > 
+	public MOAIGlobalClass < GIIHelper, MOAINode > 
 {
 private:
 	
@@ -24,14 +28,17 @@ private:
 	static int _setBufferSize       ( lua_State* L );
 	static int _renderFrameBuffer   ( lua_State* L );
 	static int _setVertexTransform  ( lua_State* L );
-
+	static int _copyWorldTransform  ( lua_State* L );
+	static int _setWorldLoc  ( lua_State* L );
+	static int _forceGC             ( lua_State* L );
+	
 public:
 	
 	DECL_LUA_SINGLETON ( GIIHelper )
 
 	//
 	void stepSim( double step );
-	void updateInput();
+	void updateInput( double step );
 
 	//----------------------------------------------------------------//
 	GIIHelper();

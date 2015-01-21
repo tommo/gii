@@ -51,7 +51,6 @@ class ScriptView( DebugViewModule ):
 			)
 
 		self.containerDebugger.addWidget( self.panelDebug )
-		self.toggleDebug(False)
 
 		#init function component
 		self.debuggerHandler = DebuggerHandler(self)
@@ -64,8 +63,11 @@ class ScriptView( DebugViewModule ):
 				file( app.getPath('data/script_settings.json'), 'r' )
 			)
 
+		self.toggleDebug(False)
+
 	def onStart( self ):
-		self.locateFile( '/Volumes/prj/moai/yaka/game/main.lua' )
+		# self.locateFile( '/Volumes/prj/moai/yaka/game/main.lua' )
+		pass
 
 	def onUnload(self):
 		if self.debuggerHandler.busy:
@@ -90,6 +92,9 @@ class ScriptView( DebugViewModule ):
 		self.enableMenu('script/debug/step_out',toggle)
 		self.enableMenu('script/debug/terminate',toggle)
 		self.enableMenu('script/debug/continue',toggle)
+		for path in self.scriptPages:
+			p = self.scriptPages[path]
+			p.clearHilight( 'normal' )
 
 	def onMenu(self, node):
 		name=node.name
@@ -163,10 +168,12 @@ class ScriptViewWindow( MainWindow ):
 class PanelDebug(QtGui.QWidget):
 	def __init__(self,*args):
 		super(PanelDebug,self).__init__(*args)
-		layout=QtGui.QVBoxLayout(self)
+		
+		layout = QtGui.QVBoxLayout(self)
 		layout.setSpacing(0)
 		layout.setMargin(0)
-		self.toolbar=QtGui.QToolBar(self)
+
+		self.toolbar = QtGui.QToolBar(self)
 		self.toolbar.setSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
 		layout.addWidget(self.toolbar)
 

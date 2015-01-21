@@ -13,7 +13,6 @@ class DebuggerHandler(object):
 	#EVENT
 	def onDebugEnter(self):		
 		self.busy=True
-		self.module.show()
 		self.module.setFocus()
 		self.module.toggleDebug(True)
 		# self.module.frame.MakeModal(True)
@@ -23,7 +22,7 @@ class DebuggerHandler(object):
 		if not self.module.alive: return
 		self.module.toggleDebug(False)
 		# self.module.frame.MakeModal(False)
-		self.module.book.clearHilight('normal')
+		# self.module.book.clearHilight('normal')
 
 
 	def onDebugInfo(self, msg=False, dataJSON=None):

@@ -120,9 +120,9 @@ class TextureAssetManager( AssetManager ):
 		pixmapPath = node.getObjectFile( 'pixmap' )
 		if pixmapPath:
 			mappedPath = context.getAbsFile( pixmapPath )
-			if context.isNewFile( mappedPath ):
+			# if context.isNewFile( mappedPath ):
 				# print( node.getNodePath(), mappedPath )
-				ImageHelpers.convertToWebP( mappedPath )
+				# ImageHelpers.convertToWebP( mappedPath )
 
 ##----------------------------------------------------------------##
 class PrebuiltAtlasAssetManager( AssetManager ):
@@ -465,7 +465,11 @@ class TextureLibrary( EditorModule ):
 	def _convertTextureFormat( self, fullPath, format, outputPath = None ):
 		if format == 'auto':
 			format = 'webp'
+		else:
+			format = 'png'
+		
 		print 'converting texture', fullPath, format
+
 		if format == 'webp':
 			ImageHelpers.convertToWebP( fullPath )
 		elif format == 'png':

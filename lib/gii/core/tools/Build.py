@@ -25,8 +25,8 @@ def run( **option ):
 	if option.get( 'verbose', False ):
 		arglist.append( '-v' )
 	
-	# if option.get( 'configure', False ):
-	# 	arglist.append( 'configure' )
+	if option.get( 'configure', False ):
+		subprocess.call( [waf, 'configure'] )
 
 	elif option.get( 'clean', False ):
 		arglist.append( 'clean' )
@@ -48,8 +48,10 @@ def run( **option ):
 				code = subprocess.call( arglist )
 				if code!=0:
 					logging.error( 'abnormal return code: %d ' % code)
+					return code
 				else:
 					print '%s building completed' % target
+					return 0
 			except Exception, e:
 				logging.error( 'cannot build host: %s ' % e)
 				return -1

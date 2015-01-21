@@ -29,7 +29,7 @@ class AnimPreviewer(AssetPreviewer):
 		return self.container
 
 	def accept(self, assetNode):
-		return assetNode.getType() in [ 'aurora_sprite', 'spine'  ]
+		return assetNode.getType() in [ 'aurora_sprite', 'spine', 'msprite'  ]
 		# return assetNode.getType() in [ 'aurora_sprite' ]
 
 	def onStart(self, assetNode):

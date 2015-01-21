@@ -128,7 +128,7 @@ cdef extern from "lupa.h" nogil:
     void  lua_rawgeti (lua_State *L, int idx, int n)
     void  lua_createtable (lua_State *L, int narr, int nrec)
     void *lua_newuserdata (lua_State *L, size_t sz)
-    bint  lua_getmetatable (lua_State *L, int objindex)
+    int   lua_getmetatable (lua_State *L, int objindex)
     void  lua_getfenv (lua_State *L, int idx)
 
     # set functions (stack -> Lua)
@@ -150,7 +150,7 @@ cdef extern from "lupa.h" nogil:
 
     # coroutine functions
     int  lua_yield (lua_State *L, int nresults)
-    int  lua_resume (lua_State *L, int narg)
+    int  lua_resume "__lupa_lua_resume" (lua_State *L, int narg)
     int  lua_status (lua_State *L)
 
     # garbage-collection function and options
@@ -177,7 +177,7 @@ cdef extern from "lupa.h" nogil:
     # some useful macros
     # ===============================================================
 
-    void lua_pop(lua_State *L, int idx)  # lua_settop(L, -(n)-1)
+    void lua_pop(lua_State *L, int n)    # lua_settop(L, -(n)-1)
     void lua_newtable(lua_State *L)      # lua_createtable(L, 0, 0)
     void  lua_register(lua_State *L, char* n, lua_CFunction f) # (lua_pushcfunction(L, (f)), lua_setglobal(L, (n)))
     void lua_pushcfunction(lua_State *L, lua_CFunction fn) # lua_pushcclosure(L, (f), 0)
@@ -201,7 +201,7 @@ cdef extern from "lupa.h" nogil:
 
 
     # compatibility macros and functions
-    lua_State* lua_open() # luaL_newstate()
+    lua_State* luaL_newstate()
     void lua_getregistry(lua_State *L) # lua_pushvalue(L, LUA_REGISTRYINDEX)
     int lua_getgccount(lua_State *L)
 
@@ -283,6 +283,7 @@ cdef extern from "lauxlib.h" nogil:
 
     void luaL_openlib (lua_State *L, char *libname, luaL_Reg *l, int nup)
     void luaL_register (lua_State *L, char *libname, luaL_Reg *l)
+    void luaL_setfuncs (lua_State *L, luaL_Reg *l, int nup)  # 5.2+
     int luaL_getmetafield (lua_State *L, int obj, char *e)
     int luaL_callmeta (lua_State *L, int obj, char *e)
     int luaL_typerror (lua_State *L, int narg, char *tname)
@@ -314,6 +315,7 @@ cdef extern from "lauxlib.h" nogil:
     int luaL_loadbuffer (lua_State *L, char *buff, size_t sz, char *name)
     int luaL_loadstring (lua_State *L, char *s)
 
+    lua_State* lua_open() # luaL_newstate()
     lua_State *luaL_newstate ()
 
 
@@ -417,3 +419,7 @@ cdef extern from "lualib.h":
     int luaopen_jit(lua_State *L)
 
     void luaL_openlibs(lua_State *L)
+
+
+cdef extern from "lupa_defs.h":
+    pass

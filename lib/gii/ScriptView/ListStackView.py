@@ -50,8 +50,8 @@ class ListStackView(QtGui.QListView):
 
 	def onDClicked( self, idx ):
 		if not idx.isValid(): return
-		level=self.model().data(idx, Qt.UserRole)
+		level = self.model().data(idx, Qt.UserRole)
 		if level['file']:
-			highLight= id==0
+			highLight = ( idx == 0 )
 			app.getModule('script_view').locateFile(
 				level['file'], level['line'], highLight and 'normal' or False)

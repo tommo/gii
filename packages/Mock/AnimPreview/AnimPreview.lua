@@ -20,6 +20,7 @@ function AnimPreview:showAnimSprite( path )
 	if node.type == 'aurora_sprite' then
 		self.spriteType = 'aurora'
 		self.sprite = self:attach( mock.AuroraSprite() )
+		self.sprite:setBlend( 'alpha' )
 		self.sprite:setSprite( path )
 		self.sprite:setFPS( 10 )
 		local names = {}
@@ -27,6 +28,19 @@ function AnimPreview:showAnimSprite( path )
 			table.insert( names, k )
 		end
 		return names
+
+	elseif node.type == 'msprite' then
+		self.spriteType = 'msprite'
+		self.sprite = self:attach( mock.MSprite() )
+		self.sprite:setSprite( path )
+		self.sprite:setFPS( 10 )
+		self.sprite:setBlend( 'alpha' )
+		local names = {}
+		for k in pairs( anim.animations ) do
+			table.insert( names, k )
+		end
+		return names
+
 	elseif node.type == 'spine' then
 		self.spriteType = 'spine'
 		self.sprite = self:attach( mock.SpineSpriteSimple() )
@@ -36,6 +50,7 @@ function AnimPreview:showAnimSprite( path )
 			names[ id ] = name
 		end
 		return names
+		
 	end
 end
 

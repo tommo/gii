@@ -83,7 +83,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		#menu
 		self.addMenuItem(
 			'main/file/open_scene', 
-			dict( label = 'Open Scene', shortcut = 'ctrl+o' )
+			dict( label = 'Open Scene', shortcut = 'ctrl+shift+o' )
 			)
 
 		self.addMenuItem( 'main/file/close_scene', 

@@ -93,6 +93,15 @@ class CodeBox( ScintillaCompat, Qsci.QsciScintilla ):
 			else:
 				pass
 
+	def clearHilight( self, hilight ):
+		if hilight == 'normal':
+			self.markerDeleteAll( MARKER_HILIGHT_NORMAL)
+		elif hilight=='serious':
+			self.markerDeleteAll( MARKER_HILIGHT_SERIOUS)
+		else:
+			self.markerDeleteAll( MARKER_HILIGHT_NORMAL)
+			self.markerDeleteAll( MARKER_HILIGHT_SERIOUS)
+
 	def toggleBreakPoint(self, line):
 		#'self.MarkerGet(line) & MARKER_BREAKPOINT
 		hasBreakpoint=self.MarkerGet(line, MARKER_BREAKPOINT)

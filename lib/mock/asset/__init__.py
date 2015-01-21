@@ -8,6 +8,7 @@ import Deck2DAsset
 import FontAsset
 import StyleSheetAsset
 import AuroraAsset
+import MSpriteAsset
 import SpineAsset
 
 import ParticleAsset

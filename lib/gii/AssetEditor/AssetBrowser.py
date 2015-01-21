@@ -53,7 +53,7 @@ class AssetBrowser( AssetEditorModule ):
 			'main/find/find_asset',   dict( label = 'Find Asset', shortcut = 'ctrl+T' )
 		)
 		self.addMenuItem(
-			'main/find/open_asset',   dict( label = 'Open Asset', shortcut = 'ctrl+shift+O' )
+			'main/find/open_asset',   dict( label = 'Open Asset', shortcut = 'ctrl+O' )
 		)
 
 		self.assetContextMenu=self.addMenu('asset_context')
