@@ -83,13 +83,16 @@ class CodeBox( ScintillaCompat, Qsci.QsciScintilla ):
 		self.setFocus()
 		if linenumber > 0:
 			self.gotoLine(linenumber)
-			self.currentHilight=hilight
-			if hilight=='normal':
+			self.currentHilight = hilight
+			if hilight == 'normal':
+				# print( 'highlight!', hilight )
 				self.markerDeleteAll( MARKER_HILIGHT_NORMAL)
 				self.markerAdd(linenumber, MARKER_HILIGHT_NORMAL)
-			elif hilight=='serious':
+
+			elif hilight == 'serious':
 				self.markerDeleteAll( MARKER_HILIGHT_SERIOUS)
 				self.markerAdd(linenumber, MARKER_HILIGHT_SERIOUS)
+
 			else:
 				pass
 

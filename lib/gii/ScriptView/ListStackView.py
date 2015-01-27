@@ -37,7 +37,6 @@ class ListStackView(QtGui.QListView):
 		self.onClicked(idx)
 		self.onDClicked(idx)
 
-
 	def selectRow(self, row):
 		idx=self.model().index(row,0)
 		if idx.isValid(): self.setCurrentIndex(idx)		
@@ -52,6 +51,8 @@ class ListStackView(QtGui.QListView):
 		if not idx.isValid(): return
 		level = self.model().data(idx, Qt.UserRole)
 		if level['file']:
-			highLight = ( idx == 0 )
+			highLight = ( idx.row() == 0 )
 			app.getModule('script_view').locateFile(
 				level['file'], level['line'], highLight and 'normal' or False)
+
+

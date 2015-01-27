@@ -42,7 +42,7 @@ class DebugView( TopEditorModule ):
 		self.addTool( 'scene/run',    label = 'Run' )
 		# self.addTool( 'scene/deploy', label = 'Deploy' )
 		#menu
-		self.addMenu( 'main/debug', dict( label = 'Debug' ) )
+		# self.addMenu( 'main/debug', dict( label = 'Debug' ) )
 
 	def onLoad( self ):
 		signals.connect( 'app.start', self.postStart )

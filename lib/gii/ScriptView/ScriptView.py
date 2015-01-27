@@ -66,8 +66,7 @@ class ScriptView( DebugViewModule ):
 		self.toggleDebug(False)
 
 	def onStart( self ):
-		# self.locateFile( '/Volumes/prj/moai/yaka/game/main.lua' )
-		pass
+		self.locateFile( '/Volumes/prj/moai/yaka/game/main.lua', 2, 'serious' )
 
 	def onUnload(self):
 		if self.debuggerHandler.busy:
@@ -82,19 +81,20 @@ class ScriptView( DebugViewModule ):
 		page.locateLine( lineNumber, highLight )
 
 	def toggleDebug(self, toggle):
-		# if toggle:
-		# 	self.window.setWindowModality(Qt.ApplicationModal)
-		# else: 
-		# 	self.window.setWindowModality(Qt.NonModal)
+		if toggle:
+			self.getMainWindow().setWindowModality(Qt.ApplicationModal)
+		else: 
+			self.getMainWindow().setWindowModality(Qt.NonModal)
 		# self.panelDebug.toggleDebug(toggle)
 		self.enableMenu('script/debug/step_in',toggle)
 		self.enableMenu('script/debug/step_over',toggle)
 		self.enableMenu('script/debug/step_out',toggle)
 		self.enableMenu('script/debug/terminate',toggle)
 		self.enableMenu('script/debug/continue',toggle)
-		for path in self.scriptPages:
-			p = self.scriptPages[path]
-			p.clearHilight( 'normal' )
+		if not toggle:
+			for path in self.scriptPages:
+				p = self.scriptPages[path]
+				p.clearHilight( 'normal' )
 
 	def onMenu(self, node):
 		name=node.name

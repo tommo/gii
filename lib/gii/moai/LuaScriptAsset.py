@@ -59,6 +59,9 @@ class LuaScriptAssetManager( AssetManager ):
 	def deployAsset( self, node, context ):
 		pass
 
+	def getMetaType( self ):
+		return 'script'
+
 ##----------------------------------------------------------------##
 class ScriptLibrary( EditorModule ):
 	def getName( self ):
@@ -116,7 +119,8 @@ class ScriptLibrary( EditorModule ):
 		for node in self.getAssetLibrary().enumerateAsset( 'lua' ):
 			hashed = _hashPath( node.getFilePath() )
 			dstPath = context.getAssetPath( hashed )
-			self.compileScript( node, dstPath, 'luajit' )
+			# self.compileScript( node, dstPath, 'lua' )
+			context._copyFile( node.getAbsFilePath(), dstPath )
 			exportIndex[ _convertToGameModuleName( node.getNodePath() ) ] = 'asset/' + hashed
 
 		jsonHelper.trySaveJSON(

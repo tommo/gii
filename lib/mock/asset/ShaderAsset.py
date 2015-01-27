@@ -12,6 +12,9 @@ class ShaderAssetManager( AssetManager ):
 	def getName( self ):
 		return 'asset_manager.shader'
 
+	def getMetaType( self ):
+		return 'script'
+
 	def acceptAssetFile(self, filePath):
 		if not os.path.isfile( filePath ): return False
 		name, ext = os.path.splitext( filePath )
@@ -58,6 +61,9 @@ class ShaderAssetCreator(AssetCreator):
 class ShaderScriptAssetManager( AssetManager ):
 	def getName( self ):
 		return 'asset_manager.shader_script'
+
+	def getMetaType( self ):
+		return 'script'
 
 	def acceptAssetFile(self, filePath):
 		if not os.path.isfile( filePath ): return False

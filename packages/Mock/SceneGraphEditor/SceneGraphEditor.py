@@ -470,9 +470,10 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def onPreviewStop( self ):
 		if not self.activeSceneNode: return
+		self.changeSelection( None )
+		self.tree.clear()
 		self.delegate.safeCallMethod( 'editor', 'stopScenePreview' )
 		self.previewing = False
-		self.tree.clear()
 		if self.delegate.safeCallMethod( 'editor', 'restoreScene' ):
 			self.tree.loadFoldState( self.retainedState )
 

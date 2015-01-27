@@ -23,11 +23,8 @@ local function onAssetModified( node ) --node: <py>AssetNode
 		local data = _pyAssetNodeToData( node )
 		mock.updateAssetNode( mockNode, data )
 	end
-	local luaAssetNode = mock.getAssetNode( nodepath )
-	if luaAssetNode then
-		emitSignal( 'asset.modified', luaAssetNode )
-	else
-		_error( 'unknown asset node', nodepath )
+	if mockNode then
+		emitSignal( 'asset.modified', mockNode )
 	end
 end
 

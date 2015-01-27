@@ -16,10 +16,10 @@ class MSpriteAssetManager(AssetManager):
 		return True
 
 	def importAsset(self, node, reload = False ):
-		if node.assetType == 'quadlists': return True
+		# if node.assetType == 'quadlists': return True
 		node.assetType = 'msprite'
 		node.setObjectFile( 'def', node.getFilePath() )
-		node.createChildNode( 'frames', 'quadlists', manager = self )
+		# node.createChildNode( 'frames', 'quadlists', manager = self )
 		return True
 
 MSpriteAssetManager().register()

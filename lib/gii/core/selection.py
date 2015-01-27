@@ -37,7 +37,7 @@ class SelectionManager(object):
 		if selection is None:
 			selection = []
 		self.currentSelection = selection
-		signals.emit('selection.changed', selection, self.key )
+		signals.emitNow('selection.changed', selection, self.key )
 
 	def addSelection( self, selection ):
 		if not selection: return
@@ -50,7 +50,7 @@ class SelectionManager(object):
 			self.historyPos += 1
 			selection=self.history[hisSize - self.historyPos]
 			self.currentSelection=selection
-			signals.emit('selection.changed', selection, self.key )
+			signals.emitNow('selection.changed', selection, self.key )
 
 	def historyForward(self):
 		hisSize = len(self.history)
@@ -58,7 +58,7 @@ class SelectionManager(object):
 			self.historyPos -= 1
 			selection=self.history[hisSize - self.historyPos]
 			self.currentSelection=selection
-			signals.emit('selection.changed', selection, self.key )
+			signals.emitNow('selection.changed', selection, self.key )
 
 	def getSelection(self):
 		return self.currentSelection or []

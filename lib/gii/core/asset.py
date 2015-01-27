@@ -468,6 +468,9 @@ class AssetManager(object):
 	def onRegister( self ):
 		pass
 
+	def getMetaType( self ):
+		return None
+
 ##----------------------------------------------------------------##
 class RawAssetManager(AssetManager):	
 	def getName(self):

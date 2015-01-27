@@ -13,7 +13,8 @@ if app.getModule('asset_browser'):
 			return self.textBrowser
 
 		def accept(self, assetNode):
-			return assetNode.isType( 'lua','script', 'text' )
+			return assetNode.getManager().getMetaType() in [ 'text', 'script' ]
+			# return assetNode.isType( 'lua', 'script', 'text' )
 
 		def onStart(self, assetNode):
 			try:
