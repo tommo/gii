@@ -76,25 +76,11 @@ class MOAICanvasBase(GLWidget):
 		inputDevice=self.inputDevice
 		if not inputDevice: return
 		key=event.key()
-		if   key == Qt.Key_Shift:
-			inputDevice.getSensor('keyboard').enqueueShiftEvent(True)
-		elif key == Qt.Key_Control:
-			inputDevice.getSensor('keyboard').enqueueControlEvent(True)
-		elif key == Qt.Key_Alt:
-			inputDevice.getSensor('keyboard').enqueueAltEvent(True)
-		else:
-			inputDevice.getSensor('keyboard').enqueueEvent(convertKeyCode(key), True)
+		inputDevice.getSensor('keyboard').enqueueKeyEvent(convertKeyCode(key), True)
 
 	def keyReleaseEvent(self, event):
 		inputDevice=self.inputDevice
 		if not inputDevice: return
 		key=event.key()
-		if   key == Qt.Key_Shift:
-			inputDevice.getSensor('keyboard').enqueueShiftEvent(False)
-		elif key == Qt.Key_Control:
-			inputDevice.getSensor('keyboard').enqueueControlEvent(False)
-		elif key == Qt.Key_Alt:
-			inputDevice.getSensor('keyboard').enqueueAltEvent(False)
-		else:
-			inputDevice.getSensor('keyboard').enqueueEvent(convertKeyCode(key), False)
+		inputDevice.getSensor('keyboard').enqueueKeyEvent(convertKeyCode(key), False)
 

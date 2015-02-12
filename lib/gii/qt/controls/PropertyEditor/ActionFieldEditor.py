@@ -2,6 +2,7 @@ from gii.core.model import *
 
 from PropertyEditor import FieldEditor, registerSimpleFieldEditorFactory
 from gii.SearchView import requestSearchView
+from gii.qt.IconCache  import getIcon
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
@@ -37,7 +38,10 @@ class ActionFieldEditor( FieldEditor ):
 			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Expanding
 			)
-		self.button.setText( self.label + ' >>')	
+		self.button.setToolButtonStyle( Qt.ToolButtonTextBesideIcon )
+		self.button.setText( self.label )
+		icon = self.getOption( 'icon', 'play' )
+		self.button.setIcon( getIcon(icon) )
 		self.button.clicked.connect( self.doAction )
 		return self.button
 

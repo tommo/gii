@@ -41,3 +41,4 @@ require 'mock_edit.AssetHelper.FMODReloader'
 
 
 mock._allowAssetCacheWeakMode( false )
+MOAISim.getInputMgr().configuration = 'GII'

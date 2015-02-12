@@ -126,7 +126,7 @@ end
 
 function SceneGraphEditor:stopScenePreview()
 	-- _collectgarbage( 'collect' )
-	GIIHelper.forceGC()
+	-- GIIHelper.forceGC()
 	mock.game:stop()
 	--restore layer visiblity
 	for i, l in pairs( mock.game:getLayers() ) do 

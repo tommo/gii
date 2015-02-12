@@ -165,33 +165,26 @@ class MOAIJoystickSensor(MOAIInputSensor):
 
 ##----------------------------------------------------------------##
 class MOAIKeyboardSensor(MOAIInputSensor):
-	def enqueueEvent(self, keyId, down):
-		getAKU().enqueueKeyboardEvent(
+	def enqueueKeyEvent(self, keyId, down):
+		getAKU().enqueueKeyboardKeyEvent(
 				self.device.id, 
 				self.id,
 				keyId,
 				down
 			)
 
-	def enqueueShiftEvent(self, down):
-		getAKU().enqueueKeyboardShiftEvent(
+	def enqueueCharEvent(self, char):
+		getAKU().enqueueKeyboardKeyEvent(
 				self.device.id, 
 				self.id,
-				down
+				char
 			)
 
-	def enqueueControlEvent(self, down):
-		getAKU().enqueueKeyboardControlEvent(
+	def enqueueTextEvent(self, text):
+		getAKU().enqueueKeyboardKeyEvent(
 				self.device.id, 
 				self.id,
-				down
-			)
-
-	def enqueueAltEvent(self, down):
-		getAKU().enqueueKeyboardAltEvent(
-				self.device.id, 
-				self.id,
-				down
+				text
 			)
 
 	def onRegister(self):

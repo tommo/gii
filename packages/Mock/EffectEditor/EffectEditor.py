@@ -342,8 +342,11 @@ class EffectNodeTreeWidget( GenericTreeWidget ):
 		return node.parent
 
 	def getNodeChildren( self, node ):		
-		return [ node for node in node.children.values() ]
-
+		result = []
+		for node in node.children.values():
+			if not node[ '_hidden' ]: result.append( node )
+		return result
+		
 	def updateItemContent( self, item, node, **option ):
 		if node == self.getRootNode():
 			item.setText( 0, node['name'] )

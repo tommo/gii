@@ -24,7 +24,8 @@ function createRenderContext( key, cr,cg,cb,ca )
 	else
 		clearColor = { cr or 0, cg or 0, cb or 0, ca or 0 }
 	end
-	local root = MOAICoroutine.new()
+	local root = MOAITimer.new()
+	root:setMode( MOAITimer.CONTINUE )
 	local context = {
 		key              = key,
 		w                = false,
@@ -34,8 +35,9 @@ function createRenderContext( key, cr,cg,cb,ca )
 		bufferTable      = {},
 		renderTableMap   = {},
 	}
+	root._contextKey = key
 	renderContextTable[ key ] = context
-	root:run( function() local dt = coroutine.yield() end )
+	-- root:run( function() local dt = coroutine.yield() end )
 end
 
 

@@ -326,7 +326,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		
 		self.makeCurrent()
 
-		if not option.get( 'no_sim', False ):		
+		if not option.get( 'no_sim', False ):	
 			runtime.stepSim( step )
 			getAKU().updateFMOD()
 

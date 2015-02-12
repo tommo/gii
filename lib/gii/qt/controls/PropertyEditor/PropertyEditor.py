@@ -74,10 +74,11 @@ class PropertyEditor( QtGui.QWidget ):
 	_fieldEditorCacheWidget = None
 	_fieldEditorCache = {}
 
-	def __init__( self, parent ):
+	def __init__( self, parent ):	
 		super( PropertyEditor, self ).__init__( parent )
 		if not PropertyEditor._fieldEditorCacheWidget:
 			PropertyEditor._fieldEditorCacheWidget = QtGui.QWidget()
+		self.setObjectName( 'PropertyEditor' )
 		layout = QtGui.QFormLayout( )
 		self.setLayout( layout )
 		self.layout = layout
@@ -87,7 +88,7 @@ class PropertyEditor( QtGui.QWidget ):
 		self.layout.setFieldGrowthPolicy( QtGui.QFormLayout.ExpandingFieldsGrow )
 		self.setSizePolicy( 
 			QtGui.QSizePolicy.Expanding,
-			QtGui.QSizePolicy.Minimum
+			QtGui.QSizePolicy.Expanding
 		)
 		self.editors    = {}
 		self.target     = None
@@ -114,7 +115,7 @@ class PropertyEditor( QtGui.QWidget ):
 			QtGui.QSizePolicy.Fixed
 		)
 		# line.setStyleSheet('background:none; border:none; ')
-		line.setStyleSheet('background:none; border-top:1px solid #333; margin: 2px 0 4px 0;')
+		line.setStyleSheet('background:none; border-top:1px solid #292929; margin: 2px 0 4px 0;')
 		line.setMinimumSize( 30, 7 )
 		self.layout.addRow( line )
 

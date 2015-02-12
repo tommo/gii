@@ -7,7 +7,6 @@ function scheduleUpdate()
 end
 --------------------------------------------------------------------
 local inputDevice = mock_edit.createEditorCanvasInputDevice()
-
 --------------------------------------------------------------------
 CLASS:SceneView ( mock_edit.EditorEntity )
 

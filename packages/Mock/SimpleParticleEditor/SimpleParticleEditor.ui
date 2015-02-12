@@ -15,25 +15,47 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <property name="topMargin">
-    <number>30</number>
+    <number>12</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="containerPropSystem">
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
-       <width>280</width>
+       <width>300</width>
        <height>0</height>
       </size>
      </property>
-     <property name="maximumSize">
-      <size>
-       <width>280</width>
-       <height>16777215</height>
-      </size>
+     <property name="autoFillBackground">
+      <bool>true</bool>
      </property>
-     <property name="title">
-      <string>System</string>
+     <property name="widgetResizable">
+      <bool>true</bool>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+     </property>
+     <widget class="QWidget" name="containerPropSystem">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>298</width>
+        <height>548</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
     </widget>
    </item>
    <item>
@@ -56,7 +78,6 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <zorder>containerLeft</zorder>
     </widget>
    </item>
   </layout>
