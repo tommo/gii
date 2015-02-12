@@ -11,22 +11,22 @@ def run( **option ):
 	assert project.isLoaded()
 	os.chdir( project.getHostPath() )
 
-	waf = app.getPath( 'support/waf/waf' )
+	arglist = []
+	arglist += [ app.getPythonPath(), app.getPath( 'support/waf/waf' ) ]
+
 	#check configure
-	code = subprocess.call( [waf, 'list'], stdout = FNULL, stderr = FNULL )
+	code = subprocess.call( arglist + ['list'], stdout = FNULL, stderr = FNULL )
 	if code != 0:
-		code = subprocess.call( [waf, 'configure'] )
+		code = subprocess.call( arglist + ['configure'] )
 		if code != 0:
 			logging.error( 'cannot configure building ' )
 			return -1
-
-	arglist = [	waf	]
 
 	if option.get( 'verbose', False ):
 		arglist.append( '-v' )
 	
 	if option.get( 'configure', False ):
-		subprocess.call( [waf, 'configure'] )
+		subprocess.call( arglist + ['configure'] )
 
 	elif option.get( 'clean', False ):
 		arglist.append( 'clean' )
@@ -42,8 +42,8 @@ def run( **option ):
 		config = option.get( 'profile', 'debug' )
 		for target in targets:
 			suffix = '-%s-%s' % ( target, config )
-			arglist.append( 'build' + suffix )
-			arglist.append( 'install' + suffix )
+			arglist += [ 'build' + suffix ]
+			arglist += [ 'install' + suffix ]
 			try:
 				code = subprocess.call( arglist )
 				if code!=0:

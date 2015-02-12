@@ -105,8 +105,13 @@ def convertToPNG( inputPath, outputPath, **options ):
 
 ##----------------------------------------------------------------##
 def convertToWebP( src, dst = None, **option ):
+	if app.getPlatformName() == 'osx':
+		cwebp = app.getPath( 'support/webp/osx/cwebp' )
+	elif app.getPlatformName() == 'win':
+		cwebp = app.getPath( 'support/webp/win/cwebp.exe' )
+
 	arglist = [
-		app.getPath( 'support/webp/cwebp' ),
+		cwebp,
 		'-quiet'
 		# '-hint', 'photo'
 	]
@@ -131,28 +136,31 @@ def convertToWebP( src, dst = None, **option ):
 ##----------------------------------------------------------------##
 #texturetool -e PVRTC --channel-weighting-linear --bits-per-pixel-4 -o ImageL4.pvrtc Image.png
 def convertToPVR( src, dst = None, **option ):
-	arglist = [
+	if app.getPlatformName() == 'osx':
 		app.getPath( 'support/pvrtc/texturetool' ),
-		'-e', 'PVRTC',
-		'-f', 'PVR',
-		'--channel-weighting-linear',
-	]
+		arglist = [
+			'-e', 'PVRTC',
+			'-f', 'PVR',
+			'--channel-weighting-linear',
+		]
 
-	bbp = option.get( 'bbp', 4 )
-	if bbp == 4 :
-		arglist += ['--bits-per-pixel-4']
+		bbp = option.get( 'bbp', 4 )
+		if bbp == 4 :
+			arglist += ['--bits-per-pixel-4']
+		else:
+			arglist += ['--bits-per-pixel-2']
+		
+		if not dst:
+			dst = src
+		arglist += [
+			'-o',
+			dst,
+			src,
+		 ]
+		print 'convert to pvr %s -> %s' % ( src, dst )
+		return subprocess.call( arglist )
 	else:
-		arglist += ['--bits-per-pixel-2']
-	
-	if not dst:
-		dst = src
-	arglist += [
-		'-o',
-		dst,
-		src,
-	 ]
-	print 'convert to pvr %s -> %s' % ( src, dst )
-	return subprocess.call( arglist )
+		logging.error( 'not supported!' )
 
 ##----------------------------------------------------------------##
 def quantize( src, dst = None, **option ):

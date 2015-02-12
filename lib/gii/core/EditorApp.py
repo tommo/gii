@@ -1,5 +1,6 @@
 import os
 import os.path
+import sys
 import logging
 import time
 import platform
@@ -151,6 +152,9 @@ class EditorApp(object):
 			return self.basePath + '/' + path
 		else:
 			return self.basePath
+
+	def getPythonPath( self ):
+		return sys.executable
 
 	def findDataFile( self, fileName ):
 		for path in self.dataPaths:
