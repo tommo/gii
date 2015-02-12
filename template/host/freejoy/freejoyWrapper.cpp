@@ -41,7 +41,7 @@ void FreeJoyState::Poll( FreeJoyManager* manager ) {
 		float v0 = mAxisStates[ axisId ];
 		float v1 = axisStates1[ axisId ];
 		float diff = v0 - v1;
-		if( diff < -0.01f or diff > 0.01f ) {
+		if( diff < -0.01f || diff > 0.01f ) {
 			mAxisStates[ axisId ] = v1;
 			manager->SendAxisEvent( mId, axisId, v1 );
 		}

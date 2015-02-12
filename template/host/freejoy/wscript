@@ -22,7 +22,13 @@ def build( bld ):
 			os.mkdir( binPath + '/python' )
 		output = binPath + '/python'
 
-		INSTALL_NAME = 'freejoy.so'
+		if sys.platform == 'darwin':
+			source = [ 'freejoy.pyx', 'freejoy.macosx.c' ]
+			INSTALL_NAME = 'freejoy.so'
+		elif sys.platform == 'win32':
+			source = [ 'freejoy.pyx', 'freejoy.win32.c' ]
+			INSTALL_NAME = 'freejoy.dll'
+
 		bld(
 			source   = 'freejoy.pyx freejoy.macosx.c',
 			features = 'cxx cxxshlib pyext',
@@ -43,8 +49,14 @@ def build( bld ):
 			install_path = output
 		)
 	else:
+		import sys
+		if sys.platform == 'darwin':
+			source = [ 'freejoyWrapper.cpp', 'freejoy.macosx.c' ]
+		elif sys.platform == 'win32':
+			source = [ 'freejoyWrapper.cpp', 'freejoy.win32.c' ]
+
 		bld.stlib( 
-			source = 'freejoy.macosx.c freejoyWrapper.cpp',
+			source = source,
 			target = 'freejoy',
 			export_includes = '.',	
 			includes = [ '.' ],
