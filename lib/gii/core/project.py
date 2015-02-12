@@ -179,7 +179,7 @@ class Project(object):
 		signals.emitNow('project.init', self)
 		logging.info( 'project initialized: %s' % path )
 		self.info['name'] = name
-
+		self.saveConfig()
 		self.save()
 		return True	
 
