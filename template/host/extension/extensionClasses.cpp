@@ -1,17 +1,10 @@
 #include <extensionClasses.h>
 #include "pch.h"
 #include <moaicore/MOAILua.h>
-// #include <TMOffsetGridDeck.h>
-// #include <TMManualBlocker.h>
-// #include <MDDHelper.h>
-// #include <TMPathGrid.h>
-// #include <TMTileDeck2D.h>
-// #include <TMBlockProp.h>
-// #include <TMInfluenceMap.h>
-// #include <MDDMap.h>
-// #include <MDDMapObject.h>
-// #include <MOAISimplexNoiseGenerator.h>
+#include "MOAIGfxMaskedQuadListDeck2D.h"
 
 
 void registerExtensionClasses(){
+	REGISTER_LUA_CLASS(MOAIGfxMaskedQuadListDeck2D)
+	REGISTER_LUA_CLASS(MOAIGfxMaskedQuadListDeck2DInstance)
 }
