@@ -59,7 +59,8 @@ def build( bld ):
 		stlib      = LIBS_SYSTEM + [ 'python2.7' ],
 		cxxflags   = [ 
 			'-DMOAI_WITH_LUAEXT', 
-			'-DMOAI_WITH_FMOD_DESIGNER' 
+			'-DMOAI_WITH_FMOD_DESIGNER',
+			'-fvisibility=default'
 		],
 
 		linkflags = [

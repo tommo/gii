@@ -992,13 +992,15 @@ cdef class _LuaIter:
         self._state = NULL
         assert obj._runtime is not None
         self._runtime = obj._runtime
+        # additional INCREF to keep runtime from disappearing in GC runs
+        cpython.ref.Py_INCREF(self._runtime)
         self._obj = obj
         self._state = obj._state
         self._refiter = 0
         self._what = what
 
     def __dealloc__(self):
-        if self._runtime is None:
+        if self._runtime is None or self._runtime._state ==NULL :
             return
         cdef lua_State* L = self._state
         if L is not NULL and self._refiter:
@@ -1011,6 +1013,8 @@ cdef class _LuaIter:
             lua.luaL_unref(L, lua.LUA_REGISTRYINDEX, self._refiter)
             if locked:
                 unlock_runtime(self._runtime)
+            # undo additional INCREF at instantiation time
+            cpython.ref.Py_DECREF(self._runtime)
 
     def __repr__(self):
         return u"LuaIter(%r)" % (self._obj)

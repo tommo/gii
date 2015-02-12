@@ -85,10 +85,9 @@ cdef extern from "moai-sim/host.h" nogil:
 	# input events api
 	void		AKUEnqueueButtonEvent		( int deviceID, int sensorID, bint down )
 	void		AKUEnqueueCompassEvent		( int deviceID, int sensorID, float heading )
-	void		AKUEnqueueKeyboardAltEvent		( int deviceID, int sensorID, bint down )
-	void		AKUEnqueueKeyboardControlEvent	( int deviceID, int sensorID, bint down )
-	void		AKUEnqueueKeyboardEvent		( int deviceID, int sensorID, int keyID, bint down )
-	void		AKUEnqueueKeyboardShiftEvent	( int deviceID, int sensorID, bint down )
+	void		AKUEnqueueKeyboardKeyEvent		( int deviceID, int sensorID, int keyID, bint down )
+	void		AKUEnqueueKeyboardTextEvent		( int deviceID, int sensorID, const_char_ptr text )
+	void		AKUEnqueueKeyboardCharEvent		( int deviceID, int sensorID, int char )
 	void		AKUEnqueueLevelEvent		( int deviceID, int sensorID, float x, float y, float z )
 	void		AKUEnqueueLocationEvent		( int deviceID, int sensorID, double longitude, double latitude, double altitude, float hAccuracy, float vAccuracy, float speed )
 	void		AKUEnqueuePointerEvent		( int deviceID, int sensorID, int x, int y )

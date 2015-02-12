@@ -1,3 +1,4 @@
+STUFF = "Hi"
 from AKU cimport *
 
 import atexit
@@ -169,17 +170,14 @@ cdef class AKU:
 	def enqueueCompassEvent(self, deviceID, sensorID, heading):
 		AKUEnqueueCompassEvent(deviceID, sensorID, heading)
 
-	def enqueueKeyboardAltEvent(self, deviceID, sensorID, down):
-		AKUEnqueueKeyboardAltEvent(deviceID, sensorID, down)
+	def enqueueKeyboardKeyEvent(self, deviceID, sensorID, keyID, down):
+		AKUEnqueueKeyboardKeyEvent(deviceID, sensorID, keyID, down)
 
-	def enqueueKeyboardControlEvent(self, deviceID, sensorID, down):
-		AKUEnqueueKeyboardControlEvent(deviceID, sensorID, down)
+	def enqueueKeyboardCharEvent(self, deviceID, sensorID, character ):
+		AKUEnqueueKeyboardCharEvent(deviceID, sensorID, character)
 
-	def enqueueKeyboardShiftEvent(self, deviceID, sensorID, down):
-		AKUEnqueueKeyboardShiftEvent(deviceID, sensorID, down)
-
-	def enqueueKeyboardEvent(self, deviceID, sensorID, keyID, down):
-		AKUEnqueueKeyboardEvent(deviceID, sensorID, keyID, down)
+	def enqueueKeyboardTextEvent(self, deviceID, sensorID, text):
+		AKUEnqueueKeyboardTextEvent(deviceID, sensorID, text)
 
 	def enqueueLevelEvent(self, deviceID, sensorID, x, y, z):
 		AKUEnqueueLevelEvent(deviceID, sensorID, x, y, z)

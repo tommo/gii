@@ -1,10 +1,10 @@
 // Copyright (c) 2010-2011 Zipline Games, Inc. All Rights Reserved.
 // http://getmoai.com
 
-#ifndef	GLUTHOSTTEST
-#define	GLUTHOSTTEST
+#ifndef	SDLHOST_H
+#define	SDLHOST_H
 
 //----------------------------------------------------------------//
-int		GlutHostTest			( int argc, char** arg );
+int		SDLHost					( int argc, char** arg );
 
 #endif

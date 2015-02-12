@@ -1,17 +1,10 @@
 #include <GIIHelper.h>
 
-int GIIHelper::_stepSim( lua_State *L){
+int GIIHelper::_stepSim( lua_State *L ){
 	MOAILuaState state (L);
 	if ( !state.CheckParams ( 1, "N" )) return 0;
-	double step = state.GetValue<double>(1, 0);
-	GIIHelper::Get().stepSim(step);
-	return 0;
-}
-
-int GIIHelper::_updateInput( lua_State *L){
-	MOAILuaState state (L);
-	double step = state.GetValue<double>(1, 0);
-	GIIHelper::Get().updateInput( step );
+	double step = state.GetValue< double >( 1, 0.0f );
+	GIIHelper::Get().stepSim( step );
 	return 0;
 }
 
@@ -35,7 +28,9 @@ int GIIHelper::_renderFrameBuffer( lua_State *L ){
 	if ( !state.CheckParams ( 1, "U" )) return 0;
 	MOAIFrameBuffer* frameBuffer = state.GetLuaObject < MOAIFrameBuffer >( 1, false );
 	if (frameBuffer) {
+		zglBegin();
 		frameBuffer->Render();
+		zglEnd();
 	}
 	return 0;
 }
@@ -101,13 +96,10 @@ int GIIHelper::_setWorldLoc( lua_State *L ){
 
 void GIIHelper::stepSim( double step ){
 	// MOAIInputMgr::Get ().Update ();
-	MOAIActionMgr::Get ().Update (( float )step );		
+	MOAISim::Get().GetActionTree().Update (( float )step );		
 	MOAINodeMgr::Get ().Update ();
 }
 
-void GIIHelper::updateInput( double step ){
-	MOAIInputMgr::Get ().Update ( step );
-}
 
 GIIHelper::GIIHelper(){
 	RTTI_BEGIN

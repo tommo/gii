@@ -1,8 +1,8 @@
 // Copyright (c) 2010-2011 Zipline Games, Inc. All Rights Reserved.
 // http://getmoai.com
 
-#include <aku/AKU-particles.h>
-#include <ParticlePresets.h>
+#include <moai-sim/host_particles.h>
+#include "ParticlePresets.h"
 
 #define UNUSED(p) (( void )p)
 

@@ -4,9 +4,8 @@
 #include <moai-core/MOAILogMessages.h>
 
 #include <moai-sim/pch.h>
-#include <moai-sim/MOAIActionMgr.h>
 #include <moai-sim/MOAIGfxDevice.h>
-#include <moai-sim/MOAIInputMgr.h>
+// #include <moai-sim/MOAIInputMgr.h>
 #include <moai-sim/MOAINodeMgr.h>
 #include <moai-sim/MOAISim.h>
 #include <moai-sim/MOAITransform.h>
