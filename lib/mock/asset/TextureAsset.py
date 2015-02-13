@@ -174,19 +174,15 @@ class TextureLibrary( EditorModule ):
 		signals.connect( 'project.save', self.onSaveProject )
 
 	def onStart( self ):
-		if os.path.exists( self.dataPath ):
-			self.loadIndex()
-		else:
+		self.lib = _MOCK.getTextureLibrary()
+		if not os.path.exists( self.dataPath ):
 			self.saveIndex()
-
-	def getLibrary( self ):
-		return self.lib
-
-	def loadIndex( self ):
-		self.lib = _MOCK.loadTextureLibrary( self.dataPath )
 		for group in self.lib.groups.values():
 			if group.atlasCachePath:
 				CacheManager.get().touchCacheFile( group.atlasCachePath )
+		
+	def getLibrary( self ):
+		return self.lib
 			
 	def saveIndex( self ):
 		logging.info( 'saving texture library index' )

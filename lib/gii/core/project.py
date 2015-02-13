@@ -165,6 +165,7 @@ class Project(object):
 		def ignore( src, names ):
 			return ['.DS_Store']
 		shutil.copytree( getMainModulePath('template/host'), self.getPath('host'), ignore )
+		shutil.copytree( getMainModulePath('template/game'), self.getPath('game'), ignore )
 		shutil.copy( getMainModulePath('template/.gitignore'), self.getPath() )
 		#
 		self._affirmDirectories()
