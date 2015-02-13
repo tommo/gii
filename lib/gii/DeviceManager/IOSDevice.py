@@ -1,13 +1,16 @@
 import os
+import time
 import stat
 import logging
 
 from Device import DeviceItem
-from gii.core import app
+from gii.core import app, EditorModule
 import json
 
+from MobileDevice.MobileDevice import *
 import MobileDevice
 import subprocess
+import threading
 
 _FILE_INDEX = '_FILE_INDEX'
 _TEST_APP_ID = 'com.pixpil.giitest'
@@ -139,6 +142,23 @@ def getAppAFC( dev, appName ):
 	return  MobileDevice.AFCApplicationDirectory( dev, appName.decode( u'utf-8' ) )
 
 ##----------------------------------------------------------------##
+class IOSDeviceDebugSession(object):
+	def __init__( self, deviceItem ):
+		tool = app.getPath( 'support/deploy/ios-deploy' )
+		arglist = [ tool ]
+		localPath = app.getProject().getHostPath( 'ios/build/Release-iphoneos/YAKA.app' )
+		arglist += ['--id', deviceItem.getId() ]
+		arglist += ['--bundle', localPath ]
+		arglist += ['--debug']
+		try:
+			code = subprocess.call( arglist )
+			if code!=0: return code
+		except Exception, e:
+			logging.error( 'error in debugging device: %s ' % e)
+			return -1		
+
+
+##----------------------------------------------------------------##
 class IOSDeviceItem( DeviceItem ):
 	def __init__( self, devId, connected = True ):
 		self._deviceId = devId
@@ -211,17 +231,65 @@ class IOSDeviceItem( DeviceItem ):
 		afc.disconnect()
 		return True
 
-class IOSDeviceDebugSession(object):
-	def __init__( self, deviceItem ):
-		tool = app.getPath( 'support/deploy/ios-deploy' )
-		arglist = [ tool ]
-		localPath = app.getProject().getHostPath( 'ios/build/Release-iphoneos/YAKA.app' )
-		arglist += ['--id', deviceItem.getId() ]
-		arglist += ['--bundle', localPath ]
-		arglist += ['--debug']
-		try:
-			code = subprocess.call( arglist )
-			if code!=0: return code
-		except Exception, e:
-			logging.error( 'error in debugging device: %s ' % e)
-			return -1		
+
+##----------------------------------------------------------------##
+class IOSDeviceMonitorThread( threading.Thread ):
+	def __init__( self, callback, *args ):
+		super( IOSDeviceMonitorThread, self ).__init__( *args )
+		self.devices = {}
+		self.callback = callback
+		self.active   = False
+		self.deamon   = True
+
+	def run( self ):		
+		self.active   = True
+		devices = self.devices
+		def cbFunc(info, cookie):
+			info = info.contents
+			if info.message == ADNCI_MSG_CONNECTED:
+				dev = IOSDeviceItem( info.device, True )
+				devices[info.device] = dev
+				self.callback( 'connected', dev )
+
+			elif info.message == ADNCI_MSG_DISCONNECTED:
+				dev = devices[info.device]
+				self.callback( 'disconnected', dev )
+				del devices[info.device]
+
+		notify = AMDeviceNotificationRef()
+		notifyFunc = AMDeviceNotificationCallback(cbFunc)
+		err = AMDeviceNotificationSubscribe(notifyFunc, 0, 0, 0, byref(notify))
+		if err != MDERR_OK:
+			raise RuntimeError(u'Unable to subscribe for notifications')
+
+		# loop so we can exit easily
+		while self.active:
+			CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.01, False)
+			time.sleep( 0.1 )
+
+		AMDeviceNotificationUnsubscribe(notify)
+
+	def getDevices( self ):
+		return self.devices
+
+	def stop( self ):
+		self.active = False
+
+##----------------------------------------------------------------##
+class IOSDeviceMonitor( EditorModule ):
+	name       = 'ios_device_monitor'
+	dependency = ['device_manager']
+
+	def __init__( self ):
+		self._monitorThread = None
+
+	def onStart( self ):
+		self._monitorThread = IOSDeviceMonitorThread( self.onDeviceEvent  )
+		self._monitorThread.start()
+
+	def onStop( self ):
+		self._monitorThread.stop()
+		self._monitorThread = None
+
+	def onDeviceEvent( self, ev, device ):
+		self.getModule( 'device_manager' ).onDeviceEvent( ev, device )

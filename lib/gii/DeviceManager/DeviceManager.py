@@ -13,9 +13,7 @@ from gii.qt.QtEditorModule  import QtEditorModule
 
 from gii.SearchView       import requestSearchView, registerSearchEnumerator
 
-import MobileDevice
 import Device
-from   MonitorThread import startDeviceMonitorThread, stopDeviceMonitorThread
 
 ##----------------------------------------------------------------##
 # def getIOSDeviceName( dev ):
@@ -44,6 +42,7 @@ class DeviceManager( EditorModule ):
 		return []
 		
 	def onLoad( self ):
+		self.deviceTypes  = {}
 		self.containers   = {}
 		self.devices      = {}
 
@@ -51,12 +50,6 @@ class DeviceManager( EditorModule ):
 		registerSearchEnumerator( deviceSearchEnumerator )
 		#load device history
 		signals.connect( 'project.done_deploy', self.onDoneDeploy )
-
-	def onStart( self ):
-		startDeviceMonitorThread( self.onDeviceEvent )
-	
-	def onStop( self ):
-		stopDeviceMonitorThread()
 
 	def onDeviceEvent( self, ev, device ):
 		if ev == 'connected':
@@ -91,7 +84,7 @@ class DeviceManager( EditorModule ):
 		activeDevice.deploy( context )
 		print 'deploy done!'
 	
-		
+
 DeviceManager().register()
 ##----------------------------------------------------------------##
 def deviceSearchEnumerator( typeId, context ):
