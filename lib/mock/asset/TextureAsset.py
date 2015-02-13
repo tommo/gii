@@ -173,8 +173,11 @@ class TextureLibrary( EditorModule ):
 		signals.connect( 'project.deploy', self.onDeploy )
 		signals.connect( 'project.save', self.onSaveProject )
 
-	def onStart( self ):		
-		self.loadIndex()		
+	def onStart( self ):
+		if os.path.exists( self.dataPath ):
+			self.loadIndex()
+		else:
+			self.saveIndex()
 
 	def getLibrary( self ):
 		return self.lib
