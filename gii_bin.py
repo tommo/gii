@@ -32,9 +32,15 @@ def getMainModulePath():
 			return os.path.dirname( mainfile )
 
 giipath = getMainModulePath() + '/lib'
-thirdPartyPath = getMainModulePath() + '/lib/3rdparty'
+thirdPartyPathBase = getMainModulePath() + '/lib/3rdparty'
+thirdPartyPathCommon = thirdPartyPathBase + '/common'
+if platform.system() == u'Darwin':
+	thirdPartyPathNative = thirdPartyPathBase + '/osx'
+else:
+	thirdPartyPathNative = thirdPartyPathBase + '/windows'
 sys.path.insert( 0, giipath )
-sys.path.insert( 1, thirdPartyPath )
+sys.path.insert( 2, thirdPartyPathNative )
+sys.path.insert( 1, thirdPartyPathCommon )
 
 ##----------------------------------------------------------------##
 import gii_cfg
