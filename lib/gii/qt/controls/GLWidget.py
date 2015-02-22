@@ -34,7 +34,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		fmt.setAlpha(True)
 		fmt.setDepth(True)
 		fmt.setDoubleBuffer(True)
-		if option.get( 'sync', False ):
+		if option.get( 'vsync', False ):
 			fmt.setSwapInterval( 1 )
 		else:
 			fmt.setSwapInterval( 0 )

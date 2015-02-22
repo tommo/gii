@@ -38,9 +38,9 @@ end
 
 function TransformProxy:updatePivot()
 	local totalX, totalY = 0, 0
-	for e in pairs( self.targets ) do
-		e:forceUpdate()		
-		local x1,y1 = e:modelToWorld( e:getPiv() )
+	for entity in pairs( self.targets ) do
+		entity:forceUpdate()		
+		local x1,y1 = entity:modelToWorld( entity:getPiv() )
 		totalX = totalX + x1
 		totalY = totalY + y1		
 	end
@@ -58,12 +58,12 @@ end
 function TransformProxy:syncFromTarget()
 	self.syncing = true
 	self:forceUpdate()
-	for e, proxy in pairs( self.proxies ) do
-		e:forceUpdate()
+	for entity, proxy in pairs( self.proxies ) do
+		entity:forceUpdate()
 		proxy:forceUpdate()
-		GIIHelper.setWorldLoc( proxy, e:getWorldLoc() )
-		proxy:setScl( e:getScl() )
-		proxy:setRot( e:getRot() )
+		GIIHelper.setWorldLoc( proxy, entity:modelToWorld( entity:getPiv() ) )
+		proxy:setScl( entity:getScl() )
+		proxy:setRot( entity:getRot() )
 		proxy:forceUpdate()
 	end
 	self.syncing = false
@@ -77,20 +77,20 @@ function TransformProxy:onUpdate()
 	local sx0, sy0, sz0 = unpack( self.scl0 )
 	local sx1, sy1, sz1 = self:getScl()
 	local rx1, ry1, rz1 = self:getRot()
-	local ssx, ssy ,ssz = 0,0,0
+	local ssx, ssy, ssz = 0, 0, 0
 	if sx1 ~= 0 then ssx = sx1/sx0 end
 	if sy1 ~= 0 then ssy = sy1/sy0 end
 	if sz1 ~= 0 then ssz = sz1/sz0 end
-	for e, proxy in pairs( self.proxies ) do
-		e:forceUpdate()
+	for entity, proxy in pairs( self.proxies ) do
+		entity:forceUpdate()
 		proxy:forceUpdate()
-		GIIHelper.setWorldLoc( e:getProp(), proxy:getWorldLoc() )
+		GIIHelper.setWorldLoc( entity:getProp(), proxy:getWorldLoc() )
 		local sx, sy, sz = proxy:getScl()
 		local rx, ry, rz = proxy:getRot()
-		e:setScl( sx*ssx, sy*ssy, sz*ssz )
-		e:setRot( rx+rx1-rx0, ry+ry1-ry0, rz+rz1-rz0 )
-		e:forceUpdate()
-		gii.emitPythonSignal( 'entity.modified', e )
+		entity:setScl( sx*ssx, sy*ssy, sz*ssz )
+		entity:setRot( rx+rx1-rx0, ry+ry1-ry0, rz+rz1-rz0 )
+		entity:forceUpdate()
+		gii.emitPythonSignal( 'entity.modified', entity )
 	end
 	self.syncing = false
 end

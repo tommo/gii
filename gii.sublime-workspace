@@ -531,18 +531,26 @@
 			"file": "lib/gii/qt/QtSupport.py",
 			"settings":
 			{
-				"buffer_size": 5166,
+				"buffer_size": 5512,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "Traceback (most recent call last):\n  File \"/Users/tommo/dev/shared/gii\", line 4, in <module>\n    gii_bin.main()\n  File \"/Volumes/prj/gii/gii_bin.py\", line 58, in main\n    gii.startup()\n  File \"/Volumes/prj/gii/lib/gii/__init__.py\", line 6, in startup\n    startupTool( info )\n  File \"/Volumes/prj/gii/lib/gii/core/tool.py\", line 138, in startupTool\n    return startTool( toolInfo )\n  File \"/Volumes/prj/gii/lib/gii/core/tool.py\", line 79, in startTool\n    m.main( sys.argv[ 1: ] )\n  File \"/Volumes/prj/gii/tools/ide/__init__.py\", line 12, in main\n    app.run()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorApp.py\", line 86, in run\n    if not self.initialized: self.init()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorApp.py\", line 74, in init\n    EditorModuleManager.get().loadAllModules()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 204, in loadAllModules\n    if not self.loadModule(m): \n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 192, in loadModule\n    m.load()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 102, in load\n    self.onLoad()\n  File \"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreview.py\", line 112, in onLoad\n    self.onMoaiReset()\n  File \"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreview.py\", line 161, in onMoaiReset\n    runtime.addDefaultInputDevice( 'device' )\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIRuntime.py\", line 298, in addDefaultInputDevice\n    device.addJoystickSensors( i + 1 )\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIInputDevice.py\", line 25, in addJoystickSensors\n    self.addSensor( axisSensorName, 'wheel' )\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIInputDevice.py\", line 49, in addSensor\n    sensor.onRegister()\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIInputDevice.py\", line 118, in onRegister\n    getAKU().setInputDeviceWheel(self.device.id, self.id, self.name)\nAttributeError: 'AKU.AKU' object has no attribute 'setInputDeviceWheel'\n\n[Finished in 1.6s with exit code 1]\n",
+			"file": "gii.sublime-project",
+			"settings":
+			{
+				"buffer_size": 1638,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "LUA Version:  Lua 5.1\n...s/prj/gii/test/game/lib/mock/core/MOAIInterfaces.lua:291: attempt to index global 'MOAIGraphicsProp' (a nil value)\nstack traceback:\n  [C] ?\n  ...s/prj/gii/test/game/lib/mock/core/MOAIInterfaces.lua:291 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/test/game/lib/mock/core/init.lua:1 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/test/game/lib/mock/env.lua:41 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/test/game/lib/mock/init.lua:1 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/test/game/lib/gamelib.lua:2 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/lib/lua/init.lua:48 in main chunk\nTraceback (most recent call last):\n  File \"/Users/tommo/dev/shared/gii\", line 4, in <module>\n    gii_bin.main()\n  File \"/Volumes/prj/gii/gii_bin.py\", line 64, in main\n    gii.startup()\n  File \"/Volumes/prj/gii/lib/gii/__init__.py\", line 6, in startup\n    startupTool( info )\n  File \"/Volumes/prj/gii/lib/gii/core/tool.py\", line 138, in startupTool\n    return startTool( toolInfo )\n  File \"/Volumes/prj/gii/lib/gii/core/tool.py\", line 79, in startTool\n    m.main( sys.argv[ 1: ] )\n  File \"/Volumes/prj/gii/tools/ide/__init__.py\", line 15, in main\n    app.run()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorApp.py\", line 87, in run\n    if not self.initialized: self.init()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorApp.py\", line 75, in init\n    EditorModuleManager.get().loadAllModules()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 204, in loadAllModules\n    if not self.loadModule(m): \n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 192, in loadModule\n    m.load()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 102, in load\n    self.onLoad()\n  File \"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreview.py\", line 123, in onLoad\n    self.onMoaiReset()\n  File \"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreview.py\", line 172, in onMoaiReset\n    runtime.addDefaultInputDevice( 'device' )\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIRuntime.py\", line 298, in addDefaultInputDevice\n    device.addJoystickSensors( i + 1 )\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIInputDevice.py\", line 25, in addJoystickSensors\n    self.addSensor( axisSensorName, 'wheel' )\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIInputDevice.py\", line 49, in addSensor\n    sensor.onRegister()\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIInputDevice.py\", line 118, in onRegister\n    getAKU().setInputDeviceWheel(self.device.id, self.id, self.name)\nAttributeError: 'AKU.AKU' object has no attribute 'setInputDeviceWheel'\n\n[Finished in 1.7s with exit code 1]\n",
 			"file": "BUILD_RESULT",
 			"file_size": -1,
 			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 1957,
+				"buffer_size": 2646,
 				"line_ending": "Unix",
 				"scratch": true
 			}
@@ -563,7 +571,7 @@
 			"file": "gii_cfg.py",
 			"settings":
 			{
-				"buffer_size": 366,
+				"buffer_size": 394,
 				"line_ending": "Unix"
 			}
 		}
@@ -1016,6 +1024,7 @@
 	},
 	"file_history":
 	[
+		"/Volumes/prj/gii/lib/gii/core/BUILD_RESULT",
 		"/Volumes/prj/gii/lib/gii/qt/controls/PropertyEditor/CommonFieldEditors.py",
 		"/Volumes/prj/gii/lib/gii/qt/controls/PropertyEditor/EnumFieldEditor.py",
 		"/Volumes/prj/gii/lib/gii/DeviceManager/IOSDevice.py",
@@ -1142,8 +1151,7 @@
 		"/Volumes/prj/gii/test/env/packages/-EditCanvsTest/test.py",
 		"/Volumes/prj/gii/test/game/lib/mock/asset/Deck2D.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/asset/Scene.lua",
-		"/Volumes/prj/gii/data/lua/bridge.lua",
-		"/Volumes/prj/gii/test/game/script/sceneTest.lua"
+		"/Volumes/prj/gii/data/lua/bridge.lua"
 	],
 	"find":
 	{
@@ -1517,14 +1525,76 @@
 						"selection":
 						[
 							[
+								446,
+								446
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 1,
+					"file": "lib/gii/qt/QtSupport.py",
+					"settings":
+					{
+						"buffer_size": 5512,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1416,
+								1416
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 436.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "gii.sublime-project",
+					"settings":
+					{
+						"buffer_size": 1638,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
 								0,
 								0
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
@@ -1540,58 +1610,24 @@
 			"sheets":
 			[
 				{
-					"buffer": 1,
-					"file": "lib/gii/qt/QtSupport.py",
-					"settings":
-					{
-						"buffer_size": 5166,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1263,
-								1263
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 436.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 2,
+					"buffer": 3,
 					"file": "BUILD_RESULT",
 					"settings":
 					{
-						"buffer_size": 1957,
+						"buffer_size": 2646,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1957,
-								1957
+								2646,
+								2646
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
 							"result_base_dir": "/Volumes/prj/gii",
 							"result_file_regex": "",
 							"result_line_regex": "",
@@ -1600,13 +1636,13 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 377.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 4,
 					"file": "lib/gii/qt/controls/prop/BUILD_RESULT",
 					"settings":
 					{
@@ -1636,11 +1672,11 @@
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 5,
 					"file": "gii_cfg.py",
 					"settings":
 					{
-						"buffer_size": 366,
+						"buffer_size": 394,
 						"regions":
 						{
 						},
@@ -1744,6 +1780,10 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"proj",
+				"gii.sublime-project"
+			],
 			[
 				"iosde",
 				"lib/gii/DeviceManager/IOSDevice.py"
@@ -1907,10 +1947,6 @@
 			[
 				"mockbr",
 				"lib/mock/MockRuntime.lua"
-			],
-			[
-				"proj",
-				"lib/gii/core/project.py"
 			],
 			[
 				"giiinit",
@@ -2264,6 +2300,10 @@
 		"height": 500.0,
 		"selected_items":
 		[
+			[
+				"gang",
+				"/Volumes/prj/moai/proto/gang/gang.sublime-project"
+			],
 			[
 				"yaka",
 				"/Volumes/prj/moai/yaka/giitest.sublime-project"

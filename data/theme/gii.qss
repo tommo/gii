@@ -826,7 +826,7 @@ QSplitter#TimelineSplitter::handle{
 #TimelineSpan {
 	/*background-color:qlineargradient( x1:0,y1:0, x2:0,y2:1 ,stop:0#348, stop:0.2 #79b, stop:1 #348);*/
 	background-color:#4360b4;
-	border: 1px solid #333;
+	border: 1px solid #222;
 	/*border-top: 1px solid #223;
 	border-bottom: 1px solid #223;
 	border-left: 1px solid #335;
@@ -834,6 +834,18 @@ QSplitter#TimelineSplitter::handle{
 	border-radius: 2px;*/
 	text-align: left;
 	margin:0;
+}
+
+#TimelineCursor {
+	color: #89e9ff;
+}
+
+#TimelineCursor[mode="play"] {
+	color: #a6ff00;
+}
+
+#TimelineCursor[mode="pause"] {
+	color: #ff7400;
 }
 
 #TimelineSpan:hover {

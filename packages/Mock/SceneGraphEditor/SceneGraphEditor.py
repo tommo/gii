@@ -223,7 +223,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		pass
 
 	def markSceneDirty( self, dirty = True ):
-		self.sceneDirty = dirty
+		if not self.previewing:
+			self.sceneDirty = dirty
 
 	def onSceneChange( self ):
 		self.tree.rebuild()
@@ -449,6 +450,16 @@ class SceneGraphEditor( SceneEditorModule ):
 		#TODO:command pattern
 		target.setName( target, name )
 		signals.emit( 'entity.modified', target )
+
+	def addEntityNode( self, entity ):
+		self.tree.setUpdatesEnabled( False )
+		self.tree.addNode( entity )
+		self.tree.setUpdatesEnabled( True )
+
+	def removeEntityNode( self, entity ):
+		self.tree.setUpdatesEnabled( False )
+		self.tree.removeNode( entity )
+		self.tree.setUpdatesEnabled( True )
 
 	def assignEntityLayer( self, layerName ):
 		#TODO:command pattern

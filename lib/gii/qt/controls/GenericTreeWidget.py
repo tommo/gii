@@ -72,20 +72,24 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			self.rootItem = self.invisibleRootItem()
 
 	def clear( self ):
+		self.setUpdatesEnabled( False )
 		for item in self.nodeDict.values():
 			item.node = None
 		self.nodeDict = {}
 		super( GenericTreeWidget, self ).clear()
 		self.initRootItem()
 		self.rootItem.node = None
+		self.setUpdatesEnabled( True )
 
 	def rebuild( self ):
 		self.hide()
+		self.setUpdatesEnabled( False )
 		self.clear()
 		rootNode = self.getRootNode()
 		if rootNode:
 			self.addNode( rootNode )
 			self.loadTreeStates()
+		self.setUpdatesEnabled( True )
 		self.show()
 
 	def addNode( self, node, addChildren = True, **option ):

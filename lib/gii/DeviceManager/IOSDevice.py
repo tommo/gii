@@ -134,6 +134,7 @@ def copyTreeToDevice( afc, srcDir, tgtDir, **option ):
 			srcFile = currentDir + '/' + f
 			tgtFile = currentTgtDir + '/' + f
 			copyToDevice( afc, srcFile, tgtFile, **option)
+			print 'copying', srcFile
 		#todo:remove file not found in source
 	saveDeviceFileIndex( afc, option['index'], tgtDir )
 
@@ -227,7 +228,7 @@ class IOSDeviceItem( DeviceItem ):
 		dev   = self._device
 		dev.refresh_session()
 		afc = getAppAFC( dev, appName )				
-		copyTreeToDevice( afc, localDataPath, remoteDataPath, **option )	
+		copyTreeToDevice( afc, localDataPath, remoteDataPath, **option )
 		afc.disconnect()
 		return True
 

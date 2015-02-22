@@ -126,7 +126,7 @@ end
 
 function SceneGraphEditor:stopScenePreview()
 	-- _collectgarbage( 'collect' )
-	-- GIIHelper.forceGC()
+	GIIHelper.forceGC()
 	mock.game:stop()
 	--restore layer visiblity
 	for i, l in pairs( mock.game:getLayers() ) do 
@@ -240,11 +240,11 @@ function SceneGraphEditor:onEntityEvent( action, entity, com )
 	if isEditorEntity( entity ) then return end
 
 	if action == 'add' then
-		_owner.tree:addNode( entity )
-		gii.emitPythonSignal( 'scene.update' )
+		_owner.addEntityNode( entity )
+		-- gii.emitPythonSignal( 'scene.update' )
 	elseif action == 'remove' then
-		_owner.tree:removeNode( entity )
-		gii.emitPythonSignal( 'scene.update' )
+		_owner.removeEntityNode( entity )
+		-- gii.emitPythonSignal( 'scene.update' )
 	end
 
 end

@@ -1,5 +1,6 @@
 from TimelineWidget import *
 from random import random
+from PyQt4 import QtOpenGL
 
 _spanid = 1
 class TestSpan():
@@ -7,7 +8,7 @@ class TestSpan():
 		global _spanid
 		_spanid += 1
 		self.name = 'span - %d' % _spanid
-		self.length = 1
+		self.length = 100
 		self.pos    = random()*1000 + 50
 		self.track  = track
 
@@ -15,6 +16,8 @@ class TestTrack():
 	def __init__( self, name ):
 		self.name = name
 		self.spans = [
+			TestSpan( self ),
+			TestSpan( self ),
 			TestSpan( self ),
 			TestSpan( self )
 		]
@@ -28,6 +31,12 @@ dataset = [
 	TestTrack( 'track0' ),
 	TestTrack( 'track1' ),
 	TestTrack( 'track2' ),
+	TestTrack( 'track3' ),
+	TestTrack( 'track1' ),
+	TestTrack( 'track2' ),
+	TestTrack( 'track3' ),
+	TestTrack( 'track1' ),
+	TestTrack( 'track2' ),
 	TestTrack( 'track3' )
 ]
 
@@ -38,8 +47,8 @@ class TestTimeline( TimelineWidget ):
 	def getSpanNodes( self, trackNode ):
 		return trackNode.spans
 
-	def getSpanParam( self, spanNode ): #pos, length
-		return spanNode.pos, spanNode.length
+	def getSpanParam( self, spanNode ): #pos, length, resizable
+		return spanNode.pos, spanNode.length, True
 
 	def getParentTrackNode( self, spanNode ):
 		return spanNode.track
@@ -69,7 +78,6 @@ styleSheetName = 'gii.qss'
 app.setStyleSheet(
 		open( '/Users/tommo/prj/gii/data/theme/' + styleSheetName ).read() 
 	)
-
 timeline = TestTimeline()
 timeline.resize( 600, 300 )
 timeline.show()
@@ -80,4 +88,3 @@ timeline.rebuild()
 timeline.selectSpan( dataset[1].spans[0] )
 
 app.exec_()
-		
