@@ -11,7 +11,8 @@ from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
 import re
 
-from subdist import get_score
+# from subdist import get_score
+from Levenshtein import ratio
 
 _SEARCHVIEW_ITEM_LIMIT = 100
 
@@ -125,6 +126,7 @@ class SearchViewWidget( QtGui.QWidget ):
 
 	def updateSearchTerms( self, text ):
 		tree = self.treeResult
+		# import pudb; pu.db
 		if text:
 			textU = text.upper()
 			globs = textU.split()
@@ -156,7 +158,7 @@ class SearchViewWidget( QtGui.QWidget ):
 		self.textTerms.setFocus()
 
 	def onTermsChanged( self, text ):
-		self.updateSearchTerms( text )		
+		self.updateSearchTerms( text )
 
 	def selectFirstItem( self ):
 		# if not self.treeResult.getSelection():
@@ -394,7 +396,7 @@ class SearchEntry(object):
 			if pos >= 0:
 				score += 2
 			else:
-				score += get_score( t, name ) * 1
+				score += ratio( t, name ) * 1
 		
 		if globs[0] in typeName:
 			findInType = True

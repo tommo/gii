@@ -3,7 +3,7 @@ module 'mock_edit'
 --------------------------------------------------------------------
 local handleSize = 100
 local handleArrowSize = 20
-
+local handlePad = 20
 --------------------------------------------------------------------
 ---Translation Tool
 --------------------------------------------------------------------
@@ -62,11 +62,11 @@ function TranslationHandle:onMouseDown( btn, x, y )
 	if btn~='left' then return end
 	self.x0, self.y0 = self:wndToTarget( x, y )	
 	x, y = self:wndToModel( x, y )
-	if x >= 0 and y >= 0 and x <= handleArrowSize + 5 and y <= handleArrowSize + 5 then
+	if x >= 0 and y >= 0 and x <= handleArrowSize + handlePad and y <= handleArrowSize + handlePad then
 		self.activeAxis = 'all'
-	elseif math.abs( y ) < 5 and x <= handleSize + handleArrowSize then
+	elseif math.abs( y ) < handlePad and x <= handleSize + handleArrowSize then
 		self.activeAxis = 'x'
-	elseif math.abs( x ) < 5 and y <= handleSize + handleArrowSize then
+	elseif math.abs( x ) < handlePad and y <= handleSize + handleArrowSize then
 		self.activeAxis = 'y'
 	end
 	if self.activeAxis then
@@ -239,11 +239,11 @@ function ScaleHandle:onMouseDown( btn, x, y )
 	x,y = self:wndToModel( x, y )
 	self.sx, self.sy, self.sz = self.target:getScl()
 
-	if x >= -5 and y >= -5 and x <= handleArrowSize + 5 and y <= handleArrowSize + 5 then
+	if x >= -handlePad and y >= -handlePad and x <= handleArrowSize + handlePad and y <= handleArrowSize + handlePad then
 		self.activeAxis = 'all'
-	elseif math.abs( y ) < 5 and x <= handleSize + handleArrowSize then
+	elseif math.abs( y ) < handlePad and x <= handleSize + handleArrowSize then
 		self.activeAxis = 'x'
-	elseif math.abs( x ) < 5 and y <= handleSize + handleArrowSize then
+	elseif math.abs( x ) < handlePad and y <= handleSize + handleArrowSize then
 		self.activeAxis = 'y'
 	end
 
@@ -272,27 +272,35 @@ function ScaleHandle:onMouseMove( x, y )
 
 	local mode = 'global'
 	local parent = target.parent
-	if parent and mode == 'global' then
+	-- if parent and mode == 'global' then
 		if self.activeAxis == 'all' then
-			--pass
 			local k = 1 + math.magnitude( dx, dy ) / 100 * math.sign(dx) 
 			self.target:setScl( 
 				self.sx * k,
 				self.sy * k,
 				self.sz * 1 )
 		elseif self.activeAxis == 'x' then
-			-- pass
+			local k = 1 + math.magnitude( dx, 0 ) / 100 * math.sign(dx) 
+			self.target:setScl( 
+				self.sx * k,
+				self.sy * 1,
+				self.sz * 1 )
+
 		elseif self.activeAxis == 'y' then
-			-- pass
+			local k = 1 - math.magnitude( dy, 0 ) / 100 * math.sign(dy) 
+			self.target:setScl( 
+				self.sx * 1,
+				self.sy * k,
+				self.sz * 1 )
 		end
 		
-	else
-		local k = 1 + math.magnitude( dx, dy ) / 100 * math.sign(dx) 
-		self.target:setScl( 
-			self.sx * k,
-			self.sy * k,
-			self.sz * 1 )
-	end
+	-- else
+	-- 	local k = 1 + math.magnitude( dx, dy ) / 100 * math.sign(dx) 
+	-- 	self.target:setScl( 
+	-- 		self.sx * k,
+	-- 		self.sy * k,
+	-- 		self.sz * 1 )
+	-- end
 	
 	self:updateCanvas()	
 	return true

@@ -19,6 +19,7 @@ function CanvasHandleLayer:onLoad()
 	self.targetCameraCom.onZoomChanged = function( zoom ) return self:onZoomChanged( zoom ) end
 end
 
+
 function CanvasHandleLayer:onMouseDown( btn, x, y )
 	for i, handle in ipairs( self.handles ) do
 		if handle:onMouseDown( btn, x, y ) == true then --grabbed
@@ -51,7 +52,8 @@ function CanvasHandleLayer:onZoomChanged( zoom )
 end	
 
 function CanvasHandleLayer:addHandle( handle )
-	self:getScene():addEntity( handle )
+	local scene= self:getScene()
+	scene:addEntity( handle )
 	-- self:addChild( handle )
 	table.insert(self.handles, 1, handle )
 	handle.handleLayer = self
@@ -72,12 +74,13 @@ function CanvasHandleLayer:setUpdateCallback( update )
 	self._onUpdate = update
 end
 
-
 function CanvasHandleLayer:clearHandles()
 	for i,h in ipairs( self.handles ) do	
 		h:destroyWithChildrenNow()
 	end
 end
+
+
 
 --------------------------------------------------------------------
 CLASS: CanvasHandle ( EditorEntity )

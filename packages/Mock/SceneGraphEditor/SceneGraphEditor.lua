@@ -119,14 +119,14 @@ end
 
 
 function SceneGraphEditor:startScenePreview()
-	-- _collectgarbage( 'collect' )
-	GIIHelper.forceGC()
+	_collectgarbage( 'collect' )
+	-- GIIHelper.forceGC()
 	mock.game:start()
 end
 
 function SceneGraphEditor:stopScenePreview()
-	-- _collectgarbage( 'collect' )
-	GIIHelper.forceGC()
+	_collectgarbage( 'collect' )
+	-- GIIHelper.forceGC()
 	mock.game:stop()
 	--restore layer visiblity
 	for i, l in pairs( mock.game:getLayers() ) do 
@@ -149,7 +149,18 @@ end
 
 function SceneGraphEditor:restoreScene()
 	if not self.retainedSceneData then return true end
-	if pcall( mock.deserializeScene, self.retainedSceneData, self.scene ) then
+	local function _onError( msg )
+		local errMsg = msg
+		local tracebackMsg = debug.traceback(2)
+		return errMsg .. '\n' .. tracebackMsg
+	end
+
+	local ok, msg = xpcall( function()
+			mock.deserializeScene( self.retainedSceneData, self.scene )
+		end,
+		_onError
+		)
+	if ok then
 		self.retainedSceneData = false
 		self:postLoadScene()		
 		_owner.tree:rebuild()
@@ -162,6 +173,7 @@ function SceneGraphEditor:restoreScene()
 		self.retainedSceneSelection = false		
 		return true
 	else
+		print( msg )
 		self.failedRefreshData = self.retainedSceneData
 		return false
 	end

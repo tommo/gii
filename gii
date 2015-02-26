@@ -1,4 +1,5 @@
-#! /usr/bin/env python-32
+#! /usr/bin/env python
 
 import gii_bin
+#from pudb import set_interrupt_handler; set_interrupt_handler()
 gii_bin.main()
