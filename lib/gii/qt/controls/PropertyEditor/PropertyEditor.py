@@ -228,6 +228,9 @@ class FieldEditor( object ):
 	def notifyChanged( self, value ):
 		return self.parent.onPropertyChanged( self.field, value )
 
+	def notifyObjectChanged( self ):
+		return self.parent.refreshAll()
+
 	def get( self ):
 		pass
 

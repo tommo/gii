@@ -47,6 +47,7 @@ class ActionFieldEditor( FieldEditor ):
 
 	def doAction( self ):
 		self.notifyChanged( True )
+		self.notifyObjectChanged()
 
 	def setFocus( self ):
 		self.button.setFocus()

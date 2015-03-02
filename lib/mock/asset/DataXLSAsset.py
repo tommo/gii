@@ -74,7 +74,20 @@ def convertSheetToData( sheet ):
 				continue
 			data[ key ] = value
 		return sheetId, data
-		
+	
+	elif typeName == 'raw':
+		data = []
+		cols = sheet.ncols
+		rows = sheet.nrows
+		for row in range( rows ):
+			cell0 = sheet.cell( row, 0 )
+			k  = cellValue( cell0 )
+			rowData = []
+			for col in range( cols ):
+				cell = sheet.cell( row, col )
+				rowData.append( cellValue( cell ) )
+			data.append( rowData )
+		return sheetId, data
 
 def convertWorkbookToData( workbook ):
 	bookData = {}
