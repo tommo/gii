@@ -9,6 +9,7 @@ from gii.core.selection   import getSelectionManager
 from exceptions import *
 from AKU        import _LuaTable, _LuaThread, _LuaObject, _LuaFunction
 from time       import time as getTime
+import uuid
 
 
 def wrapLuaCaller(func):
@@ -339,3 +340,10 @@ def registerLuaEditorCommand( fullname, cmdCreator ):
 			return cmd.canUndo( cmd )
 			
 	return LuaEditorCommand
+
+
+####
+#EXTRA
+####
+def generateGUID():
+	return str( uuid.uuid1() )
