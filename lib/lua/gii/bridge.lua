@@ -25,6 +25,7 @@ _M.setDict              = bridge.setDict
 --other
 _M.throwPythonException = bridge.throwPythonException
 _M.getTime              = bridge.getTime
+_M.generateGUID         = bridge.generateGUID
 
 --data conversion
 local encodeDict=bridge.encodeDict
