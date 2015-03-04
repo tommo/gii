@@ -27,6 +27,8 @@ _M.throwPythonException = bridge.throwPythonException
 _M.getTime              = bridge.getTime
 _M.generateGUID         = bridge.generateGUID
 
+MOAIEnvironment.generateGUID = bridge.generateGUID
+
 --data conversion
 local encodeDict=bridge.encodeDict
 local decodeDict=bridge.decodeDict
