@@ -9,7 +9,7 @@ import sublime
 def send_to_server( message = '', ip = '127.0.0.1', port = 61957 ):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.connect((ip, port))
-	sock.send(message)
+	sock.send( message.encode('utf-8') )
 	response = sock.recv(1024)
 	sock.close()
 	return response

@@ -55,7 +55,7 @@ class ScriptView( DebugViewModule ):
 		#init function component
 		self.debuggerHandler = DebuggerHandler(self)
 		signals.connect('app.command', self.onAppCommand)
-		signals.connect('app.remote', self.onAppRemote)
+		# signals.connect('app.remote', self.onAppRemote)
 
 		#script page management
 		self.scriptPages = {}
