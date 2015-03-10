@@ -25,7 +25,7 @@ cli.add_argument( '-c, --configure',
 
 cli.add_argument( '-p, --profile', 
 	dest   = 'profile',
-	help   = 'Release/Debug ',
+	help   = 'release/debug ',
 	default = 'debug'
 	)
 

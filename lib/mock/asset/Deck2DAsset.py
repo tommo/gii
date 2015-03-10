@@ -29,7 +29,6 @@ class Deck2DAssetManager(AssetManager):
 		node.setObjectFile( 'def', node.getFilePath() )
 		return True
 
-
 	def editAsset(self, node):	
 		editor = app.getModule( 'deck2d_editor' )
 		if not editor: 
@@ -38,6 +37,7 @@ class Deck2DAssetManager(AssetManager):
 			editor.openAsset( node.getParent(), node )			
 		else:
 			editor.openAsset( node )
+
 
 ##----------------------------------------------------------------##
 class Deck2DCreator(AssetCreator):

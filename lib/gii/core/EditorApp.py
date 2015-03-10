@@ -206,7 +206,6 @@ app = EditorApp()
 
 def _onRemoteArgument( data, output ):
 		#warning: comes from another thread
-		print data, output
 		signals.emit( 'app.remote', data, output )
 
 setRemoteArgumentCallback( _onRemoteArgument )

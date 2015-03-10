@@ -233,9 +233,13 @@ class AssetNode(object):
 
 	def markModified( self ):
 		logging.info( 'mark modified: %s', repr(self) )
-		self.modifyState = 'modified'
+		manager = self.getManager()
+		if manager:
+			manager.markModified( self )
+		else:
+			self.modifyState = 'modified'
 
-	def touch( self ):		
+	def touch( self ):
 		fname = self.getAbsFilePath()
 		if fname:
 			if os.path.isfile( fname ):
@@ -462,6 +466,11 @@ class AssetManager(object):
 	def editAsset(self, assetNode):
 		assetNode.openInSystem()
 
+	def markModified( self, assetNode ):
+		assetNode.modifyState = 'modified'
+		for child in assetNode.getChildren():
+			child.markModified()
+
 	def getDependency( self, assetNode ):
 		pass
 
@@ -489,6 +498,9 @@ class RawAssetManager(AssetManager):
 		elif os.path.isdir( path ):
 			assetNode.assetType = 'folder'
 		return True
+
+	def markNotified(self, assetNode ):
+		pass #do nothing
 
 ##----------------------------------------------------------------##
 class AssetCreator(object):
@@ -830,7 +842,7 @@ class AssetLibrary(object):
 				continue
 
 		#check new asset
-		for currentDir, dirs, files in os.walk(unicode(self.rootAbsPath)):
+		for currentDir, dirs, files in os.walk( unicode(self.rootAbsPath) ):
 			relDir = os.path.relpath( currentDir, self.rootAbsPath )
 
 			for filename in files:
