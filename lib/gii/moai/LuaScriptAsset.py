@@ -89,6 +89,7 @@ class ScriptLibrary( EditorModule ):
 
 	def loadScript( self, node ):
 		path = self.convertScriptPath( node )
+		logging.info( 'loading script %s', path )
 		if _GII.GameModule.hasGameModule( path ):
 			m, err = _GII.GameModule.reloadGameModule( path )
 		else:

@@ -232,6 +232,7 @@ class AssetNode(object):
 		signals.emit('asset.deploy.changed', self)
 
 	def markModified( self ):
+		if self.modifyState == 'new': return
 		logging.info( 'mark modified: %s', repr(self) )
 		manager = self.getManager()
 		if manager:

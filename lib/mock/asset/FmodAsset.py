@@ -8,6 +8,11 @@ from gii.core import AssetManager, AssetLibrary, getProjectPath, app
 import xml.etree.ElementTree
 
 ##----------------------------------------------------------------##
+
+_FMOD_DESIGNER_CL = 'fmod_designercl'
+app.affirmConfig( 'fmod_designer_path', '/Users/tommo/dev/fmod/FMOD Designer' )
+
+##----------------------------------------------------------------##
 def _parseFDPGroup( node ):
 	groups = {}
 	for groupItem in node.iterfind( 'eventgroup' ):
@@ -86,13 +91,13 @@ class FmodAssetManager(AssetManager):
 		
 		project = parseFDP( node.getAbsFilePath() )
 
-		fmodDesignerPath = '/Users/tommo/dev/fmod/FMOD Designer'
+		fmodDesignerPath = app.getAppConfig( 'fmod_designer_path' )
 		output = node.getCacheFile( 'export', is_dir = True )
 		node.setObjectFile( 'export', output )
 		# target = '-ios'
 		target = '-pc'
 		arglist = [ 
-				fmodDesignerPath+'/fmod_designercl',
+				fmodDesignerPath + '/' + _FMOD_DESIGNER_CL,
 				target,
 				'-p',
 				'-b', output,
@@ -116,3 +121,5 @@ FmodAssetManager().register()
 AssetLibrary.get().setAssetIcon( 'fmod_project',   'fmod' )
 AssetLibrary.get().setAssetIcon( 'fmod_group',     'fmod_group' )
 AssetLibrary.get().setAssetIcon( 'fmod_event',     'audio' )
+
+

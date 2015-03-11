@@ -7,6 +7,7 @@ import platform
 
 
 import signals
+import jsonHelper
 
 import globalSignals
 from EditorModule   import EditorModule, EditorModuleManager
@@ -20,6 +21,7 @@ from InstanceHelper import checkSingleInstance, setRemoteArgumentCallback
 
 
 _GII_BUILTIN_PACKAGES_PATH = 'packages'
+_GII_APP_CONFIG_FILE = 'config.json'
 
 class EditorApp(object):
 	_singleton = None
@@ -58,6 +60,8 @@ class EditorApp(object):
 	def init( self ):
 		if not checkSingleInstance():
 			raise Exception('running instance detected')
+		
+		self.loadConfig()
 
 		if self.initialized: return
 		self.openProject()
@@ -83,6 +87,7 @@ class EditorApp(object):
 
 		signals.connect( 'app.remote', self.onRemote )
 
+
 	def run( self, **kwargs ):
 		if not self.initialized: self.init()
 		sleepTime = kwargs.get( 'sleep', 0.005 )
@@ -93,6 +98,8 @@ class EditorApp(object):
 			signals.emitNow('app.start')
 			signals.dispatchAll()
 			signals.emit('app.post_start')
+
+			self.saveConfig()
 
 			while self.running:
 					self.doMainLoop( sleepTime )
@@ -121,12 +128,33 @@ class EditorApp(object):
 
 	def stop( self ):
 		self.running = False
+		self.saveConfig()
 
-	def setConfig( self, name, value ):
+	def saveConfig( self ):
+		jsonHelper.trySaveJSON( self.config, self.getPath( _GII_APP_CONFIG_FILE ), 'project config' )
+
+	def loadConfig( self ):
+		loaded = jsonHelper.tryLoadJSON( self.getPath( _GII_APP_CONFIG_FILE ) )
+		if loaded:
+			config = self.config
+			for k, v in loaded.items():
+				if not config.has_key( k ): config[ k ] = v
+		else:
+			self.saveConfig()
+
+	def setConfig( self, name, value, saveNow = True ):
 		self.config[name] = value
+		if saveNow:
+			self.saveConfig()
 
 	def getConfig( self, name, default = None ):
 		return self.config.get( name, default )
+
+	def affirmConfig( self, name, default = None ):
+		value = self.config.get( name, None )
+		if value == None:
+			self.config[ name ] = default
+			return default
 
 	def getModule(self, name):
 		return EditorModuleManager.get().getModule( name )
@@ -202,8 +230,8 @@ class EditorApp(object):
 		self.remoteCommandRegistry.doCommand( data, output )
 
 app = EditorApp()
-##----------------------------------------------------------------##
 
+##----------------------------------------------------------------##
 def _onRemoteArgument( data, output ):
 		#warning: comes from another thread
 		signals.emit( 'app.remote', data, output )

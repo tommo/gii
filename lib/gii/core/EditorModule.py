@@ -74,12 +74,22 @@ class EditorModule( object ):
 	def setConfig( self, name, value ):
 		assert(isinstance(name, (str,unicode)))
 		fullname = self.getName()+'/'+name
-		Project.get().setConfig( fullname, value )
+		self.getProject().setConfig( fullname, value )
 
 	def getConfig( self, name, defaultValue=None ):
 		assert( isinstance(name, (str,unicode)) )
 		fullname = self.getName()+'/'+name
-		return Project.get().getConfig( fullname, defaultValue )
+		return self.getProject().getConfig( fullname, defaultValue )
+
+	def setAppConfig( self, name, value ):
+		assert(isinstance(name, (str,unicode)))
+		fullname = self.getName()+'/'+name
+		self.getApp().setAppConfig( fullname, value )
+
+	def getAppConfig( self, name, defaultValue=None ):
+		assert( isinstance(name, (str,unicode)) )
+		fullname = self.getName()+'/'+name
+		return self.getApp().getAppConfig( fullname, defaultValue )
 	
 	def isDependencyReady(self):
 		dep=self.getDependency()
