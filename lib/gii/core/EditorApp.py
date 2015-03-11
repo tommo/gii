@@ -138,7 +138,7 @@ class EditorApp(object):
 		if loaded:
 			config = self.config
 			for k, v in loaded.items():
-				if not config.has_key( k ): config[ k ] = v
+				config[ k ] = v
 		else:
 			self.saveConfig()
 
