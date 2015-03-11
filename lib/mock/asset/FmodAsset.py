@@ -91,7 +91,7 @@ class FmodAssetManager(AssetManager):
 		
 		project = parseFDP( node.getAbsFilePath() )
 
-		fmodDesignerPath = app.getAppConfig( 'fmod_designer_path' )
+		fmodDesignerPath = app.getConfig( 'fmod_designer_path' )
 		output = node.getCacheFile( 'export', is_dir = True )
 		node.setObjectFile( 'export', output )
 		# target = '-ios'
