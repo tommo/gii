@@ -25,7 +25,7 @@ class GamePreview( SceneEditorModule ):
 		self.viewHeight     = 0
 		self.pendingScript  = None
 		self.activeFPS      = 60
-		self.nonActiveFPS   = 10
+		self.nonActiveFPS   = 20
 
 	def getName(self):
 		return 'scene_preview'

@@ -18,6 +18,7 @@ import FmodAsset
 
 import FSMAsset
 import BTSchemeAsset
+import BTScriptAsset
 
 import FrameBufferAsset
 import ShaderAsset

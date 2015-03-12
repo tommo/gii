@@ -14,6 +14,7 @@ require 'mock_edit.EditorCanvas.CanvasHandle'
 
 require 'mock_edit.EditorCanvas.TransformProxy'
 require 'mock_edit.EditorCanvas.TransformTool'
+require 'mock_edit.EditorCanvas.TransformToolHelper'
 
 --------------------------------------------------------------------
 --GIZMOS

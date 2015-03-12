@@ -153,7 +153,7 @@ function SceneView:onSelectionChanged( selection )
 	if next( entities ) then
 		local topEntities = findTopLevelEntities( entities )
 		local target
-		target = mock_edit.TransformProxy()
+		target = mock_edit.TransformToolHelper()
 		target:setTargets( topEntities )		
 		self.editTarget = target 		
 	end
