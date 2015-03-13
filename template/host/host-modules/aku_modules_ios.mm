@@ -3,7 +3,8 @@
 
 #include <Foundation/Foundation.h>
 #include <string.h>
-#include <aku_modules_ios.h>
+#include <zl-common/zl_platform.h>
+#include <host-modules/aku_modules_ios.h>
 
 //================================================================//
 // implementation
@@ -14,6 +15,10 @@ void AKUModulesIosAppFinalize () {
 
 	#if AKU_WITH_IOS
 		AKUIosAppFinalize ();
+	#endif
+
+	#if AKU_WITH_IOS_ADCOLONY
+		AKUIosAdColonyAppFinalize ();
 	#endif
 
 	#if AKU_WITH_IOS_BILLING
@@ -31,9 +36,21 @@ void AKUModulesIosAppFinalize () {
 	#if AKU_WITH_IOS_FACEBOOK
 		AKUIosFacebookAppFinalize ();
 	#endif
+	
+	#if AKU_WITH_IOS_FLURRY
+		AKUIosFlurryAppFinalize ();
+	#endif
 
 	#if AKU_WITH_IOS_GAMECENTER
 		AKUIosGameCenterAppFinalize ();
+	#endif
+	
+	#if AKU_WITH_IOS_KONTAGENT
+		AKUIosKontagentAppFinalize ();
+	#endif
+	
+	#if AKU_WITH_IOS_MIXPANEL
+		AKUIosMixpanelAppFinalize ();
 	#endif
 	
 	#if AKU_WITH_IOS_MOBILE_APP_TRACKER
@@ -51,17 +68,17 @@ void AKUModulesIosAppFinalize () {
 	#if AKU_WITH_IOS_VUNGLE
 		AKUIosVungleAppFinalize ();
 	#endif
-	
-	AKUModulesAppFinalize ();
 }
 
 //----------------------------------------------------------------//
 void AKUModulesIosAppInitialize () {
 
-	AKUModulesAppInitialize ();
-
 	#if AKU_WITH_IOS
 		AKUIosAppInitialize ();
+	#endif
+
+	#if AKU_WITH_IOS_ADCOLONY
+		AKUIosAdColonyAppInitialize ();
 	#endif
 
 	#if AKU_WITH_IOS_BILLING
@@ -79,9 +96,21 @@ void AKUModulesIosAppInitialize () {
 	#if AKU_WITH_IOS_FACEBOOK
 		AKUIosFacebookAppInitialize ();
 	#endif
+	
+	#if AKU_WITH_IOS_FLURRY
+		AKUIosFlurryAppInitialize ();
+	#endif
 
 	#if AKU_WITH_IOS_GAMECENTER
 		AKUIosGameCenterAppInitialize ();
+	#endif
+
+	#if AKU_WITH_IOS_KONTAGENT
+		AKUIosKontagentAppInitialize ();
+	#endif
+
+	#if AKU_WITH_IOS_MIXPANEL
+		AKUIosMixpanelAppInitialize ();
 	#endif
 
 	#if AKU_WITH_IOS_MOBILE_APP_TRACKER
@@ -104,10 +133,12 @@ void AKUModulesIosAppInitialize () {
 //----------------------------------------------------------------//
 void AKUModulesIosContextInitialize () {
 
-	AKUModulesContextInitialize ();
-
 	#if AKU_WITH_IOS
 		AKUIosContextInitialize ();
+	#endif
+
+	#if AKU_WITH_IOS_ADCOLONY
+		AKUIosAdColonyContextInitialize ();
 	#endif
 
 	#if AKU_WITH_IOS_BILLING
@@ -125,9 +156,21 @@ void AKUModulesIosContextInitialize () {
 	#if AKU_WITH_IOS_FACEBOOK
 		AKUIosFacebookContextInitialize ();
 	#endif
+	
+	#if AKU_WITH_IOS_FLURRY
+		AKUIosFlurryContextInitialize ();
+	#endif
 
 	#if AKU_WITH_IOS_GAMECENTER
 		AKUIosGameCenterContextInitialize ();
+	#endif
+	
+	#if AKU_WITH_IOS_KONTAGENT
+		AKUIosKontagentContextInitialize ();
+	#endif
+	
+	#if AKU_WITH_IOS_MIXPANEL
+		AKUIosMixpanelContextInitialize ();
 	#endif
 	
 	#if AKU_WITH_IOS_MOBILE_APP_TRACKER
@@ -148,7 +191,11 @@ void AKUModulesIosContextInitialize () {
 }
 
 //----------------------------------------------------------------//
-void AKUModulesIosUpdate () {
+void AKUModulesIosPause ( bool pause ) {
+	UNUSED ( pause );
+}
 
-	AKUModulesUpdate ();
+
+//----------------------------------------------------------------//
+void AKUModulesIosUpdate () {
 }

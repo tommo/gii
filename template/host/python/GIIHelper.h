@@ -3,17 +3,18 @@
 #include <moai-core/pch.h>
 #include <moai-core/MOAILogMessages.h>
 
-#include <moai-sim/pch.h>
-#include <moai-sim/MOAIGfxDevice.h>
-// #include <moai-sim/MOAIInputMgr.h>
-#include <moai-sim/MOAINodeMgr.h>
-#include <moai-sim/MOAISim.h>
-#include <moai-sim/MOAITransform.h>
-#include <moai-sim/MOAITransformBase.h>
-// #include <moaicore/MOAITextureBase.h>
-// #include <moaicore/MOAIDebugLines.h>
-#include <moai-sim/MOAIFrameBuffer.h>
-#include <moai-sim/MOAIProp.h>
+#include <moai-sim/headers.h>
+// #include <moai-sim/MOAIGfxResourceMgr.h>
+// #include <moai-sim/MOAIGfxDevice.h>
+// // #include <moai-sim/MOAIInputMgr.h>
+// #include <moai-sim/MOAINodeMgr.h>
+// #include <moai-sim/MOAISim.h>
+// #include <moai-sim/MOAITransform.h>
+// #include <moai-sim/MOAITransformBase.h>
+// // #include <moaicore/MOAITextureBase.h>
+// // #include <moaicore/MOAIDebugLines.h>
+// #include <moai-sim/MOAIFrameBuffer.h>
+// #include <moai-sim/MOAIProp.h>
 
 
 class GIIHelper:

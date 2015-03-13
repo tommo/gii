@@ -1,9 +1,47 @@
 // Copyright (c) 2010-2011 Zipline Games, Inc. All Rights Reserved.
 // http://getmoai.com
 
-#include <stdio.h>
 #include <string.h>
-#include "aku_modules.h"
+#include <host-modules/aku_modules.h>
+
+//================================================================//
+// objc modules
+//================================================================//
+
+#if AKU_WITH_IOS
+
+	//----------------------------------------------------------------//
+	extern void		AKUModulesIosAppFinalize			();
+	extern void		AKUModulesIosAppInitialize			();
+	extern void		AKUModulesIosContextInitialize		();
+	extern void		AKUModulesIosPause					( bool pause );
+	extern void		AKUModulesIosUpdate					();
+
+#endif
+
+#if AKU_WITH_ANDROID
+
+	//----------------------------------------------------------------//
+	extern void		AKUModulesAndroidAppFinalize			();
+	extern void		AKUModulesAndroidAppInitialize			();
+	extern void		AKUModulesAndroidContextInitialize		();
+	extern void		AKUModulesAndroidPause					( bool pause );
+	extern void		AKUModulesAndroidUpdate					();
+
+#endif
+
+
+
+#if AKU_WITH_PLUGINS
+
+	//----------------------------------------------------------------//
+	extern void		AKUPluginsAppFinalize				();
+	extern void		AKUPluginsAppInitialize				();
+	extern void		AKUPluginsContextInitialize			();
+	extern void		AKUPluginsPause						( bool pause );
+	extern void		AKUPluginsUpdate					();
+
+#endif
 
 //================================================================//
 // implementation
@@ -12,12 +50,16 @@
 //----------------------------------------------------------------//
 void AKUModulesAppFinalize () {
 
-	#if AKU_WITH_BOX2D
-		AKUBox2DAppFinalize ();
+    #if AKU_WITH_APPLE
+		AKUAppleAppFinalize ();
 	#endif
 
-	#if AKU_WITH_CHIPMUNK
-		AKUChipmunkAppFinalize ();
+    #if AKU_WITH_AUDIO_SAMPLER
+		AKUAudioSamplerAppFinalize ();
+	#endif
+
+	#if AKU_WITH_BOX2D
+		AKUBox2DAppFinalize ();
 	#endif
 
 	#if AKU_WITH_CRYPTO
@@ -28,9 +70,9 @@ void AKUModulesAppFinalize () {
 		AKUFmodDesignerAppFinalize ();
 	#endif
 
-	#if AKU_WITH_FMOD_EX
-		AKUFmodExAppFinalize ();
-	#endif
+	// #if AKU_WITH_FMOD_EX
+	// 	AKUFmodExAppFinalize ();
+	// #endif
 
 	#if AKU_WITH_HARNESS
 		AKUHarnessAppFinalize ();
@@ -48,12 +90,12 @@ void AKUModulesAppFinalize () {
 		AKULuaExtAppFinalize ();
 	#endif
 
-	#if AKU_WITH_SIM
-		AKUSimAppFinalize ();
+	#if AKU_WITH_SDL
+		AKUSdlAppFinalize ();
 	#endif
 
-	#if AKU_WITH_TEST
-		AKUTestAppFinalize ();
+	#if AKU_WITH_SIM
+		AKUSimAppFinalize ();
 	#endif
 
 	#if AKU_WITH_UNTZ
@@ -63,17 +105,37 @@ void AKUModulesAppFinalize () {
 	#if AKU_WITH_UTIL
 		AKUUtilAppFinalize ();
 	#endif
+	
+	#if AKU_WITH_IOS
+		AKUModulesIosAppFinalize ();
+	#endif
+	
+	#if AKU_WITH_ANDROID
+		AKUModulesAndroidAppFinalize ();
+	#endif
+	
+	#if AKU_WITH_PLUGINS
+		AKUPluginsAppFinalize ();
+	#endif
+
+	#if AKU_WITH_STEER
+		AKUSteerAppFinalize ();
+	#endif
 }
 
 //----------------------------------------------------------------//
 void AKUModulesAppInitialize () {
 
-	#if AKU_WITH_BOX2D
-		AKUBox2DAppInitialize ();
+    #if AKU_WITH_APPLE
+		AKUAppleAppInitialize ();
 	#endif
 
-	#if AKU_WITH_CHIPMUNK
-		AKUChipmunkAppInitialize ();
+    #if AKU_WITH_AUDIO_SAMPLER
+		AKUAudioSamplerAppInitialize ();
+	#endif
+
+	#if AKU_WITH_BOX2D
+		AKUBox2DAppInitialize ();
 	#endif
 
 	#if AKU_WITH_CRYPTO
@@ -84,9 +146,9 @@ void AKUModulesAppInitialize () {
 		AKUFmodDesignerAppInitialize ();
 	#endif
 
-	#if AKU_WITH_FMOD_EX
-		AKUFmodExAppInitialize ();
-	#endif
+	// #if AKU_WITH_FMOD_EX
+	// 	AKUFmodExAppInitialize ();
+	// #endif
 
 	#if AKU_WITH_HARNESS
 		AKUHarnessAppInitialize ();
@@ -104,12 +166,12 @@ void AKUModulesAppInitialize () {
 		AKULuaExtAppInitialize ();
 	#endif
 
-	#if AKU_WITH_SIM
-		AKUSimAppInitialize ();
+	#if AKU_WITH_SDL
+		AKUSdlAppInitialize ();
 	#endif
 
-	#if AKU_WITH_TEST
-		AKUTestAppInitialize ();
+	#if AKU_WITH_SIM
+		AKUSimAppInitialize ();
 	#endif
 
 	#if AKU_WITH_UNTZ
@@ -119,17 +181,37 @@ void AKUModulesAppInitialize () {
 	#if AKU_WITH_UTIL
 		AKUUtilAppInitialize ();
 	#endif
+
+	#if AKU_WITH_IOS
+		AKUModulesIosAppInitialize ();
+	#endif
+	
+	#if AKU_WITH_ANDROID
+		AKUModulesAndroidAppInitialize ();
+	#endif
+
+	#if AKU_WITH_PLUGINS
+		AKUPluginsAppInitialize ();
+	#endif
+
+	#if AKU_WITH_STEER
+		AKUSteerAppInitialize ();
+	#endif
 }
 
 //----------------------------------------------------------------//
 void AKUModulesContextInitialize () {
-	printf("init context\n");
-	#if AKU_WITH_BOX2D
-		AKUBox2DContextInitialize ();
+
+    #if AKU_WITH_APPLE
+		AKUAppleContextInitialize ();
 	#endif
 
-	#if AKU_WITH_CHIPMUNK
-		AKUChipmunkContextInitialize ();
+    #if AKU_WITH_AUDIO_SAMPLER
+		AKUAudioSamplerContextInitialize ();
+	#endif
+
+	#if AKU_WITH_BOX2D
+		AKUBox2DContextInitialize ();
 	#endif
 
 	#if AKU_WITH_CRYPTO
@@ -140,9 +222,9 @@ void AKUModulesContextInitialize () {
 		AKUFmodDesignerContextInitialize ();
 	#endif
 
-	#if AKU_WITH_FMOD_EX
-		AKUFmodExContextInitialize ();
-	#endif
+	// #if AKU_WITH_FMOD_EX
+	// 	AKUFmodExContextInitialize ();
+	// #endif
 
 	#if AKU_WITH_HARNESS
 		AKUHarnessContextInitialize ();
@@ -160,12 +242,12 @@ void AKUModulesContextInitialize () {
 		AKULuaExtContextInitialize ();
 	#endif
 
-	#if AKU_WITH_SIM
-		AKUSimContextInitialize ();
+	#if AKU_WITH_SDL
+		AKUSdlContextInitialize ();
 	#endif
 
-	#if AKU_WITH_TEST
-		AKUTestContextInitialize ();
+	#if AKU_WITH_SIM
+		AKUSimContextInitialize ();
 	#endif
 
 	#if AKU_WITH_UNTZ
@@ -174,6 +256,46 @@ void AKUModulesContextInitialize () {
 
 	#if AKU_WITH_UTIL
 		AKUUtilContextInitialize ();
+	#endif
+	
+	#if AKU_WITH_IOS
+		AKUModulesIosContextInitialize ();
+	#endif
+	
+	#if AKU_WITH_ANDROID
+		AKUModulesAndroidContextInitialize ();
+	#endif
+	
+	#if AKU_WITH_PLUGINS
+		AKUPluginsContextInitialize ();
+	#endif
+
+	#if AKU_WITH_STEER
+		AKUSteerContextInitialize ();
+	#endif
+}
+
+//----------------------------------------------------------------//
+void AKUModulesPause ( bool pause ) {
+	
+	#if AKU_WITH_SIM
+		AKUPause ( pause );
+	#endif
+	
+	#if AKU_WITH_UNTZ
+		AKUUntzPause ( pause );
+	#endif
+	
+	#if AKU_WITH_IOS
+		AKUModulesIosPause ( pause );
+	#endif
+	
+	#if AKU_WITH_ANDROID
+		AKUModulesAndroidPause ( pause );
+	#endif
+	
+	#if AKU_WITH_PLUGINS
+		AKUPluginsPause ( pause );
 	#endif
 }
 
@@ -188,9 +310,9 @@ void AKUModulesUpdate () {
 		AKUFmodDesignerUpdate ();
 	#endif
 
-	#if AKU_WITH_FMOD_EX
-		AKUFmodExUpdate ();
-	#endif
+	// #if AKU_WITH_FMOD_EX
+	// 	AKUFmodExUpdate ();
+	// #endif
 
 	#if AKU_WITH_HARNESS
 		AKUHarnessUpdate ()
@@ -198,5 +320,17 @@ void AKUModulesUpdate () {
 
 	#if AKU_WITH_SIM
 		AKUUpdate ();
+	#endif
+	
+	#if AKU_WITH_IOS
+		AKUModulesIosUpdate ();
+	#endif
+	
+	#if AKU_WITH_ANDROID
+		AKUModulesAndroidUpdate ();
+	#endif
+	
+	#if AKU_WITH_PLUGINS
+		AKUPluginsUpdate ();
 	#endif
 }

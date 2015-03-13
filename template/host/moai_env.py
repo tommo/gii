@@ -1,10 +1,9 @@
 import os
-import sys
 
 ##----------------------------------------------------------------##
-MOAI_LIB_DEFAULT  = 'c:\\prj\\moai-lib'
-MOAI_ROOT_DEFAULT = 'c:\\prj\\moai-dev'
-FMOD_ROOT         = 'c:\\dev\\fmod'
+MOAI_LIB_DEFAULT  = '/Users/tommo/prj/moai/lib'
+MOAI_ROOT_DEFAULT = '/Users/tommo/dev/moai-dev'
+FMOD_ROOT         = '/Users/tommo/dev/fmod'
 
 ##----------------------------------------------------------------##
 #env path helpers
@@ -24,7 +23,8 @@ def setup_moai_env( ctx, target, config ):
 		'moai-%s-untz',
 		'moai-%s-crypto',
 		# 'moai-%s-lua',
-		'moai-%s-http-client'
+		'moai-%s-http-client',
+		'moai-%s-steer',
 		]
 
 	if target == 'ios':
@@ -43,7 +43,7 @@ def setup_moai_env( ctx, target, config ):
 		]
 
 	LIB_NAMES += [ 
-		'moai-%s-fmod-ex',
+		# 'moai-%s-fmod-ex',
 		'moai-%s-fmod-designer'
 		]
 	
@@ -166,117 +166,6 @@ def setup_moai_html5_env( ctx, target, config ):
 		'-DAKU_WITH_TEST=0',
 		'-DAKU_WITH_HTTP_SERVER=0 ',
 	]
-
-##----------------------------------------------------------------##
-def setup_moai_win32_env( ctx, target, config ):
-	MOAI_LIB  =  os.environ.get( 'MOAI_LIB', MOAI_LIB_DEFAULT )
-	ctx.env.MOAI_ROOT = find_moai_lib_root()
-	ctx.env.MOAI_LIB  = os.environ.get( 'MOAI_LIB', MOAI_LIB_DEFAULT )
-	ctx.env.INCLUDES_MOAI = find_moai_includes()
-	ctx.env.LIBPATH_MOAI  = [ MOAI_LIB + '/windows' ]
-	ctx.env.LIB_MOAI = [
-		'png',
-		'sfmt',
-		'tess2',
-		'expat',
-		'tinyxml',
-		'tlsf',
-		'untz',
-		'webp',
-		'zlib',
-		'box2d',
-		'contrib',
-		'crypto',
-		'freetype',
-		'jansson',
-		'lua51',
-		'luacrypto',
-		'luafilesystem',
-		'luasocket',
-		'luasql',
-		'luacurl',
-		# 'SDL2',
-		# 'SDL2main',
-		'ogg',
-		'glew',
-		'zlvfs','zlcore', 'zlcrypto',
-		'moai-box2d',
-		'moai-core',
-		'moai-crypto',
-		'moai-sim',
-		'moai-untz',
-		'moai-util',
-		'moai-http-client',
-		'moai-fmod-designer',
-		'moai-luaext',
-		# 'moaishared'
-	]
-			
-	ctx.env.CFLAGS_MOAI = [ '-DMOAI_OS_HTML' ]
-	ctx.env.CXXFLAGS_MOAI = [
-		'-DGL_ES',
-		'-DMOAI_WITH_BOX2D=1',
-		'-DAKU_WITH_BOX2D=1',
-		'-DMOAI_WITH_CHIPMUNK=0',
-		'-DAKU_WITH_CHIPMUNK=0',
-		'-DMOAI_WITH_LIBCURL=0',
-		'-DMOAI_WITH_UNTZ=1',
-		'-DAKU_WITH_UNTZ=1',
-		'-DMOAI_WITH_TINYXML=1',
-		'-DMOAI_WITH_HTTP_CLIENT=0',
-		'-DAKU_WITH_HTTP_CLIENT=0',
-		'-DMOAI_WITH_EXPAT=0',
-		'-DMOAI_WITH_LIBCRYPTO=1',
-		'-DMOAI_WITH_OPENSSL=0',
-		'-DMOAI_WITH_FREETYPE=1',
-		'-DAKU_WITH_LUAEXT=0',
-		'-DMOAI_WITH_LUAEXT=0',
-		'-DMOAI_WITH_SQLITE=0',
-		'-DMOAI_WITH_JANSSON=1',
-		'-DMOAI_WITH_SFMT=1',
-		'-DMOAI_WITH_LIBPNG=1',
-		'-DMOAI_WITH_LIBJPG=0',
-		'-DMOAI_WITH_VORBIS=0',
-		'-DMOAI_WITH_OGG=0',
-		'-DMOAI_WITH_SDL=0',
-		'-DMOAI_WITH_MONGOOSE=0',
-		'-DMOAI_WITH_LUAJIT=0',
-		'-DAKU_WITH_PLUGINS=0',
-		'-DAKU_WITH_TEST=0',
-		'-DAKU_WITH_HTTP_SERVER=0 ',
-	]
-	ctx.env.LINKFLAGS_MOAI = [ 
-		'-DGL_ES',
-		'-DMOAI_WITH_BOX2D=1',
-		'-DAKU_WITH_BOX2D=1',
-		'-DMOAI_WITH_CHIPMUNK=0',
-		'-DAKU_WITH_CHIPMUNK=0',
-		'-DMOAI_WITH_LIBCURL=0',
-		'-DMOAI_WITH_UNTZ=1',
-		'-DAKU_WITH_UNTZ=1',
-		'-DMOAI_WITH_TINYXML=1',
-		'-DMOAI_WITH_HTTP_CLIENT=0',
-		'-DAKU_WITH_HTTP_CLIENT=0',
-		'-DMOAI_WITH_EXPAT=0',
-		'-DMOAI_WITH_LIBCRYPTO=1',
-		'-DMOAI_WITH_OPENSSL=0',
-		'-DMOAI_WITH_FREETYPE=1',
-		'-DAKU_WITH_LUAEXT=0',
-		'-DMOAI_WITH_LUAEXT=0',
-		'-DMOAI_WITH_SQLITE=0',
-		'-DMOAI_WITH_JANSSON=1',
-		'-DMOAI_WITH_SFMT=1',
-		'-DMOAI_WITH_LIBPNG=1',
-		'-DMOAI_WITH_LIBJPG=0',
-		'-DMOAI_WITH_VORBIS=0',
-		'-DMOAI_WITH_OGG=0',
-		'-DMOAI_WITH_SDL=0',
-		'-DMOAI_WITH_MONGOOSE=0',
-		'-DMOAI_WITH_LUAJIT=0',
-		'-DAKU_WITH_PLUGINS=0',
-		'-DAKU_WITH_TEST=0',
-		'-DAKU_WITH_HTTP_SERVER=0 ',
-	]
 ####----------------------------------------------------------------##
 def find_moai_lib_root():
 	MOAI_ROOT =  os.environ.get( 'MOAI_ROOT', MOAI_ROOT_DEFAULT )
@@ -296,7 +185,7 @@ def find_moai_includes():
 	thirdParties = [
 		MOAI_THRIDPARTY_PATH,
 		MOAI_THRIDPARTY_PATH + '/chipmunk-5.3.4/include',
-		MOAI_THRIDPARTY_PATH + '/box2d-2.2.1',
+		MOAI_THRIDPARTY_PATH + '/box2d-2.3.0',
 		MOAI_THRIDPARTY_PATH + '/freetype-2.4.4/include',
 		MOAI_THRIDPARTY_PATH + '/tinyxml',
 		MOAI_THRIDPARTY_PATH + '/lua-5.1.3/src',
@@ -323,17 +212,9 @@ def setup_fmod_env( ctx, target, config ):
 			'fmodeventnet_iphoneos'
 		]
 	else:
-		if sys.platform == 'win32':
-			ctx.env.LIB_FMOD      = [ 
-				'fmodex_vc',
-				'fmod_event',
-				'fmod_event_net',
-			]
-		else:
-			ctx.env.LIB_FMOD      = [ 
-				'fmodex',
-				'fmodevent',
-				'fmodeventnet'
-			]
-
+		ctx.env.LIB_FMOD      = [ 
+			'fmodex',
+			'fmodevent',
+			'fmodeventnet'
+		]
 

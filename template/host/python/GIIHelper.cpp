@@ -10,7 +10,7 @@ int GIIHelper::_stepSim( lua_State *L ){
 
 int GIIHelper::_forceGC( lua_State *L){
 	MOAILuaState state (L);
-	MOAILuaRuntime::Get ().ForceGarbageCollection ();
+	// MOAILuaRuntime::Get ().ForceGarbageCollection ();
 	return 0;
 }
 
@@ -22,6 +22,18 @@ int GIIHelper::_setBufferSize( lua_State *L){
 	MOAIGfxDevice::Get ().SetBufferSize ( width, height );
 	return 0;
 }
+
+// int GIIHelper::_clearFrameBuffer( lua_State *L ){
+// 	MOAILuaState state (L);
+// 	if ( !state.CheckParams ( 1, "U" )) return 0;
+// 	MOAIFrameBuffer* frameBuffer = state.GetLuaObject < MOAIFrameBuffer >( 1, false );
+// 	if (frameBuffer) {
+// 		zglBegin();
+// 		frameBuffer->ClearSurface();
+// 		zglEnd();
+// 	}
+// 	return 0;
+// }
 
 int GIIHelper::_renderFrameBuffer( lua_State *L ){
 	MOAILuaState state (L);
@@ -56,7 +68,7 @@ int GIIHelper::_copyWorldTransform( lua_State *L ){
 	MOAITransform* src = state.GetLuaObject< MOAITransform >(1, true);
 	MOAITransform* dst = state.GetLuaObject< MOAITransform >(2, true);
 	const ZLAffine3D& srcMtx = src->GetLocalToWorldMtx ();
-	const ZLAffine3D* inherit = dst->GetLinkedValue < ZLAffine3D* >( PACK_ATTR ( MOAITransform, MOAITransform::INHERIT_TRANSFORM ), 0 );	
+	const ZLAffine3D* inherit = dst->GetLinkedValue < ZLAffine3D* >( PACK_ATTR ( MOAITransformBase, MOAITransformBase::INHERIT_TRANSFORM ), 0 );	
 	tmp.Init( src->GetLocalToWorldMtx() );
 	if( inherit ) {
 		tmp1.Inverse( *inherit ); 
@@ -82,7 +94,7 @@ int GIIHelper::_setWorldLoc( lua_State *L ){
 	float z = state.GetValue< float >( 4, 0.0f );
 	ZLVec3D loc;
 	loc.Init( x, y, z );		
-	const ZLAffine3D* inherit = dst->GetLinkedValue < ZLAffine3D* >( PACK_ATTR ( MOAITransform, MOAITransform::INHERIT_TRANSFORM ), 0 );	
+	const ZLAffine3D* inherit = dst->GetLinkedValue < ZLAffine3D* >( PACK_ATTR ( MOAITransformBase, MOAITransformBase::INHERIT_TRANSFORM ), 0 );	
 	if( inherit ) {
 		ZLAffine3D inverse;
 		inverse.Inverse( *inherit ); 

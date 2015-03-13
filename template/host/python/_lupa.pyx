@@ -9,7 +9,7 @@ A fast Python wrapper around Lua and LuaJIT2.
 cimport cython
 
 cimport lua
-from .lua cimport lua_State
+from lua cimport lua_State
 
 cimport cpython.ref
 cimport cpython.bytes

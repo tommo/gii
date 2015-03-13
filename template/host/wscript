@@ -10,26 +10,20 @@ import waf_utils
 import moai_env
 
 _AVAILABLE_TARGET  = [ 
-	'win',
 	'osx',
 	'python',
-	#'ios',
-	# 'html5'
+	'ios',
+	'html5'
 ]
 
-_DEPENDENCIES      = [ 
-	'host-modules', 
-	'extension', 
-	'freejoy' 
-]
+_DEPENDENCIES      = [ 'host-modules', 'extension', 'freejoy' ]
 _AVAILABLE_CONFIG  = [ 'debug', 'release' ]
 _TARGET_ARCH       = {
-	'win'           : 'i386',
-	'osx'           : 'i386',
-	# 'osx'           : 'x86_64',
-	'python'        : 'i386',
+	# 'osx'           : 'i386',
+	'osx'           : 'x86_64',
+	# 'python'        : 'i386',
 	'html5'         : 'js',
-	# 'python'        : 'x86_64',
+	'python'        : 'x86_64',
 	'ios'           : 'armv7',
 	'ios-simulator' : 'i386',
 	'android'       : 'android'
@@ -53,8 +47,8 @@ def options( opt ):
 	opt.recurse( _AVAILABLE_TARGET )
 
 def configure( conf ):
-	import sys
 	env = conf.env
+	conf.load( 'compiler_cxx compiler_c' )
 	
 	for config in _AVAILABLE_CONFIG:
 		for target in _AVAILABLE_TARGET:
@@ -62,18 +56,10 @@ def configure( conf ):
 			conf.setenv( name, env.derive() )
 			conf.env.NAME      = name
 			conf.env.TARGET    = target
-
+			conf.env.ARCH      = [ _TARGET_ARCH[ target ] ]
 			conf.env.CXXFLAGS  = [ '-fno-rtti', '-fvisibility-inlines-hidden', '-fvisibility=hidden' ]
 			conf.env.CFLAGS    = []
 			conf.env.LINKFLAGS = []
-
-			if sys.platform == 'win32':
-				conf.env['MSVC_TARGETS'] = 'x86'
-				conf.env.CXXFLAGS += ['/MD']
-				conf.env.LINKFLAGS += ['/MD']
-			else:
-				conf.env.ARCH      = [ _TARGET_ARCH[ target ] ]
-				
 			if config == 'debug':
 				conf.env.CXXFLAGS += [ '-g' ]
 				conf.env.CFLAGS   += [ '-g' ]
@@ -90,10 +76,7 @@ def configure( conf ):
 				moai_env.setup_moai_html5_env( conf, target, config )
 
 			else:
-				if sys.platform != 'win32':
-					moai_env.setup_moai_env( conf, target, config )
-				else:
-					moai_env.setup_moai_win32_env( conf, target, config )
+				moai_env.setup_moai_env( conf, target, config )
 				moai_env.setup_fmod_env( conf, target, config )
 
 			conf.recurse( target )

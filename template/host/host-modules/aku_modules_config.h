@@ -1,12 +1,12 @@
 #ifndef AKU_MODULES_CONFIG_H
 #define AKU_MODULES_CONFIG_H
 
-	#ifndef AKU_WITH_BOX2D
-		#define AKU_WITH_BOX2D 1
+    #ifndef AKU_WITH_APPLE
+		#define AKU_WITH_APPLE 0
 	#endif
 
-	#ifndef AKU_WITH_CHIPMUNK
-		#define AKU_WITH_CHIPMUNK 0
+	#ifndef AKU_WITH_BOX2D
+		#define AKU_WITH_BOX2D 1
 	#endif
 
 	#ifndef AKU_WITH_CRYPTO
@@ -14,11 +14,19 @@
 	#endif
 
 	#ifndef AKU_WITH_FMOD_DESIGNER
-		#define AKU_WITH_FMOD_DESIGNER 1
+		#ifdef MOAI_OS_HTML
+			#define AKU_WITH_FMOD_DESIGNER 0
+		#else
+			#define AKU_WITH_FMOD_DESIGNER 1
+		#endif
 	#endif
 
 	#ifndef AKU_WITH_FMOD_EX
-		#define AKU_WITH_FMOD_EX 0
+		#ifdef MOAI_OS_HTML
+			#define AKU_WITH_FMOD_EX 0
+		#else
+			#define AKU_WITH_FMOD_EX 0
+		#endif
 	#endif
 
 	#ifndef AKU_WITH_HARNESS
@@ -34,23 +42,35 @@
 	#endif
 
 	#ifndef AKU_WITH_LUAEXT
-		#define AKU_WITH_LUAEXT 0
+		#define AKU_WITH_LUAEXT 1
+	#endif
+
+	#ifndef AKU_WITH_PLUGINS
+		#define AKU_WITH_PLUGINS 0
+	#endif
+
+	#ifndef AKU_WITH_SDL
+		#define AKU_WITH_SDL 0
 	#endif
 
 	#ifndef AKU_WITH_SIM
 		#define AKU_WITH_SIM 1
 	#endif
 
-	#ifndef AKU_WITH_TEST
-		#define AKU_WITH_TEST 0
-	#endif
-
 	#ifndef AKU_WITH_UNTZ
-		#define AKU_WITH_UNTZ 1
+		#ifdef MOAI_OS_HTML
+			#define AKU_WITH_UNTZ 1
+		#else
+			#define AKU_WITH_UNTZ 0
+		#endif
 	#endif
 
 	#ifndef AKU_WITH_UTIL
 		#define AKU_WITH_UTIL 1
 	#endif
 
+	#ifndef AKU_WITH_STEER
+		#define AKU_WITH_STEER 1
+	#endif
+	
 #endif
