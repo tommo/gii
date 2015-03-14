@@ -5,7 +5,7 @@ from gii.qt.controls.PropertyEditor import PropertyEditor
 from gii.qt.controls.Menu import MenuManager
 
 from PyQt4        import QtCore, QtGui, uic
-from PyQt4.QtCore import QEventLoop, QEvent, QObject
+from PyQt4.QtCore import QEventLoop, QEvent, QObject, pyqtSignal
 
 from SceneEditor  import SceneEditorModule
 from IDPool       import IDPool
@@ -20,6 +20,7 @@ ObjectContainerBase,BaseClass = uic.loadUiType(getModulePath('ObjectContainer.ui
 
 ##----------------------------------------------------------------##
 class ObjectContainer( QtGui.QWidget ):
+	foldChanged  = pyqtSignal( bool )
 	def __init__( self, *args ):
 		super( ObjectContainer, self ).__init__( *args )
 		self.ui = ObjectContainerBase()
@@ -83,6 +84,7 @@ class ObjectContainer( QtGui.QWidget ):
 		else:
 			self.ui.buttonFold.setText( '-' )
 			self.ui.ObjectInnerContainer.show()
+		self.foldChanged.emit( self.folded )
 
 	def setTitle( self, title ):
 		self.ui.labelName.setText( title )
@@ -316,6 +318,9 @@ class IntrospectorInstance(object):
 
 ##----------------------------------------------------------------##
 class ObjectEditor( object ):	
+	def getContainer( self ):
+		return self.container
+		
 	def initWidget( self, container ):
 		pass
 

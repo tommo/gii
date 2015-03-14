@@ -197,6 +197,11 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.activeSceneNode = node
 		signals.emitNow( 'scene.pre_open', node )
 		scene = self.delegate.safeCallMethod( 'editor', 'openScene', node.getPath() )
+		if not scene:
+			#todo: raise something
+			alertMessage( 'error', 
+				'%s\n\nfailed to open scene, see console for detailed information.' % node.getPath() )
+			return False
 		signals.emitNow( 'scene.open', self.activeSceneNode, scene )
 		self.setFocus()		
 		

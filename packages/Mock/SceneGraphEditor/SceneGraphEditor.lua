@@ -501,7 +501,7 @@ end
 function CmdCloneEntity:redo()
 	local createdList = {}
 	for target in pairs( self.targets ) do
-		local created = mock.cloneEntity( target )
+		local created = mock.cloneEntity( target, true )
 		created.__prefabId = target.__prefabId
 		local n = created:getName()
 		if n then

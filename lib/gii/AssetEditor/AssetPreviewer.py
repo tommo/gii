@@ -27,7 +27,7 @@ class ModAssetPreviewer( AssetEditorModule ):
 
 	def onLoad( self ):
 		self.container = self.requestDockWindow('AssetPreview',
-				title   = 'Asset Preview',
+				title   = 'Asset View',
 				dock    = 'left',
 				minSize = (100,100)
 			)

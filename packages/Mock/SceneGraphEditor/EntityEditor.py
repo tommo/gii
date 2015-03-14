@@ -41,15 +41,19 @@ class EntityEditor( ObjectEditor ): #a generic property grid
 		self.target = target
 		self.grid.setTarget( target )		
 		if isMockInstance( target, 'Entity' ):
+			#setup prefab tool
 			prefabPath = target['__prefabId']
 			if prefabPath:
 				self.header.containerPrefab.show()
 				self.header.labelPrefabPath.setText( prefabPath )
 			else:
 				self.header.containerPrefab.hide()
-			for com in target.components:
+			#add component editors
+			for com in target.getSortedComponentList( target ).values():
 				if com.FLAG_INTERNAL: continue
 				editor = introspectorInstance.addObjectEditor( com, context_menu = 'component_context' )
+				container = editor.getContainer()
+				container.foldChanged.connect ( self.onComponentFold )
 
 	def onPropertyChanged( self, obj, id, value ):		
 		if id == 'name':
@@ -81,6 +85,10 @@ class EntityEditor( ObjectEditor ): #a generic property grid
 			'scene_editor/pull_prefab',
 			entity = self.target	
 		)
+
+	def onComponentFold( self, folded ):
+		#TODO:store fold state
+		pass
 
 	def refresh( self ):
 		self.grid.refreshAll()

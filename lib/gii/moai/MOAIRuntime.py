@@ -374,7 +374,8 @@ class MOAILuaDelegate(object):
 		try:
 			return m(*args)
 		except Exception, e:
-			logging.exception( e )
+			# logging.exception( e )
+			print e
 	
 	def safeCallMethod( self, objId, methodName, *args ):
 		if not self.luaEnv: 
@@ -388,7 +389,8 @@ class MOAILuaDelegate(object):
 		try:
 			return method( obj, *args )
 		except Exception, e:
-			logging.exception( e )
+			# logging.exception( e )
+			print e
 
 	def call(self, method, *args):
 		m = self.luaEnv[method]
