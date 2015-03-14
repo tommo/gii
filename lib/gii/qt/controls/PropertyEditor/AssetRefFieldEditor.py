@@ -4,6 +4,7 @@ from gii.core.model import *
 from PropertyEditor import FieldEditor, registerSimpleFieldEditorFactory
 from SearchFieldEditor import SearchFieldEditorBase
 
+import os.path
 
 ##----------------------------------------------------------------##
 class AssetRefFieldEditor( SearchFieldEditorBase ):	
@@ -37,6 +38,12 @@ class AssetRefFieldEditor( SearchFieldEditorBase ):
 		assetBrowser = app.getModule( 'asset_browser' )
 		if assetBrowser:
 			assetBrowser.locateAsset( self.target )
+	
+	def formatRefName( self, name )	:
+		if isinstance( name, ( str, unicode ) ):
+			return os.path.basename( name )
+		else:
+			return name
 
 ##----------------------------------------------------------------##
 

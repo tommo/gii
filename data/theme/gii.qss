@@ -646,8 +646,9 @@ QGroupBox::title
 
 QToolTip
 {
-	background-color: #648ccb;
-	color: #dfdfdf;
+	background-color: #e5ff37;
+	color: #000000;
+	padding: 2px;
 }
 
 QWizard QListView

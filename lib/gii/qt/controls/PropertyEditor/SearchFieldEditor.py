@@ -61,12 +61,14 @@ class SearchFieldWidget( QtGui.QWidget ):
 			self.buttonGoto.show()
 			self.buttonClear.show()
 
-	def setRefName( self, name ):
-		if isinstance( name, (unicode, str) ):
-			self.buttonRef.setText( name )
+	def setRefName( self, name, formatted ):
+		if isinstance( formatted, (unicode, str) ):
+			self.buttonRef.setText( formatted )
+			self.buttonRef.setToolTip( name )
 		else:
-			logging.error('unknown ref name type:' + repr( name ) )
-			self.buttonRef.setText( repr( name ) )
+			logging.error('unknown ref name type:' + repr( formatted ) )
+			self.buttonRef.setText( repr( formatted ) )
+			self.buttonRef.setToolTip( '<unkown ref name>' )
 
 	def setRefIcon( self, iconName ):
 		icon = getIcon( iconName )
@@ -94,10 +96,10 @@ class SearchFieldEditorBase( FieldEditor ):
 			if isinstance( r, tuple ):
 				( name, icon ) = r
 				self.refWidget.setRefIcon( icon )
-				self.refWidget.setRefName( name )
+				self.refWidget.setRefName( name, self.formatRefName( name ) )
 			else:
 				self.refWidget.setRefIcon( None )
-				self.refWidget.setRefName( r )
+				self.refWidget.setRefName( r, self.formatRefName( r ) )
 	
 	def initEditor( self, container ):
 		widget = SearchFieldWidget( container )
@@ -176,3 +178,6 @@ class SearchFieldEditorBase( FieldEditor ):
 
 	def clearObject( self ): #virtual
 		self.setValue( None )
+
+	def formatRefName( self, name ): #virtual
+		return name
