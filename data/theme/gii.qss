@@ -3,10 +3,9 @@
 QWidget
 {
 	font-size:11px;
-	color:#cacaca;
+	color:#ccc;
 	background-color:#333;
 }
-
 
 QFrame
 {
@@ -21,7 +20,7 @@ QToolButton
 {
 	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#444,stop:1#333);
 	border: 1px solid #222;
-	border-radius:2px;
+	border-radius:1px;
 	color:#ccc;
 	padding:4px;
 }
@@ -36,7 +35,7 @@ QPushButton
 {
 	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#555,stop:1#444);
 	border: 1px solid #222;
-	border-radius:2px;
+	border-radius:1px;
 	color:#dcdcdc;
 	padding:4px;
 	margin:1px;
@@ -272,7 +271,7 @@ QScrollBar::down-arrow:vertical
 
 QSplitter::handle
 {
-	background-color:#282828;
+	background-color:#333;
 	border:0 solid green;
 }
 
@@ -390,6 +389,7 @@ QTabBar::tab
 	color:#888;
 	padding:4px 5px;
 	border-top: 1px solid #222;
+	border-bottom: 0px solid #222;
 	border-right: 1px solid #222;
 	border-left: 1px solid #444;
 }
@@ -408,7 +408,7 @@ QTabBar::tab:selected
   background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
 	color:#cdcdcd;
 	padding:4px 5px;
-	border-top: 1px solid #466dc6;
+	border-top: 2px solid #466dc6;
 }
 
 QProgressBar
@@ -577,12 +577,13 @@ QRadioButton::indicator:checked:disabled
 
 QLineEdit, QTextEdit, QPlainTextEdit, QSpinBox, QDoubleSpinBox
 {
-	background-color:#595959;
+	background-color:#555;
 	border:1px solid #222;
-	color:#c4c4c4;
+	color:#ccc;
 	/*selection-background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#787878,stop:1#5a5a5a);*/
 	/*selection-color:#000;*/
 	padding:1px;
+	margin-right:1px;
 	/*border-radius: 2px;*/
 }
 
@@ -682,7 +683,7 @@ SearchLineEdit > QLineEdit
 
 QMainWindow,QScrollBar,QTableView
 {
-	background-color:#444;
+	background-color:#333;
 }
 
 QMainWindow::separator
@@ -759,14 +760,19 @@ QTreeView::indicator:checked:disabled,QCheckBox::indicator:checked:disabled
 	image:url(theme:checkbox_checked_disabled.png);
 }
 
-QListView::item:alternate,QLabel,QCheckBox,QRadioButton
+QListView::item:alternate
 {
 	color:#dcdcdc;
 }
 
+QLabel,QCheckBox,QRadioButton
+{
+	color:#ccc;
+}
+
 QMenuBar,QToolBar:horizontal,QToolBar:vertical
 {
-	background-color:#282828;
+	background-color:#333;
 }
 
 QMenuBar::item:selected,QDialog WScrollArea
@@ -790,10 +796,21 @@ QToolButton::checked{
 
 #ObjectHeader {
 	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#444,stop:1#333);
+	border-top: 1px solid #222;
+	border-right: 1px solid #222;
+	border-left: 1px solid #222;
+	border-bottom: 1px solid #252525;
+}
+
+#ObjectHeader > QToolButton {
+	border-top: 1px solid #222;
 }
 
 #ObjectInnerContainer{
 	background-color:#444;
+	border-bottom: 1px solid #222;
+	border-right: 1px solid #222;
+	border-left: 1px solid #222;
 }
 
 QSplitter#TimelineSplitter::handle{
