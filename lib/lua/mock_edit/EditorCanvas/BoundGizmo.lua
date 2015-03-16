@@ -6,7 +6,7 @@ function SimpleBoundGizmo:__init()
 end
 
 function SimpleBoundGizmo:onLoad()
-	self:attach( mock.DrawScript() )
+	self:attach( mock.DrawScript() ):setBlend( 'alpha' )
 end
 
 function SimpleBoundGizmo:setTarget( target )

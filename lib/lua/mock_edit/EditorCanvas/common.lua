@@ -33,3 +33,6 @@ addColor( 'handle-all', 1,1,0, alpha )
 addColor( 'handle-active', 1,1,0, alpha )
 
 addColor( 'handle-previous', 1,0,0, .3 )
+
+addColor( 'gizmo_trigger', hexcolor( '#6695ff', 0.1 ) )
+addColor( 'gizmo_trigger_border', hexcolor( '#6695ff', 0.7 ) )
