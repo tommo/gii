@@ -60,15 +60,17 @@ end
 
 function TranslationHandle:onMouseDown( btn, x, y )
 	if btn~='left' then return end
+	self.activeAxis = false
 	self.x0, self.y0 = self:wndToTarget( x, y )	
 	x, y = self:wndToModel( x, y )
 	if x >= 0 and y >= 0 and x <= handleArrowSize + handlePad and y <= handleArrowSize + handlePad then
 		self.activeAxis = 'all'
-	elseif math.abs( y ) < handlePad and x <= handleSize + handleArrowSize then
+	elseif math.abs( y ) < handlePad and x <= handleSize + handleArrowSize and x > -handlePad then
 		self.activeAxis = 'x'
-	elseif math.abs( x ) < handlePad and y <= handleSize + handleArrowSize then
+	elseif math.abs( x ) < handlePad and y <= handleSize + handleArrowSize and y > -handlePad then
 		self.activeAxis = 'y'
 	end
+
 	if self.activeAxis then
 		self.target:preTransform()
 		return true
@@ -161,6 +163,7 @@ end
 
 function RotationHandle:onMouseDown( btn, x, y )
 	if btn~='left' then return end
+	self.activeAxis = false
 	local x1, y1 = self:wndToModel( x, y )
 	local r = distance( 0,0, x1,y1 )
 	if r > 80 then return end
@@ -238,12 +241,12 @@ function ScaleHandle:onMouseDown( btn, x, y )
 	self.y0 = y
 	x,y = self:wndToModel( x, y )
 	self.sx, self.sy, self.sz = self.target:getScl()
-
+	self.activeAxis = false
 	if x >= -handlePad and y >= -handlePad and x <= handleArrowSize + handlePad and y <= handleArrowSize + handlePad then
 		self.activeAxis = 'all'
-	elseif math.abs( y ) < handlePad and x <= handleSize + handleArrowSize then
+	elseif math.abs( y ) < handlePad and x <= handleSize + handleArrowSize  and x > -handlePad then
 		self.activeAxis = 'x'
-	elseif math.abs( x ) < handlePad and y <= handleSize + handleArrowSize then
+	elseif math.abs( x ) < handlePad and y <= handleSize + handleArrowSize  and y > -handlePad then
 		self.activeAxis = 'y'
 	end
 

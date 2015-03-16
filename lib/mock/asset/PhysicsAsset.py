@@ -19,6 +19,9 @@ class PhysicsMaterialAssetManager( AssetManager ):
 	def getName( self ):
 		return 'asset_manager.' + _PMATERIAL_TYPE
 
+	def getMetaType( self ):
+		return 'serializable'
+
 	def acceptAssetFile(self, filePath):
 		if not os.path.isfile( filePath ): return False
 		name, ext = os.path.splitext( filePath )
@@ -57,6 +60,9 @@ class PhysicsMaterialAssetCreator(AssetCreator):
 class PhysicsBodyDefAssetManager( AssetManager ):
 	def getName( self ):
 		return 'asset_manager.' + _PBODYDEF_TYPE
+
+	def getMetaType( self ):
+		return 'serializable'
 
 	def acceptAssetFile(self, filePath):
 		if not os.path.isfile( filePath ): return False

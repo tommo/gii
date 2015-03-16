@@ -271,7 +271,7 @@ QScrollBar::down-arrow:vertical
 
 QSplitter::handle
 {
-	background-color:#333;
+	background-color:#444;
 	border:0 solid green;
 }
 
@@ -380,7 +380,7 @@ QTabWidget::tab-bar
 	background-color:#000;
 	left:0px;
 	bottom:0px;
-	border:1px solid #000;
+	/*border:1px solid #000;*/
 }
 
 QTabBar::tab
@@ -389,9 +389,9 @@ QTabBar::tab
 	color:#888;
 	padding:4px 5px;
 	border-top: 1px solid #222;
-	border-bottom: 0px solid #222;
+	/*border-bottom: 1px solid #333;*/
 	border-right: 1px solid #222;
-	border-left: 1px solid #444;
+	border-left: 1px solid #222;
 }
 
 QTabBar::tab:first{
@@ -408,6 +408,7 @@ QTabBar::tab:selected
   background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
 	color:#cdcdcd;
 	padding:4px 5px;
+	border-bottom: 0px solid #222;
 	border-top: 2px solid #466dc6;
 }
 
@@ -908,4 +909,9 @@ QSplitter#TimelineSplitter::handle{
 
 #TimelineTrack[selected="true"] {
 	background-color:#252c25;
+}
+
+QRubberBand {
+	color: #4ba4ff;
+	background-color: #4ba4ff;
 }

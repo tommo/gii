@@ -6,6 +6,18 @@ function CanvasHandleLayer:__init( option )
 	self.option = option
 	self.activeHandle = false
 	self.handles = {}
+	self.pendingNewHandles = {}
+	self.iterating = false
+end
+
+
+function CanvasHandleLayer:startIterate()
+	self.iterating = true
+end
+
+function CanvasHandleLayer:stopIterate()
+	self.iterating = false
+	self:flushPendingNewHandles()
 end
 
 function CanvasHandleLayer:onLoad()
@@ -21,47 +33,65 @@ end
 
 
 function CanvasHandleLayer:onMouseDown( btn, x, y )
+	self:startIterate()
 	for i, handle in ipairs( self.handles ) do
 		if handle:onMouseDown( btn, x, y ) == true then --grabbed
-			return
+			break
 		end
 	end
+	self:stopIterate()
 end
 
 function CanvasHandleLayer:onMouseUp( btn, x, y )
+	self:startIterate()
 	for i, handle in ipairs( self.handles ) do
 		if handle:onMouseUp( btn, x, y ) == true then
-			return
+			break
 		end
 	end
+	self:stopIterate()
 end
 
 function CanvasHandleLayer:onMouseMove( x, y )
+	self:startIterate()
 	for i, handle in ipairs( self.handles ) do
 		if handle:onMouseMove( x, y ) == true then
-			return
+			break
 		end
 	end
+	self:stopIterate()
 end
 
 function CanvasHandleLayer:onZoomChanged( zoom )
+	self:startIterate()
 	local scl = 1/zoom
 	for i, handle in ipairs( self.handles ) do
 		handle:setScl( scl, scl, 1 )
 	end
-end	
+	self:stopIterate()
+end
 
 function CanvasHandleLayer:addHandle( handle )
-	local scene= self:getScene()
+	local scene = self:getScene()
 	scene:addEntity( handle )
-	-- self:addChild( handle )
-	table.insert(self.handles, 1, handle )
 	handle.handleLayer = self
 	local scl = 1/self.targetCameraCom:getZoom()
 	handle:setScl( scl, scl, 1 )
 	handle:setPriority( 1000 )
 	handle:setLoc( 0,0,self:getLocZ())
+	if self.iterating then
+		table.insert( self.pendingNewHandles, handle )
+	else
+		table.insert(self.handles, 1, handle )
+	end
 	return handle
+end
+
+function CanvasHandleLayer:flushPendingNewHandles()
+	for i, handle in ipairs( self.pendingNewHandles ) do
+		table.insert( self.handles, 1, handle )
+	end
+	self.pendingNewHandles = {}
 end
 
 function CanvasHandleLayer:updateCanvas( ... )
@@ -79,7 +109,6 @@ function CanvasHandleLayer:clearHandles()
 		h:destroyWithChildrenNow()
 	end
 end
-
 
 
 --------------------------------------------------------------------

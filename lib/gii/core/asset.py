@@ -467,6 +467,9 @@ class AssetManager(object):
 	def editAsset(self, assetNode):
 		assetNode.openInSystem()
 
+	def buildThumbnail( self, assetNode ):
+		return None
+
 	def markModified( self, assetNode ):
 		assetNode.modifyState = 'modified'
 		for child in assetNode.getChildren():

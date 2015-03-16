@@ -41,7 +41,8 @@ class AssetRefFieldEditor( SearchFieldEditorBase ):
 	
 	def formatRefName( self, name )	:
 		if isinstance( name, ( str, unicode ) ):
-			return os.path.basename( name )
+			baseName, ext = os.path.splitext( os.path.basename( name ) )
+			return baseName
 		else:
 			return name
 

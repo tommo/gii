@@ -389,10 +389,27 @@ function CmdCreateEntity:init( option )
 	self.entityName = option.name
 end
 
+local function _editorInitEntity( e )
+	if e.onEditorInit then
+		e:onEditorInit()
+	end
+
+	for com in pairs( e.components ) do
+		if com.onEditorInit then
+		com:onEditorInit()
+		end
+	end
+
+	for child in pairs( e.children ) do
+		_editorInitEntity( child )
+	end
+end
+
 function CmdCreateEntity:createEntity()
 	local entType = mock.getEntityType( self.entityName )
 	assert( entType )
 	local e = entType()
+	_editorInitEntity( e )
 	if not e.name then e.name = self.entityName end
 	return e
 end
@@ -447,6 +464,9 @@ function CmdCreateComponent:redo()
 	component.__guid = generateGUID()
 	self.createdComponent = component
 	self.targetEntity:attach( component )
+	if component.onEditorInit() then
+		component:onEditorInit()
+	end
 	gii.emitPythonSignal( 'component.added', component, self.targetEntity )	
 end
 

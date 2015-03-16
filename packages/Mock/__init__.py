@@ -6,6 +6,8 @@ import SceneView
 import TextureManager
 import TexturePreview
 
+import SerializablePreview
+
 import DeckEditor
 
 import ParticleEditor
