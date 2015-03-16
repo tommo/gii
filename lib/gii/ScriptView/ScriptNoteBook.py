@@ -4,7 +4,7 @@ import os
 from PyQt4      import QtGui, QtCore
 
 from gii.core   import app
-from gii.scintilla import CodeBox
+from gii.qt.controls.CodeBox import CodeBox
 
 class ScriptPage( CodeBox ):
 	def __init__(self, *args ):

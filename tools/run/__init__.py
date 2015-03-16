@@ -19,7 +19,7 @@ cli.add_argument( '-b',
 	help   = 'Build host before running',
 	action = 'store_true',
 	default = False
-	)
+)
 
 
 def main( argv ):

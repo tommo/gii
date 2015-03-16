@@ -12,6 +12,7 @@ from ReferenceFieldEditor import ReferenceFieldEditor
 from AssetRefFieldEditor  import AssetRefFieldEditor 
 
 import LongTextFieldEditor
+import CodeBoxFieldEditor
 import ActionFieldEditor
 import VecFieldEditor
 import CollectionFieldEditor

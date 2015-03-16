@@ -11,7 +11,7 @@ from PyQt4.QtCore import Qt
 from gii.core               import *
 from gii.qt.controls.Window import MainWindow
 from gii.DebugView          import DebugViewModule
-from gii.scintilla import CodeBox
+from gii.qt.controls.CodeBox import CodeBox
 
 
 ##----------------------------------------------------------------##

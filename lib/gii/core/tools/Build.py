@@ -10,13 +10,13 @@ def run( **option ):
 	project = app.getProject()
 	assert project.isLoaded()
 	os.chdir( project.getHostPath() )
-	if option.get( 'clean-bin', True ):
-		if sys.platform == 'darwin':
-			pass	
-		else:
-			pass
-			#TODO	
-		return 0
+	# if option.get( 'clean-bin', False ):
+	# 	if sys.platform == 'darwin':
+	# 		pass	
+	# 	else:
+	# 		pass
+	# 		#TODO	
+	# 	return 0
 
 	arglist = []
 	arglist += [ app.getPythonPath(), app.getPath( 'support/waf/waf' ) ]

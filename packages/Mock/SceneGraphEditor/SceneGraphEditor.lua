@@ -464,7 +464,7 @@ function CmdCreateComponent:redo()
 	component.__guid = generateGUID()
 	self.createdComponent = component
 	self.targetEntity:attach( component )
-	if component.onEditorInit() then
+	if component.onEditorInit then
 		component:onEditorInit()
 	end
 	gii.emitPythonSignal( 'component.added', component, self.targetEntity )	
