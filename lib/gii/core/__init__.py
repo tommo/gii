@@ -11,6 +11,7 @@ import globalSignals
 ##----------------------------------------------------------------##
 from helpers        import *
 from model          import *
+from res            import ResGuard
 from cli            import CLICommand, parseCLI
 from tool           import ToolBase, startupTool
 from project        import Project
