@@ -4,6 +4,8 @@ import inspect
 import sys
 import os.path
 
+from res     import *
+
 import signals
 from project import Project
 from Command import EditorCommandRegistry
@@ -20,11 +22,14 @@ class EditorModuleMeta( ABCMeta ):
 			m._dependency = dependency
 			m._name       = name
 			EditorModuleManager.get().registerModule(	m )
+
+
+
 ##----------------------------------------------------------------##
 ## EDITORMODULE
 ##----------------------------------------------------------------##
-class EditorModule( object ):
-	__metaclass__ = EditorModuleMeta	
+class EditorModule( ResHolder ):
+	__metaclass__ = EditorModuleMeta
 	def __repr__(self):
 		return '<module: %s>'%self.getName()
 
@@ -117,11 +122,8 @@ class EditorModule( object ):
 		if self.active:
 			self.stop()
 		self.alive  = False
-		self.releaseResource()
+		self.releaseAll()
 		self.onUnload()
-
-	def releaseResource( self ):
-		pass
 
 	def start( self ):
 		if self.active: return
