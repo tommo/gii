@@ -915,3 +915,9 @@ QRubberBand {
 	color: #4ba4ff;
 	background-color: #4ba4ff;
 }
+
+/*for category list*/
+#CategoryTitleBar
+{
+	text-align: left;
+}
