@@ -115,7 +115,7 @@ class PropertyEditor( QtGui.QWidget ):
 			QtGui.QSizePolicy.Fixed
 		)
 		# line.setStyleSheet('background:none; border:none; ')
-		line.setStyleSheet('background:none; border-top:1px solid #292929; margin: 2px 0 4px 0;')
+		line.setStyleSheet('background:none; border-top:1px solid #353535; margin: 2px 0 2px 0;')
 		line.setMinimumSize( 30, 7 )
 		self.layout.addRow( line )
 

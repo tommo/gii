@@ -7,7 +7,7 @@ import json
 from gii.core import *
 from mock import _MOCK
 
-from gii.qt.dialogs   import requestString, alertMessage, confirmDialog
+from gii.qt.dialogs   import requestString, alertMessage, requestConfirm
 
 ##----------------------------------------------------------------##
 class ParticleSystemAssetManager( AssetManager ):

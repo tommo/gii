@@ -30,7 +30,7 @@ class StringDialog(QtGui.QDialog):
 	def getText(self):
 		return self.lineEdit.text()
 	
-def confirmDialog(title, msg, level='normal'):
+def requestConfirm(title, msg, level='normal'):
 	f = None
 	if level == 'warning':
 		f = QMessageBox.warning
@@ -53,8 +53,11 @@ def alertMessage(title, msg, level='warning'):
 		f=QMessageBox.critical
 		logging.error( msg )
 
+	elif level=='question':
+		f = QMessageBox.question
+
 	else:
-		f = QMessageBox.queston
+		f = QMessageBox.information
 	res = f( None, title, msg	)
 
 def requestString(title, prompt):

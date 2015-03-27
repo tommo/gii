@@ -2,7 +2,7 @@ import random
 import os
 
 from gii.core         import *
-from gii.qt.dialogs   import requestString, alertMessage, confirmDialog
+from gii.qt.dialogs   import requestString, alertMessage, requestConfirm
 from gii.qt.controls.AssetTreeView import AssetTreeView
 from gii.qt.helpers   import setClipboardText
 from gii.SearchView   import requestSearchView, registerSearchEnumerator
@@ -323,7 +323,7 @@ class AssetBrowserTreeView( AssetTreeView ):
 			getAssetSelectionManager().changeSelection(None)
 
 	def onDeletePressed( self ):
-		if confirmDialog( 'delete asset', 'Confirm to delete asset(s)?' ):
+		if requestConfirm( 'delete asset', 'Confirm to delete asset(s)?' ):
 			for node in self.getSelection():
 				if not node.isVirtual():
 					path = node.getAbsFilePath()

@@ -1,7 +1,7 @@
 import os.path
 
 from gii.core         import AssetManager, AssetLibrary, AssetCreator, app
-from gii.qt.dialogs   import requestString, alertMessage, confirmDialog
+from gii.qt.dialogs   import requestString, alertMessage, requestConfirm
 
 from mock import _MOCK
 
