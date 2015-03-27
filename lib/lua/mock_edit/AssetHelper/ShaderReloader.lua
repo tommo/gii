@@ -11,9 +11,9 @@ local function onAssetModified( node )
 			end
 		end
 	elseif atype == 'shader' then
-		local prog = node.cached and node.cached.program
-		if prog then
-			prog:build( true )
+		local config = node.cached and node.cached.config
+		if config then
+			config:build( true )
 		end
 	else
 		return

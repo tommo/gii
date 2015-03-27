@@ -29,3 +29,5 @@ import DataJSONAsset
 import EffectAsset
 
 import PhysicsAsset
+
+import NamedTilesetAsset
