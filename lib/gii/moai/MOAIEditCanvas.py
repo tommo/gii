@@ -189,6 +189,28 @@ class MOAIEditCanvasLuaDelegate(MOAILuaDelegate):
 		if self._onResize: self._onResize(w,h)
 
 
+_NameToCursor = {
+	'arrow'           : Qt.ArrowCursor,
+	'up-arrow'        : Qt.UpArrowCursor,
+	'cross'           : Qt.CrossCursor,
+	'wait'            : Qt.WaitCursor,
+	'i-beam'          : Qt.IBeamCursor,
+	'size-vertical'   : Qt.SizeVerCursor,
+	'size-horizontal' : Qt.SizeHorCursor,
+	'size-bd'         : Qt.SizeBDiagCursor,
+	'size-fd'         : Qt.SizeFDiagCursor,
+	'size-all'        : Qt.SizeAllCursor,
+	'blank'           : Qt.BlankCursor,
+	'split-v'         : Qt.SplitVCursor,
+	'split-h'         : Qt.SplitHCursor,
+	'pointing-hand'   : Qt.PointingHandCursor,
+	'forbidden'       : Qt.ForbiddenCursor,
+	'open-hand'       : Qt.OpenHandCursor,
+	'closed-hand'     : Qt.ClosedHandCursor,
+	'whats-this'      : Qt.WhatsThisCursor,
+	'busy'            : Qt.BusyCursor,
+}
+
 class MOAIEditCanvasBase( MOAICanvasBase ):
 	_id = 0
 	def __init__( self, *args, **kwargs ):
@@ -210,15 +232,25 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.updateStep  = 0
 		self.alwaysForcedUpdate = False
 
+		self.currentCursorId = 'arrow'
+		self.cursorHidden = False
+
 		self.updateTimer.timeout.connect( self.updateCanvas )
 		signals.connect('moai.reset', self.onMoaiReset)
 		signals.connect('moai.clean', self.onMoaiClean)
 
 	def hideCursor(self):
+		self.cursorHidden = True
 		self.setCursor(QtCore.Qt.BlankCursor)
 
 	def showCursor(self):
-		self.setCursor(QtCore.Qt.ArrowCursor)
+		self.cursorHidden = False
+		self.setCursorById( self.currentCursorId )
+
+	def setCursorById( self, id ):
+		self.currentCursorId = id
+		if self.cursorHidden: return
+		self.setCursor( _NameToCursor.get( self.currentCursorId, QtCore.Qt.ArrowCursor ) )
 
 	def setCursorPos(self,x,y):
 		self.cursor().setPos(self.mapToGlobal(QtCore.QPoint(x,y)))
@@ -264,6 +296,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 				'updateCanvas'     : boundToClosure( self.updateCanvas ),
 				'hideCursor'       : boundToClosure( self.hideCursor ),
 				'showCursor'       : boundToClosure( self.showCursor ),
+				'setCursor'        : boundToClosure( self.setCursorById ),
 				'setCursorPos'     : boundToClosure( self.setCursorPos ),
 				'getCanvasSize'    : boundToClosure( self.getCanvasSize ),
 				'startUpdateTimer' : boundToClosure( self.startUpdateTimer ),
