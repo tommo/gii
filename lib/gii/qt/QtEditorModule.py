@@ -34,6 +34,7 @@ class QtEditorModule( EditorModule ):
 	def addShortcut( self, context, keySeq, target, *args, **option ):
 		contextWindow = None
 		shortcutContext = None
+		
 		if context == 'main':
 			contextWindow = self.getMainWindow()
 			shortcutContext = Qt.WidgetWithChildrenShortcut
@@ -76,6 +77,7 @@ class QtEditorModule( EditorModule ):
 		mainWindow = self.getMainWindow()
 		container = mainWindow.requestDockWindow( id, **windowOption )
 		# self.containers[id] = container
+		self.retain( container )
 		return container
 
 	def requestSubWindow( self, id = None, **windowOption ):
@@ -83,6 +85,7 @@ class QtEditorModule( EditorModule ):
 		mainWindow = self.getMainWindow()
 		container = mainWindow.requestSubWindow( id, **windowOption )
 		# self.containers[id] = container
+		self.retain( container )
 		return container
 
 	def requestDocumentWindow( self, id = None, **windowOption ):
@@ -90,6 +93,7 @@ class QtEditorModule( EditorModule ):
 		mainWindow = self.getMainWindow()
 		container = mainWindow.requestDocumentWindow( id, **windowOption )
 		# self.containers[id] = container
+		self.retain( container )
 		return container
 
 	def setFocus(self):
@@ -124,15 +128,18 @@ class QtEditorModule( EditorModule ):
 
 	#MENU CONTROL
 	def addMenuBar( self, name, menubar ):
-		node = MenuManager.get().addMenuBar(name, menubar, self)		
+		node = MenuManager.get().addMenuBar(name, menubar, self)
+		self.retain( node )
 		return node
 
 	def addMenu(self, path, opiton = None):
 		node = MenuManager.get().addMenu(path, opiton, self)		
+		self.retain( node )
 		return node
 
 	def addMenuItem(self, path, option = None):
 		node = MenuManager.get().addMenuItem( path, option, self )
+		self.retain( node )
 		return node
 
 	def findMenu(self, path):
@@ -157,10 +164,12 @@ class QtEditorModule( EditorModule ):
 	#TOOLBar control
 	def addToolBar( self, name, toolbar, **option ):
 		node = ToolBarManager.get().addToolBar(name, toolbar, self, **option)	
+		self.retain( node )
 		return node
 
 	def addTool(self, path, **opiton ):
 		node = ToolBarManager.get().addTool( path, opiton, self )
+		self.retain( node )
 		return node
 
 	def findTool(self, path):
