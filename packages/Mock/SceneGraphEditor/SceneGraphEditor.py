@@ -6,7 +6,7 @@ from gii.core.model  import *
 from gii.qt          import QtEditorModule
 
 from gii.qt.IconCache                  import getIcon
-from gii.qt.dialogs                    import alertMessage, confirmDialog
+from gii.qt.dialogs                    import alertMessage, requestConfirm
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 
 from gii.moai.MOAIRuntime import MOAILuaDelegate
@@ -207,7 +207,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		
 	def closeScene( self ):
 		if self.sceneDirty:
-			res = confirmDialog( 'scene modified!', 'save scene before close?' )
+			res = requestConfirm( 'scene modified!', 'save scene before close?' )
 			if res == True:   #save
 				self.saveScene()
 			elif res == None: #cancel
