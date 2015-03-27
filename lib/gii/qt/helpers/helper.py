@@ -27,8 +27,10 @@ def addWidgetWithLayout( child, parent = None, **option ):
 	layout.setMargin( 0 )
 	return child
 
+
 def setClipboardText( text ):
 	QtGui.QApplication.clipboard().setText( text )
+
 
 def getClipboardText( default = None ):
 	t = QtGui.QApplication.clipboard().text()
@@ -36,4 +38,19 @@ def getClipboardText( default = None ):
 	return t
 
 
+def restrainWidgetToScreen( widget ):
+		screenRect = QtGui.QApplication.desktop().availableGeometry(widget);
+		widgetRect = widget.frameGeometry()
+		pos = widget.pos()
+		
+		if widgetRect.left() < screenRect.left() :
+			pos.setX( pos.x() + screenRect.left() - widgetRect.left() )
+		elif widgetRect.right() > screenRect.right():
+			pos.setX( pos.x() + screenRect.right() - widgetRect.right() )
 
+		if widgetRect.top() < screenRect.top():
+			pos.setY( pos.y() + screenRect.top() - widgetRect.top() )			
+		elif widgetRect.bottom() > screenRect.bottom():
+			pos.setY( pos.y() + screenRect.bottom() - widgetRect.bottom() )
+
+		widget.move( pos )

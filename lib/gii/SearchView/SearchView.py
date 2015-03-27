@@ -2,7 +2,7 @@ from gii.core import *
 from gii.core.model import *
 
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
-from gii.qt.helpers    import addWidgetWithLayout
+from gii.qt.helpers    import addWidgetWithLayout, restrainWidgetToScreen
 from gii.qt.IconCache  import getIcon
 
 from PyQt4 import QtGui, QtCore, uic
@@ -446,6 +446,9 @@ class SearchView( EditorModule ):
 		#TODO: allow use list/dict for search candinates.
 		# if isinstance( onSearch, list ): pass
 		self.window.move( pos )
+		
+		restrainWidgetToScreen( self.window )
+
 		self.window.show()
 		self.window.raise_()
 		self.window.setFocus()
