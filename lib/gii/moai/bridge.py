@@ -11,6 +11,8 @@ from AKU        import _LuaTable, _LuaThread, _LuaObject, _LuaFunction
 from time       import time as getTime
 import uuid
 
+import importlib
+
 
 def wrapLuaCaller(func):
 	def caller(*args):
@@ -58,6 +60,9 @@ def clearLuaRegisteredSignals():
 def throwPythonException(name, data=None):
 	raise MOAIException(name)
 
+##----------------------------------------------------------------##
+def importModule( id ):
+	return importlib.import_module( id )
 
 
 ####################################
@@ -79,6 +84,7 @@ def changeSelection( key, targets = None ):
 def addSelection( key, targets = None ):
 	selectionManager = getSelectionManager( key )
 	selectionManager.addSelection( targets )
+
 	
 ####################################
 #COMMON DATA BRIDGE

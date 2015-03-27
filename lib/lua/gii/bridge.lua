@@ -29,6 +29,9 @@ _M.generateGUID         = bridge.generateGUID
 
 MOAIEnvironment.generateGUID = bridge.generateGUID
 
+--import
+_M.importPythonModule   = bridge.importModule
+
 --data conversion
 local encodeDict=bridge.encodeDict
 local decodeDict=bridge.decodeDict
