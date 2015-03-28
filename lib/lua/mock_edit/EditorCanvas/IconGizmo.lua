@@ -2,7 +2,7 @@ module 'mock_edit'
 
 local iconTextureCache = {}
 --------------------------------------------------------------------
-CLASS: IconGizmo( CanvasHandle )
+CLASS: IconGizmo( Gizmo )
 function IconGizmo:__init()
 	self.iconProp = MOAIProp.new()
 	self.iconDeck = MOAIGfxQuad2D.new()
@@ -43,6 +43,6 @@ function IconGizmo:onLoad()
 end
 
 function IconGizmo:onDestroy()
-	CanvasHandle.onDestroy( self )
+	Gizmo.onDestroy( self )
 	self:_detachProp( self.iconProp )
 end

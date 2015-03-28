@@ -23,37 +23,36 @@ def _getModulePath( path ):
 
 
 class SceneView( SceneEditorModule ):
-	def getName( self ):
-		return 'scene_view'
-
-	def getDependency( self ):
-		return [ 'mock', 'scene_editor', 'scenegraph_editor' ]
+	name       = 'scene_view'
+	dependency = [ 'mock', 'scene_editor', 'scenegraph_editor' ]
 
 	def onLoad( self ):
 		self.window = self.requestDocumentWindow(
 				title = 'Scene'
 			)
+		self.toolbar = self.window.addToolBar()
 		self.canvas = self.window.addWidget( MOAIEditCanvas() )
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
-		self.canvas.setDelegateEnv( '_view', self )
+		
+		self.canvas.setDelegateEnv( '_giiSceneView', self )
 
-		self.updateTimer = self.window.startTimer( 60, self.onUpdateTimer )
-		self.updatePending = False
-		self.previewing = False
-		self.previewUpdateTimer = False
-		self.preview = self.getModule( 'scene_preview' )
+		self.updateTimer        = self.window.startTimer( 60, self.onUpdateTimer )
+		self.updatePending      = False
+		self.previewing         = False
+		self.previewUpdateTimer = False		
 
-		signals.connect( 'entity.modified',   self.onEntityModified   )
-		signals.connect( 'asset.post_import_all',   self.onAssetReimport  )
-		signals.connect( 'scene.open',        self.onSceneOpen        )
-		signals.connect( 'scene.close',       self.onSceneClose       )
-		signals.connect( 'scene.update',      self.onSceneUpdate      )
-		signals.connect( 'selection.changed', self.onSelectionChanged )
+		signals.connect( 'entity.modified',       self.onEntityModified   )
+		signals.connect( 'asset.post_import_all', self.onAssetReimport    )
+		signals.connect( 'scene.open',            self.onSceneOpen        )
+		signals.connect( 'scene.close',           self.onSceneClose       )
+		signals.connect( 'scene.update',          self.onSceneUpdate      )
+		signals.connect( 'selection.changed',     self.onSelectionChanged )
 
 		signals.connect( 'preview.resume', self.onPreviewResume )
-		signals.connect( 'preview.pause', self.onPreviewStop )
-		signals.connect( 'preview.stop', self.onPreviewStop )
+		signals.connect( 'preview.pause',  self.onPreviewStop   )
+		signals.connect( 'preview.stop',   self.onPreviewStop   )
 
+		self.addShortcut( 'main', 'Q', self.changeEditTool, 'selection' )
 		self.addShortcut( 'main', 'W', self.changeEditTool, 'translation' )
 		self.addShortcut( 'main', 'E', self.changeEditTool, 'rotation' )
 		self.addShortcut( 'main', 'R', self.changeEditTool, 'scale' )
@@ -78,7 +77,8 @@ class SceneView( SceneEditorModule ):
 		if self.updatePending == True:
 			self.updatePending = False
 			self.canvas.updateCanvas( no_sim = self.previewing )
-			self.preview.refresh()
+			if not self.previewing:
+				self.getModule( 'scene_preview' ).refresh()
 
 	def onSetFocus( self ):
 		self.getModule( 'scene_editor' ).setFocus()
@@ -135,5 +135,3 @@ class SceneView( SceneEditorModule ):
 		self.canvas.makeCurrent()
 		self.canvas.safeCallMethod( 'view', 'focusSelection' )
 
-
-SceneView().register()

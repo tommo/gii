@@ -23,7 +23,6 @@ function EditorCanvasCamera:tryBindSceneLayer( layer )
 	end
 end
 
-
 function EditorCanvasCamera:getScreenRect()
 	return 0, 0, self.screenWidth, self.screenHeight
 end
@@ -42,6 +41,19 @@ end
 function EditorCanvasCamera:updateCanvas()
 	if self.env then self.env.updateCanvas() end
 end
+
+function EditorCanvasCamera:hideCursor()
+	if self.env then self.env.hideCursor() end
+end
+
+function EditorCanvasCamera:showCursor()
+	if self.env then self.env.showCursor() end
+end
+
+function EditorCanvasCamera:setCursor( id )
+	if self.env then self.env.setCursor( id ) end
+end
+
 
 function EditorCanvasCamera:onAttach( entity )
 	entity.FLAG_EDITOR_OBJECT = true
@@ -103,6 +115,10 @@ function EditorCanvasScene:hideCursor()
 	return self.env.hideCursor()
 end
 
+function EditorCanvasScene:setCursor( id )
+	return self.env.setCursor( id )
+end
+
 function EditorCanvasScene:showCursor()
 	return self.env.showCursor()
 end
@@ -134,7 +150,7 @@ end
 --------------------------------------------------------------------
 function createEditorCanvasInputDevice( env )
 	local env = env or getfenv( 2 )
-	local inputDevice = mock.InputDevice( env.contextName, true )
+	local inputDevice = mock.InputDevice( assert( env.contextName), true )
 
 	function env.onMouseDown( btn, x, y )
 		inputDevice:sendMouseEvent( 'down', x, y, btn )
@@ -168,6 +184,7 @@ function createEditorCanvasInputDevice( env )
 		inputDevice:sendKeyEvent( key, false )
 	end
 
+	env._delegate:updateHooks()
 	return inputDevice
 end
 

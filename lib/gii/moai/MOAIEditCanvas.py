@@ -141,6 +141,11 @@ class MOAIEditCanvasLuaDelegate(MOAILuaDelegate):
 		env = self.luaEnv
 		if not env:
 			raise Exception( 'failed loading editcanvas script:%s' % scriptPath )
+		self.updateHooks()
+
+	def updateHooks( self ):
+		env = self.luaEnv
+		if not env: return
 		self._onMouseDown  = env.onMouseDown
 		self._onMouseUp    = env.onMouseUp
 		self._onMouseMove  = env.onMouseMove

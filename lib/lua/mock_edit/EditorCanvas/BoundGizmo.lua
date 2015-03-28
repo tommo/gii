@@ -1,6 +1,6 @@
 module 'mock_edit'
 --------------------------------------------------------------------
-CLASS: SimpleBoundGizmo( CanvasHandle )
+CLASS: SimpleBoundGizmo( Gizmo )
 function SimpleBoundGizmo:__init()
 	self.target = false
 end
@@ -22,6 +22,8 @@ function SimpleBoundGizmo:onDraw()
 		return drawBounds( self.target )
 	end	
 end
+
+
 --------------------------------------------------------------------
 --Bind to core components
 local function methodBuildBoundGizmo( self )

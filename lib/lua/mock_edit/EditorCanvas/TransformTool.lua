@@ -1,13 +1,12 @@
 module 'mock_edit'
-
 --------------------------------------------------------------------
 local handleSize = 100
 local handleArrowSize = 20
 local handlePad = 20
 --------------------------------------------------------------------
----Translation Tool
+---Handles
 --------------------------------------------------------------------
-CLASS: TranslationHandle( CanvasHandle )
+CLASS: TranslationHandle( CanvasItem )
 function TranslationHandle:__init( option )
 	self.option = option
 	self.activeAxis = false
@@ -16,6 +15,10 @@ end
 function TranslationHandle:onLoad()
 	local option = self.option
 	self:attach( mock.DrawScript() )	
+end
+
+function TranslationHandle:inside( x, y )
+	return true
 end
 
 function TranslationHandle:onDraw()	
@@ -84,7 +87,7 @@ function TranslationHandle:onMouseUp( btn, x, y )
 	return true
 end
 
-function TranslationHandle:onMouseMove( x, y )
+function TranslationHandle:onDrag( btn, x, y )
 	if not self.activeAxis then return end
 	local target = self.target
 	target:forceUpdate()
@@ -119,7 +122,7 @@ function TranslationHandle:onMouseMove( x, y )
 		end
 	end
 	target:setLoc( tx, ty )
-	self:updateCanvas()
+	self.tool:updateCanvas()
 	return true
 end
 
@@ -128,7 +131,7 @@ end
 ---ROTATION
 --------------------------------------------------------------------
 
-CLASS: RotationHandle( mock_edit.CanvasHandle )
+CLASS: RotationHandle( CanvasItem )
 function RotationHandle:__init( option )
 	self.option = option
 	self.align  = false
@@ -175,11 +178,11 @@ function RotationHandle:onMouseDown( btn, x, y )
 
 	self.target:preTransform()	
 	self.r0 = self.target:getRotZ()
-	self:updateCanvas()
+	self.tool:updateCanvas()
 	return true
 end
 
-function RotationHandle:onMouseMove( x, y )
+function RotationHandle:onDrag( btn, x, y )
 	if not self.active then return end
 	local x1, y1 = self:wndToModel( x, y )
 	local r = distance( 0,0, x1,y1 )
@@ -190,7 +193,7 @@ function RotationHandle:onMouseMove( x, y )
 		rz = self.rot0 + ddir * 180/math.pi
 		self.target:setRot( rx, ry, rz )
 		gii.emitPythonSignal( 'entity.modified', self.target, 'view' )
-		self:updateCanvas()
+		self.tool:updateCanvas()
 	end
 	return true
 end
@@ -199,14 +202,14 @@ function RotationHandle:onMouseUp( btn, x, y )
 	if btn~='left' then return end
 	if not self.active then return end
 	self.active = false
-	self:updateCanvas()
+	self.tool:updateCanvas()
 	return true
 end
 
 --------------------------------------------------------------------
 ---SCALE Handle
 --------------------------------------------------------------------
-CLASS: ScaleHandle( CanvasHandle )
+CLASS: ScaleHandle( CanvasItem )
 function ScaleHandle:__init( option )
 	self.option = option
 	self.activeAxis = false
@@ -264,7 +267,7 @@ function ScaleHandle:onMouseUp( btn, x, y )
 	return true
 end
 
-function ScaleHandle:onMouseMove( x, y )
+function ScaleHandle:onDrag( btn, x, y )
 	if not self.activeAxis then return end
 	local target = self.target
 	target:forceUpdate()
@@ -305,7 +308,90 @@ function ScaleHandle:onMouseMove( x, y )
 	-- 		self.sz * 1 )
 	-- end
 	
-	self:updateCanvas()	
+	self.tool:updateCanvas()	
 	return true
 end
 
+
+--------------------------------------------------------------------
+---Transform Tool
+--------------------------------------------------------------------
+CLASS: TransformTool ( CanvasTool )
+
+function TransformTool:__init()
+	self.handle = false
+end
+
+function TransformTool:onLoad()
+	self:updateSelection()
+end
+
+function TransformTool:onSelectionChanged( selection )
+	self:updateSelection()
+end
+
+function TransformTool:updateSelection()
+	local selection = self:getSelection()
+	local entities = {}
+	for i, e in ipairs( selection ) do
+		if isInstance( e, mock.Entity ) then entities[ e ] = true end
+	end
+
+	if self.handle then
+		self:removeCanvasItem( self.handle )
+	end
+	self.handle = false
+	self.target = false
+
+	local topEntities = self:findTopLevelEntities( entities )
+	if topEntities then
+		local target = mock_edit.TransformToolHelper()
+		target:setTargets( topEntities )
+		self.target = target
+		self.handle = self:createHandle( target )
+		self.handle.tool = self
+		self:addCanvasItem( self.handle )
+	end
+	self:updateCanvas()
+end
+
+function TransformTool:createHandle( target )
+	--Abstract
+end
+
+
+
+--------------------------------------------------------------------
+CLASS: TranslationTool ( TransformTool )
+	:MODEL{}
+
+function TranslationTool:createHandle( target )
+	local handle = TranslationHandle()
+	handle:setTarget( target )
+	return handle
+end
+
+--------------------------------------------------------------------
+CLASS: RotationTool ( TransformTool )
+	:MODEL{}
+
+function RotationTool:createHandle( target )
+	local handle = RotationHandle()
+	handle:setTarget( target )
+	return handle
+end
+
+--------------------------------------------------------------------
+CLASS: ScaleTool ( TransformTool )
+	:MODEL{}
+
+function ScaleTool:createHandle( target )
+	local handle = ScaleHandle()
+	handle:setTarget( target )
+	return handle
+end
+
+--------------------------------------------------------------------
+registerCanvasTool( 'translation', TranslationTool )
+registerCanvasTool( 'rotation',    RotationTool    )
+registerCanvasTool( 'scale',       ScaleTool       )

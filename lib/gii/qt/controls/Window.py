@@ -156,6 +156,8 @@ class MainWindow(QtGui.QMainWindow):
 			dockArea=Qt.BottomDockWidgetArea
 		elif dockArea=='main':
 			dockArea='center'
+		elif dockArea=='float':
+			dockArea = False
 		elif dockArea:
 			raise Exception('unsupported dock area:%s'%dockArea)
 		

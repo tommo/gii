@@ -17,30 +17,21 @@ function CanvasNavigate:onLoad()
 			device = inputDevice
 		} )
 	self.zoom = 1
-
 end
-
--- function CanvasNavigate:onKeyDown( key )
--- 	if key == ']' then
--- 		self.targetCamera:addRot( 0,10,0 )
--- 		self:updateCanvas()
--- 	elseif key == '[' then
--- 		self.targetCamera:addRot( 0,-10,0 )
--- 		self:updateCanvas()
--- 	end
--- end
 
 function CanvasNavigate:onMouseDown( btn, x, y )
 	if btn == 'middle' then
 		self.dragFrom = { x, y }
 		self.cameraFrom = { self.targetCamera:getLoc() }
 		self.dragging = true
+		self.targetCamera:com():setCursor( 'closed-hand' )
 	end
 end
 
 function CanvasNavigate:onMouseUp( btn, x, y )
 	if btn == 'middle' then
 		self.dragging = false
+		self.targetCamera:com():setCursor( 'arrow' )
 	end
 end
 
