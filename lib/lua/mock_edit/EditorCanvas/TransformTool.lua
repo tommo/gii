@@ -17,9 +17,6 @@ function TranslationHandle:onLoad()
 	self:attach( mock.DrawScript() )	
 end
 
-function TranslationHandle:inside( x, y )
-	return true
-end
 
 function TranslationHandle:onDraw()	
 	applyColor 'handle-all'
@@ -61,19 +58,27 @@ function TranslationHandle:setTarget( target )
 	inheritLoc( self:getProp(), target:getProp() )
 end
 
+function TranslationHandle:inside( x, y )
+	return self:calcActiveAxis( x, y ) ~= false
+end
+
+function TranslationHandle:calcActiveAxis( x, y )
+	x, y = self:wndToModel( x, y )
+	if x >= 0 and y >= 0 and x <= handleArrowSize + handlePad and y <= handleArrowSize + handlePad then
+		return 'all'
+	elseif math.abs( y ) < handlePad and x <= handleSize + handleArrowSize and x > -handlePad then
+		return 'x'
+	elseif math.abs( x ) < handlePad and y <= handleSize + handleArrowSize and y > -handlePad then
+		return 'y'
+	end
+	return false
+end
+
 function TranslationHandle:onMouseDown( btn, x, y )
 	if btn~='left' then return end
 	self.activeAxis = false
 	self.x0, self.y0 = self:wndToTarget( x, y )	
-	x, y = self:wndToModel( x, y )
-	if x >= 0 and y >= 0 and x <= handleArrowSize + handlePad and y <= handleArrowSize + handlePad then
-		self.activeAxis = 'all'
-	elseif math.abs( y ) < handlePad and x <= handleSize + handleArrowSize and x > -handlePad then
-		self.activeAxis = 'x'
-	elseif math.abs( x ) < handlePad and y <= handleSize + handleArrowSize and y > -handlePad then
-		self.activeAxis = 'y'
-	end
-
+	self.activeAxis = self:calcActiveAxis( x, y )
 	if self.activeAxis then
 		self.target:preTransform()
 		return true
@@ -136,6 +141,7 @@ function RotationHandle:__init( option )
 	self.option = option
 	self.align  = false
 	self.active = false
+	self.size   = handleSize
 end
 
 function RotationHandle:onLoad()
@@ -148,6 +154,12 @@ function RotationHandle:setTarget( target )
 	self.r0 = target:getRotZ()
 end
 
+function RotationHandle:inside( x, y )
+	local x1, y1 = self:wndToModel( x, y )
+	local r = distance( 0,0, x1,y1 )
+	return r <= self.size
+end
+
 function RotationHandle:onDraw()
 	if self.active then
 		applyColor 'handle-active'
@@ -155,22 +167,19 @@ function RotationHandle:onDraw()
 		applyColor 'handle-z'
 	end
 	MOAIDraw.fillCircle( 0, 0, 5 )
-	MOAIDraw.drawCircle( 0, 0, 80 )
+	MOAIDraw.drawCircle( 0, 0, self.size )
 	local r = self.target:getRotZ()	
-	MOAIDraw.drawLine( 0,0, vecAngle( r, 80 ) )
+	MOAIDraw.drawLine( 0,0, vecAngle( r, self.size ) )
 	if self.active then
 		applyColor 'handle-previous'
-		MOAIDraw.drawLine( 0,0, vecAngle( self.r0, 80 ) )
+		MOAIDraw.drawLine( 0,0, vecAngle( self.r0, self.size ) )
 	end
 end
 
 function RotationHandle:onMouseDown( btn, x, y )
 	if btn~='left' then return end
-	self.activeAxis = false
+	
 	local x1, y1 = self:wndToModel( x, y )
-	local r = distance( 0,0, x1,y1 )
-	if r > 80 then return end
-
 	local rx,ry,rz = self.target:getRot()
 	self.rot0 = rz
 	self.dir0 = direction( 0,0, x1,y1 )
@@ -238,21 +247,29 @@ function ScaleHandle:setTarget( target )
 	inheritLoc( self:getProp(), target:getProp() )
 end
 
+
+function ScaleHandle:inside( x, y )
+	return self:calcActiveAxis( x, y ) ~= false
+end
+
+function ScaleHandle:calcActiveAxis( x, y )
+	x, y = self:wndToModel( x, y )
+	if x >= 0 and y >= 0 and x <= handleArrowSize + handlePad and y <= handleArrowSize + handlePad then
+		return 'all'
+	elseif math.abs( y ) < handlePad and x <= handleSize + handleArrowSize and x > -handlePad then
+		return 'x'
+	elseif math.abs( x ) < handlePad and y <= handleSize + handleArrowSize and y > -handlePad then
+		return 'y'
+	end
+	return false
+end
+
 function ScaleHandle:onMouseDown( btn, x, y )
 	if btn~='left' then return end	
 	self.x0 = x
 	self.y0 = y
-	x,y = self:wndToModel( x, y )
+	self.activeAxis = self:calcActiveAxis( x, y )
 	self.sx, self.sy, self.sz = self.target:getScl()
-	self.activeAxis = false
-	if x >= -handlePad and y >= -handlePad and x <= handleArrowSize + handlePad and y <= handleArrowSize + handlePad then
-		self.activeAxis = 'all'
-	elseif math.abs( y ) < handlePad and x <= handleSize + handleArrowSize  and x > -handlePad then
-		self.activeAxis = 'x'
-	elseif math.abs( x ) < handlePad and y <= handleSize + handleArrowSize  and y > -handlePad then
-		self.activeAxis = 'y'
-	end
-
 	if self.activeAxis then
 		self.target:preTransform()
 		return true
@@ -323,6 +340,10 @@ function TransformTool:__init()
 end
 
 function TransformTool:onLoad()
+	local plane = self:addCanvasItem( CanvasPickPlane() )
+	plane:setPickCallback( function( picked )
+		gii.changeSelection( 'scene', picked )
+	end)
 	self:updateSelection()
 end
 

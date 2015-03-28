@@ -54,17 +54,11 @@ function EditorCanvasCamera:setCursor( id )
 	if self.env then self.env.setCursor( id ) end
 end
 
-
 function EditorCanvasCamera:onAttach( entity )
 	entity.FLAG_EDITOR_OBJECT = true
 	return mock.Camera.onAttach( self, entity)
 end
 
-
-function EditorCanvasCamera:setZoom( zoom )
-	mock.Camera.setZoom( self, zoom )
-	if self.onZoomChanged then self.onZoomChanged( self:getZoom() ) end
-end
 
 --------------------------------------------------------------------
 --EditorCanvasScene

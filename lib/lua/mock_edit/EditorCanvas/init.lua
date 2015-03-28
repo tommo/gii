@@ -21,6 +21,7 @@ require 'mock_edit.EditorCanvas.CanvasTool'
 
 --------------------------------------------------------------------
 --TOOLS
+require 'mock_edit.EditorCanvas.CanvasPickPlane'
 require 'mock_edit.EditorCanvas.SelectionTool'
 
 require 'mock_edit.EditorCanvas.TransformTool'

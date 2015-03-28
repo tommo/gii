@@ -9,19 +9,70 @@ function CanvasItemManager:__init()
 	self.hoverItem  = false
 	self.focusItem  = false
 	self.activeMouseButton = false
+	self.factorZoom = 1
 end
 
 function CanvasItemManager:onLoad()
-	self.inputScript = self:attachInternal( mock.InputScript{ device = self.parent:getInputDevice() } )
+	local view = self:getView()
+	assert( isInstance( view, CanvasView ) )
+
+	self.inputScript = self:attachInternal( 
+		mock.InputScript{ device = view:getInputDevice() }
+	)
+
+	local cameraListenerNode = MOAIScriptNode.new()
+	cameraListenerNode:setCallback( function() self:updateAllItemScale() end )
+
+	local cameraCom = view:getCameraComponent()
+	cameraListenerNode:setNodeLink( cameraCom.zoomControlNode )
+	if cameraCom:isPerspective() then
+		cameraListenerNode:setNodeLink( cameraCom:getMoaiCamera() )
+	end
+	self.factorZoom = 1/cameraCom:getZoom()
+
+end
+
+function CanvasItemManager:getView()
+	return self.parent
 end
 
 function CanvasItemManager:addItem( item )
-	table.insert( self.items, item )
+	table.insert( self.items, 1, item )
 	self:addChild( item )
+	self:updateItemScale( item )
+end
+
+function CanvasItemManager:_attachChildEntity( child )
+	inheritVisible( child:getProp(), self:getProp() )
 end
 
 function CanvasItemManager:removeItem( item )
 	item:destroyWithChildrenNow()
+end
+
+function CanvasItemManager:updateItemScale( item )
+	local cameraCom = self:getView():getCameraComponent()
+	if cameraCom:isPerspective() then		
+		--TODO:consider distance to camera into scale calc
+		local factorDistance = 1
+		local scl = self.factorZoom * factorDistance
+		item:setScl( scl, scl, scl )
+	else
+		local scl = self.factorZoom
+		item:setScl( scl, scl, scl )
+	end
+end
+
+function CanvasItemManager:updateAllItemScale()
+	local view = self:getView()
+	local cameraCom = view:getCameraComponent()
+	local zoom = cameraCom:getZoom()
+	local factorZoom = 1/zoom
+	self.factorZoom = factorZoom
+	for i, item in ipairs( self.items ) do
+			self:updateItemScale( item )
+	end		
+	view:updateCanvas()
 end
 
 function CanvasItemManager:onItemDestroyed( item )
@@ -105,7 +156,7 @@ function CanvasItemManager:onMouseMove( x, y )
 		return
 	end
 
-	local item = self:findTopItem()
+	local item = self:findTopItem( x, y )
 	if item ~= self.hoverItem then
 		if self.hoverItem then
 			self.hoverItem:onMouseEnter()
@@ -157,6 +208,10 @@ function CanvasItem:__init()
 	self.index = 0
 end
 
+function CanvasItem:getView()
+	return self.parent:getView()
+end
+
 function CanvasItem:onDestroy()
 	if self.parent then
 		self.parent:onItemDestroyed( self )
@@ -194,3 +249,7 @@ end
 
 function CanvasItem:onDrag( btn, x, y )
 end
+
+--------------------------------------------------------------------
+CLASS: CanvasBackgroundItem ( CanvasItem )
+	:MODEL{}

@@ -18,7 +18,6 @@ end
 
 function CanvasToolManager:onLoad()
 	local inputDevice = self.option.inputDevice or self:getScene().inputDevice
-	-- self.targetCamera = assert( self.option.camera or self:getScene().camera )
 	self:attach( mock.InputScript{ 
 			device = inputDevice
 		} )
@@ -102,6 +101,7 @@ end
 function CanvasTool:onDeactivate()
 end
 
+
 function CanvasTool:addCanvasItem( item )
 	local view = self:getCurrentView()
 	view:addCanvasItem( item )
@@ -124,20 +124,6 @@ end
 
 function CanvasTool:getSelection( key )
 	return gii.getSelection( key or 'scene' )
-end
-
-function CanvasTool:pick( x, y, pad )
-	local view = self:getCurrentView()
-	if view then
-		x, y = view:wndToWorld( x, y )
-		return view:pick( x, y, pad )
-	end
-end
-
-function CanvasTool:pickAndSelect( x, y, pad )
-	local picked = self:pick( x, y )
-	gii.changeSelection( 'scene', picked )
-	return picked
 end
 
 function CanvasTool:findTopLevelEntities( entities )

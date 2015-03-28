@@ -1,11 +1,13 @@
 module 'mock_edit'
 
-
+--------------------------------------------------------------------
 CLASS: SelectionTool ( mock_edit.CanvasTool )
-function SelectionTool:onMouseUp( btn, x, y )
-	if btn == 'left' then
-		self:pickAndSelect( x, y )
-	end
+
+function SelectionTool:onLoad()
+	local plane = self:addCanvasItem( CanvasPickPlane() )
+	plane:setPickCallback( function( picked )
+		gii.changeSelection( 'scene', picked )
+	end)
 end
 
 registerCanvasTool( 'selection', SelectionTool )

@@ -7,14 +7,9 @@ function IconGizmo:__init()
 	self.iconProp = MOAIProp.new()
 	self.iconDeck = MOAIGfxQuad2D.new()
 	self.iconProp:setDeck( self.iconDeck )	
-	self.target = false
 end
 
-function IconGizmo:setTarget( target )
-	self.target = target
-end
-
-function IconGizmo:setTransform( transform )	
+function IconGizmo:setTransform( transform )
 	inheritLoc( self:getProp(), transform )
 end
 
@@ -40,6 +35,7 @@ end
 
 function IconGizmo:onLoad()
 	self:_attachProp( self.iconProp )
+	self:enableConstantSize()
 end
 
 function IconGizmo:onDestroy()

@@ -3,6 +3,37 @@ module 'mock_edit'
 CLASS: Gizmo ( EditorEntity )
 	:MODEL{}
 
+function Gizmo:enableConstantSize()
+	local view = self.parent.parent
+	local cameraListenerNode = MOAIScriptNode.new()
+	cameraListenerNode:setCallback( function() self:updateConstantSize() end )
+	local cameraCom = view:getCameraComponent()
+	cameraListenerNode:setNodeLink( cameraCom.zoomControlNode )
+	if cameraCom:isPerspective() then
+		cameraListenerNode:setNodeLink( cameraCom:getMoaiCamera() )
+	end
+end
+
+function Gizmo:updateConstantSize()
+	local view = self.parent.parent
+	local cameraCom = view:getCameraComponent()
+	local factorZoom = 1/cameraCom:getZoom()
+	local factorDistance = 1
+	if cameraCom:isPerspective() then
+		--TODO
+	end
+	local scl = factorZoom * factorDistance
+	self:setScl( scl, scl, scl )
+	self:forceUpdate()
+end
+
+function Gizmo:setTarget( object )
+end
+
+function Gizmo:setTransform( transform )
+	inheritTransform( self._prop, transform )
+end
+
 function Gizmo:updateCanvas()
 	self.parent:updateCanvas()
 end
@@ -21,6 +52,10 @@ end
 
 function GizmoManager:onLoad()
 	self:scanScene()
+end
+
+function GizmoManager:_attachChildEntity( child )
+	linkVisible( self:getProp(), child:getProp() )
 end
 
 function GizmoManager:onSelectionChanged( selection )
@@ -97,6 +132,7 @@ function GizmoManager:buildForObject( obj, selected )
 			elseif obj._entity then
 				inheritVisible( giz:getProp(), obj._entity:getProp() )
 			end
+			giz:setTarget( obj )
 		end
 	end
 end
