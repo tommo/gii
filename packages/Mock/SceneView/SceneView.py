@@ -101,6 +101,7 @@ class SceneView( SceneEditorModule ):
 		self.canvas.safeCall( 'openScene', scene )
 		self.scheduleUpdate()
 		self.setFocus()
+		self.changeEditTool( 'translation' )
 		# self.preview.update
 
 	def onSceneClose( self, node ):

@@ -4,27 +4,7 @@ CLASS: Gizmo ( EditorEntity )
 	:MODEL{}
 
 function Gizmo:enableConstantSize()
-	local view = self.parent.parent
-	local cameraListenerNode = MOAIScriptNode.new()
-	cameraListenerNode:setCallback( function() self:updateConstantSize() end )
-	local cameraCom = view:getCameraComponent()
-	cameraListenerNode:setNodeLink( cameraCom.zoomControlNode )
-	if cameraCom:isPerspective() then
-		cameraListenerNode:setNodeLink( cameraCom:getMoaiCamera() )
-	end
-end
-
-function Gizmo:updateConstantSize()
-	local view = self.parent.parent
-	local cameraCom = view:getCameraComponent()
-	local factorZoom = 1/cameraCom:getZoom()
-	local factorDistance = 1
-	if cameraCom:isPerspective() then
-		--TODO
-	end
-	local scl = factorZoom * factorDistance
-	self:setScl( scl, scl, scl )
-	self:forceUpdate()
+	self.parent:addConstantSizeGizmo( self )
 end
 
 function Gizmo:setTarget( object )
@@ -39,6 +19,7 @@ function Gizmo:updateCanvas()
 end
 
 function Gizmo:onDestroy()
+	self.parent.constantSizeGizmos[ self ] = nil
 end
 
 --------------------------------------------------------------------
@@ -48,10 +29,39 @@ CLASS: GizmoManager ( SceneEventListener )
 function GizmoManager:__init()
 	self.normalGizmoMap   = {}
 	self.selectedGizmoMap = {}
+	self.constantSizeGizmos = {}
 end
 
 function GizmoManager:onLoad()
+	local view = self.parent
+	local cameraListenerNode = MOAIScriptNode.new()
+	cameraListenerNode:setCallback( function() self:updateConstantSize() end )
+	local cameraCom = view:getCameraComponent()
+	cameraListenerNode:setNodeLink( cameraCom.zoomControlNode )
+	if cameraCom:isPerspective() then
+		cameraListenerNode:setNodeLink( cameraCom:getMoaiCamera() )
+	end
+	self.cameraListenerNode = cameraListenerNode
 	self:scanScene()
+end
+
+function GizmoManager:onDestroy()
+
+end
+
+function GizmoManager:updateConstantSize()
+	local view = self.parent
+	local cameraCom = view:getCameraComponent()
+	local factorZoom = 1/cameraCom:getZoom()
+	for giz in pairs( self.constantSizeGizmos ) do
+		local factorDistance = 1
+		if cameraCom:isPerspective() then
+			--TODO
+		end
+		local scl = factorZoom * factorDistance
+		giz:setScl( scl, scl, scl )
+		giz:forceUpdate()
+	end
 end
 
 function GizmoManager:_attachChildEntity( child )
@@ -81,7 +91,7 @@ function GizmoManager:onEntityEvent( ev, entity, com )
 	if entity.FLAG_EDITOR_OBJECT then return end
 
 	if ev == 'add' then
-		self:buildForObject( entity )
+		self:buildForObject( entity ) 
 	elseif ev == 'remove' then
 		self:removeForObject( entity )
 	elseif ev == 'attach' then
@@ -90,6 +100,15 @@ function GizmoManager:onEntityEvent( ev, entity, com )
 		self:removeForObject( com )
 	end
 
+end
+
+function GizmoManager:addConstantSizeGizmo( giz )
+	self.constantSizeGizmos[ giz ] = true	
+end
+
+function GizmoManager:refresh()
+	self:clear()
+	self:scanScene()
 end
 
 function GizmoManager:scanScene()
@@ -107,6 +126,9 @@ function GizmoManager:buildForEntity( ent, selected )
 					self:buildForObject( c, selected )
 				end
 			end
+			for child in pairs( ent.children ) do
+				self:buildForEntity( child, selected )
+			end
 		end
 	end
 end
@@ -121,6 +143,10 @@ function GizmoManager:buildForObject( obj, selected )
 	if onBuildGizmo then
 		local giz = onBuildGizmo( obj )
 		if giz then
+			if not isInstance( giz, Gizmo ) then
+				_warn( 'Invalid gizmo type given by', obj:getClassName() )
+				return
+			end
 			if selected then
 				self.selectedGizmoMap[ obj ] = giz
 			else
@@ -141,8 +167,18 @@ function GizmoManager:removeForObject( obj )
 	local giz = self.normalGizmoMap[ obj ]
 	if giz then
 		giz:destroyWithChildrenNow()
-		self.normalGizmoMap[ e ] = nil
+		self.normalGizmoMap[ obj ] = nil
 	end
+end
+
+function GizmoManager:removeForEntity( ent )
+	for com in pairs( ent.components ) do
+		self:removeForObject( com )
+	end
+	for child in pairs( ent.children ) do
+		self:removeForEntity( child )
+	end
+	self:removeForObject( ent )
 end
 
 function GizmoManager:clear()

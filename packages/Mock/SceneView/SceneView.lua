@@ -27,7 +27,7 @@ end
 
 function SceneView:focusSelection()
 	local selection = gii.getSelection( 'scene' )
-	for e in pairs( selection ) do
+	for _, e in ipairs( selection ) do
 		if isInstance( e, mock.Entity ) then
 			self.camera:setLoc( e:getWorldLoc() )
 		end
@@ -49,8 +49,7 @@ end
 
 function SceneView:postSceneDeserialize( scene )
 	if scene ~= self.scene then return end
-	self:clearGizmos()
-	self.gizmoLayerNormal:scanScene()
+	self.gizmoManager:refresh()
 end
 
 --------------------------------------------------------------------

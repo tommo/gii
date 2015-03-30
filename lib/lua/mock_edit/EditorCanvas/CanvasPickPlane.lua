@@ -8,6 +8,7 @@ function CanvasPickPlane:inside()
 end
 
 function CanvasPickPlane:onMouseUp( btn, x, y )
+	if btn ~= 'left' then return end
 	local picked = self:getView():pick( x, y )
 	if self.onPicked then
 		return self.onPicked( picked )

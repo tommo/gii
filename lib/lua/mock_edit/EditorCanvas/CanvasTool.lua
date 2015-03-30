@@ -24,6 +24,10 @@ function CanvasToolManager:onLoad()
 	self.zoom = 1
 end
 
+function CanvasToolManager:getCurrentView()
+	return self.parent
+end
+
 function CanvasToolManager:getView()
 	return self.parent
 end
@@ -50,7 +54,7 @@ function CanvasToolManager:setTool( id )
 	end
 
 	local tool = toolClass()
-	tool:installInput( self.option.inputDevice or self:getScene().inputDevice )	
+	tool:installInput( self.parent:getInputDevice() )	
 	self.activeTool = tool
 	self:addChild( tool )
 end
@@ -76,6 +80,10 @@ function CanvasTool:__init()
 	self.items = {}
 end
 
+function CanvasTool:getIcon()
+	return false
+end
+
 function CanvasTool:installInput( inputDevice )
 	self:attach( mock.InputScript{ 
 			device = inputDevice
@@ -84,7 +92,7 @@ end
 
 --TODO:use more unified framework for editor canvas scene
 function CanvasTool:getCurrentView()
-	return self:findEntity( '__scene_view__' )
+	return self.parent:getView()
 end
 
 function CanvasTool:updateCanvas()
@@ -124,6 +132,20 @@ end
 
 function CanvasTool:getSelection( key )
 	return gii.getSelection( key or 'scene' )
+end
+
+function CanvasTool:getOneSelection( clas )
+	local selection = self:getSelection( 'scene' )
+	if clas then
+		for i, obj in ipairs( selection ) do
+			if isInstance( obj, clas ) then
+				return obj
+			end
+		end
+		return nil
+	else
+		return selection[ 1 ]
+	end
 end
 
 function CanvasTool:findTopLevelEntities( entities )
