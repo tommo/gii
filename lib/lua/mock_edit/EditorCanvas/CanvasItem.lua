@@ -28,6 +28,7 @@ function CanvasItemManager:onLoad()
 	if cameraCom:isPerspective() then
 		cameraListenerNode:setNodeLink( cameraCom:getMoaiCamera() )
 	end
+	self.cameraListenerNode = cameraListenerNode
 	self.factorZoom = 1/cameraCom:getZoom()
 
 end

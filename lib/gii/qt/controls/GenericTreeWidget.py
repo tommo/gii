@@ -270,11 +270,12 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		if item:
 			self.scrollToItem( item )
 
-	def gotoNode( self, node ):
+	def gotoNode( self, node, col = 0 ):
 		item = self.getItemByNode( node )
 		if item:
 			self.scrollToItem( item )
-			self.setCurrentItem( item )
+			self.setCurrentItem( item, col, QtGui.QItemSelectionModel.Current )
+			# self.moveCursor( self.MoveUp, Qt.NoModifier )
 
 	def setNodeVisible( self, node, visible = True ):
 		item = self.getItemByNode( node )
@@ -435,6 +436,25 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			if item:
 				self.onItemActivated( item, 0 )
 				return
+
+		elif key == Qt.Key_Down:
+			if not self.currentItem():
+				top = self.topLevelItem( 0 )
+				self.setCurrentItem( top )
+			else:
+				item_below = self.itemBelow(self.currentItem())
+				if item_below:
+					self.setCurrentItem( item_below )
+			return
+
+		elif key == Qt.Key_Up:
+			if not self.currentItem():
+				top = self.topLevelItem( 0 )
+				self.setCurrentItem( top )
+			item_below = self.itemAbove(self.currentItem())
+			if item_below:
+				self.setCurrentItem( item_below )
+			return
 
 		return super( GenericTreeWidget, self ).keyPressEvent( ev )
 

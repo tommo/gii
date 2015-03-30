@@ -249,7 +249,7 @@ class SearchViewWidget( QtGui.QWidget ):
 class SearchViewTextTerm( QtGui.QLineEdit):
 	def keyPressEvent( self, ev ):
 		key = ev.key()
-		if key == Qt.Key_Down:
+		if key == Qt.Key_Down or key == Qt.Key_Up :
 			self.browser.focusResultTree()
 			self.browser.treeResult.keyPressEvent( ev )
 			return
