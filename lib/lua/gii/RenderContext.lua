@@ -24,8 +24,11 @@ function createRenderContext( key, cr,cg,cb,ca )
 	else
 		clearColor = { cr or 0, cg or 0, cb or 0, ca or 0 }
 	end
-	local root = MOAITimer.new()
-	root:setMode( MOAITimer.CONTINUE )
+
+	local root = MOAIAction.new()
+	root:setAutoStop( false )
+	root._contextKey = key
+
 	local context = {
 		key              = key,
 		w                = false,
@@ -35,9 +38,7 @@ function createRenderContext( key, cr,cg,cb,ca )
 		bufferTable      = {},
 		renderTableMap   = {},
 	}
-	root._contextKey = key
 	renderContextTable[ key ] = context
-	-- root:run( function() local dt = coroutine.yield() end )
 end
 
 
@@ -73,7 +74,7 @@ function changeRenderContext( key, w, h )
 			currentContext.deviceRenderTable = deviceBuffer:getRenderTable()
 		end
 
-		currentContext.actionRoot        = currentContext.actionRoot or MOAIActionMgr.getRoot()		
+		currentContext.actionRoot        = assert( currentContext.actionRoot )
 	end
 
 	--TODO: persist clear depth& color flag(need to modify moai)
