@@ -54,8 +54,6 @@ class AssetNode(object):
 		else:
 			self.managerName = manager
 
-		self.accessPriority = 0
-
 		self.properties={}		
 
 	def __repr__(self):	
@@ -76,6 +74,9 @@ class AssetNode(object):
 	def getBaseName(self):
 		name, ext = os.path.splitext(self.name)
 		return name
+
+	def getPathDepth(self):
+		return self.nodePath.count('/')
 
 	def getPath(self):
 		return self.nodePath	
@@ -353,6 +354,12 @@ class AssetNode(object):
 	def clearCacheFiles( self ):
 		self.cacheFiles = {}
 
+	def checkCacheFiles( self ):
+		for id, path in self.cacheFiles.items():
+			fullpath = AssetLibrary.get().getAbsProjectPath( path )
+			if not os.path.exists( fullpath ): return False
+		return True
+
 	def getObjectFile(self, name):
 		return self.objectFiles.get( name, None )
 
@@ -538,6 +545,7 @@ class AssetLibrary(object):
 		assert not AssetLibrary._singleton
 		AssetLibrary._singleton=self
 		self.projectScanScheduled = False
+		self.cacheScanned    = False
 
 		self.assetTable      = {}
 		self.assetManagers   = []
@@ -744,30 +752,31 @@ class AssetLibrary(object):
 					_markVirtualChildrenRemoving( child, removingAssets )
 					child.modifyState = 'removing'
 					removingAssets[ child ] = True
-			
 
 		#collect modified state
-		modifiedAssets = {}
 		removingAssets = {}
+		modifiedAssetList = []
 		for node in self.assetTable.values():
 			if node.modifyState:
-				modifiedAssets[ node ] = True
+				modifiedAssetList.append( node )
 				logging.info( u'asset modified: {0}'.format( node.getNodePath() ) )
-
+		modifiedAssetList = sorted( modifiedAssetList, key = lambda node: node.getPathDepth() )
 		#try importing with each asset manager, in priority order
 		for manager in self.assetManagers:
-			if not modifiedAssets: break
+			if not modifiedAssetList: break
 			done = []
-			for node in modifiedAssets:
-				if node.modifyState == 'removed':
+			rest = []
+			for node in modifiedAssetList:
+				if node.modifyState in ( 'removed', 'ignored' ) :
 					done.append( node )
 					continue
 				if not node.modifyState: #might get imported as a sub asset 
 					done.append( node )
 					continue
 				if not manager.acceptAsset( node ):
+					rest.append( node )
 					continue
-
+				
 				isNew = node.modifyState == 'new'
 				if not isNew:
 					_markVirtualChildrenRemoving( node, removingAssets )
@@ -777,21 +786,25 @@ class AssetLibrary(object):
 					logging.info( u'assets imported: {0}'.format( node.getNodePath() ) )
 					node.modifyState  =  False
 					done.append( node )
+				else:
+					rest.append( node )
+
 				if not isNew:
 					signals.emitNow( 'asset.modified',  node )
 
 				if node.isBundle():
 					_ignoreBundleChildrenNode( node )
 					
-			for node in done:
-				del modifiedAssets[ node ]
+			for node in done:				
 				if node.modifyState == 'ignored': continue
 				if node.isBundle():
 					node._updateFileTime( self._getBundleMTime( node.getAbsFilePath() ) )					
 				else:
 					node._updateFileTime()
+			modifiedAssetList = rest
+			rest = []
 
-		for node in modifiedAssets.keys(): #nodes without manager
+		for node in modifiedAssetList: #nodes without manager
 			node.modifyState = False
 			if node.isBundle():
 				node._updateFileTime( self._getBundleMTime( node.getAbsFilePath() ) )					
@@ -861,12 +874,16 @@ class AssetLibrary(object):
 				if bundle:
 					if mtime > bundle.getFileTime():
 						bundle.markModified()
+					if not bundle.checkCacheFiles():
+						bundle.markModified()
 				else:
 					if not self.getAssetNode( nodePath ): #new
 						self.initAssetNode( nodePath )
 					else:
-						node = self.getAssetNode( nodePath )
+						node = self.getAssetNode( nodePath ) #modified
 						if mtime > node.getFileTime():
+							node.markModified()
+						if not node.checkCacheFiles():
 							node.markModified()
 
 			dirs2 = dirs[:]
