@@ -6,36 +6,42 @@ CLASS: EditorCanvasCamera ( mock.Camera )
 function EditorCanvasCamera:__init( env )
 	self.FLAG_EDITOR_OBJECT = true
 	context = gii.getCurrentRenderContext()
-
 	self.context = context.key
-	self.screenWidth   = context.w or 100
-	self.screenHeight	 = context.h or 100
 	self.env = env
 	self.__allowEditorLayer = true
 	self.parallaxEnabled = false
 end
 
+function EditorCanvasCamera:getDefaultOutputRenderTarget()
+	context = gii.getCurrentRenderContext()
+	local w, h = context.w, context.h
+	self.canvasRenderTarget = mock.DeviceRenderTarget( 
+		MOAIGfxDevice.getFrameBuffer(), 1, 1
+	)
+	self:setScreenSize( w or 100, h or 100 )
+	return self.canvasRenderTarget
+end
+
 function EditorCanvasCamera:tryBindSceneLayer( layer )
 	local name = layer.name
 	if name == '_GII_EDITOR_LAYER' then
-		layer:setViewport( self.viewport )
+		layer:setViewport( self:getMoaiViewport() )
 		layer:setCamera( self._camera )
 	end
 end
 
 function EditorCanvasCamera:getScreenRect()
-	return 0, 0, self.screenWidth, self.screenHeight
+	return self.canvasRenderTarget:getAbsPixelRect()
 end
 
 function EditorCanvasCamera:getScreenScale()
-	return self.screenWidth, self.screenHeight
+	return self.canvasRenderTarget:getScale()
 end
 
 function EditorCanvasCamera:setScreenSize( w, h )
-	self.screenWidth, self.screenHeight = w, h
-	if self.scene then
-		self:updateViewport()
-	end
+	self.canvasRenderTarget:setPixelSize( w, h )
+	self.canvasRenderTarget:setFixedScale( w, h )
+	self:updateZoom()
 end
 
 function EditorCanvasCamera:updateCanvas()

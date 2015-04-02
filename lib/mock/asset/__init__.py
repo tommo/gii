@@ -17,7 +17,7 @@ import PexAsset
 import FmodAsset
 
 import FSMAsset
-import BTSchemeAsset
+# import BTSchemeAsset
 import BTScriptAsset
 
 import FrameBufferAsset

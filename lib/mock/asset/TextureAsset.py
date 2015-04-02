@@ -226,7 +226,13 @@ class TextureLibrary( EditorModule ):
 
 		if assetNode.isType( 'texture' ):
 			assetNode.clearCacheFiles()
-			src = assetNode.getAbsFilePath()
+			if assetNode.isVirtual():
+				src = assetNode.getMetaData( 'source', None )
+				if not src:
+					raise Exception( 'virtual texture node has no source metadata given' )
+				src = AssetLibrary.get().getAbsProjectPath( src )
+			else:
+				src = assetNode.getAbsFilePath()
 			dst = assetNode.getAbsCacheFile( 'pixmap' ) 
 			self._processTexture( src, dst, texture )
 
@@ -252,6 +258,7 @@ class TextureLibrary( EditorModule ):
 
 		else:
 			raise Exception( 'unknown texture node type!!' )
+
 
 	def _processTexture( self, src, dst, texture ):
 		#convert single image

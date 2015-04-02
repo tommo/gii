@@ -1,7 +1,6 @@
 import os.path
 from gii.core import AssetManager, AssetLibrary, getProjectPath, app, jsonHelper
 from helper.psd2tileset import TilesetProject
-from mock import _MOCK
 import json
 
 def _getModulePath( path ):

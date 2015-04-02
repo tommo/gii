@@ -12,6 +12,9 @@ def _getModulePath( path ):
 	
 ##----------------------------------------------------------------##
 class BTScriptAssetManager(AssetManager):
+	def getMetaType(self):
+		return 'script'
+		
 	def getName(self):
 		return 'asset_manager.bt_script'
 

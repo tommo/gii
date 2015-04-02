@@ -112,7 +112,7 @@ local function _pick( ent, x, y ) --depth first search
 	-- 	end
 	-- end
 	local picked = ent:pick( x, y )
-	if picked then return ent end
+	if picked then return picked end
 	return nil
 end
 

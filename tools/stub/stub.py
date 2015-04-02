@@ -3,9 +3,9 @@ import logging
 import osbit
 
 from gii.core import Project, app
-from PyQt4    import QtGui, QtCore, uic
 from gii.qt.helpers   import addWidgetWithLayout
 from gii.qt.dialogs   import alertMessage
+from PyQt4    import QtGui, QtCore, uic
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
 	import os.path

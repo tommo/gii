@@ -306,7 +306,7 @@ class AtlasGenerator:
 		self.quiet = kwargs.get('quiet', False)
 		self.allowBigTexture = kwargs.get( 'allow_big_texture', True )
 		self.pixel_type = 'RGBA'
-		self.bleeding = True
+		self.bleeding = kwargs.get( 'bleeding', True )
 
 		self.cache_hits = 0
 		self.cache_misses = 0

@@ -791,6 +791,9 @@ class AssetLibrary(object):
 
 				if not isNew:
 					signals.emitNow( 'asset.modified',  node )
+					if node.isBundle():
+						for child in node.children:
+							signals.emitNow( 'asset.modified', child )
 
 				if node.isBundle():
 					_ignoreBundleChildrenNode( node )

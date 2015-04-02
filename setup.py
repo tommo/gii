@@ -6,24 +6,27 @@ Usage:
 """
 
 from setuptools import setup
+##----------------------------------------------------------------##
 
 APP_NAME = 'Gii'
 AUTHOR   = 'Tommo Zhou'
-APP = [ 'gii_bin.py' ]
+APP = [ 'gii_bin_qt.py' ]
 DATA_FILES = []
 OPTIONS = {
-	'arch': 'i386',
+	'arch': 'x86_64',
 	'argv_emulation': True,
-	'optimize': 2,
+	'optimize': 0,
+	'strip': False,
 
 	'includes': [ 
-	'PyQt4', 
+	'sip',
 	'SocketServer', 
 	'watchdog', 
-	'watchdog.observers' 
+	'watchdog.observers',
+	'PIL',
 	],
 	
-	'excludes': [ 'PySide', 'pygame', 'aubio', 'numpy', 'lupa', 'openerp-server', 'wand', 'PIL' ],
+	#'excludes': [ 'PySide', 'pygame', 'aubio', 'numpy', 'lupa', 'openerp-server', 'wand', 'PIL' ],
 	}
 
 setup(
