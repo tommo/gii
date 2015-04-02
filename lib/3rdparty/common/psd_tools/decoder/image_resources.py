@@ -10,6 +10,7 @@ from psd_tools.utils import (read_pascal_string, unpack, read_fmt,
 from psd_tools.constants import ImageResourceID, PrintScaleStyle, DisplayResolutionUnit, DimensionUnit
 from psd_tools.decoder import decoders
 from psd_tools.decoder.actions import decode_descriptor, UnknownOSType
+from psd_tools.decoder.color import decode_color
 
 _image_resource_decoders, register = decoders.new_registry()
 
@@ -26,15 +27,17 @@ _image_resource_decoders.update({
     ImageResourceID.COPYRIGHT_FLAG:             decoders.boolean("H"),
 
     ImageResourceID.ALPHA_NAMES_UNICODE:        decoders.unicode_string,
-    ImageResourceID.WORKFLOW_URL:               decoders.unicode_string,
+    ImageResourceID.WORKFLOW_URL:               decoders.unicode_string
 })
 
 PrintScale = collections.namedtuple('PrintScale', 'style, x, y, scale')
 PrintFlags = collections.namedtuple('PrintFlags', 'labels, crop_marks, color_bars, registration_marks, negative, flip, interpolate, caption, print_flags')
 PrintFlagsInfo = collections.namedtuple('PrintFlagsInfo', 'version, center_crop_marks, bleed_width_value, bleed_width_scale')
 VersionInfo = collections.namedtuple('VersionInfo', 'version, has_real_merged_data, writer_name, reader_name, file_version')
-PixelAspectRation = collections.namedtuple('PixelAspectRatio', 'version aspect')
+PixelAspectRatio = collections.namedtuple('PixelAspectRatio', 'version aspect')
 _ResolutionInfo = collections.namedtuple('ResolutionInfo', 'h_res, h_res_unit, width_unit, v_res, v_res_unit, height_unit')
+PathSelectionState = collections.namedtuple('PathSelectionState', 'descriptor_version descriptor')
+LayerComps = collections.namedtuple('LayerComps', 'descriptor_version descriptor')
 
 
 class ResolutionInfo(_ResolutionInfo):
@@ -78,7 +81,6 @@ def _decode_layer_selection(data):
 def _decode_layer_groups_enabled_id(data):
     return be_array_from_bytes("B", data)
 
-
 @register(ImageResourceID.VERSION_INFO)
 def _decode_version_info(data):
     fp = io.BytesIO(data)
@@ -95,7 +97,7 @@ def _decode_version_info(data):
 def _decode_pixel_aspect_ration(data):
     version = unpack("I", data[:4])[0]
     aspect = unpack("d", data[4:])[0]
-    return PixelAspectRation(version, aspect)
+    return PixelAspectRatio(version, aspect)
 
 @register(ImageResourceID.PRINT_FLAGS)
 def _decode_print_flags(data):
@@ -113,7 +115,6 @@ def _decode_print_scale(data):
         warnings.warn("Unknown print scale style (%s)" % style)
 
     return PrintScale(style, x, y, scale)
-
 
 @register(ImageResourceID.CAPTION_PASCAL)
 def _decode_caption_pascal(data):
@@ -141,11 +142,29 @@ def _decode_icc(data):
 
     return ImageCms.ImageCmsProfile(io.BytesIO(data))
 
+@register(ImageResourceID.BACKGROUND_COLOR)
+def _decode_background_color(data):
+    fp = io.BytesIO(data)
+    return decode_color(fp)
 
-#@register(ImageResourceID.PATH_SELECTION_STATE)
-#def _decode_path_selection_state(data):
-#    try:
-#        return decode_descriptor(None, io.BytesIO(data))
-#    except UnknownOSType as e:
-#        warnings.warn("Ignoring image resource %s" % e)
-#        return data
+@register(ImageResourceID.PATH_SELECTION_STATE)
+def _decode_path_selection_state(data):
+    fp = io.BytesIO(data)
+    version = read_fmt("I", fp)[0]
+
+    try:
+        return PathSelectionState(version, decode_descriptor(None, fp))
+    except UnknownOSType as e:
+        warnings.warn("Ignoring image resource %s" % e)
+        return data
+
+@register(ImageResourceID.LAYER_COMPS)
+def _decode_layer_comps(data):
+    fp = io.BytesIO(data)
+    version = read_fmt("I", fp)[0]
+
+    try:
+        return LayerComps(version, decode_descriptor(None, fp))
+    except UnknownOSType as e:
+        warnings.warn("Ignoring image resource %s" % e)
+        return data
