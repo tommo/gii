@@ -757,7 +757,7 @@ class AssetLibrary(object):
 		removingAssets = {}
 		modifiedAssetList = []
 		for node in self.assetTable.values():
-			if node.modifyState:
+			if node.modifyState and not node.isVirtual():
 				modifiedAssetList.append( node )
 				logging.info( u'asset modified: {0}'.format( node.getNodePath() ) )
 		modifiedAssetList = sorted( modifiedAssetList, key = lambda node: node.getPathDepth() )
@@ -808,7 +808,6 @@ class AssetLibrary(object):
 			rest = []
 
 		for node in modifiedAssetList: #nodes without manager
-			node.modifyState = False
 			if node.isBundle():
 				node._updateFileTime( self._getBundleMTime( node.getAbsFilePath() ) )					
 			else:
