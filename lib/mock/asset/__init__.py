@@ -20,7 +20,7 @@ import FSMAsset
 # import BTSchemeAsset
 import BTScriptAsset
 
-import FrameBufferAsset
+import RenderTargetAsset
 import ShaderAsset
 
 import DataXLSAsset
