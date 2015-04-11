@@ -50,16 +50,22 @@ def makeStyle( id, penOption, brushOption, textOption = None ):
 		pen = makePen( **penOption )
 	elif isinstance( penOption, str ):
 		pen = makePen( color = penOption )
+	elif penOption is None:
+		pen = Qt.transparent
 
 	if isinstance( brushOption, dict ):
 		brush = makeBrush( **brushOption )
 	elif isinstance( brushOption, str ):
 		brush = makeBrush( color = brushOption )
+	elif brushOption is None:
+		brush = Qt.transparent
 
 	if isinstance( textOption, dict ):
 		penText = makePen( **textOption )
 	elif isinstance( textOption, str ):
 		penText = makePen( color = textOption )
+	elif textOption is None:
+		penText = Qt.transparent
 
 	return registerStyle( id, pen, brush, penText )
 
@@ -106,8 +112,8 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		super( GLGraphicsView, self ).__init__( *args, **kwargs )
 		self.setHorizontalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
 		self.setVerticalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
-		self.setViewportUpdateMode( QtGui.QGraphicsView.SmartViewportUpdate )
-		# self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )
+		# self.setViewportUpdateMode( QtGui.QGraphicsView.SmartViewportUpdate )
+		self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )
 		fmt = QtOpenGL.QGLFormat()
 		fmt.setRgba(True)
 		fmt.setAlpha(True)
@@ -119,15 +125,15 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		viewport.makeCurrent()
 		self.setViewport( viewport )
 		self.setRenderHint( QtGui.QPainter.Antialiasing, False )
+		self.setRenderHint( QtGui.QPainter.HighQualityAntialiasing, False )
 		self.setTransformationAnchor( self.NoAnchor )
-		# self.setRenderHint( QtGui.QPainter.HighQualityAntialiasing, True )
 		# self.setCacheMode( self.CacheBackground )
 
 
 ##----------------------------------------------------------------##
 class GridBackground( QtGui.QGraphicsRectItem ):
 	_gridPenV  = makePen( color = '#333', width = 1 )
-	_gridPenH  = makePen( color = '#444', width = 1 )
+	_gridPenH  = makePen( color = '#333', width = 1 )
 	def __init__( self ):
 		super( GridBackground, self ).__init__()
 		self.setZValue( -100 )
