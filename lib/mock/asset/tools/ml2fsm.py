@@ -1,268 +1,307 @@
-import xml.etree.ElementTree as ET
-def convertGraphML(fn):
-	callbacks={}
-	objects={}
-	root={value='nodes',type='group'}
-	edges={}
-	nodeStack={}
-	pointer=0
-	currentNode
-	prevNode
-	groupSep='.'
-	actionSep=':'
-	def getFullName(n):
-		res=n.value or ''
-		while true do
-			p=n.parent
-			if not p or p==root then return res 
-			res=p.value+groupSep+res
-			n=p
-	def pushNode(n):
-		pointer=pointer+1
-		nodeStack[pointer]=n
-		
-		parent=currentNode or root
-		children=parent.children
-		if not children then children={} parent.children=children 
-		children[n]=true
-		n.parent=parent
-		currentNode=n
-	
-	def popNode():
-		if pointer>0 then
-			pointer=pointer-1
-			currentNode=nodeStack[pointer]
-		else
-			currentNode=nil
-		
-	
-	currentGroup
-	
-	def getObject(id):
-		o=objects[id]
-		if not o then o={id=id} objects[id]=o 
-		return o
-	
-	def CharacterData(parser,string):
-		if not currentNode.value then currentNode.value=string:trim() 
-	
-	def callbacks.StartElement(parser,name,attrs):
-		callbacks.CharacterData=false
-		if name=='edge' then			
-			n={
-				type='edge',
-				id=attrs.id,
-				from=getObject(attrs.source),
-				to=getObject(attrs.target),
-			}
-			edges[attrs.id]=n
-			pushNode(n)
-		elseif name=='node' then
-			n=getObject(attrs.id)
-			n.jump={}
-			if attrs['yfiles.foldertype']=='group' then
-				n.type='group'
-			else
-				n.type='state'
-			
-			pushNode(n)
-		elseif name=='y:EdgeLabel' or name=='y:NodeLabel' then
-			if currentNode and not currentNode.value then
-				callbacks.CharacterData=CharacterData
-			
-		
-	
-	def callbacks.EndElement(parser,name):
-		if name=='node' then
-			# callbacks.CharacterData=false			
-			currentNode.fullname=getFullName(currentNode)
-			currentNode.funcname='_FSM_'+string.gsub(currentNode.fullname,'%.','_')
-			popNode()
-		# elseif name=='y:EdgeLabel' or name=='y:NodeLabel' then
-		# 	callbacks.CharacterData=false
-		
-	
-	callbacks.CharacterData=false
-	file=io.open(fn,'r')
-	if not file then 
-		print("file not found:",fn)
-		os.exit(1)		
-		
-	p=lxp.new(callbacks)
-	for line in file:lines() do
-		p:parse(line)
-	
-	file:close()
+from xml.etree.ElementTree import ElementTree
 
-	def findchild(group,name):
-		children=group.children
-		if not children then return nil 
-		for c in pairs(children) do
-			if c.value==name then return c 
-		
-		return nil
-	
-	##############-
-	#generate jump table
-	for i,e in pairs(edges) do
-		from=e.from
-		to=e.to
-		msg=e.value
-		jump=from.jump
-		isGroup=false
-		if to.type=='group' then
-			isGroup=true
-			startState=findchild(to,'start')
-			if startState then
-				to=startState
-			else
-				print("no 'start' state for group:",to.fullname)
-				return error()
-			
-		
-		if msg and msg~='' then
-			jump[msg]=to
-		else
-			#validate group
-			if from.type=='group' then
-				stopState=findchild(from,'stop')
-				if stopState then
-					from=stopState					
-				else
-					print("no 'stop' state for group:",from.fullname)
+groupSep  = '.'
+actionSep = ':'
+
+ML_NS = '{http://graphml.graphdrawing.org/xmlns}'
+Y_NS  = '{http://www.yworks.com/xml/graphml}'
+
+allNodes = {}
+allConnections = {}
+
+def getTag( node ):
+	tag = node.tag
+	index = tag.find( '}' )
+	if index != -1:
+		return tag[ index+1: ]
+	else:
+		return tag
+
+class FSMConnection(object):
+	def loadFromXML( self, xmlNode ):
+		self.id = xmlNode.attrib['id']
+		label = xmlNode.find( './/'+ Y_NS +'EdgeLabel' )
+		if label is not None:
+			self.value = label.text
+		else:
+			self.value = False
+		self.nodeIdFrom = xmlNode.attrib['source']
+		self.nodeIdTo   = xmlNode.attrib['target']
+		allConnections[ self.id ] = self
+
+	def findNodes( self ):
+		self.nodeFrom = allNodes[ self.nodeIdFrom ]
+		self.nodeTo   = allNodes[ self.nodeIdTo ]
+
+class FSMNode(object):
+	def __init__( self ):
+		self.value = None
+		self.fullname = None
+		self.funcname = None
+		self.connections = []
+		self.parent = None
+		self.id = ''
+		self.name = ''
+		self.jump = {}
+		self.next = {}
+
+	def loadFromXML( self, xmlNode ):
+		if xmlNode.tag == ML_NS + 'graphml':
+			self.id = 'root'
+			self.name = ''
+		else:
+			self.id = xmlNode.attrib['id']
+			label = xmlNode.find( './/'+ Y_NS+'NodeLabel' )
+			self.name = label.text		
+		allNodes[ self.id ] = self
+
+	def getType( self ):
+		return 'state'
+
+	def isGroup( self ):
+		return False
+
+	def getName( self ):
+		return self.name
+
+	def getFullName( self ):
+		if not self.fullname:
+			if self.parent:
+				pn = self.parent.getFullName()
+				if pn:
+					self.fullname = pn + groupSep + self.name
+				else:
+					self.fullname = self.name
+			else:
+				self.fullname = False
+		return self.fullname
+
+	def getFuncName( self ):
+		if not self.funcname:
+			self.funcname = '_FSM_' + str.replace( self.getFullName(), '.' , '_' )
+		return self.funcname
+
+
+	def __repr__( self ):
+		return str(self.getFullName())
+
+
+class FSMNodeGroup( FSMNode):
+	def __init__( self ):
+		super( FSMNodeGroup, self ).__init__()
+		self.children = []
+
+	def loadFromXML( self, xmlNode ):
+		super( FSMNodeGroup, self ).loadFromXML( xmlNode )
+		graphNode = xmlNode.find( ML_NS+'graph' )
+		self.loadChildrenFromXML( graphNode )
+
+	def isGroup( self ):
+		return True
+
+	def getType( self ):
+		return 'group'
+
+	def loadChildrenFromXML( self, xmlNode ):
+		for childXml in xmlNode:
+			tag = getTag( childXml )
+			if tag == 'node':
+				if childXml.attrib.get( 'yfiles.foldertype' ) == 'group':
+					child = FSMNodeGroup()
+				else:
+					child = FSMNode()
+				child.parent = self
+				child.loadFromXML( childXml )
+				self.children.append( child )
+
+			elif tag == 'edge':
+				conn = FSMConnection()
+				conn.loadFromXML( childXml )
+				self.connections.append( conn )
+
+	def findChild( self, name ):
+		for child in self.children:
+			if child.name == name:
+				return child
+		return False
+
+class FSMParser():
+	def __init__( self ):
+		self.output = ''
+
+	def parse( self, fileName ):
+		global allNodes
+		global allConnections
+		allNodes = {}
+		allConnections = {}
+
+		tree     = ElementTree()
+		rootNode = tree.parse( fileName )
+		root     = FSMNodeGroup()
+		root.loadFromXML( rootNode )
+
+		self.root = root
+
+		for conn in allConnections.values():
+			conn.findNodes()
+		##############-
+		#generate jump table
+		for e in allConnections.values():
+			nodeFrom   = e.nodeFrom
+			nodeTo     = e.nodeTo
+			msg        = e.value
+			jump       = nodeFrom.jump
+			isGroup    = False
+			if nodeTo.isGroup() :
+				isGroup = True
+				startState = nodeTo.findChild( 'start' )
+				if startState :
+					nodeTo = startState
+				else:
+					print( "no 'start' state for group:", nodeTo.getFullName())
 					return error()
+
+			if msg and msg != '' :
+				jump[msg]=nodeTo
+			else:
+				#validate group
+				if nodeFrom.isGroup() :
+					stopState = nodeFrom.findChild( 'stop' )
+					if stopState :
+						nodeFrom=stopState					
+					else:
+						print("no 'stop' state for group:",nodeFrom.getFullName())
+						raise Exception()
 				
-			
-			
-			__next=from.__next
-			if not __next then
-				__next={}
-				from.__next=__next
-			
-			__next[to]=isGroup and 'group' or 'node'
+				next = nodeFrom.next
+				if not next :
+					next = {}
+					nodeFrom.next = next
+				
+				next[ nodeTo ] = isGroup and 'group' or 'node'
 		
+		####
+		for node in allNodes.values():
+			self.updateJump( node )
+
+		return self.generateCode()
 	
-	def generateJumpTarget( from, to ):
-		if from.parent == to.parent then
-			return string.format( '%q', to.fullname )
+	def generateJumpTarget( self, nodeFrom, nodeTo ):
+		if nodeFrom.parent == nodeTo.parent :
+			return ( '"%s"' % nodeTo.getFullName() )
 		
 		exits  = ""
 		enters = ""
-		node = from.parent
-		while true do #find group crossing path
-			found = false
+		node = nodeFrom.parent
+		while True: #find group crossing path
+			found = False
 			enters = ""
-			node1 = to.parent
-			while node1 ~= root do
-				if node1 == node then	found = true break 
-				enters = string.format( '%q,', node1.funcname + '__jumpin' ) + enters
+			node1 = nodeTo.parent
+			while node1 != self.root:
+				if node1 == node :
+					found = True
+					break 
+				enters = ( '"%s",' % (node1.getFuncName() + '__jumpin' ) ) + enters
 				node1 = node1.parent				
 			
-			if found then
+			if found :
 				break
-			
-			if node == root then break 
-			exits = exits + string.format( '%q,', node.funcname + '__jumpout' )
+			if node == self.root :
+				break 
+
+			exits = exits + ( '"%s",' % ( node.getFuncName() + '__jumpout') )
 			node = node.parent	
 		
 		output = exits + enters
-		#format: [ list of func needed to be called ] + 'next state name'
-		return string.format( "{ %s%q }", output, to.fullname)		
+		#format: [ list of func needed nodeTo be called ] + 'next state name'
+		return '{ %s"%s" }' % ( output, nodeTo.getFullName() )
 	
-	#overwrite according to parent-level-priority
-	def updateJump(node,src):
-		if not node or node==root then return 
-		if src then
-			jump0=src.jump
-			jump=node.jump
-			for msg,target in pairs(jump) do
-				jump0[msg]=target
-			
-		else
+	#overwrite according nodeTo parent-level-priority
+	def updateJump( self, node, src = None ):
+		if not node or node == self.root : return 
+		if src :
+			jump0 = src.jump
+			jump  = node.jump
+			for msg, target in jump.items():
+				jump0[ msg ] = target
+		else:
 			src=node
 		
-		return updateJump(node.parent,src)
+		return self.updateJump( node.parent, src )
 	
-	for i,o in pairs(objects) do
-		updateJump(o)
+	def generateCode( self ):
+		self.output = ''
 	
-	output=''
-	def writef( pattern, *args ):
-		output=output+( pattern % args )
-	
-	def write(a):
-		output=output+a
-	
-	#data code(jumptable) generation
-	# file=io.open(fnout,'w')
-	# if not file then 
-	# 	print("cannot open file to write")
-	# 	os.exit(1)
-	# 
-	write('(def()\n'):
-	write('nodelist={')
-	write('\n')
-	for id,n in pairs(objects) do		
-		writef(string.format('[%q]={name=%q,localName=%q,id=%q,type=%q};',n.fullname,n.fullname,n.value,n.funcname,n.type))
-		write('\n')
-	
-	write('};')
-	write('\n')
-
-	for id,n in pairs(objects) do
-		write('#####-\n')
-		if n.jump and next(n.jump) then
-			writef('nodelist[%q].jump={\n',n.fullname)
-			for msg, target in pairs(n.jump) do
-				jumpto = target.fullname
-				writef( '\t[%q]=%s;\n', msg, generateJumpTarget( n, target ) )
-			
-			write('}\n')
-		else
-			writef('nodelist[%q].jump=false\n',n.fullname)
+		def writef( pattern, *args ):
+			self.output = self.output + ( pattern % args )
 		
-		if n.__next then
-			writef('nodelist[%q].next={\n', n.fullname )
-			count=0
-			for target,targetType in pairs(n.__next) do
-			# target=n.__next
-				jumpto=target.fullname
-				targetName=target.value
-				#add a symbol for better distinction
-				if targetType=='group' then targetName=target.parent.value 
-				writef('["$%s"]=%s;\n',targetName, generateJumpTarget( n, target ) ) 
-				count=count+1
-			
-			
-			if count==1 then #only one, give it a 'true' transition
-				target=next(n.__next)
-				jumpto=target.fullname
-				writef('[true]=%s;\n', generateJumpTarget( n, target ) )
-			
-			writef('}\n')
+		def write(a):
+			self.output = self.output+a
+
+		#data code(jumptable) generation
+		# file=io.open(fnout,'w')
+		# if not file : 
+		# 	print("cannot open file nodeTo write")
+		# 	os.exit(1)
+		# 
+		write( 'return ' )
+		write( '(function()\n' )
+		write( 'nodelist={' )
+		write( '\n' )
+		for id, n in allNodes.items():
+			if n == self.root: continue
+			writef( '["%s"]={name="%s",localName="%s",id="%s",type="%s"};',n.getFullName(),n.getFullName(),n.getName(),n.getFuncName(),n.getType() )
+			write( '\n' )
 		
-	
-	write('return nodelist\n')
-	write(') ()\n')
-	write('\n')
-	return output
+		write( '};' )
+		write( '\n' )
 
-def stripExt(p):
-		 p=string.gsub(p,'%+*$','')
-		 return p
+		for id, n in allNodes.items():
+			if n == self.root: continue
+			write( '-----------\n' )
+			if len( n.jump ) > 0:
+				writef( 'nodelist["%s"].jump={\n',n.getFullName() )
+				for msg, target in n.jump.items():
+					jumpto = target.getFullName()
+					writef( '\t["%s"]=%s;\n', msg, self.generateJumpTarget( n, target ) )
+				
+				write( '}\n' )
+			else:
+				writef( 'nodelist["%s"].jump=false\n',n.getFullName() )
+			
+			if len( n.next ) > 0:
+				writef( 'nodelist["%s"].next={\n', n.getFullName() )
+				count = 0
+				for target,targetType in n.next.items():
+				# target=n.next
+					jumpto = target.getFullName()
+					targetName = target.getName()
+					#add a symbol for better distinction
+					if targetType == 'group' :
+						targetName = target.parent.getName()
+					writef('["$%s"]=%s;\n',targetName, self.generateJumpTarget( n, target ) ) 
+					count += 1
+				
+				if count == 1 : #only one, give it a 'True' transition
+					target = n.next.keys()[0]
+					jumpto = target.getFullName()
+					writef( '[true]=%s;\n', self.generateJumpTarget( n, target ) )
+				
+				writef( '}\n' )
+			
+		
+		write( 'return nodelist\n' )
+		write( 'end) ()\n' )
+		write( '\n' )
+		return self.output
 
-def extractExt(p):
-	return string.gsub(p,'.*%.','')
+def convertGraphMLToFSM( input, output ):
+	parser = FSMParser()
+	result = parser.parse( input )
+	fp = file( output, 'w' )
+	fp.write( result )
+	fp.close()
+	return True
 
-def convertSingle( input, output ):
-	result = convertGraphML( input )
-	outfile=io.open(output,'w')
-	outfile:write( 'return ')
-	outfile:write( result )
-	outfile:close()	
-	return true
-
-convertSingle( input, output )
-
-tree = ET.parse('Hero.fsm.graphml')
-root = tree.getroot()
+# convertSingle ( input, output )
+# convertSingle( 'Hero.fsm.graphml', 'output1.lua' )

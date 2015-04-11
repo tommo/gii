@@ -7,59 +7,12 @@ from PyQt4.QtCore import QPointF, QRectF, QSizeF
 from PyQt4.QtGui import QColor
 from OpenGL.GL import *
 
+from GraphicsViewHelper import *
+
 import sys
 import math
 
 _USE_GL = True
-
-def makeBrush( **option ):
-	brush = QtGui.QBrush()
-	brush.setColor( QColor( option.get( 'color', '#ffffff') ) )
-	return brush
-
-def makePen( **option ):
-	pen = QtGui.QPen()
-	pen.setColor( QColor( option.get( 'color', '#ffffff') ) )
-	pen.setWidth( option.get( 'width', 1 ) )
-	pen.setStyle( option.get( 'style', Qt.SolidLine ) )
-	return pen
-
-class GridBackground( QtGui.QGraphicsRectItem ):
-	_gridPen  = makePen( color = '#3d3d3d', width = 1 )
-	def __init__( self ):
-		super( GridBackground, self ).__init__()
-		self.setZValue( -100 )
-		self.scrollX = 100
-		self.scrollY = 100
-		self.gridSizeH = 50
-		self.gridSizeV = 50 
-
-	def paint( self, painter, option, widget ):
-		rect = painter.viewport()
-		transform = painter.transform()
-		dx = transform.dx()
-		dy = transform.dy()
-		painter.setPen( GridBackground._gridPen )
-		tw = self.gridSizeH
-		th = self.gridSizeV
-		w = rect.width()
-		h = rect.height()
-		rows = int( h/self.gridSizeV ) + 1
-		cols = int( w/self.gridSizeH ) + 1
-		x0 = -dx
-		y0 = -dy
-		x1 = x0 + w
-		y1 = y0 + h
-		ox = (dx) % tw
-		oy = (dy) % th
-
-		for col in range( cols ):
-			x = col * tw + ox + x0
-			painter.drawLine( x, y0, x, y1 )
-
-		for row in range( rows ):
-			y = row * th + oy + y0
-			painter.drawLine( x0, y, x1, y )
 
 class GraphViewNodeSlot( QtGui.QGraphicsRectItem ):
 	_pen = makePen( color = '#3780ff' )
@@ -298,30 +251,9 @@ class GraphScene( QtGui.QGraphicsScene ):
 			self.connecting = None
 		super( GraphScene, self ).mouseReleaseEvent( event )
 
-class GraphView( QtGui.QGraphicsView ):
+class GraphView( GLGraphicsView ):
 	def __init__( self, *args, **kwargs ):
 		super( GraphView, self ).__init__( *args, **kwargs )
-		self.setHorizontalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
-		self.setVerticalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
-		if _USE_GL:
-			self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )
-			fmt = QtOpenGL.QGLFormat()
-			fmt.setRgba(True)
-			fmt.setAlpha(True)
-			fmt.setDepth(False)
-			fmt.setDoubleBuffer(True)
-			fmt.setSampleBuffers( True )
-			fmt.setSwapInterval(0)
-			viewport = QtOpenGL.QGLWidget( QtOpenGL.QGLContext(fmt, None) )
-			viewport.makeCurrent()
-			glEnable(GL_MULTISAMPLE)
-			glEnable(GL_LINE_SMOOTH)
-			self.setViewport( viewport )
-		self.setRenderHint( QtGui.QPainter.Antialiasing, True )
-		# self.setRenderHint( QtGui.QPainter.HighQualityAntialiasing, True )
-
-	# def __del__( self ):
-	# 	self.deleteLater()
 
 class GraphWidget( QtGui.QWidget ):
 	def __init__( self, *args, **kwargs ):
@@ -348,9 +280,11 @@ class GraphWidget( QtGui.QWidget ):
 		conn = GraphViewConnection( node2.getSlot( 'out-1' ), node3.getSlot( 'in-0' ) )
 		self.scene.addItem( conn )
 
+	def closeEvent( self, event ):
+		self.view.deleteLater()
 
-	# def __del__( self ):
-	# 	self.deleteLater()
+	def __del__( self ):
+		self.deleteLater()
 
 
 if __name__ == '__main__':

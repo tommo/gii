@@ -153,13 +153,13 @@ def get_psd_features( image ):
 
 def get_mani( image ):
 	for r in image.decoded_data.image_resource_blocks:
-		if r.resource_id == ImageResourceID.PLUGIN_RESOURCES_0:
+		if r.resource_id >= ImageResourceID.PLUGIN_RESOURCES_0 and r.resource_id < ImageResourceID.PLUGIN_RESOURCES_LAST:
 			f = StringIO.StringIO( r.data )
 			pluginName = f.read(4)
-			assert pluginName == 'mani', pluginName 
-			f.seek( 24, 1 )
-			desc = read_psd_obj( f, 'Objc' )
-			return desc
+			if pluginName == 'mani':
+				f.seek( 24, 1 )
+				desc = read_psd_obj( f, 'Objc' )
+				return desc
 	return None
 
 def get_layer_feature( layer ):

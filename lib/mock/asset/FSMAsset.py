@@ -4,6 +4,7 @@ import shutil
 
 from gii.core import *
 
+from tools.ml2fsm import convertGraphMLToFSM
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -22,13 +23,10 @@ class FSMSchemeAssetManager(AssetManager):
 
 	def importAsset( self, node, reload = False ):
 		node.setObjectFile( 'def', node.getCacheFile( 'def' ) )
-		arglist = [
-			'lua', 
-			_getModulePath( 'tools/ml2fsm.lua' ),
+		convertGraphMLToFSM(
 			node.getAbsFilePath(), #input file
 			node.getAbsObjectFile( 'def' ) #output file
-		 ]
-		subprocess.call(arglist)
+		)
 		node.assetType = 'fsm_scheme'
 		return True
 	

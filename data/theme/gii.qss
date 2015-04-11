@@ -138,7 +138,7 @@ QScrollBar::vertical
 QScrollBar::handle
 {
 	background-color:#666;
-	border: 0px;
+	border: 1px;
 }
 
 QScrollBar::handle:hover
@@ -269,10 +269,26 @@ QScrollBar::down-arrow:vertical
 	background-position:center;
 }
 
+
 QSplitter::handle
 {
-	background-color:#444;
 	border:0 solid green;
+}
+
+QSplitter::handle:hover
+{
+	background-color:#444;
+	border:1 solid #555;
+}
+
+QSplitter::handle:horizontal {
+	background-color:#222;
+	width: 2px;
+}
+
+QSplitter::handle:vertical {
+	background-color:#222;
+	height: 2px;
 }
 
 QTreeView, QListView
@@ -690,7 +706,7 @@ QMainWindow,QScrollBar,QTableView
 QMainWindow::separator
 {
     background-color: #222;
-    width:3px;
+    width:4px;
     height:3px;
 }
 
@@ -815,9 +831,9 @@ QToolButton::checked{
 }
 
 QSplitter#TimelineSplitter::handle{
-	background-color:#282828;
-	border-left: 1px solid #111;
-	border-right: 1px solid #444;
+	background-color:#333;
+	/*border-left: 1px solid #111;
+	border-right: 1px solid #444;*/
 }
 
 #TimelineRuler, #TimelineToolBar {
@@ -920,4 +936,10 @@ QRubberBand {
 #CategoryTitleBar
 {
 	text-align: left;
+}
+
+QSplitter#TimelineHeaderSplitter::handle{
+	background-color:#333;
+	/*border-left: 1px solid #111;*/
+	border-right: 1px solid #444;
 }
