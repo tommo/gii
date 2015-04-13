@@ -254,6 +254,7 @@ class GraphScene( QtGui.QGraphicsScene ):
 class GraphView( GLGraphicsView ):
 	def __init__( self, *args, **kwargs ):
 		super( GraphView, self ).__init__( *args, **kwargs )
+	
 
 class GraphWidget( QtGui.QWidget ):
 	def __init__( self, *args, **kwargs ):

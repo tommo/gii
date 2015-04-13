@@ -11,7 +11,6 @@ from GraphicsViewHelper import *
 import sys
 import math
 
-_USE_GL = True
 _RULER_SIZE = 25
 _TRACK_SIZE = 25
 _TRACK_MARGIN = 3

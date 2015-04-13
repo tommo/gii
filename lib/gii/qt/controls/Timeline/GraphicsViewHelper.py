@@ -21,7 +21,7 @@ def makePen( **option ):
 	color = QColor( option.get( 'color', '#ffffff' ) )
 	color.setAlphaF( option.get( 'alpha', 1 ) )
 	pen.setColor( color )
-	pen.setWidth( option.get( 'width', 1 ) )
+	pen.setWidth( option.get( 'width', .0 ) )
 	return pen
 
 _ItemStyleRegistry = {}

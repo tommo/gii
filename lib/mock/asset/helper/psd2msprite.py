@@ -464,14 +464,16 @@ class MSpriteProject(object):
 			y0 = 0
 			visible = l.visible
 			states = {}
-			for mod in layerModifyDict[l]['LaSt']:
-				fid =  mod['FrLs'][0]
-				ofst = mod.get('Ofst', None)
-				if ofst:
-					x0 = ofst['Hrzn']
-					y0 = ofst['Vrtc']
-				visible = mod.get('enab', visible)
-				states[ fid ] = ( visible, x0, y0 )
+			modData = layerModifyDict[l]
+			if modData:
+				for mod in modData['LaSt']:
+					fid =  mod['FrLs'][0]
+					ofst = mod.get('Ofst', None)
+					if ofst:
+						x0 = ofst['Hrzn']
+						y0 = ofst['Vrtc']
+					visible = mod.get('enab', visible)
+					states[ fid ] = ( visible, x0, y0 )
 			layerStates[ l ] = states
 			l._featureId = 0
 			if docFeatures:
@@ -487,14 +489,18 @@ class MSpriteProject(object):
 			for l in outputLayers:
 				#find modify state
 				layerModify = None
-				for s in layerModifyDict[l]['LaSt']:
-					if s['FrLs'][0] == fid: 
-						layerModify = s
-						break				
+				modData = layerModifyDict[l]
+				if modData:
+					for mod in modData['LaSt']:
+						if mod['FrLs'][0] == fid: 
+							layerModify = mod
+							break				
 				states = layerStates[l]
 
 				#check enabled
-				visible, offx, offy = states[ fid ]
+				defaultState = ( l.visible, 0, 0 ) 
+				fstate = states.get( fid, defaultState )
+				visible, offx, offy = fstate
 				if not visible: continue
 				#check inside bbox				
 					
