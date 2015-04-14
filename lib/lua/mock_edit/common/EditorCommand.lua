@@ -17,6 +17,10 @@ end
 function EditorCommand:undo()
 end
 
+function EditorCommand:hasHistory()
+	return true
+end
+
 function EditorCommand:canUndo()
 	return true
 end

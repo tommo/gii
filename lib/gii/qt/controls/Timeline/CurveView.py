@@ -16,6 +16,9 @@ CV_SIZE = 15
 TP_INNER_SIZE = 6
 TP_SIZE = 15
 
+_PIXEL_PER_UNIT = 100.0 #basic scale
+_HEAD_OFFSET = 15
+
 ##----------------------------------------------------------------##
 _DEFAULT_BG = makeBrush( color = '#222' )
 makeStyle( 'cv',                '#ffffff',    '#acbcff'              )
@@ -33,6 +36,137 @@ TANGENT_MODE_AUTO    = 0
 TANGENT_MODE_SPLIT   = 1
 TANGENT_MODE_SMOOTH  = 2
 
+
+
+
+##----------------------------------------------------------------##
+class AxisGridBackground( QtGui.QGraphicsRectItem ):
+	_gridPen  = makePen( color = '#333', width = 1 )
+	_axisPen  = makePen( color = '#777', width = 1 )
+	_originPen  = makePen( color = '#49599c', width = 1 )
+	def __init__( self ):
+		super( AxisGridBackground, self ).__init__()
+		self.setZValue( -100 )
+		self.gridWidth = 50
+		self.gridHeight = 50 
+		self.offsetX = 1
+		self.offsetY = 1
+		self.zoomX = 2
+		self.zoomY = 1
+
+	def setOffset( self, x, y ):
+		self.offsetX = x
+		self.offsetY = y
+		self.updateTransfrom()
+
+	def setGridSize( self, width, height = None ):
+		if not height:
+			height = width
+		self.gridWidth = width
+		self.gridHeight = height
+		self.update()
+
+	def setGridWidth( self, width ):
+		self.setGridSize( width, self.gridHeight )
+
+	def setGridHeight( self, height ):
+		self.setGridSize( self.gridWidth, height )
+
+	def paint( self, painter, option, widget ):
+		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
+		rect = painter.viewport()
+		transform = painter.transform()
+		dx = transform.dx() 
+		dy = transform.dy()
+		w = rect.width()
+		h = rect.height()
+		x0 = -dx
+		y0 = -dy
+		x1 = x0 + w
+		y1 = y0 + h
+
+		u = 100
+		stepx = 1
+		stepy = 1
+		ux = u * self.zoomX
+		uy = u * self.zoomY
+		vx0 = x0 / ux
+		vy0 = y0 / uy
+		dvx = w / ux
+		dvy = h / uy
+		vx1 = vx0 + dvx
+		vy1 = vy0 + dvy
+		stepWidth = stepx * ux
+		stepHeight = stepy * uy
+
+		#Grid
+		ox = (dx) % ux
+		oy = (dy) % uy
+		rows = int( h/uy ) + 1
+		cols = int( w/ux ) + 1
+		offx = self.offsetX
+		painter.setPen( AxisGridBackground._gridPen )
+		for col in range( cols ): #V lines
+			x = col * ux + ox + x0 + offx
+			painter.drawLine( x, y0, x, y1 )
+		
+		# x0 = max( x0, _HEAD_OFFSET )
+		offy = self.offsetY
+		painter.setPen( AxisGridBackground._gridPen )
+		for row in range( rows ): #H lines
+			y = row * uy + oy + y0 + offy
+			painter.drawLine( x0, y, x1, y )
+		
+		#Origin
+		painter.setPen( AxisGridBackground._originPen )
+		originX = 0
+		originY = 0
+		painter.drawLine( originX, y0, originX, y1 )
+		painter.drawLine( x0, originY, x1, originY )
+
+		#XAxis
+		start = math.floor( vx0/stepx ) * stepx
+		end   = math.ceil( vx1/stepx ) * stepx
+		count = int( (end-start)/stepx ) + 1
+
+		trans = painter.transform()
+		trans.translate( -dx, -dy )
+		painter.setTransform( trans )
+		painter.setPen( AxisGridBackground._axisPen )
+		subStep = 5
+		subPitch = stepWidth/subStep
+		for i in range( count ): #V lines
+			vx = start + i * stepx
+			xx = (vx-vx0) * ux
+			painter.drawLine( xx, h-20, xx, h - 1 )
+			for j in range( 1, subStep ):
+				sxx = xx + j * subPitch
+				painter.drawLine( sxx, h-6, sxx, h - 1 )
+			markText = '%.1f'%( vx )
+			painter.drawText( QRectF( xx + 2, h-20, 100, 100 ), Qt.AlignTop|Qt.AlignLeft, markText )
+
+		#YAxis
+		start = math.floor( vy0/stepy ) * stepy
+		end   = math.ceil( vy1/stepy ) * stepy
+		count = int( (end-start)/stepy ) + 1
+
+		painter.setPen( AxisGridBackground._axisPen )
+		subStep = 5
+		subPitch = stepHeight/subStep
+		for i in range( count ): #V lines
+			vy = start + i * stepy
+			yy = (vy-vy0) * uy
+			painter.drawLine( 0, yy, 20, yy )
+			for j in range( 1, subStep ):
+				syy = yy + j * subPitch
+				painter.drawLine( 0, syy, 6, syy )
+			markText = '%.1f'%( vy )
+			painter.drawText( QRectF( 5, yy + 3, 100, 20 ), Qt.AlignTop|Qt.AlignLeft, markText )
+
+	def setZoom( self, zx, zy ):
+		self.zoomX = zx
+		self.zoomY = zy
+		self.update()
 
 ##----------------------------------------------------------------##
 class CurveSpanItem( QtGui.QGraphicsPathItem ):
@@ -93,12 +227,11 @@ class CurveSpanItem( QtGui.QGraphicsPathItem ):
 		path.cubicTo( tp0, preTP, pos1 )
 		self.setPath( path )
 
-	# def paint( self, painter, option, widget ):
-	# 	painter.setRenderHint( QtGui.QPainter.Antialiasing, True )
-	# 	applyStyle( 'curve', painter)
-	# 	path = self.path()
-	# 	painter.drawPath( path )
-
+	def paint( self, painter, option, widget ):
+		painter.setRenderHint( QtGui.QPainter.Antialiasing, True )
+		applyStyle( 'curve', painter)
+		path = self.path()
+		painter.drawPath( path )
 
 class CurveTangentPointItem( QtGui.QGraphicsRectItem ):
 	def __init__( self ):
@@ -118,8 +251,6 @@ class CurveTangentPointItem( QtGui.QGraphicsRectItem ):
 	def paint( self, painter, option, widget ):
 		applyStyle( 'tp', painter )
 		painter.drawEllipse( self.innerRect )
-
-
 
 class CurveVertPointItem( QtGui.QGraphicsRectItem ):
 	def __init__( self, vertItem ):
@@ -143,8 +274,6 @@ class CurveVertPointItem( QtGui.QGraphicsRectItem ):
 		applyStyle( 'cv', painter )
 		painter.drawRect( self.innerRect )
 
-
-
 class CurveVertItem( QtGui.QGraphicsRectItem ):
 	def __init__( self, parent ):
 		super( CurveVertItem, self ).__init__()
@@ -158,7 +287,7 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		self.nextVert = None
 		self.prevVert = None
 		self.span = None
-		self.spanMode = SPAN_MODE_BEZIER
+		self.spanMode = SPAN_MODE_LINEAR
 		# self.tangentMode = 
 
 		self.preTP  = CurveTangentPointItem()
@@ -172,6 +301,11 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 
 		self.VP = CurveVertPointItem( self )
 
+	def updateZoom( self, zx, zy ):
+		trans = QTransform()
+		trans.scale( 1.0/zx, 1.0/zy )
+		self.setTransform( trans )
+		self.VP.setTransform( trans )
 
 	def setValue( self, v ):
 		self.value = v
@@ -194,14 +328,13 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 			if not self.updating:
 				self.updating = True
 				self.VP.setPos( self.pos() )
-				self.correctTP()
 				self.updateSpan()
 				self.updating = False
 
 		return QtGui.QGraphicsRectItem.itemChange( self, change, value )
 
 	def onTPUpdate( self, tp ):
-		self.correctTP()
+		# self.correctTP()
 		self.updateSpan()
 
 	def correctTP( self ):
@@ -229,7 +362,6 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		x = max( x0, min( x1, tp.x() ) )
 		tp.setX( x )
 		tp.setFlag( self.ItemSendsGeometryChanges, True )
-
 
 	def updateSpan( self ):
 		if self.span:
@@ -260,12 +392,16 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 class CurveItem( QtGui.QGraphicsRectItem ):
 	def __init__(self):
 		super(CurveItem, self).__init__()
+		self.zx = 1
+		self.zy = 1
 		self.verts = []
 		self.startVert = self.createVert()
 		self.endVert   = self.startVert
 
+
 	def createVert( self ):
 		vert = CurveVertItem( self )
+		vert.updateZoom( self.zx, self.zy )
 		return vert
 
 	def appendVert( self ):
@@ -280,45 +416,151 @@ class CurveItem( QtGui.QGraphicsRectItem ):
 	def sortVerts( self ):
 		pass
 
+	def setZoom( self, x, y ):
+		self.zx = x
+		self.zy = y
+		trans = QTransform()
+		trans.scale( self.zx, self.zy )
+		self.setTransform( trans )
+		vert = self.startVert
+		while vert:
+			vert.updateZoom( self.zx, self.zy )
+			vert = vert.nextVert
 
+##----------------------------------------------------------------##
 class CurveView( GLGraphicsView ):
 	def __init__(self):
 		super(CurveView, self).__init__()
 		self.setScene( QtGui.QGraphicsScene() )
 		self.setBackgroundBrush( _DEFAULT_BG )
 		self.curves = []
-		self.gridBackground = GridBackground()
+		self.gridBackground = AxisGridBackground()
 		self.scene().addItem( self.gridBackground )
 		self.scene().sceneRectChanged.connect( self.onRectChanged )
-	
+		self.panning = False
+		self.offsetX = 0
+		self.offsetY = 0
+		self.zoomX = 1.0
+		self.zoomY = 1.0
+		self.scene().setSceneRect( QRectF( -10000,-10000, 20000, 20000 ) )
+		self.setZoomX( 1 )
+		self.setZoomY( 1 )
+
 	def onRectChanged( self, rect ):
 		self.gridBackground.setRect( rect )
+
+	def setOffset( self, ox, oy ):
+		self.offsetX = ox
+		self.offsetY = oy
+		self.update()
 
 	def addCurve( self ):
 		curve = CurveItem()
 		self.scene().addItem( curve )
 		self.curves.append( curve )
+		curve.setZoom( self.zoomX, self.zoomY )
 		return curve
 
+	def wheelEvent(self, event):
+		steps = event.delta() / 120.0;
+		dx = 0
+		dy = 0
+		zoomRate = 1.1
+		if event.orientation() == Qt.Horizontal : 
+			dy = steps
+			if dy>0:
+				self.setZoomY( self.zoomY * zoomRate )
+			else:
+				self.setZoomY( self.zoomY / zoomRate )
+		else:
+			dy = steps
+			if dy>0:
+				self.setZoomX( self.zoomX * zoomRate )
+			else:
+				self.setZoomX( self.zoomX / zoomRate )
 
+	def setZoomX( self, zoom ):
+		self.zoomX = zoom
+		self.onZoomChanged()
+
+	def setZoomY( self, zoom ):
+		self.zoomY = zoom
+		self.onZoomChanged()
+
+	def onZoomChanged( self ):
+		for curve in self.curves:
+			curve.setZoom( self.zoomX, self.zoomY )
+		self.gridBackground.setZoom( self.zoomX, self.zoomY )
+		self.updateTransfrom()
+
+	def mouseMoveEvent( self, event ):
+		super( CurveView, self ).mouseMoveEvent( event )
+		if self.panning:
+			p1 = event.pos()
+			p0, off0 = self.panning
+			dx = p1.x() - p0.x()
+			dy = p1.y() - p0.y()
+			offX0, offY0 = off0
+			offX1 = offX0 + dx
+			offY1 = offY0 + dy
+			self.setOffset( self.xToValue( offX1 ), self.yToValue( offY1 ) )
+			self.updateTransfrom()
+
+	def mousePressEvent( self, event ):
+		super( CurveView, self ).mousePressEvent( event )
+		if event.button() == Qt.MidButton:
+			offX0, offY0 = self.valueToPos( self.offsetX, self.offsetY )
+			self.panning = ( event.pos(), ( offX0, offY0 ) )
+
+	def mouseReleaseEvent( self, event ):
+		super( CurveView, self ).mouseReleaseEvent( event )
+		if event.button() == Qt.MidButton :
+			if self.panning:
+				self.panning = False
+				# self.setCursor( Qt.ArrowCursor )
+
+	def updateTransfrom( self ):
+		trans = QTransform()
+		trans.translate( self.valueToX( self.offsetX ), self.valueToY( self.offsetY ) )
+		self.setTransform( trans )
+		self.update()
+
+	def xToValue( self, x ):
+		return  x /( _PIXEL_PER_UNIT * self.zoomX )
+
+	def valueToX( self, v ):
+		return v * self.zoomX * _PIXEL_PER_UNIT
+
+	def yToValue( self, y ):
+		return  y /( _PIXEL_PER_UNIT * self.zoomY )
+
+	def valueToY( self, v ):
+		return v * self.zoomY * _PIXEL_PER_UNIT
+
+	def valueToPos( self, x, y ):
+		return ( self.valueToX( x ), self.valueToY( y ) )
+
+	def posToValue( self, xv, yv ):
+		return ( self.xToValue( xv ), self.yToValue( yv ) )
+
+##----------------------------------------------------------------##
 class CurveWidget( QtGui.QWidget ):
 	def __init__( self, *args, **kwargs ):
 		super( CurveWidget, self ).__init__( *args, **kwargs )		
 		layout = QtGui.QVBoxLayout( self )
 		self.view = CurveView()
-		self.view.setSceneRect( QRectF( 0,0, 10000, 10000 ) )
 		layout.addWidget( self.view )
 
 		c = self.view.addCurve()
-		c.setPos( 20, 50 )
+		c.startVert.setPos( 100, 50 )
 		v = c.appendVert()
 		v.setPos( 150,  50 )
+		v.setSpanMode( SPAN_MODE_BEZIER )
 		v = c.appendVert()
-		v.setPos( 250,  20 )
-		v.setSpanMode( SPAN_MODE_LINEAR )
+		v.setPos( 250,  50 )
+		v.setSpanMode( SPAN_MODE_BEZIER )
 		v = c.appendVert()
 		v.setPos( 350,  120 )
-		
 
 	def closeEvent( self, event ):
 		self.view.deleteLater()

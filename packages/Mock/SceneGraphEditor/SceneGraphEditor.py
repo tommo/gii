@@ -96,9 +96,10 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenu( 'main/scene/----' )
 		self.addMenu( 'component_context', dict( label = 'Selected Component' ) )
 		self.addMenuItem( 'component_context/remove_component', 
-				dict( 
-					label = 'Remove'					
-				 )
+			dict( label = 'Remove' )
+			)
+		self.addMenuItem( 'component_context/copy_component', 
+			dict( label = 'Copy' )
 			)
 
 		self.addMenu( 'main/entity', dict( label = 'Entity' ) )
@@ -423,6 +424,11 @@ class SceneGraphEditor( SceneEditorModule ):
 			if context:
 				self.doCommand( 'scene_editor/remove_component', target = context )
 
+		elif name == 'copy_component':
+			context = menu.getContext()
+			if context:
+				self.doCommand( 'scene_editor/copy_component', target = context )
+
 		elif name == 'assign_layer':
 			if not self.tree.getSelection(): return
 			requestSearchView( 
@@ -574,6 +580,31 @@ class SceneGraphEditor( SceneEditorModule ):
 				data = str(data)
 			)
 
+	##----------------------------------------------------------------##
+	def onCopyComponent( self ):
+		entityGroupData = self.delegate.callMethod( 'editor', 'makeEntityCopyData' )
+		if not entityGroupData: return False
+		clip = QtGui.QApplication.clipboard()
+		mime = QtCore.QMimeData()
+		text = ''
+		for s in self.getSelection():
+			if text == '':
+				text = text + s.name
+			else:
+				text = text + '\n' + s.name
+		mime.setText( text )
+		mime.setData( _GII_ENTITY_DATA_MIME, str(entityGroupData) )
+		clip.setMimeData( mime )
+		return True
+
+	def onPasteComponent( self ):
+		clip = QtGui.QApplication.clipboard()
+		mime = clip.mimeData()
+		if mime.hasFormat( _GII_ENTITY_DATA_MIME ):
+			data = mime.data( _GII_ENTITY_DATA_MIME )
+			self.doCommand( 'scene_editor/paste_entity',
+				data = str(data)
+			)
 
 ##----------------------------------------------------------------##
 def _sortEntity( a, b ):

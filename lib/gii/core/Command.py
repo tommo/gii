@@ -26,6 +26,9 @@ class EditorCommand( object ):
 	def canUndo( self ):
 		return True
 
+	def needHistrory( self ):
+		return True
+
 
 ##----------------------------------------------------------------##
 class EditorCommandStack( object ):
@@ -45,8 +48,12 @@ class EditorCommandStack( object ):
 		return len( self.redoStack ) > 0
 
 	def pushCommand( self, cmd, redo = False ):
-		if not cmd.canUndo():
+		if not cmd.needHistrory():
 			return cmd.redo()
+
+		if not self.canUndo():
+			#TODO: Warning about non-undoable action
+			pass
 
 		assert not hasattr( cmd, 'inStack' )
 		count = len( self.undoStack )
