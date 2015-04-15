@@ -11,14 +11,10 @@ class ToolWindowManagerArea( QTabWidget ):
 		self.tabDragCanStart = False
 		self.setMovable( True )
 		self.setTabsClosable( True )
-		self.setDocumentMode( False )
+		# self.setTabPosition( QTabWidget.South )
 		self.tabBar().installEventFilter( self )
 		self.tabBar().setExpanding( True )
 		self.manager.areas.append( self )
-
-	# def __dealloc__( self ):
-	# 	self.manager.areas.remove( self )
-	# 	super( ToolWindowManagerArea, self ).__dealloc__()
 
 	def addToolWindow( self, toolWindow ):
 		self.addToolWindows( [toolWindow] )
@@ -97,14 +93,14 @@ class ToolWindowManagerArea( QTabWidget ):
 			else:
 				qWarning("cannot save state of tool window without object name")
 		result["type"] = "area"
-		result["currentIndex"] = currentIndex()
+		result["currentIndex"] = self.currentIndex()
 		result["objectNames"] = objectNames
 		return result
 
 	def restoreState( self, data ):
 		for objectName in data.get( 'objectNames', [] ):
 			found = False
-			for window in self.manager.toolWindows:
+			for window in self.manager.toolWindows():
 				if window.objectName() == objectName:
 					self.addToolWindow( window )
 					found = True

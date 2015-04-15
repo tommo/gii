@@ -102,7 +102,7 @@ class ToolWindowManager( QtGui.QWidget ):
 
 		self.dropSuggestionSwitchTimer = QtCore.QTimer( self )
 		self.dropSuggestionSwitchTimer.timeout.connect( self.showNextDropSuggestion )
-		self.dropSuggestionSwitchTimer.setInterval( 1000 )
+		self.dropSuggestionSwitchTimer.setInterval( 800 )
 		self.dropCurrentSuggestionIndex = 0
 
 		palette = QtGui.QPalette()
@@ -115,16 +115,6 @@ class ToolWindowManager( QtGui.QWidget ):
 		self.rectRubberBand.setPalette( palette )
 		self.lineRubberBand.setPalette( palette )
 		self.toolWindowList = []
-
-	def __xxdealloc__( self ):
-		pass
-		# 	while(!self.areas.isEmpty():
-		# 		delete self.areas.first()
-		# 	}
-		# 	while(!self.wrappers.isEmpty():
-		# 		delete self.wrappers.first()
-		# 	}
-		# }
 
 	def hideToolWindow( self, toolWindow ):
 		self.moveToolWindow( toolWindow, ToolWindowManager.NoArea )
@@ -179,7 +169,7 @@ class ToolWindowManager( QtGui.QWidget ):
 			area.addToolWindows( toolWindows )
 			wrapper = ToolWindowManagerWrapper( self )
 			wrapper.layout().addWidget( area )
-			wrapper.move(QCursor.pos())
+			wrapper.move( QCursor.pos() )
 			wrapper.show()
 
 		elif areaType == ToolWindowManager.AddTo:
@@ -191,6 +181,7 @@ class ToolWindowManager( QtGui.QWidget ):
 			if not ( parentSplitter or wrapper ):
 				qWarning( 'unknown parent type' )
 				return
+			# import pudb; pu.db
 			useParentSplitter = False
 			indexInParentSplitter = 0
 			if parentSplitter:
@@ -231,11 +222,17 @@ class ToolWindowManager( QtGui.QWidget ):
 				newArea.addToolWindows( toolWindows )
 
 		elif areaType == ToolWindowManager.EmptySpace:
-			newArea = self.createArea()
-			self.findChild( ToolWindowManagerWrapper ).layout().addWidget( newArea )
-			newArea.addToolWindows( toolWindows )
+			wrapper = self.findChild( ToolWindowManagerWrapper )
+			if wrapper.isOccupied():
+				self.lastUsedArea.addToolWindows( toolWindows )
+			else:
+				newArea = self.createArea()
+				wrapper.layout().addWidget( newArea )
+				newArea.addToolWindows( toolWindows )
+
 		elif areaType == ToolWindowManager.LastUsedArea:
 			self.lastUsedArea.addToolWindows( toolWindows )
+
 		else:
 			qWarning( 'invalid type' )
 
@@ -289,7 +286,7 @@ class ToolWindowManager( QtGui.QWidget ):
 			qWarning( 'can not find main wrapper' )
 
 		mainWrapper.restoreState( data['mainWrapper'] )
-		for subData in data['floatingWindows']:
+		for windowData in data['floatingWindows']:
 			wrapper = ToolWindowManagerWrapper( self )
 			wrapper.restoreState( windowData )
 			wrapper.show()
@@ -322,15 +319,21 @@ class ToolWindowManager( QtGui.QWidget ):
 		toolWindow.hide()
 		toolWindow.setParent( None )
 
+	def removeArea( self, area ):
+		area.deleteLater()
+
+	def removeWrapper( self, wrapper ):
+		wrapper.deleteLater()
+		self.wrappers.remove( wrapper )
 
 	def simplifyLayout( self ):
 		newAreas = []
-		for area in self.areas:
-			if not area.parentWidget():
+		currentAreas = self.areas
+		for area in currentAreas:
+			if area.parentWidget() is None:
 				if area.count() == 0:
 					if area == self.lastUsedArea: self.lastUsedArea = None
-					#QTimer::singleShot(1000, area, SLOT(deleteLater()))
-					area.deleteLater()
+					self.removeArea( area )
 				continue
 
 			splitter = cast( area.parentWidget(), QSplitter )
@@ -343,7 +346,6 @@ class ToolWindowManager( QtGui.QWidget ):
 				else:
 					invalidSplitter = splitter
 					splitter = cast( splitter.parentWidget(), QSplitter )
-
 			if not validSplitter:
 				wrapper = findClosestParent( area, ToolWindowManagerWrapper )
 				if not wrapper:
@@ -353,10 +355,10 @@ class ToolWindowManager( QtGui.QWidget ):
 					return
 				if area.count() == 0 and wrapper.isWindow():
 					wrapper.hide()
+					wrapper.setParent( None )
 					# can not deleteLater immediately (strange MacOS bug)
-					#QTimer::singleShot(1000, wrapper, SLOT(deleteLater()))
-					wrapper.deleteLater()
-					self.wrappers.remove( wrapper )
+					self.removeWrapper( wrapper )
+					
 				elif area.parent() != wrapper:
 					wrapper.layout().addWidget( area )
 
@@ -366,19 +368,18 @@ class ToolWindowManager( QtGui.QWidget ):
 						index = validSplitter.indexOf( invalidSplitter )
 						validSplitter.insertWidget( index, area )
 
-			if invalidSplitter:
+			if not invalidSplitter is None:
 				invalidSplitter.hide()
 				invalidSplitter.setParent( None )
-				#QTimer::singleShot(1000, invalidSplitter, SLOT(deleteLater()))
 				invalidSplitter.deleteLater()
 
 			if area.count() == 0:
 				area.hide()
 				area.setParent( None )
 				if area == self.lastUsedArea: self.lastUsedArea = None
-				#QTimer::singleShot(1000, area, SLOT(deleteLater()))
-				area.deleteLater()
+				self.removeArea( area )
 				continue
+
 			newAreas.append( area )
 		#keep
 		self.areas = newAreas
@@ -511,8 +512,8 @@ class ToolWindowManager( QtGui.QWidget ):
 		for widget in candidates:
 			splitter = cast( widget, QSplitter )
 			area = cast( widget, ToolWindowManagerArea )
-			if not ( splitter or area):
-				qWarning( 'unexpected widget type' )
+			if not ( splitter or area ):
+				qWarning( 'unexpected widget type' )				
 				continue
 
 			parentSplitter = cast( widget.parentWidget(), QSplitter )
@@ -675,16 +676,24 @@ if __name__ == '__main__':
 			self.setCentralWidget( mgr )
 			widget = QtGui.QPushButton( 'hello' )
 			widget.setWindowTitle( 'hello' )
+			widget.setObjectName( 'hello' )
 			mgr.addToolWindow( widget, ToolWindowManager.EmptySpace )
 			widget = QtGui.QPushButton( 'world' )
 			widget.setWindowTitle( 'world' )
+			widget.setObjectName( 'world' )
 			mgr.addToolWindow( widget, ToolWindowManager.NewFloatingArea )
 			widget = QtGui.QPushButton( 'happy' )
 			widget.setWindowTitle( 'happy' )
+			widget.setObjectName( 'happy' )
 			mgr.addToolWindow( widget, ToolWindowManager.EmptySpace )
 			widget = QtGui.QPushButton( 'goodness' )
 			widget.setWindowTitle( 'goodness' )
-			mgr.addToolWindow( widget, ToolWindowManager.EmptySpace )
+			widget.setObjectName( 'goodness' )
+			mgr.addToolWindow( widget, ToolWindowManager.LastUsedArea )
+			result = mgr.saveState()
+			for w in mgr.toolWindows():
+				mgr.moveToolWindow( w, ToolWindowManager.NewFloatingArea )
+			mgr.restoreState( result )
 
 	window = Test()
 	window.show()

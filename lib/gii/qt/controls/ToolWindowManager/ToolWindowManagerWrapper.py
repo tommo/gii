@@ -14,10 +14,6 @@ class ToolWindowManagerWrapper( QtGui.QWidget ) :
 		mainLayout.setContentsMargins( 0, 0, 0, 0 )
 		self.manager.wrappers.append( self )
 
-	def __xxdealloc__( self ):
-		pass
-		# self.manager.wrappers.removeOne(self)
-
 	def closeEvent( self, event ):
 		from ToolWindowManager import ToolWindowManager
 		toolWindows = []
@@ -31,7 +27,7 @@ class ToolWindowManagerWrapper( QtGui.QWidget ) :
 			qWarning('too many children for wrapper')
 			return result
 
-		if self.isWindow() and layout().count() == 0:
+		if self.isWindow() and self.layout().count() == 0:
 			qWarning('empty top level wrapper')
 			return result
 
@@ -62,3 +58,6 @@ class ToolWindowManagerWrapper( QtGui.QWidget ) :
 			area = self.manager.createArea()
 			area.restoreState( data['area'] )
 			self.layout().addWidget( area )
+
+	def isOccupied( self ):
+		return self.layout().count() > 0
