@@ -389,11 +389,11 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 				sxx = xx + j * subPitch
 				painter.drawLine( sxx, h-5, sxx, h - 1 )
 			markText = '%.1f'%( t )
-			painter.drawText( QRectF( xx + 2, h-20, 100, 100 ), Qt.AlignTop|Qt.AlignLeft, markText )
+			painter.drawText( QRectF( xx + 2, h-18, 100, 100 ), Qt.AlignTop|Qt.AlignLeft, markText )
 
 		#draw cursor
 		painter.setPen( TimelineRulerItem._cursorPen )
-		cx = ( self.view.cursorPos - t0 ) * u + _HEAD_OFFSET
+		cx = float( self.view.cursorPos - t0 ) * u + _HEAD_OFFSET
 		painter.drawLine( cx, 0, cx, h-1 )
 
 ##----------------------------------------------------------------##

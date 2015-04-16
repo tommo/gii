@@ -45,6 +45,11 @@ require 'mock_edit.AssetHelper.DeckReloader'
 require 'mock_edit.AssetHelper.ShaderReloader'
 require 'mock_edit.AssetHelper.FMODReloader'
 
+--------------------------------------------------------------------
+--COMMANDS
+--------------------------------------------------------------------
+require 'mock_edit.commands'
+
 
 mock._allowAssetCacheWeakMode( false )
 MOAISim.getInputMgr().configuration = 'GII'

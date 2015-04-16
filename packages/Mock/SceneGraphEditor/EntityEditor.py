@@ -30,10 +30,9 @@ class EntityEditor( ObjectEditor ): #a generic property grid
 		self.header.layout().addWidget( self.grid )
 		self.grid.propertyChanged.connect( self.onPropertyChanged )		
 		self.grid.setContext( 'scene_editor' )
+		self.header.buttonEdit   .clicked .connect ( self.onEditPrefab   )
 		self.header.buttonGoto   .clicked .connect ( self.onGotoPrefab   )
 		self.header.buttonUnlink .clicked .connect ( self.onUnlinkPrefab )
-		self.header.buttonPush   .clicked .connect ( self.onPushPrefab   )
-		self.header.buttonPull   .clicked .connect ( self.onPullPrefab   )
 		return self.header
 
 	def setTarget( self, target, introspectorInstance ):
@@ -42,7 +41,7 @@ class EntityEditor( ObjectEditor ): #a generic property grid
 		self.grid.setTarget( target )		
 		if isMockInstance( target, 'Entity' ):
 			#setup prefab tool
-			prefabPath = target['__prefabId']
+			prefabPath = target['FLAG_PROTO_INSTANCE']
 			if prefabPath:
 				self.header.containerPrefab.show()
 				self.header.labelPrefabPath.setText( prefabPath )
@@ -51,7 +50,10 @@ class EntityEditor( ObjectEditor ): #a generic property grid
 			#add component editors
 			for com in target.getSortedComponentList( target ).values():
 				if com.FLAG_INTERNAL: continue
-				editor = introspectorInstance.addObjectEditor( com, context_menu = 'component_context' )
+				editor = introspectorInstance.addObjectEditor(
+						com,
+						context_menu = 'component_context'
+					)
 				container = editor.getContainer()
 				container.foldChanged.connect ( self.onComponentFold )
 
@@ -65,7 +67,12 @@ class EntityEditor( ObjectEditor ): #a generic property grid
 	def onGotoPrefab( self ):
 		assetBrowser = app.getModule( 'asset_browser' )
 		if assetBrowser:
-			assetBrowser.locateAsset( self.target['__prefabId'] )
+			assetBrowser.locateAsset( self.target['FLAG_PROTO_INSTANCE'] )
+
+	def onEditPrefab( self ):
+		assetBrowser = app.getModule( 'asset_browser' )
+		if assetBrowser:
+			assetBrowser.locateAsset( self.target['FLAG_PROTO_INSTANCE'] )
 
 	def onUnlinkPrefab( self ):
 		app.doCommand(

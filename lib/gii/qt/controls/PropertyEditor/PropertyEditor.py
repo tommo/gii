@@ -101,6 +101,9 @@ class PropertyEditor( QtGui.QWidget ):
 		editor  =  buildFieldEditor( self, field )
 		labelWidget  = editor.initLabel( label, self )
 		editorWidget = editor.initEditor( self )
+		editorWidget.setObjectName( 'FieldEditor' )
+		labelWidget.setObjectName( 'FieldLabel' )
+		editor.initState()
 		if labelWidget in (None, False):
 			self.layout.addRow ( editorWidget )
 		else:
@@ -200,15 +203,19 @@ class PropertyEditor( QtGui.QWidget ):
 		if editor:			
 			v = self.model.getFieldValue( target, field.id )
 			self.refreshing = True #avoid duplicated update
+			editor.refreshing = True
 			editor.set( v )
+			editor.refreshing = False
 			self.refreshing = False
+			editor.setOverrided( self.model.isFieldOverrided( target, field.id ) )
 
 ##----------------------------------------------------------------##
 class FieldEditor( object ):
 	def __init__( self, parent, field, fieldType = None ):
 		self.setTarget( parent, field )
 		self.fieldType = fieldType or field._type
-		
+		self.overrided = False
+
 	def setTarget( self, parent, field ):
 		self.field   = field
 		self.parent  = parent
@@ -237,6 +244,21 @@ class FieldEditor( object ):
 	def set( self, value ):
 		pass
 
+	def setReadonly( self, readonly = True ):
+		pass
+
+	def setOverrided( self, overrided = True ):
+		if overrided == self.overrided: return
+		self.overrided = overrided
+		self.labelWidget.setProperty( 'overrided', overrided )
+		self.labelWidget.style().unpolish( self.labelWidget )
+		self.labelWidget.style().polish( self.labelWidget )
+
+	def setRecording( self, recording = True ):
+		self.labelWidget.setProperty( 'recording', overrided )
+		self.labelWidget.style().unpolish( self.labelWidget )
+		self.labelWidget.style().polish( self.labelWidget )
+
 	def initLabel( self, label, container ):
 		self.labelWidget = QtGui.QLabel( container )
 		self.labelWidget.setText( label )
@@ -250,8 +272,12 @@ class FieldEditor( object ):
 	def initEditor( self, container ):
 		return QtGui.QWidget( container )
 
+	def initState( self ):
+		self.setReadonly( self.getOption( 'readonly', False ) )
+		
 	def clear( self ):
 		pass
+
 
 
 

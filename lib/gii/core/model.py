@@ -219,6 +219,9 @@ class ObjectModel( DataType ):
 		f=self.getFieldInfo(id)
 		f.setValue(obj, value)
 
+	def isFieldOverrided( self, obj, id ):
+		return False
+
 	def serialize( self, obj, objMap = None ):
 		data = {}
 		if not objMap: objMap = {}

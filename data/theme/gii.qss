@@ -73,6 +73,7 @@ QDockWidget::title
 	padding-top: 5px;
 	padding-left: 45px;
 	border: 1px solid #222;
+	height: 10px;
 }
 
 
@@ -599,7 +600,7 @@ QLineEdit, QTextEdit, QPlainTextEdit, QSpinBox, QDoubleSpinBox
 	color:#ccc;
 	/*selection-background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#787878,stop:1#5a5a5a);*/
 	/*selection-color:#000;*/
-	padding:1px;
+	padding:0px;
 	margin-right:1px;
 	/*border-radius: 2px;*/
 }
@@ -739,12 +740,13 @@ QComboBox:!editable,QComboBox::drop-down:editable,QComboBox:!editable:on,QComboB
 
 QTreeView:active,QTreeView:!active
 {
-	selection-background-color:#466dc6;
+	selection-background-color:transparent;
 }
 
 QTreeView::item:selected:!active,QTreeView::item:selected:active,QListView::item:selected:!active,QListView::item:selected:active
 {
-	background-color:#466dc6;
+	background-color:#515c84;
+	color: #fff;
 }
 
 QTreeView::item:hover,QListView::item:hover
@@ -810,6 +812,24 @@ QToolButton::checked{
 #PropertyEditor {
 	background-color:#555;
 }
+
+#FieldLabel {
+	margin : 2px;
+}
+
+#FieldLabel[overrided="true"]{
+	color:#95cf6e;
+	/*border-bottom:1px dashed #9c7;*/
+}
+
+#FieldLabel[recording="true"]{
+	color:#f2697a;
+}
+
+QWidget#FieldEditor {
+	font-size:10px;
+}
+
 
 #ObjectHeader {
 	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#444,stop:1#333);
@@ -942,4 +962,16 @@ QSplitter#TimelineHeaderSplitter::handle{
 	background-color:#333;
 	/*border-left: 1px solid #111;*/
 	border-right: 1px solid #444;
+}
+
+
+#containerPrefab {
+	border: 1px solid #222;
+	background-color: #492f54;
+	font-size: 10px;
+}
+
+QToolButton#containerPrefab {
+	color:#aaa;
+	font-size: 10px;
 }

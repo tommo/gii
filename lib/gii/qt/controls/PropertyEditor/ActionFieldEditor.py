@@ -30,7 +30,14 @@ class ActionFieldEditor( FieldEditor ):
 
 	def initLabel( self, label, container ):
 		self.label = label
-		return ''
+		self.labelWidget = QtGui.QLabel( container )
+		self.labelWidget.setText( '' )
+		self.labelWidget.setMinimumSize( 50, 16 )
+		self.labelWidget.setSizePolicy(
+			QtGui.QSizePolicy.Expanding,
+			QtGui.QSizePolicy.Expanding
+			)
+		return self.labelWidget
 
 	def initEditor( self, container ):
 		self.button = ActionFieldButton( container )

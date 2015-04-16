@@ -5,13 +5,13 @@ require 'mock_edit'
 CLASS:SceneView ( mock_edit.CanvasView )
 
 function SceneView:onInit()
-	self:connect( 'scene.serialize',    'preSceneSerialize'    )
-	self:connect( 'scene.deserialize',  'postSceneDeserialize' )
+	self:connect( 'scene.pre_serialize',    'preSceneSerialize'    )
+	self:connect( 'scene.post_deserialize',  'postSceneDeserialize' )
 	self:readConfig()
 end
 
 function SceneView:readConfig()
-	local cfg = self.scene.metaData[ 'scene_view' ]
+	local cfg = self.scene:getMetaData( 'scene_view' )
 	if not cfg then return end
 	local cameraCfg = cfg['camera']
 	if cameraCfg then
@@ -39,12 +39,15 @@ end
 function SceneView:preSceneSerialize( scene )
 	if scene ~= self.scene then return end
 	local cam = self.camera
-	self.scene.metaData [ 'scene_view' ] = {
-		camera = {
-			loc = { cam:getLoc() },
-			zoom = cam:getComponent( mock_edit.EditorCanvasCamera ):getZoom(),
+	self.scene:setMetaData(
+		'scene_view',
+		{
+			camera = {
+				loc = { cam:getLoc() },
+				zoom = cam:getComponent( mock_edit.EditorCanvasCamera ):getZoom(),
+			}
 		}
-	}
+	)
 end
 
 function SceneView:postSceneDeserialize( scene )

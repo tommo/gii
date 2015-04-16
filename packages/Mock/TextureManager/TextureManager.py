@@ -71,7 +71,7 @@ class TextureManager( AssetEditorModule ):
 				drag_mode = 'internal',
 				editable  = True,
 				multiple_selection = True,
-				auto_expand = False
+				expanded = False
 			)
 		)
 		self.tree.module = self

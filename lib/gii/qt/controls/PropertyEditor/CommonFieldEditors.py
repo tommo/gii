@@ -20,9 +20,11 @@ class StringFieldEditor( FieldEditor ):
 		self.lineEdit = FieldEditorLineEdit( container )
 		self.lineEdit.setMinimumSize( 50, 16 )
 		self.lineEdit.textEdited.connect( self.notifyChanged )
-		if self.getOption( 'readonly', False ):
-			self.lineEdit.setReadOnly( True )
 		return self.lineEdit
+
+	def setReadonly( self, readonly ):
+		self.lineEdit.setReadOnly( readonly )
+
 
 ##----------------------------------------------------------------##
 class NumberFieldEditor( FieldEditor ):
@@ -32,6 +34,9 @@ class NumberFieldEditor( FieldEditor ):
 	def set( self, value ):
 		self.control.setValue( value or 0 )
 
+	def setReadonly( self, readonly ):
+		self.control.setEnabled( not readonly )
+
 	def initEditor( self, container ):
 		self.step = self.getOption( 'step', 1 )
 		widget = self.getOption( 'widget', 'spin' )
@@ -39,8 +44,6 @@ class NumberFieldEditor( FieldEditor ):
 			self.control = self.initSlider( container )
 		else: #if widget == 'spin'
 			self.control = self.initSpinBox( container )
-		if self.getOption( 'readonly', False):
-			self.control.setEnabled( False )		
 		return self.control
 
 	def initLabel( self, label, container ):
@@ -71,23 +74,23 @@ class NumberFieldEditor( FieldEditor ):
 			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Expanding
 			)
-		spineBox.valueChanged.connect( self.notifyChanged )
 		#options
 		minValue = self.getOption( 'min', -16777215.0 )
 		maxValue = self.getOption( 'max',  16777215.0 )
 		spineBox.setRange( minValue, maxValue	)
+		spineBox.valueChanged.connect( self.notifyChanged )
 		return spineBox
 
 	def initSlider( self, container ):
 		sliderBox = FieldEditorSliderBox( container )
 		sliderBox.setMinimumSize( 50, 16 )
-		sliderBox.valueChanged.connect( self.notifyChanged )
 		if not self.getOption( 'min' ) and not self.getOption( 'max' ):
 			logging.warn( 'no range specified for slider field: %s' % self.field )
 		minValue = self.getOption( 'min', 0.0 )
 		maxValue = self.getOption( 'max', 100.0 )
 		sliderBox.setRange( minValue, maxValue )
 		sliderBox.setNumberType( self.getFieldType() )
+		sliderBox.valueChanged.connect( self.notifyChanged )
 		return sliderBox
 
 	def onDragAdjust( self, delta ):
@@ -103,14 +106,15 @@ class BoolFieldEditor( FieldEditor ):
 	def set( self, value ):		
 		self.checkBox.setChecked( bool(value) )
 
+	def setReadonly( self, readonly ):
+		self.checkBox.setEnabled( not readonly )
+
 	def onStateChanged( self, state ):
 		return self.notifyChanged( bool( self.get() ) )
 
 	def initEditor( self, container ):
 		self.checkBox = QtGui.QCheckBox( container )
 		self.checkBox.stateChanged.connect( self.onStateChanged )
-		if self.getOption( 'readonly', False ):
-			self.checkBox.setEnabled( False )
 		return self.checkBox
 
 

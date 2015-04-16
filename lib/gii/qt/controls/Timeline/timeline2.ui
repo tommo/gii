@@ -50,7 +50,7 @@
       <property name="minimumSize">
        <size>
         <width>100</width>
-        <height>250</height>
+        <height>100</height>
        </size>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -71,13 +71,13 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>30</height>
+           <height>20</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>30</height>
+           <height>20</height>
           </size>
          </property>
         </widget>
@@ -93,7 +93,7 @@
          <property name="minimumSize">
           <size>
            <width>150</width>
-           <height>150</height>
+           <height>0</height>
           </size>
          </property>
         </widget>
@@ -131,13 +131,13 @@
          <property name="minimumSize">
           <size>
            <width>197</width>
-           <height>30</height>
+           <height>20</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>30</height>
+           <height>20</height>
           </size>
          </property>
         </widget>
@@ -150,7 +150,6 @@
            <height>0</height>
           </size>
          </property>
-         <zorder>containerRuler</zorder>
         </widget>
        </item>
       </layout>

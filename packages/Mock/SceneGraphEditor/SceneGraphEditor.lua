@@ -92,7 +92,7 @@ function SceneGraphEditor:saveScene( path )
 	mock.serializeSceneToFile( 
 		self.scene, path, 
 		{
-			save_dependency_list = true
+			editor_mode = true
 		}
 	)
 	return true
@@ -542,6 +542,7 @@ function CmdCloneEntity:redo()
 	for target in pairs( self.targets ) do
 		local created = mock.cloneEntity( target, true )
 		created.__prefabId = target.__prefabId
+		created.FLAG_PROTO_INSTANCE = target.FLAG_PROTO_INSTANCE
 		local n = created:getName()
 		if n then
 			--auto increase prefix
@@ -806,6 +807,38 @@ function CmdCreatePrefabContainer:createEntity()
 	container:setPrefab( self.prefabPath )
 	return container	
 end
+
+--------------------------------------------------------------------
+CLASS: CmdMakeProto ( mock_edit.EditorCommand )
+	:register( 'scene_editor/make_proto' )
+
+function CmdMakeProto:init( option )
+	self.entity = option['entity']
+end
+
+function CmdMakeProto:redo()
+	self.entity.FLAG_PROTO_SOURCE = true
+end
+
+function CmdMakeProto:undo()
+	self.entity.FLAG_PROTO_SOURCE = false
+end
+
+
+--------------------------------------------------------------------
+CLASS: CmdCreateProtoInstance ( CmdCreateEntityBase )
+	:register( 'scene_editor/create_proto_instance' )
+
+function CmdCreateProtoInstance:init( option )
+	CmdCreateEntityBase.init( self, option )
+	self.protoPath = option['proto']
+end
+
+function CmdCreateProtoInstance:createEntity()
+	local proto = mock.loadAsset( self.protoPath )
+	return proto:createInstance()
+end
+
 
 --------------------------------------------------------------------
 CLASS: CmdAssignEntityLayer ( mock_edit.EditorCommand )

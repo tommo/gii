@@ -101,19 +101,17 @@ class SearchFieldEditorBase( FieldEditor ):
 				self.refWidget.setRefIcon( None )
 				self.refWidget.setRefName( r, self.formatRefName( r ) )
 	
+	def setReadonly( self, readonly ):
+		self.refWidget.buttonRef.setEnabled( not readonly )
+		self.refWidget.buttonClear.setEnabled( not readonly )
+		if self.getOption( 'no_nil', False ):
+			self.refWidget.buttonClear.setEnabled( False )
+
 	def initEditor( self, container ):
 		widget = SearchFieldWidget( container )
 		widget.buttonRef   .clicked .connect( self.openBrowser )
 		widget.buttonClear .clicked .connect( self.clearObject )
 		widget.buttonGoto  .clicked .connect( self.gotoObject  )
-
-		if self.getOption( 'readonly', False ):
-			widget.buttonRef.setEnabled( False )
-			widget.buttonClear.setEnabled( False )		
-		else:
-			if self.getOption( 'no_nil', False ):
-				widget.buttonClear.setEnabled( False )
-		
 		self.refWidget = widget
 		return self.refWidget
 

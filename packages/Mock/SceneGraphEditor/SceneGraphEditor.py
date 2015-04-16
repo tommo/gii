@@ -55,6 +55,7 @@ class SceneGraphEditor( SceneEditorModule ):
 			)
 
 		#Components
+		self.tool = self.addToolBar( 'scene_graph', self.container.addToolBar() )
 		self.tree = self.container.addWidget( 
 				SceneGraphTreeWidget( 
 					self.container,
@@ -65,7 +66,6 @@ class SceneGraphEditor( SceneEditorModule ):
 				)
 			)
 		self.tree.module = self
-		self.tool = self.addToolBar( 'scene_graph', self.container.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( getModulePath( 'SceneGraphEditor.lua' ) )
 
@@ -121,10 +121,12 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/find/find_entity', dict( label = 'Find In Scene', shortcut = 'ctrl+f' ) )
 
 		#Toolbars
-		self.addTool( 'scene_graph/fold_all',    label = 'fold' )
-		self.addTool( 'scene_graph/unfold_all',  label = 'unfold' )
-		self.addTool( 'scene_graph/load_prefab', label = 'prefab' )
-		self.addTool( 'scene_graph/save_prefab', label = '->prefab' )
+		self.addTool( 'scene_graph/make_proto',    label = '> P' )
+		self.addTool( 'scene_graph/create_proto_instance',    label = '+ I' )
+		# self.addTool( 'scene_graph/fold_all',    label = 'F' )
+		# self.addTool( 'scene_graph/unfold_all',  label = 'U' )
+		# self.addTool( 'scene_graph/load_prefab', label = '+ P' )
+		# self.addTool( 'scene_graph/save_prefab', label = '>>P' )
 
 		self.addTool( 'scene/refresh', label = 'refresh', icon='refresh' )
 
@@ -334,11 +336,25 @@ class SceneGraphEditor( SceneEditorModule ):
 			requestSearchView( 
 				info    = 'select a perfab node to instantiate',
 				context = 'asset',
-				type    = 'prefab',
+				type    = 'proto;prefab',
 				on_selection = 
 					lambda obj: 
 						self.doCommand( 'scene_editor/create_prefab_entity', prefab = obj.getNodePath() )
 				)
+
+		elif name == 'make_proto':
+			self.makeProto()
+
+		elif name == 'create_proto_instance':
+			requestSearchView( 
+				info    = 'select a perfab node to instantiate',
+				context = 'asset',
+				type    = 'proto',
+				on_selection = 
+					lambda obj: 
+						self.doCommand( 'scene_editor/create_proto_instance', proto = obj.getNodePath() )
+				)
+			
 
 	def onMenu( self, menu ):
 		name = menu.name
@@ -464,7 +480,8 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def addEntityNode( self, entity ):
 		self.tree.setUpdatesEnabled( False )
-		self.tree.addNode( entity )
+		self.tree.addNode( entity, expanded = False )
+		self.tree.setNodeExpanded( entity, False )
 		self.tree.setUpdatesEnabled( True )
 
 	def removeEntityNode( self, entity ):
@@ -511,6 +528,9 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onEntityAdded( self, entity, context = None ):
 		if context == 'new':
 			self.setFocus()
+			pnode = entity.parent
+			if pnode:
+				self.tree.setNodeExpanded( pnode, True )
 			self.tree.setFocus()
 			self.tree.editNode( entity )
 			self.tree.selectNode( entity )
@@ -553,6 +573,23 @@ class SceneGraphEditor( SceneEditorModule ):
 			prefab = targetPrefab.getNodePath(),
 			file   = targetPrefab.getAbsFilePath()
 		)
+
+	def makeProto( self ):
+		selection = self.getSelection()
+		if not selection: return
+		if len( selection ) > 1:
+			return alertMessage( 'multiple entities cannot be converted into Proto' )
+		target = selection[0]
+		if not target: return
+		if requestConfirm( 'convert proto', 'Convert this Entity into Proto?' ):
+			self.doCommand( 'scene_editor/make_proto', 
+				entity = target
+			)
+			self.tree.refreshNodeContent( target )
+
+	def createProtoInstance( self ):
+		pass
+
 
 	##----------------------------------------------------------------##
 	def onCopyEntity( self ):
@@ -618,7 +655,8 @@ def _sortEntity( a, b ):
 ##----------------------------------------------------------------##
 class SceneGraphTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		return [('Name',200), ( 'Layer', 50 ), ('Type', 50)]
+		# return [('Name',200), ( 'Layer', 50 ), ('Type', 50)]
+		return [('Name',200), ( 'Layer', 50 )]
 
 	def getRootNode( self ):
 		return self.module.getActiveScene()
@@ -678,14 +716,19 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 	def compareNodes( self, node1, node2 ):
 		return node1._priority >= node2._priority
 
+	def createItem( self, node ):
+		return SceneGraphTreeItem()
+
 	def updateItemContent( self, item, node, **option ):
 		name = None
 		if isMockInstance( node, 'Scene' ):
 			item.setText( 0, node.name or '<unnamed>' )
 			item.setIcon( 0, getIcon('scene') )
 		elif isMockInstance( node, 'Entity' ):
-			if node['__prefabId']:
-				item.setIcon( 0, getIcon('obj_blue') )
+			if node['FLAG_PROTO_SOURCE']:
+				item.setIcon( 0, getIcon('proto') )
+			elif node['FLAG_PROTO_INSTANCE']:
+				item.setIcon( 0, getIcon('instance') )
 			else:
 				item.setIcon( 0, getIcon('obj') )
 			item.setText( 0, node.name or '<unnamed>' )
@@ -695,7 +738,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 				item.setText( 1, '????' )
 			else:
 				item.setText( 1, layerName )
-			item.setText( 2, node.getClassName( node ) )
+			# item.setText( 2, node.getClassName( node ) )
 		
 	def onItemSelectionChanged(self):
 		items=self.selectedItems()
@@ -740,6 +783,26 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		return True
 
 
+	
+##----------------------------------------------------------------##
+#TODO: allow sort by other column
+class SceneGraphTreeItem(QtGui.QTreeWidgetItem):
+	def __lt__(self, other):
+		node0 = self.node
+		node1 = hasattr(other, 'node') and other.node or None
+		if not node1:
+			return True
+		proto0 = node0[ 'FLAG_PROTO_SOURCE' ]
+		proto1 = node1[ 'FLAG_PROTO_SOURCE' ]
+		tree = self.treeWidget()
+		if proto0 != proto1:
+			if tree.sortOrder() == 0:
+				if proto0: return True
+				if proto1: return False
+			else:
+				if proto0: return False
+				if proto1: return True
+		return super( SceneGraphTreeItem, self ).__lt__( other )
 
 ##----------------------------------------------------------------##
 SceneGraphEditor().register()

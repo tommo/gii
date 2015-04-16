@@ -3,6 +3,8 @@ from gii.core import signals
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import Qt
 
+from ToolWindowManager import ToolWindowManager
+
 def getWindowScreenId(window):
 	desktop=QtGui.QApplication.desktop()
 	return desktop.screenNumber(window)
@@ -272,7 +274,6 @@ class SubWindowMixin:
 ##----------------------------------------------------------------##
 				
 class SubWindow(QtGui.QMainWindow, SubWindowMixin):
-	"""docstring for DockWindow"""
 	def __init__(self, parent):
 		super(SubWindow, self).__init__(parent)
 		self.setupUi()
@@ -332,10 +333,10 @@ class DockWindowTitleBar( QtGui.QWidget ):
 		super(DockWindowTitleBar, self).__init__(*args)
 
 	def sizeHint(self):
-		return QtCore.QSize(20,20)
+		return QtCore.QSize(20,15)
 
 	def minimumSizeHint(self):
-		return QtCore.QSize(20,20)
+		return QtCore.QSize(20,15)
 
 ##----------------------------------------------------------------##
 class DockWindow(QtGui.QDockWidget, SubWindowMixin):

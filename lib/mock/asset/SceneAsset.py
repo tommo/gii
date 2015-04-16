@@ -1,5 +1,6 @@
 import os.path
 import json
+import base64
 from gii.core import *
 
 class SceneAssetManager(AssetManager):
@@ -16,13 +17,32 @@ class SceneAssetManager(AssetManager):
 	def importAsset( self, node, reload = False ):
 		node.assetType = 'scene'
 		node.setObjectFile( 'def', node.getFilePath() )
+		#scan proto nodes
+		data = jsonHelper.tryLoadJSON( node.getFilePath() )
+		protoInfos = data.get( 'protos', None )
+		if protoInfos:
+			for protoInfo in protoInfos:						
+				name  =  protoInfo[ 'name' ]
+				protoNode = node.affirmChildNode( name, 'proto', manager = self )
+				protoNode.setObjectFile( 'def', protoNode.getCacheFile( 'data' ) )
+				fp = file( protoNode.getAbsCacheFile( 'data' ), 'w' )
+				serialized = protoInfo['serialized']
+				fp.write( base64.b64decode( serialized ) )
+				fp.close()
+				#extract data and
 		return True
 
 	def editAsset( self, node ):
 		editor = app.getModule( 'scenegraph_editor' )
 		if not editor:
 			return alertMessage( 'Editor not load', 'Scene Editor not found!' ) 
-		editor.openScene( node )
+		if node.assetType == 'scene':
+			editor.openScene( node )
+		elif node.assetType == 'proto':
+			scnNode = node.getParent()
+			editor.openScene( scnNode )
+		else:
+			return
 
 ##----------------------------------------------------------------##
 class SceneCreator(AssetCreator):
@@ -58,3 +78,4 @@ SceneAssetManager().register()
 SceneCreator().register()
 
 AssetLibrary.get().setAssetIcon( 'scene',    'scene' )
+AssetLibrary.get().setAssetIcon( 'proto',    'proto' )

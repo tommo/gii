@@ -104,7 +104,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			pitem = self.getItemByNode( pnode )
 			if not pitem:
 				pitem = self.addNode( pnode, False )
-			item  = self.createItem( node )			
+			item  = self.createItem( node )
 			item.node = node
 			assert pitem, ( 'node not found in tree:%s' % repr(pnode) )
 			#find best new item index
@@ -125,8 +125,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		self.nodeDict[ node ]=item
 
-		if self.getOption( 'auto_expand', True ):
-			item.setExpanded( True )
+		item.setExpanded( self.getOption( 'expanded', True ) )
 			
 		# if pnode:
 		self.updateItem( node )
@@ -193,6 +192,16 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		if idx:
 			self.setCurrentIndex( idx )
 
+	def _calcItemFlags( self, node ):
+		flags = Qt.ItemIsEnabled 
+		flagNames = self.getItemFlags( node )
+		if flagNames.get( 'selectable', True ): flags |= Qt.ItemIsSelectable
+		if flagNames.get( 'draggable',  True ): flags |= Qt.ItemIsDragEnabled
+		if flagNames.get( 'droppable',  True ): flags |= Qt.ItemIsDropEnabled
+		if self.getOption( 'editable', False ):
+			if flagNames.get( 'editable',   True ): flags |= Qt.ItemIsEditable
+		return flags
+		
 	def _updateItem(self, node, updateLog=None, **option):
 		item = self.getItemByNode(node)
 		if not item: return False
@@ -202,6 +211,8 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		self.refreshing = True
 		self.updateItemContent( item, node, **option )
+		flags = self._calcItemFlags( node )
+		item.setFlags( flags )
 		self.refreshing = False
 
 		if option.get('updateChildren',False):
@@ -324,17 +335,9 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 	def getItemFlags( self, node ):
 		return {}
-		
+
 	def createItem( self, node ):
-		flags = Qt.ItemIsEnabled 
-		flagNames = self.getItemFlags( node )
-		if flagNames.get( 'selectable', True ): flags |= Qt.ItemIsSelectable
-		if flagNames.get( 'draggable',  True ): flags |= Qt.ItemIsDragEnabled
-		if flagNames.get( 'droppable',  True ): flags |= Qt.ItemIsDropEnabled
-		if self.getOption( 'editable', False ):
-			if flagNames.get( 'editable',   True ): flags |= Qt.ItemIsEditable
 		item  = QtGui.QTreeWidgetItem()
-		item.setFlags ( flags )
 		return item
 
 	def updateItemContent( self, item, node, **option ):
