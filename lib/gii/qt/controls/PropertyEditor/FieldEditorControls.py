@@ -85,7 +85,19 @@ class DraggableLabel( QtGui.QLabel ):
 
 ##----------------------------------------------------------------##
 class FieldEditorSlider(QtGui.QSlider):
-	pass
+	def focusInEvent( self, ev ):
+		super(FieldEditorSlider, self).focusInEvent( ev )
+		self.setFocusPolicy( Qt.WheelFocus )
+
+	def focusOutEvent( self, ev ):
+		super(FieldEditorSlider, self).focusOutEvent( ev )
+		self.setFocusPolicy( Qt.StrongFocus )
+
+	def wheelEvent( self, ev ):
+		if self.hasFocus():
+			super(FieldEditorSlider, self).wheelEvent( ev )
+		else:
+			ev.ignore()
 
 # ##----------------------------------------------------------------##
 class FieldEditorSliderBox(QtGui.QWidget):
@@ -97,7 +109,7 @@ class FieldEditorSliderBox(QtGui.QWidget):
 		self.setLayout( layout )
 		self.text   = FieldEditorLineEdit( self )
 		self.text.setText( '0' )
-		self.slider = QtGui.QSlider( self )
+		self.slider = FieldEditorSlider( self )
 		self.slider.setOrientation( Qt.Horizontal )		
 		layout.setSpacing(5)
 		layout.setMargin(0)
