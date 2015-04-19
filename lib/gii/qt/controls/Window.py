@@ -16,39 +16,22 @@ def moveWindowToCenter(window):
 	y=(geom.height()-window.height())/2+geom.y()
 	window.move(x,y)
 
-def ensureWindowVisible(window, border=0): #TODO
-	desktop=QtGui.QApplication.desktop()
-	geom=desktop.availableGeometry(window)
-	wgeom=window.rect()
-	if border>0:
-		wgeom.setWidth(wgeom.width()+border*2)
-		wgeom.setHeight(wgeom.height()+border*2)
+def ensureWindowVisible( widget ):
+	screenRect = QtGui.QApplication.desktop().availableGeometry(widget);
+	widgetRect = widget.frameGeometry()
+	pos = widget.pos()
+	
+	if widgetRect.left() < screenRect.left() :
+		pos.setX( pos.x() + screenRect.left() - widgetRect.left() )
+	elif widgetRect.right() > screenRect.right():
+		pos.setX( pos.x() + screenRect.right() - widgetRect.right() )
 
-	if geom.contains(wgeom): return
+	if widgetRect.top() < screenRect.top():
+		pos.setY( pos.y() + screenRect.top() - widgetRect.top() )			
+	elif widgetRect.bottom() > screenRect.bottom():
+		pos.setY( pos.y() + screenRect.bottom() - widgetRect.bottom() )
 
-	sx0,sy0=geom.left(), geom.top()
-	sx1,sy1=geom.right(), geom.bottom()
-	sw,sh=geom.width(), geom.height()
-
-	wx,wy=wgeom.left(), wgeom.top()
-	w,h=wgeom.width(), wgeom.height()
-	x=wx
-	y=wy
-
-	if w>=sw: 
-		x=sx0
-	elif wx+w>sx1:
-		x=sx1-w
-
-	if h>=sh:
-		y=sy0
-	elif wy+h>sy1:
-		y=sy1-h
-
-	if x+border<sx1: x+=border	
-	if y+border<sy1: y+=border	
-
-	window.move(x,y)
+	widget.move( pos )
 
 ##----------------------------------------------------------------##
 class MainWindow(QtGui.QMainWindow):
@@ -76,6 +59,9 @@ class MainWindow(QtGui.QMainWindow):
 		self.centerTabWidget.setTabsClosable(True)
 		self.centerTabWidget.tabCloseRequested.connect( self.onTabCloseRequested )
 
+		# self.toolWindowMgr = ToolWindowManager( self )
+		# self.setCentralWidget( self.toolWindowMgr )
+
 	def moveToCenter(self):
 		moveWindowToCenter(self)
 
@@ -89,11 +75,6 @@ class MainWindow(QtGui.QMainWindow):
 		timer.timeout.connect(trigger)
 		timer.start(interval)
 		return timer
-
-	def addChildWidget(self, widget, id, **dockOptions):
-		window=self.requestDockWindow(id, **dockOptions)
-		window.setWidget(widget)
-		return widget
 
 	def requestSubWindow(self, id, **windowOption ):
 		title = windowOption.get('title',id)
@@ -124,6 +105,8 @@ class MainWindow(QtGui.QMainWindow):
 		title  = windowOption.get('title',id)
 		
 		window = DocumentWindow( self.centerTabWidget )
+		# window = DocumentWindow( self.toolWindowMgr )
+		# self.toolWindowMgr.addToolWindow( window, ToolWindowManager.EmptySpace )
 		window.parentWindow = self
 		window.setWindowTitle( title )
 		# self.centerTabWidget.addTab( window, title )
@@ -203,6 +186,9 @@ class MainWindow(QtGui.QMainWindow):
 		window.dockOptions=dockOptions
 
 		return window
+
+	def requestToolWindow(self, id, **option ):
+		pass
 
 	def onTabCloseRequested( self, idx ):
 		subwindow = self.centerTabWidget.widget( idx )

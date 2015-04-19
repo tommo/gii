@@ -1,50 +1,10 @@
+local findTopLevelEntities       = mock_edit.findTopLevelEntities
+local getTopLevelEntitySelection = mock_edit.getTopLevelEntitySelection
+local isEditorEntity             = mock_edit.isEditorEntity
+
+local affirmGUID      = mock_edit.affirmGUID
+local affirmSceneGUID = mock_edit.affirmSceneGUID
 local generateGUID = MOAIEnvironment.generateGUID
-
-local function findTopLevelEntities( entities )
-	local found = {}
-	for e in pairs( entities ) do
-		local p = e.parent
-		local isTop = true
-		while p do
-			if entities[ p ] then isTop = false break end
-			p = p.parent
-		end
-		if isTop then found[e] = true end
-	end
-	return found
-end
-
-local function getTopLevelEntitySelection()
-	local entities = {}
-	for i, e in ipairs( gii.getSelection( 'scene' ) ) do
-		if isInstance( e, mock.Entity ) then 
-			entities[ e ] = true
-		end
-	end
-	return findTopLevelEntities( entities )
-end
-
-local function isEditorEntity( e )
-	while e do
-		if e.FLAG_EDITOR_OBJECT or e.FLAG_INTERNAL then return true end
-		e = e.parent
-	end
-	return false
-end
-
-local function affirmGUID( entity )
-	if not entity.__guid then
-		entity.__guid = generateGUID()
-	end
-	for com in pairs( entity.components ) do
-		if not com.__guid then
-			com.__guid = generateGUID()
-		end
-	end
-	for child in pairs( entity.children ) do
-		affirmGUID( child )
-	end
-end
 
 --------------------------------------------------------------------
 CLASS:  SceneGraphEditor()
@@ -66,10 +26,7 @@ function SceneGraphEditor:openScene( path )
 	local scene = mock.game:openSceneByPath( path ) --dont start
 	assert( scene )
 	self.scene = scene
-	--affirm guid
-	for entity in pairs( scene.entities ) do
-		affirmGUID( entity )
-	end
+	affirmSceneGUID( scene )
 	--
 	self:postLoadScene()
 	mock.setAssetCacheWeak()
@@ -89,12 +46,8 @@ end
 
 function SceneGraphEditor:saveScene( path )
 	if not self.scene then return false end
-	mock.serializeSceneToFile( 
-		self.scene, path, 
-		{
-			editor_mode = true
-		}
-	)
+	affirmSceneGUID( self.scene )
+	mock.serializeSceneToFile( self.scene, path, 'keepProto' )
 	return true
 end
 
@@ -142,7 +95,7 @@ function SceneGraphEditor:retainScene()
 		guids[ i ] = e.__guid
 	end
 	self.retainedSceneSelection = guids
-	self.retainedSceneData = mock.serializeScene( self.scene )
+	self.retainedSceneData = mock.serializeScene( self.scene, 'keepProto' )
 	--keep node fold state
 end
 
@@ -273,7 +226,8 @@ function SceneGraphEditor:makeEntityCopyData()
 	local targets = getTopLevelEntitySelection()
 	local dataList = {}
 	for ent in pairs( targets ) do
-		local data = mock.serializeEntity( ent )
+		local data = mock.serializeEntity( ent, 'keepProto' )
+		data.guid = {} --remove guids
 		table.insert( dataList, data )
 	end
 
@@ -365,7 +319,7 @@ end
 function CmdCreateEntityBase:redo()
 	local entity = self:createEntity()
 	if not entity then return false end
-	entity.__guid = generateGUID()
+	affirmGUID( entity )
 	self.created = entity
 	if self.parentEntity then
 		self.parentEntity:addChild( entity )
@@ -542,7 +496,7 @@ function CmdCloneEntity:redo()
 	for target in pairs( self.targets ) do
 		local created = mock.cloneEntity( target, true )
 		created.__prefabId = target.__prefabId
-		created.FLAG_PROTO_INSTANCE = target.FLAG_PROTO_INSTANCE
+		created.PROTO_INSTANCE_STATE = target.PROTO_INSTANCE_STATE
 		local n = created:getName()
 		if n then
 			--auto increase prefix
@@ -836,7 +790,13 @@ end
 
 function CmdCreateProtoInstance:createEntity()
 	local proto = mock.loadAsset( self.protoPath )
-	return proto:createInstance()
+	local id = generateGUID()
+	local instance = proto:createInstance( nil, id )
+	instance.__overrided_fields = {
+		[ 'loc' ] = true,
+		[ 'name' ] = true,
+	}
+	return instance
 end
 
 

@@ -117,6 +117,7 @@ local function buildGiiModel( model )
 				option['objtype'] = f.__objtype or 'ref'
 			end
 			pmodel:addLuaFieldInfo( id, typeid, option )
+			
 		end		
 	end
 

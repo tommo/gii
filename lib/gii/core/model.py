@@ -203,10 +203,13 @@ class ObjectModel( DataType ):
 		self.subobject = option.get('subobject',None)
 
 	def addFieldInfo(self, id, t, **option):
-		f = Field(self, id, t, **option)
+		f = self.createField(id, t, **option)
 		self.fieldMap[id] = f
 		self.fieldList.append(f)
 		return f
+
+	def createField( self, id, t, **option ):
+		return Field(self, id, t, **option)
 
 	def getFieldInfo(self, id):
 		return self.fieldMap.get(id, None)
@@ -286,6 +289,9 @@ class Field(object):
 		else:
 			self.setter(obj, value)
 	
+	def isOverrided( self, obj ):
+		return self.model.isFieldOverrided( obj, self.id )
+
 	def serialize( self, obj, data, objMap ):
 		_type = self._type
 		if _type in ( int, float, str, unicode, bool ):

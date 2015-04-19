@@ -20,14 +20,6 @@ class GLWidget(QtOpenGL.QGLWidget):
 	
 		return GLWidget.sharedWidget
 
-	def _getGLFormat( self ):
-		fmt.setRgba(True)
-		fmt.setAlpha(True)
-		fmt.setDepth(True)
-		fmt.setDoubleBuffer(True)
-		fmt.setSwapInterval(1)
-		return fmt
-
 	def __init__( self, parent=None, **option ):
 		fmt = QtOpenGL.QGLFormat()
 		fmt.setRgba(True)

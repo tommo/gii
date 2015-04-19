@@ -1,6 +1,7 @@
 import logging
 import json
 import weakref
+import base64
 
 from gii.core   import *
 
@@ -190,9 +191,38 @@ class LuaObjectEnumerator( ObjectEnumerator ):
 
 
 ##----------------------------------------------------------------##
+class LuaObjectField( Field ):
+	def getValue( self, obj, defaultValue = None ):
+		getter = self.getter
+		if getter == False: return None
+		#indexer
+		if getter == True:
+			return getattr( obj, self.id, defaultValue )
+		#caller
+		v = self.getter( obj, self.id )
+		if v is None: return defaultValue
+		return v
+
+	def setValue( self, obj, value ):
+		if self.readonly: return 
+		if self.setter == True:
+			setattr( obj, self.id, value )
+		else:
+			self.setter(obj, value)
+
+##----------------------------------------------------------------##
 class LuaObjectModel(ObjectModel):
 	_EnumCache = weakref.WeakValueDictionary()
 	_AssetTypeCache = {}
+
+	def createField( self, id, t, **option ):
+		return LuaObjectField(self, id, t, **option)
+
+	def isFieldOverrided( self, obj, id ):
+		overridedFields = obj['__overrided_fields']
+		if not overridedFields: return False
+		if overridedFields[ id ]: return True
+		return False
 
 	def addLuaFieldInfo(self, name, typeId, data = None): #called by lua
 		#convert lua-typeId -> pythontype
@@ -352,4 +382,5 @@ def registerLuaEditorCommand( fullname, cmdCreator ):
 #EXTRA
 ####
 def generateGUID():
-	return str( uuid.uuid1() )
+	# return str( uuid.uuid1() )
+	return uuid.uuid1().hex

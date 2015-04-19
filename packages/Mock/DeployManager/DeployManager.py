@@ -50,8 +50,8 @@ class DeployManager( AssetEditorModule ):
 		self.container = self.requestDocumentWindow( 'DeployManager',
 			title     = 'Deployment Manager',
 			allowDock = False,
-			minSize   = ( 600, 600 ),
-			maxSize   = ( 600, 600 )
+			minSize   = ( 300, 300 ),
+			maxSize   = ( 300, 300 )
 			)
 
 		#Components

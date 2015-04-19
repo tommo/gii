@@ -320,6 +320,7 @@ class ToolWindowManager( QtGui.QWidget ):
 		toolWindow.setParent( None )
 
 	def removeArea( self, area ):
+		area.manager = None
 		area.deleteLater()
 
 	def removeWrapper( self, wrapper ):
@@ -694,6 +695,9 @@ if __name__ == '__main__':
 			for w in mgr.toolWindows():
 				mgr.moveToolWindow( w, ToolWindowManager.NewFloatingArea )
 			mgr.restoreState( result )
+			area = mgr.areaOf( widget )
+			mgr.hideToolWindow( widget )
+			area.addToolWindow( widget )
 
 	window = Test()
 	window.show()

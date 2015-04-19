@@ -254,8 +254,11 @@ class IntrospectorInstance(object):
 		parent = app.getModule('introspector')
 		typeId = ModelManager.get().getTypeId( target )
 		if typeId:
-			editorClas = parent.getObjectEditor( typeId )
-			editor = editorClas()			
+			editorClas = option.get( 'editor_class', None )
+			if not editorClas: #get default object editors
+				editorClas = parent.getObjectEditor( typeId )
+
+			editor = editorClas()
 			self.editors.append( editor )
 			container = ObjectContainer( self.body )
 			widget = editor.initWidget( container.getInnerContainer() )
@@ -277,7 +280,8 @@ class IntrospectorInstance(object):
 				container.hide()
 				
 			editor.container = container
-			editor.setTarget( target, self )
+			editor.parentIntrospector = self
+			editor.setTarget( target )
 			self.body.show()
 			return editor
 
@@ -318,8 +322,14 @@ class IntrospectorInstance(object):
 
 ##----------------------------------------------------------------##
 class ObjectEditor( object ):	
+	def __init__( self ):
+		self.parentIntrospector = None
+
 	def getContainer( self ):
 		return self.container
+
+	def getIntrospector( self ):
+		return self.parentIntrospector
 		
 	def initWidget( self, container ):
 		pass
@@ -327,7 +337,7 @@ class ObjectEditor( object ):
 	def getContextMenu( self ):
 		pass
 
-	def setTarget( self, target, introspectorInstance ):
+	def setTarget( self, target ):
 		pass
 
 	def unload( self ):
@@ -341,12 +351,9 @@ class CommonObjectEditor( ObjectEditor ): #a generic property grid
 		self.grid.propertyChanged.connect( self.onPropertyChanged )
 		return self.grid
 
-	def setTarget( self, target, introspectorInstance ):
+	def setTarget( self, target ):
 		self.target = target
 		self.grid.setTarget( target )
-
-	def onPropertyChanged( self, obj, id, value ):
-		signals.emit( 'entity.modified', obj, 'introspector' )
 
 	def refresh( self ):
 		self.grid.refreshAll()
@@ -355,6 +362,8 @@ class CommonObjectEditor( ObjectEditor ): #a generic property grid
 		self.grid.clear()
 		self.target = None
 
+	def onPropertyChanged( self, obj, id, value ):
+		pass
 
 ##----------------------------------------------------------------##
 def registerObjectEditor( typeId, editorClas ):

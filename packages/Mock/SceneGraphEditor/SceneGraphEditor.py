@@ -655,8 +655,7 @@ def _sortEntity( a, b ):
 ##----------------------------------------------------------------##
 class SceneGraphTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		# return [('Name',200), ( 'Layer', 50 ), ('Type', 50)]
-		return [('Name',200), ( 'Layer', 50 )]
+		return [('Name',200), ( 'Layer', 50 ), ('Type', 50)]
 
 	def getRootNode( self ):
 		return self.module.getActiveScene()
@@ -727,7 +726,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		elif isMockInstance( node, 'Entity' ):
 			if node['FLAG_PROTO_SOURCE']:
 				item.setIcon( 0, getIcon('proto') )
-			elif node['FLAG_PROTO_INSTANCE']:
+			elif node['PROTO_INSTANCE_STATE']:
 				item.setIcon( 0, getIcon('instance') )
 			else:
 				item.setIcon( 0, getIcon('obj') )
@@ -738,7 +737,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 				item.setText( 1, '????' )
 			else:
 				item.setText( 1, layerName )
-			# item.setText( 2, node.getClassName( node ) )
+			item.setText( 2, node.getClassName( node ) )
 		
 	def onItemSelectionChanged(self):
 		items=self.selectedItems()
@@ -792,6 +791,8 @@ class SceneGraphTreeItem(QtGui.QTreeWidgetItem):
 		node1 = hasattr(other, 'node') and other.node or None
 		if not node1:
 			return True
+		if not node0:
+			return False
 		proto0 = node0[ 'FLAG_PROTO_SOURCE' ]
 		proto1 = node1[ 'FLAG_PROTO_SOURCE' ]
 		tree = self.treeWidget()

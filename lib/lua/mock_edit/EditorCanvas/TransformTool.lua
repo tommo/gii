@@ -55,6 +55,7 @@ end
 
 function TranslationHandle:setTarget( target )
 	self.target = target
+	target:setUpdateMasks( true, false, false )
 	inheritLoc( self:getProp(), target:getProp() )
 end
 
@@ -399,6 +400,11 @@ CLASS: RotationTool ( TransformTool )
 function RotationTool:createHandle( target )
 	local handle = RotationHandle()
 	handle:setTarget( target )
+	if target.targetCount > 1 then
+		target:setUpdateMasks( true, true, false )
+	else
+		target:setUpdateMasks( false, true, false )
+	end
 	return handle
 end
 
@@ -409,6 +415,11 @@ CLASS: ScaleTool ( TransformTool )
 function ScaleTool:createHandle( target )
 	local handle = ScaleHandle()
 	handle:setTarget( target )
+	if target.targetCount > 1 then
+		target:setUpdateMasks( false, true, true )
+	else
+		target:setUpdateMasks( false, false, true )
+	end
 	return handle
 end
 

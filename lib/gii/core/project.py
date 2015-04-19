@@ -330,6 +330,12 @@ class Project(object):
 	def getCacheManager( self ):
 		return self.cacheManager
 
+	def generateID( self ):
+		userID = 1
+		index = self.globalIndex
+		self.globalIndex += 1
+		return '%d:%d'%( userID, index )
+
 Project()
 
 ##----------------------------------------------------------------##

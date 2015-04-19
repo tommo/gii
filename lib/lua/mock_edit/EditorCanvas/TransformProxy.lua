@@ -24,12 +24,25 @@ function TransformProxy:syncFromTarget()
 	proxy:forceUpdate()
 end
 
-function TransformProxy:syncToTarget( drx, dry, drz, ssx ,ssy, ssz )
+function TransformProxy:syncToTarget( 
+	drx, dry, drz, ssx ,ssy, ssz,
+	updateTranslation, updateRotation, updateScale
+	)
+
 	local target, proxy = self.target, self.proxy
 	target:forceUpdate()
 	proxy:forceUpdate()
 	self:onSyncToTarget( drx, dry, drz, ssx ,ssy, ssz )
 	target:forceUpdate()
+	if updateTranslation then
+		mock.markProtoInstanceOverrided( target, 'loc' )
+	end
+	if updateRotation then
+		mock.markProtoInstanceOverrided( target, 'rot' )
+	end
+	if updateScale then
+		mock.markProtoInstanceOverrided( target, 'scl' )
+	end
 end
 
 function TransformProxy:onSyncToTarget( drx, dry, drz, ssx ,ssy, ssz )

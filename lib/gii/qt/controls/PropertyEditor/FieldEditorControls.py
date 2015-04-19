@@ -1,5 +1,25 @@
 from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, pyqtSignal
+
+##----------------------------------------------------------------##
+class FieldEditorLabel( QtGui.QLabel ):
+	def __init__(self, *arg):
+		super(FieldEditorLabel, self).__init__( *arg )
+		self.setMinimumSize( 50, 16 )
+		self.setSizePolicy(
+			QtGui.QSizePolicy.Expanding,
+			QtGui.QSizePolicy.Expanding
+			)
+		self.fieldEditor = None
+
+	def setEditor( self, fieldEditor ):
+		self.fieldEditor = fieldEditor
+
+	def mousePressEvent(self, event):
+		button=event.button()		
+		if button == Qt.RightButton:
+			if self.fieldEditor:
+				self.fieldEditor.notifyContextMenuRequested()
 
 ##----------------------------------------------------------------##
 class FieldEditorLineEdit(QtGui.QLineEdit):
@@ -9,7 +29,6 @@ class FieldEditorLineEdit(QtGui.QLineEdit):
 	def focusInEvent( self, ev ):
 		super(FieldEditorLineEdit, self).focusInEvent( ev )
 		self.selectAll()
-		
 
 ##----------------------------------------------------------------##
 class FieldEditorSpinBox(QtGui.QSpinBox):
@@ -56,7 +75,7 @@ class FieldEditorDoubleSpinBox(QtGui.QDoubleSpinBox):
 			ev.ignore()
 
 ##----------------------------------------------------------------##
-class DraggableLabel( QtGui.QLabel ):
+class DraggableLabel( FieldEditorLabel ):
 	dragged = QtCore.pyqtSignal( int )
 
 	def __init__( self, *args ):
@@ -70,6 +89,8 @@ class DraggableLabel( QtGui.QLabel ):
 			self.dragging = True
 			self.grabMouse()
 			self.x0 = ev.x()
+		else:
+			super( DraggableLabel, self ).mousePressEvent( ev )
 
 	def mouseReleaseEvent( self, ev ):
 		if ev.button() == Qt.LeftButton:

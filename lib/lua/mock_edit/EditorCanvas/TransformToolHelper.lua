@@ -8,6 +8,15 @@ CLASS: TransformToolHelper( EditorEntity )
 function TransformToolHelper:__init()
 	self.updateNode = MOAIScriptNode.new()	
 	self.syncing = false
+	self.updateTranslation = true
+	self.updateRotation    = true
+	self.updateScale       = true
+end
+
+function TransformToolHelper:setUpdateMasks( translation, rotation, scale )
+	self.updateTranslation = translation or false
+	self.updateRotation    = rotation    or false
+	self.updateScale       = scale       or false
 end
 
 function TransformToolHelper:setTargets( targets )
@@ -78,8 +87,14 @@ function TransformToolHelper:onUpdate()
 	if sy1 ~= 0 then ssy = sy1/sy0 end
 	if sz1 ~= 0 then ssz = sz1/sz0 end
 	local drx, dry, drz = rx1 - rx0, ry1 - ry0, rz1 - rz0
+	local updateTranslation = self.updateTranslation
+	local updateRotation = self.updateRotation
+	local updateScale = self.updateScale
 	for entity, proxy in pairs( self.proxies ) do
-		proxy:syncToTarget( drx, dry, drz, ssx ,ssy, ssz )
+		proxy:syncToTarget(
+			drx, dry, drz, ssx ,ssy, ssz, 
+			updateTranslation, updateRotation, updateScale
+		)
 		gii.emitPythonSignal( 'entity.modified', entity )
 	end
 	self.syncing = false

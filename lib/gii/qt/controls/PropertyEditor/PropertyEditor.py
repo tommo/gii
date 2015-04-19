@@ -3,6 +3,8 @@ from gii.core.model import *
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 
+from FieldEditorControls import *
+
 '''
 	planned control:
 		- text
@@ -15,8 +17,8 @@ from PyQt4.QtCore import Qt
 ##----------------------------------------------------------------##
 		
 _FieldEditorFactories = []
-_FieldEditorRegistry = {}
-_ModelEditorRegistry = {}
+_FieldEditorRegistry  = {}
+_ModelEditorRegistry  = {}
 
 ##----------------------------------------------------------------##
 class FieldEditorFactory():
@@ -70,6 +72,7 @@ def buildFieldEditor( parentEditor, field ):
 ##----------------------------------------------------------------##
 class PropertyEditor( QtGui.QWidget ):
 	propertyChanged = QtCore.pyqtSignal( object, str, object )
+	contextMenuRequested = QtCore.pyqtSignal( object, str )
 	
 	_fieldEditorCacheWidget = None
 	_fieldEditorCache = {}
@@ -146,6 +149,9 @@ class PropertyEditor( QtGui.QWidget ):
 		self.model.setFieldValue( self.target, field.id, value )
 		self.propertyChanged.emit( self.target, field.id, value )
 
+	def onContextMenuRequested( self, field ):
+		self.contextMenuRequested.emit( self.target, field.id )
+
 	def getTarget( self ):
 		return self.target
 		
@@ -209,6 +215,15 @@ class PropertyEditor( QtGui.QWidget ):
 			self.refreshing = False
 			editor.setOverrided( self.model.isFieldOverrided( target, field.id ) )
 
+	def refershFieldState( self, fieldId ):
+		target = self.target
+		if not target: return
+		for field in self.model.fieldList: #todo: just use propMap to iter?
+			if field.id == fieldId:
+				editor = self.editors.get( field, None )
+				if not editor: return
+				editor.setOverrided( self.model.isFieldOverrided( target, field.id ) )
+
 ##----------------------------------------------------------------##
 class FieldEditor( object ):
 	def __init__( self, parent, field, fieldType = None ):
@@ -235,6 +250,9 @@ class FieldEditor( object ):
 	def notifyChanged( self, value ):
 		return self.parent.onPropertyChanged( self.field, value )
 
+	def notifyContextMenuRequested( self ):
+		return self.parent.onContextMenuRequested( self.field )
+
 	def notifyObjectChanged( self ):
 		return self.parent.refreshAll()
 
@@ -260,13 +278,9 @@ class FieldEditor( object ):
 		self.labelWidget.style().polish( self.labelWidget )
 
 	def initLabel( self, label, container ):
-		self.labelWidget = QtGui.QLabel( container )
+		self.labelWidget = FieldEditorLabel( container )
+		self.labelWidget.setEditor( self )
 		self.labelWidget.setText( label )
-		self.labelWidget.setMinimumSize( 50, 16 )
-		self.labelWidget.setSizePolicy(
-			QtGui.QSizePolicy.Expanding,
-			QtGui.QSizePolicy.Expanding
-			)
 		return self.labelWidget
 
 	def initEditor( self, container ):
