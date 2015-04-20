@@ -1,4 +1,5 @@
 from gii.core.model import *
+from gii.qt.helpers import repolishWidget
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
@@ -269,13 +270,11 @@ class FieldEditor( object ):
 		if overrided == self.overrided: return
 		self.overrided = overrided
 		self.labelWidget.setProperty( 'overrided', overrided )
-		self.labelWidget.style().unpolish( self.labelWidget )
-		self.labelWidget.style().polish( self.labelWidget )
+		repolishWidget( self.labelWidget )
 
 	def setRecording( self, recording = True ):
 		self.labelWidget.setProperty( 'recording', overrided )
-		self.labelWidget.style().unpolish( self.labelWidget )
-		self.labelWidget.style().polish( self.labelWidget )
+		repolishWidget( self.labelWidget )
 
 	def initLabel( self, label, container ):
 		self.labelWidget = FieldEditorLabel( container )

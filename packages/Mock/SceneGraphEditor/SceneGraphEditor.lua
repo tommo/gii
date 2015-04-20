@@ -790,7 +790,7 @@ end
 
 function CmdCreateProtoInstance:createEntity()
 	local proto = mock.loadAsset( self.protoPath )
-	local id = generateGUID()
+	local id    = generateGUID()
 	local instance = proto:createInstance( nil, id )
 	instance.__overrided_fields = {
 		[ 'loc' ] = true,
@@ -848,6 +848,7 @@ function CmdToggleEntityVisibility:redo()
 	vis = not vis
 	for i, e in ipairs( self.entities ) do
 		e:setVisible( vis )
+		mock.markProtoInstanceOverrided( e, 'visible' )
 		gii.emitPythonSignal( 'entity.modified', e, '' )
 	end
 end

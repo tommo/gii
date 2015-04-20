@@ -1,7 +1,7 @@
 from gii.core import  *
 from gii.SceneEditor.Introspector   import ObjectEditor, CommonObjectEditor, registerObjectEditor
 from gii.qt.controls.PropertyEditor import PropertyEditor
-from gii.qt.helpers import addWidgetWithLayout
+from gii.qt.helpers import addWidgetWithLayout, repolishWidget
 
 from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt
@@ -75,6 +75,13 @@ class ComponentEditor( CommonObjectEditor, ProtoFieldResetMenuMixin ): #a generi
 		self.initContextMenu( self.grid )
 		return self.grid
 
+	def setTarget( self, target ):
+		super( ComponentEditor, self ).setTarget( target )
+		if target['__proto_history']:
+			self.container.setProperty( 'proto', True )
+			repolishWidget( self.container )
+			repolishWidget( self.container.getInnerContainer() )
+
 ##----------------------------------------------------------------##
 class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin ): #a generic property grid 
 	def initWidget( self, container ):
@@ -97,6 +104,11 @@ class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin ): #a generic propert
 		self.target = target
 		self.grid.setTarget( target )		
 		if isMockInstance( target, 'Entity' ):
+			if target['__proto_history']:				
+				self.container.setProperty( 'proto', True )
+				repolishWidget( self.container )
+				repolishWidget( self.container.getInnerContainer() )
+
 			#setup prefab tool
 			protoState = target['PROTO_INSTANCE_STATE']
 			if protoState:
@@ -133,7 +145,6 @@ class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin ): #a generic propert
 			signals.emit( 'entity.renamed', obj, obj.getName( obj ) )
 		signals.emit( 'entity.modified', obj, 'introspector' )
 		signals.emit( 'entity.modified', obj, 'introspector' )
-
 
 	def onGotoPrefab( self ):
 		assetBrowser = app.getModule( 'asset_browser' )

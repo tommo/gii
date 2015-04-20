@@ -49,11 +49,7 @@ class NumberFieldEditor( FieldEditor ):
 	def initLabel( self, label, container ):
 		self.labelWidget = DraggableLabel( container )
 		self.labelWidget.setText( label )
-		self.labelWidget.setMinimumSize( 50, 16 )
-		self.labelWidget.setSizePolicy(
-			QtGui.QSizePolicy.Expanding,
-			QtGui.QSizePolicy.Expanding
-			)
+		self.labelWidget.setEditor( self )
 		self.labelWidget.dragged.connect( self.onDragAdjust )
 		return self.labelWidget
 

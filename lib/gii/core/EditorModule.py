@@ -263,12 +263,13 @@ class EditorModuleManager(object):
 						m.unload()
 						unloaded=True
 			if not needUnload:
-				return True
+				break
 			if not unloaded:
 				for m in self.moduleQueue:
 					if m.alive:
 						print(m.getName())
 				raise Exception('Cyclic Dependency')
+		logging.info('modules unloaded' )
 
 	def registerModule( self, module, **option ):
 		if not isinstance(module, EditorModule):

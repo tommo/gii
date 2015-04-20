@@ -819,8 +819,8 @@ QToolButton::checked{
 }
 
 #FieldLabel[overrided="true"]{
-	/*color:#c2f166;*/
-	color:#f1da79;
+	color:#ffbc48;
+	/*color:#f1da79;*/
 	/*border-bottom:1px dashed #9c7;*/
 }
 
@@ -850,6 +850,27 @@ QToolButton::checked{
 	border-right: 1px solid #222;
 	border-left: 1px solid #222;
 }
+
+#ObjectContainer[proto="true"] #ObjectInnerContainer{
+	background-color:#444450;
+}
+
+#ObjectContainer[proto="true"] #ObjectHeader {
+	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#445,stop:1#334);
+}
+
+#ObjectContainer[proto="true"] #ObjectHeader QToolButton{
+	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#445,stop:1#334);
+}
+
+#ObjectContainer[proto="true"] #ObjectHeader QToolButton::hover{
+	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#556,stop:1#334);
+}
+
+#ObjectContainer[proto="true"] #ObjectHeader QToolButton::pressed{
+	background-color: #466dc6;
+}
+
 
 QSplitter#TimelineSplitter::handle{
 	background-color:#333;
@@ -968,11 +989,21 @@ QSplitter#TimelineHeaderSplitter::handle{
 
 #containerPrefab {
 	border: 1px solid #222;
-	background-color: #492f54;
+	background-color: #343454;
 	font-size: 10px;
 }
 
-QToolButton#containerPrefab {
+#containerPrefab QToolButton {
+	background-color: #446;
 	color:#aaa;
 	font-size: 10px;
+}
+
+#containerPrefab QToolButton::hover {
+	background-color: #667;
+}
+
+#containerPrefab QToolButton::pressed {
+	background-color: #466dc6;
+	color: #eee;
 }

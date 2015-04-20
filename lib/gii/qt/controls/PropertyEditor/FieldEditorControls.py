@@ -89,8 +89,10 @@ class DraggableLabel( FieldEditorLabel ):
 			self.dragging = True
 			self.grabMouse()
 			self.x0 = ev.x()
-		else:
-			super( DraggableLabel, self ).mousePressEvent( ev )
+		elif ev.button() == Qt.RightButton:
+			if self.fieldEditor:
+				self.fieldEditor.notifyContextMenuRequested()
+			
 
 	def mouseReleaseEvent( self, ev ):
 		if ev.button() == Qt.LeftButton:

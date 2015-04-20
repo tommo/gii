@@ -5,7 +5,7 @@ from gii.qt.controls.PropertyEditor import PropertyEditor
 from gii.qt.controls.Menu import MenuManager
 
 from PyQt4        import QtCore, QtGui, uic
-from PyQt4.QtCore import QEventLoop, QEvent, QObject, pyqtSignal
+from PyQt4.QtCore import Qt, QEventLoop, QEvent, QObject, pyqtSignal
 
 from SceneEditor  import SceneEditorModule
 from IDPool       import IDPool
@@ -214,7 +214,6 @@ class IntrospectorInstance(object):
 		self.scroll = scroll = container.addWidget( QtGui.QScrollArea( container ) )
 		self.body   = body   = QtGui.QWidget( container )
 		self.header.hide()
-
 		scroll.setWidgetResizable(True)
 		body.mainLayout = layout = QtGui.QVBoxLayout( body )
 		layout.setSpacing(0)
@@ -222,7 +221,7 @@ class IntrospectorInstance(object):
 		layout.addStretch()
 		scroll.setWidget( body )
 
-		self.updateTimer = self.container.startTimer( 5, self.onUpdateTimer )
+		self.updateTimer = self.container.startTimer( 10, self.onUpdateTimer )
 		self.updatePending = False
 	
 	def getTarget(self):
