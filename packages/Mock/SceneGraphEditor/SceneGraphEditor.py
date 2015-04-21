@@ -593,7 +593,7 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	##----------------------------------------------------------------##
 	def onCopyEntity( self ):
-		entityGroupData = self.delegate.callMethod( 'editor', 'makeEntityCopyData' )
+		entityGroupData = self.delegate.callMethod( 'editor', 'makeSceneSelectionCopyData' )
 		if not entityGroupData: return False
 		clip = QtGui.QApplication.clipboard()
 		mime = QtCore.QMimeData()

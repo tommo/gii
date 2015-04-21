@@ -222,15 +222,13 @@ function SceneGraphEditor:onMainSceneClose( scn )
 	gii.emitPythonSignal( 'scene.change' )
 end
 
-function SceneGraphEditor:makeEntityCopyData()
+function SceneGraphEditor:makeSceneSelectionCopyData()
 	local targets = getTopLevelEntitySelection()
 	local dataList = {}
 	for ent in pairs( targets ) do
-		local data = mock.serializeEntity( ent, 'keepProto' )
-		data.guid = {} --remove guids
+		local data = mock.makeEntityCopyData( ent )
 		table.insert( dataList, data )
 	end
-
 	return encodeJSON( { 
 		entities = dataList,
 		scene    = editor.scene.assetPath or '<unknown>',
@@ -494,9 +492,8 @@ end
 function CmdCloneEntity:redo()
 	local createdList = {}
 	for target in pairs( self.targets ) do
-		local created = mock.cloneEntity( target, true )
-		created.__prefabId = target.__prefabId
-		created.PROTO_INSTANCE_STATE = target.PROTO_INSTANCE_STATE
+		local newId = generateGUID()
+		local created = mock.copyAndPasteEntity( target, newId )
 		local n = created:getName()
 		if n then
 			--auto increase prefix
@@ -533,7 +530,7 @@ CLASS: CmdPasteEntity ( mock_edit.EditorCommand )
 	:register( 'scene_editor/paste_entity' )
 
 function CmdPasteEntity:init( option )
-	self.data = decodeJSON( option['data'] )
+	self.data   = decodeJSON( option['data'] )
 	self.parent = gii.getSelection( 'scene' )[1] or false
 	self.createdList = false
 	if not self.data then _error( 'invalid entity data' ) return false end
@@ -542,7 +539,9 @@ end
 function CmdPasteEntity:redo()
 	local createdList = {}
 	local parent = self.parent
-	for i, entityData in ipairs( self.data.entities ) do
+	for i, copyData in ipairs( self.data.entities ) do
+		local newId = generateGUID()
+		local entityData = mock.makeEntityPasteData( copyData, newId )
 		local created = mock.deserializeEntity( entityData )
 		if parent then
 			parent:addChild( created )
