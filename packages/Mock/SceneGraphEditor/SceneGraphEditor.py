@@ -728,6 +728,8 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 				item.setIcon( 0, getIcon('proto') )
 			elif node['PROTO_INSTANCE_STATE']:
 				item.setIcon( 0, getIcon('instance') )
+			elif node['__proto_history']:
+				item.setIcon( 0, getIcon('instance-sub') )
 			else:
 				item.setIcon( 0, getIcon('obj') )
 			item.setText( 0, node.name or '<unnamed>' )
