@@ -36,7 +36,6 @@ class NamedTilesetAssetManager(AssetManager):
 		proj.save( absAtlas, absDef )
 		#TODO: let texture library handle atlas
 		pack = jsonHelper.tryLoadJSON( absDef )
-		print pack
 		for item in pack[ 'themes' ]:
 			node.affirmChildNode( item[ 'name' ], 'named_tileset', manager = self )
 		return True

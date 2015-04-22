@@ -10,7 +10,6 @@ import math
 
 from PIL import Image
 
-
 _BLEEDSIZE = 1
 
 def bleeding_image( image ):
@@ -25,14 +24,13 @@ def bleeding_image( image ):
 
 	bottom = out.crop( (0,height-2,width,height-1) )
 	out.paste( bottom, (0,height-1,width,height) )
-	
+
 	left = out.crop( (1,0,2,height) )
 	out.paste( left, (0,0,1,height) )
 
 	right = out.crop( (width-2,0,width-1,height) )
 	out.paste( right, (width-1,0,width,height) )
 	return out
-
 
 def md5_for_file(path, block_size=256*128, hr=False):
 	'''
@@ -193,7 +191,7 @@ class Img:
 	def getBBoxInfo(self):
 		return self.bbox
 
-	def getImage(self):
+	def getImage(self, imgSet = None):
 		im = Image.open(self.path)
 		im = im.crop(self.bbox)
 		return im
@@ -219,6 +217,19 @@ class Node:
 				self.w - _BLEEDSIZE*2, self.h - _BLEEDSIZE*2
 			]
 
+	def getUVRect( self ):
+		x = self.x
+		y = self.y
+		if self.bleeding:
+			x += _BLEEDSIZE
+			y += _BLEEDSIZE
+		rw = self.root.w
+		rh = self.root.h
+		u0 = float(x)/rw
+		v0 = float(y)/rh
+		u1 = u0 + float(self.w - 1)/rw
+		v1 = v0 + float(self.h - 1)/rh
+		return [ u0, v1, u1, v0 ]
 
 	def isParent(self):
 		return self.child1 is not None or self.child2 is not None
@@ -267,9 +278,9 @@ class Node:
 
 			return self.child1.insert(img, spacing, bleeding)
 
-	def paintOn(self, canvas):
+	def paintOn(self, canvas, imgSet = None):
 		if self.img is not None:
-			im = self.img.getImage()			
+			im = self.img.getImage( imgSet )			
 			if im.mode != canvas.mode:
 				im = im.convert(canvas.mode)
 			if self.bleeding:
@@ -277,9 +288,9 @@ class Node:
 			canvas.paste(im, (self.x, self.y, self.x+self.w, self.y+self.h))
 
 		if self.child1 is not None:
-			self.child1.paintOn(canvas)
+			self.child1.paintOn(canvas, imgSet)
 		if self.child2 is not None:
-			self.child2.paintOn(canvas)
+			self.child2.paintOn(canvas, imgSet)
 
 	def dumpImages(self):
 		if self.img is not None:
@@ -306,7 +317,7 @@ class AtlasGenerator:
 		self.quiet = kwargs.get('quiet', False)
 		self.allowBigTexture = kwargs.get( 'allow_big_texture', True )
 		self.pixel_type = 'RGBA'
-		self.bleeding = kwargs.get( 'bleeding', True )
+		self.bleeding = True
 
 		self.cache_hits = 0
 		self.cache_misses = 0
@@ -488,11 +499,12 @@ class AtlasGenerator:
 
 		return atlases
 
-	def paintAtlas(self, atlas, atlas_fname):
+	def paintAtlas(self, atlas, atlas_fname, **kwargs):
+		format = kwargs.get( 'format', 'PNG' )
 		with Stopwatch() as s:
 			canvas = Image.new(self.pixel_type, (atlas.w, atlas.h), (0, 0, 0, 0))
-			atlas.paintOn(canvas)
-			canvas.save(atlas_fname, 'PNG')
+			atlas.paintOn(canvas, kwargs.get( 'imgSet', None ))
+			canvas.save(atlas_fname, format )
 			D("        saved atlas image file '{0}' in {1} seconds", atlas_fname, s)
 
 	def generate(self, paths):

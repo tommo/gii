@@ -492,8 +492,7 @@ end
 function CmdCloneEntity:redo()
 	local createdList = {}
 	for target in pairs( self.targets ) do
-		local newId = generateGUID()
-		local created = mock.copyAndPasteEntity( target, newId )
+		local created = mock.copyAndPasteEntity( target, generateGUID )
 		local n = created:getName()
 		if n then
 			--auto increase prefix
@@ -540,8 +539,7 @@ function CmdPasteEntity:redo()
 	local createdList = {}
 	local parent = self.parent
 	for i, copyData in ipairs( self.data.entities ) do
-		local newId = generateGUID()
-		local entityData = mock.makeEntityPasteData( copyData, newId )
+		local entityData = mock.makeEntityPasteData( copyData, generateGUID )
 		local created = mock.deserializeEntity( entityData )
 		if parent then
 			parent:addChild( created )

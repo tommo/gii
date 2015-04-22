@@ -697,7 +697,7 @@ SearchLineEdit > QLineEdit
 
 :disabled
 {
-	color:#818181;
+	color:#989;
 }
 
 QMainWindow,QScrollBar,QTableView

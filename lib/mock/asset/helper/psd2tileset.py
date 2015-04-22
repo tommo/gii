@@ -52,7 +52,7 @@ def extractLeafLayers( image ):
 
 ##----------------------------------------------------------------##
 class LayerImg(Img): #	
-	def getImage(self):
+	def getImage(self, imgSet = None ):
 		return self.animModule.getImage()
 
 def extract_layer_channel_data( l ):
@@ -81,7 +81,7 @@ def compare_layer_image( l1, l2 ):
 
 ##----------------------------------------------------------------##
 class TileImg(Img): #	
-	def getImage(self):
+	def getImage(self, imgSet = None):
 		return self.src.getImage()
 
 ##----------------------------------------------------------------##

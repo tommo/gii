@@ -9,6 +9,7 @@ import FontAsset
 import StyleSheetAsset
 import AuroraAsset
 import MSpriteAsset
+import DeckPSDAsset
 import SpineAsset
 
 import ParticleAsset

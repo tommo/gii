@@ -185,7 +185,7 @@ def extractLeafLayers( image ):
 
 ##----------------------------------------------------------------##
 class LayerImg(Img): #	
-	def getImage(self):
+	def getImage(self, imgSet = None):
 		return self.src.getImage()
 
 def extract_layer_channel_data( l ):
