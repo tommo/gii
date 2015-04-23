@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>601</width>
-    <height>454</height>
+    <width>485</width>
+    <height>448</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -49,7 +49,7 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>100</width>
+        <width>120</width>
         <height>100</height>
        </size>
       </property>
@@ -61,7 +61,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QWidget" name="containerEtc" native="true">
+        <widget class="QWidget" name="containerPlayTool" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -71,7 +71,7 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>20</height>
+           <height>25</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -131,7 +131,7 @@
          <property name="minimumSize">
           <size>
            <width>197</width>
-           <height>20</height>
+           <height>25</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -143,13 +143,35 @@
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="containerTrack" native="true">
+        <widget class="QTabWidget" name="containerContents">
          <property name="minimumSize">
           <size>
            <width>200</width>
            <height>0</height>
           </size>
          </property>
+         <property name="tabPosition">
+          <enum>QTabWidget::South</enum>
+         </property>
+         <property name="tabShape">
+          <enum>QTabWidget::Triangular</enum>
+         </property>
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <property name="documentMode">
+          <bool>false</bool>
+         </property>
+         <widget class="QWidget" name="containerTrack" native="true">
+          <attribute name="title">
+           <string>Dope Sheet</string>
+          </attribute>
+         </widget>
+         <widget class="QWidget" name="containerCurve">
+          <attribute name="title">
+           <string>Curve View</string>
+          </attribute>
+         </widget>
         </widget>
        </item>
       </layout>

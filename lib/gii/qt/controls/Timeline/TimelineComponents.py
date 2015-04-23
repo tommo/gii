@@ -12,7 +12,7 @@ import sys
 import math
 
 _RULER_SIZE = 25
-_TRACK_SIZE = 25
+_TRACK_SIZE = 20
 _TRACK_MARGIN = 3
 _PIXEL_PER_SECOND = 100.0 #basic scale
 _HEAD_OFFSET = 15
@@ -384,12 +384,12 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		for i in range( count ): #V lines
 			t = start + i * step
 			xx = (t-t0) * u + _HEAD_OFFSET
-			painter.drawLine( xx, h-20, xx, h - 1 )
+			painter.drawLine( xx, h-25, xx, h - 1 )
 			for j in range( 1, subStep ):
 				sxx = xx + j * subPitch
-				painter.drawLine( sxx, h-5, sxx, h - 1 )
+				painter.drawLine( sxx, h-8, sxx, h - 1 )
 			markText = '%.1f'%( t )
-			painter.drawText( QRectF( xx + 2, h-18, 100, 100 ), Qt.AlignTop|Qt.AlignLeft, markText )
+			painter.drawText( QRectF( xx + 2, h-20, 100, 100 ), Qt.AlignTop|Qt.AlignLeft, markText )
 
 		#draw cursor
 		painter.setPen( TimelineRulerItem._cursorPen )
@@ -447,6 +447,25 @@ class TimelineRulerView( TimelineSubView ):
 	def updateCursorItem( self ):
 		self.cursorItem.setX( self.timeToPos( self.cursorPos - self.scrollPos ) ) 
 
+
+##----------------------------------------------------------------##
+class TimelineHeaderWidget( QtGui.QWidget ):
+	def __init__(self):
+		super(TimelineHeaderWidget, self).__init__()
+		layout = QtGui.QHBoxLayout( self )
+		layout.setSpacing( 0 )
+		layout.setMargin( 0 )
+		self.buttonFold = QtGui.QToolButton()
+		self.buttonFold.setText( '+' )
+		self.buttonItem = QtGui.QToolButton()
+		self.buttonItem.setText( 'Track Item' )
+		self.buttonItem.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+		self.buttonKey = QtGui.QToolButton()
+		self.buttonKey.setText( '>' )
+		layout.addWidget( self.buttonFold )
+		layout.addWidget( self.buttonItem )
+		layout.addWidget( self.buttonKey )
+
 ##----------------------------------------------------------------##
 class TimelineHeaderItem( QtGui.QGraphicsProxyWidget ):
 	foldClicked = pyqtSignal()
@@ -454,10 +473,10 @@ class TimelineHeaderItem( QtGui.QGraphicsProxyWidget ):
 		super( TimelineHeaderItem, self ).__init__()
 		self.track = track
 		self.setCursor( Qt.PointingHandCursor )
-		button = QtGui.QPushButton( "TrackView" )
-		self.setWidget( button )
+		widget = TimelineHeaderWidget()
+		self.setWidget( widget )
 		self.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
-		button.clicked.connect( self.foldClicked )
+		# widget.clicked.connect( self.foldClicked )
 
 	def setIndent( self, indent ):
 		self.indent = indent

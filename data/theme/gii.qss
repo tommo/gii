@@ -22,7 +22,7 @@ QToolButton
 	border: 1px solid #222;
 	border-radius:0px;
 	color:#ccc;
-	padding:4px;
+	padding:2px;
 }
 
 QToolButton::hover

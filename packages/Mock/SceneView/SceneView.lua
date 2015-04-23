@@ -9,7 +9,11 @@ function onSceneOpen( scene )
 	-- local gameActionRoot = game:getActionRoot()
 	-- gii.setCurrentRenderContextActionRoot( game:getActionRoot() )
 	view = mock_edit.createSceneView( scene, _M )
+	view.updateCanvas = function()
+		_giiSceneView.scheduleUpdate()
+	end
 	scene:addEntity( view )
+	mock_edit.updateMOAIGfxResource()
 end
 
 function onSceneClose()
@@ -17,6 +21,9 @@ function onSceneClose()
 end
 
 function onResize( w, h )
-	if view then view:onCanvasResize( w, h ) end
+	if view then 
+		view:onCanvasResize( w, h )
+		mock_edit.updateMOAIGfxResource()
+	end
 end
 

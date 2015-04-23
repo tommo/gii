@@ -1,3 +1,4 @@
+
 from PyQt4 import QtGui, QtCore, QtOpenGL, uic
 from PyQt4.QtCore import Qt, QObject, QEvent, pyqtSignal
 from PyQt4.QtCore import QPoint, QRect, QSize
@@ -5,11 +6,12 @@ from PyQt4.QtCore import QPointF, QRectF, QSizeF
 from PyQt4.QtGui import QColor, QTransform
 
 from TimelineComponents import TimelineHeaderView,TimelineRulerView,TimelineTrackView
+from CurveView import CurveView
 
 import sys
 import math
 
-_TRACK_SIZE   = 25
+_TRACK_SIZE   = 20
 _TRACK_MARGIN = 3
 
 ##----------------------------------------------------------------##
@@ -156,7 +158,6 @@ class TimelineView( QtGui.QFrame ):
 
 		self.initData()
 		self.initUI()
-		
 
 	def initData( self ):
 		self.tracks      = []
@@ -171,12 +172,18 @@ class TimelineView( QtGui.QFrame ):
 		self.trackView  = TimelineTrackView( parent = self )
 		self.headerView = TimelineHeaderView( parent = self )
 		self.rulerView  = TimelineRulerView( parent = self )
-
+		self.curveView  = CurveView( parent = self )
+		self.curveView.setAxisShown( False, True )
 		
 		trackLayout = QtGui.QVBoxLayout( self.ui.containerTrack )
 		trackLayout.setSpacing( 0)
 		trackLayout.setMargin( 0 )
 		trackLayout.addWidget( self.trackView )
+
+		curveLayout = QtGui.QVBoxLayout( self.ui.containerCurve )
+		curveLayout.setSpacing( 0)
+		curveLayout.setMargin( 0 )
+		curveLayout.addWidget( self.curveView )
 
 		headerLayout = QtGui.QVBoxLayout( self.ui.containerHeader )
 		headerLayout.setSpacing( 0)

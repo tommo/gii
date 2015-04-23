@@ -53,9 +53,9 @@ class AnimatorView( SceneEditorModule ):
 		#
 		# self.delegate = MOAILuaDelegate( self )
 		# self.delegate.load( _getModulePath( 'AnimatorView.lua' ) )
-		self.window.addWidget( TimelineView() )
-		# self.window.addWidget( CurveView() )
 		self.tool = self.addToolBar( 'animator', self.window.addToolBar() )
+		self.window.addWidget( TimelineView() )
+		
 		self.addTool( 'animator/add',    label = 'add',    icon = 'add' )
 		self.addTool( 'animator/remove', label = 'remove', icon = 'remove' )
 		self.addTool( 'animator/up',     label = 'up',     icon = 'arrow-up' )

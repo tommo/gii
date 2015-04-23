@@ -57,6 +57,12 @@ local function isEditorEntity( e )
 	return false
 end
 
+local updateGfxResource = MOAIGfxResourceMgr.update
+function updateMOAIGfxResource()
+	if updateGfxResource then
+		updateGfxResource()
+	end
+end
 --------------------------------------------------------------------
 _M.findTopLevelEntities       = findTopLevelEntities
 _M.getTopLevelEntitySelection = getTopLevelEntitySelection

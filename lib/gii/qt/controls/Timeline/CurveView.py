@@ -37,7 +37,16 @@ TANGENT_MODE_SPLIT   = 1
 TANGENT_MODE_SMOOTH  = 2
 
 
+##----------------------------------------------------------------##
+class CursorLine( QtGui.QGraphicsLineItem ):
+	_pen  = makePen( color = '#9cff00', width = 1 )
+	def __init__( self ):
+		super( CursorLine, self ).__init__()
+		self.setPen( self._pen )
 
+	def paint( self, painter, option, widget ):
+		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
+		super( CursorLine, self ).paint( painter, option, widget )
 
 ##----------------------------------------------------------------##
 class AxisGridBackground( QtGui.QGraphicsRectItem ):
@@ -53,6 +62,9 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 		self.offsetY = 1
 		self.zoomX = 2
 		self.zoomY = 1
+		self.showXAxis = True
+		self.showYAxis = True
+
 
 	def setOffset( self, x, y ):
 		self.offsetX = x
@@ -124,44 +136,46 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 		painter.drawLine( originX, y0, originX, y1 )
 		painter.drawLine( x0, originY, x1, originY )
 
-		#XAxis
-		start = math.floor( vx0/stepx ) * stepx
-		end   = math.ceil( vx1/stepx ) * stepx
-		count = int( (end-start)/stepx ) + 1
-
 		trans = painter.transform()
 		trans.translate( -dx, -dy )
 		painter.setTransform( trans )
-		painter.setPen( AxisGridBackground._axisPen )
-		subStep = 5
-		subPitch = stepWidth/subStep
-		for i in range( count ): #V lines
-			vx = start + i * stepx
-			xx = (vx-vx0) * ux
-			painter.drawLine( xx, h-20, xx, h - 1 )
-			for j in range( 1, subStep ):
-				sxx = xx + j * subPitch
-				painter.drawLine( sxx, h-6, sxx, h - 1 )
-			markText = '%.1f'%( vx )
-			painter.drawText( QRectF( xx + 2, h-20, 100, 100 ), Qt.AlignTop|Qt.AlignLeft, markText )
+		#XAxis
+		if self.showXAxis:
+			start = math.floor( vx0/stepx ) * stepx
+			end   = math.ceil( vx1/stepx ) * stepx
+			count = int( (end-start)/stepx ) + 1
+			
+			painter.setPen( AxisGridBackground._axisPen )
+			subStep = 5
+			subPitch = stepWidth/subStep
+			for i in range( count ): #V lines
+				vx = start + i * stepx
+				xx = (vx-vx0) * ux
+				painter.drawLine( xx, h-20, xx, h - 1 )
+				for j in range( 1, subStep ):
+					sxx = xx + j * subPitch
+					painter.drawLine( sxx, h-6, sxx, h - 1 )
+				markText = '%.1f'%( vx )
+				painter.drawText( QRectF( xx + 2, h-20, 100, 100 ), Qt.AlignTop|Qt.AlignLeft, markText )
 
 		#YAxis
-		start = math.floor( vy0/stepy ) * stepy
-		end   = math.ceil( vy1/stepy ) * stepy
-		count = int( (end-start)/stepy ) + 1
+		if self.showYAxis:
+			start = math.floor( vy0/stepy ) * stepy
+			end   = math.ceil( vy1/stepy ) * stepy
+			count = int( (end-start)/stepy ) + 1
 
-		painter.setPen( AxisGridBackground._axisPen )
-		subStep = 5
-		subPitch = stepHeight/subStep
-		for i in range( count ): #V lines
-			vy = start + i * stepy
-			yy = (vy-vy0) * uy
-			painter.drawLine( 0, yy, 20, yy )
-			for j in range( 1, subStep ):
-				syy = yy + j * subPitch
-				painter.drawLine( 0, syy, 6, syy )
-			markText = '%.1f'%( vy )
-			painter.drawText( QRectF( 5, yy + 3, 100, 20 ), Qt.AlignTop|Qt.AlignLeft, markText )
+			painter.setPen( AxisGridBackground._axisPen )
+			subStep = 5
+			subPitch = stepHeight/subStep
+			for i in range( count ): #V lines
+				vy = start + i * stepy
+				yy = (vy-vy0) * uy
+				painter.drawLine( 0, yy, 20, yy )
+				for j in range( 1, subStep ):
+					syy = yy + j * subPitch
+					painter.drawLine( 0, syy, 6, syy )
+				markText = '%.1f'%( vy )
+				painter.drawText( QRectF( 5, yy + 3, 100, 20 ), Qt.AlignTop|Qt.AlignLeft, markText )
 
 	def setZoom( self, zx, zy ):
 		self.zoomX = zx
@@ -429,14 +443,21 @@ class CurveItem( QtGui.QGraphicsRectItem ):
 
 ##----------------------------------------------------------------##
 class CurveView( GLGraphicsView ):
-	def __init__(self):
-		super(CurveView, self).__init__()
+	def __init__(self, *args, **kwargs ):
+		super(CurveView, self).__init__( *args, **kwargs )
 		self.setScene( QtGui.QGraphicsScene() )
 		self.setBackgroundBrush( _DEFAULT_BG )
 		self.curves = []
 		self.gridBackground = AxisGridBackground()
 		self.scene().addItem( self.gridBackground )
 		self.scene().sceneRectChanged.connect( self.onRectChanged )
+		
+		#components
+		self.cursorLine = CursorLine()
+		self.cursorLine.setLine( 0,0, 0, 10000 )
+		self.cursorLine.setZValue( 1000 )
+		self.scene().addItem( self.cursorLine )
+
 		self.panning = False
 		self.offsetX = 0
 		self.offsetY = 0
@@ -448,6 +469,10 @@ class CurveView( GLGraphicsView ):
 
 	def onRectChanged( self, rect ):
 		self.gridBackground.setRect( rect )
+
+	def setAxisShown( self, xAxis, yAxis ):
+		self.gridBackground.showXAxis = xAxis
+		self.gridBackground.showYAxis = yAxis
 
 	def setOffset( self, ox, oy ):
 		self.offsetX = ox

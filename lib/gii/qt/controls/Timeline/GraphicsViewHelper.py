@@ -5,6 +5,14 @@ from PyQt4.QtCore import QPointF, QRectF, QSizeF
 from PyQt4.QtGui import QColor, QTransform
 from OpenGL.GL import *
 
+try:
+	from gii.qt.controls.GLWidget import GLWidget
+	def getSharedGLWidget():
+		return GLWidget.getSharedWidget()
+
+except Exception, e:
+	def getSharedGLWidget():
+		return None
 
 
 def makeBrush( **option ):
@@ -120,8 +128,8 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		fmt.setDepth(False)
 		fmt.setDoubleBuffer(True)
 		fmt.setSwapInterval(0)
-		fmt.setSampleBuffers( True )
-		viewport = QtOpenGL.QGLWidget( QtOpenGL.QGLContext(fmt, None) )
+		# fmt.setSampleBuffers( True )
+		viewport = QtOpenGL.QGLWidget( fmt, None, getSharedGLWidget() )
 		viewport.makeCurrent()
 		self.setViewport( viewport )
 		self.setRenderHint( QtGui.QPainter.Antialiasing, False )
