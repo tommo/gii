@@ -13,13 +13,20 @@ function CanvasView:onLoad()
 	self:connect( 'scene.entity_event', 'onEntityEvent' )
 end
 
+function CanvasView:createCamera( canvasEnv )
+	local cameraEntity = EditorEntity()
+	local cameraCom    = EditorCanvasCamera( canvasEnv )
+	cameraEntity:attach( cameraCom )
+	self:addChild( cameraEntity )
+	return cameraEntity, cameraCom
+end
+
 function CanvasView:initContext()
 	self:setName( '__scene_view__' )
 	local inputDevice = createEditorCanvasInputDevice( self.canvasEnv )
 	self:attach( mock.InputScript{ device = inputDevice } )
 	self.inputDevice = inputDevice
-	self.camera = self:addChild( EditorEntity() )
-	self.cameraCom = self.camera:attach( EditorCanvasCamera( self.canvasEnv ) )
+	self.camera, self.cameraCom = self:createCamera( self.canvasEnv )
 end
 
 function CanvasView:initAddons()
@@ -65,7 +72,7 @@ function CanvasView:changeEditTool( name )
 end
 
 function CanvasView:updateCanvas( force )
-	return self.canvasEnv.updateCanvas( force )
+	return self.canvasEnv.updateCanvas()
 end
 
 function CanvasView:toggleDebugLines()

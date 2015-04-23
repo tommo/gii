@@ -190,8 +190,9 @@ function manualRenderAll()
 	local rt=MOAIRenderMgr.getBufferTable()
 	if rt then
 		renderTable(rt)
+	else
+		renderFrameBuffer(MOAIGfxDevice.getFrameBuffer())
 	end
-	renderFrameBuffer(MOAIGfxDevice.getFrameBuffer())
 end
 
 

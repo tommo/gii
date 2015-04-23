@@ -12,6 +12,11 @@ function EditorCanvasCamera:__init( env )
 	self.parallaxEnabled = false
 end
 
+function EditorCanvasCamera:loadPasses()
+	self:addPass( mock.SceneCameraPass( self.clearBuffer, self.clearColor ) )
+end
+
+
 function EditorCanvasCamera:getDefaultOutputRenderTarget()
 	context = gii.getCurrentRenderContext()
 	local w, h = context.w, context.h

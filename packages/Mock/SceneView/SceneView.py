@@ -98,7 +98,7 @@ class SceneView( SceneEditorModule ):
 		self.window.setDocumentName( node.getPath() )
 		self.canvas.show()
 		self.canvas.makeCurrent()
-		self.canvas.safeCall( 'openScene', scene )
+		self.canvas.safeCall( 'onSceneOpen', scene )
 		self.scheduleUpdate()
 		self.setFocus()
 		self.changeEditTool( 'translation' )
@@ -108,7 +108,7 @@ class SceneView( SceneEditorModule ):
 		self.window.setDocumentName( None )
 		self.canvas.hide()
 		self.canvas.makeCurrent()
-		self.canvas.safeCall( 'closeScene' )
+		self.canvas.safeCall( 'onSceneClose' )
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
