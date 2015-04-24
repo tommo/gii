@@ -479,15 +479,11 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.emit( 'entity.modified', target )
 
 	def addEntityNode( self, entity ):
-		self.tree.setUpdatesEnabled( False )
 		self.tree.addNode( entity, expanded = False )
 		self.tree.setNodeExpanded( entity, False )
-		self.tree.setUpdatesEnabled( True )
 
 	def removeEntityNode( self, entity ):
-		self.tree.setUpdatesEnabled( False )
 		self.tree.removeNode( entity )
-		self.tree.setUpdatesEnabled( True )
 
 	def assignEntityLayer( self, layerName ):
 		#TODO:command pattern
@@ -654,6 +650,10 @@ def _sortEntity( a, b ):
 
 ##----------------------------------------------------------------##
 class SceneGraphTreeWidget( GenericTreeWidget ):
+	def __init__( self, *args, **kwargs ):
+		super( SceneGraphTreeWidget, self ).__init__( *args, **kwargs )
+		self.syncSelection = True
+
 	def getHeaderInfo( self ):
 		return [('Name',200), ( 'Layer', 50 ), ('Type', 50)]
 
@@ -742,6 +742,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			item.setText( 2, node.getClassName( node ) )
 		
 	def onItemSelectionChanged(self):
+		if not self.syncSelection: return
 		items=self.selectedItems()
 		if items:
 			selections=[item.node for item in items]
@@ -770,7 +771,10 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		super( GenericTreeWidget, self ).dropEvent( ev )
 
 	def onDeletePressed( self ):
+		self.syncSelection = False
 		self.module.doCommand( 'scene_editor/remove_entity' )
+		self.syncSelection = True
+		self.onItemSelectionChanged()
 
 	def onItemChanged( self, item, col ):
 		self.module.renameEntity( item.node, item.text(0) )

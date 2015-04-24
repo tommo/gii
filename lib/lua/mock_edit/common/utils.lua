@@ -25,13 +25,13 @@ local function affirmSceneGUID( scene )
 end
 
 --------------------------------------------------------------------
-local function findTopLevelEntities( entities )
+local function findTopLevelEntities( entitySet )
 	local found = {}
-	for e in pairs( entities ) do
+	for e in pairs( entitySet ) do
 		local p = e.parent
 		local isTop = true
 		while p do
-			if entities[ p ] then isTop = false break end
+			if entitySet[ p ] then isTop = false break end
 			p = p.parent
 		end
 		if isTop then found[e] = true end
@@ -40,13 +40,18 @@ local function findTopLevelEntities( entities )
 end
 
 local function getTopLevelEntitySelection()
-	local entities = {}
+	local entitySet = {}
 	for i, e in ipairs( gii.getSelection( 'scene' ) ) do
 		if isInstance( e, mock.Entity ) then 
-			entities[ e ] = true
+			entitySet[ e ] = true
 		end
 	end
-	return findTopLevelEntities( entities )
+	local topLevelEntitySet = findTopLevelEntities( entitySet )
+	local list = {}
+	for ent in pairs( topLevelEntitySet ) do
+		table.insert( list, ent )
+	end
+	return list
 end
 
 local function isEditorEntity( e )

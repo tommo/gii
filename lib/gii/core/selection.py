@@ -36,6 +36,7 @@ class SelectionManager(object):
 			self.historyPos = 0
 		if selection is None:
 			selection = []
+			if not self.currentSelection: return
 		self.currentSelection = selection
 		signals.emitNow('selection.changed', selection, self.key )
 

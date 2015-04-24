@@ -74,8 +74,12 @@ function GizmoManager:onSelectionChanged( selection )
 		giz:destroyWithChildrenNow()
 	end
 	self.selectedGizmoMap = {}
-	local entities = {}
+	local entitySet = {}
 	for i, e in ipairs( selection ) do
+		entitySet[ e ] = true
+	end
+	local topEntitySet = findTopLevelEntities( entitySet )
+	for e in pairs( topEntitySet ) do
 		if isInstance( e, mock.Entity ) then
 			self:buildForEntity( e, true )
 		end
@@ -91,9 +95,9 @@ function GizmoManager:onEntityEvent( ev, entity, com )
 	if entity.FLAG_EDITOR_OBJECT then return end
 
 	if ev == 'add' then
-		self:buildForObject( entity ) 
+		self:buildForEntity( entity ) 
 	elseif ev == 'remove' then
-		self:removeForObject( entity )
+		self:removeForEntity( entity )
 	elseif ev == 'attach' then
 		self:buildForObject( com )
 	elseif ev == 'detach' then
@@ -148,8 +152,12 @@ function GizmoManager:buildForObject( obj, selected )
 				return
 			end
 			if selected then
+				local giz0 = self.selectedGizmoMap[ obj ]
+				if giz0 then giz0:destroyWithChildrenNow() end
 				self.selectedGizmoMap[ obj ] = giz
 			else
+				local giz0 = self.normalGizmoMap[ obj ]
+				if giz0 then giz0:destroyWithChildrenNow() end
 				self.normalGizmoMap[ obj ] = giz
 			end
 			self:addChild( giz )

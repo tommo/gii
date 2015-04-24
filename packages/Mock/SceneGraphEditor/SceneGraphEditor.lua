@@ -225,7 +225,7 @@ end
 function SceneGraphEditor:makeSceneSelectionCopyData()
 	local targets = getTopLevelEntitySelection()
 	local dataList = {}
-	for ent in pairs( targets ) do
+	for _, ent in ipairs( targets ) do
 		local data = mock.makeEntityCopyData( ent )
 		table.insert( dataList, data )
 	end
@@ -378,16 +378,16 @@ CLASS: CmdRemoveEntity ( mock_edit.EditorCommand )
 function CmdRemoveEntity:init( option )
 	local target = gii.getSelection( 'scene' )[1]
 	if not isInstance( target, mock.Entity ) then return false end
-	self.selection = gii.getSelection( 'scene' )
+	self.selection = getTopLevelEntitySelection()
 end
 
 function CmdRemoveEntity:redo()
 	for _, target in ipairs( self.selection ) do
 		if target.scene then 
 			target:destroyWithChildrenNow()
-			gii.emitPythonSignal('entity.removed', target )
 		end
 	end
+	gii.emitPythonSignal('entity.removed', target )
 end
 
 function CmdRemoveEntity:undo()
@@ -491,7 +491,7 @@ end
 
 function CmdCloneEntity:redo()
 	local createdList = {}
-	for target in pairs( self.targets ) do
+	for _, target in ipairs( self.targets ) do
 		local created = mock.copyAndPasteEntity( target, generateGUID )
 		local n = created:getName()
 		if n then
