@@ -295,7 +295,7 @@ QSplitter::handle:vertical {
 QTreeView, QListView
 {
 	background-color:#444;
-	alternate-background-color:#333;
+	alternate-background-color:#494949;
 	border:1px solid #222;
 }
 
@@ -405,10 +405,22 @@ QTabBar::tab
 	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #555, stop:1 #444);
 	color:#888;
 	padding:4px 5px;
+	border-bottom: 1px solid #222;
 	border-top: 1px solid #222;
-	/*border-bottom: 1px solid #333;*/
 	border-right: 1px solid #222;
-	border-left: 1px solid #222;
+	border-left: 0px solid #222;
+}
+
+QTabBar::tab:top {
+	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #555, stop:1 #444);
+	border-top: 2px solid #444;
+	border-bottom: 0;
+}
+
+QTabBar::tab:bottom {
+	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #555);
+	border-bottom: 2px solid #444;
+	border-top: 0;
 }
 
 QTabBar::tab:first{
@@ -422,12 +434,22 @@ QTabBar::tab:!selected:hover
 
 QTabBar::tab:selected
 {
-  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
 	color:#cdcdcd;
 	padding:4px 5px;
-	border-bottom: 0px solid #222;
+}
+
+QTabBar::tab:bottom:selected
+{
+  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #333, stop:1 #444);
+	border-bottom: 2px solid #466dc6;
+}
+
+QTabBar::tab:top:selected
+{
+  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
 	border-top: 2px solid #466dc6;
 }
+
 
 QProgressBar
 {
@@ -1006,4 +1028,12 @@ QSplitter#TimelineHeaderSplitter::handle{
 #containerPrefab QToolButton::pressed {
 	background-color: #466dc6;
 	color: #eee;
+}
+
+
+#containerPlayTool{
+	background-color:#333;
+}
+#containerEditTool{
+	border-bottom:1px solid #222;
 }

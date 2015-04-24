@@ -11,7 +11,7 @@ from GraphicsViewHelper import *
 import sys
 import math
 
-_RULER_SIZE = 25
+_RULER_SIZE = 23
 _TRACK_SIZE = 20
 _TRACK_MARGIN = 3
 _PIXEL_PER_SECOND = 100.0 #basic scale
@@ -628,7 +628,7 @@ class TimelineTrackView( TimelineSubView ):
 			sp1 = sp0 - dx
 			sy1 = sy0 + dy
 			self.setScrollPos( self.posToTime( sp1 ), True )
-			self.setScrollY( sy1, False )
+			# self.setScrollY( sy1, False )
 			self.updateTransfrom()
 
 	def mousePressEvent( self, event ):

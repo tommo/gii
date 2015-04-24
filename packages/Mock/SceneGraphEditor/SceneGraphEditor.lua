@@ -32,6 +32,7 @@ function SceneGraphEditor:openScene( path )
 	mock.setAssetCacheWeak()
 	GIIHelper.forceGC()
 	mock.setAssetCacheStrong()
+	mock_edit.updateMOAIGfxResource()
 	return scene
 end
 

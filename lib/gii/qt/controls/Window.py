@@ -266,7 +266,6 @@ class SubWindow(QtGui.QMainWindow, SubWindowMixin):
 		self.stayOnTop = False
 		self.setFocusPolicy( Qt.WheelFocus )
 
-
 	def hideTitleBar(self):
 		pass
 		# emptyTitle=QtGui.QWidget()

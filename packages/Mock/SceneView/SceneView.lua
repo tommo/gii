@@ -13,7 +13,6 @@ function onSceneOpen( scene )
 		_giiSceneView.scheduleUpdate()
 	end
 	scene:addEntity( view )
-	mock_edit.updateMOAIGfxResource()
 end
 
 function onSceneClose()

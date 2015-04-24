@@ -1,18 +1,14 @@
-
 from PyQt4 import QtGui, QtCore, QtOpenGL, uic
 from PyQt4.QtCore import Qt, QObject, QEvent, pyqtSignal
 from PyQt4.QtCore import QPoint, QRect, QSize
 from PyQt4.QtCore import QPointF, QRectF, QSizeF
 from PyQt4.QtGui import QColor, QTransform
 
-from TimelineComponents import TimelineHeaderView,TimelineRulerView,TimelineTrackView
+from TimelineComponents import TimelineRulerView,TimelineTrackView, _RULER_SIZE, _TRACK_SIZE, _TRACK_MARGIN
 from CurveView import CurveView
 
 import sys
 import math
-
-_TRACK_SIZE   = 20
-_TRACK_MARGIN = 3
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -27,7 +23,6 @@ TimelineForm,BaseClass = uic.loadUiType( _getModulePath('timeline2.ui') )
 class TimelineTrack( QObject ):
 	def __init__( self, view, node ):
 		QObject.__init__( self )
-		self.headerViewItem = False
 		self.trackViewItem  = False
 		self.trackType  = 'normal' # group / object / property
 		self.node = node
@@ -67,9 +62,7 @@ class TimelineTrack( QObject ):
 
 	def buildViewItems( self ):
 		view = self.getView()
-		self.headerViewItem = view.headerView.addTrackItem( self )
 		self.trackViewItem = view.trackView.addTrackItem( self )
-		self.headerViewItem.foldClicked.connect( self.onFoldToggle )
 
 	def getKeyByNode( self, keyNode ):
 		for key in self.keys:
@@ -77,15 +70,11 @@ class TimelineTrack( QObject ):
 				return key
 		return None
 
-	def getHeaderItem( self ):
-		return self.headerViewItem
-
 	def getTrackItem( self ):
 		return self.trackViewItem
 
 	def setY( self, y ):
 		self.trackViewItem.setPos( 0, y )
-		self.headerViewItem.setPos( 0, y )
 
 	def setViewItemVisible( self, visible ):
 		if visible:
@@ -167,13 +156,12 @@ class TimelineView( QtGui.QFrame ):
 		self.setObjectName( 'Timeline' )
 		self.ui = TimelineForm()
 		self.ui.setupUi( self )
-		self.ui.splitter.setObjectName('TimelineHeaderSplitter')
 		
 		self.trackView  = TimelineTrackView( parent = self )
-		self.headerView = TimelineHeaderView( parent = self )
 		self.rulerView  = TimelineRulerView( parent = self )
 		self.curveView  = CurveView( parent = self )
 		self.curveView.setAxisShown( False, True )
+		self.ui.containerRuler.setFixedHeight( _RULER_SIZE )
 		
 		trackLayout = QtGui.QVBoxLayout( self.ui.containerTrack )
 		trackLayout.setSpacing( 0)
@@ -185,18 +173,11 @@ class TimelineView( QtGui.QFrame ):
 		curveLayout.setMargin( 0 )
 		curveLayout.addWidget( self.curveView )
 
-		headerLayout = QtGui.QVBoxLayout( self.ui.containerHeader )
-		headerLayout.setSpacing( 0)
-		headerLayout.setMargin( 0 )
-		headerLayout.addWidget( self.headerView )
-
 		rulerLayout = QtGui.QVBoxLayout( self.ui.containerRuler )
 		rulerLayout.setSpacing( 0)
 		rulerLayout.setMargin( 0 )
 		rulerLayout.addWidget( self.rulerView )
 
-		self.trackView.scrollYChanged.connect( self.headerView.setScrollY )
-		self.headerView.scrollYChanged.connect( self.trackView.setScrollY )
 		# self.rulerView.cursorPosChanged
 		self.trackView.zoomChanged.connect( self.onZoomChanged )
 		self.rulerView.zoomChanged.connect( self.onZoomChanged )
@@ -207,10 +188,30 @@ class TimelineView( QtGui.QFrame ):
 		self.trackView.cursorPosChanged.connect( self.onCursorPosChanged )
 		self.rulerView.cursorPosChanged.connect( self.onCursorPosChanged )
 
+		self.tabBar = QtGui.QTabBar()		
+		bottomLayout = QtGui.QHBoxLayout( self.ui.containerBottom )
+		bottomLayout.addWidget( self.tabBar )
+		bottomLayout.setSpacing( 0 )
+		bottomLayout.setMargin( 0 )
+		self.tabBar.addTab( 'Dope Sheet')
+		self.tabBar.addTab( 'Curve View' )
+		self.tabBar.currentChanged.connect( self.onTabChanged )
+		self.tabBar.setShape( QtGui.QTabBar.RoundedSouth )
+		self.tabBar.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
+
+		self.toolbarEdit = QtGui.QToolBar()
+		bottomLayout.addWidget( self.toolbarEdit )
+		self.toolbarEdit.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+
 		self.setScrollPos( 0 )
 		self.setCursorPos( 0 )
 		self.setZoom( 1.0 )
 		# self.trackView.cursorPosChanged.connect(  )
+	def onTabChanged( self, idx ):
+		self.ui.containerContents.setCurrentIndex( idx )
+
+	def getRulerHeight( self ):
+		return _RULER_SIZE
 		
 	def getZoom( self ):
 		return self.rulerView.getZoom()
@@ -255,7 +256,6 @@ class TimelineView( QtGui.QFrame ):
 
 	def clear( self ):
 		self.hide()
-		self.headerView.clear()
 		self.trackView.clear()
 		self.rulerView.clear()
 		self.tracks = []
@@ -303,10 +303,8 @@ class TimelineView( QtGui.QFrame ):
 		del self.nodeToTrack[ track.node ]
 		track.node = None
 		track.clear()
-		self.ui.containerHeaders.layout().removeWidget( track.header )
 		self.ui.containerTracks.layout().removeWidget( track )
 		track.setParent( None )
-		track.header.setParent( None )
 		self.updateScrollTrackSize()
 
 	def addKey( self, keyNode, **option ):
@@ -430,9 +428,6 @@ class TimelineView( QtGui.QFrame ):
 	def createTrack( self, node ):
 		return TimelineTrack( )
 
-	def createTrackHeader( self, node ):
-		return TimelineTrackHeader( )
-
 	def getTrackNodes( self ):
 		return []
 
@@ -451,9 +446,6 @@ class TimelineView( QtGui.QFrame ):
 	def onTrackClicked( self, track, pos ):
 		self.selectTrack( track.node )
 
-	def onTrackHeaderClicked( self, track, header ):
-		self.selectTrack( track.node )
-
 	def onTrackDClicked( self, track, pos ):
 		pass
 
@@ -462,7 +454,6 @@ class TimelineView( QtGui.QFrame ):
 
 	def closeEvent( self, ev ):
 		self.trackView.deleteLater()
-		self.headerView.deleteLater()
 		self.rulerView.deleteLater()
 		
 	def __del__( self ):

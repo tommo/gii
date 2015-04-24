@@ -128,7 +128,7 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		fmt.setDepth(False)
 		fmt.setDoubleBuffer(True)
 		fmt.setSwapInterval(0)
-		# fmt.setSampleBuffers( True )
+		fmt.setSampleBuffers( True )
 		viewport = QtOpenGL.QGLWidget( fmt, None, getSharedGLWidget() )
 		viewport.makeCurrent()
 		self.setViewport( viewport )
