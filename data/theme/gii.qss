@@ -19,7 +19,7 @@ QLabel{
 QToolButton
 {
 	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#444,stop:1#333);
-	border: 1px solid #222;
+	border: 1px solid #252525;
 	border-radius:0px;
 	color:#ccc;
 	padding:2px;
@@ -34,7 +34,7 @@ QToolButton::hover
 QPushButton
 {
 	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#555,stop:1#444);
-	border: 1px solid #222;
+	border: 1px solid #252525;
 	border-radius:1px;
 	color:#dcdcdc;
 	padding:4px;
@@ -284,12 +284,12 @@ QSplitter::handle:hover
 
 QSplitter::handle:horizontal {
 	background-color:#222;
-	width: 2px;
+	width: 3px;
 }
 
 QSplitter::handle:vertical {
 	background-color:#222;
-	height: 2px;
+	height: 3px;
 }
 
 QTreeView, QListView
@@ -403,8 +403,8 @@ QTabWidget::tab-bar
 QTabBar::tab
 {
 	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #555, stop:1 #444);
-	color:#888;
-	padding:4px 5px;
+	color:#999;
+	padding:5px 10px 3px 10px;
 	border-bottom: 1px solid #222;
 	border-top: 1px solid #222;
 	border-right: 1px solid #222;
@@ -434,8 +434,9 @@ QTabBar::tab:!selected:hover
 
 QTabBar::tab:selected
 {
-	color:#cdcdcd;
-	padding:4px 5px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	color:#cdcdcd;	
 }
 
 QTabBar::tab:bottom:selected
@@ -465,7 +466,7 @@ QProgressBar::chunk
 
 QToolBar
 {
-	border:1px solid #222;
+	border-bottom:1px solid #222;
 	padding:1px;
 	spacing:2px;
 }
@@ -629,7 +630,8 @@ QLineEdit, QTextEdit, QPlainTextEdit, QSpinBox, QDoubleSpinBox
 }
 
 QLineEdit:read-only, QTextEdit:read-only, QPlainTextEdit:read-only, QSpinBox:read-only, QDoubleSpinBox:read-only {
-	background-color:#414859;
+	color:#888;
+	background-color:#333;
 }
 
 
@@ -719,8 +721,9 @@ SearchLineEdit > QLineEdit
 
 :disabled
 {
-	color:#989;
+	color:#999;
 }
+
 
 QMainWindow,QScrollBar,QTableView
 {
@@ -833,7 +836,10 @@ QToolButton::checked{
 }
 
 #PropertyEditor {
-	background-color:#555;
+	background-color:#444;
+	border:1px solid #282828;
+	padding: 4px;
+	padding-bottom: 10px;
 }
 
 #FieldLabel {
@@ -893,6 +899,10 @@ QToolButton::checked{
 	background-color: #466dc6;
 }
 
+#ObjectContainer #PropertyEditor {
+	border-top: 0px;
+	background-color: transparent;
+}
 
 QSplitter#TimelineSplitter::handle{
 	background-color:#333;
@@ -1031,9 +1041,24 @@ QSplitter#TimelineHeaderSplitter::handle{
 }
 
 
+
 #containerPlayTool{
 	background-color:#333;
-}
-#containerEditTool{
 	border-bottom:1px solid #222;
+}
+
+#TimelineToolBarPlay{
+	border-bottom:1px solid #444;
+}
+
+#TimelineToolBarPlay QToolButton{
+	/*border: 0px ;*/
+	/*border-radius:2px;*/
+	spacing:0;
+}
+
+
+#AnimatorTrackTree{
+	background-color:#383838;
+	alternate-background-color:#404040;
 }
