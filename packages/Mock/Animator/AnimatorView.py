@@ -98,6 +98,13 @@ class AnimatorView( SceneEditorModule ):
 	def getClipList( self ):
 		return []
 
+	def getTrackList( self ):
+		if self.editTarget:
+			trackList = self.editTarget.getTrackList( self.editTarget )
+			return [ track for track in trackList.values()  ]
+		else:
+			return []
+
 	def getClipRoot( self ):
 		if self.editTarget:
 			return self.editTarget.getRoot( self.editTarget )

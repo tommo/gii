@@ -120,11 +120,10 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		super( GLGraphicsView, self ).__init__( *args, **kwargs )
 		self.setHorizontalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
 		self.setVerticalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
-		# self.setViewportUpdateMode( QtGui.QGraphicsView.SmartViewportUpdate )
-		self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )
+		self.setViewportUpdateMode( QtGui.QGraphicsView.SmartViewportUpdate )
+		# self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )
 		fmt = QtOpenGL.QGLFormat()
 		fmt.setRgba(True)
-		# fmt.setAlpha(True)
 		fmt.setDepth(False)
 		fmt.setDoubleBuffer(True)
 		fmt.setSwapInterval(0)
@@ -136,7 +135,7 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		self.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		self.setRenderHint( QtGui.QPainter.HighQualityAntialiasing, False )
 		self.setTransformationAnchor( self.NoAnchor )
-		# self.setCacheMode( self.CacheBackground )
+		self.setCacheMode( self.CacheBackground )
 
 
 ##----------------------------------------------------------------##

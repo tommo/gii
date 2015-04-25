@@ -66,6 +66,16 @@ function SceneGraphEditor:refreshScene()
 	return r
 end
 
+function SceneGraphEditor:locateProto( path )
+	local protoData = mock.loadAsset( path )
+	local rootId = protoData.rootId
+	for ent in pairs( self.scene.entities ) do
+		if ent.__guid == rootId then
+			return gii.changeSelection( 'scene', ent )
+		end
+	end
+end
+
 function SceneGraphEditor:postLoadScene()
 	local scene = self.scene
 	scene:setEntityListener( function( action, ... ) return self:onEntityEvent( action, ... ) end )
@@ -795,6 +805,27 @@ function CmdCreateProtoInstance:createEntity()
 		[ 'name' ] = true,
 	}
 	return instance
+end
+
+
+--------------------------------------------------------------------
+CLASS: CmdUnlinkProto ( mock_edit.EditorCommand )
+	:register( 'scene_editor/create_proto_instance' )
+
+--TODO
+function CmdUnlinkProto:init( option )
+	self.entity     = option['entity']
+	self.prefabId = self.entity.__prefabId
+end
+
+function CmdUnlinkProto:redo()
+	self.entity.__prefabId = nil
+	gii.emitPythonSignal( 'prefab.unlink', self.entity )
+end
+
+function CmdUnlinkProto:undo()
+	self.entity.__prefabId = self.prefabId --TODO: other process
+	gii.emitPythonSignal( 'prefab.relink', self.entity )
 end
 
 

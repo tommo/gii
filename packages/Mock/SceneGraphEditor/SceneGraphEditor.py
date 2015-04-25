@@ -191,22 +191,29 @@ class SceneGraphEditor( SceneEditorModule ):
 	def getActiveScene( self ):
 		return self.delegate.safeCallMethod( 'editor', 'getScene' )
 
-	def openScene( self, node ):
+	def openScene( self, node, protoNode = None ):
 		if self.activeSceneNode == node:			
 			if self.getModule('scene_view'):
 				self.getModule('scene_view').setFocus()
-			return
-		if not self.closeScene(): return
-		self.activeSceneNode = node
-		signals.emitNow( 'scene.pre_open', node )
-		scene = self.delegate.safeCallMethod( 'editor', 'openScene', node.getPath() )
-		if not scene:
-			#todo: raise something
-			alertMessage( 'error', 
-				'%s\n\nfailed to open scene, see console for detailed information.' % node.getPath() )
-			return False
-		signals.emitNow( 'scene.open', self.activeSceneNode, scene )
-		self.setFocus()		
+
+			if protoNode:
+				self.delegate.safeCallMethod( 'editor', 'locateProto', protoNode.getPath() )
+				if self.getModule('scene_view'):
+					self.getModule('scene_view').focusSelection()
+				
+		else:
+			if not self.closeScene(): return
+			self.activeSceneNode = node
+			signals.emitNow( 'scene.pre_open', node )
+			scene = self.delegate.safeCallMethod( 'editor', 'openScene', node.getPath() )
+			if not scene:
+				#todo: raise something
+				alertMessage( 'error', 
+					'%s\n\nfailed to open scene, see console for detailed information.' % node.getPath() )
+				return False
+			signals.emitNow( 'scene.open', self.activeSceneNode, scene )
+			self.setFocus()
+			self.editingProtoNode = protoNode		
 		
 	def closeScene( self ):
 		if self.sceneDirty:
@@ -239,6 +246,11 @@ class SceneGraphEditor( SceneEditorModule ):
 		retainedState = self.activeSceneNode.getMetaData( 'tree_state', None )
 		if retainedState:
 			self.tree.loadFoldState( retainedState )
+		if self.editingProtoNode:
+			self.delegate.safeCallMethod( 'editor', 'locateProto', self.editingProtoNode.getPath() )
+			self.editingProtoNode = None
+			if self.getModule('scene_view'):
+					self.getModule('scene_view').focusSelection()
 		
 	def saveScene( self ):
 		if not self.activeSceneNode: return

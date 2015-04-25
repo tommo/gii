@@ -152,9 +152,10 @@ class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin ): #a generic propert
 			assetBrowser.locateAsset( getProtoPath(self.target) )
 
 	def onEditPrefab( self ):
-		assetBrowser = app.getModule( 'asset_browser' )
-		if assetBrowser:
-			assetBrowser.locateAsset( getProtoPath(self.target) )
+		path = getProtoPath( self.target )
+		assetNode = app.getAssetLibrary().getAssetNode( path )
+		if assetNode:
+			assetNode.edit()
 
 	def onUnlinkPrefab( self ):
 		app.doCommand(

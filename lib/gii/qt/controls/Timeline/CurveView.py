@@ -558,6 +558,7 @@ class CurveView( GLGraphicsView ):
 			curve.setZoom( self.zoomX, self.zoomY )
 		self.gridBackground.setZoom( self.zoomX, self.zoomY )
 		self.updateTransfrom()
+		self.cursorLine.setX( self.valueToX( self.cursorX ) )
 
 	def mouseMoveEvent( self, event ):
 		super( CurveView, self ).mouseMoveEvent( event )

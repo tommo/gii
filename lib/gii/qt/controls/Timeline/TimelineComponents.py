@@ -29,7 +29,7 @@ makeStyle( 'key:hover',          '#dfecff',    '#acbcff'              )
 makeStyle( 'key:selected',       '#ffffff',    '#a0ff00'              )
 makeStyle( 'key-span',           '#000',       '#303459'    ,'#c2c2c2' )
 makeStyle( 'key-span:selected',  '#ffffff',    '#303459'               )
-makeStyle( 'track',                None,       dict( color = '#444', alpha = 0.1 ) )
+makeStyle( 'track',                None,       dict( color = '#444', alpha = 0.2 ) )
 makeStyle( 'track:selected',       None,       dict( color = '#555', alpha = 0.2 ) )
 
 
@@ -284,7 +284,7 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		self.keyItems = []
 		self.zoom = 1
 		self.setItemType( 'track' )
-		# self.setItemState( 'selected' )
+		self.setItemState( 'normal' )
 
 	def addKeyItem( self, key ):
 		keyItem = TimelineKeyItem( self )

@@ -325,6 +325,29 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			if item:
 				item.setExpanded( True )
 
+	def isNodeExpanded( self, node ):
+		item = self.getItemByNode( node )
+		if item:
+			return item.isExpanded()
+
+	def isNodeVisible( self, node, considerFold = True ):
+		item = self.getItemByNode( node )
+		if item:
+			if item.isHidden(): return False
+			if considerFold:
+				p = item.parent()
+				while p:
+					if not p.isExpanded(): return False
+					p = p.parent()
+			return True
+
+	def getNodeVisualRect( self, node ):
+		item = self.getItemByNode( node )
+		if item:
+			return self.visualItemRect( item )
+		else:
+			return None
+
 	##----------------------------------------------------------------##
 	## VIRTUAL Functions
 	##----------------------------------------------------------------##	

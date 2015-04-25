@@ -40,7 +40,7 @@ class SceneAssetManager(AssetManager):
 			editor.openScene( node )
 		elif node.assetType == 'proto':
 			scnNode = node.getParent()
-			editor.openScene( scnNode )
+			editor.openScene( scnNode, node )
 		else:
 			return
 

@@ -54,7 +54,7 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		return node.parent
 
 	def getNodeChildren( self, node ):
-		return [ action for action in node.children.values() ]
+		return [ clip for clip in node.children.values() ]
 
 	def updateItemContent( self, item, node, **option ):
 		pal = self.palette()
@@ -81,10 +81,12 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		self.setColumnWidth ( 1, 30 )
 
 	def onItemExpanded( self, item ):
-		pass
+		node = item.node
+		self.parentView.onTrackFolded( node, False )
 
 	def onItemCollapsed( self, item ):
-		pass
+		node = item.node
+		self.parentView.onTrackFolded( node, True )
 
 	def onScrollRangeChanged( self, min, max ):
 		if self.adjustingRange: return
@@ -138,13 +140,23 @@ class AnimatorClipListTree( GenericTreeWidget ):
 ##----------------------------------------------------------------##
 class AnimatorTimelineWidget( TimelineView ):
 	def getTrackNodes( self ):
-		return []
+		return self.owner.getTrackList()
 
 	def getKeyNodes( self, trackNode ):
-		return [] 
+		keys = trackNode['keys']
+		if keys:
+			return [ key for key in keys.values() ]
+		else:
+			return []
 
 	def getParentTrackNode( self, keyNode ):
-		return keyNode.parent
+		return keyNode['parent']
+
+	def getTrackPos( self, trackNode ):
+		return self.parentView.getTrackPos( trackNode )
+
+	def isTrackVisible( self, trackNode ):
+		return self.parentView.isTrackVisible( trackNode )
 
 	def updateTrackContent( self, track, trackNode, **option ):
 		# trackType = trackNode.getType( trackNode )
@@ -159,19 +171,19 @@ class AnimatorTimelineWidget( TimelineView ):
 		pass
 
 	def getKeyParam( self, keyNode ):
-		# resizable = keyNode.isResizable( keyNode )
-		# length = resizable and keyNode.length or 0
-		# return keyNode.pos, length, resizable 
-		pass
+		resizable = keyNode.isResizable( keyNode )
+		length = resizable and keyNode.length or 0
+		return float(keyNode.getPos( keyNode ))/1000.0, length, resizable 
 
 	def onTrackDClicked( self, track, pos ):
 		pass
-		# actionTrack = track.node
-		# self.module.addEvent( actionTrack, pos, None )
-		# eventTypes = actionTrack.getEventTypes( actionTrack )
+
+		# clipTrack = track.node
+		# self.module.addEvent( clipTrack, pos, None )
+		# eventTypes = clipTrack.getEventTypes( clipTrack )
 		# if not eventTypes:			
 		# else:
-		# 	self.module.promptAddEvent( actionTrack, pos )
+		# 	self.module.promptAddEvent( clipTrack, pos )
 
 	def formatPos( self, pos ):
 		i = int( pos/1000 )
@@ -259,6 +271,9 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 
 	def setOwner( self, owner ):
 		self.owner = owner
+		self.treeTracks.parentView = self
+		self.treeClips.parentView = self
+		self.timeline.parentView = self
 		self.treeTracks.owner = owner
 		self.treeClips.owner = owner
 		self.timeline.owner = owner
@@ -268,5 +283,15 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.treeClips.rebuild()
 		self.timeline.rebuild()
 
+	def isTrackVisible( self, trackNode ):
+		return self.treeTracks.isNodeVisible( trackNode )
+
+	def getTrackPos( self, trackNode ):
+		rect = self.treeTracks.getNodeVisualRect( trackNode )
+		return rect.y() + 2
+
 	def onTrackTreeScroll( self, v ):
 		self.timeline.setTrackViewScroll( -v )
+
+	def onTrackFolded( self, track, folded ):
+		self.timeline.updateTrackLayout()
