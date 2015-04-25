@@ -35,7 +35,7 @@ class NumberFieldEditor( FieldEditor ):
 		self.control.setValue( value or 0 )
 
 	def setReadonly( self, readonly ):
-		self.control.setEnabled( not readonly )
+		self.control.setReadOnly( readonly )
 
 	def initEditor( self, container ):
 		self.step = self.getOption( 'step', 1 )

@@ -55,7 +55,6 @@ class SceneGraphEditor( SceneEditorModule ):
 			)
 
 		#Components
-		self.tool = self.addToolBar( 'scene_graph', self.container.addToolBar() )
 		self.tree = self.container.addWidget( 
 				SceneGraphTreeWidget( 
 					self.container,
@@ -66,6 +65,7 @@ class SceneGraphEditor( SceneEditorModule ):
 				)
 			)
 		self.tree.module = self
+		self.tool = self.addToolBar( 'scene_graph', self.container.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( getModulePath( 'SceneGraphEditor.lua' ) )
 
@@ -653,6 +653,8 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 	def __init__( self, *args, **kwargs ):
 		super( SceneGraphTreeWidget, self ).__init__( *args, **kwargs )
 		self.syncSelection = True
+		self.adjustingRange = False
+		self.verticalScrollBar().rangeChanged.connect( self.onScrollRangeChanged )
 
 	def getHeaderInfo( self ):
 		return [('Name',200), ( 'Layer', 50 ), ('Type', 50)]
@@ -787,8 +789,12 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		self.module.onPasteEntity()
 		return True
 
+	def onScrollRangeChanged( self, min, max ):
+		if self.adjustingRange: return
+		self.adjustingRange = True
+		self.verticalScrollBar().setRange( min, max + 5 )
+		self.adjustingRange = False
 
-	
 ##----------------------------------------------------------------##
 #TODO: allow sort by other column
 class SceneGraphTreeItem(QtGui.QTreeWidgetItem):

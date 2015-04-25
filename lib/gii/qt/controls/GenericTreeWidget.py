@@ -1,16 +1,24 @@
 
 from PyQt4 import QtCore, QtGui, uic
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QSize
 from PyQt4.QtGui import QApplication
 ##----------------------------------------------------------------##
 class no_editItemDelegate( QtGui.QStyledItemDelegate ):
 	def createEditor( *args ):
 		return None
 
+# class GenericTreeItemDelegate( QtGui.QStyledItemDelegate ):
+# 	def sizeHint( self, option, index ):
+# 		return QSize( 200,50 )
+
 ##----------------------------------------------------------------##
 class GenericTreeWidget( QtGui.QTreeWidget ):
 	def __init__( self, *args, **option ):
 		super(GenericTreeWidget, self).__init__(*args)
+		self.setAttribute(Qt.WA_MacShowFocusRect, False)
+		self.setUniformRowHeights( True )
+		self.setHorizontalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
+		self.setVerticalScrollMode( QtGui.QAbstractItemView.ScrollPerItem )
 		self.nodeDict = {}
 		self.no_editItemDelegate = no_editItemDelegate( self )
 		self.refreshing = False
@@ -18,6 +26,8 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		headerInfo = self.getHeaderInfo()
 		headerItem = QtGui.QTreeWidgetItem()
 		self.setHeaderItem(headerItem)
+		# self._itemDelegate = GenericTreeItemDelegate( self )
+		# self.setItemDelegate( self._itemDelegate )
 		for i in range( 0, len(headerInfo) ):
 			info =  headerInfo[i]
 			headerItem.setText ( i, info[0] )
@@ -50,7 +60,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.itemChanged          .connect( self._onItemChanged )
 		self.setIndentation( 15 )
 
-		self.initRootItem()
+		self.initRootItem()		
 
 	def getOption( self, k, v ):
 		defOption = self.getDefaultOptions()

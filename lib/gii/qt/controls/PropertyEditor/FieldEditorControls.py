@@ -149,6 +149,10 @@ class FieldEditorSliderBox(QtGui.QWidget):
 		self.maxValue = 100
 		self.updateSliderStep()
 
+	def setReadOnly( self, readonly = True ):
+		self.text.setReadOnly( readonly )
+		self.slider.setEnabled( not readonly )
+
 	def setNumberType( self, t ):
 		self.numberType = t
 

@@ -71,7 +71,7 @@ def buildFieldEditor( parentEditor, field ):
 	return None
 
 ##----------------------------------------------------------------##
-class PropertyEditor( QtGui.QWidget ):
+class PropertyEditor( QtGui.QFrame ):
 	propertyChanged = QtCore.pyqtSignal( object, str, object )
 	contextMenuRequested = QtCore.pyqtSignal( object, str )
 	
@@ -88,6 +88,7 @@ class PropertyEditor( QtGui.QWidget ):
 		self.layout = layout
 		self.layout.setHorizontalSpacing( 4 )
 		self.layout.setVerticalSpacing( 1 )
+		self.layout.setMargin( 4 )
 		self.layout.setLabelAlignment( Qt.AlignLeft )
 		self.layout.setFieldGrowthPolicy( QtGui.QFormLayout.ExpandingFieldsGrow )
 		self.setSizePolicy( 
