@@ -12,10 +12,10 @@ import sys
 import math
 
 _RULER_SIZE = 23
-_TRACK_SIZE = 20
+_TRACK_SIZE = 17
 _TRACK_MARGIN = 3
 _PIXEL_PER_SECOND = 100.0 #basic scale
-_HEAD_OFFSET = 15
+_HEAD_OFFSET = 30
 
 ##----------------------------------------------------------------##
 _DEFAULT_BG = makeBrush( color = '#222' )
@@ -27,8 +27,10 @@ makeStyle( 'default',            '#000000',    '#ff0ecf'              )
 makeStyle( 'key',                '#000000',    '#acbcff'              )
 makeStyle( 'key:hover',          '#dfecff',    '#acbcff'              )
 makeStyle( 'key:selected',       '#ffffff',    '#a0ff00'              )
-makeStyle( 'key-span',           '#000',    '#303459'    ,'#c2c2c2' )
+makeStyle( 'key-span',           '#000',       '#303459'    ,'#c2c2c2' )
 makeStyle( 'key-span:selected',  '#ffffff',    '#303459'               )
+makeStyle( 'track',                None,       dict( color = '#444', alpha = 0.1 ) )
+makeStyle( 'track:selected',       None,       dict( color = '#555', alpha = 0.2 ) )
 
 
 ##----------------------------------------------------------------##
@@ -274,13 +276,15 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		self.setTimePos( key.getTimePos() )
 
 ##----------------------------------------------------------------##
-class TimelineTrackItem( QtGui.QGraphicsRectItem ):
+class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def __init__( self, track ):
 		super(TimelineTrackItem, self).__init__()
 		self.track = track
 		self.index = 0
 		self.keyItems = []
-		self.zoom = 1		
+		self.zoom = 1
+		self.setItemType( 'track' )
+		# self.setItemState( 'selected' )
 
 	def addKeyItem( self, key ):
 		keyItem = TimelineKeyItem( self )
@@ -305,6 +309,10 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem ):
 
 	def posToTime( self, p ):
 		return self.view.posToTime( p )
+
+	def onPaint( self, painter, option, widget ):
+		rect = self.rect()
+		painter.drawRect( rect )
 
 ##----------------------------------------------------------------##
 class TimelineRulerCursorItem( QtGui.QGraphicsRectItem ):
@@ -449,101 +457,6 @@ class TimelineRulerView( TimelineSubView ):
 
 
 ##----------------------------------------------------------------##
-class TimelineHeaderWidget( QtGui.QWidget ):
-	def __init__(self):
-		super(TimelineHeaderWidget, self).__init__()
-		layout = QtGui.QHBoxLayout( self )
-		layout.setSpacing( 0 )
-		layout.setMargin( 0 )
-		self.buttonFold = QtGui.QToolButton()
-		self.buttonFold.setText( '+' )
-		self.buttonItem = QtGui.QToolButton()
-		self.buttonItem.setText( 'Track Item' )
-		self.buttonItem.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
-		self.buttonKey = QtGui.QToolButton()
-		self.buttonKey.setText( '>' )
-		layout.addWidget( self.buttonFold )
-		layout.addWidget( self.buttonItem )
-		layout.addWidget( self.buttonKey )
-
-##----------------------------------------------------------------##
-class TimelineHeaderItem( QtGui.QGraphicsProxyWidget ):
-	foldClicked = pyqtSignal()
-	def __init__( self, track ):
-		super( TimelineHeaderItem, self ).__init__()
-		self.track = track
-		self.setCursor( Qt.PointingHandCursor )
-		widget = TimelineHeaderWidget()
-		self.setWidget( widget )
-		self.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
-		# widget.clicked.connect( self.foldClicked )
-
-	def setIndent( self, indent ):
-		self.indent = indent
-
-	def setText( self, text ):
-		self.text = text
-		self.update()
-
-	def setWidth( self, width ):
-		pos = self.pos()
-		self.setGeometry( QRectF( 0, pos.y(), width, _TRACK_SIZE ) )
-
-##----------------------------------------------------------------##
-class TimelineHeaderView( TimelineSubView ):
-	scrollYChanged  = pyqtSignal( float )
-	def __init__( self, *args, **kwargs ):
-		super( TimelineHeaderView, self ).__init__( *args, **kwargs )
-		self.scene = QtGui.QGraphicsScene( self )
-		self.scene.setBackgroundBrush( _DEFAULT_BG );
-		self.scene.setSceneRect( QRectF( 0,0, 10000, 10000 ) )
-		self.setScene( self.scene )
-		self.scrollY = 0
-		self.updating = False
-		self.scene.sceneRectChanged.connect( self.onRectChanged )
-		self.headerItems = []
-
-	def clear( self ):
-		pass
-
-	def setScrollY( self, y, update = True ):
-		self.scrollY = y
-		if self.updating: return
-		self.updating = True
-		self.scrollYChanged.emit( self.scrollY )
-		if update:
-			self.updateTransfrom()
-		self.updating = False
-
-	def updateTransfrom( self ):
-		trans = QTransform()
-		trans.translate( 0, self.scrollY )
-		self.setTransform( trans )
-
-	def onRectChanged( self ):
-		pass
-
-	def wheelEvent(self, event):
-		pass
-
-	def addTrackItem( self, track ):
-		item = TimelineHeaderItem( track )
-		self.scene.addItem( item )
-		self.headerItems.append( item )
-		item.setWidth( self.width() )
-		# button = QtGui.QPushButton()
-		# button.setFixedSize( 300, _TRACK_SIZE * 2 )
-		# self.scene.addWidget( button )
-		# button.setText( 'hello, graphics button' )
-		return item
-
-	def resizeEvent( self, event ):
-		w = self.width()
-		for item in self.headerItems:
-			item.setWidth( w )
-
-
-##----------------------------------------------------------------##
 class TimelineTrackView( TimelineSubView ):
 	scrollYChanged   = pyqtSignal( float )
 	def __init__( self, *args, **kwargs ):
@@ -572,6 +485,7 @@ class TimelineTrackView( TimelineSubView ):
 		#grid
 		self.gridBackground = GridBackground()
 		self.gridBackground.setGridSize( self.gridSize, _TRACK_SIZE + _TRACK_MARGIN )
+		self.gridBackground.setAxisShown( False, True )
 		self.gridBackground.setOffset( _HEAD_OFFSET, -1 )
 		self.scene.addItem( self.gridBackground )
 
@@ -583,6 +497,7 @@ class TimelineTrackView( TimelineSubView ):
 	def addTrackItem( self, track ):
 		item = TimelineTrackItem( track )
 		item.view = self
+		item.setRect( 0,0, 10000, _TRACK_SIZE )
 		self.scene.addItem( item )
 		self.trackItems.append( item )
 		item.index = len( self.trackItems )
@@ -597,6 +512,9 @@ class TimelineTrackView( TimelineSubView ):
 		if update:
 			self.updateTransfrom()
 		self.updating = False
+
+	def getScrollY( self ):
+		return self.scrollY
 
 	def onCursorPosChanged( self, pos ):
 		self.cursorLine.setX( self.timeToPos( self.cursorPos ) )
@@ -616,7 +534,7 @@ class TimelineTrackView( TimelineSubView ):
 		sx = - self.timeToPos( self.scrollPos ) + _HEAD_OFFSET
 		trans.translate( sx, self.scrollY )
 		self.setTransform( trans )
-		self.update()
+		# self.update()
 
 	def mouseMoveEvent( self, event ):
 		super( TimelineTrackView, self ).mouseMoveEvent( event )

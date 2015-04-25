@@ -1,8 +1,8 @@
 module 'mock_edit'
 --------------------------------------------------------------------
-local handleSize = 100
-local handleArrowSize = 20
-local handlePad = 20
+local handleSize = 80
+local handleArrowSize = 12
+local handlePad = 15
 --------------------------------------------------------------------
 ---Handles
 --------------------------------------------------------------------

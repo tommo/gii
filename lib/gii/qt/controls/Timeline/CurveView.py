@@ -443,8 +443,13 @@ class CurveItem( QtGui.QGraphicsRectItem ):
 
 ##----------------------------------------------------------------##
 class CurveView( GLGraphicsView ):
+	scrollXChanged = pyqtSignal( float )
+	scrollYChanged = pyqtSignal( float )
+	zoomXChanged   = pyqtSignal( float )
+	zoomYChanged   = pyqtSignal( float )
 	def __init__(self, *args, **kwargs ):
 		super(CurveView, self).__init__( *args, **kwargs )
+		self.updating = False
 		self.setScene( QtGui.QGraphicsScene() )
 		self.setBackgroundBrush( _DEFAULT_BG )
 		self.curves = []
@@ -454,13 +459,21 @@ class CurveView( GLGraphicsView ):
 		
 		#components
 		self.cursorLine = CursorLine()
-		self.cursorLine.setLine( 0,0, 0, 10000 )
+		self.cursorLine.setLine( 0,-10000, 0, 20000 )
 		self.cursorLine.setZValue( 1000 )
 		self.scene().addItem( self.cursorLine )
 
 		self.panning = False
+		self.scrollX = 0
+		self.scrollY = 0
+		self.scrollXMin = None
+		self.scrollXMax = None
+
+		self.cursorX = 0
+		self.cursorY = 0
+		
 		self.offsetX = 0
-		self.offsetY = 0
+
 		self.zoomX = 1.0
 		self.zoomY = 1.0
 		self.scene().setSceneRect( QRectF( -10000,-10000, 20000, 20000 ) )
@@ -474,10 +487,32 @@ class CurveView( GLGraphicsView ):
 		self.gridBackground.showXAxis = xAxis
 		self.gridBackground.showYAxis = yAxis
 
-	def setOffset( self, ox, oy ):
-		self.offsetX = ox
-		self.offsetY = oy
-		self.update()
+	def setScrollXLimit( self, minX, maxX ):
+		self.scrollXMin = minX
+		self.scrollXMax = maxX
+
+	def setScroll( self, x, y ):
+		if not self.scrollXMin is None:
+			x = max( self.scrollXMin, x )
+		# if self.scrollXMin:
+		# 	x = max( self.scrollXMin, x )
+		self.scrollX = x
+		self.scrollY = y
+		self.scrollXChanged.emit( self.scrollX )
+		self.scrollYChanged.emit( self.scrollY )
+		self.updateTransfrom()
+
+	def setScrollX( self, x ):
+		if not self.scrollXMin is None:
+			x = max( self.scrollXMin, x )
+		self.scrollX = x
+		self.scrollXChanged.emit( self.scrollX )
+		self.updateTransfrom()
+
+	def setOffset( self, x, y ):
+		self.offsetX = x
+		self.offsetY = y
+		self.updateTransfrom()
 
 	def addCurve( self ):
 		curve = CurveItem()
@@ -485,6 +520,10 @@ class CurveView( GLGraphicsView ):
 		self.curves.append( curve )
 		curve.setZoom( self.zoomX, self.zoomY )
 		return curve
+
+	def setCursorX( self, vx ):
+		self.cursorX = vx
+		self.cursorLine.setX( self.valueToX( vx ) )
 
 	def wheelEvent(self, event):
 		steps = event.delta() / 120.0;
@@ -505,10 +544,12 @@ class CurveView( GLGraphicsView ):
 				self.setZoomX( self.zoomX / zoomRate )
 
 	def setZoomX( self, zoom ):
+		self.zoomXChanged.emit( zoom )
 		self.zoomX = zoom
 		self.onZoomChanged()
 
 	def setZoomY( self, zoom ):
+		self.zoomYChanged.emit( zoom )
 		self.zoomY = zoom
 		self.onZoomChanged()
 
@@ -523,18 +564,17 @@ class CurveView( GLGraphicsView ):
 		if self.panning:
 			p1 = event.pos()
 			p0, off0 = self.panning
-			dx = p1.x() - p0.x()
-			dy = p1.y() - p0.y()
+			dx = p0.x() - p1.x()
+			dy = p0.y() - p1.y()
 			offX0, offY0 = off0
 			offX1 = offX0 + dx
 			offY1 = offY0 + dy
-			self.setOffset( self.xToValue( offX1 ), self.yToValue( offY1 ) )
-			self.updateTransfrom()
+			self.setScroll( self.xToValue( offX1 ), self.yToValue( offY1 ) )
 
 	def mousePressEvent( self, event ):
 		super( CurveView, self ).mousePressEvent( event )
 		if event.button() == Qt.MidButton:
-			offX0, offY0 = self.valueToPos( self.offsetX, self.offsetY )
+			offX0, offY0 = self.valueToPos( self.scrollX, self.scrollY )
 			self.panning = ( event.pos(), ( offX0, offY0 ) )
 
 	def mouseReleaseEvent( self, event ):
@@ -545,10 +585,13 @@ class CurveView( GLGraphicsView ):
 				# self.setCursor( Qt.ArrowCursor )
 
 	def updateTransfrom( self ):
+		if self.updating : return
+		self.updating = True
 		trans = QTransform()
-		trans.translate( self.valueToX( self.offsetX ), self.valueToY( self.offsetY ) )
+		trans.translate( self.valueToX( -self.scrollX ) + self.offsetX, self.valueToY( -self.scrollY ) )
 		self.setTransform( trans )
 		self.update()
+		self.updating = False
 
 	def xToValue( self, x ):
 		return  x /( _PIXEL_PER_UNIT * self.zoomX )

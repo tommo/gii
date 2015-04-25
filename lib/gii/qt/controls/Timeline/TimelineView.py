@@ -4,7 +4,8 @@ from PyQt4.QtCore import QPoint, QRect, QSize
 from PyQt4.QtCore import QPointF, QRectF, QSizeF
 from PyQt4.QtGui import QColor, QTransform
 
-from TimelineComponents import TimelineRulerView,TimelineTrackView, _RULER_SIZE, _TRACK_SIZE, _TRACK_MARGIN
+from TimelineComponents import TimelineRulerView,TimelineTrackView
+from TimelineComponents import _RULER_SIZE, _TRACK_SIZE, _TRACK_MARGIN, _HEAD_OFFSET
 from CurveView import CurveView
 
 import sys
@@ -27,7 +28,6 @@ class TimelineTrack( QObject ):
 		self.trackType  = 'normal' # group / object / property
 		self.node = node
 		self.view = view
-		self.folded  = False
 		self.visible = True
 
 		self.buildViewItems()
@@ -46,7 +46,6 @@ class TimelineTrack( QObject ):
 		if not self.visible: return False
 		if self.parent:
 			if not self.parent.isVisible(): return False
-			if self.parent.folded: return False
 		return True
 
 	def addKey( self, keyNode ):
@@ -83,10 +82,6 @@ class TimelineTrack( QObject ):
 		else:
 			self.trackViewItem.hide()
 			self.trackViewItem.hide()
-
-	def onFoldToggle( self ):
-		self.folded = not self.folded
-		self.view.updateTrackLayout()
 
 ##----------------------------------------------------------------##
 class TimelineKey( QObject ):
@@ -161,6 +156,9 @@ class TimelineView( QtGui.QFrame ):
 		self.rulerView  = TimelineRulerView( parent = self )
 		self.curveView  = CurveView( parent = self )
 		self.curveView.setAxisShown( False, True )
+		self.curveView.setOffset( _HEAD_OFFSET, 0 )
+		self.curveView.setScrollXLimit( 0, None )
+
 		self.ui.containerRuler.setFixedHeight( _RULER_SIZE )
 		
 		trackLayout = QtGui.QVBoxLayout( self.ui.containerTrack )
@@ -181,9 +179,11 @@ class TimelineView( QtGui.QFrame ):
 		# self.rulerView.cursorPosChanged
 		self.trackView.zoomChanged.connect( self.onZoomChanged )
 		self.rulerView.zoomChanged.connect( self.onZoomChanged )
+		self.curveView.zoomXChanged.connect( self.onZoomChanged )
 
 		self.trackView.scrollPosChanged.connect( self.onScrollPosChanged )
 		self.rulerView.scrollPosChanged.connect( self.onScrollPosChanged )
+		self.curveView.scrollXChanged.connect( self.onScrollPosChanged )
 
 		self.trackView.cursorPosChanged.connect( self.onCursorPosChanged )
 		self.rulerView.cursorPosChanged.connect( self.onCursorPosChanged )
@@ -200,6 +200,7 @@ class TimelineView( QtGui.QFrame ):
 		self.tabBar.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
 
 		self.toolbarEdit = QtGui.QToolBar()
+		self.toolbarEdit.setObjectName( 'TimelineToolBarEdit')
 		bottomLayout.addWidget( self.toolbarEdit )
 		self.toolbarEdit.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
 
@@ -207,11 +208,15 @@ class TimelineView( QtGui.QFrame ):
 		self.setCursorPos( 0 )
 		self.setZoom( 1.0 )
 		# self.trackView.cursorPosChanged.connect(  )
+
 	def onTabChanged( self, idx ):
 		self.ui.containerContents.setCurrentIndex( idx )
 
 	def getRulerHeight( self ):
 		return _RULER_SIZE
+
+	def getBottomToolHeight( self ):
+		return self.toolbarEdit.height()
 		
 	def getZoom( self ):
 		return self.rulerView.getZoom()
@@ -227,6 +232,12 @@ class TimelineView( QtGui.QFrame ):
 
 	def setScrollPos( self, pos ):
 		self.rulerView.setScrollPos( pos )
+
+	def setTrackViewScroll( self, y ):
+		self.trackView.setScrollY( y )
+
+	def getTrackViewScroll( self, y ):
+		return self.trackView.getScrollY( y )
 
 	def setCursorPos( self, pos ):
 		self.rulerView.setCursorPos( pos )
@@ -265,8 +276,10 @@ class TimelineView( QtGui.QFrame ):
 	def updateTrackLayout( self ):
 		y = 0
 		for track in self.tracks:
-			vis = track.isVisible()
+			node = track.node
+			vis = self.isTrackVisible( node )
 			if vis:
+				y = self.getTrackPos( node )
 				track.setY( y )
 				y += _TRACK_SIZE + _TRACK_MARGIN
 			track.setViewItemVisible( vis )
@@ -375,6 +388,7 @@ class TimelineView( QtGui.QFrame ):
 		self.updating = True
 		self.rulerView.setCursorPos( pos )
 		self.trackView.setCursorPos( pos )
+		self.curveView.setCursorX( pos )
 		self.updating = False
 
 	def onScrollPosChanged( self, pos ):
@@ -382,6 +396,7 @@ class TimelineView( QtGui.QFrame ):
 		self.updating = True
 		self.rulerView.setScrollPos( pos )
 		self.trackView.setScrollPos( pos )
+		self.curveView.setScrollX( pos )
 		self.updating = False
 
 	def onZoomChanged( self, zoom ):
@@ -390,6 +405,7 @@ class TimelineView( QtGui.QFrame ):
 		#sync widget zoom
 		self.rulerView.setZoom( zoom )
 		self.trackView.setZoom( zoom )
+		self.curveView.setZoomX( zoom )
 		self.zoomChanged.emit( zoom )
 		self.updating = False
 	
@@ -439,6 +455,12 @@ class TimelineView( QtGui.QFrame ):
 
 	def getParentTrackNode( self, keyNode ):
 		return None
+
+	def getTrackPos( self, trackNode ):
+		return 0
+
+	def isTrackVisible( self, trackNode ):
+		return 0
 
 	#######
 	#Interaction

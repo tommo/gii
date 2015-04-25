@@ -13,8 +13,12 @@ class TestKey():
 		self.pos    = ( random()*1000 + 50 ) /1000.0
 		self.track  = track
 
+_trackId = 0
 class TestTrack():
-	def __init__( self, name ):
+	def __init__( self, name, pos = None ):
+		global _trackId
+		pos = _trackId * 25
+		_trackId += 1
 		self.name = name
 		self.keys = [
 			TestKey( self ),
@@ -22,6 +26,7 @@ class TestTrack():
 			TestKey( self ),
 			TestKey( self )
 		]
+		self.pos = pos
 
 class TestEvent():
 	def __init__( self ):
@@ -60,6 +65,12 @@ class TestTimeline( TimelineView ):
 
 	def updateKeyContent( self, key, keyNode, **option ):
 		pass
+
+	def isTrackVisible( self, track ):
+		return True
+
+	def getTrackPos( self, track ):
+		return track.pos
 
 	def formatPos( self, pos ):
 		i = int( pos/1000 )

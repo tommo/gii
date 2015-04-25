@@ -124,7 +124,7 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )
 		fmt = QtOpenGL.QGLFormat()
 		fmt.setRgba(True)
-		fmt.setAlpha(True)
+		# fmt.setAlpha(True)
 		fmt.setDepth(False)
 		fmt.setDoubleBuffer(True)
 		fmt.setSwapInterval(0)
@@ -132,6 +132,7 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		viewport = QtOpenGL.QGLWidget( fmt, None, getSharedGLWidget() )
 		viewport.makeCurrent()
 		self.setViewport( viewport )
+		self.glViewport = viewport
 		self.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		self.setRenderHint( QtGui.QPainter.HighQualityAntialiasing, False )
 		self.setTransformationAnchor( self.NoAnchor )
@@ -149,6 +150,12 @@ class GridBackground( QtGui.QGraphicsRectItem ):
 		self.gridHeight = 50 
 		self.offsetX = 0
 		self.offsetY = 0
+		self.showXAxis = True
+		self.showYAxis = True
+
+	def setAxisShown( self, xAxis, yAxis ):
+		self.showXAxis = xAxis
+		self.showYAxis = yAxis
 
 	def setOffset( self, x, y ):
 		self.offsetX = x
@@ -186,15 +193,17 @@ class GridBackground( QtGui.QGraphicsRectItem ):
 		ox = (dx) % tw
 		oy = (dy) % th
 
-		offx = self.offsetX
-		painter.setPen( GridBackground._gridPenV )
-		for col in range( cols ): #V lines
-			x = col * tw + ox + x0 + offx
-			painter.drawLine( x, y0, x, y1 )
+		if self.showYAxis:
+			offx = self.offsetX
+			painter.setPen( GridBackground._gridPenV )
+			for col in range( cols ): #V lines
+				x = col * tw + ox + x0 + offx
+				painter.drawLine( x, y0, x, y1 )
 		
-		# x0 = max( x0, _HEAD_OFFSET )
-		offy = self.offsetY
-		painter.setPen( GridBackground._gridPenH )
-		for row in range( rows ): #H lines
-			y = row * th + oy + y0 + offy
-			painter.drawLine( x0, y, x1, y )
+		if self.showXAxis:
+			# x0 = max( x0, _HEAD_OFFSET )
+			offy = self.offsetY
+			painter.setPen( GridBackground._gridPenH )
+			for row in range( rows ): #H lines
+				y = row * th + oy + y0 + offy
+				painter.drawLine( x0, y, x1, y )

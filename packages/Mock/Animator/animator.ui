@@ -101,7 +101,7 @@
             <widget class="QWidget" name="containerPlayTool" native="true">
              <property name="minimumSize">
               <size>
-               <width>150</width>
+               <width>180</width>
                <height>25</height>
               </size>
              </property>
@@ -122,6 +122,9 @@
               </size>
              </property>
             </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="containerTrackTool" native="true"/>
            </item>
           </layout>
          </widget>
@@ -146,7 +149,7 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>120</width>
+        <width>200</width>
         <height>0</height>
        </size>
       </property>

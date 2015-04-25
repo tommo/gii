@@ -40,6 +40,7 @@ def _fixDuplicatedName( names, name, id = None ):
 class AnimatorView( SceneEditorModule ):
 	name = 'animator'
 	dependency = [ 'scene_editor' ]
+
 	def onLoad( self ):
 		#UI
 		self.windowTitle = 'Animator'
@@ -54,6 +55,7 @@ class AnimatorView( SceneEditorModule ):
 		self.window.addWidget( self.widget )
 		self.toolbarClips = self.addToolBar( 'animator_clips', self.widget.toolbarClips )
 		self.toolbarPlay  = self.addToolBar( 'animator_play',  self.widget.toolbarPlay )
+		self.toolbarTrack = self.addToolBar( 'animator_track', self.widget.toolbarTrack )
 		# self.toolbarEdit  = self.addToolBar( 'animator_play',  self.widget.toolbarEdit )
 
 		# addWidgetWithLaytut( toolbar,
@@ -62,17 +64,45 @@ class AnimatorView( SceneEditorModule ):
 		self.addTool( 'animator_clips/remove', label = 'remove', icon = 'remove' )
 
 
-		self.addTool( 'animator_play/play',    label = 'play',    icon = 'play' )
+		self.addTool( 'animator_play/to_start',    label = 'to start',  icon = 'previous' )
+		self.addTool( 'animator_play/play',    label = 'play',    icon = 'play',  type = 'check' )
 		self.addTool( 'animator_play/stop',    label = 'stop',    icon = 'stop' )
+		self.addTool( 'animator_play/to_end',    label = 'to end',    icon = 'next' )
+		self.addTool( 'animator_play/----' )
+		self.addTool( 'animator_play/toggle_repeat',  label = 'toggle repeat',  icon = 'repeat', type = 'check' )
 		
 		#SIGNALS
+		self.addTool( 'animator_track/add_track',    label = 'add',    icon = 'add' )
+		self.addTool( 'animator_track/remove_track', label = 'remove', icon = 'remove' )
+		self.addTool( 'animator_track/add_group',    label = 'add group',    icon = 'add_folder' )
 
 		#
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( _getModulePath( 'AnimatorView.lua' ) )
 
+		self.editTarget = None
+		self.widget.setOwner( self )
+
 	def onStart( self ):
-		self.delegate.safeCall( 'setupTestData' )
+		target = self.delegate.safeCall( 'setupTestData' )
+		self.setEditTarget( target )
+
+	def setEditTarget( self, target ):
+		self.editTarget = target
+		self.delegate.safeCall( 'setEditTarget', target )
+		self.widget.rebuild()
+
+	def onSelectionChanged( self, selection, context = None ):
+		pass
+
+	def getClipList( self ):
+		return []
+
+	def getClipRoot( self ):
+		if self.editTarget:
+			return self.editTarget.getRoot( self.editTarget )
+		else:
+			return None
 
 	def onTool( self, tool ):
 		name = tool.name
