@@ -171,17 +171,16 @@ class PropertyEditor( QtGui.QFrame ):
 		self.hide()
 		model = kwargs.get( 'model', None )
 		if not model: model = ModelManager.get().getModel(target)
-		if not model: 
+		if not model:
+			self.model = None
 			self.clear()
 			return
 
 		rebuildFields = model != self.model
-		self.model  = model
-		self.target = target
-
 		assert(model)
-
 		if rebuildFields:
+			self.clear()
+			
 			self.refreshing = True
 			#install field info
 			currentId = None
@@ -195,7 +194,9 @@ class PropertyEditor( QtGui.QFrame ):
 				self.addFieldEditor( field )			
 			assert self.refreshing
 			self.refreshing = False
-		
+			
+		self.model  = model
+		self.target = target
 		self.refreshAll()
 		self.show()
 

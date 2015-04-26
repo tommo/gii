@@ -316,7 +316,9 @@ class IntrospectorInstance(object):
 
 		editor.parentIntrospector = self
 		editor.setTarget( target )
-		self.body.resize( self.body.sizeHint() )
+		size = self.body.sizeHint()
+		size.setWidth( self.scroll.width() )
+		self.body.resize( size )
 		self.scroll.show()
 		return editor
 
