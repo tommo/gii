@@ -10,9 +10,31 @@ try:
 	def getSharedGLWidget():
 		return GLWidget.getSharedWidget()
 
+	# def makeGLWidget( *args, **option ):
+	# 	return GLWidget( *args, **option)
+
+	def makeGLWidget( *args, **option ):
+		fmt = QtOpenGL.QGLFormat()
+		fmt.setRgba(True)
+		fmt.setDepth(False)
+		fmt.setDoubleBuffer(True)
+		fmt.setSwapInterval(0)
+		fmt.setSampleBuffers( True )
+		viewport = QtOpenGL.QGLWidget( fmt, None, getSharedGLWidget() )
+
 except Exception, e:
 	def getSharedGLWidget():
 		return None
+
+	def makeGLWidget( *args, **option ):
+		fmt = QtOpenGL.QGLFormat()
+		fmt.setRgba(True)
+		fmt.setDepth(False)
+		fmt.setDoubleBuffer(True)
+		fmt.setSwapInterval(0)
+		fmt.setSampleBuffers( True )
+		viewport = QtOpenGL.QGLWidget( fmt )
+		return viewport
 
 
 def makeBrush( **option ):
@@ -113,6 +135,8 @@ class StyledItemMixin:
 		pass
 
 
+_USE_GL = False
+_USE_GL = True
 
 ##----------------------------------------------------------------##
 class GLGraphicsView( QtGui.QGraphicsView ):
@@ -120,23 +144,19 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		super( GLGraphicsView, self ).__init__( *args, **kwargs )
 		self.setHorizontalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
 		self.setVerticalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
-		self.setViewportUpdateMode( QtGui.QGraphicsView.SmartViewportUpdate )
-		# self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )
-		fmt = QtOpenGL.QGLFormat()
-		fmt.setRgba(True)
-		fmt.setDepth(False)
-		fmt.setDoubleBuffer(True)
-		fmt.setSwapInterval(0)
-		fmt.setSampleBuffers( True )
-		viewport = QtOpenGL.QGLWidget( fmt, None, getSharedGLWidget() )
-		viewport.makeCurrent()
-		self.setViewport( viewport )
-		self.glViewport = viewport
+		
+		if _USE_GL:
+			self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
+			viewport = makeGLWidget()
+			self.setViewport( viewport )
+
+		else:
+			self.setViewportUpdateMode( QtGui.QGraphicsView.SmartViewportUpdate )
+
 		self.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		self.setRenderHint( QtGui.QPainter.HighQualityAntialiasing, False )
-		self.setTransformationAnchor( self.NoAnchor )
-		self.setCacheMode( self.CacheBackground )
 
+		self.setTransformationAnchor( self.NoAnchor )
 
 ##----------------------------------------------------------------##
 class GridBackground( QtGui.QGraphicsRectItem ):

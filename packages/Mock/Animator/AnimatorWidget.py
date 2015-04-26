@@ -278,6 +278,9 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.treeClips.owner = owner
 		self.timeline.owner = owner
 
+		#signals
+		self.timeline.keyChanged.connect( owner.onTimelineKeyChanged )
+
 	def rebuild( self ):
 		self.treeTracks.rebuild()
 		self.treeClips.rebuild()

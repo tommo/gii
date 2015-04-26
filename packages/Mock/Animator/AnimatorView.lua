@@ -5,7 +5,7 @@ function AnimatorView:loadTestData()
 end
 
 
-function setupTestData()
+function AnimatorView:setupTestData()
 	testClip = mock.AnimatorClip()
 	
 	testGroup = mock.AnimatorTrackGroup()
@@ -31,6 +31,12 @@ function setupTestData()
 	return testClip
 end
 
-function setEditTarget( target )
+function AnimatorView:setEditTarget( target )
 	editTarget = target
 end
+
+function AnimatorView:moveKey( key )
+end
+
+
+view = AnimatorView()

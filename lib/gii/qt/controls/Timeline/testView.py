@@ -82,20 +82,32 @@ class TestTimeline( TimelineView ):
 		# return dict( zoom = 5 )
 
 
-class TestFrame( QtGui.QWidget ):
+class TestFrame( QtGui.QFrame ):
 	def __init__( self ):
+		super( TestFrame, self ).__init__()
+		layout = QtGui.QVBoxLayout( self )
+		layout.setMargin( 0 )
+		timeline = TestTimeline()
+		layout.addWidget( timeline )
+		timeline.rebuild()
+
+		timeline.keyChanged.connect( self.onKeyChanged )
+
+	def onKeyChanged( self, key ):
 		pass
+
 
 app = QtGui.QApplication( sys.argv )
 styleSheetName = 'gii.qss'
 app.setStyleSheet(
 		open( '/Users/tommo/prj/gii/data/theme/' + styleSheetName ).read() 
 	)
-timeline = TestTimeline()
-timeline.resize( 600, 300 )
-timeline.show()
-timeline.raise_()
-timeline.rebuild()
+frame = TestFrame()
+
+frame.resize( 600, 300 )
+frame.show()
+frame.raise_()
+
 # # timeline.setZoom( 10 )
 # # timeline.selectTrack( dataset[1] )
 # timeline.selectKey( dataset[1].keys[0] )

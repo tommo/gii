@@ -10,6 +10,7 @@ from PyQt4.QtCore import Qt, QEventLoop, QEvent, QObject, pyqtSignal
 from SceneEditor  import SceneEditorModule
 from IDPool       import IDPool
 
+from gii.qt.controls.GLWidget import CommonGLWidget
 
 ##----------------------------------------------------------------##
 def getModulePath( path ):
@@ -197,6 +198,25 @@ class SceneIntrospector( SceneEditorModule ):
 				ins.scheduleUpdate()
 
 ##----------------------------------------------------------------##
+_OBJECT_EDITOR_CACHE = {} 
+def pushObjectEditorToCache( typeId, editor ):
+	pool = _OBJECT_EDITOR_CACHE.get( typeId, None )
+	if not pool:
+		pool = []
+		_OBJECT_EDITOR_CACHE[ typeId ] = pool
+	pool.append( editor )
+	return True
+
+def popObjectEditorFromCache( typeId ):
+	pool = _OBJECT_EDITOR_CACHE.get( typeId, None )
+	if pool:
+		return pool.pop()
+
+def clearObjectEditorCache( typeId ):
+	if _OBJECT_EDITOR_CACHE.has_key( typeId ):
+		del _OBJECT_EDITOR_CACHE[ typeId ]
+
+##----------------------------------------------------------------##
 class IntrospectorInstance(object):
 	def __init__(self, id):
 		self.id = id
@@ -214,7 +234,8 @@ class IntrospectorInstance(object):
 		self.scroll = scroll = container.addWidget( QtGui.QScrollArea( container ) )
 		self.body   = body   = QtGui.QWidget( container )
 		self.header.hide()
-		scroll.setWidgetResizable(True)
+		self.scroll.verticalScrollBar().setStyleSheet('width:4px')
+		scroll.setWidgetResizable( True )
 		body.mainLayout = layout = QtGui.QVBoxLayout( body )
 		layout.setSpacing(0)
 		layout.setMargin(0)
@@ -249,15 +270,29 @@ class IntrospectorInstance(object):
 
 	
 	def addObjectEditor( self, target, **option ):
-		self.body.hide()
+		self.scroll.hide()
 		parent = app.getModule('introspector')
 		typeId = ModelManager.get().getTypeId( target )
-		if typeId:
+		if not typeId:
+			self.scroll.show()
+			return
+
+		#create or use cached editor
+		cachedEditor = popObjectEditorFromCache( typeId )
+		if cachedEditor:
+			editor = cachedEditor
+			container = editor.container
+			count = self.body.mainLayout.count()
+			assert count>0
+			self.body.mainLayout.insertWidget( count - 1, container )
+
+		else:
 			editorClas = option.get( 'editor_class', None )
 			if not editorClas: #get default object editors
 				editorClas = parent.getObjectEditor( typeId )
 
 			editor = editorClas()
+			editor.targetTypeId = typeId
 			self.editors.append( editor )
 			container = ObjectContainer( self.body )
 			widget = editor.initWidget( container.getInnerContainer() )
@@ -277,21 +312,25 @@ class IntrospectorInstance(object):
 				container.setContextMenu( menuName )
 			else:
 				container.hide()
-				
 			editor.container = container
-			editor.parentIntrospector = self
-			editor.setTarget( target )
-			self.body.show()
-			return editor
 
-		self.body.show()
-		return None
+		editor.parentIntrospector = self
+		editor.setTarget( target )
+		self.body.resize( self.body.sizeHint() )
+		self.scroll.show()
+		return editor
+
 
 	def clear(self):		
 		for editor in self.editors:
 			editor.container.setContextObject( None )
-			editor.unload() #TODO: cache?
-		#remove widgets
+			cached = False
+			if editor.needCache():
+				cached = pushObjectEditorToCache( editor.targetTypeId, editor )
+			if not cached:
+				editor.unload()
+
+		#remove containers
 		layout = self.body.mainLayout
 		for count in reversed( range(layout.count()) ):
 			child = layout.takeAt( count )
@@ -341,6 +380,9 @@ class ObjectEditor( object ):
 
 	def unload( self ):
 		pass
+
+	def needCache( self ):
+		return True
 
 		
 ##----------------------------------------------------------------##

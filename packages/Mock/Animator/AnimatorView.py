@@ -83,13 +83,17 @@ class AnimatorView( SceneEditorModule ):
 		self.editTarget = None
 		self.widget.setOwner( self )
 
+		#playback
+		self.previewing = False
+
+
 	def onStart( self ):
-		target = self.delegate.safeCall( 'setupTestData' )
+		target = self.delegate.callMethod( 'view', 'setupTestData' )
 		self.setEditTarget( target )
 
 	def setEditTarget( self, target ):
 		self.editTarget = target
-		self.delegate.safeCall( 'setEditTarget', target )
+		self.delegate.callMethod( 'view', 'setEditTarget', target )
 		self.widget.rebuild()
 
 	def onSelectionChanged( self, selection, context = None ):
@@ -111,12 +115,45 @@ class AnimatorView( SceneEditorModule ):
 		else:
 			return None
 
+	def clearPreviewState( self ):
+		if self.previewing: return
+		self.canvas.callMethod( 'view', 'clearStateData' )
+	
+	#preview
+	def startPreview( self ):
+		self.canvas.makeCurrent()
+		if self.canvas.callMethod( 'view', 'startPreview' ):
+			self.timeline.setCursorDraggable( False )
+			self.previewing = True
+			self.canvas.startUpdateTimer( 60 )
+			self.canvas.setStyleSheet('border-bottom: 1px solid rgb(0, 255, 0);')
+
+	def stopPreview( self ):		
+		self.canvas.makeCurrent()
+		self.canvas.callMethod( 'view', 'stopPreview' )
+		self.previewing = False
+		self.canvas.stopUpdateTimer()
+		self.canvas.setStyleSheet('border-bottom: none ')
+		self.timeline.setCursorDraggable( True )
+
+	def togglePreview( self ):
+		if self.previewing:
+			self.stopPreview()
+		else:
+			self.startPreview()
+
+	def onTimelineKeyChanged( self, key ):
+		self.delegate.callMethod( 'view', 'moveKey', key )
+
+	def onCurveKeyChanged( self, key ):
+		pass
+
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'add':
-			layer = self.delegate.safeCall( 'addLayer' )
+			layer = self.delegate.callMethod( 'view', 'addLayer' )
 			
 		elif name == 'remove':
 			for l in self.tree.getSelection():
-				self.delegate.safeCall( 'removeLayer', l )
+				self.delegate.callMethod( 'view', 'removeLayer', l )
 	

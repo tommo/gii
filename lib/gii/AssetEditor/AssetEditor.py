@@ -51,7 +51,7 @@ class AssetEditor( TopEditorModule ):
 		
 	def onLoad( self ):
 		self.projectScanScheduled = False
-		self.projectScanTimer = self.mainWindow.startTimer( 1, self.checkProjectScan )
+		self.projectScanTimer = self.mainWindow.startTimer( 10, self.checkProjectScan )
 		signals.connect( 'app.start', self.postStart )
 		registerSearchEnumerator( assetSearchEnumerator )
 		

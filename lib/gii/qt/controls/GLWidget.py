@@ -33,7 +33,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 		QtOpenGL.QGLWidget.__init__( self, fmt, parent, GLWidget.getSharedWidget() )		
 		self.setFocusPolicy( QtCore.Qt.WheelFocus )
-		self.setMinimumSize( 32, 32 )
+		# self.setMinimumSize( 32, 32 )
 		self.allowRefresh   = False
 		self.pendingRefresh = False
 
@@ -80,3 +80,18 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def onDraw(self):
 		pass
+
+##----------------------------------------------------------------##
+class CommonGLWidget(QtOpenGL.QGLWidget):
+	def __init__( self, parent=None, **option ):
+		fmt = QtOpenGL.QGLFormat()
+		fmt.setRgba(True)
+		fmt.setAlpha(True)
+		fmt.setDepth(True)
+		fmt.setDoubleBuffer(False)
+		if option.get( 'vsync', False ):
+			fmt.setSwapInterval( 1 )
+		else:
+			fmt.setSwapInterval( 0 )
+		QtOpenGL.QGLWidget.__init__( self, fmt, parent, GLWidget.getSharedWidget() )		
+		self.setFocusPolicy( QtCore.Qt.WheelFocus )

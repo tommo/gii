@@ -35,17 +35,22 @@ class SimpleFieldEditorFactory( FieldEditorFactory ):
 		self.targetTypeId = typeId
 		self.clas = clas
 		self.priority = priority
+		self.pool = []
 
 	def getPriority( self ):
 		return self.priority
+
+	def createEditor( self, parentEditor, field ):
+		# cached = self.pool.pop()
+		return self.clas( parentEditor, field )
 
 	def build( self,parentEditor, field, context = None ):
 		dataType  = field._type
 		if field.getOption( 'objtype', None) == 'ref' :
 			dataType    = ReferenceType
 		while True:
-			if dataType == self.targetTypeId: 
-				return self.clas( parentEditor, field )
+			if dataType == self.targetTypeId:
+				return self.createEditor( parentEditor, field )
 			dataType = getSuperType( dataType )
 			if not dataType: return None
 
@@ -99,6 +104,7 @@ class PropertyEditor( QtGui.QFrame ):
 		self.target     = None
 		self.refreshing = False
 		self.context    = None
+		self.model      = False
 		self.clear()
 		
 	def addFieldEditor( self, field ):
@@ -163,30 +169,32 @@ class PropertyEditor( QtGui.QFrame ):
 		if target==self.target:
 			return
 		self.hide()
-		self.clear()
 		model = kwargs.get( 'model', None )
 		if not model: model = ModelManager.get().getModel(target)
 		if not model: 
+			self.clear()
 			return
 
+		rebuildFields = model != self.model
 		self.model  = model
 		self.target = target
 
 		assert(model)
 
-		self.refreshing = True
-		#install field info
-		currentId = None
-		for field in model.fieldList:
-			lastId = currentId
-			currentId = field.id
-			if field.getOption('no_edit'):
-				if field.id == '----' and lastId != '----':
-					self.addSeparator()
-				continue
-			self.addFieldEditor( field )			
-		assert self.refreshing
-		self.refreshing = False
+		if rebuildFields:
+			self.refreshing = True
+			#install field info
+			currentId = None
+			for field in model.fieldList:
+				lastId = currentId
+				currentId = field.id
+				if field.getOption('no_edit'):
+					if field.id == '----' and lastId != '----':
+						self.addSeparator()
+					continue
+				self.addFieldEditor( field )			
+			assert self.refreshing
+			self.refreshing = False
 		
 		self.refreshAll()
 		self.show()

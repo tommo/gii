@@ -126,7 +126,7 @@ class GraphViewConnection( QtGui.QGraphicsPathItem ):
 	_pen = makePen( color = '#e3ff00', width = 2, style=Qt.SolidLine )
 	def __init__( self, srcSlot, dstSlot ):
 		super( GraphViewConnection, self ).__init__()
-		self.useCurve = False
+		self.useCurve = True
 		self.srcSlot = None
 		self.dstSlot = None
 		self.setSrcSlot( srcSlot )
