@@ -292,7 +292,8 @@ class IntrospectorInstance(object):
 			self.body.mainLayout.insertWidget( count - 1, container )
 			container.show()
 			container.setContextObject( target )
-			
+			self.editors.append( editor )
+
 		else:
 			editorClas = option.get( 'editor_class', None )
 			if not editorClas: #get default object editors
@@ -317,6 +318,7 @@ class IntrospectorInstance(object):
 				self.body.mainLayout.insertWidget( count - 1, container )
 				menuName = option.get( 'context_menu', editor.getContextMenu() )
 				container.setContextMenu( menuName )
+				container.ownerEditor = editor
 			else:
 				container.hide()
 			editor.container = container
@@ -347,7 +349,6 @@ class IntrospectorInstance(object):
 			w = child.widget()
 			if w:
 				w.setParent( None )
-				w.deleteLater()
 		layout.addStretch()
 		
 		self.target = None
@@ -393,7 +394,7 @@ class ObjectEditor( object ):
 		pass
 
 	def needCache( self ):
-		return False
+		return True
 
 		
 ##----------------------------------------------------------------##

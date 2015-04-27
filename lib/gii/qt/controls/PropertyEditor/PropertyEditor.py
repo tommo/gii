@@ -200,6 +200,10 @@ class PropertyEditor( QtGui.QFrame ):
 		self.refreshAll()
 		self.show()
 
+	def refreshFor( self, target ):
+		if target == self.target:
+			return self.refreshAll()
+			
 	def refreshAll( self ):
 		target=self.target
 		if not target: return

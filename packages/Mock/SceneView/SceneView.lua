@@ -26,3 +26,7 @@ function onResize( w, h )
 	end
 end
 
+local xxx= {}
+function  XXX()
+	return xxx
+end

@@ -158,7 +158,9 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		self.glViewport.makeCurrent()
 		super( GLGraphicsView, self ).paintEvent( ev )
 		self.glViewport.doneCurrent() #dirty workaround...
-		getSharedGLWidget().makeCurrent()
+		shared = getSharedGLWidget()
+		if shared:
+			shared.makeCurrent()
 
 
 ##----------------------------------------------------------------##

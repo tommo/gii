@@ -15,7 +15,7 @@ function AnimatorView:setupTestData()
 	testTrack = mock.AnimatorTrack()
 	testTrack.name = 'track'
 	for i = 1, 8 do
-		local key = testTrack:addKey( rand( 0, 5 ) * 1000 )
+		local key = testTrack:addKey( rand( 0, 5 ) )
 	end
 	testGroup:addChild( testTrack )
 	testGroup1 = mock.AnimatorTrackGroup()
@@ -25,7 +25,7 @@ function AnimatorView:setupTestData()
 	testTrack.name = 'track'
 	testGroup1:addChild( testTrack )
 	for i = 1, 8 do
-		local key = testTrack:addKey( rand( 0, 5 ) * 1000 )
+		local key = testTrack:addKey( rand( 0, 5 ) )
 	end
 	
 	return testClip
@@ -35,7 +35,20 @@ function AnimatorView:setEditTarget( target )
 	editTarget = target
 end
 
-function AnimatorView:moveKey( key )
+function AnimatorView:removeKey( key )
+	local track = key:getTrack()
+	if track then track:removeKey( key ) end
+end
+
+function AnimatorView:updateTimelineKey( key, pos, length )
+	key:setPos( pos )
+	key:setLength( length )
+end
+
+function AnimatorView:updateKeyCurveMode( key, mode )
+end
+
+function AnimatorView:updateKeyCurvate( key, c1, c2 )
 end
 
 

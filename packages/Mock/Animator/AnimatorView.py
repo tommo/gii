@@ -142,8 +142,12 @@ class AnimatorView( SceneEditorModule ):
 		else:
 			self.startPreview()
 
-	def onTimelineKeyChanged( self, key ):
-		self.delegate.callMethod( 'view', 'moveKey', key )
+	def onKeyRemoving( self, key ):
+		if self.delegate.callMethod( 'view', 'removeKey', key ) != False:
+			return True
+
+	def onTimelineKeyChanged( self, key, pos, length ):
+		self.delegate.callMethod( 'view', 'updateTimelineKey', key, pos, length )
 
 	def onCurveKeyChanged( self, key ):
 		pass

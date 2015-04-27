@@ -92,8 +92,8 @@ class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin ): #a generic propert
 		self.initContextMenu( self.grid )
 
 		self.grid.propertyChanged.connect( self.onPropertyChanged )		
-		self.header.buttonEdit   .clicked .connect ( self.onEditPrefab   )
-		self.header.buttonGoto   .clicked .connect ( self.onGotoPrefab   )
+		self.header.buttonEdit   .clicked .connect ( self.onEditPrefab )
+		self.header.buttonGoto   .clicked .connect ( self.onGotoPrefab )
 		self.header.buttonUnlink .clicked .connect ( self.onUnlinkPrefab )
 
 		return self.header

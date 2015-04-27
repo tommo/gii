@@ -15,7 +15,7 @@ class no_editItemDelegate( QtGui.QStyledItemDelegate ):
 class GenericTreeWidget( QtGui.QTreeWidget ):
 	def __init__( self, *args, **option ):
 		super(GenericTreeWidget, self).__init__(*args)
-		self.setAttribute(Qt.WA_MacShowFocusRect, False)
+		# self.setAttribute(Qt.WA_MacShowFocusRect, False)
 		self.setUniformRowHeights( True )
 		self.setHorizontalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
 		self.setVerticalScrollMode( QtGui.QAbstractItemView.ScrollPerItem )

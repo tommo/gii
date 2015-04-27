@@ -40,6 +40,7 @@ makeStyle( 'key-span',           '#000',       '#303459'    ,'#c2c2c2' )
 makeStyle( 'key-span:selected',  '#ffffff',    '#303459'               )
 makeStyle( 'track',                None,       dict( color = '#444', alpha = 0.2 ) )
 makeStyle( 'track:selected',       None,       dict( color = '#555', alpha = 0.2 ) )
+makeStyle( 'selection',          dict( color = '#ffa000', alpha = 0.5 ), dict( color = '#ffa000', alpha = 0.2 ) )
 
 
 ##----------------------------------------------------------------##
@@ -208,6 +209,7 @@ class TimelineRulerView( TimelineSubView ):
 		self.ruler.view = self
 		self.scene.addItem( self.ruler )
 		self.dragging = False
+		self.draggable = True
 
 	def clear( self ):
 		pass
@@ -241,6 +243,8 @@ class TimelineRulerView( TimelineSubView ):
 	def updateCursorItem( self ):
 		self.cursorItem.setX( self.timeToPos( self.cursorPos - self.scrollPos ) ) 
 
+	def setDraggable( self, draggable ):
+		self.draggable = draggable
 
 ##----------------------------------------------------------------##
 class TimelineKeyResizeHandle( QtGui.QGraphicsRectItem ):
@@ -336,6 +340,8 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		self.span.hide()
 		self.track = track
 
+		self.selected = False
+
 	def onPaint( self, painter, option, widget ):
 		rect = self.rect()
 		painter.drawRect( QRectF( 0,0,4, rect.height() ) )
@@ -361,18 +367,36 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		self.span.setPos( self.pos() )
 
 	def hoverEnterEvent( self, event ):
+		if self.selected: return
 		self.setItemState( 'hover' )
 		self.update()
 
 	def hoverLeaveEvent( self, event ):
+		if self.selected: return
 		self.setItemState( 'normal' )
 		self.update()
+
+	def setSelected( self, selected, notifyParent = False ):
+		self.selected = selected
+		if selected:
+			self.setItemState( 'selected' )
+		else:
+			self.setItemState( 'normal' )
+		if notifyParent:
+			self.getTimelineView().selectKey( self.node, True )
 
 	def mousePressEvent( self, event ):
 		if event.button() == Qt.LeftButton:
 			x0 = self.pos().x()
 			mx0 = event.scenePos().x()
 			self.dragging = ( x0, mx0 )
+			if event.modifiers() == Qt.ShiftModifier:
+				if self.selected:
+					self.getTimelineView().deselectKey( self.node )
+				else:
+					self.getTimelineView().selectKey( self.node, True )
+			else:
+				self.getTimelineView().selectKey( self.node, False )
 
 	def mouseMoveEvent( self, event ):
 		if self.dragging == False: return
@@ -392,14 +416,15 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		return self.track.posToTime( t )
 
 	def updateShape( self ):
-		self.setTimePos( self.timePos )
+		self.setTimePos( self.timePos, False )
 		self.span.updateShape()
 
-	def setTimePos( self, tpos ):
+	def setTimePos( self, tpos, notify = True ):
 		tpos = max( 0, tpos )
 		self.timePos = tpos
 		x = self.timeToPos( tpos )
-		self.getTimelineView().notifyKeyChanged( self.node )
+		if notify:
+			self.getTimelineView().notifyKeyChanged( self.node, self.timePos, self.timeLength )
 		if not self.updatingPos:
 			self.updatingPos = True
 			self.setX( x )
@@ -486,6 +511,17 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def getTimelineView( self ):
 		return self.view.getTimelineView()
 
+
+##----------------------------------------------------------------##
+class SelectionRegionItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
+	def __init__( self, *args, **kwargs ):
+		super( SelectionRegionItem, self ).__init__( *args, **kwargs )
+		self.setItemType( 'selection' )
+
+	def onPaint( self, painter, option, widget ):
+		rect = self.rect()
+		painter.drawRect( rect )
+
 ##----------------------------------------------------------------##
 class TimelineTrackView( TimelineSubView ):
 	scrollYChanged   = pyqtSignal( float )
@@ -499,11 +535,14 @@ class TimelineTrackView( TimelineSubView ):
 		self.zoom      = 1
 		self.panning   = False
 		self.updating  = False
+		
+		self.selecting = False
+		self.selectingItems = []
 
-		self.scene = QtGui.QGraphicsScene( self )
-		self.scene.setBackgroundBrush( _DEFAULT_BG );
-		self.setScene( self.scene )
-		self.scene.sceneRectChanged.connect( self.onRectChanged )
+		scene = QtGui.QGraphicsScene( self )
+		scene.setBackgroundBrush( _DEFAULT_BG );
+		self.setScene( scene )
+		scene.sceneRectChanged.connect( self.onRectChanged )
 
 		self.trackItems = []
 		
@@ -511,15 +550,20 @@ class TimelineTrackView( TimelineSubView ):
 		self.cursorLine = TimelineCursorLine()
 		self.cursorLine.setLine( 0,0, 0, 10000 )
 		self.cursorLine.setZValue( 1000 )
-		self.scene.addItem( self.cursorLine )
+		scene.addItem( self.cursorLine )
 		#grid
 		self.gridBackground = GridBackground()
 		self.gridBackground.setGridSize( self.gridSize, _TRACK_SIZE + _TRACK_MARGIN )
 		self.gridBackground.setAxisShown( False, True )
 		self.gridBackground.setOffset( _HEAD_OFFSET, -1 )
-		self.scene.addItem( self.gridBackground )
+		scene.addItem( self.gridBackground )
 
-		self.scene.setSceneRect( QRectF( 0,0, 10000, 10000 ) )
+		scene.setSceneRect( QRectF( 0,0, 10000, 10000 ) )
+
+		self.selectionRegion = SelectionRegionItem()
+		self.selectionRegion.setZValue( 9999 )
+		self.selectionRegion.setVisible( False )
+		scene.addItem( self.selectionRegion )
 
 	def clear( self ):
 		pass
@@ -528,7 +572,7 @@ class TimelineTrackView( TimelineSubView ):
 		item = TimelineTrackItem()
 		item.view = self
 		item.setRect( 0,0, 10000, _TRACK_SIZE )
-		self.scene.addItem( item )
+		self.scene().addItem( item )
 		self.trackItems.append( item )
 		item.index = len( self.trackItems )
 		item.setPos( 0, ( item.index - 1 ) * ( _TRACK_SIZE + _TRACK_MARGIN ) )
@@ -572,6 +616,38 @@ class TimelineTrackView( TimelineSubView ):
 		self.setTransform( trans )
 		# self.update()
 
+	def startSelectionRegion( self, pos ):
+		self.selecting = True
+		self.selectionRegion.setPos( pos )
+		self.selectionRegion.setRect( 0,0,0,0 )
+		self.selectionRegion.setVisible( True )
+		self.resizeSelectionRegion( pos )
+		# for keyNode in self.selection:
+		# 	key = self.getKeyByNode( keyNode )
+		# 	key.setSelected( False, False )
+
+	def resizeSelectionRegion( self, pos1 ):
+		pos = self.selectionRegion.pos()
+		w, h = pos1.x()-pos.x(), pos1.y()-pos.y()
+		self.selectionRegion.setRect( 0,0, w, h )
+		itemsInRegion = self.scene().items( pos.x(), pos.y(), w, h )
+		for item in self.selectingItems:
+			item.setSelected( False, False )
+
+		self.selectingItems = []
+		for item in itemsInRegion:
+			if isinstance( item, TimelineKeyItem ):
+				self.selectingItems.append( item )
+				item.setSelected( True, False )
+
+	def stopSelectionRegion( self ):
+		self.selectionRegion.setRect( 0,0,0,0 )
+		self.selectionRegion.setVisible( False )
+		selection = []
+		for key in self.selectingItems:
+			selection.append( key.node )
+		self.timelineView.updateSelection( selection )
+
 	def mouseMoveEvent( self, event ):
 		super( TimelineTrackView, self ).mouseMoveEvent( event )
 		if self.panning:
@@ -584,17 +660,26 @@ class TimelineTrackView( TimelineSubView ):
 			self.setScrollPos( self.posToTime( sp1 ), True )
 			# self.setScrollY( sy1, False )
 			self.updateTransfrom()
+		elif self.selecting:
+			self.resizeSelectionRegion( self.mapToScene( event.pos() ) )
 
 	def mousePressEvent( self, event ):
 		super( TimelineTrackView, self ).mousePressEvent( event )
 		if event.button() == Qt.MidButton:
 			self.panning = ( event.pos(), self.timeToPos( self.scrollPos ), self.scrollY )
+		elif event.button() == Qt.LeftButton and event.modifiers() == Qt.ShiftModifier:
+			self.startSelectionRegion( self.mapToScene( event.pos() ) )
+			self.selecting = True
 
 	def mouseReleaseEvent( self, event ):
 		super( TimelineTrackView, self ).mouseReleaseEvent( event )
 		if event.button() == Qt.MidButton :
 			if self.panning:
 				self.panning = False
+		if event.button() == Qt.LeftButton:
+			if self.selecting:
+				self.stopSelectionRegion()
+				self.selecting = False
 
 	def wheelEvent(self, event):
 		steps = event.delta() / 120.0;
@@ -610,6 +695,13 @@ class TimelineTrackView( TimelineSubView ):
 			else:
 				self.setZoom( self.zoom / zoomRate )
 
+	def keyPressEvent( self, event ):
+		key = event.key()
+		modifiers = event.modifiers()
+		if key in ( Qt.Key_Delete, Qt.Key_Backspace ):
+			self.timelineView.deleteSelection()
+
+
 	def onRectChanged( self, rect ):
 		self.gridBackground.setRect( rect )
 
@@ -618,9 +710,11 @@ class TimelineTrackView( TimelineSubView ):
 
 ##----------------------------------------------------------------##	
 class TimelineView( QtGui.QWidget ):
-	keySelectionChanged   = pyqtSignal( object )
-	trackSelectionChanged = pyqtSignal( object )
-	keyChanged            = pyqtSignal( object )
+	keySelectionChanged   = pyqtSignal()
+	trackSelectionChanged = pyqtSignal()
+	keyChanged            = pyqtSignal( object, float, float )
+	keyModeChanged        = pyqtSignal( object )
+	keyCurvateChanged     = pyqtSignal( object, float, float )
 	cursorPosChanged      = pyqtSignal( float )
 	zoomChanged           = pyqtSignal( float )
 
@@ -630,6 +724,7 @@ class TimelineView( QtGui.QWidget ):
 		self.rebuilding = False
 		self.updating   = False
 		self.shiftMode  = False
+		self.selection = []
 
 		self.initData()
 		self.initUI()
@@ -824,54 +919,18 @@ class TimelineView( QtGui.QWidget ):
 		track = self.getParentTrack( keyNode )
 		if not track: return
 		track.removeKey( keyNode )
+		if keyNode in self.selection:
+			self.selection.remove( keyNode )
 
 	def getParentTrack( self, keyNode ):
 		trackNode = self.getParentTrackNode( keyNode )
 		if not trackNode: return None
 		return self.getTrackByNode( trackNode )
-	
-	def selectTrack( self, trackNode ):
-		track = self.getTrackByNode( trackNode )
-		if self.selectedTrack == track: return
-		if self.selectedTrack: 
-			self.selectedTrack.setSelected( False )
-			if self.selectedKey:
-				self.selectedKey.setSelected( False )
-				self.selectedKey = None
-		self.selectedTrack = track
-		track.setSelected( True )
-		self.trackSelectionChanged.emit( trackNode )
-		self.keySelectionChanged.emit( None )
 
-	def selectKey( self, keyNode ):
-		key = self.getKeyByNode( keyNode )
-		if key == self.selectedKey: return
-		if self.selectedKey:
-			self.selectedKey.setSelected( False )
-			self.selectedKey = None
-		if key:
-			track = key.track
-			self.selectTrack( track.node )			
-			key.setSelected( True )
-			self.selectedKey = key
-			self.keySelectionChanged.emit( keyNode )
-		else:
-			self.keySelectionChanged.emit( None )
-
-	def getSelectedTrack( self ):
-		return self.selectedTrack
-
-	def getSelectedKey( self ):
-		return self.selectedKey
-	
 	def getSelectedTrackNode( self ):
 		track = self.selectedTrack
 		return track and track.node or None
 
-	def getSelectedKey( self ):
-		key = self.selectedKey
-		return key and key.node or None
-	
 	def setCursorDraggable( self, draggable = True ):
 		self.rulerView.setCursorDraggable( draggable )
 
@@ -916,8 +975,52 @@ class TimelineView( QtGui.QWidget ):
 		if track:
 			self.updateTrackContent( track, trackNode, **option )
 
-	def notifyKeyChanged( self, keyNode ):
-		self.keyChanged.emit( keyNode )
+	def notifyKeyChanged( self, keyNode, pos, length ):
+		self.keyChanged.emit( keyNode, pos, length )
+
+	def deselectKey( self, keyNode ):
+		if not keyNode in self.selection:
+			return
+		self.selection.remove( keyNode )
+		keyItem = self.getKeyByNode(keyNode)
+		keyItem.setSelected( False, False )
+
+	def selectKey( self, keyNode, additive = False ):
+		if additive:
+			if not keyNode in self.selection:
+				self.selection.append( keyNode )
+			keyItem = self.getKeyByNode(keyNode)
+			keyItem.setSelected( True, False )
+
+		else:
+			for prevKey in self.selection:				
+				keyItem = self.getKeyByNode( prevKey )
+				keyItem.setSelected( False, False )
+
+			self.selection = []
+			if keyNode:
+				self.selection.append( keyNode )
+				keyItem = self.getKeyByNode( keyNode )
+				keyItem.setSelected( True, False )
+		self.keySelectionChanged.emit()
+		self.update()
+		self.onSelectionChanged( self.selection )
+
+	def clearSelection( self ):
+		self.selectKey( None )
+
+	def updateSelection( self, selection ):
+		self.selection = selection
+		self.onSelectionChanged( self.selection )
+
+	def getSelection( self ):
+		return self.selection
+
+	def deleteSelection( self ):
+		oldSelection = self.selection [:]
+		for keyNode in oldSelection:
+			if self.onKeyRemoving( keyNode ) != False:
+				self.removeKey( keyNode )
 
 	#####
 	#VIRUTAL data model functions
@@ -957,6 +1060,13 @@ class TimelineView( QtGui.QWidget ):
 
 	def isTrackVisible( self, trackNode ):
 		return 0
+
+	def onSelectionChanged( self, selection ):
+		pass
+
+	def onKeyRemoving( self, keyNode ):
+		return True
+
 
 	#######
 	#Interaction

@@ -94,6 +94,9 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		self.verticalScrollBar().setRange( min, max + self.height() - 25 )
 		self.adjustingRange = False
 
+	def onItemSelectionChanged( self ):
+		pass
+
 
 
 ##----------------------------------------------------------------##
@@ -173,7 +176,7 @@ class AnimatorTimelineWidget( TimelineView ):
 	def getKeyParam( self, keyNode ):
 		resizable = keyNode.isResizable( keyNode )
 		length = resizable and keyNode.length or 0
-		return float(keyNode.getPos( keyNode ))/1000.0, length, resizable 
+		return keyNode.getPos( keyNode ), length, resizable 
 
 	def onTrackDClicked( self, track, pos ):
 		pass
@@ -184,6 +187,12 @@ class AnimatorTimelineWidget( TimelineView ):
 		# if not eventTypes:			
 		# else:
 		# 	self.module.promptAddEvent( clipTrack, pos )
+
+	def onSelectionChanged( self, selection ):
+		if selection:
+			self.parentView.setPropertyTarget( selection[0] )
+		else:
+			self.parentView.setPropertyTarget( None )
 
 	def formatPos( self, pos ):
 		i = int( pos/1000 )
@@ -205,6 +214,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.timeline       = AnimatorTimelineWidget( parent = self )
 		self.treeClips      = AnimatorClipListTree( parent = self )
 		self.propertyEditor = PropertyEditor( self )
+		self.propertyEditor.propertyChanged.connect( self.onPropertyChanged )
 		# self.treeTracks.setRowHeight( _TRACK_SIZE )
 
 		self.treeTracks.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -279,12 +289,15 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.timeline.owner = owner
 
 		#signals
-		self.timeline.keyChanged.connect( owner.onTimelineKeyChanged )
+		self.timeline.keyChanged.connect( self.onKeyChanged )
 
 	def rebuild( self ):
 		self.treeTracks.rebuild()
 		self.treeClips.rebuild()
 		self.timeline.rebuild()
+
+	def setPropertyTarget( self, target ):
+		self.propertyEditor.setTarget( target )
 
 	def isTrackVisible( self, trackNode ):
 		return self.treeTracks.isNodeVisible( trackNode )
@@ -298,3 +311,15 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 
 	def onTrackFolded( self, track, folded ):
 		self.timeline.updateTrackLayout()
+		self.timeline.clearSelection()
+
+	def onKeyChanged( self, key, pos, length ):
+		self.propertyEditor.refreshFor( key )
+		self.owner.onTimelineKeyChanged( key, pos, length )
+
+	def onKeyRemoving( self, key ):
+		return self.owner.removeKey( key )
+
+	def onPropertyChanged( self, obj, fid, value ):
+		if fid == 'pos' or fid == 'length':
+			self.timeline.refreshKey( obj )
