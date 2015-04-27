@@ -62,7 +62,6 @@ class SceneView( SceneEditorModule ):
 
 
 	def onStart( self ):
-		self.canvas.makeCurrent()
 		self.scheduleUpdate()
 
 	def changeEditTool( self, name ):
@@ -96,7 +95,6 @@ class SceneView( SceneEditorModule ):
 
 	def onSceneOpen( self, node, scene ):
 		self.window.setDocumentName( node.getPath() )
-		self.canvas.makeCurrent()
 		self.canvas.show()
 		self.canvas.safeCall( 'onSceneOpen', scene )
 		self.scheduleUpdate()
@@ -106,13 +104,11 @@ class SceneView( SceneEditorModule ):
 
 	def onSceneClose( self, node ):
 		self.window.setDocumentName( None )
-		self.canvas.makeCurrent()
 		self.canvas.safeCall( 'onSceneClose' )
 		self.canvas.hide()
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
-		self.canvas.makeCurrent()
 		self.canvas.safeCallMethod( 'view', 'onSelectionChanged', selection )
 
 	def updateInPreview( self ):
@@ -133,6 +129,5 @@ class SceneView( SceneEditorModule ):
 		self.updatePending = True
 
 	def focusSelection( self ):
-		self.canvas.makeCurrent()
 		self.canvas.safeCallMethod( 'view', 'focusSelection' )
 

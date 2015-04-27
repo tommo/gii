@@ -10,17 +10,11 @@ try:
 	def getSharedGLWidget():
 		return GLWidget.getSharedWidget()
 
-	# def makeGLWidget( *args, **option ):
-	# 	return GLWidget( *args, **option)
-
 	def makeGLWidget( *args, **option ):
-		fmt = QtOpenGL.QGLFormat()
-		fmt.setRgba(True)
-		fmt.setDepth(False)
-		fmt.setDoubleBuffer(True)
-		fmt.setSwapInterval(0)
-		fmt.setSampleBuffers( True )
-		viewport = QtOpenGL.QGLWidget( fmt, None, getSharedGLWidget() )
+		sharedWidget = None
+		fmt = QtOpenGL.QGLFormat.defaultFormat()
+		sharedWidget = getSharedGLWidget()
+		return QtOpenGL.QGLWidget( fmt, None, sharedWidget )
 
 except Exception, e:
 	def getSharedGLWidget():
@@ -141,22 +135,31 @@ _USE_GL = True
 ##----------------------------------------------------------------##
 class GLGraphicsView( QtGui.QGraphicsView ):
 	def __init__( self, *args, **kwargs ):
-		super( GLGraphicsView, self ).__init__( *args, **kwargs )
+		super( GLGraphicsView, self ).__init__()
 		self.setHorizontalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
 		self.setVerticalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
 		
-		if _USE_GL:
+		if _USE_GL and kwargs.get( 'use_gl', True ):
 			self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
 			viewport = makeGLWidget()
+			self.glViewport = viewport
 			self.setViewport( viewport )
-
 		else:
-			self.setViewportUpdateMode( QtGui.QGraphicsView.SmartViewportUpdate )
+			self.setViewportUpdateMode( QtGui.QGraphicsView.MinimalViewportUpdate )
 
 		self.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		self.setRenderHint( QtGui.QPainter.HighQualityAntialiasing, False )
-
 		self.setTransformationAnchor( self.NoAnchor )
+		
+		self.setOptimizationFlags( QtGui.QGraphicsView.DontAdjustForAntialiasing | QtGui.QGraphicsView.DontSavePainterState )
+		
+
+	def paintEvent( self, ev ):
+		self.glViewport.makeCurrent()
+		super( GLGraphicsView, self ).paintEvent( ev )
+		self.glViewport.doneCurrent() #dirty workaround...
+		getSharedGLWidget().makeCurrent()
+
 
 ##----------------------------------------------------------------##
 class GridBackground( QtGui.QGraphicsRectItem ):

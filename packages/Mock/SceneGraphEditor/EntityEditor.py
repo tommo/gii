@@ -4,7 +4,7 @@ from gii.qt.controls.PropertyEditor import PropertyEditor
 from gii.qt.helpers import addWidgetWithLayout, repolishWidget
 
 from PyQt4 import QtGui, QtCore, uic
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, pyqtSlot
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
 from PyQt4.QtGui  import QMenu
 
@@ -88,13 +88,13 @@ class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin ): #a generic propert
 		self.header = EntityHeader( container )
 		self.grid = PropertyEditor( self.header )
 		self.header.layout().addWidget( self.grid )
+		self.grid.setContext( 'scene_editor' )		
+		self.initContextMenu( self.grid )
+
 		self.grid.propertyChanged.connect( self.onPropertyChanged )		
-		self.grid.setContext( 'scene_editor' )
 		self.header.buttonEdit   .clicked .connect ( self.onEditPrefab   )
 		self.header.buttonGoto   .clicked .connect ( self.onGotoPrefab   )
 		self.header.buttonUnlink .clicked .connect ( self.onUnlinkPrefab )
-		
-		self.initContextMenu( self.grid )
 
 		return self.header
 
@@ -128,6 +128,7 @@ class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin ): #a generic propert
 				container = editor.getContainer()
 				container.foldChanged.connect ( self.onComponentFold )
 
+	@pyqtSlot( object, str, QObject )
 	def onPropertyChanged( self, obj, id, value ):
 		if _MOCK.markProtoInstanceOverrided( obj, id ):
 			self.grid.refershFieldState( id )

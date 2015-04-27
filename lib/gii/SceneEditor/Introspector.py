@@ -5,7 +5,7 @@ from gii.qt.controls.PropertyEditor import PropertyEditor
 from gii.qt.controls.Menu import MenuManager
 
 from PyQt4        import QtCore, QtGui, uic
-from PyQt4.QtCore import Qt, QEventLoop, QEvent, QObject, pyqtSignal
+from PyQt4.QtCore import Qt, QEventLoop, QEvent, QObject, pyqtSignal, pyqtSlot
 
 from SceneEditor  import SceneEditorModule
 from IDPool       import IDPool
@@ -103,7 +103,6 @@ class SceneIntrospector( SceneEditorModule ):
 		self.instanceCache  = []
 		self.idPool         = IDPool()
 		self.activeInstance = None
-
 		self.objectEditorRegistry = {}
 
 	def getName(self):
@@ -118,6 +117,7 @@ class SceneIntrospector( SceneEditorModule ):
 		signals.connect( 'component.added',   self.onComponentAdded )
 		signals.connect( 'component.removed', self.onComponentRemoved )
 		signals.connect( 'entity.modified',   self.onEntityModified ) 
+		self.widgetCacheHolder = QtGui.QWidget()
 		
 	def onStart( self ):
 		pass
@@ -199,18 +199,23 @@ class SceneIntrospector( SceneEditorModule ):
 
 ##----------------------------------------------------------------##
 _OBJECT_EDITOR_CACHE = {} 
+
 def pushObjectEditorToCache( typeId, editor ):
 	pool = _OBJECT_EDITOR_CACHE.get( typeId, None )
 	if not pool:
 		pool = []
 		_OBJECT_EDITOR_CACHE[ typeId ] = pool
+	editor.container.setUpdatesEnabled( False )
 	pool.append( editor )
 	return True
 
 def popObjectEditorFromCache( typeId ):
 	pool = _OBJECT_EDITOR_CACHE.get( typeId, None )
 	if pool:
-		return pool.pop()
+		editor = pool.pop()
+		if editor:
+			editor.container.setUpdatesEnabled( True )
+		return editor
 
 def clearObjectEditorCache( typeId ):
 	if _OBJECT_EDITOR_CACHE.has_key( typeId ):
@@ -229,7 +234,7 @@ class IntrospectorInstance(object):
 	def createWidget(self, container):
 		self.container = container
 		self.header = container.addWidgetFromFile(
-			getAppPath( 'data/ui/introspector.ui' ),
+			getModulePath( 'introspector.ui' ),
 			expanding=False)
 		self.scroll = scroll = container.addWidget( QtGui.QScrollArea( container ) )
 		self.body   = body   = QtGui.QWidget( container )
@@ -285,7 +290,9 @@ class IntrospectorInstance(object):
 			count = self.body.mainLayout.count()
 			assert count>0
 			self.body.mainLayout.insertWidget( count - 1, container )
-
+			container.show()
+			container.setContextObject( target )
+			
 		else:
 			editorClas = option.get( 'editor_class', None )
 			if not editorClas: #get default object editors
@@ -331,6 +338,7 @@ class IntrospectorInstance(object):
 				cached = pushObjectEditorToCache( editor.targetTypeId, editor )
 			if not cached:
 				editor.unload()
+			editor.target = None
 
 		#remove containers
 		layout = self.body.mainLayout
@@ -339,6 +347,7 @@ class IntrospectorInstance(object):
 			w = child.widget()
 			if w:
 				w.setParent( None )
+				w.deleteLater()
 		layout.addStretch()
 		
 		self.target = None
@@ -384,7 +393,7 @@ class ObjectEditor( object ):
 		pass
 
 	def needCache( self ):
-		return True
+		return False
 
 		
 ##----------------------------------------------------------------##

@@ -617,7 +617,7 @@ class TimelineTrackView( TimelineSubView ):
 		return self.timelineView
 
 ##----------------------------------------------------------------##	
-class TimelineView( QtGui.QFrame ):
+class TimelineView( QtGui.QWidget ):
 	keySelectionChanged   = pyqtSignal( object )
 	trackSelectionChanged = pyqtSignal( object )
 	keyChanged            = pyqtSignal( object )
@@ -967,12 +967,12 @@ class TimelineView( QtGui.QFrame ):
 	def onKeyClicked( self, key, pos ):
 		self.selectKey( key.node )
 
-	def closeEvent( self, ev ):
-		self.trackView.deleteLater()
-		self.rulerView.deleteLater()
+	# def closeEvent( self, ev ):
+	# 	self.trackView.deleteLater()
+	# 	self.rulerView.deleteLater()
 		
-	def __del__( self ):
-		self.deleteLater()
+	# def __del__( self ):
+	# 	self.deleteLater()
 
 ##----------------------------------------------------------------##
 if __name__ == '__main__':
