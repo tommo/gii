@@ -97,7 +97,7 @@
          </size>
         </property>
         <property name="text">
-         <string>find</string>
+         <string>goto</string>
         </property>
        </widget>
       </item>

@@ -44,7 +44,13 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			self.setSelectionMode( QtGui.QAbstractItemView.SingleSelection )
 
 		dragMode = self.getOption( 'drag_mode', None )
-		if dragMode:
+		if dragMode == 'all':
+			self.setDragDropMode( QtGui.QAbstractItemView.DragDrop )
+		elif dragMode == 'drag':
+			self.setDragDropMode( QtGui.QAbstractItemView.DragOnly )
+		elif dragMode == 'drop':
+			self.setDragDropMode( QtGui.QAbstractItemView.DropOnly )
+		elif dragMode == 'internal' or dragMode == True:
 			self.setDragDropMode( QtGui.QAbstractItemView.InternalMove )
 			
 		self.setAlternatingRowColors( self.getOption('alternating_color', False) )
@@ -280,6 +286,14 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 				item.setSelected( True )
 				if kw.get('goto',True) : 
 					self.gotoNode( node )
+
+	def selectFirstItem( self ):
+		# if not self.treeResult.getSelection():
+		self.clearSelection()
+		item = self.itemAt( 0, 0 )
+		if item:
+			item.setSelected( True )
+			self.scrollToItem( item )
 
 	def editNode( self, node, col = 0 ):
 		item = self.getItemByNode( node )

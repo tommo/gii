@@ -2,6 +2,7 @@ from gii.core import  *
 from gii.SceneEditor.Introspector   import ObjectEditor, CommonObjectEditor, registerObjectEditor
 from gii.qt.controls.PropertyEditor import PropertyEditor
 from gii.qt.helpers import addWidgetWithLayout, repolishWidget
+from gii.qt.IconCache               import getIcon
 
 from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt, pyqtSlot
@@ -32,13 +33,22 @@ class ProtoFieldResetMenuMixin():
 		itemTitle = menu.addAction( '[ %s ]' % fieldId )
 		itemTitle.setEnabled( False )
 		menu.addSeparator()
-		itemDefault = menu.addAction( 'Set Default Value' )
-		itemDefault.triggered.connect( self.onFieldResetDefault )
+
+		animator = app.getModule( 'animator' )
+		if animator:
+			itemAddKey = menu.addAction( 'Add Key Frame' )
+			itemAddKey.setIcon( getIcon('key') )
+			itemAddKey.triggered.connect( self.onFieldAddKey )
+			menu.addSeparator()
+
+		# itemDefault = menu.addAction( 'Set Default Value' )
+		# itemDefault.triggered.connect( self.onFieldResetDefault )
 
 		if _MOCK.isProtoInstanceOverrided( target, fieldId ):
 			menu.addSeparator()
 			itemProto = menu.addAction( 'Reset To Proto Value' )
 			itemProto.triggered.connect( self.onFieldResetProto )
+
 
 		self.currentFieldContext = ( target, fieldId )
 		menu.exec_(QtGui.QCursor.pos())
@@ -52,6 +62,12 @@ class ProtoFieldResetMenuMixin():
 		self.propertyEditor.refreshField( fieldId )
 		self.currentFieldContext = None
 		self.onPropertyReset( target, fieldId )
+
+	def onFieldAddKey( self ):
+		target, fieldId = self.currentFieldContext
+		animator = app.getModule( 'animator' )
+		animator.addKeyForField( target, fieldId )
+		
 
 ##----------------------------------------------------------------##
 class EntityHeader( EntityHeaderBase, QtGui.QWidget ):
@@ -79,8 +95,9 @@ class ComponentEditor( CommonObjectEditor, ProtoFieldResetMenuMixin ): #a generi
 		super( ComponentEditor, self ).setTarget( target )
 		if target['__proto_history']:
 			self.container.setProperty( 'proto', True )
-			repolishWidget( self.container )
-			repolishWidget( self.container.getInnerContainer() )
+		else:
+			self.container.setProperty( 'proto', False )
+		self.container.repolish()
 
 ##----------------------------------------------------------------##
 class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin ): #a generic property grid 
@@ -106,9 +123,9 @@ class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin ): #a generic propert
 		if isMockInstance( target, 'Entity' ):
 			if target['__proto_history']:				
 				self.container.setProperty( 'proto', True )
-				repolishWidget( self.container )
-				repolishWidget( self.container.getInnerContainer() )
-
+			else:
+				self.container.setProperty( 'proto', False )
+			self.container.repolish()
 			#setup prefab tool
 			protoState = target['PROTO_INSTANCE_STATE']
 			if protoState:

@@ -5,6 +5,7 @@ from gii.qt          import QtEditorModule
 
 from gii.qt.IconCache                   import getIcon
 from gii.qt.controls.GenericTreeWidget  import GenericTreeWidget
+from gii.qt.dialogs                     import alertMessage
 from gii.moai.MOAIRuntime import MOAILuaDelegate
 from gii.SceneEditor      import SceneEditorModule, getSceneSelectionManager
 from gii.qt.helpers       import addWidgetWithLayout, QColorF, unpackQColor
@@ -60,8 +61,8 @@ class AnimatorView( SceneEditorModule ):
 
 		# addWidgetWithLaytut( toolbar,
 		# 	self.widget.containerEditTool )
-		self.addTool( 'animator_clips/add',    label = 'add',    icon = 'add' )
-		self.addTool( 'animator_clips/remove', label = 'remove', icon = 'remove' )
+		self.addTool( 'animator_clips/add_clip',    label = 'add',    icon = 'add' )
+		self.addTool( 'animator_clips/remove_clip', label = 'remove', icon = 'remove' )
 
 
 		self.addTool( 'animator_play/to_start',    label = 'to start',  icon = 'previous' )
@@ -77,70 +78,136 @@ class AnimatorView( SceneEditorModule ):
 		self.addTool( 'animator_track/add_group',    label = 'add group',    icon = 'add_folder' )
 
 		#
+		signals.connect( 'selection.changed', self.onSceneSelectionChanged )
+
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( _getModulePath( 'AnimatorView.lua' ) )
 
-		self.editTarget = None
 		self.widget.setOwner( self )
 
 		#playback
 		self.previewing = False
+		self.widget.setEnabled( False )
+
+		self.targetAnimator     = None
+		self.targetClip         = None
+		self.targetAnimatorData = None
+		self.currentTrack       = None
 
 
 	def onStart( self ):
-		target = self.delegate.callMethod( 'view', 'setupTestData' )
-		self.setEditTarget( target )
-
-	def setEditTarget( self, target ):
-		self.editTarget = target
-		self.delegate.callMethod( 'view', 'setEditTarget', target )
-		self.widget.rebuild()
-
-	def onSelectionChanged( self, selection, context = None ):
 		pass
 
+	def setTargetAnimator( self, target ):
+		if target == self.targetAnimator: return
+		self.targetAnimator = target
+		self.targetClip     = None
+		self.delegate.callMethod( 'view', 'setTargetAnimator', target )
+		self.targetAnimatorData = self.delegate.callMethod( 'view', 'getTargetAnimatorData' )
+		self.widget.rebuild()
+		if self.targetAnimator:
+			self.widget.setEnabled( True )
+		else:
+			self.widget.setEnabled( False )
+		clip = self.delegate.callMethod( 'view', 'getPreviousTargeClip', target )
+		if clip:
+			self.widget.treeClips.selectNode( clip )
+		else:
+			self.widget.treeClips.selectFirstItem()
+
+
+	def setTargetClip( self, clip ):
+		self.targetClip = clip
+		self.delegate.callMethod( 'view', 'setTargetClip', clip )
+		self.widget.rebuildTimeline()
+
+	def setCurrentTrack( self, track ):
+		self.currentTrack = track
+		self.delegate.callMethod( 'view', 'setCurrentTrack', track )
+		#TODO:update track toolbar
+		
 	def getClipList( self ):
-		return []
+		if self.targetAnimatorData:
+			clipList = self.targetAnimatorData.clips
+			return [ clip for clip in clipList.values()  ]
+		else:
+			return []
 
 	def getTrackList( self ):
-		if self.editTarget:
-			trackList = self.editTarget.getTrackList( self.editTarget )
+		if self.targetClip:
+			trackList = self.targetClip.getTrackList( self.targetClip )
 			return [ track for track in trackList.values()  ]
 		else:
 			return []
 
 	def getClipRoot( self ):
-		if self.editTarget:
-			return self.editTarget.getRoot( self.editTarget )
+		if self.targetClip:
+			return self.targetClip.getRoot( self.targetClip )
 		else:
 			return None
 
+	def onSelectionChanged( self, selection, context = None ):
+		if context == 'clip':
+			if selection:
+				clip = selection[0]
+			else:
+				clip = None
+			self.setTargetClip( clip )
+		elif context == 'track':
+			if selection:
+				track = selection[0]
+			else:
+				track = None
+			self.setCurrentTrack( track )
+
+	def onSceneSelectionChanged( self, selection, key ):
+		if key != 'scene': return
+		#find animator component
+		target = self.delegate.callMethod( 'view', 'findTargetAnimator' )
+		self.setTargetAnimator( target )
+		
 	def clearPreviewState( self ):
 		if self.previewing: return
-		self.canvas.callMethod( 'view', 'clearStateData' )
+		self.delegate.callMethod( 'view', 'clearStateData' )
 	
+	def addKeyForField( self, target, fieldId ):
+		if not self.targetAnimator:
+			alertMessage( 'No Animator', 'No Animator found in current entity scope', 'question' )
+			return False
+
+		if not self.targetClip:
+			alertMessage( 'No Clip', 'You need to select a Clip first', 'question' )
+			return False
+
+		key = self.delegate.callMethod( 'view', 'addKeyForField', target, fieldId )
+		if key:
+			self.widget.addKey( key, True )
+
+	def addKeyForEvent( self, target, eventId ):
+		pass
+
 	#preview
-	def startPreview( self ):
-		self.canvas.makeCurrent()
-		if self.canvas.callMethod( 'view', 'startPreview' ):
-			self.timeline.setCursorDraggable( False )
-			self.previewing = True
-			self.canvas.startUpdateTimer( 60 )
-			self.canvas.setStyleSheet('border-bottom: 1px solid rgb(0, 255, 0);')
+	# def startPreview( self ):
+	# 	self.delegate.makeCurrent()
+	# 	if self.delegate.callMethod( 'view', 'startPreview' ):
+	# 		self.timeline.setCursorDraggable( False )
+	# 		self.previewing = True
+	# 		self.delegate.startUpdateTimer( 60 )
+	# 		self.delegate.setStyleSheet('border-bottom: 1px solid rgb(0, 255, 0);')
 
-	def stopPreview( self ):		
-		self.canvas.makeCurrent()
-		self.canvas.callMethod( 'view', 'stopPreview' )
-		self.previewing = False
-		self.canvas.stopUpdateTimer()
-		self.canvas.setStyleSheet('border-bottom: none ')
-		self.timeline.setCursorDraggable( True )
+	# def stopPreview( self ):		
+	# 	self.delegate.makeCurrent()
+	# 	self.delegate.callMethod( 'view', 'stopPreview' )
+	# 	self.previewing = False
+	# 	self.delegate.stopUpdateTimer()
+	# 	self.delegate.setStyleSheet('border-bottom: none ')
+	# 	self.timeline.setCursorDraggable( True )
 
-	def togglePreview( self ):
-		if self.previewing:
-			self.stopPreview()
-		else:
-			self.startPreview()
+	# def togglePreview( self ):
+	# 	if self.previewing:
+	# 		self.stopPreview()
+	# 	else:
+	# 		self.startPreview()
 
 	def onKeyRemoving( self, key ):
 		if self.delegate.callMethod( 'view', 'removeKey', key ) != False:
@@ -154,10 +221,22 @@ class AnimatorView( SceneEditorModule ):
 
 	def onTool( self, tool ):
 		name = tool.name
-		if name == 'add':
-			layer = self.delegate.callMethod( 'view', 'addLayer' )
+		if name == 'add_clip':
+			clip = self.delegate.callMethod( 'view', 'addClip' )
+			if clip:
+				self.widget.addClip( clip, True )
 			
-		elif name == 'remove':
-			for l in self.tree.getSelection():
-				self.delegate.callMethod( 'view', 'removeLayer', l )
-	
+		elif name == 'remove_clip':
+			for clip in self.widget.treeClips.getSelection():
+				self.delegate.callMethod( 'view', 'removeClip', clip )
+				self.widget.removeClip( clip )
+
+		elif name == 'add_group':
+			group = self.delegate.callMethod( 'view', 'addTrackGroup' )
+			if group:
+				self.widget.addTrack( group )
+
+		elif name == 'remove_track':
+			for track in self.widget.treeTracks.getSelection():
+				self.delegate.callMethod( 'view', 'removeTrack', track )
+				self.widget.removeTrack( track )

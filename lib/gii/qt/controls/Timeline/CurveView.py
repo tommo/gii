@@ -38,15 +38,15 @@ TANGENT_MODE_SMOOTH  = 2
 
 
 ##----------------------------------------------------------------##
-class CursorLine( QtGui.QGraphicsLineItem ):
+class CursorItem( QtGui.QGraphicsLineItem ):
 	_pen  = makePen( color = '#9cff00', width = 1 )
 	def __init__( self ):
-		super( CursorLine, self ).__init__()
+		super( CursorItem, self ).__init__()
 		self.setPen( self._pen )
 
 	def paint( self, painter, option, widget ):
 		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
-		super( CursorLine, self ).paint( painter, option, widget )
+		super( CursorItem, self ).paint( painter, option, widget )
 
 ##----------------------------------------------------------------##
 class AxisGridBackground( QtGui.QGraphicsRectItem ):
@@ -458,10 +458,10 @@ class CurveView( GLGraphicsView ):
 		self.scene().sceneRectChanged.connect( self.onRectChanged )
 		
 		#components
-		self.cursorLine = CursorLine()
-		self.cursorLine.setLine( 0,-10000, 0, 20000 )
-		self.cursorLine.setZValue( 1000 )
-		self.scene().addItem( self.cursorLine )
+		self.cursorItem = CursorItem()
+		self.cursorItem.setLine( 0,-10000, 0, 20000 )
+		self.cursorItem.setZValue( 1000 )
+		self.scene().addItem( self.cursorItem )
 
 		self.panning = False
 		self.scrollX = 0
@@ -486,6 +486,9 @@ class CurveView( GLGraphicsView ):
 	def setAxisShown( self, xAxis, yAxis ):
 		self.gridBackground.showXAxis = xAxis
 		self.gridBackground.showYAxis = yAxis
+
+	def setCursorVisible( self, visible ):
+		self.cursorItem.setVisible( visible )
 
 	def setScrollXLimit( self, minX, maxX ):
 		self.scrollXMin = minX
@@ -523,7 +526,7 @@ class CurveView( GLGraphicsView ):
 
 	def setCursorX( self, vx ):
 		self.cursorX = vx
-		self.cursorLine.setX( self.valueToX( vx ) )
+		self.cursorItem.setX( self.valueToX( vx ) )
 
 	def wheelEvent(self, event):
 		steps = event.delta() / 120.0;
@@ -558,7 +561,7 @@ class CurveView( GLGraphicsView ):
 			curve.setZoom( self.zoomX, self.zoomY )
 		self.gridBackground.setZoom( self.zoomX, self.zoomY )
 		self.updateTransfrom()
-		self.cursorLine.setX( self.valueToX( self.cursorX ) )
+		self.cursorItem.setX( self.valueToX( self.cursorX ) )
 
 	def mouseMoveEvent( self, event ):
 		super( CurveView, self ).mouseMoveEvent( event )

@@ -8,6 +8,7 @@ from gii.qt          import QtEditorModule
 from gii.qt.IconCache                  import getIcon
 from gii.qt.dialogs                    import alertMessage, requestConfirm
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
+from gii.qt.helpers                    import makeBrush, makeFont
 
 from gii.moai.MOAIRuntime import MOAILuaDelegate
 from gii.SceneEditor      import SceneEditorModule
@@ -29,6 +30,8 @@ def getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 
 
+_brushAnimatable = makeBrush( color = '#5f3d26' )
+_fontAnimatable  = makeFont( bold = True, italic = True )
 ##----------------------------------------------------------------##
 class SceneGraphEditor( SceneEditorModule ):
 	def __init__(self):
@@ -754,6 +757,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			else:
 				item.setText( 1, layerName )
 			item.setText( 2, node.getClassName( node ) )
+			# item.setFont( 0, _fontAnimatable )
 		
 	def onItemSelectionChanged(self):
 		if not self.syncSelection: return
@@ -806,6 +810,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		self.adjustingRange = True
 		self.verticalScrollBar().setRange( min, max + 5 )
 		self.adjustingRange = False
+
 
 ##----------------------------------------------------------------##
 #TODO: allow sort by other column

@@ -94,16 +94,19 @@ class TimelineSubView( GLGraphicsView ):
 	def onCursorPosChanged( self, cursorPos ):
 		pass
 
+	def setCursorVisible( self, visible ):
+		pass
+
 ##----------------------------------------------------------------##
-class TimelineCursorLine( QtGui.QGraphicsLineItem ):
+class CursorItem( QtGui.QGraphicsLineItem ):
 	_pen  = makePen( color = '#9cff00', width = 1 )
 	def __init__( self ):
-		super( TimelineCursorLine, self ).__init__()
+		super( CursorItem, self ).__init__()
 		self.setPen( self._pen )
 
 	def paint( self, painter, option, widget ):
 		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
-		super( TimelineCursorLine, self ).paint( painter, option, widget )
+		super( CursorItem, self ).paint( painter, option, widget )
 
 
 ##----------------------------------------------------------------##
@@ -135,6 +138,7 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		self.view = None		
 		self.setRect( 0,0,10000,50 )
 		self.dragging = False
+		self.cursorVisible = True
 
 	def mousePressEvent( self, event ):
 		if event.button() == Qt.LeftButton:
@@ -192,9 +196,10 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 			painter.drawText( QRectF( xx + 2, h-20, 100, 100 ), Qt.AlignTop|Qt.AlignLeft, markText )
 
 		#draw cursor
-		painter.setPen( TimelineRulerItem._cursorPen )
-		cx = float( self.view.cursorPos - t0 ) * u + _HEAD_OFFSET
-		painter.drawLine( cx, 0, cx, h-1 )
+		if self.cursorVisible:
+			painter.setPen( TimelineRulerItem._cursorPen )
+			cx = float( self.view.cursorPos - t0 ) * u + _HEAD_OFFSET
+			painter.drawLine( cx, 0, cx, h-1 )
 
 ##----------------------------------------------------------------##
 class TimelineRulerView( TimelineSubView ):
@@ -213,6 +218,10 @@ class TimelineRulerView( TimelineSubView ):
 
 	def clear( self ):
 		pass
+
+	def setCursorVisible( self, visible ):
+		self.ruler.cursorVisible = visible
+		self.update()
 
 	def wheelEvent(self, event):
 		steps = event.delta() / 120.0;
@@ -463,6 +472,9 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		self.node = None
 
 	def addKey( self, keyNode ):
+		for key in self.keys:
+			if key.node == keyNode:
+				return key
 		keyItem = TimelineKeyItem( self )
 		keyItem.track = self
 		keyItem.node  = keyNode
@@ -547,10 +559,10 @@ class TimelineTrackView( TimelineSubView ):
 		self.trackItems = []
 		
 		#components
-		self.cursorLine = TimelineCursorLine()
-		self.cursorLine.setLine( 0,0, 0, 10000 )
-		self.cursorLine.setZValue( 1000 )
-		scene.addItem( self.cursorLine )
+		self.cursorItem = CursorItem()
+		self.cursorItem.setLine( 0,0, 0, 10000 )
+		self.cursorItem.setZValue( 1000 )
+		scene.addItem( self.cursorItem )
 		#grid
 		self.gridBackground = GridBackground()
 		self.gridBackground.setGridSize( self.gridSize, _TRACK_SIZE + _TRACK_MARGIN )
@@ -566,7 +578,15 @@ class TimelineTrackView( TimelineSubView ):
 		scene.addItem( self.selectionRegion )
 
 	def clear( self ):
-		pass
+		scn = self.scene()
+		for trackItem in self.trackItems:
+			trackItem.clear()
+			trackItem.setParentItem( None )
+			scn.removeItem( trackItem )
+		self.trackItems = []
+
+	def setCursorVisible( self, visible ):
+		self.cursorItem.setVisible( visible )
 
 	def addTrackItem( self ):
 		item = TimelineTrackItem()
@@ -582,7 +602,7 @@ class TimelineTrackView( TimelineSubView ):
 		self.trackItems.remove( track )
 		track.setParentItem( None )
 		track.node = None
-		track.delete()
+		track.scene().removeItem( track )
 
 	def setScrollY( self, y, update = True ):
 		self.scrollY = min( y, 0.0 )
@@ -597,7 +617,7 @@ class TimelineTrackView( TimelineSubView ):
 		return self.scrollY
 
 	def onCursorPosChanged( self, pos ):
-		self.cursorLine.setX( self.timeToPos( self.cursorPos ) )
+		self.cursorItem.setX( self.timeToPos( self.cursorPos ) )
 
 	def onScrollPosChanged( self, p ):
 		self.updateTransfrom()
@@ -607,7 +627,7 @@ class TimelineTrackView( TimelineSubView ):
 		for track in self.trackItems:
 			track.setZoom( self.zoom )
 		self.gridBackground.setGridWidth( self.gridSize * zoom )
-		self.cursorLine.setX( self.timeToPos( self.cursorPos ) )
+		self.cursorItem.setX( self.timeToPos( self.cursorPos ) )
 
 	def updateTransfrom( self ):
 		trans = QTransform()
@@ -776,16 +796,16 @@ class TimelineView( QtGui.QWidget ):
 		self.trackView.cursorPosChanged.connect( self.onCursorPosChanged )
 		self.rulerView.cursorPosChanged.connect( self.onCursorPosChanged )
 
-		self.tabBar = QtGui.QTabBar()		
+		self.tabViewSwitch = QtGui.QTabBar()		
 		bottomLayout = QtGui.QHBoxLayout( self.ui.containerBottom )
-		bottomLayout.addWidget( self.tabBar )
+		bottomLayout.addWidget( self.tabViewSwitch )
 		bottomLayout.setSpacing( 0 )
 		bottomLayout.setMargin( 0 )
-		self.tabBar.addTab( 'Dope Sheet')
-		self.tabBar.addTab( 'Curve View' )
-		self.tabBar.currentChanged.connect( self.onTabChanged )
-		self.tabBar.setShape( QtGui.QTabBar.RoundedSouth )
-		self.tabBar.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
+		self.tabViewSwitch.addTab( 'Dope Sheet')
+		self.tabViewSwitch.addTab( 'Curve View' )
+		self.tabViewSwitch.currentChanged.connect( self.onTabChanged )
+		self.tabViewSwitch.setShape( QtGui.QTabBar.RoundedSouth )
+		self.tabViewSwitch.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
 
 		self.toolbarEdit = QtGui.QToolBar()
 		self.toolbarEdit.setObjectName( 'TimelineToolBarEdit')
@@ -845,19 +865,18 @@ class TimelineView( QtGui.QWidget ):
 		
 	def rebuild( self ):
 		self.clear()
-		self.hide()
 		self.rebuilding = True
 		for node in self.getTrackNodes():
 			self.addTrack( node )
 		self.updateTrackLayout()
 		self.rebuilding = False
-		self.show()
 
 	def clear( self ):
 		self.hide()
 		self.trackView.clear()
 		self.rulerView.clear()
 		self.tracks = []
+		self.nodeToTrack = {}
 		self.updateTrackLayout()
 		self.show()
 
@@ -870,7 +889,7 @@ class TimelineView( QtGui.QWidget ):
 				y = self.getTrackPos( node )
 				track.setY( y )
 				y += _TRACK_SIZE + _TRACK_MARGIN
-			track.setVisible( vis )
+			track.setVisible( vis or False )
 		
 	def getTrackByNode( self, trackNode ):
 		return self.nodeToTrack.get( trackNode, None )
@@ -905,10 +924,10 @@ class TimelineView( QtGui.QWidget ):
 		track.node = None
 		track.clear()
 		self.trackView.removeTrackItem( track )
-		self.updateScrollTrackSize()
+		self.updateTrackLayout()
 
 	def addKey( self, keyNode, **option ):
-		track = self.getParentTrack( keyNode )
+		track = self.affirmParentTrack( keyNode )
 		if not track: return None
 		key = track.addKey( keyNode )
 		if key:
@@ -926,6 +945,15 @@ class TimelineView( QtGui.QWidget ):
 		trackNode = self.getParentTrackNode( keyNode )
 		if not trackNode: return None
 		return self.getTrackByNode( trackNode )
+
+	def affirmParentTrack( self, keyNode ):
+		trackNode = self.getParentTrackNode( keyNode )
+		if not trackNode: return None
+		trackItem = self.getTrackByNode( trackNode )
+		if not trackItem:
+			return self.addTrack( trackNode )
+		else:
+			return trackItem
 
 	def getSelectedTrackNode( self ):
 		track = self.selectedTrack
@@ -1076,6 +1104,12 @@ class TimelineView( QtGui.QWidget ):
 
 	def onKeyClicked( self, key, pos ):
 		self.selectKey( key.node )
+
+	def setEnabled( self, enabled ):
+		super( TimelineView, self ).setEnabled( enabled )
+		self.trackView.setCursorVisible( enabled )
+		self.rulerView.setCursorVisible( enabled )
+		self.curveView.setCursorVisible( enabled )
 
 	# def closeEvent( self, ev ):
 	# 	self.trackView.deleteLater()

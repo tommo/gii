@@ -4,6 +4,7 @@ from gii.core.tmpfile import TempDir
 from PyQt4 import QtGui,QtCore
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QMessageBox
+from PyQt4.QtGui import QColor, QTransform
 
 def unpackQColor( c ):
 	return c.redF(), c.greenF(), c.blueF(), c.alphaF()
@@ -61,3 +62,31 @@ def repolishWidget( widget ):
 	style.polish( widget )
 	widget.update()
 	# style.polish( widget )
+
+def makeBrush( **option ):
+	brush = QtGui.QBrush()
+	brush.setStyle( option.get( 'style', Qt.SolidPattern ) )
+	color = QColor( option.get( 'color', '#ffffff' ) )
+	color.setAlphaF( option.get( 'alpha', 1 ) )
+	brush.setColor( color )
+	return brush
+
+def makePen( **option ):
+	pen = QtGui.QPen()
+	pen.setStyle( option.get( 'style', Qt.SolidLine ) )
+	color = QColor( option.get( 'color', '#ffffff' ) )
+	color.setAlphaF( option.get( 'alpha', 1 ) )
+	pen.setColor( color )
+	pen.setWidth( option.get( 'width', .0 ) )
+	return pen
+
+def makeFont( **option ):
+	font=QtGui.QFont()
+	font.setPointSize( option.get( 'size', 11 ) )
+	font.setBold( option.get( 'bold', False ) )
+	font.setItalic( option.get( 'italic', False ) )
+	font.setUnderline( option.get( 'underline', False ) )
+	family = option.get( 'family', None )
+	if family:
+		font.setFamily( family )
+	return font

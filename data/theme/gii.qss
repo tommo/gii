@@ -400,6 +400,14 @@ QTabWidget::tab-bar
 	/*border:1px solid #000;*/
 }
 
+QTabBar::tab:disabled {
+	color:#222;
+}
+
+QTabBar::tab:selected:disabled {
+	color:#777;
+}
+
 QTabBar::tab
 {
 	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #555, stop:1 #444);
@@ -1061,4 +1069,6 @@ QSplitter#TimelineHeaderSplitter::handle{
 #AnimatorTrackTree{
 	background-color:#383838;
 	alternate-background-color:#404040;
+	font-size: 10px;
 }
+

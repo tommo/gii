@@ -11,7 +11,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 			fmt.setAlpha(True)
 			fmt.setDepth(True)
 			fmt.setDoubleBuffer(True)
-			fmt.setSampleBuffers(True)
+			fmt.setSampleBuffers(False)
 			fmt.setSwapInterval(0)
 			QtOpenGL.QGLFormat.setDefaultFormat(fmt)
 			

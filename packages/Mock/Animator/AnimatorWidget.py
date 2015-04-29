@@ -32,11 +32,14 @@ class AnimatorTrackTreeItemDelegate( QtGui.QStyledItemDelegate ):
 ##----------------------------------------------------------------##
 class AnimatorTrackTree( GenericTreeWidget ):
 	def __init__( self, *args, **option ):
+		option['editable']  = True
+		option['drag_mode'] = 'internal'
 		super( AnimatorTrackTree, self ).__init__( *args, **option )
 		self.setItemDelegate( AnimatorTrackTreeItemDelegate() )
 		self.setVerticalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
 		self.adjustingRange = False
-		self.verticalScrollBar().rangeChanged.connect( self.onScrollRangeChanged )
+		self.verticalScrollBar().rangeChanged.connect( self.onScrollRangeChanged )		
+		self.setIndentation( 10 )
 
 	def getHeaderInfo( self ):
 		return [ ('Name',80), ('Key', 20) ]
@@ -56,15 +59,24 @@ class AnimatorTrackTree( GenericTreeWidget ):
 	def getNodeChildren( self, node ):
 		return [ clip for clip in node.children.values() ]
 
+	def getItemFlags( self, node ):
+		flags = {}
+		if isMockInstance( node, 'AnimatorTrackGroup' ):
+			flags['editable'] = True
+		else:
+			flags['editable'] = False
+		return flags
+
 	def updateItemContent( self, item, node, **option ):
 		pal = self.palette()
 		defaultBrush = QColorF( .8,.8,.8 )
 		name = None
+
 		if isMockInstance( node, 'AnimatorTrackGroup' ):
 			item.setText( 0, node.name )
 			item.setIcon( 0, getIcon('track_group') )
-		else:
-			item.setText( 0, node.name )
+		elif isMockInstance( node, 'AnimatorClipSubNode' ):
+			item.setText( 0, node.toString( node ) )
 			item.setIcon( 0, getIcon('track_number') )
 			item.setIcon( 1, getIcon('track_key_0') )
 		
@@ -77,8 +89,8 @@ class AnimatorTrackTree( GenericTreeWidget ):
 	def resizeEvent( self, event ):
 		super( AnimatorTrackTree, self ).resizeEvent( event )
 		width = self.width() - 4
-		self.setColumnWidth ( 0, width - 30 )
-		self.setColumnWidth ( 1, 30 )
+		self.setColumnWidth ( 0, width - 25 )
+		self.setColumnWidth ( 1, 25 )
 
 	def onItemExpanded( self, item ):
 		node = item.node
@@ -94,13 +106,45 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		self.verticalScrollBar().setRange( min, max + self.height() - 25 )
 		self.adjustingRange = False
 
-	def onItemSelectionChanged( self ):
-		pass
+	def mousePressEvent( self, ev ):
+		item = self.itemAt( ev.pos() )
+		if not item:
+			self.clearSelection()
+		else:
+			return super( AnimatorTrackTree, self ).mousePressEvent( ev )
 
+	def dropEvent( self, ev ):		
+		p = self.dropIndicatorPosition()
+		pos = False
+		if p == QtGui.QAbstractItemView.OnItem: #reparent
+			pos = 'on'
+		elif p == QtGui.QAbstractItemView.AboveItem:
+			return False
+		elif p == QtGui.QAbstractItemView.BelowItem:
+			return False
+		else:
+			pos = 'viewport'
+
+		target = self.itemAt( ev.pos() )
+		if pos == 'on':
+			# self.owner.doCommand( 'animator/reparent_track',  )
+			# self.module.doCommand( 'scene_editor/reparent_entity', target = target.node )
+			pass
+		elif pos == 'viewport':
+			# self.module.doCommand( 'scene_editor/reparent_entity', target = 'root' )
+			pass
+
+
+		super( GenericTreeWidget, self ).dropEvent( ev )
 
 
 ##----------------------------------------------------------------##
 class AnimatorClipListTree( GenericTreeWidget ):
+	def __init__( self, *args, **kwargs ):
+		super( AnimatorClipListTree, self ).__init__( *args, **kwargs )
+		self.setIndentation( 0 )
+		self.option['editable'] = True
+
 	def getHeaderInfo( self ):
 		return [ ('Name',50) ]
 
@@ -114,7 +158,9 @@ class AnimatorClipListTree( GenericTreeWidget ):
 		pass
 
 	def getNodeParent( self, node ): # reimplemnt for target node	
-		return None
+		if node == self.owner:
+			return None
+		return self.owner
 
 	def getNodeChildren( self, node ):
 		if node == self.owner:
@@ -126,12 +172,8 @@ class AnimatorClipListTree( GenericTreeWidget ):
 		pal = self.palette()
 		defaultBrush = QColorF( .8,.8,.8 )
 		name = None
-		if isMockInstance( node, 'AnimatorTrackGroup' ):
-			item.setText( 0, node.name )
-			item.setIcon( 0, getIcon('folder') )
-		else:
-			item.setText( 0, node.name )
-			item.setIcon( 0, getIcon('normal') )
+		item.setText( 0, node.name )
+		item.setIcon( 0, getIcon('clip') )
 		
 	def onItemSelectionChanged(self):
 		self.owner.onSelectionChanged( self.getSelection(), 'clip' )
@@ -278,7 +320,6 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		#signals
 		self.treeTracks.verticalScrollBar().valueChanged.connect( self.onTrackTreeScroll )
 
-
 	def setOwner( self, owner ):
 		self.owner = owner
 		self.treeTracks.parentView = self
@@ -295,6 +336,33 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.treeTracks.rebuild()
 		self.treeClips.rebuild()
 		self.timeline.rebuild()
+
+	def rebuildTimeline( self ):
+		self.timeline.rebuild()
+		self.treeTracks.rebuild()
+
+	def createClip( self ):
+		pass
+
+	def addClip( self, clip, focus = False ):
+		self.treeClips.addNode( clip )
+		if focus:
+			self.treeClips.selectNode( clip )
+
+	def addKey( self, key, focus = False ):
+		self.addTrack( key.parent )
+		self.timeline.addKey( key )
+
+	def addTrack( self, track ):
+		self.treeTracks.addNode( track )
+		self.timeline.rebuild()
+
+	def removeClip( self, clip ):
+		self.treeClips.removeNode( clip )
+
+	def removeTrack( self, track ):
+		self.treeTracks.removeNode( track )
+		self.timeline.removeTrack( track )
 
 	def setPropertyTarget( self, target ):
 		self.propertyEditor.setTarget( target )
@@ -323,3 +391,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 	def onPropertyChanged( self, obj, fid, value ):
 		if fid == 'pos' or fid == 'length':
 			self.timeline.refreshKey( obj )
+
+	def setEnabled( self, enabled ):
+		super( AnimatorWidget, self ).setEnabled( enabled )
+		self.timeline.setEnabled( enabled )

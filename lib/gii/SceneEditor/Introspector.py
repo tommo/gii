@@ -11,6 +11,8 @@ from SceneEditor  import SceneEditorModule
 from IDPool       import IDPool
 
 from gii.qt.controls.GLWidget import CommonGLWidget
+from gii.qt.helpers           import addWidgetWithLayout, repolishWidget
+from gii.qt.IconCache         import getIcon
 
 ##----------------------------------------------------------------##
 def getModulePath( path ):
@@ -41,6 +43,8 @@ class ObjectContainer( QtGui.QWidget ):
 		self.toggleFold( False )
 		self.ui.buttonFold.clicked.connect( lambda x: self.toggleFold( None ) )
 		self.ui.buttonContext.clicked.connect( lambda x: self.openContextMenu() )
+		self.ui.buttonContext.setIcon( getIcon( 'menu' ) )
+		self.ui.buttonKey.setIcon( getIcon( 'key' ) )
 
 	def setContextObject( self, context ):
 		self.contextObject = context
@@ -74,6 +78,15 @@ class ObjectContainer( QtGui.QWidget ):
 
 	def getInnerContainer( self ):
 		return self.ui.ObjectInnerContainer
+
+	def getHeader( self ):
+		return self.ui.ObjectHeader
+
+	def repolish( self ):
+		repolishWidget( self.ui.ObjectInnerContainer )
+		repolishWidget( self.ui.ObjectHeader )
+		repolishWidget( self.ui.buttonContext )
+		repolishWidget( self.ui.buttonFold )
 
 	def toggleFold( self, folded = None ):
 		if folded == None:

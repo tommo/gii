@@ -32,6 +32,12 @@
    <item>
     <widget class="QWidget" name="ObjectHeader" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="margin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QToolButton" name="buttonFold">
         <property name="maximumSize">
@@ -56,6 +62,31 @@
         <property name="text">
          <string>TextLabel</string>
         </property>
+        <property name="margin">
+         <number>0</number>
+        </property>
+        <property name="indent">
+         <number>10</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="buttonKey">
+        <property name="maximumSize">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>K</string>
+        </property>
+        <property name="checkable">
+         <bool>false</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -78,6 +109,12 @@
        </widget>
       </item>
      </layout>
+     <zorder>buttonFold</zorder>
+     <zorder>labelName</zorder>
+     <zorder>buttonContext</zorder>
+     <zorder>buttonKey</zorder>
+     <zorder>ObjectInnerContainer</zorder>
+     <zorder>ObjectInnerContainer</zorder>
     </widget>
    </item>
    <item>
