@@ -68,15 +68,27 @@ class ProtoFieldResetMenuMixin():
 		animator = app.getModule( 'animator' )
 		animator.addKeyForField( target, fieldId )
 		
+##----------------------------------------------------------------##
+class ObjectFoldStateMixin():
+	def initFoldState( self ):
+		self.getContainer().foldChanged.connect( self.onFoldChanged )
+	
+	def restoreFoldState( self ):
+		folded = self.getTarget()['__foldState'] or False
+		self.getContainer().toggleFold( folded, False )
+
+	def onFoldChanged( self, folded ):
+		self.getTarget()['__foldState'] = folded
+
 
 ##----------------------------------------------------------------##
 class EntityHeader( EntityHeaderBase, QtGui.QWidget ):
 	def __init__(self, *args ):
 		super(EntityHeader, self).__init__( *args )
-		self.setupUi( self )		
+		self.setupUi( self )
 
 ##----------------------------------------------------------------##
-class ComponentEditor( CommonObjectEditor, ProtoFieldResetMenuMixin ): #a generic property grid 
+class ComponentEditor( CommonObjectEditor, ProtoFieldResetMenuMixin, ObjectFoldStateMixin ): #a generic property grid 
 	def onPropertyChanged( self, obj, id, value ):
 		if _MOCK.markProtoInstanceOverrided( obj, id ):
 			self.grid.refershFieldState( id )
@@ -86,9 +98,11 @@ class ComponentEditor( CommonObjectEditor, ProtoFieldResetMenuMixin ): #a generi
 		self.grid.refershFieldState( id )
 		signals.emit( 'entity.modified', obj._entity, 'introspector' )
 
-	def initWidget( self, container ):
-		self.grid = super( ComponentEditor, self ).initWidget( container )
+	def initWidget( self, container, objectContainer ):
+		self.grid = super( ComponentEditor, self ).initWidget( container, objectContainer )
 		self.initContextMenu( self.grid )
+		objectContainer.setKeyMenu( 'component_context' )
+		self.initFoldState()
 		return self.grid
 
 	def setTarget( self, target ):
@@ -98,10 +112,15 @@ class ComponentEditor( CommonObjectEditor, ProtoFieldResetMenuMixin ): #a generi
 		else:
 			self.container.setProperty( 'proto', False )
 		self.container.repolish()
+		self.restoreFoldState()
+		#recording check
+		# for field, editor in self.grid.editors.items():
+		# 	pass
+		
 
 ##----------------------------------------------------------------##
-class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin ): #a generic property grid 
-	def initWidget( self, container ):
+class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin, ObjectFoldStateMixin ): #a generic property grid 
+	def initWidget( self, container, objectContainer ):
 		self.header = EntityHeader( container )
 		self.grid = PropertyEditor( self.header )
 		self.header.layout().addWidget( self.grid )
@@ -112,6 +131,8 @@ class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin ): #a generic propert
 		self.header.buttonEdit   .clicked .connect ( self.onEditPrefab )
 		self.header.buttonGoto   .clicked .connect ( self.onGotoPrefab )
 		self.header.buttonUnlink .clicked .connect ( self.onUnlinkPrefab )
+		objectContainer.setKeyMenu( 'component_context' )
+		self.initFoldState()
 
 		return self.header
 
@@ -143,8 +164,8 @@ class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin ): #a generic propert
 						editor_class = ComponentEditor
 					)
 				container = editor.getContainer()
-				container.foldChanged.connect ( self.onComponentFold )
-
+		self.restoreFoldState()
+		
 	@pyqtSlot( object, str, QObject )
 	def onPropertyChanged( self, obj, id, value ):
 		if _MOCK.markProtoInstanceOverrided( obj, id ):
@@ -193,10 +214,6 @@ class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin ): #a generic propert
 			'scene_editor/pull_prefab',
 			entity = self.target	
 		)
-
-	def onComponentFold( self, folded ):
-		#TODO:store fold state
-		pass
 
 	def refresh( self ):
 		self.grid.refreshAll()

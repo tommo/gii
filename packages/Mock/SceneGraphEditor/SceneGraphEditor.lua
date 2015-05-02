@@ -66,6 +66,35 @@ function SceneGraphEditor:refreshScene()
 	return r
 end
 
+local function collectFoldState( ent )
+end
+
+function SceneGraphEditor:saveIntrospectorFoldState()
+	local output = {}
+	for ent in pairs( self.scene.entities ) do
+		if ent.__guid and ent.__foldState then output[ent.__guid] = true end
+		for com in pairs( ent.components ) do
+			if com.__guid and com.__foldState then output[com.__guid] = true end
+		end
+	end
+	return gii.tableToDict( output )
+end
+
+function SceneGraphEditor:loadIntrospectorFoldState( containerFoldState )
+	containerFoldState = gii.dictToTable( containerFoldState )
+	for ent in pairs( self.scene.entities ) do
+		if ent.__guid and containerFoldState[ent.__guid] then
+			ent.__foldState = true
+		end
+		for com in pairs( ent.components ) do
+			if com.__guid and containerFoldState[ com.__guid ] then
+				com.__foldState = true
+			end
+		end
+
+	end
+end
+
 function SceneGraphEditor:locateProto( path )
 	local protoData = mock.loadAsset( path )
 	local rootId = protoData.rootId
@@ -124,6 +153,7 @@ function SceneGraphEditor:restoreScene()
 		end,
 		_onError
 		)
+	gii.emitPythonSignal( 'scene.change' )
 	if ok then
 		self.retainedSceneData = false
 		self:postLoadScene()		
@@ -810,7 +840,7 @@ end
 
 --------------------------------------------------------------------
 CLASS: CmdUnlinkProto ( mock_edit.EditorCommand )
-	:register( 'scene_editor/create_proto_instance' )
+	:register( 'scene_editor/create_proto_unlink' )
 
 --TODO
 function CmdUnlinkProto:init( option )

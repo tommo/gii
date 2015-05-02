@@ -45,6 +45,7 @@ class SceneView( SceneEditorModule ):
 		signals.connect( 'asset.post_import_all', self.onAssetReimport    )
 		signals.connect( 'scene.open',            self.onSceneOpen        )
 		signals.connect( 'scene.close',           self.onSceneClose       )
+		signals.connect( 'scene.change',          self.onSceneUpdate      )
 		signals.connect( 'scene.update',          self.onSceneUpdate      )
 		signals.connect( 'selection.changed',     self.onSelectionChanged )
 
@@ -75,7 +76,7 @@ class SceneView( SceneEditorModule ):
 	def onUpdateTimer( self ):
 		if self.updatePending == True:
 			self.updatePending = False
-			self.canvas.updateCanvas( no_sim = self.previewing )
+			self.canvas.updateCanvas( no_sim = self.previewing, forced = True )
 			if not self.previewing:
 				self.getModule( 'scene_preview' ).refresh()
 
@@ -127,6 +128,10 @@ class SceneView( SceneEditorModule ):
 
 	def scheduleUpdate( self ):
 		self.updatePending = True
+
+	def forceUpdate( self ):
+		self.scheduleUpdate()
+		self.onUpdateTimer()
 
 	def focusSelection( self ):
 		self.canvas.safeCallMethod( 'view', 'focusSelection' )

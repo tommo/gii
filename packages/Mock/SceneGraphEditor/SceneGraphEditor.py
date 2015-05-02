@@ -40,6 +40,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.activeSceneNode  = None
 		self.refreshScheduled = False
 		self.previewing       = False
+		self.workspaceState   = None
 		
 	def getName( self ):
 		return 'scenegraph_editor'
@@ -217,6 +218,7 @@ class SceneGraphEditor( SceneEditorModule ):
 			signals.emitNow( 'scene.open', self.activeSceneNode, scene )
 			self.setFocus()
 			self.editingProtoNode = protoNode		
+			self.loadWorkspaceState( False )
 		
 	def closeScene( self ):
 		if self.sceneDirty:
@@ -244,11 +246,45 @@ class SceneGraphEditor( SceneEditorModule ):
 		if not self.previewing:
 			self.sceneDirty = dirty
 
+	def saveWorkspaceState( self ):
+		self.retainWorkspaceState()
+		treeFoldState      = self.workspaceState['tree_state']
+		containerFoldState = self.workspaceState['container_state']
+		self.activeSceneNode.setMetaData( 'tree_state', treeFoldState )
+		self.activeSceneNode.setMetaData( 'container_state', containerFoldState )
+
+	def loadWorkspaceState( self, restoreState = True ):
+		treeFoldState = self.activeSceneNode.getMetaData( 'tree_state', None )		
+		containerFoldState = self.activeSceneNode.getMetaData( 'container_state', None )		
+		self.workspaceState = {
+			'tree_state' : treeFoldState,
+			'container_state' : containerFoldState
+		}		
+		if restoreState: self.restoreWorkspaceState()
+
+	def retainWorkspaceState( self ):
+		#tree node foldstate
+		treeFoldState =  self.tree.saveFoldState()
+		#save introspector foldstate
+		introspectorFoldState = self.delegate.safeCallMethod( 'editor', 'saveIntrospectorFoldState' )
+		self.workspaceState = {
+			'tree_state': treeFoldState,
+			'container_state' : introspectorFoldState
+		}
+
+	def restoreWorkspaceState( self ):
+		if not self.workspaceState: return
+		treeState = self.workspaceState.get( 'tree_state', None )
+		if treeState:
+			self.tree.loadFoldState( treeState )	
+		containerState = self.workspaceState.get( 'container_state', None )
+		if containerState:
+			self.delegate.safeCallMethod( 'editor', 'loadIntrospectorFoldState', containerState )
+
+
 	def onSceneChange( self ):
 		self.tree.rebuild()
-		retainedState = self.activeSceneNode.getMetaData( 'tree_state', None )
-		if retainedState:
-			self.tree.loadFoldState( retainedState )
+		self.restoreWorkspaceState()
 		if self.editingProtoNode:
 			self.delegate.safeCallMethod( 'editor', 'locateProto', self.editingProtoNode.getPath() )
 			self.editingProtoNode = None
@@ -258,19 +294,18 @@ class SceneGraphEditor( SceneEditorModule ):
 	def saveScene( self ):
 		if not self.activeSceneNode: return
 		self.markSceneDirty( False )
+		signals.emitNow( 'scene.save' )
 		self.delegate.safeCallMethod( 'editor', 'saveScene', self.activeSceneNode.getAbsFilePath() )
-		self.retainedState = None
-		retainedState = self.tree.saveFoldState()
-		self.activeSceneNode.setMetaData( 'tree_state', retainedState )
+		self.saveWorkspaceState()
 
 	def refreshScene( self ):
 		if not self.activeSceneNode: return
 		if self.previewing: return
 		self.refreshScheduled = False
 		node = self.activeSceneNode
-		self.retainedState = self.tree.saveFoldState()
+		self.retainWorkspaceState()
 		if self.delegate.safeCallMethod( 'editor', 'refreshScene' ):
-			self.tree.loadFoldState( self.retainedState )	
+			self.restoreWorkspaceState()
 		self.refreshCreatorMenu()
 
 	def scheduleRefreshScene( self ):
@@ -513,7 +548,7 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def onPreviewStart( self ):
 		if not self.activeSceneNode: return
-		self.retainedState = self.tree.saveFoldState()
+		self.retainWorkspaceState()
 		self.delegate.safeCallMethod( 'editor', 'retainScene' )
 		self.delegate.safeCallMethod( 'editor', 'startScenePreview' )
 		self.previewing = True
@@ -525,7 +560,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.delegate.safeCallMethod( 'editor', 'stopScenePreview' )
 		self.previewing = False
 		if self.delegate.safeCallMethod( 'editor', 'restoreScene' ):
-			self.tree.loadFoldState( self.retainedState )
+			self.restoreWorkspaceState()
 
 	##----------------------------------------------------------------##
 	def updateEntityPriority( self ):

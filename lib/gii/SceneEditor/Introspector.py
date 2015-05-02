@@ -40,11 +40,13 @@ class ObjectContainer( QtGui.QWidget ):
 		self.contextObject = None
 
 		self.folded = False
-		self.toggleFold( False )
+		self.toggleFold( False, True )
 		self.ui.buttonFold.clicked.connect( lambda x: self.toggleFold( None ) )
 		self.ui.buttonContext.clicked.connect( lambda x: self.openContextMenu() )
 		self.ui.buttonContext.setIcon( getIcon( 'menu' ) )
+		self.ui.buttonKey.clicked.connect( lambda x: self.openKeyMenu() )
 		self.ui.buttonKey.setIcon( getIcon( 'key' ) )
+		self.ui.buttonKey.hide()
 
 	def setContextObject( self, context ):
 		self.contextObject = context
@@ -76,6 +78,14 @@ class ObjectContainer( QtGui.QWidget ):
 		else:
 			self.ui.buttonContext.show()
 
+	def setKeyMenu( self, menuName ):
+		menu = menuName and MenuManager.get().find( menuName ) or None
+		self.keyMenu = menu
+		if not menu:
+			self.ui.buttonKey.hide()
+		else:
+			self.ui.buttonKey.show()
+
 	def getInnerContainer( self ):
 		return self.ui.ObjectInnerContainer
 
@@ -86,9 +96,10 @@ class ObjectContainer( QtGui.QWidget ):
 		repolishWidget( self.ui.ObjectInnerContainer )
 		repolishWidget( self.ui.ObjectHeader )
 		repolishWidget( self.ui.buttonContext )
+		repolishWidget( self.ui.buttonKey )
 		repolishWidget( self.ui.buttonFold )
 
-	def toggleFold( self, folded = None ):
+	def toggleFold( self, folded = None, notify = True ):
 		if folded == None:
 			folded = not self.folded
 		self.folded = folded
@@ -98,7 +109,8 @@ class ObjectContainer( QtGui.QWidget ):
 		else:
 			self.ui.buttonFold.setText( '-' )
 			self.ui.ObjectInnerContainer.show()
-		self.foldChanged.emit( self.folded )
+		if notify:
+			self.foldChanged.emit( self.folded )
 
 	def setTitle( self, title ):
 		self.ui.labelName.setText( title )
@@ -106,6 +118,10 @@ class ObjectContainer( QtGui.QWidget ):
 	def openContextMenu( self ):
 		if self.contextMenu:
 			self.contextMenu.popUp( context = self.contextObject )
+
+	def openKeyMenu( self ):
+		if self.keyMenu:
+			self.keyMenu.popUp( context = self.contextObject )
 
 ##----------------------------------------------------------------##
 class SceneIntrospector( SceneEditorModule ):
@@ -316,7 +332,8 @@ class IntrospectorInstance(object):
 			editor.targetTypeId = typeId
 			self.editors.append( editor )
 			container = ObjectContainer( self.body )
-			widget = editor.initWidget( container.getInnerContainer() )
+			editor.container = container
+			widget = editor.initWidget( container.getInnerContainer(), container )
 			container.setContextObject( target )
 			if widget:
 				container.addWidget( widget )				
@@ -334,7 +351,6 @@ class IntrospectorInstance(object):
 				container.ownerEditor = editor
 			else:
 				container.hide()
-			editor.container = container
 
 		editor.parentIntrospector = self
 		editor.setTarget( target )
@@ -391,17 +407,23 @@ class ObjectEditor( object ):
 	def getContainer( self ):
 		return self.container
 
+	def getInnerContainer( self ):
+		return self.container.ObjectInnerContainer()
+
 	def getIntrospector( self ):
 		return self.parentIntrospector
 		
-	def initWidget( self, container ):
+	def initWidget( self, container, objectContainer ):
 		pass
 
 	def getContextMenu( self ):
 		pass
 
 	def setTarget( self, target ):
-		pass
+		self.target = target
+
+	def getTarget( self ):
+		return self.target
 
 	def unload( self ):
 		pass
@@ -412,7 +434,7 @@ class ObjectEditor( object ):
 		
 ##----------------------------------------------------------------##
 class CommonObjectEditor( ObjectEditor ): #a generic property grid 
-	def initWidget( self, container ):
+	def initWidget( self, container, objectContainer ):
 		self.grid = PropertyEditor(container)
 		self.grid.propertyChanged.connect( self.onPropertyChanged )
 		return self.grid
