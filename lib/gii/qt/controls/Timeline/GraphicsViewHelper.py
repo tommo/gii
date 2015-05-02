@@ -140,33 +140,38 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		self.setVerticalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
 		
 		if _USE_GL and kwargs.get( 'use_gl', True ):
-			self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
+			self.setViewportUpdateMode( QtGui.QGraphicsView.MinimalViewportUpdate )		
+			# self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
 			viewport = makeGLWidget()
 			self.glViewport = viewport
 			self.setViewport( viewport )
+			# self.setCacheMode( QtGui.QGraphicsView.CacheBackground )
 		else:
 			self.setViewportUpdateMode( QtGui.QGraphicsView.MinimalViewportUpdate )
 
 		self.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		self.setRenderHint( QtGui.QPainter.HighQualityAntialiasing, False )
+		self.setRenderHint( QtGui.QPainter.NonCosmeticDefaultPen, True )
 		self.setTransformationAnchor( self.NoAnchor )
-		
 		self.setOptimizationFlags( QtGui.QGraphicsView.DontAdjustForAntialiasing | QtGui.QGraphicsView.DontSavePainterState )
-		
 
 	def paintEvent( self, ev ):
-		self.glViewport.makeCurrent()
-		super( GLGraphicsView, self ).paintEvent( ev )
-		self.glViewport.doneCurrent() #dirty workaround...
-		shared = getSharedGLWidget()
-		if shared:
-			shared.makeCurrent()
+		if _USE_GL:
+			self.glViewport.makeCurrent()
+			super( GLGraphicsView, self ).paintEvent( ev )
+			self.glViewport.doneCurrent() #dirty workaround...
+			shared = getSharedGLWidget()
+			if shared:
+				shared.makeCurrent()
+		else:
+			super( GLGraphicsView, self ).paintEvent( ev )
 
 
 ##----------------------------------------------------------------##
 class GridBackground( QtGui.QGraphicsRectItem ):
 	_gridPenV  = makePen( color = '#333', width = 1 )
 	_gridPenH  = makePen( color = '#333', width = 1 )
+	_cursorPen  = makePen( color = '#ff7cb7', width = 1 )
 	def __init__( self ):
 		super( GridBackground, self ).__init__()
 		self.setZValue( -100 )
@@ -174,8 +179,11 @@ class GridBackground( QtGui.QGraphicsRectItem ):
 		self.gridHeight = 50 
 		self.offsetX = 0
 		self.offsetY = 0
+		self.cursorPos  = 0
+		self.showCursorLine = False
 		self.showXAxis = True
 		self.showYAxis = True
+		self.cursorPen = GridBackground._cursorPen
 
 	def setAxisShown( self, xAxis, yAxis ):
 		self.showXAxis = xAxis
@@ -197,6 +205,9 @@ class GridBackground( QtGui.QGraphicsRectItem ):
 
 	def setGridHeight( self, height ):
 		self.setGridSize( self.gridWidth, height )
+
+	def setCursorPos( self, pos ):
+		self.cursorPos = pos
 
 	def paint( self, painter, option, widget ):
 		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
@@ -231,3 +242,8 @@ class GridBackground( QtGui.QGraphicsRectItem ):
 			for row in range( rows ): #H lines
 				y = row * th + oy + y0 + offy
 				painter.drawLine( x0, y, x1, y )
+
+		if self.showCursorLine:
+			painter.setPen( self.cursorPen )
+			x = int(self.cursorPos)
+			painter.drawLine( x, y0, x, y1 )

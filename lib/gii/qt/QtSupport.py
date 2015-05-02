@@ -4,6 +4,7 @@ import os
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
+from time import time
 
 from gii.core import *
 
@@ -133,8 +134,9 @@ class QtSupport( QtEditorModule ):
 		return True
 
 	def update( self ):
+		self.qtApp.processEvents( QEventLoop.AllEvents )
 		# self.qtApp.processEvents( QEventLoop.WaitForMoreEvents )
-		self.qtApp.processEvents( QEventLoop.AllEvents, 10 )
+		# self.qtApp.processEvents( QEventLoop.AllEvents, 10 )
 	
 	def getMainWindow( self ):
 		return self.mainWindow

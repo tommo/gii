@@ -22,11 +22,11 @@ class GLWidget(QtOpenGL.QGLWidget):
 		return GLWidget.sharedWidget
 
 	def __init__( self, parent=None, **option ):
-		fmt = QtOpenGL.QGLFormat.defaultFormat()
-		# if option.get( 'vsync', False ):
-		# 	fmt.setSwapInterval( 1 )
-		# else:
-		# 	fmt.setSwapInterval( 0 )
+		fmt = QtOpenGL.QGLFormat()
+		if option.get( 'vsync', False ):
+			fmt.setSwapInterval( 1 )
+		else:
+			fmt.setSwapInterval( 0 )
 
 		QtOpenGL.QGLWidget.__init__( self, fmt, parent, GLWidget.getSharedWidget() )		
 		self.setFocusPolicy( QtCore.Qt.WheelFocus )

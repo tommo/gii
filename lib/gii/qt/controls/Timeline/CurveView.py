@@ -39,7 +39,7 @@ TANGENT_MODE_SMOOTH  = 2
 
 ##----------------------------------------------------------------##
 class CursorItem( QtGui.QGraphicsLineItem ):
-	_pen  = makePen( color = '#9cff00', width = 1 )
+	_pen  = makePen( color = '#ff7cb7', width = 1 )
 	def __init__( self ):
 		super( CursorItem, self ).__init__()
 		self.setPen( self._pen )
@@ -53,6 +53,7 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 	_gridPen  = makePen( color = '#333', width = 1 )
 	_axisPen  = makePen( color = '#777', width = 1 )
 	_originPen  = makePen( color = '#49599c', width = 1 )
+	_cursorPen  = makePen( color = '#ff7cb7', width = 1 )
 	def __init__( self ):
 		super( AxisGridBackground, self ).__init__()
 		self.setZValue( -100 )
@@ -64,12 +65,17 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 		self.zoomY = 1
 		self.showXAxis = True
 		self.showYAxis = True
-
+		self.showCursorLine = False
+		self.cursorPosX = 0
+		self.cursorPen = AxisGridBackground._cursorPen
 
 	def setOffset( self, x, y ):
 		self.offsetX = x
 		self.offsetY = y
 		self.updateTransfrom()
+
+	def setCursorPosX( self, pos ):
+		self.cursorPosX = pos
 
 	def setGridSize( self, width, height = None ):
 		if not height:
@@ -177,6 +183,11 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 				markText = '%.1f'%( vy )
 				painter.drawText( QRectF( 5, yy + 3, 100, 20 ), Qt.AlignTop|Qt.AlignLeft, markText )
 
+		# if self.showCursorLine:
+		x = self.cursorPosX + dx
+		painter.setPen( self.cursorPen )
+		painter.drawLine( x, y0 + dy, x, y1 + dy )
+
 	def setZoom( self, zx, zy ):
 		self.zoomX = zx
 		self.zoomY = zy
@@ -242,7 +253,7 @@ class CurveSpanItem( QtGui.QGraphicsPathItem ):
 		self.setPath( path )
 
 	def paint( self, painter, option, widget ):
-		painter.setRenderHint( QtGui.QPainter.Antialiasing, True )
+		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		applyStyle( 'curve', painter)
 		path = self.path()
 		painter.drawPath( path )
@@ -461,7 +472,7 @@ class CurveView( GLGraphicsView ):
 		self.cursorItem = CursorItem()
 		self.cursorItem.setLine( 0,-10000, 0, 20000 )
 		self.cursorItem.setZValue( 1000 )
-		self.scene().addItem( self.cursorItem )
+		# self.scene().addItem( self.cursorItem )
 
 		self.panning = False
 		self.scrollX = 0
@@ -479,6 +490,7 @@ class CurveView( GLGraphicsView ):
 		self.scene().setSceneRect( QRectF( -10000,-10000, 20000, 20000 ) )
 		self.setZoomX( 1 )
 		self.setZoomY( 1 )
+		self.setCursorVisible( True )
 
 	def onRectChanged( self, rect ):
 		self.gridBackground.setRect( rect )
@@ -488,7 +500,8 @@ class CurveView( GLGraphicsView ):
 		self.gridBackground.showYAxis = yAxis
 
 	def setCursorVisible( self, visible ):
-		self.cursorItem.setVisible( visible )
+		# self.cursorItem.setVisible( visible )
+		self.gridBackground.showCursorLine = visible
 
 	def setScrollXLimit( self, minX, maxX ):
 		self.scrollXMin = minX
@@ -526,7 +539,10 @@ class CurveView( GLGraphicsView ):
 
 	def setCursorX( self, vx ):
 		self.cursorX = vx
-		self.cursorItem.setX( self.valueToX( vx ) )
+		# self.cursorItem.setX( self.valueToX( vx ) )
+		x = self.valueToX( vx )
+		self.gridBackground.setCursorPosX( x )
+		self.update()
 
 	def wheelEvent(self, event):
 		steps = event.delta() / 120.0;

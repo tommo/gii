@@ -32,3 +32,5 @@ import EffectAsset
 import PhysicsAsset
 
 import NamedTilesetAsset
+
+import AnimatorAsset

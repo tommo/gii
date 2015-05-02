@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>651</width>
-    <height>476</height>
+    <width>666</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,7 +101,7 @@
             <widget class="QWidget" name="containerPlayTool" native="true">
              <property name="minimumSize">
               <size>
-               <width>180</width>
+               <width>220</width>
                <height>25</height>
               </size>
              </property>

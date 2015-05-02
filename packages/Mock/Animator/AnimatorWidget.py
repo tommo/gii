@@ -29,6 +29,32 @@ class AnimatorTrackTreeItemDelegate( QtGui.QStyledItemDelegate ):
 	def sizeHint( self, option, index ):
 		return QSize( 10, _TRACK_SIZE )
 
+class AnimatorTrackTreeItem(QtGui.QTreeWidgetItem):
+	def __lt__(self, other):
+		node0 = self.node
+		node1 = hasattr(other, 'node') and other.node or None
+		if not node1:
+			return True
+		tree = self.treeWidget()
+
+		# if not tree:
+		# 	col = 0
+		# else:
+		# 	col = tree.sortColumn()
+		t0 = isMockInstance( node0, 'AnimatorTrackGroup' ) and 'group' or 'node'
+		t1 = isMockInstance( node1, 'AnimatorTrackGroup' ) and 'group' or 'node'
+
+		if t1!=t0:			
+			if tree.sortOrder() == 0:
+				if t0 == 'group': return True
+				if t1 == 'group': return False
+			else:
+				if t0 == 'group': return False
+				if t1 == 'group': return True
+		return super( AnimatorTrackTreeItem, self ).__lt__( other )
+		# return node0.getName().lower()<node1.getName().lower()
+
+
 ##----------------------------------------------------------------##
 class AnimatorTrackTree( GenericTreeWidget ):
 	def __init__( self, *args, **option ):
@@ -52,6 +78,9 @@ class AnimatorTrackTree( GenericTreeWidget ):
 
 	def loadTreeStates( self ):
 		pass
+
+	def createItem( self, node ):
+		return AnimatorTrackTreeItem()
 
 	def getNodeParent( self, node ): # reimplemnt for target node	
 		return node.parent
@@ -84,7 +113,7 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		self.owner.onSelectionChanged( self.getSelection(), 'track' )
 
 	def onItemChanged( self, item, col ):
-		node = self.getNodeByItem( item )
+		self.owner.renameTrack( item.node, item.text(0) )
 
 	def resizeEvent( self, event ):
 		super( AnimatorTrackTree, self ).resizeEvent( event )
@@ -179,7 +208,7 @@ class AnimatorClipListTree( GenericTreeWidget ):
 		self.owner.onSelectionChanged( self.getSelection(), 'clip' )
 
 	def onItemChanged( self, item, col ):
-		node = self.getNodeByItem( item )
+		self.owner.renameClip( item.node, item.text(0) )
 
 
 ##----------------------------------------------------------------##
@@ -319,6 +348,9 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 
 		#signals
 		self.treeTracks.verticalScrollBar().valueChanged.connect( self.onTrackTreeScroll )
+		self.timeline.cursorPosChanged.connect( self.onCursorPosChanged )
+
+		self.cursorMovable = True
 
 	def setOwner( self, owner ):
 		self.owner = owner
@@ -391,7 +423,26 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 	def onPropertyChanged( self, obj, fid, value ):
 		if fid == 'pos' or fid == 'length':
 			self.timeline.refreshKey( obj )
+		self.owner.onObjectEdited( obj )
 
 	def setEnabled( self, enabled ):
 		super( AnimatorWidget, self ).setEnabled( enabled )
 		self.timeline.setEnabled( enabled )
+
+	def startPreview( self ):
+		self.timeline.setCursorDraggable( False )
+
+	def stopPreview( self ):
+		self.timeline.setCursorDraggable( True )
+
+	def setCursorMovalbe( self, movable ):
+		self.cursorMovable = movable
+		self.timeline.setCursorDraggable( movable )		
+
+	def onCursorPosChanged( self, pos ):
+		if self.cursorMovable:
+			self.owner.applyTime( pos )
+
+	def setCursorPos( self, pos, focus = False ):
+		self.timeline.setCursorPos( pos, focus )
+

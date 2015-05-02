@@ -2,8 +2,8 @@ import os
 import os.path
 import sys
 import logging
-import time
 import platform
+import time
 
 
 import signals
@@ -90,7 +90,7 @@ class EditorApp(object):
 
 	def run( self, **kwargs ):
 		if not self.initialized: self.init()
-		sleepTime = kwargs.get( 'sleep', 0.005 )
+		sleepTime = kwargs.get( 'sleep', 0.003 )
 		hasError = False
 		try:
 			EditorModuleManager.get().startAllModules()
@@ -102,7 +102,7 @@ class EditorApp(object):
 			self.saveConfig()
 
 			while self.running:
-					self.doMainLoop( sleepTime )
+				self.doMainLoop( sleepTime )
 
 		except Exception, e:
 			#TODO: popup a alert window?
@@ -121,10 +121,17 @@ class EditorApp(object):
 		EditorModuleManager.get().unloadAllModules()
 
 	def doMainLoop( self, sleepTime = 0.01 ):
-		EditorModuleManager.get().updateAllModules()
+		budget = 0.005
+		t0 = time.time()
+		EditorModuleManager.get().updateAllModules()		
 		signals.dispatchAll()
-		if sleepTime:
-			time.sleep( sleepTime )
+		t1 = time.time()
+		elapsed = t1 - t0
+		rest = budget - elapsed
+		if rest > 0:
+			time.sleep( rest )
+		# if sleepTime:
+		# 	time.sleep( sleepTime )
 
 	def stop( self ):
 		self.running = False

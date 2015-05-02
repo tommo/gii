@@ -6,6 +6,8 @@ function SceneView:onInit()
 	self:connect( 'scene.pre_serialize',    'preSceneSerialize'    )
 	self:connect( 'scene.post_deserialize',  'postSceneDeserialize' )
 	self:readConfig()
+	self.gizmoManager:updateConstantSize()
+	self.itemManager:updateAllItemScale()
 end
 
 function SceneView:readConfig()
@@ -14,8 +16,9 @@ function SceneView:readConfig()
 	local cameraCfg = cfg['camera']
 	if cameraCfg then
 		self.camera:setLoc( unpack(cameraCfg['loc']) )
-		self.camera:getComponent( mock_edit.EditorCanvasCamera ):setZoom( cameraCfg['zoom'] )
 		self.navi.zoom = cameraCfg['zoom']
+		local cameraCom = self.camera:getComponent( mock_edit.EditorCanvasCamera )
+		cameraCom:setZoom( cameraCfg['zoom'] )
 	end
 end
 

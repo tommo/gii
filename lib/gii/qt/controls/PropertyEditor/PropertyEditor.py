@@ -122,6 +122,9 @@ class PropertyEditor( QtGui.QFrame ):
 		self.editors[ field ] = editor
 		return editor
 
+	def getFieldEditor( self, field ):
+		return self.editors.get( field, None )
+
 	def addSeparator( self ):
 		line = QtGui.QFrame( self )
 		line.setSizePolicy(
@@ -165,9 +168,6 @@ class PropertyEditor( QtGui.QFrame ):
 		
 	def setTarget( self, target, **kwargs ):
 		oldtarget = self.target
-
-		if target==self.target:
-			return
 		self.hide()
 		model = kwargs.get( 'model', None )
 		if not model: model = ModelManager.get().getModel(target)
@@ -287,7 +287,7 @@ class FieldEditor( object ):
 		repolishWidget( self.labelWidget )
 
 	def setRecording( self, recording = True ):
-		self.labelWidget.setProperty( 'recording', overrided )
+		self.labelWidget.setProperty( 'recording', recording )
 		repolishWidget( self.labelWidget )
 
 	def initLabel( self, label, container ):

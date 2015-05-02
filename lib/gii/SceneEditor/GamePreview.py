@@ -74,7 +74,9 @@ class GamePreview( SceneEditorModule ):
 			dock  = 'right'
 			)
 
-		self.canvas = self.window.addWidget( GamePreviewCanvas( self.window )  )
+		self.canvas = self.window.addWidget(
+				GamePreviewCanvas( self.window, vsync = False )
+			)
 		self.canvas.startRefreshTimer( self.nonActiveFPS )
 		self.paused = None
 		

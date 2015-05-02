@@ -5,6 +5,8 @@ from PyQt4.QtCore import QPointF, QRectF, QSizeF
 from PyQt4.QtGui import QColor, QTransform, QStyle
 from OpenGL.GL import *
 
+import time
+
 from GraphicsViewHelper import *
 from CurveView import CurveView
 
@@ -99,37 +101,18 @@ class TimelineSubView( GLGraphicsView ):
 
 ##----------------------------------------------------------------##
 class CursorItem( QtGui.QGraphicsLineItem ):
-	_pen  = makePen( color = '#9cff00', width = 1 )
+	_pen  = makePen( color = '#ff7cb7', width = 1 )
 	def __init__( self ):
 		super( CursorItem, self ).__init__()
 		self.setPen( self._pen )
 
-	def paint( self, painter, option, widget ):
-		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
-		super( CursorItem, self ).paint( painter, option, widget )
-
-
-##----------------------------------------------------------------##
-class TimelineRulerCursorItem( QtGui.QGraphicsRectItem ):
-	_bgBrush   = makeBrush( color = '#71ff00' )
-	_bgPen     = makePen( color = '#71ff00' )
-	_polyMark = QtGui.QPolygonF([
-			QPointF( -5, -5 ),
-			QPointF( 5, -5 ),
-			QPointF( 0, 0 ),
-		])
-
-	def paint( self, painter, option, widget ):
-		rect = self.rect()
-		painter.setPen( Qt.transparent )
-		painter.setBrush( TimelineRulerCursorItem._bgBrush )
-		painter.drawPolygon( TimelineRulerCursorItem._polyMark )
 
 class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 	_gridPenV  = makePen( color = '#777', width = 1 )
 	_gridPenH  = makePen( color = '#444', width = 1 )
-	_cursorPen = makePen( color = '#71ff00', width = 1 )
+	_cursorPen = makePen( color = '#ff7cb7', width = 1 )
 	_bgBrush   = makeBrush( color = '#222' )
+	_bgActiveBrush = makeBrush( color = '#334' )
 	def __init__( self ):
 		super( TimelineRulerItem, self ).__init__()
 		self.setCursor( Qt.PointingHandCursor)
@@ -139,9 +122,12 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		self.setRect( 0,0,10000,50 )
 		self.dragging = False
 		self.cursorVisible = True
+		self.rangeMin = 50
+		self.rangeMax = 100
 
 	def mousePressEvent( self, event ):
 		if event.button() == Qt.LeftButton:
+			if not self.view.draggable: return
 			self.dragging = True
 			x = event.scenePos().x()
 			self.view.setCursorPos( self.view.posToTime( x ) + self.view.scrollPos )
@@ -160,7 +146,7 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 
 	def paint( self, painter, option, widget ):
 		formatter = self.formatter
-		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
+		# painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		rect      = painter.viewport()
 		transform = painter.transform()
 		x = -transform.dx()
@@ -168,6 +154,10 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		w = rect.width()
 		h = rect.height()
 		size = self.size
+
+		painter.setPen( Qt.transparent )
+		painter.setBrush( TimelineRulerItem._bgActiveBrush )
+		painter.drawRect( self.rangeMin,0, self.rangeMax, h )
 
 		painter.setPen( TimelineRulerItem._gridPenH )
 		painter.drawLine( 0,h-1,w,h-1 ) #topline
@@ -203,7 +193,7 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 
 ##----------------------------------------------------------------##
 class TimelineRulerView( TimelineSubView ):
-	_BG = makeBrush( color = '#333' )
+	_BG = makeBrush( color = '#222' )
 	def __init__( self, *args, **kwargs ):
 		super( TimelineRulerView, self ).__init__( *args, **kwargs )
 		self.scene = QtGui.QGraphicsScene( self )
@@ -216,8 +206,15 @@ class TimelineRulerView( TimelineSubView ):
 		self.dragging = False
 		self.draggable = True
 
+	def getVisibleRange( self ):
+		#TODO
+		return 0, 10
+
 	def clear( self ):
 		pass
+
+	def setCursorDraggable( self, draggable ):
+		self.draggable = draggable
 
 	def setCursorVisible( self, visible ):
 		self.ruler.cursorVisible = visible
@@ -238,19 +235,13 @@ class TimelineRulerView( TimelineSubView ):
 				self.setZoom( self.zoom / zoomRate )
 
 	def onZoomChanged( self, zoom ):
-		# self.updateCursorItem()
 		self.update()
 
 	def onScrollPosChanged( self, p ):
-		# self.updateCursorItem()
 		self.update()
 
 	def onCursorPosChanged( self, pos ):
 		self.update()
-		# self.updateCursorItem()
-
-	def updateCursorItem( self ):
-		self.cursorItem.setX( self.timeToPos( self.cursorPos - self.scrollPos ) ) 
 
 	def setDraggable( self, draggable ):
 		self.draggable = draggable
@@ -412,6 +403,7 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		x0, mx0 = self.dragging
 		mx1 = event.scenePos().x()
 		x1 = x0 + mx1 - mx0
+		self.prepareGeometryChange()
 		self.setPos( max( x1, _HEAD_OFFSET ), 0 )
 
 	def mouseReleaseEvent( self, event ):
@@ -523,7 +515,6 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def getTimelineView( self ):
 		return self.view.getTimelineView()
 
-
 ##----------------------------------------------------------------##
 class SelectionRegionItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def __init__( self, *args, **kwargs ):
@@ -534,12 +525,21 @@ class SelectionRegionItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		rect = self.rect()
 		painter.drawRect( rect )
 
+
+##----------------------------------------------------------------##
+class TestEventFilter( QtCore.QObject):
+	def eventFilter(self, obj, event):
+		e=event.type()
+		return QObject.eventFilter( self, obj, event )
+
+
 ##----------------------------------------------------------------##
 class TimelineTrackView( TimelineSubView ):
 	scrollYChanged   = pyqtSignal( float )
 	def __init__( self, *args, **kwargs ):
 		super( TimelineTrackView, self ).__init__( *args, **kwargs )
-		
+		# self.eventFilter = TestEventFilter( self )
+		# self.installEventFilter( self.eventFilter )
 		self.gridSize  = 100
 		self.scrollPos = 0.0
 		self.cursorPos = 0.0
@@ -553,20 +553,18 @@ class TimelineTrackView( TimelineSubView ):
 
 		scene = QtGui.QGraphicsScene( self )
 		scene.setBackgroundBrush( _DEFAULT_BG );
+		# scene.setItemIndexMethod( QtGui.QGraphicsScene.NoIndex )
 		self.setScene( scene )
 		scene.sceneRectChanged.connect( self.onRectChanged )
 
 		self.trackItems = []
 		
-		#components
-		self.cursorItem = CursorItem()
-		self.cursorItem.setLine( 0,0, 0, 10000 )
-		self.cursorItem.setZValue( 1000 )
-		scene.addItem( self.cursorItem )
+
 		#grid
 		self.gridBackground = GridBackground()
 		self.gridBackground.setGridSize( self.gridSize, _TRACK_SIZE + _TRACK_MARGIN )
 		self.gridBackground.setAxisShown( False, True )
+		self.gridBackground.showCursorLine = True
 		self.gridBackground.setOffset( _HEAD_OFFSET, -1 )
 		scene.addItem( self.gridBackground )
 
@@ -576,6 +574,16 @@ class TimelineTrackView( TimelineSubView ):
 		self.selectionRegion.setZValue( 9999 )
 		self.selectionRegion.setVisible( False )
 		scene.addItem( self.selectionRegion )
+
+		#components
+		self.cursorItem = CursorItem()
+		self.cursorItem.setLine( 0,0, 0, 10000 )
+		self.cursorItem.setZValue( 1000 )
+		# scene.addItem( self.cursorItem )
+
+	# def paintEvent( self, ev ):
+	# 	super( TimelineTrackView, self ).paintEvent( ev )
+	# 	pass
 
 	def clear( self ):
 		scn = self.scene()
@@ -617,7 +625,9 @@ class TimelineTrackView( TimelineSubView ):
 		return self.scrollY
 
 	def onCursorPosChanged( self, pos ):
-		self.cursorItem.setX( self.timeToPos( self.cursorPos ) )
+		x = self.timeToPos( self.cursorPos )
+		# self.cursorItem.setX( x )
+		self.gridBackground.setCursorPos( x )
 
 	def onScrollPosChanged( self, p ):
 		self.updateTransfrom()
@@ -627,7 +637,9 @@ class TimelineTrackView( TimelineSubView ):
 		for track in self.trackItems:
 			track.setZoom( self.zoom )
 		self.gridBackground.setGridWidth( self.gridSize * zoom )
-		self.cursorItem.setX( self.timeToPos( self.cursorPos ) )
+		x = self.timeToPos( self.cursorPos )
+		# self.cursorItem.setX( self.timeToPos( self.cursorPos ) )
+		self.gridBackground.setCursorPos( x )
 
 	def updateTransfrom( self ):
 		trans = QTransform()
@@ -727,6 +739,7 @@ class TimelineTrackView( TimelineSubView ):
 
 	def getTimelineView( self ):
 		return self.timelineView
+
 
 ##----------------------------------------------------------------##	
 class TimelineView( QtGui.QWidget ):
@@ -847,8 +860,16 @@ class TimelineView( QtGui.QWidget ):
 	def getTrackViewScroll( self, y ):
 		return self.trackView.getScrollY( y )
 
-	def setCursorPos( self, pos ):
+	def setCursorPos( self, pos, focus = False ):
 		self.rulerView.setCursorPos( pos )
+		if focus:
+			self.focusTimeline( pos )
+
+	def focusTimeline( self, pos ):
+		#TODO:center
+		leftEnd, rightEnd = self.rulerView.getVisibleRange()
+		self.setScrollPos( max(pos, 0 ) )
+
 
 	def posToTime( self, x ):
 		zoom = self.getZoom()
@@ -965,10 +986,12 @@ class TimelineView( QtGui.QWidget ):
 	def onCursorPosChanged( self, pos ):
 		if self.updating: return
 		self.updating = True
+		self.trackView.setUpdatesEnabled( False )
 		self.rulerView.setCursorPos( pos )
 		self.trackView.setCursorPos( pos )
 		self.curveView.setCursorX( pos )
 		self.cursorPosChanged.emit( pos )
+		self.trackView.setUpdatesEnabled( True )
 		self.updating = False
 
 	def onScrollPosChanged( self, pos ):

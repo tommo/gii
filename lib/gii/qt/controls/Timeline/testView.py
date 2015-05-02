@@ -2,6 +2,8 @@ from TimelineView import *
 from random import random
 from PyQt4 import QtOpenGL
 
+from time import time
+
 _keyid = 1
 class TestKey():
 	def __init__( self, track ):
@@ -92,9 +94,20 @@ class TestFrame( QtGui.QFrame ):
 		timeline.rebuild()
 
 		timeline.keyChanged.connect( self.onKeyChanged )
+		self.timer = QtCore.QTimer( self )
+		self.timer.timeout.connect( self.onTimer )
+		self.timer.setInterval( 100 )
+		self.timer.start()
+		self.t0 = time()
 
 	def onKeyChanged( self, key ):
 		pass
+
+	def onTimer( self ):
+		t1 = time()
+		print '%.2f' % (t1- self.t0)
+		self.t0 = t1
+		
 
 
 app = QtGui.QApplication( sys.argv )

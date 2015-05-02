@@ -3,6 +3,7 @@ import subprocess
 import shutil
 
 from gii.core import *
+from mock import _MOCK
 
 
 ##----------------------------------------------------------------##
@@ -26,6 +27,8 @@ class BTScriptAssetManager(AssetManager):
 	def importAsset( self, node, reload = False ):
 		node.setObjectFile( 'def', node.getFilePath() )
 		node.assetType = 'bt_script'
+		#validate
+		_MOCK.parseBTScriptFile( node.getFilePath() )
 		return True
 	
 ##----------------------------------------------------------------##

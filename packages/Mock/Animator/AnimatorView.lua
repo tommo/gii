@@ -10,8 +10,12 @@ function AnimatorView:__init()
 	self.targetAnimator   = false
 	self.targetRootEntity = false
 	self.targetClip       = false
-	self.targetAnimatorData       = mock.AnimatorData()
+	self.targetAnimatorData  = false
 	self.currentTrack     = false 
+	self.currentTime = 0
+	self.previewTimeStep = 1/30
+	self.prevClock = 0
+	self.dirty = false
 end
 
 function AnimatorView:setupTestData()
@@ -63,7 +67,6 @@ end
 
 function AnimatorView:getTargetAnimatorData()
 	if not self.targetAnimator then return nil end
-	--TODO: real target data
 	return self.targetAnimatorData
 end
 
@@ -72,6 +75,13 @@ function AnimatorView:setTargetAnimator( targetAnimator )
 	self.targetRootEntity = targetAnimator and targetAnimator._entity	
 	self.targetClip = false
 	self.currentTrack = false
+	self.dirty = false
+	--TODO: real target data
+	if self.targetAnimator then
+		self.targetAnimatorData = self.targetAnimator:getData()
+	else
+		self.targetAnimatorData = false
+	end
 end
 
 function AnimatorView:getPreviousTargeClip( targetAnimator )
@@ -101,13 +111,30 @@ end
 
 
 function AnimatorView:addKeyForField( target, fieldId )
-	--affirm track
-	local parent = self:findParentTrackGroup()
-	if not parent then return end
-	local track = mock.AnimatorTrackField()	
-	parent:addChild( track )
-	track:initFromObject( target, fieldId, self.targetRootEntity )
+	--find existed track
+	local track
+	local trackList = self.targetClip:getTrackList()
+	for _, t in ipairs( trackList ) do
+		if t:isInstance( mock.AnimatorTrackField ) then
+			if t:isMatched( target, fieldId, self.targetRootEntity ) then
+				track = t
+				break
+			end
+		end
+	end
+
+	if not track then
+		local parent = self:findParentTrackGroup()
+		if not parent then return end
+		track = mock.AnimatorTrackField()	
+		parent:addChild( track )
+		track:initFromObject( target, fieldId, self.targetRootEntity )
+	end
+
 	local key = track:addKey()
+	local value = track.targetField:getValue( target )
+	key.value = value
+	key.pos   = self.currentTime
 	return key
 end
 
@@ -151,6 +178,7 @@ end
 function AnimatorView:updateTimelineKey( key, pos, length )
 	key:setPos( pos )
 	key:setLength( length )
+	self:markTrackDirty()
 end
 
 function AnimatorView:updateKeyCurveMode( key, mode )
@@ -159,5 +187,98 @@ end
 function AnimatorView:updateKeyCurvate( key, c1, c2 )
 end
 
+function AnimatorView:startPreview( t )
+	self.prevClock = false
+	return true
+end
+
+function AnimatorView:stopPreview()
+	return true
+end
+
+function AnimatorView:gotoStart()
+	return true
+end
+
+function AnimatorView:gotoEnd()
+	return true
+end
+
+function AnimatorView:applyTime( t )
+	if self.targetClip then
+		if not self.previewState then self:preparePreivewState() end
+		self.previewState:apply( t )
+		self.currentTime = self.previewState:getTime()
+	else
+		self.currentTime = t
+	end
+	return self.currentTime
+end
+
+function AnimatorView:preparePreivewState()
+	self.previewState = self.targetAnimator:_loadClip( self.targetClip )
+	self.previewState:setMode( self.previewRepeat and MOAITimer.LOOP or MOAITimer.NORMAL )
+	self.prevClock = false
+	return true
+end
+
+
+function AnimatorView:doPreviewStep()
+	local dt
+	local clock = os.clock()
+	if not self.prevClock then
+		dt = 0
+	else
+		dt = clock - self.prevClock
+	end
+	self.prevClock = clock
+	self:applyTime( self.currentTime + dt )
+	return self.currentTime
+end
+
+function AnimatorView:markTrackDirty( track )
+	--TODO: update track only
+	self:markClipDirty()
+	self.dirty = true
+end
+
+function AnimatorView:markClipDirty()
+	self.targetClip:clearPrebuiltContext()
+	self:clearPreviewState()
+	self.dirty = true
+end
+
+function AnimatorView:renameClip( clip, name )
+	clip.name = name
+end
+
+function AnimatorView:renameTrack( track, name )
+	track.name = name
+end
+
+function AnimatorView:clearPreviewState()
+	if self.previewState then
+		self.previewState:stop()
+	end
+	self.previewState = false
+end
+
+function AnimatorView:togglePreviewRepeat( toggle )
+	self.previewRepeat = toggle
+	if self.previewState then
+		self.previewState:setMode( self.previewRepeat and MOAITimer.LOOP or MOAITimer.NORMAL )
+	end
+end
+
+function AnimatorView:saveData()
+	if not self.dirty then return end
+	if not( self.targetAnimator and self.targetAnimatorData ) then return end
+	local dataPath = self.targetAnimator:getDataPath()
+	assert( dataPath )
+	local node = mock.getAssetNode( dataPath )
+	mock.serializeToFile( self.targetAnimatorData, node:getObjectFile( 'data' )  )
+	self.dirty = false
+	return true
+end
 
 view = AnimatorView()

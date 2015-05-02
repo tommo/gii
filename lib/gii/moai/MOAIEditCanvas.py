@@ -369,7 +369,6 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 			getAKU().updateFMOD()
 
 		self.delegate.onUpdate( step )
-
 		if option.get( 'forced', self.alwaysForcedUpdate ):
 			self.forceUpdateGL()
 		else:
