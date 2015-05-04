@@ -47,6 +47,13 @@ QPushButton::hover
 	color:#fff;
 }
 
+QPushButton::focus, QToolButton::focus
+{
+	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#7b7b7b,stop:1#676767);
+	color:#fff;
+}
+
+
 QDialogButtonBox > QPushButton,QDialog > QPushButton,QWizard > QWidget > QPushButton
 {
 	min-width:5em;
@@ -58,6 +65,11 @@ QCheckBox
 	margin-bottom: 1px;
 	margin-top: 4px;
 	background-color:none;
+}
+
+QCheckBox:focus {
+	background-color:#444;
+	border:1px dotted #777;
 }
 
 QDockWidget
