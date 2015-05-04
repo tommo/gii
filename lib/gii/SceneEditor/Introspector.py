@@ -33,7 +33,7 @@ class ObjectContainer( QtGui.QWidget ):
 			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Fixed
 			)
-
+		self.setAttribute( Qt.WA_NoSystemBackground, True )
 		self.mainLayout = QtGui.QVBoxLayout(self.getInnerContainer())
 		self.mainLayout.setSpacing(0)
 		self.mainLayout.setMargin(0)

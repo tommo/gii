@@ -123,11 +123,13 @@ class EditorApp(object):
 	def doMainLoop( self, sleepTime = 0.01 ):
 		budget = 0.005
 		t0 = time.time()
-		EditorModuleManager.get().updateAllModules()		
-		signals.dispatchAll()
-		t1 = time.time()
-		elapsed = t1 - t0
-		rest = budget - elapsed
+		EditorModuleManager.get().updateAllModules()
+		if signals.dispatchAll():
+			rest = 0
+		else:
+			t1 = time.time()
+			elapsed = t1 - t0
+			rest = budget - elapsed
 		if rest > 0:
 			time.sleep( rest )
 		# if sleepTime:

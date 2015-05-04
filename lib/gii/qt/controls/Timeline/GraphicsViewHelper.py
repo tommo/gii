@@ -138,10 +138,11 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		super( GLGraphicsView, self ).__init__()
 		self.setHorizontalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
 		self.setVerticalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
+		self.setAttribute( Qt.WA_NoSystemBackground, True )
+		self.setAttribute( Qt.WA_OpaquePaintEvent, True )
 		
 		if _USE_GL and kwargs.get( 'use_gl', True ):
-			self.setViewportUpdateMode( QtGui.QGraphicsView.MinimalViewportUpdate )		
-			# self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
+			self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
 			viewport = makeGLWidget()
 			self.glViewport = viewport
 			self.setViewport( viewport )
@@ -151,7 +152,7 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 
 		self.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		self.setRenderHint( QtGui.QPainter.HighQualityAntialiasing, False )
-		self.setRenderHint( QtGui.QPainter.NonCosmeticDefaultPen, True )
+		# self.setRenderHint( QtGui.QPainter.NonCosmeticDefaultPen, True )
 		self.setTransformationAnchor( self.NoAnchor )
 		self.setOptimizationFlags( QtGui.QGraphicsView.DontAdjustForAntialiasing | QtGui.QGraphicsView.DontSavePainterState )
 

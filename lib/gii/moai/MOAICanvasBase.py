@@ -16,7 +16,7 @@ def convertKeyCode(k):
 
 class MOAICanvasBase(GLWidget):
 	def __init__( self, parentWidget = None, **option ):
-		option['vsync'] = option.get('vsync', True)
+		option['vsync'] = option.get('vsync', False)
 		super(MOAICanvasBase,self).__init__( parentWidget, **option )		
 		self.inputDevice = None
 		self.buttonCount = 0

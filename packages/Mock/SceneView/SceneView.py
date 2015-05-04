@@ -49,6 +49,9 @@ class SceneView( SceneEditorModule ):
 		signals.connect( 'scene.update',          self.onSceneUpdate      )
 		signals.connect( 'selection.changed',     self.onSelectionChanged )
 
+		signals.connect( 'animator.start', self.onAnimatorStart )
+		signals.connect( 'animator.stop',  self.onAnimatorStop )
+
 		signals.connect( 'preview.resume', self.onPreviewResume )
 		signals.connect( 'preview.pause',  self.onPreviewStop   )
 		signals.connect( 'preview.stop',   self.onPreviewStop   )
@@ -120,11 +123,21 @@ class SceneView( SceneEditorModule ):
 
 	def onPreviewResume( self ):
 		self.previewing = True
-		self.previewUpdateTimer = self.window.startTimer( 1, self.updateInPreview )
+		self.toolbar.setStyleSheet('QToolBar{ border-bottom: 1px solid rgb(0, 120, 0); }')
+		self.previewUpdateTimer = self.window.startTimer( 3, self.updateInPreview )
 
 	def onPreviewStop( self ):
 		self.previewing = False
+		self.toolbar.setStyleSheet('QToolBar{ border-bottom: none }')
 		self.previewUpdateTimer.stop()
+
+	def onAnimatorStart( self ):
+		self.toolbar.setStyleSheet('QToolBar{ border-bottom: 1px solid rgb(255, 0, 120); }')
+		self.animating = True
+
+	def onAnimatorStop( self ):
+		self.toolbar.setStyleSheet('QToolBar{ border-bottom: none }')
+		self.animating = True
 
 	def scheduleUpdate( self ):
 		self.updatePending = True

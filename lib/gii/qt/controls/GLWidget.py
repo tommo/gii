@@ -1,4 +1,5 @@
 from PyQt4 import QtCore, QtGui, QtOpenGL
+from PyQt4.QtCore import Qt
 
 class GLWidget(QtOpenGL.QGLWidget):
 	sharedWidget = None
@@ -29,6 +30,8 @@ class GLWidget(QtOpenGL.QGLWidget):
 			fmt.setSwapInterval( 0 )
 
 		QtOpenGL.QGLWidget.__init__( self, fmt, parent, GLWidget.getSharedWidget() )		
+		self.setAttribute( Qt.WA_NoSystemBackground, True )
+		self.setAttribute( Qt.WA_OpaquePaintEvent, True )
 		self.setFocusPolicy( QtCore.Qt.WheelFocus )
 		# self.setMinimumSize( 32, 32 )
 		self.allowRefresh   = False
