@@ -15,6 +15,7 @@ class no_editItemDelegate( QtGui.QStyledItemDelegate ):
 class GenericTreeWidget( QtGui.QTreeWidget ):
 	def __init__( self, *args, **option ):
 		super(GenericTreeWidget, self).__init__(*args)
+		# self.setAttribute( Qt.WA_OpaquePaintEvent, True )
 		# self.setAttribute(Qt.WA_MacShowFocusRect, False)
 		self.setUniformRowHeights( True )
 		self.setHorizontalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
@@ -110,7 +111,8 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 	def addNode( self, node, addChildren = True, **option ):
 		assert not node is None, 'attempt to insert null node '
-		if self.nodeDict.has_key( node ): return
+		item = self.nodeDict.get( node, None )
+		if item: return item
 		pnode = self.getNodeParent( node )
 		assert pnode != node, 'parent is item itself'
 		if not pnode :

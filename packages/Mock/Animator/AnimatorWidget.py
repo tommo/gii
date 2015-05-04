@@ -57,6 +57,7 @@ class AnimatorTrackTreeItem(QtGui.QTreeWidgetItem):
 
 ##----------------------------------------------------------------##
 class AnimatorTrackTree( GenericTreeWidget ):
+	layoutChanged = pyqtSignal()
 	def __init__( self, *args, **option ):
 		option['editable']  = True
 		option['drag_mode'] = 'internal'
@@ -66,6 +67,15 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		self.adjustingRange = False
 		self.verticalScrollBar().rangeChanged.connect( self.onScrollRangeChanged )		
 		self.setIndentation( 10 )
+
+	def event( self, ev ):
+		if ev.type() == 26:
+			self.parentView.updateTrackLayout()
+		# print ev.type(), ev
+		return super( AnimatorTrackTree, self ).event( ev )
+	# def paintEvent( self, ev ):
+	# 	super( AnimatorTrackTree, self ).paintEvent( ev )
+	# 	self.layoutChanged.emit()
 
 	def getHeaderInfo( self ):
 		return [ ('Name',80), ('Key', 20) ]
@@ -106,7 +116,7 @@ class AnimatorTrackTree( GenericTreeWidget ):
 			item.setIcon( 0, getIcon('track_group') )
 		elif isMockInstance( node, 'AnimatorClipSubNode' ):
 			item.setText( 0, node.toString( node ) )
-			item.setIcon( 0, getIcon('track_number') )
+			item.setIcon( 0, getIcon(node.getIcon( node )) )
 			item.setIcon( 1, getIcon('track_key_0') )
 		
 	def onItemSelectionChanged(self):
@@ -249,9 +259,6 @@ class AnimatorTimelineWidget( TimelineView ):
 		length = resizable and keyNode.length or 0
 		return keyNode.getPos( keyNode ), length, resizable 
 
-	def onTrackDClicked( self, track, pos ):
-		pass
-
 		# clipTrack = track.node
 		# self.module.addEvent( clipTrack, pos, None )
 		# eventTypes = clipTrack.getEventTypes( clipTrack )
@@ -349,7 +356,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		#signals
 		self.treeTracks.verticalScrollBar().valueChanged.connect( self.onTrackTreeScroll )
 		self.timeline.cursorPosChanged.connect( self.onCursorPosChanged )
-
+		self.treeTracks.layoutChanged.connect( self.updateTrackLayout )
 		self.cursorMovable = True
 
 	def setOwner( self, owner ):
@@ -373,6 +380,9 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.timeline.rebuild()
 		self.treeTracks.rebuild()
 
+	def updateTrackLayout( self ):
+		self.timeline.updateTrackLayout()
+
 	def createClip( self ):
 		pass
 
@@ -387,7 +397,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 
 	def addTrack( self, track ):
 		self.treeTracks.addNode( track )
-		self.timeline.rebuild()
+		self.timeline.addTrack( track )
 
 	def removeClip( self, clip ):
 		self.treeClips.removeNode( clip )
@@ -430,12 +440,14 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.timeline.setEnabled( enabled )
 
 	def startPreview( self ):
-		self.timeline.setCursorDraggable( False )
+		# self.timeline.setCursorDraggable( False )
+		pass
 
 	def stopPreview( self ):
-		self.timeline.setCursorDraggable( True )
+		# self.timeline.setCursorDraggable( True )
+		pass
 
-	def setCursorMovalbe( self, movable ):
+	def setCursorMovable( self, movable ):
 		self.cursorMovable = movable
 		self.timeline.setCursorDraggable( movable )		
 

@@ -12,8 +12,6 @@ from GraphicsViewHelper import *
 import sys
 import math
 
-_USE_GL = True
-
 class GraphViewNodeSlot( QtGui.QGraphicsRectItem ):
 	_pen = makePen( color = '#3780ff' )
 	_brush = QtGui.QBrush( QColor( '#dddf09' ) )

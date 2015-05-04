@@ -16,32 +16,9 @@ function AnimatorView:__init()
 	self.previewTimeStep = 1/30
 	self.prevClock = 0
 	self.dirty = false
-end
 
-function AnimatorView:setupTestData()
-	testClip = mock.AnimatorClip()
-	
-	testGroup = mock.AnimatorTrackGroup()
-	testGroup.name = 'group'
-
-	testClip:getRoot():addChild( testGroup )
-	testTrack = mock.AnimatorTrack()
-	testTrack.name = 'track'
-	for i = 1, 8 do
-		local key = testTrack:addKey( rand( 0, 5 ) )
-	end
-	testGroup:addChild( testTrack )
-	testGroup1 = mock.AnimatorTrackGroup()
-	testGroup1.name = 'group'
-	testGroup:addChild( testGroup1 )
-	testTrack = mock.AnimatorTrack()
-	testTrack.name = 'track'
-	testGroup1:addChild( testTrack )
-	for i = 1, 8 do
-		local key = testTrack:addKey( rand( 0, 5 ) )
-	end
-	
-	return testClip
+	self.retainedEntityState = false
+	self.objectRecordingState = {}
 end
 
 function AnimatorView:findTargetAnimator()
@@ -70,18 +47,26 @@ function AnimatorView:getTargetAnimatorData()
 	return self.targetAnimatorData
 end
 
+function AnimatorView:getTargetAnimatorDataPath()
+	if not self.targetAnimator then return nil end
+	return self.targetAnimatorDataPath
+end
+
 function AnimatorView:setTargetAnimator( targetAnimator )
 	self.targetAnimator = targetAnimator
 	self.targetRootEntity = targetAnimator and targetAnimator._entity	
 	self.targetClip = false
 	self.currentTrack = false
 	self.dirty = false
-	--TODO: real target data
+
 	if self.targetAnimator then
 		self.targetAnimatorData = self.targetAnimator:getData()
+		self.targetAnimatorDataPath = self.targetAnimator:getDataPath()
 	else
 		self.targetAnimatorData = false
+		self.targetAnimatorDataPath = false
 	end
+
 end
 
 function AnimatorView:getPreviousTargeClip( targetAnimator )
@@ -91,8 +76,12 @@ function AnimatorView:getPreviousTargeClip( targetAnimator )
 end
 
 function AnimatorView:setTargetClip( targetClip )
+	self:restoreEntityState()
 	self.targetClip = targetClip
 	self.currentTrack = false
+	if self.targetClip then
+		self:collectEntityRecordingState()
+	end
 end
 
 function AnimatorView:setCurrentTrack( track )
@@ -109,7 +98,6 @@ function AnimatorView:removeClip( clip )
 	return true
 end
 
-
 function AnimatorView:addKeyForField( target, fieldId )
 	--find existed track
 	local track
@@ -123,19 +111,34 @@ function AnimatorView:addKeyForField( target, fieldId )
 		end
 	end
 
+	--create track if not found
 	if not track then
 		local parent = self:findParentTrackGroup()
 		if not parent then return end
-		track = mock.AnimatorTrackField()	
+		local model = Model.fromObject( target )
+		local fieldType = model:getFieldType( target, fieldId )
+		local trackClass = mock.getAnimatorTrackFieldClass( fieldType )
+		if trackClass then
+			track = trackClass()
+		else
+			_warn( 'field is not keyable', fieldType )
+			return false
+		end
 		parent:addChild( track )
 		track:initFromObject( target, fieldId, self.targetRootEntity )
 	end
 
-	local key = track:addKey()
-	local value = track.targetField:getValue( target )
-	key.value = value
-	key.pos   = self.currentTime
-	return key
+	local keys = { 
+		track:createKey( 
+			self.currentTime,
+			{
+				target = target,
+				root   = self.targetRootEntity
+			}
+		)
+	}
+	track:collectObjectRecordingState( self.targetAnimator, self.retainedRecordingState )
+	return keys
 end
 
 function AnimatorView:addKeyForEvent( target, eventId )
@@ -189,6 +192,9 @@ end
 
 function AnimatorView:startPreview( t )
 	self.prevClock = false
+	if self.currentTime >= self.targetClip:getLength() then
+		self:applyTime( 0 )
+	end		
 	return true
 end
 
@@ -233,7 +239,43 @@ function AnimatorView:doPreviewStep()
 	end
 	self.prevClock = clock
 	self:applyTime( self.currentTime + dt )
-	return self.currentTime
+	if self.currentTime >= self.targetClip:getLength() then
+		--preview stop
+		if not self.previewRepeat then
+			return false, self.currentTime
+		end
+	end
+	return true, self.currentTime
+end
+
+function AnimatorView:retainEntityState()
+	-- retainedEntityState
+	assert( self.targetAnimator )
+	local state = {}
+	_retainEntityState( self.targetAnimator._entity, state )
+end
+
+function AnimatorView:markObjectFieldRecording( obj, fieldId )
+	local state = self.objectRecordingState[ obj ]
+	if not state then
+		state = {}
+		self.objectRecordingState[ obj ] = state
+	end
+	local model = Model.fromObject( obj )
+	state[ fieldId ] = { model:getFieldValue( fieldId ) }
+end
+
+function AnimatorView:collectEntityRecordingState()
+	if not self.targetAnimator then return end
+	local clip   = self.targetClip
+	local retainedState = clip:collectObjectRecordingState( self.targetAnimator )
+	self.retainedRecordingState = retainedState
+end
+
+function AnimatorView:restoreEntityState()
+	if not self.retainedRecordingState then return end
+	self.retainedRecordingState:applyRetainedState()
+	self.retainedRecordingState = false
 end
 
 function AnimatorView:markTrackDirty( track )

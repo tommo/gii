@@ -146,6 +146,9 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'preview.start',     self.onPreviewStart     )
 		signals.connect( 'preview.stop' ,     self.onPreviewStop      )
 
+		# signals.connect( 'animator.start',     self.onAnimatorStart     )
+		# signals.connect( 'animator.stop' ,     self.onAnimatorStop      )
+
 		signals.connect( 'entity.added',      self.onEntityAdded      )
 		signals.connect( 'entity.removed',    self.onEntityRemoved    )
 		signals.connect( 'entity.renamed',    self.onEntityRenamed    )
@@ -513,11 +516,12 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
-		self.tree.blockSignals( True )
-		self.tree.selectNode( None )
-		for e in selection:
-			self.tree.selectNode( e, add = True)
-		self.tree.blockSignals( False )
+		if self.tree.syncSelection:
+			self.tree.blockSignals( True )
+			self.tree.selectNode( None )
+			for e in selection:
+				self.tree.selectNode( e, add = True)
+			self.tree.blockSignals( False )
 
 	def selectEntity( self, target ):
 		self.changeSelection( target )
@@ -559,6 +563,16 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.tree.clear()
 		self.delegate.safeCallMethod( 'editor', 'stopScenePreview' )
 		self.previewing = False
+		if self.delegate.safeCallMethod( 'editor', 'restoreScene' ):
+			self.restoreWorkspaceState()
+
+	def onAnimatorStart( self ):
+		self.retainWorkspaceState()
+		self.delegate.safeCallMethod( 'editor', 'retainScene' )
+
+	def onAnimatorStop( self ):
+		self.tree.clear()
+		self.delegate.safeCallMethod( 'editor', 'clearScene' )
 		if self.delegate.safeCallMethod( 'editor', 'restoreScene' ):
 			self.restoreWorkspaceState()
 
@@ -796,7 +810,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		
 	def onItemSelectionChanged(self):
 		if not self.syncSelection: return
-		items=self.selectedItems()
+		items = self.selectedItems()
 		if items:
 			selections=[item.node for item in items]
 			self.module.changeSelection(selections)

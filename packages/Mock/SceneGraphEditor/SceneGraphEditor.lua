@@ -153,7 +153,7 @@ function SceneGraphEditor:restoreScene()
 		end,
 		_onError
 		)
-	gii.emitPythonSignal( 'scene.change' )
+	gii.emitPythonSignal( 'scene.update' )
 	if ok then
 		self.retainedSceneData = false
 		self:postLoadScene()		

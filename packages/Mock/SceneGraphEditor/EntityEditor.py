@@ -166,7 +166,6 @@ class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin, ObjectFoldStateMixin
 				container = editor.getContainer()
 		self.restoreFoldState()
 		
-	@pyqtSlot( object, str, QObject )
 	def onPropertyChanged( self, obj, id, value ):
 		if _MOCK.markProtoInstanceOverrided( obj, id ):
 			self.grid.refershFieldState( id )

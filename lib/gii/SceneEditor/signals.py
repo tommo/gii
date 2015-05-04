@@ -8,7 +8,6 @@ register( 'scene.open' )
 register( 'scene.close' )
 register( 'scene.change' ) #Scene is changed during preview
 
-
 register( 'scene.modified' )
 
 register( 'entity.added' )
@@ -23,3 +22,6 @@ register( 'prefab.pull' )
 
 register( 'component.added' )
 register( 'component.removed' )
+
+register( 'animator.start' )
+register( 'animator.stop' )

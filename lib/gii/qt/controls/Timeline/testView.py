@@ -105,7 +105,7 @@ class TestFrame( QtGui.QFrame ):
 
 	def onTimer( self ):
 		t1 = time()
-		print '%.2f' % (t1- self.t0)
+		# print '%.2f' % (t1- self.t0)
 		self.t0 = t1
 		
 

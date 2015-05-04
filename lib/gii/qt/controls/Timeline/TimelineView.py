@@ -86,7 +86,8 @@ class TimelineSubView( GLGraphicsView ):
 		pass
 
 	def setCursorPos( self, cursorPos, update = True ):
-		self.cursorPos = max( cursorPos, 0.0 )
+		cursorPos = max( cursorPos, 0.0 )
+		self.cursorPos = cursorPos
 		if self.updating: return
 		self.updating = True
 		self.onCursorPosChanged( cursorPos )
@@ -111,8 +112,9 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 	_gridPenV  = makePen( color = '#777', width = 1 )
 	_gridPenH  = makePen( color = '#444', width = 1 )
 	_cursorPen = makePen( color = '#ff7cb7', width = 1 )
-	_bgBrush   = makeBrush( color = '#222' )
-	_bgActiveBrush = makeBrush( color = '#334' )
+	_bgBrush   = makeBrush( color = '#333' )
+	_bgActiveBrush  = makeBrush( color = '#c8ff00', alpha = 0.1 )
+	_bgEditingBrush = makeBrush( color = '#232e35' )
 	def __init__( self ):
 		super( TimelineRulerItem, self ).__init__()
 		self.setCursor( Qt.PointingHandCursor)
@@ -156,6 +158,9 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		size = self.size
 
 		painter.setPen( Qt.transparent )
+		painter.setBrush( TimelineRulerItem._bgBrush )
+		painter.drawRect( rect )
+		painter.drawRect( self.rangeMin,0, self.rangeMax, h )
 		painter.setBrush( TimelineRulerItem._bgActiveBrush )
 		painter.drawRect( self.rangeMin,0, self.rangeMax, h )
 
@@ -197,7 +202,7 @@ class TimelineRulerView( TimelineSubView ):
 	def __init__( self, *args, **kwargs ):
 		super( TimelineRulerView, self ).__init__( *args, **kwargs )
 		self.scene = QtGui.QGraphicsScene( self )
-		self.scene.setBackgroundBrush( TimelineRulerView._BG );
+		# self.scene.setBackgroundBrush( TimelineRulerView._BG );
 		self.scene.setSceneRect( QRectF( 0,0, 10000, 10000 ) )
 		self.setScene( self.scene )
 		self.ruler = TimelineRulerItem()
@@ -886,20 +891,22 @@ class TimelineView( QtGui.QWidget ):
 		
 	def rebuild( self ):
 		self.clear()
+		self.setUpdatesEnabled( False )
 		self.rebuilding = True
 		for node in self.getTrackNodes():
 			self.addTrack( node )
 		self.updateTrackLayout()
 		self.rebuilding = False
+		self.setUpdatesEnabled( True )
 
 	def clear( self ):
-		self.hide()
+		self.setUpdatesEnabled( False )
 		self.trackView.clear()
 		self.rulerView.clear()
 		self.tracks = []
 		self.nodeToTrack = {}
 		self.updateTrackLayout()
-		self.show()
+		self.setUpdatesEnabled( True )
 
 	def updateTrackLayout( self ):
 		y = 0
@@ -920,7 +927,8 @@ class TimelineView( QtGui.QWidget ):
 		return track and track.getKeyByNode( keyNode ) or None
 
 	def addTrack( self, node, **option ):
-		assert not self.nodeToTrack.has_key( node )
+		track = self.nodeToTrack.get( node, None )
+		if track: return track
 		track =  self.trackView.addTrackItem()
 		track.node = node
 		self.nodeToTrack[ node ] = track
@@ -933,7 +941,8 @@ class TimelineView( QtGui.QWidget ):
 				self.addKey( keyNode )
 
 		self.refreshTrack( node, **option )
-
+		self.updateTrackLayout()
+		
 		return track
 
 	def removeTrack( self, trackNode ):
@@ -975,10 +984,6 @@ class TimelineView( QtGui.QWidget ):
 			return self.addTrack( trackNode )
 		else:
 			return trackItem
-
-	def getSelectedTrackNode( self ):
-		track = self.selectedTrack
-		return track and track.node or None
 
 	def setCursorDraggable( self, draggable = True ):
 		self.rulerView.setCursorDraggable( draggable )
@@ -1046,7 +1051,8 @@ class TimelineView( QtGui.QWidget ):
 		else:
 			for prevKey in self.selection:				
 				keyItem = self.getKeyByNode( prevKey )
-				keyItem.setSelected( False, False )
+				if keyItem:
+					keyItem.setSelected( False, False )
 
 			self.selection = []
 			if keyNode:

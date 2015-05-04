@@ -125,8 +125,16 @@ class AnimatorView( SceneEditorModule ):
 		self.widget.rebuild()
 		if self.targetAnimator:
 			self.widget.setEnabled( True )
+			signals.emit( 'animator.start' )
 		else:
 			self.widget.setEnabled( False )
+			signals.emit( 'animator.stop' )
+			
+		path = self.delegate.callMethod( 'view', 'getTargetAnimatorDataPath' )
+		if path:
+			self.window.setWindowTitle( 'Animator - %s' % path )
+		else:
+			self.window.setWindowTitle( 'Animator' )
 		clip = self.delegate.callMethod( 'view', 'getPreviousTargeClip', target )
 		self.enableTool( 'animator_play' , False )
 		self.enableTool( 'animator_track', False )
@@ -213,10 +221,10 @@ class AnimatorView( SceneEditorModule ):
 			self.addClip()
 			# alertMessage( 'No Clip', 'You need to select a Clip first', 'question' )
 			# return False
-
-		key = self.delegate.callMethod( 'view', 'addKeyForField', target, fieldId )
-		if key:
-			self.widget.addKey( key, True )
+		keys = self.delegate.callMethod( 'view', 'addKeyForField', target, fieldId )
+		if keys:
+			for key in keys.values():
+				self.widget.addKey( key, True )
 
 	def addKeyForEvent( self, target, eventId ):
 		pass
@@ -280,7 +288,7 @@ class AnimatorView( SceneEditorModule ):
 	def startPreview( self ):
 		self.saveAnimatorData()
 		if self.delegate.callMethod( 'view', 'startPreview', self.previewTime ):
-			self.widget.setCursorMovalbe( False )
+			self.widget.setCursorMovable( False )
 			self.previewing = True
 			self.findTool( 'animator_play/play' ).setValue( True )
 			self.previewTimer.start()
@@ -288,18 +296,21 @@ class AnimatorView( SceneEditorModule ):
 	def stopPreview( self, rewind = False ):		
 		if self.previewing:
 			self.delegate.callMethod( 'view', 'stopPreview' )
-			self.widget.setCursorMovalbe( True )
+			self.widget.setCursorMovable( True )
 			self.previewing = False
 			self.findTool( 'animator_play/play' ).setValue( False )
 			self.previewTimer.stop()
+			signals.emit( 'entity.modified',  None , '' )
 		if rewind:
 			self.gotoStart()
 
 	def onPreviewTimer( self ):
-		currentTime = self.delegate.callMethod( 'view', 'doPreviewStep' )
+		playing, currentTime = self.delegate.callMethod( 'view', 'doPreviewStep' )
 		self.previewTime = currentTime
 		self.widget.setCursorPos( self.previewTime )
 		self.getActiveSceneView().forceUpdate()
+		if not playing:
+			self.stopPreview()
 		# signals.emit( 'entity.modified',  None , '' )
 
 	def gotoStart( self ):
@@ -317,6 +328,7 @@ class AnimatorView( SceneEditorModule ):
 	def applyTime( self, t, syncCursor = False ):
 		self.previewTime = self.delegate.callMethod( 'view', 'applyTime', t )
 		self.getActiveSceneView().forceUpdate()
+		signals.emit( 'entity.modified',  None , '' )
 		if syncCursor:
 			self.widget.setCursorPos( t )
 

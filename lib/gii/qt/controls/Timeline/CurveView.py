@@ -45,7 +45,7 @@ class CursorItem( QtGui.QGraphicsLineItem ):
 		self.setPen( self._pen )
 
 	def paint( self, painter, option, widget ):
-		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
+		# painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		super( CursorItem, self ).paint( painter, option, widget )
 
 ##----------------------------------------------------------------##
@@ -91,7 +91,7 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 		self.setGridSize( self.gridWidth, height )
 
 	def paint( self, painter, option, widget ):
-		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
+		# painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		rect = painter.viewport()
 		transform = painter.transform()
 		dx = transform.dx() 
@@ -253,7 +253,7 @@ class CurveSpanItem( QtGui.QGraphicsPathItem ):
 		self.setPath( path )
 
 	def paint( self, painter, option, widget ):
-		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
+		# painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		applyStyle( 'curve', painter)
 		path = self.path()
 		painter.drawPath( path )
@@ -266,6 +266,7 @@ class CurveTangentPointItem( QtGui.QGraphicsRectItem ):
 		self.innerRect = QRectF( -TP_INNER_SIZE/2, -TP_INNER_SIZE/2, TP_INNER_SIZE, TP_INNER_SIZE )
 		self.setCursor( Qt.PointingHandCursor )
 		self.setFlag( self.ItemSendsGeometryChanges, True )
+		self.setFlag( self.ItemIsSelectable, True )
 		self.setFlag( self.ItemIsMovable, True )
 
 	def itemChange( self, change, value ):
@@ -452,12 +453,14 @@ class CurveItem( QtGui.QGraphicsRectItem ):
 			vert.updateZoom( self.zx, self.zy )
 			vert = vert.nextVert
 
+
 ##----------------------------------------------------------------##
 class CurveView( GLGraphicsView ):
 	scrollXChanged = pyqtSignal( float )
 	scrollYChanged = pyqtSignal( float )
 	zoomXChanged   = pyqtSignal( float )
 	zoomYChanged   = pyqtSignal( float )
+
 	def __init__(self, *args, **kwargs ):
 		super(CurveView, self).__init__( *args, **kwargs )
 		self.updating = False
@@ -577,7 +580,8 @@ class CurveView( GLGraphicsView ):
 			curve.setZoom( self.zoomX, self.zoomY )
 		self.gridBackground.setZoom( self.zoomX, self.zoomY )
 		self.updateTransfrom()
-		self.cursorItem.setX( self.valueToX( self.cursorX ) )
+		# self.cursorItem.setX( self.valueToX( self.cursorX ) )
+		self.gridBackground.setCursorPosX( self.valueToX( self.cursorX ) )
 
 	def mouseMoveEvent( self, event ):
 		super( CurveView, self ).mouseMoveEvent( event )
@@ -631,29 +635,72 @@ class CurveView( GLGraphicsView ):
 	def posToValue( self, xv, yv ):
 		return ( self.xToValue( xv ), self.yToValue( yv ) )
 
-##----------------------------------------------------------------##
-class CurveWidget( QtGui.QWidget ):
-	def __init__( self, *args, **kwargs ):
-		super( CurveWidget, self ).__init__( *args, **kwargs )		
-		layout = QtGui.QVBoxLayout( self )
-		self.view = CurveView()
-		layout.addWidget( self.view )
+	def initSelectionRegion( self ):
+		self.selecting = False
+		self.selectionRegion = SelectionRegionItem()
+		self.selectionRegion.setZValue( 9999 )
+		self.selectionRegion.setVisible( False )
+		self.scene().addItem( self.selectionRegion )
 
-		c = self.view.addCurve()
-		c.startVert.setPos( 100, 50 )
-		v = c.appendVert()
-		v.setPos( 150,  50 )
-		v.setSpanMode( SPAN_MODE_BEZIER )
-		v = c.appendVert()
-		v.setPos( 250,  50 )
-		v.setSpanMode( SPAN_MODE_BEZIER )
-		v = c.appendVert()
-		v.setPos( 350,  120 )
+	def startSelectionRegion( self, pos ):
+		self.selecting = True
+		self.selectionRegion.setPos( pos )
+		self.selectionRegion.setRect( 0,0,0,0 )
+		self.selectionRegion.setVisible( True )
+		self.resizeSelectionRegion( pos )
+		# for keyNode in self.selection:
+		# 	key = self.getKeyByNode( keyNode )
+		# 	key.setSelected( False, False )
 
-	def closeEvent( self, event ):
-		self.view.deleteLater()
+	def resizeSelectionRegion( self, pos1 ):
+		pos = self.selectionRegion.pos()
+		w, h = pos1.x()-pos.x(), pos1.y()-pos.y()
+		self.selectionRegion.setRect( 0,0, w, h )
+		itemsInRegion = self.scene().items( pos.x(), pos.y(), w, h )
+		for item in self.selectingItems:
+			item.setSelected( False, False )
+
+		self.selectingItems = []
+		for item in itemsInRegion:
+			if isinstance( item, TimelineKeyItem ):
+				self.selectingItems.append( item )
+				item.setSelected( True, False )
+
+	def stopSelectionRegion( self ):
+		self.selectionRegion.setRect( 0,0,0,0 )
+		self.selectionRegion.setVisible( False )
+		selection = []
+		for key in self.selectingItems:
+			selection.append( key.node )
+
+	def applySelection( self, selection ):
+		pass
+		# self.timelineView.updateSelection( selection )
 
 if __name__ == '__main__':
+	# import testView
+	##----------------------------------------------------------------##
+	class CurveWidget( QtGui.QWidget ):
+		def __init__( self, *args, **kwargs ):
+			super( CurveWidget, self ).__init__( *args, **kwargs )		
+			layout = QtGui.QVBoxLayout( self )
+			self.view = CurveView()
+			layout.addWidget( self.view )
+
+			c = self.view.addCurve()
+			c.startVert.setPos( 100, 50 )
+			v = c.appendVert()
+			v.setPos( 150,  50 )
+			v.setSpanMode( SPAN_MODE_BEZIER )
+			v = c.appendVert()
+			v.setPos( 250,  50 )
+			v.setSpanMode( SPAN_MODE_BEZIER )
+			v = c.appendVert()
+			v.setPos( 350,  120 )
+
+		def closeEvent( self, event ):
+			self.view.deleteLater()
+	
 	app = QtGui.QApplication( sys.argv )
 	styleSheetName = 'gii.qss'
 	app.setStyleSheet(
