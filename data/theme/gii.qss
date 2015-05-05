@@ -1084,6 +1084,15 @@ QSplitter#TimelineHeaderSplitter::handle{
 #AnimatorTrackTree{
 	background-color:#383838;
 	alternate-background-color:#404040;
-	font-size: 9px;
+	font-size: 10px;
 }
 
+#TimelineStatusLabel{
+	color: #888;
+	background-color:#333;
+	padding:5px;
+}
+
+#TimelineToolBarEdit QToolButton {
+	padding:2px;
+}
