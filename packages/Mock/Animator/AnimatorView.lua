@@ -66,6 +66,8 @@ function AnimatorView:setTargetAnimator( targetAnimator )
 		self.targetAnimatorData = false
 		self.targetAnimatorDataPath = false
 	end
+	
+	mock.setAnimatorEditorTarget( self.targetRootEntity )
 
 end
 
@@ -138,12 +140,41 @@ function AnimatorView:addKeyForField( target, fieldId )
 		)
 	}
 	track:collectObjectRecordingState( self.targetAnimator, self.retainedRecordingState )
+	self:markClipDirty()
 	return keys
 end
 
 function AnimatorView:addKeyForEvent( target, eventId )
 end
 
+function AnimatorView:addKeyForSelectedTrack( track )
+	local target = track:getTargetObject( self.targetRootEntity )
+	local keys = {
+		track:createKey(
+			self.currentTime,
+			{
+				target = target,
+				root   = self.targetRootEntity
+			}
+		)
+	}
+	track:collectObjectRecordingState( self.targetAnimator, self.retainedRecordingState )
+	self:markClipDirty()
+	return keys
+end
+
+function AnimatorView:addCustomAnimatorTrack( target, trackClasId )
+	local parent = self:findParentTrackGroup()
+	if not parent then return end
+	local classes = mock.getCustomAnimatorTrackTypesForObject( target )
+	local clas = classes[ trackClasId ]
+	local track = clas()
+	parent:addChild( track )
+	track:initFromObject( target, self.targetRootEntity )
+	track:collectObjectRecordingState( self.targetAnimator, self.retainedRecordingState )
+	self:markClipDirty()
+	return track
+end
 
 function AnimatorView:removeKey( key )
 	local track = key:getTrack()

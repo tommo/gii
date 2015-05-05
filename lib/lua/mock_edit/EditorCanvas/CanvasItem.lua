@@ -55,12 +55,16 @@ function CanvasItemManager:updateItemScale( item )
 	local cameraCom = self:getView():getCameraComponent()
 	if cameraCom:isPerspective() then		
 		--TODO:consider distance to camera into scale calc
-		local factorDistance = 1
-		local scl = self.factorZoom * factorDistance
-		item:setScl( scl, scl, scl )
+		if item:isConstantSize() then
+			local factorDistance = 1
+			local scl = self.factorZoom * factorDistance
+			item:setScl( scl, scl, scl )
+		end
 	else
-		local scl = self.factorZoom
-		item:setScl( scl, scl, scl )
+		if item:isConstantSize() then
+			local scl = self.factorZoom
+			item:setScl( scl, scl, scl )
+		end
 	end
 end
 
@@ -251,6 +255,9 @@ end
 function CanvasItem:onDrag( btn, x, y )
 end
 
+function CanvasItem:isConstantSize()
+	return true
+end
 --------------------------------------------------------------------
 CLASS: CanvasBackgroundItem ( CanvasItem )
 	:MODEL{}

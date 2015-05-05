@@ -154,12 +154,7 @@ class AnimatorView( SceneEditorModule ):
 		self.enableTool( 'animator_play' , bool( clip ) )
 		self.enableTool( 'animator_track', bool( clip ) )
 		self.applyTime( 0, True )
-
-	def setCurrentTrack( self, track ):
-		self.currentTrack = track
-		self.delegate.callMethod( 'view', 'setCurrentTrack', track )
-		#TODO:update track toolbar
-		
+	
 	def getClipList( self ):
 		if self.targetAnimatorData:
 			clipList = self.targetAnimatorData.clips
@@ -192,26 +187,12 @@ class AnimatorView( SceneEditorModule ):
 			self.delegate.callMethod( 'view', 'clearPreviewState' )
 			self.delegate.callMethod( 'view', 'markClipDirty' )
 
-	def onSelectionChanged( self, selection, context = None ):
-		if context == 'clip':
-			if selection:
-				clip = selection[0]
-			else:
-				clip = None
-			self.setTargetClip( clip )
-		elif context == 'track':
-			if selection:
-				track = selection[0]
-			else:
-				track = None
-			self.setCurrentTrack( track )
-
 	def onSceneSelectionChanged( self, selection, key ):
 		if key != 'scene': return
 		#find animator component
 		target = self.delegate.callMethod( 'view', 'findTargetAnimator' )
 		self.setTargetAnimator( target )
-	
+
 	def addKeyForField( self, target, fieldId ):
 		if not self.targetAnimator:
 			alertMessage( 'No Animator', 'No Animator found in current entity scope', 'question' )
@@ -229,6 +210,18 @@ class AnimatorView( SceneEditorModule ):
 	def addKeyForEvent( self, target, eventId ):
 		pass
 
+	def addCustomAnimatorTrack( self, target, trackClasId ):
+		track = self.delegate.callMethod( 'view', 'addCustomAnimatorTrack', target, trackClasId )
+		if track:
+			self.widget.addTrack( track )
+
+	def addKeyForSelectedTracks( self ):
+		selectedTracks = self.widget.getTrackSelection()
+		for track in selectedTracks:
+			keys = self.delegate.callMethod( 'view', 'addKeyForSelectedTrack', track )
+			if keys:
+				for key in keys.values():
+					self.widget.addKey( key, True )
 
 	def onKeyRemoving( self, key ):
 		if self.delegate.callMethod( 'view', 'removeKey', key ) != False:
@@ -259,7 +252,7 @@ class AnimatorView( SceneEditorModule ):
 		elif name == 'add_group':
 			group = self.delegate.callMethod( 'view', 'addTrackGroup' )
 			if group:
-				self.widget.addTrack( group )
+				self.widget.addTrack( group, True )
 
 		elif name == 'remove_track':
 			for track in self.widget.treeTracks.getSelection():
@@ -279,6 +272,28 @@ class AnimatorView( SceneEditorModule ):
 			self.stopPreview( True )
 		elif name == 'toggle_repeat':
 			self.delegate.callMethod( 'view', 'togglePreviewRepeat', tool.getValue() )
+
+	def onTimelineEditTool( self, toolName ):
+		if toolName == 'add_key':
+			self.addKeyForSelectedTracks()
+
+		elif toolName == 'remove_key':
+			pass
+
+		elif toolName == 'clone_key':
+			pass
+
+		elif toolName == 'curve_mode_linear':
+			pass
+
+		elif toolName == 'curve_mode_constant':
+			pass
+
+		elif toolName == 'curve_mode_bezier':
+			pass
+
+		elif toolName == 'curve_mode_bezier_s':
+			pass
 
 
 	def getActiveSceneView( self ):

@@ -61,6 +61,7 @@ class AnimatorTrackTree( GenericTreeWidget ):
 	def __init__( self, *args, **option ):
 		option['editable']  = True
 		option['drag_mode'] = 'internal'
+		option['multiple_selection'] = True
 		super( AnimatorTrackTree, self ).__init__( *args, **option )
 		self.setItemDelegate( AnimatorTrackTreeItemDelegate() )
 		self.setVerticalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
@@ -120,7 +121,7 @@ class AnimatorTrackTree( GenericTreeWidget ):
 			item.setIcon( 1, getIcon('track_key_0') )
 		
 	def onItemSelectionChanged(self):
-		self.owner.onSelectionChanged( self.getSelection(), 'track' )
+		self.parentView.onTrackSelectioChanged()
 
 	def onItemChanged( self, item, col ):
 		self.owner.renameTrack( item.node, item.text(0) )
@@ -215,7 +216,7 @@ class AnimatorClipListTree( GenericTreeWidget ):
 		item.setIcon( 0, getIcon('clip') )
 		
 	def onItemSelectionChanged(self):
-		self.owner.onSelectionChanged( self.getSelection(), 'clip' )
+		self.parentView.onClipSelectioChanged()
 
 	def onItemChanged( self, item, col ):
 		self.owner.renameClip( item.node, item.text(0) )
@@ -279,7 +280,9 @@ class AnimatorTimelineWidget( TimelineView ):
 
 	def getRulerParam( self ):
 		return dict( zoom = 0.1, pos_step = 1000, sub_step = 100 )
-	
+
+	def onEditTool( self, toolName ):
+		self.owner.onTimelineEditTool( toolName )		
 
 ##----------------------------------------------------------------##
 class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
@@ -303,6 +306,15 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.toolbarPlay  = QtGui.QToolBar()
 		self.toolbarTrack = QtGui.QToolBar()
 		self.toolbarEdit  = self.timeline.toolbarEdit
+
+		self.timeline.toolbuttonCurveModeLinear   .setIcon( getIcon( 'curve_mode_linear'   ) )
+		self.timeline.toolbuttonCurveModeConstant .setIcon( getIcon( 'curve_mode_constant' ) )
+		self.timeline.toolbuttonCurveModeBezier   .setIcon( getIcon( 'curve_mode_bezier'   ) )
+		self.timeline.toolbuttonCurveModeBezierS  .setIcon( getIcon( 'curve_mode_bezier_s' ) )
+
+		self.timeline.toolbuttonAddKey    .setIcon( getIcon( 'add'    ) )
+		self.timeline.toolbuttonRemoveKey .setIcon( getIcon( 'remove' ) )
+		self.timeline.toolbuttonCloneKey  .setIcon( getIcon( 'clone'  ) )
 
 		treeLayout = QtGui.QVBoxLayout(self.containerTree) 
 		treeLayout.setSpacing( 0 )
@@ -390,14 +402,18 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.treeClips.addNode( clip )
 		if focus:
 			self.treeClips.selectNode( clip )
+			self.treeClips.editNode( clip )
 
 	def addKey( self, key, focus = False ):
 		self.addTrack( key.parent )
 		self.timeline.addKey( key )
 
-	def addTrack( self, track ):
+	def addTrack( self, track, focus = False ):
 		self.treeTracks.addNode( track )
 		self.timeline.addTrack( track )
+		if focus:
+			self.treeTracks.editNode( track )
+			self.timeline.setTrackSelection( [track] )
 
 	def removeClip( self, clip ):
 		self.treeClips.removeNode( clip )
@@ -458,3 +474,17 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 	def setCursorPos( self, pos, focus = False ):
 		self.timeline.setCursorPos( pos, focus )
 
+	def onTrackSelectioChanged( self ):
+		selection = self.treeTracks.getSelection()
+		self.timeline.setTrackSelection( selection )
+		
+	def onClipSelectioChanged( self ):
+		selection = self.treeClips.getSelection()
+		if selection:
+			clip = selection[0]
+		else:
+			clip = None
+		self.owner.setTargetClip( clip )
+
+	def getTrackSelection( self ):
+		return self.timeline.getTrackSelection()

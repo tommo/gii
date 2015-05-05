@@ -44,9 +44,15 @@ class ObjectContainer( QtGui.QWidget ):
 		self.ui.buttonFold.clicked.connect( lambda x: self.toggleFold( None ) )
 		self.ui.buttonContext.clicked.connect( lambda x: self.openContextMenu() )
 		self.ui.buttonContext.setIcon( getIcon( 'menu' ) )
-		self.ui.buttonKey.clicked.connect( lambda x: self.openKeyMenu() )
+		
 		self.ui.buttonKey.setIcon( getIcon( 'key' ) )
 		self.ui.buttonKey.hide()
+
+	def getButtonKey( self ):
+		return self.ui.buttonKey
+
+	def getButtonContext( self ):
+		return self.ui.buttonContext
 
 	def setContextObject( self, context ):
 		self.contextObject = context
@@ -77,14 +83,6 @@ class ObjectContainer( QtGui.QWidget ):
 			self.ui.buttonContext.hide()
 		else:
 			self.ui.buttonContext.show()
-
-	def setKeyMenu( self, menuName ):
-		menu = menuName and MenuManager.get().find( menuName ) or None
-		self.keyMenu = menu
-		if not menu:
-			self.ui.buttonKey.hide()
-		else:
-			self.ui.buttonKey.show()
 
 	def getInnerContainer( self ):
 		return self.ui.ObjectInnerContainer
@@ -118,10 +116,6 @@ class ObjectContainer( QtGui.QWidget ):
 	def openContextMenu( self ):
 		if self.contextMenu:
 			self.contextMenu.popUp( context = self.contextObject )
-
-	def openKeyMenu( self ):
-		if self.keyMenu:
-			self.keyMenu.popUp( context = self.contextObject )
 
 ##----------------------------------------------------------------##
 class SceneIntrospector( SceneEditorModule ):

@@ -125,7 +125,6 @@ end
 
 function CanvasView:pick( x, y )
 	--TODO: use layer order?
-	x, y = self:wndToWorld( x, y )
 	local candidates = {}
 	for ent in pairs( self:getScene().entities ) do
 		-- if isEntityPickable( ent ) and ent:inside( x, y ) then

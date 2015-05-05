@@ -49,18 +49,22 @@ function GizmoManager:onDestroy()
 
 end
 
-function GizmoManager:updateConstantSize()
+function GizmoManager:updateConstantSizeForGizmo( giz )
 	local view = self.parent
 	local cameraCom = view:getCameraComponent()
 	local factorZoom = 1/cameraCom:getZoom()
+	local factorDistance = 1
+	if cameraCom:isPerspective() then
+		--TODO
+	end
+	local scl = factorZoom * factorDistance
+	giz:setScl( scl, scl, scl )
+	giz:forceUpdate()
+end
+
+function GizmoManager:updateConstantSize()
 	for giz in pairs( self.constantSizeGizmos ) do
-		local factorDistance = 1
-		if cameraCom:isPerspective() then
-			--TODO
-		end
-		local scl = factorZoom * factorDistance
-		giz:setScl( scl, scl, scl )
-		giz:forceUpdate()
+		self:updateConstantSizeForGizmo( giz )
 	end
 end
 
@@ -108,11 +112,13 @@ end
 
 function GizmoManager:addConstantSizeGizmo( giz )
 	self.constantSizeGizmos[ giz ] = true	
+	self:updateConstantSizeForGizmo( giz )
 end
 
 function GizmoManager:refresh()
 	self:clear()
 	self:scanScene()
+	self:updateConstantSize()
 end
 
 function GizmoManager:scanScene()

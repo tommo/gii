@@ -60,8 +60,6 @@ def repolishWidget( widget ):
 	style = widget.style()
 	style.unpolish( widget )
 	style.polish( widget )
-	widget.update()
-	# style.polish( widget )
 
 def makeBrush( **option ):
 	brush = QtGui.QBrush()

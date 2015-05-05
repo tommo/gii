@@ -348,9 +348,6 @@ class GamePreviewCanvas(MOAICanvasBase):
 		MOAICanvasBase.resizeGL( self, width, height )
 
 	def onDraw(self):
-		#manual clear
-		# glClearColor( .2, .2, .2, 1 )
-		# glClear(GL_COLOR_BUFFER_BIT)
 		self.module.renderView()
 		
 ##----------------------------------------------------------------##

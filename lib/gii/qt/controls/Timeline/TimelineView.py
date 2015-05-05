@@ -37,11 +37,11 @@ makeStyle( 'black',              '#000000',    '#000000'              )
 makeStyle( 'default',            '#000000',    '#ff0ecf'              )
 makeStyle( 'key',                '#000000',    '#acbcff'              )
 makeStyle( 'key:hover',          '#dfecff',    '#acbcff'              )
-makeStyle( 'key:selected',       '#ffffff',    '#a0ff00'              )
+makeStyle( 'key:selected',       '#dfecff',    '#a0ff00'              )
 makeStyle( 'key-span',           '#000',       '#303459'    ,'#c2c2c2' )
 makeStyle( 'key-span:selected',  '#ffffff',    '#303459'               )
 makeStyle( 'track',                None,       dict( color = '#444', alpha = 0.2 ) )
-makeStyle( 'track:selected',       None,       dict( color = '#555', alpha = 0.2 ) )
+makeStyle( 'track:selected',       None,       dict( color = '#4e536e', alpha = 0.4 ) )
 makeStyle( 'selection',          dict( color = '#ffa000', alpha = 0.5 ), dict( color = '#ffa000', alpha = 0.2 ) )
 
 
@@ -513,6 +513,14 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def onKeyUpdate( self, key ):
 		self.view.onKeyUpdate( self, key )
 
+	def setSelected( self, selected = True ):
+		self.selected = selected
+		if selected:
+			self.setItemState( 'selected' )
+		else:
+			self.setItemState( 'normal' )
+		self.update()
+
 	def onPaint( self, painter, option, widget ):
 		rect = self.rect()
 		painter.drawRect( rect )
@@ -604,7 +612,7 @@ class TimelineTrackView( TimelineSubView ):
 	def addTrackItem( self ):
 		item = TimelineTrackItem()
 		item.view = self
-		item.setRect( 0,0, 10000, _TRACK_SIZE )
+		item.setRect( 0,-1, 10000, _TRACK_SIZE + 2 )
 		self.scene().addItem( item )
 		self.trackItems.append( item )
 		item.index = len( self.trackItems )
@@ -817,26 +825,70 @@ class TimelineView( QtGui.QWidget ):
 		self.tabViewSwitch = QtGui.QTabBar()		
 		bottomLayout = QtGui.QHBoxLayout( self.ui.containerBottom )
 		bottomLayout.addWidget( self.tabViewSwitch )
-		bottomLayout.setSpacing( 0 )
+		bottomLayout.setSpacing( 10 )
 		bottomLayout.setMargin( 0 )
 		self.tabViewSwitch.addTab( 'Dope Sheet')
 		self.tabViewSwitch.addTab( 'Curve View' )
 		self.tabViewSwitch.currentChanged.connect( self.onTabChanged )
 		self.tabViewSwitch.setShape( QtGui.QTabBar.RoundedSouth )
-		self.tabViewSwitch.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Preferred)
+		self.tabViewSwitch.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
 
 		self.toolbarEdit = QtGui.QToolBar()
 		self.toolbarEdit.setObjectName( 'TimelineToolBarEdit')
 		bottomLayout.addWidget( self.toolbarEdit )
 		self.toolbarEdit.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
+		self.toolbarEdit.setIconSize( QtCore.QSize( 16, 16 ) )
+		#key tool
+		self.toolbarEdit.addSeparator()
+		self.toolbuttonAddKey    = self.addEditToolButton(
+			'add_key',    '+', 'Add Key(s)'
+			)
+		self.toolbuttonRemoveKey = self.addEditToolButton(
+			'remove_key', '-', 'Remove Key(s)'
+			)
+		self.toolbuttonCloneKey  = self.addEditToolButton(
+			'clone_key',  'C', 'Clone Key(s)'
+			)		
+		
+		#curve tool
+		self.toolbarEdit.addSeparator()
 
+		self.toolbuttonCurveModeLinear   = self.addEditToolButton(
+			'curve_mode_linear',   'L', 'Linear Interpolation Mode'
+			)
+		self.toolbuttonCurveModeConstant = self.addEditToolButton(
+			'curve_mode_constant', 'K', 'Constant Interpolation Mode'
+			)
+		self.toolbuttonCurveModeBezier   = self.addEditToolButton(
+			'curve_mode_bezier',   'B', 'Uniform Besizer Interpolation Mode'
+			)
+		self.toolbuttonCurveModeBezierS  = self.addEditToolButton(
+			'curve_mode_bezier_s', 'b', 'Splitted Besizer Interpolation Mode'
+			)
+	
+		#init
 		self.setScrollPos( 0 )
 		self.setCursorPos( 0 )
 		self.setZoom( 1.0 )
 		# self.trackView.cursorPosChanged.connect(  )
 
+		self.trackSelection = []
+
+	def addEditToolButton( self, id, label, tooltip = None ):
+		tooltip = tooltip or label
+		action = self.toolbarEdit.addAction( label )
+		action.triggered.connect( lambda x: self.onEditTool( id ) )
+		action.setToolTip( tooltip )
+		return action
+
 	def onTabChanged( self, idx ):
 		self.ui.containerContents.setCurrentIndex( idx )
+
+	def getCurrentEditMode( self ):
+		if self.ui.containerContents.currentIndex() == 0:
+			return 'dope'
+		else:
+			return 'curve'
 
 	def getRulerHeight( self ):
 		return _RULER_SIZE
@@ -874,7 +926,6 @@ class TimelineView( QtGui.QWidget ):
 		#TODO:center
 		leftEnd, rightEnd = self.rulerView.getVisibleRange()
 		self.setScrollPos( max(pos, 0 ) )
-
 
 	def posToTime( self, x ):
 		zoom = self.getZoom()
@@ -964,6 +1015,7 @@ class TimelineView( QtGui.QWidget ):
 			self.refreshKey( keyNode, **option )			
 		return key
 
+
 	def removeKey( self, keyNode ):
 		track = self.getParentTrack( keyNode )
 		if not track: return
@@ -984,6 +1036,22 @@ class TimelineView( QtGui.QWidget ):
 			return self.addTrack( trackNode )
 		else:
 			return trackItem
+
+	def setTrackSelection( self, tracks ):
+		prev = self.trackSelection
+		if prev:
+			for trackNode in prev:
+				trackItem = self.getTrackByNode( trackNode )
+				if trackItem:
+					trackItem.setSelected( False )
+		if tracks:
+			for trackNode in tracks:
+				trackItem = self.getTrackByNode( trackNode )
+				trackItem.setSelected( True )
+		self.trackSelection = tracks
+
+	def getTrackSelection( self ):
+		return self.trackSelection
 
 	def setCursorDraggable( self, draggable = True ):
 		self.rulerView.setCursorDraggable( draggable )
@@ -1124,6 +1192,12 @@ class TimelineView( QtGui.QWidget ):
 	def onKeyRemoving( self, keyNode ):
 		return True
 
+	def setTrackSelected( self, trackNode ):
+		pass
+
+	def getSelectedTrack( self ):
+		pass
+
 
 	#######
 	#Interaction
@@ -1139,6 +1213,9 @@ class TimelineView( QtGui.QWidget ):
 		self.trackView.setCursorVisible( enabled )
 		self.rulerView.setCursorVisible( enabled )
 		self.curveView.setCursorVisible( enabled )
+
+	def onEditTool( self, toolName ):
+		pass
 
 	# def closeEvent( self, ev ):
 	# 	self.trackView.deleteLater()

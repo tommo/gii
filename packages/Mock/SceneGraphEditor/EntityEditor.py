@@ -23,36 +23,13 @@ def getProtoPath( obj ):
 	state = obj['PROTO_INSTANCE_STATE']
 	return state['proto'] or state['sub_proto']
 
-class ProtoFieldResetMenuMixin():
-	def initContextMenu( self, propertyEditor ):
+##----------------------------------------------------------------##
+class SceneObjectEditorMixin():
+	#field proto state
+	def initFieldContextMenu( self, propertyEditor ):
 		self.propertyEditor = propertyEditor
-		propertyEditor.contextMenuRequested.connect( self.onContextMenuRequested )
+		propertyEditor.contextMenuRequested.connect( self.onFieldContextMenuRequested )
 	
-	def onContextMenuRequested( self, target, fieldId ):
-		menu = QMenu("Field Context")
-		itemTitle = menu.addAction( '[ %s ]' % fieldId )
-		itemTitle.setEnabled( False )
-		menu.addSeparator()
-
-		animator = app.getModule( 'animator' )
-		if animator:
-			itemAddKey = menu.addAction( 'Add Key Frame' )
-			itemAddKey.setIcon( getIcon('key') )
-			itemAddKey.triggered.connect( self.onFieldAddKey )
-			menu.addSeparator()
-
-		# itemDefault = menu.addAction( 'Set Default Value' )
-		# itemDefault.triggered.connect( self.onFieldResetDefault )
-
-		if _MOCK.isProtoInstanceOverrided( target, fieldId ):
-			menu.addSeparator()
-			itemProto = menu.addAction( 'Reset To Proto Value' )
-			itemProto.triggered.connect( self.onFieldResetProto )
-
-
-		self.currentFieldContext = ( target, fieldId )
-		menu.exec_(QtGui.QCursor.pos())
-
 	def onFieldResetDefault( self ):
 		print 'reset default', self.currentFieldContext
 
@@ -67,9 +44,33 @@ class ProtoFieldResetMenuMixin():
 		target, fieldId = self.currentFieldContext
 		animator = app.getModule( 'animator' )
 		animator.addKeyForField( target, fieldId )
-		
-##----------------------------------------------------------------##
-class ObjectFoldStateMixin():
+
+	def onFieldContextMenuRequested( self, target, fieldId ):
+		menu = QMenu("Field Context")
+		itemTitle = menu.addAction( '[ %s ]' % fieldId )
+		itemTitle.setEnabled( False )
+		menu.addSeparator()
+
+		animator = app.getModule( 'animator' )
+		if animator:
+			itemAddKey = menu.addAction( 'Add key' )
+			itemAddKey.setIcon( getIcon('key') )
+			itemAddKey.triggered.connect( self.onFieldAddKey )
+			menu.addSeparator()
+
+		# itemDefault = menu.addAction( 'Set Default' )
+		# itemDefault.triggered.connect( self.onFieldResetDefault )
+
+		if _MOCK.isProtoInstanceOverrided( target, fieldId ):
+			menu.addSeparator()
+			itemProtoReset = menu.addAction( 'Reset To Proto Value' )
+			itemProtoReset.triggered.connect( self.onFieldResetProto )
+			itemProtoReset.setIcon( getIcon('reset') )
+
+		self.currentFieldContext = ( target, fieldId )
+		menu.exec_(QtGui.QCursor.pos())
+
+	#foldstate
 	def initFoldState( self ):
 		self.getContainer().foldChanged.connect( self.onFoldChanged )
 	
@@ -80,6 +81,40 @@ class ObjectFoldStateMixin():
 	def onFoldChanged( self, folded ):
 		self.getTarget()['__foldState'] = folded
 
+	#animtor track button
+	def initAnimatorButton( self ):
+		#check if there is animator track
+		button = self.container.getButtonKey()
+		button.clicked.connect( self.onCustomTrackMenuRequested )
+		button.hide()
+
+	def updateAnimatorButton( self ):
+		animator = app.getModule( 'animator' )
+		if not animator:
+			return
+		target = self.getTarget()
+		button = self.container.getButtonKey()
+		if target and _MOCK.objectHasAnimatorTrack( self.getTarget() ):
+			button.show()
+		else:
+			button.hide()
+
+	def onCustomTrackMenuRequested( self ):
+		menu = QMenu("Animator Track Context")
+		itemTitle = menu.addAction( 'Create Custom Animator Track' )
+		itemTitle.setEnabled( False )
+		menu.addSeparator()
+		trackTypes = _MOCK.getCustomAnimatorTrackTypesForObject( self.getTarget() )
+		if not trackTypes: return
+		for id, clas in trackTypes.items():
+			action = menu.addAction( id )
+			action.triggered.connect( lambda x: self.addCustomAnimatorTrack( id ) )
+			action.setIcon( getIcon('object_track') )
+		menu.exec_(QtGui.QCursor.pos())
+
+	def addCustomAnimatorTrack( self, id ):
+		animator = app.getModule( 'animator' )
+		animator.addCustomAnimatorTrack( self.getTarget(), id )
 
 ##----------------------------------------------------------------##
 class EntityHeader( EntityHeaderBase, QtGui.QWidget ):
@@ -88,7 +123,7 @@ class EntityHeader( EntityHeaderBase, QtGui.QWidget ):
 		self.setupUi( self )
 
 ##----------------------------------------------------------------##
-class ComponentEditor( CommonObjectEditor, ProtoFieldResetMenuMixin, ObjectFoldStateMixin ): #a generic property grid 
+class ComponentEditor( CommonObjectEditor, SceneObjectEditorMixin ): #a generic property grid 
 	def onPropertyChanged( self, obj, id, value ):
 		if _MOCK.markProtoInstanceOverrided( obj, id ):
 			self.grid.refershFieldState( id )
@@ -100,9 +135,10 @@ class ComponentEditor( CommonObjectEditor, ProtoFieldResetMenuMixin, ObjectFoldS
 
 	def initWidget( self, container, objectContainer ):
 		self.grid = super( ComponentEditor, self ).initWidget( container, objectContainer )
-		self.initContextMenu( self.grid )
-		objectContainer.setKeyMenu( 'component_context' )
+		
+		self.initFieldContextMenu( self.grid )
 		self.initFoldState()
+		self.initAnimatorButton()
 		return self.grid
 
 	def setTarget( self, target ):
@@ -113,26 +149,28 @@ class ComponentEditor( CommonObjectEditor, ProtoFieldResetMenuMixin, ObjectFoldS
 			self.container.setProperty( 'proto', False )
 		self.container.repolish()
 		self.restoreFoldState()
+		self.updateAnimatorButton()
 		#recording check
 		# for field, editor in self.grid.editors.items():
 		# 	pass
 		
 
 ##----------------------------------------------------------------##
-class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin, ObjectFoldStateMixin ): #a generic property grid 
+class EntityEditor( ObjectEditor, SceneObjectEditorMixin ): #a generic property grid 
 	def initWidget( self, container, objectContainer ):
 		self.header = EntityHeader( container )
 		self.grid = PropertyEditor( self.header )
 		self.header.layout().addWidget( self.grid )
 		self.grid.setContext( 'scene_editor' )		
-		self.initContextMenu( self.grid )
 
 		self.grid.propertyChanged.connect( self.onPropertyChanged )		
 		self.header.buttonEdit   .clicked .connect ( self.onEditPrefab )
 		self.header.buttonGoto   .clicked .connect ( self.onGotoPrefab )
 		self.header.buttonUnlink .clicked .connect ( self.onUnlinkPrefab )
-		objectContainer.setKeyMenu( 'component_context' )
+		
+		self.initFieldContextMenu( self.grid )
 		self.initFoldState()
+		self.initAnimatorButton()
 
 		return self.header
 
@@ -165,7 +203,8 @@ class EntityEditor( ObjectEditor, ProtoFieldResetMenuMixin, ObjectFoldStateMixin
 					)
 				container = editor.getContainer()
 		self.restoreFoldState()
-		
+		self.updateAnimatorButton()
+
 	def onPropertyChanged( self, obj, id, value ):
 		if _MOCK.markProtoInstanceOverrided( obj, id ):
 			self.grid.refershFieldState( id )

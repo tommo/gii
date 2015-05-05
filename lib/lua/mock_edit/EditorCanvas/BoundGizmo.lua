@@ -35,5 +35,7 @@ local function methodBuildBoundGizmo( self )
 end
 
 mock.DeckComponent.onBuildSelectedGizmo = methodBuildBoundGizmo
-mock.TexturePlane.onBuildSelectedGizmo = methodBuildBoundGizmo
-mock.TextLabel.onBuildSelectedGizmo = methodBuildBoundGizmo
+mock.TexturePlane.onBuildSelectedGizmo  = methodBuildBoundGizmo
+mock.TextLabel.onBuildSelectedGizmo     = methodBuildBoundGizmo
+mock.TextLabel.onBuildSelectedGizmo     = methodBuildBoundGizmo
+mock.MSprite.onBuildSelectedGizmo       = methodBuildBoundGizmo
