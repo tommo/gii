@@ -223,6 +223,7 @@ class TimelineRulerView( TimelineSubView ):
 
 	def setCursorVisible( self, visible ):
 		self.ruler.cursorVisible = visible
+		# self.gridBackground.cursorVisible = visible
 		self.update()
 
 	def wheelEvent(self, event):
@@ -577,7 +578,7 @@ class TimelineTrackView( TimelineSubView ):
 		self.gridBackground = GridBackground()
 		self.gridBackground.setGridSize( self.gridSize, _TRACK_SIZE + _TRACK_MARGIN )
 		self.gridBackground.setAxisShown( False, True )
-		self.gridBackground.showCursorLine = True
+		self.gridBackground.setCursorVisible( False )
 		self.gridBackground.setOffset( _HEAD_OFFSET, -1 )
 		scene.addItem( self.gridBackground )
 
@@ -752,6 +753,9 @@ class TimelineTrackView( TimelineSubView ):
 
 	def getTimelineView( self ):
 		return self.timelineView
+
+	def setCursorVisible( self, visible ):
+		self.gridBackground.setCursorVisible( visible )
 
 
 ##----------------------------------------------------------------##	

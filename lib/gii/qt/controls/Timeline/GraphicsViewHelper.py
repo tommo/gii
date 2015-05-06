@@ -181,7 +181,7 @@ class GridBackground( QtGui.QGraphicsRectItem ):
 		self.offsetX = 0
 		self.offsetY = 0
 		self.cursorPos  = 0
-		self.showCursorLine = False
+		self.cursorVisible = False
 		self.showXAxis = True
 		self.showYAxis = True
 		self.cursorPen = GridBackground._cursorPen
@@ -209,6 +209,9 @@ class GridBackground( QtGui.QGraphicsRectItem ):
 
 	def setCursorPos( self, pos ):
 		self.cursorPos = pos
+
+	def setCursorVisible( self, visible ):
+		self.cursorVisible = visible
 
 	def paint( self, painter, option, widget ):
 		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
@@ -244,7 +247,7 @@ class GridBackground( QtGui.QGraphicsRectItem ):
 				y = row * th + oy + y0 + offy
 				painter.drawLine( x0, y, x1, y )
 
-		if self.showCursorLine:
+		if self.cursorVisible:
 			painter.setPen( self.cursorPen )
 			x = int(self.cursorPos)
 			painter.drawLine( x, y0, x, y1 )

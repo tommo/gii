@@ -65,7 +65,7 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 		self.zoomY = 1
 		self.showXAxis = True
 		self.showYAxis = True
-		self.showCursorLine = False
+		self.cursorVisible = False
 		self.cursorPosX = 0
 		self.cursorPen = AxisGridBackground._cursorPen
 
@@ -183,10 +183,10 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 				markText = '%.1f'%( vy )
 				painter.drawText( QRectF( 5, yy + 3, 100, 20 ), Qt.AlignTop|Qt.AlignLeft, markText )
 
-		# if self.showCursorLine:
-		x = self.cursorPosX + dx
-		painter.setPen( self.cursorPen )
-		painter.drawLine( x, y0 + dy, x, y1 + dy )
+		if self.cursorVisible:
+			x = self.cursorPosX + dx
+			painter.setPen( self.cursorPen )
+			painter.drawLine( x, y0 + dy, x, y1 + dy )
 
 	def setZoom( self, zx, zy ):
 		self.zoomX = zx
@@ -504,7 +504,7 @@ class CurveView( GLGraphicsView ):
 
 	def setCursorVisible( self, visible ):
 		# self.cursorItem.setVisible( visible )
-		self.gridBackground.showCursorLine = visible
+		self.gridBackground.cursorVisible = visible
 
 	def setScrollXLimit( self, minX, maxX ):
 		self.scrollXMin = minX
