@@ -192,23 +192,43 @@ class LuaObjectEnumerator( ObjectEnumerator ):
 
 ##----------------------------------------------------------------##
 class LuaObjectField( Field ):
-	def getValue( self, obj, defaultValue = None ):
-		getter = self.getter
-		if getter == False: return None
-		#indexer
-		if getter == True:
-			return getattr( obj, self.id, defaultValue )
+	def __init__( self, model, id, _type, **option ):
+		super( LuaObjectField, self ).__init__( model, id, _type, **option )
+		#init getter/setter
+		if self.getter == False:
+			self.getValue = self._getValueNone
+		elif self.getter == True: 
+			self.getValue = self._getValueRaw
+		else:
+			self.getValue = self._getValueGetter
+
+		if self.readonly:
+			self.setValue = self._setValueNone
+		elif self.setter == True:
+			self.setValue = self._setValueRaw
+		else:
+			self.setValue = self._setValueSetter
+
+	def _getValueNone( self, obj, defaultValue = None ):
+		return None
+
+	def _getValueRaw( self, obj, defaultValue = None ):
+		return getattr( obj, self.id, defaultValue )
+
+	def _getValueGetter( self, obj, defaultValue = None ):
 		#caller
 		v = self.getter( obj, self.id )
 		if v is None: return defaultValue
 		return v
 
-	def setValue( self, obj, value ):
-		if self.readonly: return 
-		if self.setter == True:
-			setattr( obj, self.id, value )
-		else:
-			self.setter(obj, value)
+	def _setValueNone( self, obj, value ):
+		pass
+
+	def _setValueRaw( self, obj, value ):
+		setattr( obj, self.id, value )
+
+	def _setValueSetter( self, obj, value ):
+		self.setter(obj, value)
 
 ##----------------------------------------------------------------##
 class LuaObjectModel(ObjectModel):
