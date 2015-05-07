@@ -260,13 +260,6 @@ class AnimatorTimelineWidget( TimelineView ):
 		length = resizable and keyNode.length or 0
 		return keyNode.getPos( keyNode ), length, resizable 
 
-		# clipTrack = track.node
-		# self.module.addEvent( clipTrack, pos, None )
-		# eventTypes = clipTrack.getEventTypes( clipTrack )
-		# if not eventTypes:			
-		# else:
-		# 	self.module.promptAddEvent( clipTrack, pos )
-
 	def onSelectionChanged( self, selection ):
 		if selection:
 			self.parentView.setPropertyTarget( selection[0] )
@@ -282,7 +275,12 @@ class AnimatorTimelineWidget( TimelineView ):
 		return dict( zoom = 0.1, pos_step = 1000, sub_step = 100 )
 
 	def onEditTool( self, toolName ):
-		self.owner.onTimelineEditTool( toolName )		
+		self.owner.onTimelineEditTool( toolName )	
+
+	def onTrackClicked( self, track, pos ):
+		trackNode = track.node
+		self.parentView.selectTrack( trackNode )
+
 
 ##----------------------------------------------------------------##
 class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
@@ -414,6 +412,9 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		if focus:
 			self.treeTracks.editNode( track )
 			self.timeline.setTrackSelection( [track] )
+
+	def selectTrack( self, trackNode ):
+		self.treeTracks.selectNode( trackNode )
 
 	def removeClip( self, clip ):
 		self.treeClips.removeNode( clip )

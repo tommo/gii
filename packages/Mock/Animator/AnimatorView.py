@@ -60,6 +60,7 @@ class AnimatorView( SceneEditorModule ):
 		# self.toolbarEdit  = self.addToolBar( 'animator_play',  self.widget.toolbarEdit )
 
 		signals.connect( 'scene.save', self.preSceneSave )
+		signals.connect( 'scene.saved', self.postSceneSave )
 
 		# addWidgetWithLaytut( toolbar,
 		# 	self.widget.containerEditTool )
@@ -353,5 +354,10 @@ class AnimatorView( SceneEditorModule ):
 		self.delegate.callMethod( 'view', 'saveData' )
 
 	def preSceneSave( self ):
-		self.saveAnimatorData()
+		if self.targetAnimator:
+			self.delegate.callMethod( 'view', 'restoreEntityState' )
+
+	def postSceneSave( self ):
+		if self.targetAnimator:
+			self.applyTime( self.previewTime )
 

@@ -299,6 +299,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.markSceneDirty( False )
 		signals.emitNow( 'scene.save' )
 		self.delegate.safeCallMethod( 'editor', 'saveScene', self.activeSceneNode.getAbsFilePath() )
+		signals.emitNow( 'scene.saved' )
 		self.saveWorkspaceState()
 
 	def refreshScene( self ):

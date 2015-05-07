@@ -529,6 +529,10 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def getTimelineView( self ):
 		return self.view.getTimelineView()
 
+	def mousePressEvent( self, ev ):
+		if ev.button() == Qt.LeftButton:
+			self.getTimelineView().onTrackClicked( self, ev.pos() )
+
 ##----------------------------------------------------------------##
 class SelectionRegionItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def __init__( self, *args, **kwargs ):
@@ -778,6 +782,7 @@ class TimelineView( QtGui.QWidget ):
 
 		self.initData()
 		self.initUI()
+		self.setEnabled( True )
 
 	def initData( self ):
 		self.tracks      = []
@@ -1202,12 +1207,11 @@ class TimelineView( QtGui.QWidget ):
 	def getSelectedTrack( self ):
 		pass
 
-
 	#######
 	#Interaction
 	#######
 	def onTrackClicked( self, track, pos ):
-		self.selectTrack( track.node )
+		pass
 
 	def onKeyClicked( self, key, pos ):
 		self.selectKey( key.node )

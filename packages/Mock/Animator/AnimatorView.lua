@@ -53,6 +53,9 @@ function AnimatorView:getTargetAnimatorDataPath()
 end
 
 function AnimatorView:setTargetAnimator( targetAnimator )
+	self:restoreEntityState()
+	self.retainedRecordingState = false
+	
 	self.targetAnimator = targetAnimator
 	self.targetRootEntity = targetAnimator and targetAnimator._entity	
 	self.targetClip = false
@@ -79,6 +82,7 @@ end
 
 function AnimatorView:setTargetClip( targetClip )
 	self:restoreEntityState()
+	self.retainedRecordingState = false
 	self.targetClip = targetClip
 	self.currentTrack = false
 	if self.targetClip then
@@ -279,12 +283,6 @@ function AnimatorView:doPreviewStep()
 	return true, self.currentTime
 end
 
-function AnimatorView:retainEntityState()
-	-- retainedEntityState
-	assert( self.targetAnimator )
-	local state = {}
-	_retainEntityState( self.targetAnimator._entity, state )
-end
 
 function AnimatorView:markObjectFieldRecording( obj, fieldId )
 	local state = self.objectRecordingState[ obj ]
@@ -306,7 +304,6 @@ end
 function AnimatorView:restoreEntityState()
 	if not self.retainedRecordingState then return end
 	self.retainedRecordingState:applyRetainedState()
-	self.retainedRecordingState = false
 end
 
 function AnimatorView:markTrackDirty( track )

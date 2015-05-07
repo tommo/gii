@@ -28,7 +28,10 @@ class BTScriptAssetManager(AssetManager):
 		node.setObjectFile( 'def', node.getFilePath() )
 		node.assetType = 'bt_script'
 		#validate
-		_MOCK.parseBTScriptFile( node.getFilePath() )
+		try:
+			_MOCK.parseBTScriptFile( node.getFilePath() )
+		except Exception, e:
+			pass
 		return True
 	
 ##----------------------------------------------------------------##

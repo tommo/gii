@@ -266,8 +266,7 @@ class CurveTangentPointItem( QtGui.QGraphicsRectItem ):
 		self.innerRect = QRectF( -TP_INNER_SIZE/2, -TP_INNER_SIZE/2, TP_INNER_SIZE, TP_INNER_SIZE )
 		self.setCursor( Qt.PointingHandCursor )
 		self.setFlag( self.ItemSendsGeometryChanges, True )
-		self.setFlag( self.ItemIsSelectable, True )
-		self.setFlag( self.ItemIsMovable, True )
+		
 
 	def itemChange( self, change, value ):
 		if change == self.ItemPositionChange or change == self.ItemPositionHasChanged:
@@ -287,7 +286,6 @@ class CurveVertPointItem( QtGui.QGraphicsRectItem ):
 		self.setCursor( Qt.PointingHandCursor )
 		applyStyle( 'cv', self )
 		self.setFlag( self.ItemSendsGeometryChanges, True )
-		self.setFlag( self.ItemIsMovable, True )
 		self.vertItem = vertItem
 		self.setParentItem( vertItem.parentItem() )
 
@@ -421,9 +419,33 @@ class CurveItem( QtGui.QGraphicsRectItem ):
 		self.zx = 1
 		self.zy = 1
 		self.verts = []
+		self.vertDict = {}
 		self.startVert = self.createVert()
 		self.endVert   = self.startVert
 
+	def getVertByNode( self, node ):
+		return self.vertDict.get( node, None )
+
+	def addVert( self, node ):
+		vert = self.createVert()
+		vert.node = node
+		self.verts.append( vert )
+		self.vertDict[ node ] = vert
+
+	def removeVert( self, node ):
+		vert = self.getVertByNode( node )
+		if vert :
+			del self.vertDict[ node ]
+			vert.setParentItem( None )
+			vert.node = None
+			self.verts.remove( vert )
+
+	def clear( self ):
+		for v in self.verts:
+			v.setParentItem( None )
+			del self.vertDict[ v.node ]
+			v.node = None
+		self.verts = []
 
 	def createVert( self ):
 		vert = CurveVertItem( self )
@@ -460,7 +482,12 @@ class CurveView( GLGraphicsView ):
 	scrollYChanged = pyqtSignal( float )
 	zoomXChanged   = pyqtSignal( float )
 	zoomYChanged   = pyqtSignal( float )
+	cursorPosXChanged = pyqtSignal( float )
+	cursorPosYChanged = pyqtSignal( float )
 
+	vertChanged        = pyqtSignal( object, float, float )
+	vertTangentChanged = pyqtSignal( object, float, float )
+	
 	def __init__(self, *args, **kwargs ):
 		super(CurveView, self).__init__( *args, **kwargs )
 		self.updating = False
@@ -533,13 +560,6 @@ class CurveView( GLGraphicsView ):
 		self.offsetY = y
 		self.updateTransfrom()
 
-	def addCurve( self ):
-		curve = CurveItem()
-		self.scene().addItem( curve )
-		self.curves.append( curve )
-		curve.setZoom( self.zoomX, self.zoomY )
-		return curve
-
 	def setCursorX( self, vx ):
 		self.cursorX = vx
 		# self.cursorItem.setX( self.valueToX( vx ) )
@@ -606,7 +626,6 @@ class CurveView( GLGraphicsView ):
 		if event.button() == Qt.MidButton :
 			if self.panning:
 				self.panning = False
-				# self.setCursor( Qt.ArrowCursor )
 
 	def updateTransfrom( self ):
 		if self.updating : return
@@ -634,6 +653,49 @@ class CurveView( GLGraphicsView ):
 
 	def posToValue( self, xv, yv ):
 		return ( self.xToValue( xv ), self.yToValue( yv ) )
+
+	def rebuild( self ):
+		self.clear()
+		for curveNode in self.getCurveNodes():
+			self.addCurve( curveNode )
+		
+
+	def clear( self ):
+		for curve in self.curves:
+			curve.clear()
+			self.scene().removeItem( curve )
+		self.curves = []
+
+	def removeCurve( self, curveNode ):
+		curve = self.getCurveByNode( curveNode )
+		if curve:
+			curve.clear()
+			curve.node = None
+			self.scene().removeItem( curve )
+			self.curves.remove( curve )
+
+	def addCurve( self, curveNode ):
+		curve = CurveItem()
+		curve.node = curveNode
+		self.scene().addItem( curve )
+		self.curves.append( curve )
+		curve.setZoom( self.zoomX, self.zoomY )
+		return curve
+
+	def getCurveByNode( self, curveNode ):
+		for curve in self.curves:
+			if curve.node == curveNode:
+				return curve
+		return None
+
+	def getVertByNode( self, vertNode ):
+		parentCurveNode = self.getParentCurveNode( vertNode )
+		if not parentCurveNode: return None
+		curve = self.getCurveByNode( parentCurveNode )
+		if curve:
+			return curve.getVertByNode( vertNode )
+		else:
+			return None
 
 	def initSelectionRegion( self ):
 		self.selecting = False
@@ -676,6 +738,21 @@ class CurveView( GLGraphicsView ):
 	def applySelection( self, selection ):
 		pass
 		# self.timelineView.updateSelection( selection )
+
+	#====VIRTUAL FUNCTIONS ========
+	def getParentCurveNode( self, vertNode ):
+		return None
+
+	def getVertNodes( self, curveNode ):
+		return []
+
+	def getCurveNodes( self ):
+		return []
+
+	def getVertParam( self, curveNode ):
+		#x, y, curveMode, pre-tangent, post-tangeng
+		return ( 0,0, SPAN_MODE_LINEAR, 0, 0 )
+	
 
 if __name__ == '__main__':
 	# import testView
