@@ -14,8 +14,10 @@ class EnumFieldButton( QtGui.QToolButton ):
 class EnumFieldEditor( FieldEditor ):
 	def setTarget( self, parent, field ):
 		super( EnumFieldEditor, self ).setTarget( parent, field )
-		enumType = field.getType()
-		self.enumItems = enumType.itemList[:]
+		self.enumType = field.getType()
+
+	def getEnumItems( self ):
+		return self.enumType.getItemList( self.getTarget() )
 
 	def get( self ):
 		#TODO
@@ -23,7 +25,7 @@ class EnumFieldEditor( FieldEditor ):
 		
 	def set( self, value ):
 		self.value = value
-		for i, t in enumerate( self.enumItems ):
+		for i, t in enumerate( self.getEnumItems() ):
 			itemName, itemValue = t
 			if value == itemValue:
 				self.button.setText( itemName )
@@ -66,7 +68,7 @@ class EnumFieldEditor( FieldEditor ):
 
 	def onSearch( self, typeId, context ):
 		entries = []
-		for item in self.enumItems:
+		for item in self.getEnumItems():
 			itemName, itemValue = item
 			entry = ( itemValue, itemName, '', None )
 			entries.append( entry )			

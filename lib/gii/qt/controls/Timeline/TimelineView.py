@@ -483,6 +483,7 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def removeKey( self, keyNode ):
 		key = self.getKeyByNode( keyNode )
 		if key:
+			if self.getTimelineView().onKeyRemoving( keyNode ) == False: return
 			key.setParentItem( None )
 			self.keys.remove( key )
 			key.delete()
@@ -1024,7 +1025,6 @@ class TimelineView( QtGui.QWidget ):
 			self.refreshKey( keyNode, **option )			
 		return key
 
-
 	def removeKey( self, keyNode ):
 		track = self.getParentTrack( keyNode )
 		if not track: return
@@ -1153,8 +1153,7 @@ class TimelineView( QtGui.QWidget ):
 	def deleteSelection( self ):
 		oldSelection = self.selection [:]
 		for keyNode in oldSelection:
-			if self.onKeyRemoving( keyNode ) != False:
-				self.removeKey( keyNode )
+			self.removeKey( keyNode )
 
 	#####
 	#VIRUTAL data model functions

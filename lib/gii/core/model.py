@@ -100,6 +100,10 @@ class EnumType( DataType ):
 			if value == v: return i
 		return None
 
+	def getItemList( self, contextObject ):
+		return self.itemList
+		
+
 ##----------------------------------------------------------------##
 class CollectionType( DataType ):
 	def __init__(self, name, itemType, defaultValue = None ):
@@ -123,6 +127,13 @@ class AssetRefType( DataType ):
 
 	def getName( self ):
 		return self.assetType
+
+	def getAssetType( self, contextObject ):
+		atype = self.assetType
+		if isinstance( atype, ( str, unicode ) ):
+			return atype
+		else: #asset type getter function
+			return atype( contextObject )
 
 	def getSuperType( self ):
 		return AssetRefType

@@ -18,8 +18,8 @@ class AssetRefFieldEditor( SearchFieldEditorBase ):
 		return value #str
 
 	def getSearchType( self ): #virtual
-		t = self.field.getType()
-		return t.assetType
+		t = self.field.getType() #AssetRefType
+		return t.getAssetType( self.getTarget() )
 
 	def getSearchContext( self ): #virtual
 		return "asset"

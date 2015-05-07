@@ -178,6 +178,7 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		super( GenericTreeWidget, self ).dropEvent( ev )
 
 
+
 ##----------------------------------------------------------------##
 class AnimatorClipListTree( GenericTreeWidget ):
 	def __init__( self, *args, **kwargs ):
@@ -280,7 +281,9 @@ class AnimatorTimelineWidget( TimelineView ):
 	def onTrackClicked( self, track, pos ):
 		trackNode = track.node
 		self.parentView.selectTrack( trackNode )
-
+		
+	def onKeyRemoving( self, keyNode ):
+		return self.parentView.onKeyRemoving( keyNode )
 
 ##----------------------------------------------------------------##
 class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
@@ -445,7 +448,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.owner.onTimelineKeyChanged( key, pos, length )
 
 	def onKeyRemoving( self, key ):
-		return self.owner.removeKey( key )
+		return self.owner.onKeyRemoving( key )
 
 	def onPropertyChanged( self, obj, fid, value ):
 		if fid == 'pos' or fid == 'length':

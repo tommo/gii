@@ -182,7 +182,10 @@ end
 
 function AnimatorView:removeKey( key )
 	local track = key:getTrack()
-	if track then track:removeKey( key ) end
+	assert( track )
+	track:removeKey( key )
+	self:markTrackDirty( track )
+	return true
 end
 
 function AnimatorView:findParentTrackGroup()

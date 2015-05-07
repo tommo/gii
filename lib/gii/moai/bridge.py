@@ -233,7 +233,7 @@ class LuaObjectField( Field ):
 ##----------------------------------------------------------------##
 class LuaObjectModel(ObjectModel):
 	_EnumCache = weakref.WeakValueDictionary()
-	_AssetTypeCache = {}
+	# _AssetTypeCache = {}
 
 	def createField( self, id, t, **option ):
 		return LuaObjectField(self, id, t, **option)
@@ -269,10 +269,10 @@ class LuaObjectModel(ObjectModel):
 		return self.addLuaFieldInfo( name, enumType, data )
 
 	def addLuaAssetFieldInfo(self, name, assetType, data = None): #called by lua
-		typeId = LuaObjectModel._AssetTypeCache.get( assetType )
-		if not typeId:
-			typeId = AssetRefType( assetType )
-			LuaObjectModel._AssetTypeCache[ assetType ] = typeId
+		# typeId = LuaObjectModel._AssetTypeCache.get( assetType )
+		# if not typeId:
+		typeId = AssetRefType( assetType )
+		# LuaObjectModel._AssetTypeCache[ assetType ] = typeId
 		return self.addLuaFieldInfo( name, typeId, data )
 
 	def addLuaActionFieldInfo(self, name, actionName, data = None): #called by lua
