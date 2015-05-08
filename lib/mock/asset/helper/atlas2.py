@@ -212,23 +212,30 @@ class Node:
 		if not self.bleeding:
 			return [ self.x, self.y, self.w, self.h ]
 		else:
-			return [
-				self.x + _BLEEDSIZE, self.y + _BLEEDSIZE, 
-				self.w - _BLEEDSIZE*2, self.h - _BLEEDSIZE*2
-			]
+			if includeBleeding:
+				return [ self.x, self.y, self.w, self.h ]
+			else:
+				return [
+					self.x + _BLEEDSIZE, self.y + _BLEEDSIZE, 
+					self.w - _BLEEDSIZE*2, self.h - _BLEEDSIZE*2
+				]
 
 	def getUVRect( self ):
 		x = self.x
 		y = self.y
+		w = self.w
+		h = self.h
 		if self.bleeding:
 			x += _BLEEDSIZE
 			y += _BLEEDSIZE
+			w -= _BLEEDSIZE*2
+			h -= _BLEEDSIZE*2
 		rw = self.root.w
 		rh = self.root.h
 		u0 = float(x)/rw
 		v0 = float(y)/rh
-		u1 = u0 + float(self.w - 1)/rw
-		v1 = v0 + float(self.h - 1)/rh
+		u1 = u0 + float(w)/rw
+		v1 = v0 + float(h)/rh
 		return [ u0, v1, u1, v0 ]
 
 	def isParent(self):

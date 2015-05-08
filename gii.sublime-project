@@ -87,7 +87,7 @@
 			"-I/Users/tommo/dev/moai-dev/src"
 		],
 		// "sublimegdb_commandline": "gdb --interpreter=mi --args ../host/osx/moai main.lua",
-		// "sublimegdb_commandline": "gdb --interpreter=mi --args ../host/osx/moai test.lua",
+		"sublimegdb_commandline": "gdb --interpreter=mi --args ../host/osx/moai test.lua",
 		// "sublimegdb_commandline": "gdb --interpreter=mi --args python-32 ../host/moei/start main.lua",
 		"sublimegdb_workingdir": "/Users/tommo/prj/gii",
 		"tab_size": 2

@@ -423,7 +423,7 @@ class DeckPackProject(object):
 if __name__ == '__main__':
 	proj = DeckPackProject()
 	proj.loadPSD( 'deckpack.psd' )
-	proj.save( 'deckpack', ( 1024, 1024 ) )
+	proj.save( 'deckpack', ( 2048, 2048 ) )
 	# proj.save( 'chicago' )
 
 	# proj.loadPSD( 'tmpnumber.psd' )

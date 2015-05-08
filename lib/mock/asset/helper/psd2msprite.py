@@ -326,7 +326,7 @@ class MSpriteProject(object):
 		return self.featureNames.get( featureName, None )
 
 	def save( self, atlasPath, jsonPath, atlasSize = (1024,1024) ):
-		atlases = [ self.generateAtlas( atlasPath, atlasSize, bleeding = False ) ]
+		atlases = [ self.generateAtlas( atlasPath, atlasSize, bleeding = True ) ]
 		atlasData  = {}
 		moduleData = {}
 		frameData  = {}
@@ -341,7 +341,7 @@ class MSpriteProject(object):
 			node = m.subImg.getAtlasNode()			
 			moduleData[ str( m.id ) ] = {
 				'atlas' : str( node.root.id ),
-				'rect'  : [ node.x, node.y, node.w, node.h ],
+				'rect'  : node.getRect(),
 				'feature' : m.feature
 			}
 			
