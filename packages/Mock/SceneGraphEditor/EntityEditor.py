@@ -164,9 +164,9 @@ class EntityEditor( ObjectEditor, SceneObjectEditorMixin ): #a generic property 
 		self.grid.setContext( 'scene_editor' )		
 
 		self.grid.propertyChanged.connect( self.onPropertyChanged )		
-		self.header.buttonEdit   .clicked .connect ( self.onEditPrefab )
-		self.header.buttonGoto   .clicked .connect ( self.onGotoPrefab )
-		self.header.buttonUnlink .clicked .connect ( self.onUnlinkPrefab )
+		self.header.buttonEdit   .clicked .connect ( self.onEditProto )
+		self.header.buttonGoto   .clicked .connect ( self.onGotoProto )
+		self.header.buttonUnlink .clicked .connect ( self.onUnlinkProto )
 		
 		self.initFieldContextMenu( self.grid )
 		self.initFoldState()
@@ -221,18 +221,24 @@ class EntityEditor( ObjectEditor, SceneObjectEditorMixin ): #a generic property 
 		elif id == 'layer':
 			signals.emit( 'entity.renamed', obj, obj.getName( obj ) )
 		signals.emit( 'entity.modified', obj, 'introspector' )
-		signals.emit( 'entity.modified', obj, 'introspector' )
 
-	def onGotoPrefab( self ):
+	def onGotoProto( self ):
 		assetBrowser = app.getModule( 'asset_browser' )
 		if assetBrowser:
 			assetBrowser.locateAsset( getProtoPath(self.target) )
 
-	def onEditPrefab( self ):
+	def onEditProto( self ):
 		path = getProtoPath( self.target )
 		assetNode = app.getAssetLibrary().getAssetNode( path )
 		if assetNode:
 			assetNode.edit()
+
+	def onUnlinkProto( self ):
+		app.doCommand(
+			'scene_editor/unlink_proto',
+			entity = self.target	
+		)
+		
 
 	def onUnlinkPrefab( self ):
 		app.doCommand(

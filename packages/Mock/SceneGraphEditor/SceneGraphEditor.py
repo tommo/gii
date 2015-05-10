@@ -157,6 +157,8 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		signals.connect( 'prefab.unlink',     self.onPrefabUnlink    )
 		signals.connect( 'prefab.relink',     self.onPrefabRelink    )
+		signals.connect( 'proto.unlink',      self.onPrefabUnlink    )
+		signals.connect( 'proto.relink',      self.onPrefabRelink    )
 
 
 		signals.connect( 'component.added',   self.onComponentAdded   )
@@ -618,10 +620,10 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	##----------------------------------------------------------------##
 	def onPrefabUnlink( self, entity ):
-		self.tree.refreshNodeContent( entity )
+		self.tree.refreshNodeContent( entity, updateChildren = True )
 
 	def onPrefabRelink( self, entity ):
-		self.tree.refreshNodeContent( entity )
+		self.tree.refreshNodeContent( entity, updateChildren = True )
 
 	def createPrefab( self, targetPrefab ):
 		selection = self.getSelection()

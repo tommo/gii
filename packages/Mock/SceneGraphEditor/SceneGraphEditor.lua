@@ -840,22 +840,79 @@ end
 
 --------------------------------------------------------------------
 CLASS: CmdUnlinkProto ( mock_edit.EditorCommand )
-	:register( 'scene_editor/create_proto_unlink' )
+	:register( 'scene_editor/unlink_proto' )
 
+function CmdUnlinkProto:_retainAndClearComponentProtoState( entity, data )
+	for com in pairs( entity.components ) do
+		if com.__proto_history then
+			data[ com ] = {
+				overrided = com.__overrided_fields,
+				history   = com.__proto_history,
+			}
+			com.__overrided_fields = nil
+			com.__proto_history = nil
+		end
+	end
+end
+
+function CmdUnlinkProto:_retainAndClearChildProtoState( entity, data )
+	if entity.PROTO_INSTANCE_STATE then return end
+	if not entity.__proto_history then return end
+	data[ entity ] = {
+		overrided = entity.__overrided_fields,
+		history   = entity.__proto_history,
+	}
+	entity.__overrided_fields = nil
+	entity.__proto_history = nil
+	self:_retainAndClearComponentProtoState( entity, data )
+	for child in pairs( entity.children ) do
+		self:_retainAndClearChildProtoState( child, data )
+	end
+end
+
+function CmdUnlinkProto:_retainAndClearEntityProtoState( root, data )
+	data = data or {}
+	if root.PROTO_INSTANCE_STATE then
+		data[ root ] = {
+			overrided = root.__overrided_fields,
+			history   = root.__proto_history,
+			state     = root.PROTO_INSTANCE_STATE
+		}
+		for child in pairs( root.children ) do
+			self:_retainAndClearChildProtoState( child, data )
+		end
+		self:_retainAndClearComponentProtoState( root, data )
+		root.__overrided_fields   = nil
+		root.__proto_history      = nil
+		root.PROTO_INSTANCE_STATE = nil
+	end
+	return data
+end
+
+function CmdUnlinkProto:_restoreEntityProtoState( root, data )
+	for ent, retained in pairs( data ) do
+		if retained.state then
+			ent.PROTO_INSTANCE_STATE = retained.state
+		end
+		ent.__overrided_fields = retained.overrided
+		ent.__proto_history = retained.history
+	end
+end
 --TODO
 function CmdUnlinkProto:init( option )
 	self.entity     = option['entity']
-	self.prefabId = self.entity.__prefabId
 end
 
-function CmdUnlinkProto:redo()
-	self.entity.__prefabId = nil
-	gii.emitPythonSignal( 'prefab.unlink', self.entity )
+function CmdUnlinkProto:redo()	
+	self.retainedState =  self:_retainAndClearEntityProtoState( self.entity )
+	gii.emitPythonSignal( 'proto.unlink', self.entity )
+	gii.emitPythonSignal( 'entity.modified', self.entity )
 end
 
 function CmdUnlinkProto:undo()
-	self.entity.__prefabId = self.prefabId --TODO: other process
-	gii.emitPythonSignal( 'prefab.relink', self.entity )
+	self:_restoreEntityProtoState( self.retainedState )
+	gii.emitPythonSignal( 'proto.relink', self.entity )
+	gii.emitPythonSignal( 'entity.modified', self.entity )
 end
 
 

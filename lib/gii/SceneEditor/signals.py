@@ -21,6 +21,9 @@ register( 'prefab.relink' )
 register( 'prefab.push' )
 register( 'prefab.pull' )
 
+register( 'proto.unlink' )
+register( 'proto.relink' )
+
 register( 'component.added' )
 register( 'component.removed' )
 
