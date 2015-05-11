@@ -22,7 +22,9 @@ class FSMConnection(object):
 		self.id = xmlNode.attrib['id']
 		label = xmlNode.find( './/'+ Y_NS +'EdgeLabel' )
 		if label is not None:
-			self.value = label.text
+			self.value = label.text.strip()
+			if not self.value:
+				self.values = False
 		else:
 			self.value = False
 		self.nodeIdFrom = xmlNode.attrib['source']

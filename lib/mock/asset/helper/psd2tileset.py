@@ -381,13 +381,14 @@ class TilesetProject(object):
 		return atlas
 ##----------------------------------------------------------------##
 
-# proj = TilesetProject()
-# proj.loadPSD( 'tile.psd' )
-# proj.save( 'tile', ( 1024, 1024 ) )
-# proj.save( 'chicago' )
+if __name__ == '__main__':
+	proj = TilesetProject()
+	proj.loadPSD( 'tile.psd' )
+	proj.save( 'tile', ( 1024, 1024 ) )
+	proj.save( 'chicago' )
 
-# proj.loadPSD( 'tmpnumber.psd' )
-# proj.save( 'numbers' )
+	proj.loadPSD( 'tmpnumber.psd' )
+	proj.save( 'numbers' )
 
-# proj.loadPSD( 'number2.psd' )
-# proj.save( 'numbers2' )
+	proj.loadPSD( 'number2.psd' )
+	proj.save( 'numbers2' )
