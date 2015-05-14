@@ -69,12 +69,20 @@ def calcNormal( pix, x, y, w, h ):
 
 
 PI4 = -math.pi/4
+PI2 = -math.pi/4
+CosPI2 = math.cos( PI2 )
+SinPI2 = math.sin( PI2 )
 CosPI4 = math.cos( PI4 )
 SinPI4 = math.sin( PI4 )
 CosPI4H = math.cos( PI4/4 )
 SinPI4H = math.sin( PI4/4 )
 CosPI4N = math.cos( -PI4 )
 SinPI4N = math.sin( -PI4 )
+
+def rotateTopDouble( ny, nz ):
+	nny = ny * CosPI2 - nz * SinPI2
+	nnz = ny * SinPI2 + nz * CosPI2
+	return nny, nnz
 
 def rotateTop( ny, nz ):
 	nny = ny * CosPI4 - nz * SinPI4

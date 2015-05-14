@@ -66,6 +66,7 @@ class AnimatorView( SceneEditorModule ):
 		# 	self.widget.containerEditTool )
 		self.addTool( 'animator_clips/add_clip',    label = 'add',    icon = 'add' )
 		self.addTool( 'animator_clips/remove_clip', label = 'remove', icon = 'remove' )
+		self.addTool( 'animator_clips/clone_clip', label = 'clone', icon = 'clone' )
 
 
 		self.addTool( 'animator_play/goto_start', label = 'to start',  icon = 'rewind' )
@@ -147,14 +148,18 @@ class AnimatorView( SceneEditorModule ):
 
 
 	def setTargetClip( self, clip ):
+		wasPreviewing = self.previewing
 		if self.previewing:
 			self.stopPreview()
+
 		self.targetClip = clip
 		self.delegate.callMethod( 'view', 'setTargetClip', clip )
 		self.widget.rebuildTimeline()
 		self.enableTool( 'animator_play' , bool( clip ) )
 		self.enableTool( 'animator_track', bool( clip ) )
 		self.applyTime( 0, True )
+		if wasPreviewing:
+			self.startPreview()
 	
 	def getClipList( self ):
 		if self.targetAnimatorData:
@@ -179,6 +184,13 @@ class AnimatorView( SceneEditorModule ):
 	def addClip( self ):
 		if not self.targetAnimator: return
 		clip = self.delegate.callMethod( 'view', 'addClip' )
+		if clip:
+			self.widget.addClip( clip, True )
+		return clip
+
+	def cloneClip( self ):
+		if not self.targetClip: return
+		clip = self.delegate.callMethod( 'view', 'cloneClip', self.targetClip )
 		if clip:
 			self.widget.addClip( clip, True )
 		return clip
@@ -249,6 +261,9 @@ class AnimatorView( SceneEditorModule ):
 			for clip in self.widget.treeClips.getSelection():
 				self.delegate.callMethod( 'view', 'removeClip', clip )
 				self.widget.removeClip( clip )
+
+		if name == 'clone_clip':
+			self.cloneClip()			
 
 		elif name == 'add_group':
 			group = self.delegate.callMethod( 'view', 'addTrackGroup' )

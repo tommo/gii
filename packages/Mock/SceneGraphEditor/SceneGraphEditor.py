@@ -487,7 +487,7 @@ class SceneGraphEditor( SceneEditorModule ):
 				info    = 'search for entity in current scene',
 				context = 'scene',
 				type    = _MOCK.Entity,
-				on_selection = self.selectEntity,
+				on_selection = lambda x: self.selectEntity( x, focus_tree = True ) ,
 				on_test      = self.selectEntity
 				)
 
@@ -526,7 +526,9 @@ class SceneGraphEditor( SceneEditorModule ):
 				self.tree.selectNode( e, add = True)
 			self.tree.blockSignals( False )
 
-	def selectEntity( self, target ):
+	def selectEntity( self, target, **option ):
+		if option.get( 'focus_tree', False ):
+			self.tree.setFocus()
 		self.changeSelection( target )
 
 	##----------------------------------------------------------------##
@@ -667,7 +669,7 @@ class SceneGraphEditor( SceneEditorModule ):
 			else:
 				text = text + '\n' + s.name
 		mime.setText( text )
-		mime.setData( _GII_ENTITY_DATA_MIME, str(entityGroupData) )
+		mime.setData( _GII_ENTITY_DATA_MIME, entityGroupData.encode('utf-8') )
 		clip.setMimeData( mime )
 		return True
 
@@ -677,7 +679,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		if mime.hasFormat( _GII_ENTITY_DATA_MIME ):
 			data = mime.data( _GII_ENTITY_DATA_MIME )
 			self.doCommand( 'scene_editor/paste_entity',
-				data = str(data)
+				data = str(data).decode('utf-8')
 			)
 
 	##----------------------------------------------------------------##
@@ -860,7 +862,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 	def onScrollRangeChanged( self, min, max ):
 		if self.adjustingRange: return
 		self.adjustingRange = True
-		self.verticalScrollBar().setRange( min, max + 5 )
+		self.verticalScrollBar().setRange( min, max + 2 )
 		self.adjustingRange = False
 
 

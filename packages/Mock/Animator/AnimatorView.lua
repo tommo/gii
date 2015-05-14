@@ -95,14 +95,27 @@ function AnimatorView:setCurrentTrack( track )
 end
 
 function AnimatorView:addClip()
-	local clip = self.targetAnimatorData:addClip( 'New Clip' )
+	local clip = self.targetAnimatorData:createClip( 'New Clip' )
+	self:markDataDirty()
 	return clip
 end
 
 function AnimatorView:removeClip( clip )
 	self.targetAnimatorData:removeClip( clip )
+	self:markDataDirty()
 	return true
 end
+
+function AnimatorView:cloneClip( clip )
+	local serializedData = mock.serialize( clip )
+	local clip1 = mock.deserialize( nil, serializedData )
+	clip1.name = clip.name .. '_copy'
+	clip1:getRoot():_load()
+	self.targetAnimatorData:addClip( clip1 )
+	self:markDataDirty()
+	return clip1
+end
+
 
 function AnimatorView:addKeyForField( target, fieldId )
 	--find existed track
@@ -312,12 +325,15 @@ end
 function AnimatorView:markTrackDirty( track )
 	--TODO: update track only
 	self:markClipDirty()
-	self.dirty = true
 end
 
 function AnimatorView:markClipDirty()
 	self.targetClip:clearPrebuiltContext()
 	self:clearPreviewState()
+	self:markDataDirty()
+end
+
+function AnimatorView:markDataDirty()
 	self.dirty = true
 end
 
@@ -327,6 +343,14 @@ end
 
 function AnimatorView:renameTrack( track, name )
 	track.name = name
+end
+
+function AnimatorView:cloneKey( key )
+	--todo
+end
+
+function AnimatorView:cloneTrack( track )
+	--todo
 end
 
 function AnimatorView:clearPreviewState()
@@ -353,5 +377,6 @@ function AnimatorView:saveData()
 	self.dirty = false
 	return true
 end
+
 
 view = AnimatorView()
