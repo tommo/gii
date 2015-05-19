@@ -5,7 +5,7 @@ def calcHeight( r,g,b, a ):
 	if a <5: return 0
 	h1 = (r * 1.2 + g * 1.2  + b * 0.6)/3/255.0
 	# return math.sqrt( h1 )
-	return h1 * h1
+	return h1 * h1 * 0.5
 	# return h1
 
 def calcNormal( pix, x, y, w, h ):

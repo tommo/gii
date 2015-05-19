@@ -1,3 +1,7 @@
+if __name__ == '__main__':
+	import sys
+	sys.path.insert( 0, '/Users/tommo/prj/gii/lib/3rdparty/common' )
+
 from os.path import basename, splitext
 import math
 import StringIO
@@ -164,6 +168,9 @@ class DeckPart(object):
 	def __init__( self, project, psdLayer ):
 		self._project = project
 		self._layer = psdLayer
+		layerName = psdLayer.name.encode( 'utf-8' )
+		self.rawName = layerName
+		self.name = layerName
 		self.img = None
 		x1,y1,x2,y2 = psdLayer.bbox
 		self.w = x2-x1
@@ -173,7 +180,11 @@ class DeckPart(object):
 		self.deckRect = ( 0,0,1,1 )
 		self.imgInfo = None
 		self.meshes = []
-		self.globalMeshes = []
+		self.globalMeshes = []		
+		self.options = {}
+		#parameter
+		self.options[ 'floor' ] = (':FLOOR' in layerName)
+		self.options[ 'wall' ]  = (':WALL' in layerName)
 
 	def getSize( self ):
 		return (self.w, self.h)
@@ -211,10 +222,24 @@ class DeckPart(object):
 		return self.imgInfo.node
 
 	def build( self, projContext ):
-		guideTopFace = projContext.get( 'guide-top-face', 0 )
+		foldMode = 'auto'
+		if self.options['floor']:
+			foldMode = 'floor'
+		elif self.options['wall']:
+			foldMode = 'wall'
+
 		( w, h ) = self.getSize()
 		( x, y ) = self.getOffset()
-		localGuideTopFace = clamp( guideTopFace - y, 0, h )
+
+		localGuideTopFace = h
+		if foldMode == 'auto':
+			guideTopFace = projContext.get( 'guide-top-face', 0 )
+			localGuideTopFace = clamp( guideTopFace - y, 0, h )
+		elif foldMode == 'wall':
+			localGuideTopFace = 0
+		elif foldMode == 'floor':
+			localGuideTopFace = h
+
 		img = DeckPartImg ( '', w, h, (0, 0, w, h) )	
 		img.src = self
 		self.imgInfo = img
@@ -285,12 +310,17 @@ class DeckPart(object):
 	def getBottom( self ):
 		return self.y + self.h
 
-	def updateGlobalMeshOffset( self, globalBottom ):
+	def getLeft( self ):
+		return self.x
+
+	def updateGlobalMeshOffset( self, globalLeft, globalBottom ):
 		offy = globalBottom - self.getBottom()
+		offx = globalLeft   - self.getLeft()
 		self.globalMeshes = []
 		for mesh in self.meshes:
 			gmesh = copy.deepcopy( mesh )
 			for vert in gmesh['verts']:
+				vert[ 0 ] -= offx
 				vert[ 1 ] += offy
 			self.globalMeshes.append( gmesh )
 
@@ -329,12 +359,14 @@ class DeckItem(object):
 	def build( self, projContext ):
 		meshDatas = []
 		bottom = 0
+		left   = 0xffffffff
 		for part in self.parts:
 			part.build( projContext )
 			bottom = max( bottom, part.getBottom() )
+			left   = min( left, part.getLeft() )
 		#move mesh
 		for part in self.parts:
-			part.updateGlobalMeshOffset( bottom )
+			part.updateGlobalMeshOffset( left, bottom )
 
 	def buildUV( self ):
 		for part in self.parts:
@@ -347,6 +379,7 @@ class DeckPackProject(object):
 		self.tileSize = ( 50, 50 )
 		self.columns = 4
 		self.decks = []
+		self.globalGuideTopFace = 0
 
 	def loadPSD( self, path ):
 		image = PSDImage.load( path )
@@ -360,7 +393,13 @@ class DeckPackProject(object):
 		#todo:get context settings
 			
 	def collectDeck( self, group ):
-		if not isinstance( group, Group ): return
+		if not isinstance( group, Group ):
+			layer = group
+			layerName = layer.name.encode( 'utf-8' )
+			if layerName == '@guide-top-face':
+				x1,y1,x2,y2 = layer.bbox
+				self.globalGuideTopFace = y1
+			return
 		deck = DeckItem()
 		deck.rawName = group.name.encode( 'utf-8' )
 		deck.name = deck.rawName
@@ -368,20 +407,18 @@ class DeckPackProject(object):
 			for layer in l.layers:
 				layerName = layer.name.encode( 'utf-8' )
 				if layerName.startswith( '//' ): continue
-				if layerName.startswith( '@' ):continue
+				if layerName.startswith( '@' ):	continue
 				if isinstance( layer, Group ):
 					collectLayer( layer )
 				else:
-					part = DeckPart( self, layer )
-					part.rawName = layerName
-					part.name = layerName
+					part = DeckPart( self, layer )					
 					deck.addPart( part )
 		collectLayer( group )
 		return deck
 
 	def save( self, path, prefix, size ):
 		projContext = {
-			'guide-top-face' : 138
+			'guide-top-face' : self.globalGuideTopFace
 		}
 
 		for deck in self.decks:
@@ -422,8 +459,8 @@ class DeckPackProject(object):
 
 if __name__ == '__main__':
 	proj = DeckPackProject()
-	proj.loadPSD( 'deckpack.psd' )
-	proj.save( 'deckpack', ( 2048, 2048 ) )
+	proj.loadPSD( 'test.decks.psd' )
+	proj.save( './', 'testpack', ( 2048, 2048 ) )
 	# proj.save( 'chicago' )
 
 	# proj.loadPSD( 'tmpnumber.psd' )

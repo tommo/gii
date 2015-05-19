@@ -29,6 +29,7 @@ class CodeEditor( CodeEdit ):
 		super(CodeEditor, self).__init__( parent, False )
 		self.setObjectName( 'CodeEditor' )
 		self.font_size = 12
+		self.use_spaces_instead_of_tabs = False
 		server_script = server.__file__
 		interpreter = sys.executable
 		self.backend.start( server_script, interpreter, None, reuse=True )

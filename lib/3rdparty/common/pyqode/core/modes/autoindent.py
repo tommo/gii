@@ -23,7 +23,10 @@ class AutoIndentMode(Mode):
 
         :returns: Tuple (text before new line, text after new line)
         """
-        indent = TextHelper(self.editor).line_indent() * ' '
+        if self.editor.use_spaces_instead_of_tabs:
+            indent = TextHelper(self.editor).line_indent() * ' '
+        else:
+            indent = TextHelper(self.editor).line_indent() * '\t'
         return "", indent
 
     def on_state_changed(self, state):
