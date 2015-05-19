@@ -28,7 +28,7 @@ class CodeEditor( CodeEdit ):
 	def __init__(self, parent=None ):
 		super(CodeEditor, self).__init__( parent, False )
 		self.setObjectName( 'CodeEditor' )
-		self._flg_stylesheet = True
+		self.font_size = 12
 		server_script = server.__file__
 		interpreter = sys.executable
 		self.backend.start( server_script, interpreter, None, reuse=True )

@@ -1114,3 +1114,7 @@ QSplitter#TimelineHeaderSplitter::handle{
 #TimelineToolBarEdit QToolButton {
 	padding:2px;
 }
+
+#CodeEditor{
+	font-size:12px;
+}
