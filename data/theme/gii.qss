@@ -5,6 +5,14 @@ QWidget
 	font-size:11px;
 	color:#ccc;
 	background-color:#333;
+	font-family:
+		_Arial,
+		Anonymous Pro,
+		04b03,
+		Nokia Cellphone FC,
+		Inconsolata, 
+		Consolas, 
+		Envy Code R;
 }
 
 QFrame
@@ -309,6 +317,8 @@ QTreeView, QListView
 	background-color:#444;
 	alternate-background-color:#494949;
 	border:1px solid #222;
+	font-size: 12px;
+	font-family: Anonymous Pro;
 }
 
 QTreeWidget
@@ -647,6 +657,8 @@ QLineEdit, QTextEdit, QPlainTextEdit, QSpinBox, QDoubleSpinBox
 	padding-left:2px;
 	margin-right:1px;
 	/*border-radius: 2px;*/
+	font-family: Anonymous Pro;
+
 }
 
 QLineEdit:read-only, QTextEdit:read-only, QPlainTextEdit:read-only, QSpinBox:read-only, QDoubleSpinBox:read-only {
@@ -860,6 +872,12 @@ QToolButton::checked{
 	border:1px solid #282828;
 	padding: 4px;
 	padding-bottom: 10px;
+
+}
+
+#PropertyEditor QWidget{
+	font-family: Anonymous Pro;
+	font-size: 12px;
 }
 
 #FieldLabel {
@@ -887,9 +905,9 @@ QToolButton::checked{
 }
 
 #ObjectHeader > QLabel {
-	color: #a6a6a6;
+	color: #bbb;
 	font-weight: bold;
-	font-size: 10px;
+	font-size: 11px;
 }
 
 #ObjectHeader > QToolButton {

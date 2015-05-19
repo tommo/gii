@@ -4,6 +4,8 @@ import os
 from PyQt4      import QtGui, QtCore, Qsci
 from PyQt4.Qsci import QsciScintilla as Sci
 
+import pyqode.core
+
 from gii.core   import app
 from compat     import ScintillaCompat
 

@@ -127,8 +127,9 @@ class SceneGraphEditor( SceneEditorModule ):
 		#Toolbars
 		self.addTool( 'scene_graph/make_proto',    label = '> P' )
 		self.addTool( 'scene_graph/create_proto_instance',    label = '+ I' )
-		# self.addTool( 'scene_graph/fold_all',    label = 'F' )
-		# self.addTool( 'scene_graph/unfold_all',  label = 'U' )
+		self.addTool( 'scene_graph/----'  )
+		self.addTool( 'scene_graph/fold_all',    label = 'F' )
+		self.addTool( 'scene_graph/unfold_all',  label = 'U' )
 		# self.addTool( 'scene_graph/load_prefab', label = '+ P' )
 		# self.addTool( 'scene_graph/save_prefab', label = '>>P' )
 
@@ -724,6 +725,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		self.syncSelection = True
 		self.adjustingRange = False
 		self.verticalScrollBar().rangeChanged.connect( self.onScrollRangeChanged )
+		self.setIndentation( 13 )
 
 	def getHeaderInfo( self ):
 		return [('Name',200), ( 'Layer', 50 ), ('Type', 50)]

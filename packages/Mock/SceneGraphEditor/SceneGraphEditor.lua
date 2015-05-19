@@ -503,7 +503,7 @@ function CmdCloneEntity:init( option )
 end
 
 local function extractNumberPrefix( name )
-	local numberPart = string.match( name, '%d+$' )
+	local numberPart = string.match( name, '_%d+$' )
 	if numberPart then
 		local mainPart = string.sub( name, 1, -1 - #numberPart )
 		return mainPart, tonumber( numberPart )
@@ -513,7 +513,7 @@ end
 
 local function findNextNumberProfix( scene, name )
 	local max = -1
-	local pattern = name .. '(%d+)$'
+	local pattern = name .. '_(%d+)$'
 	for ent in pairs( scene.entities ) do
 		local n = ent:getName()
 		if n then
@@ -540,7 +540,8 @@ function CmdCloneEntity:redo()
 			local header, profix = extractNumberPrefix( n )
 			local number = findNextNumberProfix( editor.scene, header )
 			if number >= 0 then
-				created:setName( header ..  (number + 1) )
+				local profix = '_' ..(number + 1)
+				created:setName( header .. profix )
 			end
 		end
 

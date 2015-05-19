@@ -25,7 +25,7 @@ class AssetBrowser( AssetEditorModule ):
 		self.container = self.requestDockWindow('AssetBrowser',
 				title='Asset Browser',
 				dock='left',
-				minSize=(250,250)
+				minSize=(200,200)
 			)
 		
 		self.treeView  = self.container.addWidget(

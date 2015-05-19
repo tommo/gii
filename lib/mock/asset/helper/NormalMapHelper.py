@@ -69,7 +69,7 @@ def calcNormal( pix, x, y, w, h ):
 
 
 PI4 = -math.pi/4
-PI2 = -math.pi/4
+PI2 = -math.pi/2
 CosPI2 = math.cos( PI2 )
 SinPI2 = math.sin( PI2 )
 CosPI4 = math.cos( PI4 )

@@ -11,8 +11,7 @@ from PyQt4.QtCore import Qt
 from gii.core               import *
 from gii.qt.controls.Window import MainWindow
 from gii.DebugView          import DebugViewModule
-from gii.qt.controls.CodeBox import CodeBox
-
+from gii.qt.controls.CodeEditor import CodeEditor
 
 ##----------------------------------------------------------------##
 # from ScriptNoteBook  import ScriptNoteBook
@@ -132,20 +131,49 @@ class ScriptView( DebugViewModule ):
 			)
 			page = ScriptPage( path, container )
 			container.addWidget( page )
-			page.applySetting( self.defaultPageSetting )
 			self.scriptPages[ path ]=page
 		# else:
 		# 	page.checkFileModified()
 		return page
 
 ##----------------------------------------------------------------##
-class ScriptPage( CodeBox ):
+class ScriptPage( CodeEditor ):
 	def __init__( self, path, container ):
-		CodeBox.__init__( self, container )
+		CodeEditor.__init__( self, container )
 		self.path = path
+		self.mimeType = 'text/x-lua'
 		self.container = container
+		self.fileTime = 0
 		self.setReadOnly(True)
 		self.refreshCode()
+
+	def refreshCode(self):
+		self.refreshing = True
+		code = 'Not Load'
+		with file(self.path,'r') as f:
+			code = f.read()
+			self.fileTime = os.path.getmtime(self.path)
+		try:
+			code = code.decode('utf-8')
+		except Exception, e:
+			pass
+		readOnly = self.isReadOnly()
+		self.setReadOnly(False)
+		self.setPlainText( code, self.mimeType )
+		self.setReadOnly(readOnly)
+		# self.SetSavePoint()
+		# self.EmptyUndoBuffer()
+		self.refreshing=False
+		#self.checkModifyState()
+
+	def checkFileModified(self):
+		newtime=os.path.getmtime(self.path)
+		if newtime>self.fileTime:
+			self.refreshCode()
+
+	def locateLine(self, linenumber, hilight=False):
+		#TODO
+		pass
 
 	def setFocus( self ):
 		self.container.show()
@@ -163,6 +191,7 @@ class ScriptViewWindow( MainWindow ):
 		if self.module.alive:
 			self.hide()
 			event.ignore()
+
 
 ##----------------------------------------------------------------##
 class PanelDebug(QtGui.QWidget):

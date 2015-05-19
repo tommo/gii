@@ -8,6 +8,7 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
 from gii.qt.IconCache  import getIcon
+from gii.qt.controls.CodeEditor import CodeEditor
 from gii.qt.controls.CodeBox import CodeBox
 from gii.core import app, jsonHelper
 
@@ -40,27 +41,27 @@ class CodeBoxEditorWidget( QtGui.QWidget ):
 
 		self.ui.buttonOK.clicked.connect( self.apply )
 		self.ui.buttonCancel.clicked.connect( self.cancel )
-		self.codeBox = CodeBox( self.ui.containerContent )
+		self.codeBox = CodeEditor( self.ui.containerContent )
 		layout = QtGui.QVBoxLayout( self.ui.containerContent )
 		layout.addWidget( self.codeBox )
 		layout.setSpacing( 0 )
 		layout.setMargin( 0 )
 
-		settingData = jsonHelper.tryLoadJSON(
-				app.findDataFile( 'script_settings.json' )
-			)
-		if settingData:
-			self.codeBox.applySetting( settingData )
+		# settingData = jsonHelper.tryLoadJSON(
+		# 		app.findDataFile( 'script_settings.json' )
+		# 	)
+		# if settingData:
+		# 	self.codeBox.applySetting( settingData )
 		
 		self.setFocusProxy( self.codeBox )
 	
 	def getText( self ):
-		return self.codeBox.text()
+		return self.codeBox.toPlainText()
 
 	def startEdit( self, editor, text ):
 		self.originalText = text or ''
 		self.editor = editor
-		self.codeBox.setText( text )
+		self.codeBox.setPlainText( text, 'text/x-lua' )
 
 	def hideEvent( self, ev ):
 		self.apply( True )

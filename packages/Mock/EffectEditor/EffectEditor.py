@@ -14,6 +14,7 @@ from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 
 from gii.qt.controls.PropertyEditor  import PropertyEditor
 from gii.qt.controls.CodeBox import CodeBox
+from gii.qt.controls.CodeEditor import CodeEditor
 
 from gii.AssetEditor  import AssetEditorModule
 
@@ -113,13 +114,15 @@ class EffectEditor( AssetEditorModule ):
 		window.containerScript.setVisible( False )
 
 		self.codebox = codebox = addWidgetWithLayout(
-			CodeBox( window.containerScript )
+			CodeEditor( window.containerScript )
 		)
 		settingData = jsonHelper.tryLoadJSON(
 				self.getApp().findDataFile( 'script_settings.json' )
 			)
-		if settingData:
-			codebox.applySetting( settingData )
+		# if settingData:
+		# 	codebox.applySetting( settingData )
+
+		self.editingTarget = None
 		
 		#ShortCuts
 		self.addShortcut( self.container, '+',  self.addSystem )
@@ -242,7 +245,7 @@ class EffectEditor( AssetEditorModule ):
 	def updateScript( self ):
 		self.refreshingScript = True
 		stateNode = self.editingTarget
-		self.codebox.setText( stateNode.script or '' )
+		self.codebox.setPlainText( stateNode.script or '', 'text/x-lua' )
 		self.updateParamProxy()
 		self.refreshingScript = False
 		#TODO: param
@@ -254,8 +257,9 @@ class EffectEditor( AssetEditorModule ):
 			self.paramPropEditor.setTarget( self.paramProxy )
 
 	def onScriptChanged( self ):
+		if not self.editingTarget: return
 		if self.refreshingScript: return
-		src = self.codebox.text()
+		src = self.codebox.toPlainText()
 		stateNode = self.editingTarget
 		stateNode.script = src
 		self.scriptModifyFlag = 1

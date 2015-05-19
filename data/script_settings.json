@@ -67,7 +67,7 @@
 	"foldingMargin": 12,
 	"breakPointMargin": 12,
 	"styles": [{
-		"font": "Consolas",
+		"font": "Anonymous Pro, Consolas",
 		"bg": {
 			"a": 1,
 			"r": 1,
@@ -87,7 +87,7 @@
 		"bold": 0,
 		"name": "default"
 	}, {
-		"font": "Consolas",
+		"font": "Anonymous Pro, Consolas",
 		"bg": {
 			"a": 1,
 			"r": 1,
@@ -107,7 +107,7 @@
 		"bold": 0,
 		"name": "comment"
 	}, {
-		"font": "Consolas",
+		"font": "Anonymous Pro, Consolas",
 		"bg": {
 			"a": 1,
 			"r": 1,
@@ -127,7 +127,7 @@
 		"bold": 0,
 		"name": "comment line"
 	}, {
-		"font": "Consolas",
+		"font": "Anonymous Pro, Consolas",
 		"bg": {
 			"a": 1,
 			"r": 1,
@@ -147,7 +147,7 @@
 		"bold": 0,
 		"name": "comment doc"
 	}, {
-		"font": "Consolas",
+		"font": "Anonymous Pro, Consolas",
 		"bg": {
 			"a": 1,
 			"r": 1,
@@ -167,7 +167,7 @@
 		"bold": 0,
 		"name": "number"
 	}, {
-		"font": "Consolas",
+		"font": "Anonymous Pro, Consolas",
 		"bg": {
 			"a": 1,
 			"r": 1,
@@ -187,7 +187,7 @@
 		"bold": 0,
 		"name": "instruction"
 	}, {
-		"font": "Consolas",
+		"font": "Anonymous Pro, Consolas",
 		"bg": {
 			"a": 1,
 			"r": 1,
@@ -207,7 +207,7 @@
 		"bold": 0,
 		"name": "string"
 	}, {
-		"font": "Consolas",
+		"font": "Anonymous Pro, Consolas",
 		"bg": {
 			"a": 1,
 			"r": 1,
@@ -227,7 +227,7 @@
 		"bold": 0,
 		"name": "character"
 	}, {
-		"font": "Consolas",
+		"font": "Anonymous Pro, Consolas",
 		"bg": {
 			"a": 1,
 			"r": 1,
@@ -247,7 +247,7 @@
 		"bold": 0,
 		"name": "operator"
 	}, {
-		"font": "Consolas",
+		"font": "Anonymous Pro, Consolas",
 		"bg": {
 			"a": 1,
 			"r": 1,
@@ -267,7 +267,7 @@
 		"bold": 0,
 		"name": "ident"
 	}, {
-		"font": "Consolas",
+		"font": "Anonymous Pro, Consolas",
 		"bg": {
 			"a": 1,
 			"r": 1,
@@ -287,7 +287,7 @@
 		"bold": 0,
 		"name": "string eol"
 	}, {
-		"font": "Consolas",
+		"font": "Anonymous Pro, Consolas",
 		"bg": {
 			"a": 1,
 			"r": 1,

@@ -39,6 +39,7 @@ class QtSupport( QtEditorModule ):
 		# setup styles
 		# QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Windows'))
 		QtCore.QDir.setSearchPaths( 'theme', [ self.getApp().getPath( 'data/theme' ) ] )
+		QtGui.QFontDatabase.addApplicationFont( self.getApp().getPath( 'data/default_font.ttf' ) )
 		try:
 			# styleSheetName = 'dark.qss'
 			styleSheetName = 'gii.qss'
