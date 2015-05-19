@@ -1,5 +1,5 @@
 from gii.core import app
-from PyQt4 import QtGui, QtCore, Qsci
+from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 
 

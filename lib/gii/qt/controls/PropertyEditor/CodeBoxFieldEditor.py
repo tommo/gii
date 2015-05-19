@@ -9,7 +9,6 @@ from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
 from gii.qt.IconCache  import getIcon
 from gii.qt.controls.CodeEditor import CodeEditor
-from gii.qt.controls.CodeBox import CodeBox
 from gii.core import app, jsonHelper
 
 from LongTextFieldEditor import *

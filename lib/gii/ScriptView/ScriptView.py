@@ -4,7 +4,7 @@ import shutil
 import time
 import json
 ##----------------------------------------------------------------##
-from PyQt4 import QtGui, QtCore, Qsci
+from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 ##----------------------------------------------------------------##
 
@@ -14,7 +14,6 @@ from gii.DebugView          import DebugViewModule
 from gii.qt.controls.CodeEditor import CodeEditor
 
 ##----------------------------------------------------------------##
-# from ScriptNoteBook  import ScriptNoteBook
 from DebuggerHandler import DebuggerHandler
 from ListStackView   import ListStackView
 from TreeScopeView   import TreeScopeView

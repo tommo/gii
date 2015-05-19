@@ -13,7 +13,6 @@ from gii.qt.dialogs   import requestString, alertMessage, requestColor
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 
 from gii.qt.controls.PropertyEditor  import PropertyEditor
-from gii.qt.controls.CodeBox import CodeBox
 from gii.qt.controls.CodeEditor import CodeEditor
 
 from gii.AssetEditor  import AssetEditorModule

@@ -1206,7 +1206,6 @@ class CodeEdit(QtWidgets.QPlainTextEdit):
                                  self._font_size + self._zoom_level))
         flg_stylesheet = hasattr(self, '_flg_stylesheet')
         if QtWidgets.QApplication.instance().styleSheet() or flg_stylesheet:
-            print('Repaint')
             self._flg_stylesheet = True
             # On Window, if the application once had a stylesheet, we must
             # keep on using a stylesheet otherwise strange colors appear
