@@ -111,11 +111,11 @@ class DeployManager( AssetEditorModule ):
 
 		#menu
 		self.addMenuItem( 'main/file/deploy_manager', 
-			dict( label = 'Deploy Manager', shortcut = 'F9' )
+			dict( label = 'Deploy Manager', shortcut = 'F11' )
 			)
 
 		self.addMenuItem( 'main/file/deploy_build', 
-			dict( label = 'Deploy Build', shortcut = 'Ctrl+F9' )
+			dict( label = 'Deploy Build', shortcut = 'Ctrl+F11' )
 			)
 		
 		

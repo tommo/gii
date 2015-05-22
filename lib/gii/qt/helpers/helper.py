@@ -2,7 +2,7 @@ import logging
 from gii.core.tmpfile import TempDir
 
 from PyQt4 import QtGui,QtCore
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QPoint
 from PyQt4.QtGui import QMessageBox
 from PyQt4.QtGui import QColor, QTransform
 
@@ -40,7 +40,7 @@ def getClipboardText( default = None ):
 
 
 def restrainWidgetToScreen( widget ):
-		screenRect = QtGui.QApplication.desktop().availableGeometry(widget);
+		screenRect = QtGui.QApplication.desktop().availableGeometry(widget.mapToGlobal( QPoint(0,0) ));
 		widgetRect = widget.frameGeometry()
 		pos = widget.pos()
 		

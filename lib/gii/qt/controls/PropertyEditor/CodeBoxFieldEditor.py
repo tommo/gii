@@ -9,6 +9,7 @@ from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
 from gii.qt.IconCache  import getIcon
 from gii.qt.controls.CodeEditor import CodeEditor
+from gii.qt.helpers    import addWidgetWithLayout, restrainWidgetToScreen
 from gii.core import app, jsonHelper
 
 from LongTextFieldEditor import *
@@ -30,7 +31,7 @@ class WindowAutoHideEventFilter(QObject):
 class CodeBoxEditorWidget( QtGui.QWidget ):
 	def __init__( self, *args ):
 		super( CodeBoxEditorWidget, self ).__init__( *args )
-		self.setWindowFlags( Qt.Popup )
+		self.setWindowFlags( Qt.Popup | Qt.Window )
 		self.ui = CodeBoxForm()
 		self.ui.setupUi( self )
 		self.installEventFilter( WindowAutoHideEventFilter( self ) )
@@ -106,10 +107,11 @@ class CodeBoxFieldEditor( LongTextFieldEditor ):
 		editor = getCodeBoxEditorWidget()
 		pos        = QtGui.QCursor.pos()
 		editor.move( pos )
+		restrainWidgetToScreen( editor )
+		editor.startEdit( self, self.text )
 		editor.show()
 		editor.raise_()
 		editor.setFocus()
-		editor.startEdit( self, self.text )
 
 ##----------------------------------------------------------------##
 class CodeBoxFieldEditorFactory( FieldEditorFactory ):

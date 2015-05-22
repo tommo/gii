@@ -139,7 +139,7 @@ class FieldEditorSliderBox(QtGui.QWidget):
 		layout.addWidget( self.text )
 		layout.addWidget( self.slider )
 		layout.setStretchFactor( self.text, 1 )
-		layout.setStretchFactor( self.slider, 3 )
+		layout.setStretchFactor( self.slider, 2 )
 		self.slider.valueChanged.connect( self.onSliderChanged )
 		self.numberType = int
 		self.text.editingFinished.connect( self.onTextEditingFinished )
