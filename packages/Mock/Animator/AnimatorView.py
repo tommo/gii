@@ -224,6 +224,10 @@ class AnimatorView( SceneEditorModule ):
 		pass
 
 	def addCustomAnimatorTrack( self, target, trackClasId ):
+		if not self.targetAnimator:
+			alertMessage( 'No Animator', 'No Animator found in current entity scope', 'question' )
+			return False
+			
 		track = self.delegate.callMethod( 'view', 'addCustomAnimatorTrack', target, trackClasId )
 		if track:
 			self.widget.addTrack( track )

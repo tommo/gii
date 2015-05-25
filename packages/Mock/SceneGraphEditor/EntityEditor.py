@@ -108,7 +108,9 @@ class SceneObjectEditorMixin():
 		if not trackTypes: return
 		for id, clas in trackTypes.items():
 			action = menu.addAction( id )
-			action.triggered.connect( lambda x: self.addCustomAnimatorTrack( id ) )
+			def _makeTrackCreator( trackId ):
+				return lambda x: self.addCustomAnimatorTrack( trackId )
+			action.triggered.connect( _makeTrackCreator( id ) )
 			action.setIcon( getIcon('object_track') )
 		menu.exec_(QtGui.QCursor.pos())
 

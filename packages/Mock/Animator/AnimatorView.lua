@@ -273,7 +273,7 @@ function AnimatorView:applyTime( t )
 end
 
 function AnimatorView:preparePreivewState()
-	self.previewState = self.targetAnimator:_loadClip( self.targetClip )
+	self.previewState = self.targetAnimator:_loadClip( self.targetClip, true )
 	self.previewState:setMode( self.previewRepeat and MOAITimer.LOOP or MOAITimer.NORMAL )
 	self.prevClock = false
 	return true
