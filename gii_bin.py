@@ -47,6 +47,11 @@ import gii_cfg
 import gii
 ##----------------------------------------------------------------##
 DO_PROFILE = False
+gii.MODULEPATH=[
+	giipath,
+	thirdPartyPathNative,
+	thirdPartyPathCommon,
+]
 
 def main():
  	if DO_PROFILE:
