@@ -5,13 +5,13 @@ def _getFirstNodeOfTag( xmlNode, tagName ):
 	return nodes and nodes[0]
 
 ##----------------------------------------------------------------##
-class YEDGraph():
+class YEdGraph():
 	def __init__( self ):
 		self.nodes = {}
 		self.edges = {}
 
 	def addNode( self, id, groupNode ):
-		node = YEDGraphNode()
+		node = YEdGraphNode()
 		node.graph = self
 		if groupNode:
 			node.group = groupNode
@@ -20,7 +20,7 @@ class YEDGraph():
 		return node
 
 	def addGroup( self, id, groupNode ):
-		group = YEDGraphGroup()
+		group = YEdGraphGroup()
 		group.graph = self
 		self.nodes[ id ] = group
 		if groupNode:
@@ -32,12 +32,12 @@ class YEDGraph():
 		fullname = '%s>%s' % ( nodeIdSrc, nodeIdDst )
 		nodeSrc = self.nodes[ nodeIdSrc ]
 		nodeDst = self.nodes[ nodeIdDst ]
-		edge = YEDGraphEdge(nodeSrc, nodeDst)
+		edge = YEdGraphEdge(nodeSrc, nodeDst)
 		self.nodes[ fullname ] = edge
 		return edge
 
 ##----------------------------------------------------------------##
-class YEDGraphItem( object ):
+class YEdGraphItem( object ):
 	def __init__( self ):
 		self.attrs = {}
 
@@ -49,31 +49,31 @@ class YEDGraphItem( object ):
 		self.attrs[ key ] = value
 
 ##----------------------------------------------------------------##
-class YEDGraphNode( YEDGraphItem ):
+class YEdGraphNode( YEdGraphItem ):
 	def __init__( self ):
-		super( YEDGraphNode, self ).__init__()
+		super( YEdGraphNode, self ).__init__()
 		self.graph = None
 		self.group = None
 		self.edgesSelf  = []
 		self.edgesOther = []
 
 ##----------------------------------------------------------------##
-class YEDGraphGroup( YEDGraphNode ):
+class YEdGraphGroup( YEdGraphNode ):
 	def __init__( self ):
-		super( YEDGraphGroup, self ).__init__()
+		super( YEdGraphGroup, self ).__init__()
 		self.children = {}
 
 ##----------------------------------------------------------------##
-class YEDGraphEdge( YEDGraphItem ):
+class YEdGraphEdge( YEdGraphItem ):
 	def __init__( self, nodeSrc, nodeDst ):
-		super( YEDGraphEdge, self ).__init__()
+		super( YEdGraphEdge, self ).__init__()
 		self.nodeSrc = nodeSrc
 		self.nodeDst = nodeDst
 		nodeSrc.edgesSelf.append( self )
 		nodeDst.edgesOther.append( self )
 
 ##----------------------------------------------------------------##
-class YedGraphMLParser( object ):
+class YEdGraphMLParser( object ):
 	def parseItemData( self, item, domNode ):
 		keyInfos = self.keyInfos
 		for childNode in domNode.childNodes:
@@ -115,7 +115,7 @@ class YedGraphMLParser( object ):
 		dom   = minidom.parse(open(path, 'r'))
 		root  = dom.getElementsByTagName("graphml")[0]
 
-		g = YEDGraph()
+		g = YEdGraph()
 
 		keyInfos = {}
 		self.keyInfos = keyInfos
@@ -156,7 +156,7 @@ class YedGraphMLParser( object ):
 		return g
 
 	def parseNodeGraphics( self, node, attr ):
-		if isinstance( node, YEDGraphGroup ):
+		if isinstance( node, YEdGraphGroup ):
 			shapeNode = attr.getElementsByTagName('y:GroupNode')[0]
 		else:
 			shapeNode = attr.childNodes[1]
@@ -213,7 +213,7 @@ class YedGraphMLParser( object ):
 		edge.setAttr( 'path', points )
 
 if __name__ == '__main__':
-	from gii.qt.controls.Timeline.GraphicsViewHelper import *
+	from gii.qt.controls.GraphicsView.GraphicsViewHelper import *
 	from PyQt4 import QtGui, QtCore, QtOpenGL, uic
 	import sys
 

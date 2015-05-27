@@ -1,7 +1,7 @@
 import sys
 import math
 
-from gii.qt.controls.Timeline.TimelineView import TimelineView
+from gii.qt.controls.GraphicsView.TimelineView import TimelineView
 from gii.qt.controls.GenericTreeWidget     import GenericTreeWidget
 from gii.qt.controls.PropertyEditor        import PropertyEditor
 from gii.qt.IconCache                      import getIcon

@@ -34,6 +34,10 @@ import EffectPreview
 
 import ScreenProfileManager
 
+import StoryView
+
+
 ##----------------------------------------------------------------##
 import DebugInfo
 import LuaProfiler
+

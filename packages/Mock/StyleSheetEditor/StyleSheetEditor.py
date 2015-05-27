@@ -10,7 +10,7 @@ from gii.qt                              import *
 from gii.qt.IconCache                    import getIcon
 from gii.qt.helpers                      import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.dialogs                      import requestString, alertMessage, requestColor
-from gii.qt.controls.Timeline            import TimelineWidget
+from gii.qt.controls.GraphicsView        import TimelineWidget
 from gii.qt.controls.GenericTreeWidget   import GenericTreeWidget
 from gii.qt.controls.PropertyEditor      import PropertyEditor
 from gii.AssetEditor                     import AssetEditorModule

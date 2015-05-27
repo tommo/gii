@@ -34,3 +34,5 @@ import PhysicsAsset
 import NamedTilesetAsset
 
 import AnimatorAsset
+
+import StoryAsset
