@@ -334,8 +334,6 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 		font = QtGui.QFont()
 		font.setPointSize(11)
 		self.setFont(font)
-		# signals.connect( 'app.activate', self.onAppActivate )
-		# signals.connect( 'app.deactivate', self.onAppDeactivate )
 		self.topLevel  = False
 		self.stayOnTop = False
 

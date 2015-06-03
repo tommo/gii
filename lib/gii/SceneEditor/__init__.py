@@ -5,3 +5,5 @@ import Introspector
 import GamePreview
 
 import SceneTool
+
+import SceneToolBox

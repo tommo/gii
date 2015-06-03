@@ -135,7 +135,7 @@ _USE_GL = True
 ##----------------------------------------------------------------##
 class GLGraphicsView( QtGui.QGraphicsView ):
 	def __init__( self, *args, **kwargs ):
-		super( GLGraphicsView, self ).__init__()
+		super( GLGraphicsView, self ).__init__( *args, **kwargs )
 		self.setHorizontalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
 		self.setVerticalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
 		self.setAttribute( Qt.WA_NoSystemBackground, True )

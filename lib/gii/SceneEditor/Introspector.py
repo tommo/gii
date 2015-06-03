@@ -257,7 +257,7 @@ class IntrospectorInstance(object):
 	def createWidget(self, container):
 		self.container = container
 		self.header = container.addWidgetFromFile(
-			getModulePath( 'introspector.ui' ),
+			getModulePath( 'Introspector.ui' ),
 			expanding=False)
 		self.scroll = scroll = container.addWidget( QtGui.QScrollArea( container ) )
 		self.body   = body   = QtGui.QWidget( container )

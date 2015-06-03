@@ -32,7 +32,7 @@ class CodeEditor( CodeEdit ):
 		self.use_spaces_instead_of_tabs = False
 		server_script = server.__file__
 		interpreter = sys.executable
-		self.backend.start( server_script, interpreter, None, reuse=True )
+		# self.backend.start( server_script, interpreter, None, reuse=True )
 		# append panels
 		self.panels.append(panels.LineNumberPanel())
 		self.panels.append(panels.SearchAndReplacePanel(),
