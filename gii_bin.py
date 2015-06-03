@@ -53,6 +53,10 @@ gii.MODULEPATH=[
 	thirdPartyPathCommon,
 ]
 
+PYTHONPATH0 = os.getenv( 'PYTHONPATH' )
+PYTHONPATH1 = (PYTHONPATH0 and PYTHONPATH0 + ':' or '') + ( ':'.join( gii.MODULEPATH ) )
+os.putenv('PYTHONPATH', PYTHONPATH1)
+
 def main():
  	if DO_PROFILE:
 		import cProfile, pstats, io

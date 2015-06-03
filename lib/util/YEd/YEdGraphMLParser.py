@@ -13,19 +13,21 @@ class YEdGraph():
 	def addNode( self, id, groupNode ):
 		node = YEdGraphNode()
 		node.graph = self
+		node.id = id
 		if groupNode:
 			node.group = groupNode
-			groupNode.children[ id ] = node
+			groupNode.children.append( node )
 		self.nodes[ id ] = node
 		return node
 
 	def addGroup( self, id, groupNode ):
 		group = YEdGraphGroup()
 		group.graph = self
+		group.id = id
 		self.nodes[ id ] = group
 		if groupNode:
 			group.group = groupNode
-			groupNode.children[ id ] = group
+			groupNode.children.append( group )
 		return group
 
 	def addEdgeByNodeId( self, nodeIdSrc, nodeIdDst ):
@@ -33,7 +35,7 @@ class YEdGraph():
 		nodeSrc = self.nodes[ nodeIdSrc ]
 		nodeDst = self.nodes[ nodeIdDst ]
 		edge = YEdGraphEdge(nodeSrc, nodeDst)
-		self.nodes[ fullname ] = edge
+		self.edges[ fullname ] = edge
 		return edge
 
 ##----------------------------------------------------------------##
@@ -61,7 +63,7 @@ class YEdGraphNode( YEdGraphItem ):
 class YEdGraphGroup( YEdGraphNode ):
 	def __init__( self ):
 		super( YEdGraphGroup, self ).__init__()
-		self.children = {}
+		self.children = []
 
 ##----------------------------------------------------------------##
 class YEdGraphEdge( YEdGraphItem ):
@@ -92,7 +94,7 @@ class YEdGraphMLParser( object ):
 			else:
 				name = keyInfo['name']
 				if kt == 'string':
-					item.setAttr( name, childNode.firstChild and str( childNode.firstChild.data ) or '' )
+					item.setAttr( name, childNode.firstChild and unicode( childNode.firstChild.data ) or '' )
 				else:
 					pass
 
@@ -163,15 +165,22 @@ class YEdGraphMLParser( object ):
 			#label
 		labelNode = _getFirstNodeOfTag( shapeNode, 'y:NodeLabel' )
 		if labelNode : self.parseLabelNode( node, labelNode )
+
 		geomNode = _getFirstNodeOfTag( shapeNode, 'y:Geometry' )
 		if geomNode : self.parseGeometryNode( node, geomNode )
 		
+
 	def parseEdgeGraphics( self, edge, attr ):
 		edgeNode = attr.childNodes[1]
+
 		labelNode = _getFirstNodeOfTag( edgeNode, 'y:NodeLabel' )
 		if labelNode : self.parseLabelNode( edge, labelNode )
+
 		pathNode = _getFirstNodeOfTag( edgeNode, 'y:Path' )
 		if pathNode: self.parsePathNode( edge, pathNode )
+
+		styleNode = _getFirstNodeOfTag( edgeNode, 'y:LineStyle' )
+		if styleNode: self.parseLineStyleNode( edge, styleNode )
 
 	def parseLabelNode( self, item, labelNode ):
 		x = float( labelNode.getAttribute('x') )
@@ -181,7 +190,7 @@ class YEdGraphMLParser( object ):
 		fsize = float( labelNode.getAttribute('fontSize') )
 		item.setAttr( 'label.geometry', (x,y,w,h) )
 		item.setAttr( 'label.font-size', fsize )
-		item.setAttr( 'label', str(labelNode.firstChild.data) )
+		item.setAttr( 'label', unicode(labelNode.firstChild.data) )
 
 	def parseGeometryNode( self, item, geomNode ):
 		x = float( geomNode.getAttribute('x') )
@@ -189,6 +198,15 @@ class YEdGraphMLParser( object ):
 		w = float( geomNode.getAttribute('width') )
 		h = float( geomNode.getAttribute('height') )
 		item.setAttr( 'geometry', (x,y,w,h) )
+
+	def parseLineStyleNode( self, item, styleNode ):
+		color = styleNode.getAttribute( 'color' )
+		width = float( styleNode.getAttribute( 'width' ) )
+		style = styleNode.getAttribute( 'type' )
+		item.setAttr( 'color', color )
+		item.setAttr( 'width', width )
+		item.setAttr( 'style', style )
+
 
 	def parsePathNode( self, edge, pathNode ):
 		sx = float( pathNode.getAttribute('sx') )

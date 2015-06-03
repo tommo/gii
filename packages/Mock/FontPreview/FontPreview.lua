@@ -1,3 +1,8 @@
+scn = mock_edit.createEditorCanvasScene()
+
+CLASS: FontPreview ( mock_edit.EditorEntity )
+--------------------------------------------------------------------
+
 context        = false
 -------
 currentFont = false
