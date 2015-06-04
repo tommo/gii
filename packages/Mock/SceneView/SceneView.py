@@ -24,7 +24,7 @@ def _getModulePath( path ):
 
 class SceneView( SceneEditorModule ):
 	name       = 'scene_view'
-	dependency = [ 'mock', 'scene_editor', 'scenegraph_editor' ]
+	dependency = [ 'mock', 'scene_editor', 'scenegraph_editor', 'scene_tool_box' ]
 
 	def onLoad( self ):
 		self.window = self.requestDocumentWindow(

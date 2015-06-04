@@ -42,7 +42,7 @@ def _fixDuplicatedName( names, name, id = None ):
 ##----------------------------------------------------------------##
 class SceneToolBox( SceneEditorModule ):
 	name = 'scene_tool_box'
-	dependency = [ 'scene_editor' ]
+	dependency = [ 'scene_tool_manager' ]
 	
 	def onLoad( self ):
 		self.window = self.requestDockWindow( 'SceneToolBox',
@@ -57,6 +57,7 @@ class SceneToolBox( SceneEditorModule ):
 		)
 		self.window.setStayOnTop( True )
 		self.window.show()
+		self.window.setObjectName( 'SceneToolBox' )
 
 		self.treeCategory = SceneToolCategoryTreeWidget( 
 					multiple_selection = False,
@@ -115,6 +116,7 @@ class SceneToolCategoryTreeWidget( GenericTreeWidget ):
 	def __init__( self, *arg, **kwargs ):
 		super( SceneToolCategoryTreeWidget, self ).__init__( *arg, **kwargs )
 		self.headerItem().setHidden( True )
+		self.setAttribute(Qt.WA_MacShowFocusRect, False)
 
 	def getHeaderInfo( self ):
 		return [ ('Name',100) ]
@@ -151,6 +153,7 @@ class SceneToolCategoryTreeWidget( GenericTreeWidget ):
 class SceneToolListWidget( GenericListWidget ):
 	def __init__( self, *args, **option ):
 		super( SceneToolListWidget, self ).__init__( *args )		
+		self.setAttribute(Qt.WA_MacShowFocusRect, False)
 
 	def getItemFlags( self, node ):
 		return {}

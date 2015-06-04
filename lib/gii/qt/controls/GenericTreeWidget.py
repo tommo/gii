@@ -519,5 +519,33 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		return super( GenericTreeWidget, self ).mousePressEvent( ev )
 
 	
+class GenericTreeFilter( QtGui.QWidget ):
+	def __init__(self, *args ):
+		super(GenericTreeFilter, self).__init__( *args )
+		self.setObjectName( 'ItemFilter' )
+		self.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
+		self.setMinimumSize( 100, 20 )
+		layout = QtGui.QHBoxLayout( self )
+		layout.setMargin( 0 )
+		layout.setSpacing( 0 )
+
+		self.lineEdit = QtGui.QLineEdit( self )
+		self.lineEdit.textChanged.connect( self.onTextChanged )
+		self.lineEdit.setPlaceholderText( 'Filters' )
+		self.targetTree = None
+
+		layout.addWidget( self.lineEdit )
+		self.lineEdit.setMinimumSize( 100, 20 )
+		self.lineEdit.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
+
+
+	def setTargetTree( self, tree ):
+		self.targetTree = tree
+
+	def onTextChanged( self, text ):
+		pass
+
+	def applyFilter( self ):
+		if not self.targetTree: return
 
 		

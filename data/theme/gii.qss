@@ -344,25 +344,6 @@ QTreeView::indicator
 	height:16px;
 }
 
-QTreeView#UIGroup_TreeView
-{
-	background-color:#282828;
-	alternate-background-color:#323232;
-	border:0 solid #000;
-}
-
-QListView::item:selected
-{
-	color:#fff;
-}
-
-QListView#UIGroup_ListView
-{
-	background-color:#282828;
-	border:0 solid #000;
-	selection-background-color:#3c3c3c;
-}
-
 QMenuBar::item
 {
 	background-color:transparent;
@@ -801,7 +782,13 @@ QTreeView:active,QTreeView:!active
 	selection-background-color:transparent;
 }
 
-QTreeView::item:selected:!active,QTreeView::item:selected:active,QListView::item:selected:!active,QListView::item:selected:active
+QTreeView::item:selected:!active,QListView::item:selected:!active
+{
+	background-color:#6d7284;
+	color: #fff;
+}
+
+QTreeView::item:selected:active, QListView::item:selected:active
 {
 	background-color:#515c84;
 	color: #fff;
@@ -1117,4 +1104,35 @@ QSplitter#TimelineHeaderSplitter::handle{
 
 #CodeEditor{
 	font-size:12px;
+}
+
+#SceneToolBox QListView {
+	background-color:#333;
+	color:#aaa;
+}
+
+#SceneToolBox QListView::item {
+	border-radius:2px;
+}
+
+#SceneToolBox QListView::item:hover
+{
+	background-color:#3a3a33;
+}
+
+
+#SceneToolBox QListView::item:selected
+{
+	background-color:#68582d;
+	border:1px solid #9f5a11;
+	border-radius:2px;
+}
+
+#ItemFilter QLineEdit {
+	image:url(theme:filter.png);
+	image-position:right;
+	padding-left: 5px;
+	background-color:#444;
+	border-radius:2px;
+	color: #ffb850;
 }

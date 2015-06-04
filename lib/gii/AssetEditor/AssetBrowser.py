@@ -3,7 +3,7 @@ import os
 
 from gii.core         import *
 from gii.qt.dialogs   import requestString, alertMessage, requestConfirm
-from gii.qt.controls.AssetTreeView import AssetTreeView
+from gii.qt.controls.AssetTreeView import AssetTreeView, AssetTreeFilter
 from gii.qt.helpers   import setClipboardText
 from gii.SearchView   import requestSearchView, registerSearchEnumerator
 
@@ -28,6 +28,13 @@ class AssetBrowser( AssetEditorModule ):
 				minSize=(200,200)
 			)
 		
+		#Components
+		self.treeFilter = self.container.addWidget(
+			AssetTreeFilter(
+				self.container
+			),
+			expanding = False
+		)
 		self.treeView  = self.container.addWidget(
 				AssetBrowserTreeView(
 					sorting   = True,

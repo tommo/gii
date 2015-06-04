@@ -7,7 +7,7 @@ from gii.qt          import QtEditorModule
 
 from gii.qt.IconCache                  import getIcon
 from gii.qt.dialogs                    import alertMessage, requestConfirm
-from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
+from gii.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
 from gii.qt.helpers                    import makeBrush, makeFont
 
 from gii.moai.MOAIRuntime import MOAILuaDelegate
@@ -59,6 +59,12 @@ class SceneGraphEditor( SceneEditorModule ):
 			)
 
 		#Components
+		self.treeFilter = self.container.addWidget(
+			GenericTreeFilter(
+				self.container
+			),
+			expanding = False
+		)
 		self.tree = self.container.addWidget( 
 				SceneGraphTreeWidget( 
 					self.container,

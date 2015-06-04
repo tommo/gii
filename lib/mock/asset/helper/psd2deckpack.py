@@ -241,6 +241,7 @@ class DeckPart(object):
 			localGuideTopFace = h
 
 		img = DeckPartImg ( '', w, h, (0, 0, w, h) )	
+		img.node = None
 		img.src = self
 		self.imgInfo = img
 		#build normal
@@ -326,6 +327,8 @@ class DeckPart(object):
 
 	def buildAtlasUV( self ):
 		node = self.getAtlasNode()
+		if not node:
+			print( 'no atlas node for deck', self.name )
 		uvrect = node.getUVRect()
 		u0, v0, u1 ,v1 = uvrect
 		du = u1 - u0

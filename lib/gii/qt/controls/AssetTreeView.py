@@ -6,7 +6,7 @@ from gii.core         import *
 from gii.qt           import QtEditorModule
 
 from gii.qt.IconCache                  import getIcon
-from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
+from gii.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
 
 
 class AssetTreeView( GenericTreeWidget ):
@@ -110,3 +110,6 @@ class AssetTreeItem(QtGui.QTreeWidgetItem):
 		# return node0.getName().lower()<node1.getName().lower()
 
 ##----------------------------------------------------------------##
+
+class AssetTreeFilter( GenericTreeFilter ):
+	pass

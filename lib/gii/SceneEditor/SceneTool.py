@@ -42,12 +42,15 @@ class SceneToolCategory():
 	def getIcon( self ):
 		return self.icon
 
+	def getManager( self ):
+		return app.getModule( 'scene_tool_manager' )
 
 ##----------------------------------------------------------------##
 class SceneTool():
 	def __init__( self ):
 		self.active = False
 		self.category = None
+		self.lastUseTime = -1
 
 	def getId( self ):
 		return 'unknown'
@@ -82,18 +85,36 @@ class SceneTool():
 		pass
 
 ##----------------------------------------------------------------##
+class RecentToolsCategory():
+	def getToolList( self ):
+		return self.getManager().getRecentToolList()
+
+##----------------------------------------------------------------##
 class SceneToolManager( EditorModule ):
 	name = 'scene_tool_manager'
 	dependency = [ 'scene_editor' ]
 	def __init__( self ):		
-		self.tools = {}
+		#
 		self.defaultTool = None
-		self.activeTool = None
+		self.activeTool  = None
+		self.recentTools = []
+
+		self.toolStack = []
+
+		self.recentLimit = 20
+		self.useTime     = 0
+		#
 		self.rootCategory = SceneToolCategory()
 		
 		self.favoriteCategory = SceneToolCategory()
-		self.favoriteCategory.icon = 'star'
+		self.favoriteCategory.name = '<Favorites>'
+		self.favoriteCategory.icon = 'star-2'
 		self.rootCategory.addChildCategory( self.favoriteCategory )
+
+		self.recentCategory = SceneToolCategory()
+		self.recentCategory.name = '<Recent>'
+		self.recentCategory.icon = 'clock'
+		self.rootCategory.addChildCategory( self.recentCategory )
 
 		testTool = SceneTool()
 		self.favoriteCategory.addTool( testTool)
@@ -102,8 +123,36 @@ class SceneToolManager( EditorModule ):
 		pass
 
 	def onStart( self ):
-		for id, tool in self.tools.items():
-			tool.onLoad()
+		pass
 
 	def getRootCategory( self ):
 		return self.rootCategory
+
+	def addCategory( self, category ):
+		self.rootCategory.addChildCategory( category )
+		return category
+
+	def createCategory( self, id, **option ):
+		category = SceneToolCategory()
+		category.name = option.get( 'name', 'Category' )
+		category.icon = option.get( 'icon', 'folder' )
+		return self.addCategory( category )
+
+	def setActiveTool( self, tool ):
+		self.useTime += 1
+		self.activeTool = tool
+		tool.lastUseTime = self.useTime
+		if not ( tool in self.recentTools ):
+			if len( self.recentTools ) >= self.recentLimit:
+				self.recentTools = self.recentTools[ 1: ]
+			self.recentTools.append( tool )
+		else:
+			self.recentTools.remove( tool )
+			self.recentTools.append( tool )
+
+	def getActiveTool( self ):
+		return self.activeTool
+
+	def getRecentToolList( self ):
+		return self.recentTools
+

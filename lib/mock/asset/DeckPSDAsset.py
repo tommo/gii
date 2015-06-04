@@ -29,7 +29,7 @@ class DeckPSDAssetManager(AssetManager):
 
 		proj = DeckPackProject()
 		proj.loadPSD( node.getAbsFilePath() )
-		proj.save( output+'/', 'decks', (1024,1024) )
+		proj.save( output+'/', 'decks', (2048,2048) )
 
 		#import
 		jsonPath = output+'/decks.json'
