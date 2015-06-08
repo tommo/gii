@@ -81,6 +81,9 @@ class AssetNode(object):
 	def getPath(self):
 		return self.nodePath	
 
+	def getNodePath( self ):
+		return self.nodePath
+
 	def getDir(self):
 		return os.path.dirname( self.getNodePath() )
 

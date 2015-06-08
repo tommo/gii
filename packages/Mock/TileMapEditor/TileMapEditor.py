@@ -6,11 +6,13 @@ import json
 
 from gii.core         import *
 from gii.qt           import *
+from gii.qt.IconCache                  import getIcon
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.dialogs   import requestString, alertMessage, requestColor
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 
 from gii.SceneEditor  import SceneEditorModule
+from gii.SearchView import requestSearchView
 
 from gii.moai.MOAIEditCanvas import  MOAIEditCanvas
 
@@ -48,15 +50,19 @@ class TileMapEditor( SceneEditorModule ):
 		self.toolbarLayers = QtGui.QToolBar( window.containerLayers )
 		self.toolbarLayers.setOrientation( Qt.Vertical )
 		self.toolbarLayers.setMaximumWidth( 20 )
-		self.toolbarTileset = QtGui.QToolBar( window.containerCanvas )
-		self.toolbarTileset.setOrientation( Qt.Vertical )
-		self.toolbarTileset.setMaximumWidth( 20 )
+
+		self.toolbarMain = QtGui.QToolBar( window.containerCanvas )
+		self.toolbarMain.setOrientation( Qt.Horizontal )
+		# self.toolbarMain.setIconSize( 32 )
 		self.canvas.alwaysForcedUpdate = True
 		
-		self.treeLayers = TileMapLayerTreeWidget( window.containerLayers )
+		self.treeLayers = TileMapLayerTreeWidget(
+			window.containerLayers,
+			editable = True
+		 )
 		self.treeLayers.parentModule = self
 
-		canvasLayout = QtGui.QHBoxLayout( window.containerCanvas )
+		canvasLayout = QtGui.QVBoxLayout( window.containerCanvas )
 		canvasLayout.setSpacing( 0 )
 		canvasLayout.setMargin( 0 )
 
@@ -65,21 +71,26 @@ class TileMapEditor( SceneEditorModule ):
 		layersLayout.setMargin( 0 )
 
 		canvasLayout.addWidget( self.canvas )
-		canvasLayout.addWidget( self.toolbarTileset )
+		canvasLayout.addWidget( self.toolbarMain )
 
 		layersLayout.addWidget( self.treeLayers )
 		layersLayout.addWidget( self.toolbarLayers )
 
 		self.addToolBar( 'tilemap_layers', self.toolbarLayers )
-		self.addToolBar( 'tilemap_canvas', self.toolbarTileset )
-		self.toolbarTileset.hide()
+		self.addToolBar( 'tilemap_main', self.toolbarMain )
+		
 		self.addTool( 'tilemap_layers/add_layer',    label = 'Add', icon = 'add' )
 		self.addTool( 'tilemap_layers/remove_layer', label = 'Remove', icon = 'remove' )
 		self.addTool( 'tilemap_layers/layer_up',     label = 'up', icon = 'arrow-up' )
 		self.addTool( 'tilemap_layers/layer_down',   label = 'down', icon = 'arrow-down' )
 
+		self.addTool( 'tilemap_main/tool_pen',     label = 'Pen',   icon = 'tilemap/pen' )
+		self.addTool( 'tilemap_main/tool_eraser', label = 'Eraser', icon = 'tilemap/eraser' )
+
 		signals.connect( 'selection.changed', self.onSceneSelectionChanged )
 
+		self.targetTileMap = None
+		self.targetTileMapLayer = None
 
 	def onStart( self ):
 		self.container.show()
@@ -93,13 +104,19 @@ class TileMapEditor( SceneEditorModule ):
 	def onSceneSelectionChanged( self, selection, key ):
 		if key != 'scene': return
 		#find animator component
-		target = self.canvas.callMethod( 'editor', 'findTargetMap' )
+		target = self.canvas.callMethod( 'editor', 'findTargetTileMap' )
 		self.setTargetTileMap( target )
 
 	def onLayerSelectionChanged( self, selection ):
-		pass
+		if selection:
+			self.setTargetTileMapLayer( selection[0] )
+		else:
+			self.setTargetTileMapLayer( None )
+		signals.emit( 'scene.update' )
 
 	def setTargetTileMap( self, tileMap ):
+		self.setTargetTileMapLayer( None )
+		self.canvas.callMethod( 'editor', 'setTargetTileMap', tileMap )
 		self.targetTileMap = tileMap
 		if not self.targetTileMap:
 			self.treeLayers.clear()
@@ -107,27 +124,77 @@ class TileMapEditor( SceneEditorModule ):
 			return
 		self.container.setEnabled( True )
 		self.treeLayers.rebuild()
+		layers = self.getLayers()
+		if layers:
+			self.treeLayers.selectNode( layers[0] )
+
+	def setTargetTileMapLayer( self, layer ):
+		self.canvas.callMethod( 'editor', 'setTargetTileMapLayer', layer )
+		self.canvas.updateCanvas()
+		self.targetTileMapLayer = layer
 
 	def getLayers( self ):
 		if not self.targetTileMap: return []
-		return self.targetTileMap.getLayers( self.targetTileMap )
+		layers = self.targetTileMap.getLayers( self.targetTileMap )
+		return [ layer for layer in layers.values() ]
+
+	def createLayer( self, tilesetNode ):
+		layer = self.canvas.callMethod( 'editor', 'createTileMapLayer', tilesetNode.getPath() )
+		if layer:
+			self.treeLayers.addNode( layer )
+			self.treeLayers.selectNode( layer )
+			self.treeLayers.editNode( layer )
+
+	def renameLayer( self, layer, name ):
+		layer.name = name
+
+	def listTileMapLayerTypes( self, typeId, context ):
+		res = self.canvas.callMethod( 'editor', 'requestAvailTileMapLayerTypes' )
+		entries = []
+		for n in res.values():
+			entry = ( n, n, 'LayerTypes', 'obj' )
+			entries.append( entry )
+		return entries
 
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'add_layer':
-			pass #TODO
+			requestSearchView( 
+				context      = 'asset',
+				type         = 'tileset;named_tileset',
+				multiple_selection = False,
+				on_selection = self.createLayer,
+				# on_search    = self.listTileMapLayerTypes	
+			)
+
 		elif name == 'remove_layer':
-			pass #TODO
+			self.canvas.callMethod( 'editor', 'removeTileMapLayer' )
+			self.treeLayers.rebuild()
+
 		elif name == 'layer_up':
-			pass #TODO
+			self.canvas.callMethod( 'editor', 'moveTileMapLayerUp' )
+			self.treeLayers.rebuild()
+
 		elif name == 'layer_down':
-			pass #TODO
+			self.canvas.callMethod( 'editor', 'moveTileMapLayerDown' )
+			self.treeLayers.rebuild()
+
+		elif name == 'tool_pen':
+			self.canvas.callMethod( 'editor', 'changeEditTool', 'pen' )
+
+		elif name == 'tool_eraser':
+			self.canvas.callMethod( 'editor', 'changeEditTool', 'eraser' )
+
+		elif name == 'tool_fill':
+			self.canvas.callMethod( 'editor', 'changeEditTool', 'fill' )
+
+
 
 
 ##----------------------------------------------------------------##
 class TileMapLayerTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		return [ ('Name',150), ('View', 30), ('Tileset',-1) ]
+		return [ ('Name',90), ('Show', 30), ('Tileset',-1) ]
 
 	def getRootNode( self ):
 		return self
@@ -150,8 +217,19 @@ class TileMapLayerTreeWidget( GenericTreeWidget ):
 		return[]
 
 	def updateItemContent( self, item, node, **option ):
-		pass
+		if node == self: return
+		item.setIcon( 0, getIcon( 'tilemap/layer' ) )
+		item.setText( 0, node.name )
+		if node.visible:
+			item.setText( 1, 'Y' )
+		else:
+			item.setText( 1, '' )
+		path = node.getTilesetPath( node ) or ''
+		item.setText( 2, os.path.basename(path) )
 
-	def onSelectionChanged( self, selection ):
-		self.parentModule.onLayerSelectionChanged( selection )
+	def onItemChanged( self, item, col ):
+		self.parentModule.renameLayer( item.node, item.text( col ) )
+
+	def onItemSelectionChanged( self ):
+		self.parentModule.onLayerSelectionChanged( self.getSelection() )
 
