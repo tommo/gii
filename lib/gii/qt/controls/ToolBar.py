@@ -3,7 +3,7 @@ import logging
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import QMenu, QMenuBar, QToolBar, QAction
 
-from gii.core import signals
+from gii.core import signals, app
 from Menu import MenuManager
 from gii.qt.IconCache import getIcon
 
@@ -13,7 +13,9 @@ class ToolBarItem(object):
 		self.name     = name.lower()
 		self.label    = option.get( 'label', name )	
 		self.priority = option.get( 'priority', 0 )
-
+		self.shortcut = option.get( 'shortcut', False )
+		self.cmd      = option.get( 'command', None )
+		self.cmdArgs  = option.get( 'command_args', None )
 		iconName      = option.get( 'icon', None )
 		self.icon     = iconName and getIcon( iconName ) or None
 
@@ -38,7 +40,8 @@ class ToolBarItem(object):
 			self.qtaction   = QtGui.QAction( 
 				self.label, None,
 				checkable = self.itemType == 'check',
-				triggered = self.handleEvent
+				triggered = self.handleEvent,
+				shortcut  = self.shortcut
 				)
 
 		if self.icon:
@@ -64,6 +67,9 @@ class ToolBarItem(object):
 			self.signal( value )
 		if self.onClick != None:
 			self.onClick( value )
+		if self.cmd:
+			args = self.cmdArgs or {}
+			app.doCommand( self.cmd, **args )
 			
 	def getFullName(self):
 		if parent:
@@ -96,6 +102,9 @@ class ToolBarNode(object):
 
 	def addWidget( self, widget ):
 		return self.qtToolbar.addWidget( widget )
+
+	def getQtToolBar( self ):
+		return self.qtToolbar
 
 	def addSeparator( self ):
 		self.qtToolbar.addSeparator()

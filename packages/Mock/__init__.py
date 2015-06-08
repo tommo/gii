@@ -41,3 +41,6 @@ import StoryView
 import DebugInfo
 import LuaProfiler
 
+# import ProtoToolBox
+
+import TileMapEditor

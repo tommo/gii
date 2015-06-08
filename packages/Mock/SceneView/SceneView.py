@@ -9,12 +9,14 @@ from gii.qt           import *
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.dialogs   import requestString, alertMessage, requestColor
 
-from gii.SceneEditor  import SceneEditorModule
+from gii.SceneEditor  import SceneEditorModule, SceneTool
 
 from gii.moai.MOAIEditCanvas import  MOAIEditCanvas
 
 from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
+
+
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -22,6 +24,7 @@ def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 
 
+##----------------------------------------------------------------##
 class SceneView( SceneEditorModule ):
 	name       = 'scene_view'
 	dependency = [ 'mock', 'scene_editor', 'scenegraph_editor', 'scene_tool_box' ]
@@ -31,6 +34,7 @@ class SceneView( SceneEditorModule ):
 				title = 'Scene'
 			)
 		self.toolbar = self.window.addToolBar()
+
 		self.canvas = self.window.addWidget( MOAIEditCanvas() )
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
 		
@@ -39,7 +43,7 @@ class SceneView( SceneEditorModule ):
 		self.updateTimer        = self.window.startTimer( 60, self.onUpdateTimer )
 		self.updatePending      = False
 		self.previewing         = False
-		self.previewUpdateTimer = False		
+		self.previewUpdateTimer = False
 
 		signals.connect( 'entity.modified',       self.onEntityModified   )
 		signals.connect( 'asset.post_import_all', self.onAssetReimport    )
@@ -56,6 +60,8 @@ class SceneView( SceneEditorModule ):
 		signals.connect( 'preview.pause',  self.onPreviewStop   )
 		signals.connect( 'preview.stop',   self.onPreviewStop   )
 
+		signals.connect( 'tool.change',   self.onSceneToolChanged   )
+
 		self.addShortcut( 'main', 'Q', self.changeEditTool, 'selection' )
 		self.addShortcut( 'main', 'W', self.changeEditTool, 'translation' )
 		self.addShortcut( 'main', 'E', self.changeEditTool, 'rotation' )
@@ -63,6 +69,35 @@ class SceneView( SceneEditorModule ):
 		self.addShortcut( 'main', 'F', self.focusSelection )
 
 		self.addShortcut( 'main', '/', self.toggleDebugLines )
+
+		self.mainToolBar = self.addToolBar( 'scene_view_tools', 
+			self.getMainWindow().requestToolBar( 'view_tools' )
+			)
+		self.mainToolBar.qtToolbar.setIconSize( QtCore.QSize( 24, 24 ) )
+
+		self.addTool( 'scene_view_tools/tool_selection',
+			label = 'Selection',
+			icon = 'tools/selection',
+			type = 'check'
+			)
+
+		self.addTool( 'scene_view_tools/tool_translation',
+			label = 'Translate',
+			icon = 'tools/translate',
+			type = 'check'
+			)
+
+		self.addTool( 'scene_view_tools/tool_rotation',
+			label = 'Rotate',
+			icon = 'tools/rotate',
+			type = 'check'
+			)
+
+		self.addTool( 'scene_view_tools/tool_scale',
+			label = 'Scale',
+			icon = 'tools/scale',
+			type = 'check'
+			)
 
 
 	def onStart( self ):
@@ -149,3 +184,16 @@ class SceneView( SceneEditorModule ):
 	def focusSelection( self ):
 		self.canvas.safeCallMethod( 'view', 'focusSelection' )
 
+	def onTool( self, tool ):
+		name = tool.name
+		if name == 'tool_selection':
+			self.changeEditTool( 'selection' )
+		elif name == 'tool_translation':
+			self.changeEditTool( 'translation' )
+		elif name == 'tool_rotation':
+			self.changeEditTool( 'rotation' )
+		elif name == 'tool_scale':
+			self.changeEditTool( 'scale' )
+
+	def onSceneToolChanged( self, tool ):
+		pass

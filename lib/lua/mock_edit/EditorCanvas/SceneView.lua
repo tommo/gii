@@ -1,4 +1,13 @@
 module 'mock_edit'
+
+--------------------------------------------------------------------
+local currentSceneView = false
+
+function getCurrentSceneView()
+	return currentSceneView
+end
+
+
 --------------------------------------------------------------------
 CLASS:SceneView ( CanvasView )
 
@@ -52,6 +61,18 @@ function SceneView:postSceneDeserialize( scene )
 	self.gizmoManager:refresh()
 end
 
+function SceneView:makeCurrent()
+	currentSceneView = self
+end
+
+function SceneView:onDestroy()
+	if currentSceneView == self then
+		currentSceneView = false
+	end
+end
+
+
+
 --------------------------------------------------------------------
 CLASS: SceneViewFactory ()
 function SceneViewFactory:__init()
@@ -83,6 +104,7 @@ function createSceneView( scene, env )
 	for i, factory in pairs( factoryList ) do
 		local view = factory:createSceneView( scene, env )
 		if view then
+			view:setName( '__EDITOR_SCENE_VIEW')
 			return view
 		end
 	end

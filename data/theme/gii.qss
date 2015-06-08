@@ -1109,15 +1109,18 @@ QSplitter#TimelineHeaderSplitter::handle{
 #SceneToolBox QListView {
 	background-color:#333;
 	color:#aaa;
+	font-size: 10px;
 }
 
 #SceneToolBox QListView::item {
-	border-radius:2px;
+	border-radius:3px;
+	margin-bottom: 4px;
+	padding-bottom: 2px;
 }
 
 #SceneToolBox QListView::item:hover
 {
-	background-color:#3a3a33;
+	background-color:#443;
 }
 
 

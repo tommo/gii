@@ -27,6 +27,9 @@ class SceneEditorModule( SubEditorModule ):
 	def getSceneEditor( self ):
 		return self.getParentModule()
 
+	def getSceneToolManager( self ):
+		return self.getModule( 'scene_tool_manager' )
+
 ##----------------------------------------------------------------##
 class SceneEditor( TopEditorModule ):
 	name       = 'scene_editor'
@@ -40,6 +43,7 @@ class SceneEditor( TopEditorModule ):
 	
 	def onSetupMainWindow( self, window ):
 		self.mainToolBar = self.addToolBar( 'scene', self.mainWindow.requestToolBar( 'main' ) )		
+		self.mainToolBar.qtToolbar.setIconSize( QtCore.QSize( 24, 24 ) )
 		window.setMenuWidget( self.getQtSupport().getSharedMenubar() )
 		#menu
 		self.addMenu( 'main/scene', dict( label = 'Scene' ) )

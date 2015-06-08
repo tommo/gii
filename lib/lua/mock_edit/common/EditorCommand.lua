@@ -25,3 +25,21 @@ function EditorCommand:canUndo()
 	return true
 end
 
+
+--------------------------------------------------------------------
+CLASS: EditorCommandNoHistory (EditorCommand)
+	:MODEL{}
+
+function EditorCommandNoHistory:hasHistory()
+	return false
+end
+
+
+--------------------------------------------------------------------
+CLASS: EditorCommandNoUndo (EditorCommand)
+	:MODEL{}
+
+function EditorCommandNoUndo:canUndo()
+	return false
+end
+

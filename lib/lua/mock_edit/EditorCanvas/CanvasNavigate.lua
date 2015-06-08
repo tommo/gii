@@ -42,7 +42,8 @@ function CanvasNavigate:onMouseMove( x, y )
 	local cx0, cy0 = unpack( self.cameraFrom )
 	local cameraCom = self.targetCamera:getComponent( EditorCanvasCamera )
 	local zoom = cameraCom:getZoom()
-	self.targetCamera:setLoc( cx0 - dx/zoom, cy0 + dy/zoom )
+	local z0 = self.targetCamera:getLocZ()
+	self.targetCamera:setLoc( cx0 - dx/zoom, cy0 + dy/zoom, z0 )
 	self:updateCanvas()
 end
 

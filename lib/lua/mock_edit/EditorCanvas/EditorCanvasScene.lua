@@ -8,7 +8,6 @@ function EditorCanvasCamera:__init( env )
 	context = gii.getCurrentRenderContext()
 	self.context = context.key
 	self.env = env
-	self.__allowEditorLayer = true
 	self.parallaxEnabled = false
 end
 
@@ -16,6 +15,9 @@ function EditorCanvasCamera:loadPasses()
 	self:addPass( mock.SceneCameraPass( self.clearBuffer, self.clearColor ) )
 end
 
+function EditorCanvasCamera:isEditorCamera()
+	return true
+end
 
 function EditorCanvasCamera:getDefaultOutputRenderTarget()
 	context = gii.getCurrentRenderContext()

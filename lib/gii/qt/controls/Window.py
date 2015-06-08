@@ -200,6 +200,7 @@ class MainWindow(QtGui.QMainWindow):
 		toolbar.setFloatable( options.get( 'floatable', False ) )
 		toolbar.setMovable(   options.get( 'movable',   True ) )		
 		toolbar.setObjectName( 'toolbar-%s' % name )
+		# size = option.get( 'size', (24, 24) )
 		self.addToolBar( toolbar )
 		return toolbar
 		

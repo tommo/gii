@@ -12,6 +12,7 @@ class SceneToolCategory():
 		self.tools = {}
 		self.icon  = 'folder'
 		self.name  = 'category'
+		self.options = {}
 
 	def getName( self ):
 		return self.name
@@ -25,6 +26,13 @@ class SceneToolCategory():
 	def addChildCategory( self, category ):
 		self.children.append( category )
 		category.parent = self
+		return category
+
+	def createChildCategory( self, id, **option ):
+		category = SceneToolCategory()
+		category.name = option.get( 'name', 'Category' )
+		category.icon = option.get( 'icon', 'folder' )
+		return self.addChildCategory( category )
 
 	def addTool( self, tool ):
 		toolId = tool.getId()
@@ -32,6 +40,7 @@ class SceneToolCategory():
 			raise Exception( 'Duplicated Scene Tool: %s ( %s ) ' % ( toolId, self.getName() ) )
 		tool.category = self
 		self.tools[ toolId ] = tool
+		return tool
 
 	def getToolList( self ):
 		return [ tool for tool in self.tools.values() ]
@@ -67,25 +76,25 @@ class SceneTool():
 	def __repr__( self ):
 		return '%s::%s' % ( repr(self.category), self.getId() )
 
-	def start( self ):
+	def isActive( self ):
+		return self.active
+
+	def _activate( self ):
 		self.active = True
-		self.onStart()
+		self.onActivated()
 
-	def finish( self ):
+	def _deactivate( self ):
 		self.active = False
-		self.onFinish()
+		self.onDeactivated()
 
-	def onLoad( self ):
+	def onActivated( self ):
 		pass
 
-	def onStart( self ):
-		pass
-
-	def onFinish( self ):
+	def onDeactivated( self ):
 		pass
 
 ##----------------------------------------------------------------##
-class RecentToolsCategory():
+class RecentToolsCategory( SceneToolCategory ):
 	def getToolList( self ):
 		return self.getManager().getRecentToolList()
 
@@ -111,13 +120,10 @@ class SceneToolManager( EditorModule ):
 		self.favoriteCategory.icon = 'star-2'
 		self.rootCategory.addChildCategory( self.favoriteCategory )
 
-		self.recentCategory = SceneToolCategory()
+		self.recentCategory = RecentToolsCategory()
 		self.recentCategory.name = '<Recent>'
 		self.recentCategory.icon = 'clock'
 		self.rootCategory.addChildCategory( self.recentCategory )
-
-		testTool = SceneTool()
-		self.favoriteCategory.addTool( testTool)
 
 	def onLoad( self ):
 		pass
@@ -129,18 +135,21 @@ class SceneToolManager( EditorModule ):
 		return self.rootCategory
 
 	def addCategory( self, category ):
-		self.rootCategory.addChildCategory( category )
-		return category
+		return self.rootCategory.addChildCategory( category )
 
 	def createCategory( self, id, **option ):
-		category = SceneToolCategory()
-		category.name = option.get( 'name', 'Category' )
-		category.icon = option.get( 'icon', 'folder' )
-		return self.addCategory( category )
+		return self.rootCategory.createChildCategory( id, **option )
 
 	def setActiveTool( self, tool ):
+		if self.activeTool == tool : return
+		prevTool = self.activeTool
 		self.useTime += 1
 		self.activeTool = tool
+		if prevTool:
+			prevTool._deactivate()
+		if tool:
+			tool._activate()
+
 		tool.lastUseTime = self.useTime
 		if not ( tool in self.recentTools ):
 			if len( self.recentTools ) >= self.recentLimit:
@@ -149,6 +158,7 @@ class SceneToolManager( EditorModule ):
 		else:
 			self.recentTools.remove( tool )
 			self.recentTools.append( tool )
+		signals.emit( 'tool.change', self.activeTool )
 
 	def getActiveTool( self ):
 		return self.activeTool

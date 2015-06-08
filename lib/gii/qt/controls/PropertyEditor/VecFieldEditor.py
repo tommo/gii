@@ -44,6 +44,10 @@ class VecEditorWidget( QtGui.QWidget ):
 		for field in  self.fields:
 			field.setSingleStep( step )
 
+	def setReadOnly( self, readonly ):
+		for field in self.fields:
+			field.setReadOnly( readonly )
+
 		
 ##----------------------------------------------------------------##
 class GenericVecFieldEdtior( FieldEditor ):
@@ -58,6 +62,9 @@ class GenericVecFieldEdtior( FieldEditor ):
 
 	def onValueChanged( self, v ):
 		return self.notifyChanged( self.get() )
+
+	def setReadonly( self, readonly ):
+		self.editor.setReadOnly( readonly )
 
 	def initEditor( self, container )	:
 		self.editor = VecEditorWidget( self.getDimension(), container )

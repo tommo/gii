@@ -11,11 +11,14 @@ class no_editItemDelegate( QtGui.QStyledItemDelegate ):
 class GenericListWidget( QtGui.QListWidget ):
 	def __init__( self, *args, **option ):
 		super( GenericListWidget, self ).__init__( *args )
-		self.setViewMode( QtGui.QListView.IconMode )
+		
 		self.nodeDict = {}
 		self.refreshing = False
 		self.option = option
 
+		if option.get( 'mode', 'list' ) == 'icon':
+			self.setViewMode( QtGui.QListView.IconMode )
+			
 		self.itemDoubleClicked    .connect( self.onDClicked )
 		self.itemClicked          .connect( self.onClicked )
 		self.itemSelectionChanged .connect( self.onItemSelectionChanged )
@@ -82,7 +85,6 @@ class GenericListWidget( QtGui.QListWidget ):
 		item = QtGui.QListWidgetItem( self )
 		self.nodeDict[ node ] = item
 		item.node = node
-		print( node )
 		self.updateItem( node )
 		return item
 
@@ -108,6 +110,26 @@ class GenericListWidget( QtGui.QListWidget ):
 		item.setFlags( flags )
 		self.refreshing = False
 
+	def selectNode( self, node, **kwargs ):
+		if not kwargs.get( 'add', False ):
+				self.selectionModel().clearSelection()
+		if not node: return
+		if isinstance( node, (tuple, list) ):
+			for n in node:
+				item = self.getItemByNode( n )
+				if item:
+					item.setSelected( True )
+			if kwargs.get('goto',True) : 
+				first = len( node ) > 0 and node[0]
+				if first:
+					self.gotoNode( first )
+		else:
+			item = self.getItemByNode( node )
+			if item:
+				item.setSelected( True )
+				if kwargs.get('goto',True) : 
+					self.gotoNode( node )
+
 	def getSelection( self ):
 		return [ item.node for item in self.selectedItems() ]
 
@@ -115,6 +137,28 @@ class GenericListWidget( QtGui.QListWidget ):
 		for item in self.selectedItems():
 			return item.node
 		return None
+
+	def setFocusedItem(self, item ):
+		idx = self.indexFromItem( item )
+		if idx:
+			self.setCurrentIndex( idx )
+
+	def editNode( self, node ):
+		item = self.getItemByNode( node )
+		if item:
+			self.editItem( item )
+
+	def scrollToNode( self, node ):
+		item = self.getItemByNode( node )
+		if item:
+			self.scrollToItem( item )
+
+	def gotoNode( self, node ):
+		item = self.getItemByNode( node )
+		if item:
+			self.scrollToItem( item )
+			self.setCurrentItem( item, QtGui.QItemSelectionModel.Current )
+			# self.moveCursor( self.MoveUp, Qt.NoModifier )
 	
 	##----------------------------------------------------------------##
 	##Virtual

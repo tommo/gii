@@ -51,7 +51,6 @@ class SceneToolBox( SceneEditorModule ):
 			minSize   = (120,120),
 			dock      = 'bottom'
 		)
-
 		ui = self.window.addWidgetFromFile(
 			_getModulePath('SceneToolBox.ui')
 		)
@@ -80,6 +79,11 @@ class SceneToolBox( SceneEditorModule ):
 		# self.listTools.setGridSize( QtCore.QSize( 80, 6464 ) )
 
 		self.currentCategory = None
+		self.currentTool     = None
+		self.refreshingTools = False
+		
+		signals.connect( 'tool.change',  self.onSceneToolChanged )
+		signals.connect( 'tool_category.update',  self.onSceneToolCategoryUpdate )
 
 	def onStart( self ):
 		self.treeCategory.rebuild()
@@ -87,10 +91,18 @@ class SceneToolBox( SceneEditorModule ):
 	def onCategorySelectionChanged( self ):
 		for category in self.treeCategory.getSelection():
 			self.currentCategory = category
-			self.listTools.rebuild()
+			self.rebuildListTools()
 			return
 		self.currentCategory = None
+		self.rebuildListTools()
+
+	def rebuildListTools( self ):
+		self.refreshingTools = True
 		self.listTools.rebuild()
+		activeTool = self.getSceneToolManager().getActiveTool()
+		if activeTool and self.listTools.hasNode( activeTool ):
+			self.listTools.selectNode( activeTool, goto = True )
+		self.refreshingTools = False
 
 	def getToolsInCurrentCategory( self ):
 		category = self.currentCategory
@@ -99,17 +111,30 @@ class SceneToolBox( SceneEditorModule ):
 		else:
 			return []
 
-	def selectTool( self, tool ):
-		print 'selecting Tool', tool
-		if tool:
-			pass
-		else:
-			pass
+	def setActiveTool( self, tool ):
+		if self.refreshingTools: return
+		if not tool: return
+		self.currentTool = tool
+		self.getSceneToolManager().setActiveTool( tool )
 
 	def onSceneToolChanged( self, tool ):
-		#TODO:locate and hilight tool item
-		pass
+		if tool == self.currentTool: return
+		category = tool.getCategory()
+		if not self.treeCategory.hasNode( category ): return
+		self.treeCategory.selectNode( category )
+		if not self.listTools.hasNode( tool ):
+			self.listTools.selectNode( None )
+		else:
+			self.listTools.selectNode( tool, goto = True )
 
+	def onSceneToolCategoryUpdate( self, category ):
+		if category == self.currentCategory:
+			self.rebuildListTools()
+
+##----------------------------------------------------------------##
+class SceneToolCategoryTreeItemDelegate( QtGui.QStyledItemDelegate ):
+	def sizeHint( self, option, index ):
+		return QtCore.QSize( 10, 24 )
 
 ##----------------------------------------------------------------##
 class SceneToolCategoryTreeWidget( GenericTreeWidget ):
@@ -117,6 +142,8 @@ class SceneToolCategoryTreeWidget( GenericTreeWidget ):
 		super( SceneToolCategoryTreeWidget, self ).__init__( *arg, **kwargs )
 		self.headerItem().setHidden( True )
 		self.setAttribute(Qt.WA_MacShowFocusRect, False)
+		self.setItemDelegate( SceneToolCategoryTreeItemDelegate() )
+
 
 	def getHeaderInfo( self ):
 		return [ ('Name',100) ]
@@ -124,14 +151,6 @@ class SceneToolCategoryTreeWidget( GenericTreeWidget ):
 	def getRootNode( self ):
 		return app.getModule( 'scene_tool_manager' ).getRootCategory()
 
-	# def saveTreeStates( self ):
-	# 	for node, item in self.nodeDict.items():
-	# 		node.__folded = item.isExpanded()
-
-	# def loadTreeStates( self ):
-	# 	for node, item in self.nodeDict.items():
-	# 		folded = node.__folded or False
-	# 		item.setExpanded( not folded )
 
 	def getNodeParent( self, node ): # reimplemnt for target node	
 		return node.getParent()
@@ -154,6 +173,8 @@ class SceneToolListWidget( GenericListWidget ):
 	def __init__( self, *args, **option ):
 		super( SceneToolListWidget, self ).__init__( *args )		
 		self.setAttribute(Qt.WA_MacShowFocusRect, False)
+		self.setWrapping( True )
+		self.setResizeMode( QtGui.QListView.Adjust  )
 
 	def getItemFlags( self, node ):
 		return {}
@@ -170,4 +191,4 @@ class SceneToolListWidget( GenericListWidget ):
 
 	def onItemSelectionChanged(self):
 		node = self.getFirstSelection()
-		self.parentModule.selectTool( node )
+		self.parentModule.setActiveTool( node )

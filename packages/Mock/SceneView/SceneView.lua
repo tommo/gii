@@ -13,6 +13,7 @@ function onSceneOpen( scene )
 		_giiSceneView.scheduleUpdate()
 	end
 	scene:addEntity( view )
+	view:makeCurrent()
 end
 
 function onSceneClose()
@@ -26,7 +27,3 @@ function onResize( w, h )
 	end
 end
 
-local xxx= {}
-function  XXX()
-	return xxx
-end
