@@ -540,7 +540,7 @@ function CmdCloneEntity:redo()
 			local header, profix = extractNumberPrefix( n )
 			local number = findNextNumberProfix( editor.scene, header )
 			if number >= 0 then
-				local profix = '_' ..(number + 1)
+				local profix = '_' .. string.format( '%02d', number + 1 )
 				created:setName( header .. profix )
 			end
 		end

@@ -37,7 +37,7 @@ function CanvasToolManager:getActiveTool()
 end
 
 function CanvasToolManager:getActiveToolId()
-	return self.activeTool and self.activeTool.toolId
+	return self.activeTool and self.activeTool.__toolId
 end
 
 function CanvasToolManager:setTool( id )
@@ -54,11 +54,11 @@ function CanvasToolManager:setTool( id )
 	end
 
 	local tool = toolClass()
+	tool.__toolId = id
 	tool:installInput( self.parent:getInputDevice() )	
 	self.activeTool = tool
 	self:addChild( tool )
 end
-
 
 function CanvasToolManager:onSelectionChanged( selection )
 	if self.activeTool then

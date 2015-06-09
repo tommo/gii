@@ -85,7 +85,10 @@ class TileMapEditor( SceneEditorModule ):
 		self.addTool( 'tilemap_layers/layer_down',   label = 'down', icon = 'arrow-down' )
 
 		self.addTool( 'tilemap_main/tool_pen',     label = 'Pen',   icon = 'tilemap/pen' )
-		self.addTool( 'tilemap_main/tool_eraser', label = 'Eraser', icon = 'tilemap/eraser' )
+		self.addTool( 'tilemap_main/tool_eraser',  label = 'Eraser', icon = 'tilemap/eraser' )
+		self.addTool( 'tilemap_main/tool_fill',    label = 'Fill', icon = 'tilemap/fill' )
+		self.addTool( 'tilemap_main/----' )
+		self.addTool( 'tilemap_main/tool_clear',    label = 'Clear', icon = 'tilemap/clear' )
 
 		signals.connect( 'selection.changed', self.onSceneSelectionChanged )
 
@@ -187,6 +190,9 @@ class TileMapEditor( SceneEditorModule ):
 
 		elif name == 'tool_fill':
 			self.canvas.callMethod( 'editor', 'changeEditTool', 'fill' )
+
+		elif name == 'tool_clear':
+			self.canvas.callMethod( 'editor', 'changeEditTool', 'clear' )
 
 
 

@@ -71,6 +71,14 @@ function CanvasView:changeEditTool( name )
 	self.toolManager:setTool( name )
 end
 
+function CanvasView:getActiveTool()
+	return self.toolManager:getActiveTool()
+end
+
+function CanvasView:getActiveToolId()
+	return self.toolManager:getActiveToolId()
+end
+
 function CanvasView:updateCanvas( force )
 	return self.canvasEnv.updateCanvas()
 end

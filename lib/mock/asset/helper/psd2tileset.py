@@ -96,7 +96,10 @@ class TileModule(object):
 		self.x = x1
 		self.y = y1
 		self.deckRect = ( 0,0,1,1 )
+		self.deckOffset = ( 0,0 )
+		self.rawRect  = ( x1,y1,x2,y2 )
 		self.imgInfo = None
+		self.rawIndex = psdLayer._index
 
 	def getSize( self ):
 		return (self.w, self.h)
@@ -117,6 +120,15 @@ class TileModule(object):
 
 	def getDeckRect( self ):
 		return self.deckRect
+
+	def getDeckOffset( self ):
+		return self.deckOffset
+
+	def getRawRect( self ):
+		return self.rawRect
+
+	def getRawIndex( self ):
+		return self.rawIndex
 
 ##----------------------------------------------------------------##
 class TileGroup(object):
@@ -214,7 +226,8 @@ class TileGroup(object):
 			elif k == 'c':
 				ox = 0
 				oy = alt
-			tile.deckRect = ( ox, oy, ox+w, oy+h )
+			tile.deckRect   = ( ox, oy, ox+w, oy+h )
+			tile.deckOffset = ( ox, oy )
 	
 	def __repr__( self ):
 		return '%s: %s( %d, %d, %d )' % ( self.name, self.tileType, self.tileWidth, self.tileDepth, self.tileHeight )
@@ -231,7 +244,10 @@ class TileGroup(object):
 				'fullname'   : t.fullName,
 				'atlas'      : str( node.root.id ),
 				'rect'       : node.getRect(),
-				'deck_rect'  : t.deckRect
+				'deck_rect'  : t.getDeckRect(),
+				'deck_offset': t.getDeckOffset(),
+				'raw_rect'   : t.getRawRect(),
+				'raw_index'  : t.getRawIndex()
 			}
 			tileDatas.append( tileData )
 		data[ 'name'     ] = self.name

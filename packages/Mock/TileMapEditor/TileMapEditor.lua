@@ -3,6 +3,87 @@ scn = mock_edit.createEditorCanvasScene()
 --------------------------------------------------------------------
 
 mock_edit.addColor( 'tilemap_grid', hexcolor( '#ff0000', 0.5 ) )
+
+
+--------------------------------------------------------------------
+CLASS: NamedTilesetLayout ( mock_edit.EditorEntity )
+	:MODEL{}
+
+function NamedTilesetLayout:onLoad()
+	self.tileProps = {}
+	self.target = false
+	self.selectedTile = false
+	self.selectedTileId = false
+end
+
+function NamedTilesetLayout:setTarget( tileset )
+	self.target = tileset
+	local count = tileset:getTileCount()
+	local deck = tileset:getMoaiDeck()
+	local bx0 = 1000000
+	local by0 = 1000000
+	local bx1 = -1000000
+	local by1 = -1000000
+	for id = 1, count do
+		local name = tileset.idToName[ id ]
+		local data = tileset.nameToTile[ name ]
+		local x0,y0,x1,y1 = unpack( data['raw_rect'])
+		local ox,oy = unpack( data['deck_offset'])
+		local index = data['raw_index']
+		local prop = MOAIProp.new()
+		self:_attachProp( prop )
+		prop:setDeck( deck )
+		prop:setIndex( id )
+		local x, y = x0 - ox, -y1 - oy
+		bx0 = math.min( x, bx0 )
+		bx1 = math.max( x, bx1 )
+		by0 = math.min( y, by0 )
+		by1 = math.max( y, by1 )
+		prop:setLoc( x, y, index*0.01 )
+		prop:setColor( 1,1,1, 1 )
+		self.tileProps[ id ] = prop
+	end
+	self:setLoc( -(bx0+bx1)/2, -(by0+by1)/2 )
+end
+
+function NamedTilesetLayout:selectTile( name )
+	if self.selectedTileId then
+		local prevProp = self.tileProps[ self.selectedTileId ]
+		prevProp:setColor( 1,1,1, 1 )
+	end
+
+	if name then
+		local id = self.target.nameToId[ name ]
+		local prop = self.tileProps[ id ]
+		self.selectedTile = name
+		self.selectedTileId = id
+		prop:setColor( 1, .7, .7, 1 )
+	else
+		self.selectedTile = false
+		self.selectedTileId = false
+	end
+
+end
+
+function NamedTilesetLayout:pickTile( x, y )
+	if not self.target then return nil end
+	local found = false
+	for i, prop in pairs( self.tileProps ) do
+		local _,_,z1 = prop:getWorldLoc()
+		if prop:inside( x, y, z1 ) then
+			found = i
+			break
+		end
+	end
+	return self.target.idToName[ found ], found
+end
+
+function NamedTilesetLayout:onDestroy()
+	for i, p in ipairs( self.tileProps ) do
+		self:_detachProp( p )
+	end
+end
+
 --------------------------------------------------------------------
 CLASS: TilesetViewer ( mock_edit.EditorEntity )
 	:MODEL{}
@@ -10,29 +91,62 @@ CLASS: TilesetViewer ( mock_edit.EditorEntity )
 function TilesetViewer:__init()
 	self.targetTilesetPath = false
 	self.targetTileset = false
-	self.viewProp = MOAIProp.new()
-	self.viewGrid = false
+	self.currentLayout = false
+	self.selectedTile = false
 end
 
 function TilesetViewer:onLoad()
-	self:_attachProp( self.viewProp )
-	self:addChild( mock_edit.CanvasNavigate() )
+	self.navigate = self:addChild( mock_edit.CanvasNavigate() )
+	local inputDevice = self:getScene().inputDevice
+	self:attach( mock.InputScript{ 
+			device = inputDevice
+		} )
+end
+
+function TilesetViewer:onMouseDown( btn, x,y )
+	if btn ~= 'left' then return end
+	if not self.currentLayout then return end
+	local wx, wy = self:wndToWorld( x, y )
+	local name = self.currentLayout:pickTile( wx, wy )
+	if name then
+		self.currentLayout:selectTile( name )
+	end
+	if mock_edit.getCurrentSceneView():getActiveToolId() ~= 'tilemap.fill' then
+		self.parentEditor:changeEditTool( 'pen' )
+	end
+	self.parentEditor:setTileBrush( name )
+	self.navigate:updateCanvas()
 end
 
 function TilesetViewer:setTargetTileset( tilesetPath )
+	if self.targetTilesetPath == tilesetPath then return end
 	self.targetTilesetPath = tilesetPath
 	self.targetTileset = tilesetPath and mock.loadAsset( tilesetPath )
+
+	self.parentEditor:setTileBrush( false )
+	if self.currentLayout then
+		self.currentLayout:destroyAllNow()
+		self.currentLayout = false
+	end
 	if not self.targetTileset then return self:hide() end
 	self:show()
-	local tileset = self.targetTileset
-	self.viewProp:setDeck( tileset:getMoaiDeck() )
-	self.viewGrid = tileset:buildPreviewGrid()	
-	self.viewProp:setGrid( self.viewGrid )
+
+	--build tile layout
+	if self.targetTileset:isInstance( mock.NamedTileset ) then
+		self.currentLayout = self:addChild( NamedTilesetLayout() )
+		self.currentLayout:setTarget( self.targetTileset )
+	else
+		--TODO
+	end
 end
 
--- function TilesetViewer:
-
 function TilesetViewer:fitViewport( w, h )
+end
+
+function TilesetViewer:clearSelection()
+	if self.currentLayout then self.currentLayout:selectTile( false ) end
+	self.parentEditor:setTileBrush( false )
+	self.navigate:updateCanvas()
 end
 
 --------------------------------------------------------------------
@@ -103,8 +217,8 @@ function TileMapEditor:setTargetTileMapLayer( l )
 	end
 
 	self.targetTileMapLayer  = l
-	self.currentTileBrush    = 'FloorDirt.c'
-	self.currentTileBrush    = 'WallBrick.s'
+	self.currentTileBrush    = false
+	-- self.currentTileBrush    = 'WallBrick.s'
 	self.currentTerrainBrush = false
 	if self.targetTileMapLayer then
 		self.tilesetViewer:setTargetTileset( self.targetTileMapLayer:getTilesetPath() )
@@ -121,6 +235,15 @@ end
 
 function TileMapEditor:getTargetTileMap()
 	return self.targetTileMap
+end
+
+function TileMapEditor:wndToCoord( x, y )
+	local sceneView = mock_edit.getCurrentSceneView()
+	x, y = sceneView:wndToWorld( x, y )
+	layer = self.targetTileMapLayer
+	local lx, ly = layer:worldToModel( x, y )
+	local tx, ty = layer:locToCoord( lx, ly ) 
+	return tx, ty
 end
 
 function TileMapEditor:requestAvailTileMapLayerTypes()
@@ -176,6 +299,12 @@ function TileMapEditor:changeEditTool( id )
 		mock_edit.getCurrentSceneView():changeEditTool( 'tilemap.pen' )
 	elseif id == 'eraser' then
 		mock_edit.getCurrentSceneView():changeEditTool( 'tilemap.eraser' )
+		self.tilesetViewer:clearSelection()
+	elseif id == 'fill' then
+		mock_edit.getCurrentSceneView():changeEditTool( 'tilemap.fill' )
+	elseif id == 'clear' then
+		self:getTargetTileMapLayer():getMoaiGrid():fill(0)
+		mock_edit.getCurrentSceneView():updateCanvas()
 	end
 end
 
@@ -214,11 +343,8 @@ function TileMapToolPen:onMouseMove( x, y )
 end
 
 function TileMapToolPen:_doAction( x, y )
-	x, y = self:wndToWorld( x, y )
-	local map = editor:getTargetTileMap()
-	local layer = editor:getTargetTileMapLayer()
-	local lx, ly = map._entity:worldToModel( x, y )
-	local tx, ty = layer:locToCoord( lx, ly ) 
+	local tx, ty = editor:wndToCoord( x, y )
+	local layer  = editor:getTargetTileMapLayer()
 	if layer:isValidCoord( tx, ty ) then
 		self:onAction( layer, tx, ty )
 		mock_edit.getCurrentSceneView():updateCanvas()
@@ -228,12 +354,10 @@ end
 mock_edit.registerCanvasTool( 'tilemap.pen', TileMapToolPen )
 
 
-
 --------------------------------------------------------------------
 CLASS: TileMapToolEraser ( TileMapToolPen )
 
 function TileMapToolEraser:onAction( layer, x, y )
-	print( 'erase', x, y )
 	layer:setTile( x, y, false )
 end
 
@@ -248,8 +372,41 @@ function TileMapToolTerrain:onAction( layer, x, y )
 end
 
 mock_edit.registerCanvasTool( 'tilemap.terrain', TileMapToolTerrain )
---------------------------------------------------------------------
 
+
+--------------------------------------------------------------------
+CLASS: TileMapToolFill ( TileMapToolPen )
+
+
+local function _floodFill( grid, x, y, w, h, id0, id1 )
+	if x < 1 then return end
+	if y < 1 then return end
+	if x > w then return end
+	if y > h then return end
+	local id = grid:getTile( x, y )
+	if id ~= id0 then return end
+	grid:setTile( x, y, id1 )
+	_floodFill( grid, x+1, y, w, h, id0, id1 )
+	_floodFill( grid, x-1, y, w, h, id0, id1 )
+	_floodFill( grid, x, y+1, w, h, id0, id1 )
+	_floodFill( grid, x, y-1, w, h, id0, id1 )
+end
+
+function TileMapToolFill:onAction( layer, x, y )
+	local brush = editor:getTileBrush()
+	--flood fill
+	if not brush then return end
+	local layer = editor:getTargetTileMapLayer()
+	local grid = layer:getMoaiGrid()
+	local brushId = layer:tileIdToGridId( brush )
+	local id0 = grid:getTile( x, y )
+	local w, h = grid:getSize()
+	if id0 == brushId then return end
+	_floodFill( grid, x,y, w,h, id0, brushId )
+end
+
+
+mock_edit.registerCanvasTool( 'tilemap.fill', TileMapToolFill )
 
 editor = scn:addEntity( TileMapEditor() )
 
