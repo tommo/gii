@@ -438,12 +438,11 @@ mock_edit.registerCanvasTool( 'tilemap.fill', TileMapToolFill )
 --------------------------------------------------------------------
 CLASS: TileMapToolTerrain ( TileMapToolPen )
 
-
 function TileMapToolTerrain:onAction( layer, x, y )
 	local brush = editor:getTerrainBrush()
 	--flood fill
 	if not brush then return end
-	print( x,y, brush.name )
+	brush:paint( layer, x, y )
 end
 
 
