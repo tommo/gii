@@ -2,7 +2,7 @@
 scn = mock_edit.createEditorCanvasScene()
 --------------------------------------------------------------------
 
-mock_edit.addColor( 'tilemap_grid', hexcolor( '#ff0000', 0.5 ) )
+mock_edit.addColor( 'tilemap_grid', hexcolor( '#00ffea', 0.5 ) )
 
 
 --------------------------------------------------------------------
@@ -14,6 +14,7 @@ function NamedTilesetLayout:onLoad()
 	self.target = false
 	self.selectedTile = false
 	self.selectedTileId = false
+
 end
 
 function NamedTilesetLayout:setTarget( tileset )
@@ -32,8 +33,9 @@ function NamedTilesetLayout:setTarget( tileset )
 		local index = data['raw_index']
 		local prop = MOAIProp.new()
 		self:_attachProp( prop )
-		prop:setDeck( deck )
-		prop:setIndex( id )
+		local prop2 = MOAIProp.new()
+		self:_attachProp( prop2 )
+		
 		local x, y = x0 - ox, -y1 - oy
 		bx0 = math.min( x, bx0 )
 		bx1 = math.max( x, bx1 )
@@ -41,6 +43,27 @@ function NamedTilesetLayout:setTarget( tileset )
 		by1 = math.max( y, by1 )
 		prop:setLoc( x, y, index*0.01 )
 		prop:setColor( 1,1,1, 1 )
+		prop:setDeck( deck )
+		prop:setIndex( id )
+		prop2:setLoc( x, y, index*0.01 + 0.1 )
+		prop2:setColor( 0.5,0.5,1, 1 )
+		-- prop2:setDeck( deck )
+		local xx0,yy0,zz0, xx1,yy1,zz1 = prop:getBounds()
+		local boundDeck = MOAIScriptDeck.new()
+		boundDeck:setDrawCallback(function()
+			MOAIGfxDevice.setPenColor( 0.5,0.5,1, 0.2 )
+			MOAIDraw.fillRect( xx0,yy0, xx1,yy1  )
+			MOAIGfxDevice.setPenColor( 0.5,0.5,1, 1 )
+			MOAIDraw.drawRect( xx0,yy0, xx1,yy1  )
+		end)
+		prop2:setDeck( boundDeck )
+		prop2:setBounds( prop:getBounds() )
+		prop2.deck = boundDeck
+		prop2:setIndex( id )
+		prop2:setVisible( false )
+		setPropBlend( prop2, 'alpha' )
+		prop.selectionProp = prop2
+
 		self.tileProps[ id ] = prop
 	end
 	self:setLoc( -(bx0+bx1)/2, -(by0+by1)/2 )
@@ -49,7 +72,8 @@ end
 function NamedTilesetLayout:selectTile( name )
 	if self.selectedTileId then
 		local prevProp = self.tileProps[ self.selectedTileId ]
-		prevProp:setColor( 1,1,1, 1 )
+		-- prevProp:setColor( 1,1,1, 1 )
+		prevProp.selectionProp:setVisible( false )
 	end
 
 	if name then
@@ -57,7 +81,8 @@ function NamedTilesetLayout:selectTile( name )
 		local prop = self.tileProps[ id ]
 		self.selectedTile = name
 		self.selectedTileId = id
-		prop:setColor( 1, .7, .7, 1 )
+		-- prop:setColor( 1, .7, .7, 1 )
+		prop.selectionProp:setVisible( true )
 	else
 		self.selectedTile = false
 		self.selectedTileId = false
@@ -80,6 +105,7 @@ end
 
 function NamedTilesetLayout:onDestroy()
 	for i, p in ipairs( self.tileProps ) do
+		self:_detachProp( p.selectionProp )
 		self:_detachProp( p )
 	end
 end
@@ -114,7 +140,7 @@ function TilesetViewer:onMouseDown( btn, x,y )
 	if mock_edit.getCurrentSceneView():getActiveToolId() ~= 'tilemap.fill' then
 		self.parentEditor:changeEditTool( 'pen' )
 	end
-	self.parentEditor:setTileBrush( name )
+	self.parentEditor:selectTileBrush( name )
 	self.navigate:updateCanvas()
 end
 
@@ -123,7 +149,7 @@ function TilesetViewer:setTargetTileset( tilesetPath )
 	self.targetTilesetPath = tilesetPath
 	self.targetTileset = tilesetPath and mock.loadAsset( tilesetPath )
 
-	self.parentEditor:setTileBrush( false )
+	self.parentEditor:selectTileBrush( false )
 	if self.currentLayout then
 		self.currentLayout:destroyAllNow()
 		self.currentLayout = false
@@ -145,7 +171,7 @@ end
 
 function TilesetViewer:clearSelection()
 	if self.currentLayout then self.currentLayout:selectTile( false ) end
-	self.parentEditor:setTileBrush( false )
+	self.parentEditor:selectTileBrush( false )
 	self.navigate:updateCanvas()
 end
 
@@ -176,7 +202,8 @@ CLASS: TileMapEditor( mock_edit.EditorEntity )
 
 function TileMapEditor:__init()
 	self.currentTerrainBrush = false
-	self.currentTileBrush = false
+	self.currentTileBrush    = false
+	self.randomEnabled       = false
 end
 
 function TileMapEditor:onLoad()
@@ -274,7 +301,7 @@ function TileMapEditor:moveTileMapLayerDown( layer )
 	--TODO
 end
 
-function TileMapEditor:setTileBrush( id )
+function TileMapEditor:selectTileBrush( id, additive )
 	self.currentTileBrush = id
 end
 
@@ -282,8 +309,9 @@ function TileMapEditor:getTileBrush()
 	return self.currentTileBrush
 end
 
-function TileMapEditor:setTerrainBrush( id )
-	self.currentTerrainBrush = id
+function TileMapEditor:setTerrainBrush( brush )
+	self.currentTerrainBrush = brush
+	self:changeEditTool( 'terrain' )
 end
 
 function TileMapEditor:getTerrainBrush()
@@ -297,15 +325,24 @@ function TileMapEditor:changeEditTool( id )
 	end
 	if id == 'pen' then		
 		mock_edit.getCurrentSceneView():changeEditTool( 'tilemap.pen' )
+		_module.clearTerrainSelection()
+
 	elseif id == 'eraser' then
 		mock_edit.getCurrentSceneView():changeEditTool( 'tilemap.eraser' )
 		self.tilesetViewer:clearSelection()
 	elseif id == 'fill' then
 		mock_edit.getCurrentSceneView():changeEditTool( 'tilemap.fill' )
+	elseif id == 'terrain' then
+		mock_edit.getCurrentSceneView():changeEditTool( 'tilemap.terrain' )
+		self.tilesetViewer:clearSelection()
 	elseif id == 'clear' then
 		self:getTargetTileMapLayer():getMoaiGrid():fill(0)
 		mock_edit.getCurrentSceneView():updateCanvas()
 	end
+end
+
+function TileMapEditor:toggleToolRandom( enabled )
+	self.randomEnabled = enabled
 end
 
 
@@ -365,18 +402,7 @@ mock_edit.registerCanvasTool( 'tilemap.eraser', TileMapToolEraser )
 
 
 --------------------------------------------------------------------
-CLASS: TileMapToolTerrain ( TileMapToolPen )
-
-function TileMapToolTerrain:onAction( layer, x, y )
-	layer:setTile( x,y, 0 )
-end
-
-mock_edit.registerCanvasTool( 'tilemap.terrain', TileMapToolTerrain )
-
-
---------------------------------------------------------------------
 CLASS: TileMapToolFill ( TileMapToolPen )
-
 
 local function _floodFill( grid, x, y, w, h, id0, id1 )
 	if x < 1 then return end
@@ -408,5 +434,23 @@ end
 
 mock_edit.registerCanvasTool( 'tilemap.fill', TileMapToolFill )
 
+
+--------------------------------------------------------------------
+CLASS: TileMapToolTerrain ( TileMapToolPen )
+
+
+function TileMapToolTerrain:onAction( layer, x, y )
+	local brush = editor:getTerrainBrush()
+	--flood fill
+	if not brush then return end
+	print( x,y, brush.name )
+end
+
+
+mock_edit.registerCanvasTool( 'tilemap.terrain', TileMapToolTerrain )
+
+
+--------------------------------------------------------------------
 editor = scn:addEntity( TileMapEditor() )
+
 

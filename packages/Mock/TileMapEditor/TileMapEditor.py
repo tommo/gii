@@ -10,6 +10,7 @@ from gii.qt.IconCache                  import getIcon
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.dialogs   import requestString, alertMessage, requestColor
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
+from gii.qt.controls.GenericListWidget import GenericListWidget
 
 from gii.SceneEditor  import SceneEditorModule
 from gii.SearchView import requestSearchView
@@ -48,13 +49,12 @@ class TileMapEditor( SceneEditorModule ):
 			)		
 
 		self.toolbarLayers = QtGui.QToolBar( window.containerLayers )
-		self.toolbarLayers.setOrientation( Qt.Vertical )
-		self.toolbarLayers.setMaximumWidth( 20 )
+		self.toolbarLayers.setOrientation( Qt.Horizontal )
+		self.toolbarLayers.setMaximumHeight( 20 )
 
 		self.toolbarMain = QtGui.QToolBar( window.containerCanvas )
 		self.toolbarMain.setOrientation( Qt.Horizontal )
 		# self.toolbarMain.setIconSize( 32 )
-		self.canvas.alwaysForcedUpdate = True
 		
 		self.treeLayers = TileMapLayerTreeWidget(
 			window.containerLayers,
@@ -62,15 +62,26 @@ class TileMapEditor( SceneEditorModule ):
 		 )
 		self.treeLayers.parentModule = self
 
+		self.listTerrain = TileMapTerrainList(
+			window.containerLayers,
+			editable = False,
+			mode = 'icon'
+		)
+		self.listTerrain.parentModule = self
+		self.listTerrain.setFixedHeight( 70 )
+		self.listTerrain.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
+		self.canvas.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding )
+
 		canvasLayout = QtGui.QVBoxLayout( window.containerCanvas )
 		canvasLayout.setSpacing( 0 )
 		canvasLayout.setMargin( 0 )
 
-		layersLayout = QtGui.QHBoxLayout( window.containerLayers )
+		layersLayout = QtGui.QVBoxLayout( window.containerLayers )
 		layersLayout.setSpacing( 0 )
 		layersLayout.setMargin( 0 )
 
 		canvasLayout.addWidget( self.canvas )
+		canvasLayout.addWidget( self.listTerrain )
 		canvasLayout.addWidget( self.toolbarMain )
 
 		layersLayout.addWidget( self.treeLayers )
@@ -87,6 +98,8 @@ class TileMapEditor( SceneEditorModule ):
 		self.addTool( 'tilemap_main/tool_pen',     label = 'Pen',   icon = 'tilemap/pen' )
 		self.addTool( 'tilemap_main/tool_eraser',  label = 'Eraser', icon = 'tilemap/eraser' )
 		self.addTool( 'tilemap_main/tool_fill',    label = 'Fill', icon = 'tilemap/fill' )
+		self.addTool( 'tilemap_main/----' )
+		self.addTool( 'tilemap_main/tool_random',   label = 'Random', icon = 'tilemap/random', type = 'check' )
 		self.addTool( 'tilemap_main/----' )
 		self.addTool( 'tilemap_main/tool_clear',    label = 'Clear', icon = 'tilemap/clear' )
 
@@ -117,6 +130,13 @@ class TileMapEditor( SceneEditorModule ):
 			self.setTargetTileMapLayer( None )
 		signals.emit( 'scene.update' )
 
+	def onTerrainSelectionChanged( self, selection ):
+		if selection:
+			self.canvas.callMethod( 'editor', 'setTerrainBrush', selection[0] )
+
+	def clearTerrainSelection( self ):
+		self.listTerrain.selectNode( None )
+
 	def setTargetTileMap( self, tileMap ):
 		self.setTargetTileMapLayer( None )
 		self.canvas.callMethod( 'editor', 'setTargetTileMap', tileMap )
@@ -135,6 +155,14 @@ class TileMapEditor( SceneEditorModule ):
 		self.canvas.callMethod( 'editor', 'setTargetTileMapLayer', layer )
 		self.canvas.updateCanvas()
 		self.targetTileMapLayer = layer
+		self.listTerrain.rebuild()
+
+	def getTerrainTypeList( self ):
+		if self.targetTileMapLayer:
+			tileset = self.targetTileMapLayer.tileset
+			brushTable = tileset.getTerrainBrushes( tileset )
+			return [ brush for brush in brushTable.values() ]
+		return []
 
 	def getLayers( self ):
 		if not self.targetTileMap: return []
@@ -194,7 +222,8 @@ class TileMapEditor( SceneEditorModule ):
 		elif name == 'tool_clear':
 			self.canvas.callMethod( 'editor', 'changeEditTool', 'clear' )
 
-
+		elif name == 'tool_random':
+			self.canvas.callMethod( 'editor', 'toggleToolRandom', tool.getValue() )
 
 
 ##----------------------------------------------------------------##
@@ -239,3 +268,13 @@ class TileMapLayerTreeWidget( GenericTreeWidget ):
 	def onItemSelectionChanged( self ):
 		self.parentModule.onLayerSelectionChanged( self.getSelection() )
 
+##----------------------------------------------------------------##
+class TileMapTerrainList( GenericListWidget ):
+	def getNodes( self ):
+		return self.parentModule.getTerrainTypeList()
+
+	def updateItemContent( self, item, node, **option ):
+		item.setText( node.name )
+
+	def onItemSelectionChanged( self ):
+		self.parentModule.onTerrainSelectionChanged( self.getSelection() )
