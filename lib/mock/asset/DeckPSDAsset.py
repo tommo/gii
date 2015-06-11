@@ -45,3 +45,4 @@ DeckPSDAssetManager().register()
 
 AssetLibrary.get().setAssetIcon( 'deck_pack',           'pack' )
 AssetLibrary.get().setAssetIcon( 'deck2d.mquad',        'deck_mquad' )
+AssetLibrary.get().setAssetIcon( 'deck2d.mtileset',     'deck_mtileset' )

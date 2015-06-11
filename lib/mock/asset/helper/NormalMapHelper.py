@@ -3,10 +3,10 @@ import math
 
 def calcHeight( r,g,b, a ):
 	if a <5: return 0
-	h1 = (r * 1.2 + g * 1.2  + b * 0.6)/3/255.0
+	h1 = (r * 1.0 + g * 1.0  + b * 1.0)/3/255.0
 	# return math.sqrt( h1 )
-	return h1 * h1 * 0.2
-	# return h1
+	# return h1 * h1 * 0.2
+	return h1 * 0.3
 
 def calcNormal( pix, x, y, w, h ):
 	r,g,b,a = pix[ x, y ]
@@ -36,7 +36,7 @@ def calcNormal( pix, x, y, w, h ):
 			h1 = calcHeight( r1, g1, b1, a1 )
 			fy = fy + ( h1 - h0 ) * -.5
 	
-	for r in range( 1, 3 ):
+	for r in range( 1, 2 ):
 		if y < h - r:
 			r1,g1,b1,a1 = pix[ x, y + r ]
 			h1 = calcHeight( r1, g1, b1, a1 )
@@ -127,9 +127,9 @@ def makeNormalMap( img, option ):
 			nx= ( nx/255.0 - 0.5 ) * 2.0
 			ny= ( ny/255.0 - 0.5 ) * 2.0
 			nz= ( nz/255.0 - 0.5 ) * 2.0
-			if y < guideTopFace - 1:
+			if y < guideTopFace:
 				ny, nz = rotateTop( ny, nz )
-			elif guideTopFace > 0 and y < guideTopFace:
+			elif guideTopFace > 0 and y < guideTopFace + 1:
 				ny, nz = rotateTopHalf( ny, nz )
 			# else:
 			# 	ny, nz = rotateFront( ny, nz )

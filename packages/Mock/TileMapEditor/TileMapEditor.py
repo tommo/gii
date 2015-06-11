@@ -192,7 +192,7 @@ class TileMapEditor( SceneEditorModule ):
 		if name == 'add_layer':
 			requestSearchView( 
 				context      = 'asset',
-				type         = 'tileset;named_tileset',
+				type         = 'tileset;named_tileset;deck2d.mtileset',
 				multiple_selection = False,
 				on_selection = self.createLayer,
 				# on_search    = self.listTileMapLayerTypes	

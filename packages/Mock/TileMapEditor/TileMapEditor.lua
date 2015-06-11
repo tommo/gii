@@ -2,7 +2,7 @@
 scn = mock_edit.createEditorCanvasScene()
 --------------------------------------------------------------------
 
-mock_edit.addColor( 'tilemap_grid', hexcolor( '#00ffea', 0.5 ) )
+mock_edit.addColor( 'tilemap_grid', hexcolor( '#007fff', 0.3 ) )
 
 
 --------------------------------------------------------------------
@@ -87,7 +87,6 @@ function NamedTilesetLayout:selectTile( name )
 		self.selectedTile = false
 		self.selectedTileId = false
 	end
-
 end
 
 function NamedTilesetLayout:pickTile( x, y )
@@ -176,6 +175,39 @@ function TilesetViewer:clearSelection()
 end
 
 --------------------------------------------------------------------
+local colors = {
+	{hexcolor"#725800"},
+	{hexcolor"#405805"},
+	{hexcolor"#822e25"},
+}
+
+local randcolors =  {}
+local function getRandomColor( id )
+	local c = randcolors [ id ]
+	if c then return c end
+	c = { rand(0,1), rand(0,1), rand(0,1), 1 }
+	randcolors[ id ] = c
+	return c
+end
+
+local markTileWidth, markTileHeight = 1, 1
+local markTileDeck = MOAIScriptDeck.new()
+markTileDeck:setDrawCallback( function( idx, x, y, xScl, yScl )
+	-- MOAIGfxDevice.setPenColor( unpack( getRandomColor( idx ) ) )
+	MOAIGfxDevice.setPenColor( hexcolor( '#52a1ff', 0.7 ) )
+	-- x = x - tileSize/2
+	-- y = y - tileSize/2
+	-- MOAIDraw.fillRect( x, y, x+tileSize-1, y+tileSize-1 )
+	MOAIDraw.drawRect( 
+		x + 1,
+		y + 1,
+		x + xScl * markTileWidth - 2,
+		y + yScl * markTileHeight - 2
+	)
+end
+)
+
+--------------------------------------------------------------------
 CLASS: TileMapGridLines ( mock_edit.EditorEntity )
 	:MODEL{}
 
@@ -185,6 +217,10 @@ end
 
 function TileMapGridLines:onLoad()
 	self:attach( mock.DrawScript() ):setBlend( 'alpha' )
+	self.markProp = MOAIProp.new()	
+	self.markProp:setDeck( markTileDeck )
+	setPropBlend( self.markProp, 'alpha' )
+	self:_attachProp( self.markProp )
 end
 
 function TileMapGridLines:onDraw()
@@ -193,9 +229,34 @@ function TileMapGridLines:onDraw()
 	self.targetLayer:onDrawGridLine()
 end
 
+function TileMapGridLines:onDestroy()
+	self:_detachProp( self.markProp )
+end
+
 function TileMapGridLines:setTarget( targetLayer )
 	self.targetLayer = targetLayer
+	self.markProp:setGrid( targetLayer:getMoaiGrid() )
+	local tw, th = targetLayer:getTileSize()
+	markTileWidth = tw
+	markTileHeight = th
+	markTileDeck:setRect( 0,0,tw,th)
 end
+
+--------------------------------------------------------------------
+CLASS: TileBrush ()
+	:MODEL{}
+
+function TileBrush:__init()
+	self.grid = mock.GridStruct()
+	self.tiles = {}
+end
+
+function TileBrush:paint( layer, x, y )
+end
+
+function TileBrush:paintRandom( layer, x, y )
+end
+
 
 --------------------------------------------------------------------
 CLASS: TileMapEditor( mock_edit.EditorEntity )
@@ -204,6 +265,7 @@ function TileMapEditor:__init()
 	self.currentTerrainBrush = false
 	self.currentTileBrush    = false
 	self.randomEnabled       = false
+	self.tileBrush           = false
 end
 
 function TileMapEditor:onLoad()
@@ -294,11 +356,26 @@ function TileMapEditor:removeTileMapLayer()
 end
 
 function TileMapEditor:moveTileMapLayerUp( layer )
-	--TODO
+	local map = layer.parentMap
+	local order = layer.order
+	if order > 1 then
+		local upper = map.layers[ order - 1 ]
+		if not upper then return end
+		upper:setOrder( order )
+		layer:setOrder( order - 1 )
+	end
 end
 
 function TileMapEditor:moveTileMapLayerDown( layer )
-	--TODO
+	local map = layer.parentMap
+	local order = layer.order
+	local count = #map.layers
+	if order < count then
+		local lower = map.layers[ order + 1 ]
+		if not lower then return end
+		lower:setOrder( order )
+		layer:setOrder( order + 1 )
+	end
 end
 
 function TileMapEditor:selectTileBrush( id, additive )
@@ -358,6 +435,13 @@ function TileMapToolPen:onMouseDown( btn, x, y )
 	if btn == 'left' then 
 		self.pressed = true
 		self:_doAction( x, y )
+	elseif btn == 'right' then
+		local tx, ty = editor:wndToCoord( x, y )
+		local layer  = editor:getTargetTileMapLayer()
+		if layer:isValidCoord( tx, ty ) then
+			local id = layer:getTile( tx, ty )
+			print( tx,ty, id )
+		end
 	end
 end
 
@@ -443,6 +527,9 @@ function TileMapToolTerrain:onAction( layer, x, y )
 	--flood fill
 	if not brush then return end
 	brush:paint( layer, x, y )
+	brush:paint( layer, x-0, y-1 )
+	brush:paint( layer, x-1, y-0 )
+	brush:paint( layer, x-1, y-1 )
 end
 
 
