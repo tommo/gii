@@ -527,9 +527,9 @@ function TileMapToolTerrain:onAction( layer, x, y )
 	--flood fill
 	if not brush then return end
 	brush:paint( layer, x, y )
-	brush:paint( layer, x-0, y-1 )
-	brush:paint( layer, x-1, y-0 )
-	brush:paint( layer, x-1, y-1 )
+	-- brush:paint( layer, x-0, y-1 )
+	-- brush:paint( layer, x-1, y-0 )
+	-- brush:paint( layer, x-1, y-1 )
 end
 
 
