@@ -1,7 +1,7 @@
 module 'mock_edit'
 
-addColor( 'physics_gizmo', hexcolor( '#ff3d32', 0.5) )
-addColor( 'physics_gizmo_active', hexcolor( '#ff9000', 0.5) )
+addColor( 'physics_gizmo', hexcolor( '#ff3d32', 0.7) )
+addColor( 'physics_gizmo_active', hexcolor( '#ff9000', 0.7) )
 
 --------------------------------------------------------------------
 CLASS: PhysicsShapeGizmo( Gizmo )
