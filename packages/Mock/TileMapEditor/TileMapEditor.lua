@@ -19,8 +19,10 @@ end
 
 function NamedTilesetLayout:setTarget( tileset )
 	self.target = tileset
+	
 	local count = tileset:getTileCount()
-	local deck = tileset:getMoaiDeck()
+	local deck  = tileset:getMoaiDeck()
+
 	local bx0 = 1000000
 	local by0 = 1000000
 	local bx1 = -1000000
@@ -523,13 +525,38 @@ mock_edit.registerCanvasTool( 'tilemap.fill', TileMapToolFill )
 CLASS: TileMapToolTerrain ( TileMapToolPen )
 
 function TileMapToolTerrain:onAction( layer, x, y )
+	self:paint( layer, x, y )
+end
+
+function TileMapToolTerrain:paint( layer, x, y )
 	local brush = editor:getTerrainBrush()
-	--flood fill
+	local brushSize = 1
+	local terrain1 = brush:getTerrainId()
+	local tileset = editor:getTargetTileMapLayer():getTileset()
+
 	if not brush then return end
-	brush:paint( layer, x, y )
-	-- brush:paint( layer, x-0, y-1 )
-	-- brush:paint( layer, x-1, y-0 )
-	-- brush:paint( layer, x-1, y-1 )
+	local x0, x1 =  x + math.ceil(-brushSize/2), x + math.floor(brushSize/2)
+	local y0, y1 =  y + math.ceil(-brushSize/2), y + math.floor(brushSize/2)
+
+	for yy = y0 - 1, y1 + 1 do
+	for xx = x0 - 1, x1 + 1 do
+		-- if xx < x0 or xx > x1 or yy < y0 or yy > y1 then
+			local terrain0 = layer:getTerrain( xx, yy )
+			if terrain0 and terrain0 ~= terrain1 then
+				local brush0 = tileset:getTerrainBrush( terrain0 )
+				if brush0 then
+					brush0:remove( layer, xx, yy )
+				end
+			end
+		-- end
+	end
+	end
+
+	for yy = y0, y1 do
+	for xx = x0, x1 do
+		brush:paint( layer, xx, yy  )
+	end
+	end
 end
 
 
