@@ -30,8 +30,7 @@ require 'mock_edit.EditorCanvas.TransformToolHelper'
 
 --------------------------------------------------------------------
 --GIZMOS
-require 'mock_edit.EditorCanvas.BoundGizmo'
-require 'mock_edit.EditorCanvas.IconGizmo'
+require 'mock_edit.EditorCanvas.gizmos'
 
 --------------------------------------------------------------------
 require 'mock_edit.EditorCanvas.SceneView'

@@ -71,7 +71,8 @@ function SceneView:onDestroy()
 	end
 end
 
-
+function SceneView:pushObjectAttributeHistory()
+end
 
 --------------------------------------------------------------------
 CLASS: SceneViewFactory ()

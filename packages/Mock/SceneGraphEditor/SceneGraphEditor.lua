@@ -499,6 +499,7 @@ CLASS: CmdCloneEntity ( mock_edit.EditorCommand )
 function CmdCloneEntity:init( option )
 	local targets = getTopLevelEntitySelection()
 	self.targets = targets
+	self.created = false
 	if not next( targets ) then return false end
 end
 
@@ -555,6 +556,7 @@ function CmdCloneEntity:redo()
 		table.insert( createdList, created )
 	end
 	gii.changeSelection( 'scene', unpack( createdList ) )
+	self.createdList = createdList
 end
 
 function CmdCloneEntity:undo()

@@ -88,12 +88,11 @@ class QtSupport( QtEditorModule ):
 			'E&xit',
 			]
 		)	
-		# self.menu.addChild('&Edit').addChild( [
-		# 	'Copy|Ctrl+C',
-		# 	'Paste|Ctrl+V',
-		# 	'Cut|Ctrl+X',
-		# 	]
-		# )
+		self.menu.addChild('&Edit').addChild( [
+			'Undo|Ctrl+Z',
+			'Redo|Ctrl+Shift+Z',
+			]
+		)
 		self.menu.addChild('&Find')
 
 	def getSharedMenubar( self ):
@@ -172,6 +171,16 @@ class QtSupport( QtEditorModule ):
 			print 'paste'
 		elif name == 'cut':
 			print 'cut'
+
+		elif name == 'undo':
+			stack = EditorCommandRegistry.get().getCommandStack( 'scene_editor' )
+			stack.undoCommand()
+
+		elif name == 'redo':
+			stack = EditorCommandRegistry.get().getCommandStack( 'scene_editor' )
+			stack.redoCommand()
+			
+
 
 QtSupport().register()
 

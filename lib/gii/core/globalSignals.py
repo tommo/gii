@@ -13,6 +13,10 @@ register('app.remote')
 
 register('module.loaded')
 
+register( 'command.new'  )
+register( 'command.undo' )
+register( 'command.redo' )
+register( 'command.clear' )
 
 register('game.pause')
 register('game.resume')

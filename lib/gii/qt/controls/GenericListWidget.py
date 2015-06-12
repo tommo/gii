@@ -88,6 +88,20 @@ class GenericListWidget( QtGui.QListWidget ):
 		self.updateItem( node )
 		return item
 
+	def _removeItem( self, item ):
+		node = item.node
+		item.node = None
+		del self.nodeDict[ node ]
+		row = self.row( item )
+		self.takeItem( row )
+		return True
+
+	def removeNode( self, node ):
+		item = self.nodeDict.get( node, None )
+		if not item: return
+		self._removeItem( item )
+
+
 	def getItemFlags( self, node ):
 		return {}
 

@@ -6,3 +6,4 @@ from SceneTool import SceneTool, SceneToolCategory
 
 import Introspector
 import GamePreview
+import CommandHistoryView

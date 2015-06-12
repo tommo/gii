@@ -1,4 +1,5 @@
 import logging
+import signals
 
 class EditorCommandMeta( type ):
 	def __init__( cls, name, bases, dict ):
@@ -29,6 +30,8 @@ class EditorCommand( object ):
 	def needHistrory( self ):
 		return True
 
+	def __repr__( self ):
+		return self.fullname
 
 ##----------------------------------------------------------------##
 class EditorCommandStack( object ):
@@ -72,7 +75,11 @@ class EditorCommandStack( object ):
 			return False
 
 		if not redo:
+			signals.emit( 'command.new', cmd, self )
 			self.redoStack = []
+		else:
+			signals.emit( 'command.redo', cmd, self )
+
 
 		return True
 
@@ -84,9 +91,10 @@ class EditorCommandStack( object ):
 				return False
 			self.undoStack.pop()
 			self.redoStack.append( cmd )
+			signals.emit( 'command.undo', cmd, self )
 			if cmd.merged:
 				return self.undoCommand()
-			else:
+			else:				
 				return True
 		return False
 
@@ -138,5 +146,6 @@ class EditorCommandRegistry(object):
 			logging.warn( 'command stack not found %s ' % stackName )
 			return None
 		cmd = cmdClass()
+		cmd._fullname = fullname
 		if cmd.init( **kwargs ) ==  False: return None
 		return stack.pushCommand( cmd )

@@ -487,7 +487,7 @@ class TileModule( DeckPart ):
 		localGuideTopFace = self.h - ( self.alt - oy )
 		oy = oy + oz
 		oz = - oz
-		print self.fullName, w, h, '|', ox, oy, oz, '|', localGuideTopFace
+		# print self.fullName, w, h, '|', ox, oy, oz, '|', localGuideTopFace
 		#build mesh
 		#format: x,y,z/ u,v /color
 		if localGuideTopFace < h:

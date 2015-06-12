@@ -6,6 +6,7 @@ CLASS: EditorCommand ()
 function EditorCommand.register( clas, name )
 	_stat( 'register Lua Editor Command', name )
 	gii.registerLuaEditorCommand( name, clas )
+	clas._commandName = name
 end
 
 function EditorCommand:init( option )
@@ -23,6 +24,10 @@ end
 
 function EditorCommand:canUndo()
 	return true
+end
+
+function EditorCommand:toString()
+	return self._commandName
 end
 
 

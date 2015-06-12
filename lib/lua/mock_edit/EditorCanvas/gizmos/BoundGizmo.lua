@@ -34,8 +34,12 @@ local function methodBuildBoundGizmo( self )
 	end
 end
 
-mock.DeckComponent.onBuildSelectedGizmo = methodBuildBoundGizmo
-mock.TexturePlane.onBuildSelectedGizmo  = methodBuildBoundGizmo
-mock.TextLabel.onBuildSelectedGizmo     = methodBuildBoundGizmo
-mock.TextLabel.onBuildSelectedGizmo     = methodBuildBoundGizmo
-mock.MSprite.onBuildSelectedGizmo       = methodBuildBoundGizmo
+local function installBoundGizmo( clas )
+	clas.onBuildSelectedGizmo = methodBuildBoundGizmo
+end
+
+
+installBoundGizmo( mock.DeckComponent )
+installBoundGizmo( mock.TexturePlane  )
+installBoundGizmo( mock.TextLabel     )
+installBoundGizmo( mock.MSprite       )
