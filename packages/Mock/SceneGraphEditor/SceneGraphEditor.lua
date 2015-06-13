@@ -1011,9 +1011,10 @@ function CmdFreezePivot:redo( )
 	for i, e in ipairs( self.entities ) do
 		local px, py, pz = e:getPiv()
 		e:setPiv( 0,0,0 )
-		for child in pairs( e:getChildren() ) do
-			child:addLoc( -px, -py, -pz )
-		end
+		e:addLoc( -px, -py, -pz )
+		-- for child in pairs( e:getChildren() ) do
+		-- 	child:addLoc( -px, -py, -pz )
+		-- end
 		gii.emitPythonSignal( 'entity.modified', e, '' )
 	end
 end

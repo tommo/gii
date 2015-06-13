@@ -30,6 +30,7 @@ class TopEditorModule( QtEditorModule ):
 		window.setBaseSize( 800, 600 )
 		window.resize( 800, 600 )
 		window.setWindowTitle( 'GII - ' + self.getWindowTitle() )
+		window.defaultToolBarIconSize = 24
 		self.statusBar = QtGui.QStatusBar()
 		window.setStatusBar( self.statusBar )
 		self.onSetupMainWindow( window )

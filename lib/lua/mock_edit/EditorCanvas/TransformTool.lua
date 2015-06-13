@@ -17,7 +17,6 @@ function TranslationHandle:onLoad()
 	self:attach( mock.DrawScript() )	
 end
 
-
 function TranslationHandle:onDraw()	
 	applyColor 'handle-all'
 	MOAIDraw.fillRect( 0,0, handleArrowSize, handleArrowSize )
@@ -371,7 +370,6 @@ function TransformTool:updateSelection()
 		target:setTargets( topEntities )
 		self.target = target
 		self.handle = self:createHandle( target )
-		self.handle.tool = self
 		self:addCanvasItem( self.handle )
 	end
 	self:updateCanvas()

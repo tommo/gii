@@ -51,6 +51,10 @@ require 'mock_edit.AssetHelper.FMODReloader'
 --COMMANDS
 --------------------------------------------------------------------
 require 'mock_edit.commands'
+require 'mock_edit.gizmos'
+require 'mock_edit.tools'
+
+require 'mock_edit.defaults'
 
 
 mock._allowAssetCacheWeakMode( false )

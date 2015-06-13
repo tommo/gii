@@ -88,8 +88,9 @@ class ToolBarNode(object):
 		assert isinstance( qtToolbar, QToolBar )
 		self.qtToolbar = qtToolbar
 		self.items = {}
-		iconSize = option.get( 'icon_size', 16 )
-		qtToolbar.setIconSize( QtCore.QSize( iconSize, iconSize ) )
+		if not hasattr( qtToolbar, '_icon_size' ):
+			iconSize = option.get( 'icon_size', 16 )
+			qtToolbar.setIconSize( QtCore.QSize( iconSize, iconSize ) )
 
 	def addTool( self, name, **option ):
 		if name == '----':

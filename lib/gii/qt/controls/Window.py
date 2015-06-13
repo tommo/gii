@@ -39,6 +39,7 @@ class MainWindow(QtGui.QMainWindow):
 	def __init__(self, parent):
 		super(MainWindow, self).__init__(parent)		
 		# self.setDocumentMode(True)
+		self.defaultToolBarIconSize = 16
 		self.setUnifiedTitleAndToolBarOnMac( False )
 		self.setDockOptions(
 			QtGui.QMainWindow.AllowNestedDocks | QtGui.QMainWindow.AllowTabbedDocks  )
@@ -200,8 +201,10 @@ class MainWindow(QtGui.QMainWindow):
 		toolbar.setFloatable( options.get( 'floatable', False ) )
 		toolbar.setMovable(   options.get( 'movable',   True ) )		
 		toolbar.setObjectName( 'toolbar-%s' % name )
-		# size = option.get( 'size', (24, 24) )
+		iconSize = options.get('icon_size', self.defaultToolBarIconSize )
 		self.addToolBar( toolbar )
+		toolbar.setIconSize( QtCore.QSize( iconSize, iconSize ) )
+		toolbar._icon_size = iconSize
 		return toolbar
 		
 	def onDocumentTabChanged( self, idx ):

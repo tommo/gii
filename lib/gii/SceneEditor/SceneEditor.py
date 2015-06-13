@@ -43,7 +43,6 @@ class SceneEditor( TopEditorModule ):
 	
 	def onSetupMainWindow( self, window ):
 		self.mainToolBar = self.addToolBar( 'scene', self.mainWindow.requestToolBar( 'main' ) )		
-		self.mainToolBar.qtToolbar.setIconSize( QtCore.QSize( 24, 24 ) )
 		window.setMenuWidget( self.getQtSupport().getSharedMenubar() )
 		#menu
 		self.addMenu( 'main/scene', dict( label = 'Scene' ) )

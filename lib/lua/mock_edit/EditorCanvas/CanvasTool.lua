@@ -109,11 +109,11 @@ end
 function CanvasTool:onDeactivate()
 end
 
-
 function CanvasTool:addCanvasItem( item )
 	local view = self:getCurrentView()
 	view:addCanvasItem( item )
 	self.items[ item ] = true
+	item.tool = self
 	return item
 end
 

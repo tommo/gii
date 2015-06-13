@@ -3,6 +3,10 @@ module 'mock_edit'
 CLASS: Gizmo ( EditorEntity )
 	:MODEL{}
 
+function Gizmo:__init()
+	self.items = {}
+end
+
 function Gizmo:enableConstantSize()
 	self.parent:addConstantSizeGizmo( self )
 end
@@ -20,6 +24,25 @@ end
 
 function Gizmo:onDestroy()
 	self.parent.constantSizeGizmos[ self ] = nil
+end
+
+function Gizmo:addCanvasItem( item )
+	local view = self:getCurrentView()
+	view:addCanvasItem( item )
+	self.items[ item ] = true
+	return item
+end
+
+function Gizmo:removeCanvasItem( item )
+	if item then
+		item:destroyWithChildrenNow()
+	end
+end
+
+function Gizmo:onDestroy()
+	for item in pairs( self.items ) do
+		item:destroyWithChildrenNow()
+	end
 end
 
 --------------------------------------------------------------------

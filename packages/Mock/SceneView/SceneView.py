@@ -17,7 +17,6 @@ from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
 
 
-
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
 	import os.path
@@ -73,7 +72,6 @@ class SceneView( SceneEditorModule ):
 		self.mainToolBar = self.addToolBar( 'scene_view_tools', 
 			self.getMainWindow().requestToolBar( 'view_tools' )
 			)
-		self.mainToolBar.qtToolbar.setIconSize( QtCore.QSize( 24, 24 ) )
 
 		self.addTool( 'scene_view_tools/tool_selection',
 			label = 'Selection',
@@ -197,3 +195,8 @@ class SceneView( SceneEditorModule ):
 
 	def onSceneToolChanged( self, tool ):
 		pass
+
+	def getCurrentSceneView( self ):
+		#TODO
+		return self
+

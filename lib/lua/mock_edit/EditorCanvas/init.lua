@@ -19,6 +19,9 @@ require 'mock_edit.EditorCanvas.Gizmo'
 require 'mock_edit.EditorCanvas.CanvasItem'
 require 'mock_edit.EditorCanvas.CanvasTool'
 
+require 'mock_edit.EditorCanvas.CanvasItemVert'
+
+
 --------------------------------------------------------------------
 --TOOLS
 require 'mock_edit.EditorCanvas.CanvasPickPlane'
@@ -30,7 +33,6 @@ require 'mock_edit.EditorCanvas.TransformToolHelper'
 
 --------------------------------------------------------------------
 --GIZMOS
-require 'mock_edit.EditorCanvas.gizmos'
 
 --------------------------------------------------------------------
 require 'mock_edit.EditorCanvas.SceneView'

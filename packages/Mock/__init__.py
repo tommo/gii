@@ -44,3 +44,5 @@ import LuaProfiler
 # import ProtoToolBox
 
 import TileMapEditor
+
+import PhysicsTools
