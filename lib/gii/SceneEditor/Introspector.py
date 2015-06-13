@@ -217,7 +217,7 @@ class SceneIntrospector( SceneEditorModule ):
 
 	def refresh( self, target = None, context = None ):
 		for ins in self.instances:
-			if not target or ins.target == target:
+			if not target or ins.hasTarget( target ):
 				ins.scheduleUpdate()
 
 ##----------------------------------------------------------------##
@@ -296,7 +296,11 @@ class IntrospectorInstance(object):
 
 		self.addObjectEditor( self.target )
 
-	
+	def hasTarget( self, target ):
+		for editor in self.editors:
+			if editor.getTarget() == target: return True
+		return False
+
 	def addObjectEditor( self, target, **option ):
 		self.scroll.hide()
 		parent = app.getModule('introspector')
@@ -378,11 +382,10 @@ class IntrospectorInstance(object):
 		self.header.hide()
 		self.editors = []
 
-	def refresh(self):
-		if not self.target:
-			return
+	def refresh(self, target = None):
 		for editor in self.editors:
-			editor.refresh()
+			if not target or editor.getTarget() == target:
+				editor.refresh()
 
 	def onUpdateTimer( self ):
 		if self.updatePending == True:

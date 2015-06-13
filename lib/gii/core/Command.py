@@ -27,7 +27,7 @@ class EditorCommand( object ):
 	def canUndo( self ):
 		return True
 
-	def needHistrory( self ):
+	def hasHistory( self ):
 		return True
 
 	def __repr__( self ):
@@ -51,7 +51,7 @@ class EditorCommandStack( object ):
 		return len( self.redoStack ) > 0
 
 	def pushCommand( self, cmd, redo = False ):
-		if not cmd.needHistrory():
+		if not cmd.hasHistory():
 			return cmd.redo()
 
 		if not self.canUndo():

@@ -4,7 +4,12 @@ CLASS: CanvasItemVert ( CanvasItem )
 	:MODEL{}
 
 function CanvasItemVert:__init()
-	self.size = 5
+	self.size  = 5
+	self.shape = 'box'
+end
+
+function CanvasItemVert:setShape( shape )
+	self.shape = shape
 end
 
 function CanvasItemVert:onLoad()
@@ -19,12 +24,18 @@ end
 
 function CanvasItemVert:onDraw()
 	local size = self.size
-	applyColor 'cp'
-	MOAIDraw.fillRect( -size/2, -size/2, size, size )
-	-- MOAIDraw.fillCircle( 0, 0, size )
-	applyColor 'cp-border'
-	MOAIDraw.drawRect( -size/2, -size/2, size, size )
-	-- MOAIDraw.drawCircle( 0, 0, size )
+	local shape = self.shape
+	if shape == 'box' then
+		applyColor 'cp'
+		MOAIDraw.fillRect( -size/2, -size/2, size, size )
+		applyColor 'cp-border'
+		MOAIDraw.drawRect( -size/2, -size/2, size, size )
+	elseif shape == 'circle' then
+		applyColor 'cp'
+		MOAIDraw.fillCircle( 0, 0, size )
+		applyColor 'cp-border'
+		MOAIDraw.drawCircle( 0, 0, size )
+	end
 end
 
 function CanvasItemVert:onMouseDown( btn, x, y )
@@ -32,6 +43,7 @@ function CanvasItemVert:onMouseDown( btn, x, y )
 		x, y = self:wndToWorld( x, y )
 		local x0, y0 = self:getLoc()
 		self.dragFrom = { x, y, x0, y0 }
+		self:onPress()
 	end
 end
 
@@ -42,7 +54,8 @@ function CanvasItemVert:onDrag( btn, x, y )
 		local dx, dy = x - dragFrom[ 1 ], y - dragFrom[ 2 ]
 		local x1, y1 = dragFrom[3] + dx, dragFrom[ 4 ] + dy
 		self:setLoc( x1, y1 )
-		self.tool:updateCanvas()	
+		self.tool:updateCanvas()
+		self:onMove()
 	end
 end
 
@@ -50,7 +63,8 @@ function CanvasItemVert:onMouseUp( btn, x, y )
 	print( 'mouse up')
 end
 
+function CanvasItemVert:onPress()
+end
 
-
-
-
+function CanvasItemVert:onMove()
+end

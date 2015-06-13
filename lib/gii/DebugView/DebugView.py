@@ -39,7 +39,7 @@ class DebugView( TopEditorModule ):
 		self.mainToolBar = self.addToolBar( 'debug', self.mainWindow.requestToolBar( 'main' ) )		
 		window.setMenuWidget( self.getQtSupport().getSharedMenubar() )
 		#MainTool 
-		self.addTool( 'scene/run',    label = 'Run' )
+		# self.addTool( 'scene/run',    label = 'Run' )
 		# self.addTool( 'scene/deploy', label = 'Deploy' )
 		#menu
 		# self.addMenu( 'main/debug', dict( label = 'Debug' ) )

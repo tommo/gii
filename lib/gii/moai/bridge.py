@@ -395,6 +395,10 @@ def registerLuaEditorCommand( fullname, cmdCreator ):
 			cmd = self.luaCmd
 			return cmd.canUndo( cmd )
 
+		def hasHistory( self ):
+			cmd = self.luaCmd
+			return cmd.hasHistory( cmd )
+
 		def __repr__( self ):
 			cmd = self.luaCmd
 			return cmd.toString( cmd )

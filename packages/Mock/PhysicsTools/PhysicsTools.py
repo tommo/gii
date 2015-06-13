@@ -35,5 +35,4 @@ class PhysicTools( SceneEditorModule ):
 		if name == 'shape_editor':
 			sceneView = app.getModule( 'scene_view' ).getCurrentSceneView()
 			sceneView.changeEditTool( 'physics_shape_editor')
-
-				
+		

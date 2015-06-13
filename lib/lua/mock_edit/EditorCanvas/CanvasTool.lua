@@ -123,6 +123,13 @@ function CanvasTool:removeCanvasItem( item )
 	end
 end
 
+function CanvasTool:clearCanvasItems()
+	for item in pairs( self.items ) do
+		item:destroyWithChildrenNow()
+	end
+	self.items = {}
+end
+
 function CanvasTool:onDestroy()
 	for item in pairs( self.items ) do
 		item:destroyWithChildrenNow()
