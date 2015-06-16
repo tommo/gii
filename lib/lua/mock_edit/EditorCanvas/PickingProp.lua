@@ -59,26 +59,36 @@ function PickingManager:onEntityEvent( ev, entity, com )
 	elseif ev == 'remove' then
 		self:removeForEntity( entity )
 	elseif ev == 'attach' then
-		self:buildForObject( com, entity )
+		if self:isEntityPickable( entity ) then
+			self:buildForObject( com, entity )
+		end
 	elseif ev == 'detach' then
 		self:removeForObject( com, entity )
 	end
 
 end
 
+function PickingManager:isEntityPickable( ent )
+	if not ent:isVisible() then return false end
+	if ent.FLAG_EDITOR_OBJECT then
+		local isPickable = ent.isPickable
+		if not isPickable then return false end
+		if not isPickable( ent ) then return false end
+	end
+	return true
+end
+
+
 function PickingManager:buildForEntity( ent )
-	if ent.components then
-		if not ( ent.FLAG_INTERNAL or ent.FLAG_EDITOR_OBJECT ) then
-			self:buildForObject( ent, ent )
-			for com in pairs( ent.components ) do
-				if not ( com.FLAG_EDITOR_OBJECT ) then
-					self:buildForObject( com, ent )
-				end
-			end
-			for child in pairs( ent.children ) do
-				self:buildForEntity( child )
-			end
+	if not self:isEntityPickable( ent ) then return end
+	self:buildForObject( ent, ent )
+	for com in pairs( ent.components ) do
+		if not ( com.FLAG_EDITOR_OBJECT ) then
+			self:buildForObject( com, ent )
 		end
+	end
+	for child in pairs( ent.children ) do
+		self:buildForEntity( child )
 	end
 end
 
@@ -128,7 +138,7 @@ function PickingManager:getVisibleLayers()
 			table.insert( layers, layer )
 		end
 	end
-	return layers
+	return table.reversed( layers )
 end
 
 function PickingManager:pickPoint( x, y, pad )
@@ -140,13 +150,16 @@ function PickingManager:pickPoint( x, y, pad )
 		local result = { partition:propListForRay( x, y, -1000, 0, 0, 1, defaultSortMode ) }
 		for i, prop in ipairs( result ) do
 			local ent = pickingPropToEntity[ prop ]
+			if ent and ent.getPickingTarget then
+				ent = ent:getPickingTarget()
+			end
 			if ent and ent:isVisible() then --TODO: sorting & sub picking
 				-- print( ent:getName() )
 				return { ent }
 			end
 		end
 	end
-	
+
 	return {}
 end
 
@@ -161,7 +174,12 @@ function PickingManager:pickRect( x0, y0, x1, y1, pad )
 		for i, prop in ipairs( result ) do
 			local ent = pickingPropToEntity[ prop ]
 			if ent then --TODO: sub picking
-				picked[ ent ] = true
+				if ent.getPickingTarget then
+					ent = ent:getPickingTarget()
+				end
+				if ent:isVisible() then
+					picked[ ent ] = true
+				end
 				-- print( ent:getName() )
 			end
 		end

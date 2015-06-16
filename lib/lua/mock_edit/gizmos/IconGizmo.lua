@@ -7,10 +7,34 @@ function IconGizmo:__init()
 	self.iconProp = MOAIProp.new()
 	self.iconDeck = MOAIGfxQuad2D.new()
 	self.iconProp:setDeck( self.iconDeck )	
+	self.pickingTarget = false
+end
+
+function IconGizmo:inheritVisible( prop )
+	inheritVisible( self.iconProp, prop )
 end
 
 function IconGizmo:setTransform( transform )
 	inheritLoc( self:getProp(), transform )
+end
+
+function IconGizmo:setPickingTarget( target )
+	self.pickingTarget = target
+end
+
+local ATTR_LOCAL_VISIBLE = MOAIProp. ATTR_LOCAL_VISIBLE
+local ATTR_VISIBLE = MOAIProp. ATTR_VISIBLE
+
+function IconGizmo:setParentEntity( ent, propRole )
+	self:setPickingTarget( ent )
+	local prop = ent:getProp( propRole or 'render' )
+	inheritVisible( self:getProp(), prop )
+	inheritLoc( self:getProp(), prop )
+end
+
+
+function IconGizmo:getPickingTarget()
+	return self.pickingTarget
 end
 
 function IconGizmo:setIcon( filename, scale )
@@ -44,6 +68,9 @@ function IconGizmo:onDestroy()
 end
 
 function IconGizmo:isPickable()
-	return true
+	return self.pickingTarget and true or false
 end
 
+function IconGizmo:getPickingProp()
+	return self.iconProp
+end

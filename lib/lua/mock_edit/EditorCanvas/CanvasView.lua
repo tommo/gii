@@ -119,20 +119,6 @@ local function isEntityPickable( ent )
 	return true
 end
 
-local function _pick( ent, x, y ) --depth first search
-	if not isEntityPickable( ent ) then return nil end
-	-- local children = ent.children
-	-- if children then
-	-- 	for child in pairs( children ) do
-	-- 		local pickedEnt = _pick( child, x, y )
-	-- 		if pickedEnt then return pickedEnt end
-	-- 	end
-	-- end
-	local picked = ent:pick( x, y )
-	if picked then return picked end
-	return nil
-end
-
 function CanvasView:pick( x, y, pad )
 	return self.pickingManager:pickPoint( x, y, pad )
 end
@@ -141,25 +127,6 @@ function CanvasView:pickRect( x0, y0, x1, y1, pad )
 	return self.pickingManager:pickRect( x0, y0, x1, y1, pad )
 end
 
-
-function CanvasView:__pick( x, y )
-	--TODO: use layer order?
-	local candidates = {}
-	for ent in pairs( self:getScene().entities ) do
-		-- if isEntityPickable( ent ) and ent:inside( x, y ) then
-		-- 	table.insert( candidates, ent )
-		-- end
-		if not ent.parent then
-			local p = _pick( ent, x, y )
-			if p then
-				table.insert( candidates, p )
-			end
-		end
-	end
-
-	--TODO:sort and find
-	return candidates[1]
-end
 
 function CanvasView:pickAndSelect( x, y, pad )
 	local picked = self:pick( x, y, pad )

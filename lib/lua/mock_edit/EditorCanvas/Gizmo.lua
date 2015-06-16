@@ -96,7 +96,7 @@ function GizmoManager:updateConstantSize()
 end
 
 function GizmoManager:_attachChildEntity( child )
-	linkVisible( self:getProp(), child:getProp() )
+	linkLocalVisible( self:getProp(), child:getProp() )
 end
 
 function GizmoManager:onSelectionChanged( selection )
@@ -236,3 +236,4 @@ end
 function GizmoManager:pickRect( x,y, x1, y1  )
 	--TODO
 end
+
