@@ -431,45 +431,53 @@ CLASS: TileMapToolPen ( mock_edit.CanvasTool )
 
 function TileMapToolPen:__init()
 	self.pressed = false
+	self.action = false
 end
 
 function TileMapToolPen:onMouseDown( btn, x, y )
+	if self.pressed then return end
+	self.pressed = btn
 	if btn == 'left' then 
-		self.pressed = true
+		self.action = 'normal'
 		self:_doAction( x, y )
 	elseif btn == 'right' then
+		self.action = 'optional'
+		self:_doAction( x, y )
+	end
+end
+
+function TileMapToolPen:onAction( action, layer, x, y )
+	if action == 'normal' then
+		local brush = editor:getTileBrush()
+		if brush then
+			layer:setTile( x,y, brush )
+		end
+	elseif action == 'optional' then
 		local tx, ty = editor:wndToCoord( x, y )
 		local layer  = editor:getTargetTileMapLayer()
 		if layer:isValidCoord( tx, ty ) then
 			local id = layer:getTile( tx, ty )
-			print( tx,ty, id )
+			-- print( tx,ty, id )
 		end
 	end
 end
 
-function TileMapToolPen:onAction( layer, x, y )
-	local brush = editor:getTileBrush()
-	if brush then
-		layer:setTile( x,y, brush )
-	end
-end
-
 function TileMapToolPen:onMouseUp( btn, x, y )
-	self.pressed = false
+	if self.pressed ~= btn then return end
+	self.pressed    = false
 	self.targetRoom = false
 end
 
 function TileMapToolPen:onMouseMove( x, y )
-	if self.pressed then
-		self:_doAction( x, y )
-	end
+	if not self.pressed then return end
+	self:_doAction( x, y )
 end
 
 function TileMapToolPen:_doAction( x, y )
 	local tx, ty = editor:wndToCoord( x, y )
 	local layer  = editor:getTargetTileMapLayer()
 	if layer:isValidCoord( tx, ty ) then
-		self:onAction( layer, tx, ty )
+		self:onAction( self.action, layer, tx, ty )
 		mock_edit.getCurrentSceneView():updateCanvas()
 	end
 end
@@ -480,8 +488,11 @@ mock_edit.registerCanvasTool( 'tilemap.pen', TileMapToolPen )
 --------------------------------------------------------------------
 CLASS: TileMapToolEraser ( TileMapToolPen )
 
-function TileMapToolEraser:onAction( layer, x, y )
-	layer:setTile( x, y, false )
+function TileMapToolEraser:onAction( action, layer, x, y )
+	if action == 'normal' then
+		layer:setTile( x, y, false )
+	else
+	end
 end
 
 mock_edit.registerCanvasTool( 'tilemap.eraser', TileMapToolEraser )
@@ -504,17 +515,20 @@ local function _floodFill( grid, x, y, w, h, id0, id1 )
 	_floodFill( grid, x, y-1, w, h, id0, id1 )
 end
 
-function TileMapToolFill:onAction( layer, x, y )
-	local brush = editor:getTileBrush()
-	--flood fill
-	if not brush then return end
-	local layer = editor:getTargetTileMapLayer()
-	local grid = layer:getMoaiGrid()
-	local brushId = layer:tileIdToGridId( brush )
-	local id0 = grid:getTile( x, y )
-	local w, h = grid:getSize()
-	if id0 == brushId then return end
-	_floodFill( grid, x,y, w,h, id0, brushId )
+function TileMapToolFill:onAction( action, layer, x, y )
+	if action == 'normal' then
+		local brush = editor:getTileBrush()
+		--flood fill
+		if not brush then return end
+		local layer = editor:getTargetTileMapLayer()
+		local grid = layer:getMoaiGrid()
+		local brushId = layer:tileIdToGridId( brush )
+		local id0 = grid:getTile( x, y )
+		local w, h = grid:getSize()
+		if id0 == brushId then return end
+		_floodFill( grid, x,y, w,h, id0, brushId )
+	else
+	end
 end
 
 
@@ -524,8 +538,12 @@ mock_edit.registerCanvasTool( 'tilemap.fill', TileMapToolFill )
 --------------------------------------------------------------------
 CLASS: TileMapToolTerrain ( TileMapToolPen )
 
-function TileMapToolTerrain:onAction( layer, x, y )
-	self:paint( layer, x, y )
+function TileMapToolTerrain:onAction( action, layer, x, y )
+	if action == 'normal' then
+		self:paint( layer, x, y )
+	else
+		self:remove( layer, x, y )
+	end
 end
 
 function TileMapToolTerrain:paint( layer, x, y )
@@ -554,11 +572,27 @@ function TileMapToolTerrain:paint( layer, x, y )
 
 	for yy = y0, y1 do
 	for xx = x0, x1 do
-		brush:paint( layer, xx, yy  )
+		brush:paint( layer, xx, yy )
 	end
 	end
 end
 
+function TileMapToolTerrain:remove( layer, x, y )
+	local brushSize = 1
+	local tileset = editor:getTargetTileMapLayer():getTileset()
+
+	local x0, x1 =  x + math.ceil(-brushSize/2), x + math.floor(brushSize/2)
+	local y0, y1 =  y + math.ceil(-brushSize/2), y + math.floor(brushSize/2)
+	for yy = y0, y1 do
+	for xx = x0, x1 do
+		local terrain0 = layer:getTerrain( xx, yy )
+		local brush0 = tileset:getTerrainBrush( terrain0 )
+		if brush0 then
+			brush0:remove( layer, xx, yy )
+		end
+	end
+	end
+end
 
 mock_edit.registerCanvasTool( 'tilemap.terrain', TileMapToolTerrain )
 

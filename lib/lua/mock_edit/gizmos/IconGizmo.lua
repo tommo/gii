@@ -42,3 +42,8 @@ function IconGizmo:onDestroy()
 	Gizmo.onDestroy( self )
 	self:_detachProp( self.iconProp )
 end
+
+function IconGizmo:isPickable()
+	return true
+end
+

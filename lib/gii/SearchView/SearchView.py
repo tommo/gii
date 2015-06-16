@@ -77,8 +77,8 @@ class SearchViewWidget( QtGui.QWidget ):
 
 		self.treeResult.browser = self
 		self.entries = None
-		self.setMinimumSize( 400, 300  )
-		self.setMaximumSize( 600, 600  )
+		self.setMinimumSize( 800, 300  )
+		self.setMaximumSize( 800, 600  )
 		self.multipleSelection = False
 
 		self.setInfo( None )
@@ -262,7 +262,7 @@ class SearchViewTree(GenericTreeWidget):
 		self.testingSelection = False
 
 	def getHeaderInfo( self ):
-		return [('Sel', 50), ('Name', 300), ('Type', 80)]
+		return [('Sel', 50), ('Name', 650), ('Type', 80)]
 
 	def getRootNode( self ):
 		return self.browser

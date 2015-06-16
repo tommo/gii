@@ -59,11 +59,19 @@ function CanvasPickPlane:onMouseUp( btn )
 		self:setVisible( false )
 		self:getView():updateCanvas()
 
-		local x, y = self.x0, self.y0
-		local picked = self:getView():pick( x, y )
-		if self.onPicked then
-			return self.onPicked( picked )
-		end		
+		local x0, y0, x1, y1 = self.x0, self.y0, self.x1, self.y1
+		local dx, dy = x1-x0, y1-y0
+		if (dx*dx+dy*dy) < 5 then --Point pick
+			local picked = self:getView():pick( x1, y1 )
+			if self.onPicked then
+				return self.onPicked( picked )
+			end
+		else
+			local picked = self:getView():pickRect( x0, y0, x1, y1 )
+			if self.onPicked then
+				return self.onPicked( picked )
+			end
+		end
 		
 	end
 end

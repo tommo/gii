@@ -12,8 +12,8 @@ from gii.qt.dialogs   import requestString, alertMessage, requestColor
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.qt.controls.GenericListWidget import GenericListWidget
 
-from gii.SceneEditor  import SceneEditorModule
-from gii.SearchView import requestSearchView
+from gii.SceneEditor import SceneEditorModule
+from gii.SearchView  import requestSearchView
 
 from gii.moai.MOAIEditCanvas import  MOAIEditCanvas
 
@@ -21,6 +21,7 @@ from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
 
 from mock import _MOCK, isMockInstance
+from mock import SceneViewTool
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):

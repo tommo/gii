@@ -18,6 +18,8 @@ class ToolBarItem(object):
 		self.cmdArgs  = option.get( 'command_args', None )
 		iconName      = option.get( 'icon', None )
 		self.icon     = iconName and getIcon( iconName ) or None
+		
+
 
 		self.module   = None
 		
@@ -25,8 +27,13 @@ class ToolBarItem(object):
 		self.signal  = None
 		self.itemType = False
 
+		widget   = option.get( 'widget', None )
 		menuLink = option.get( 'menu_link')
-		if menuLink:
+
+		if widget:
+			self.qtaction   = QtGui.QWidgetAction( None )
+			self.qtaction.setDefaultWidget( widget )
+		elif menuLink:
 			m = MenuManager.get().find( menuLink )
 			if m and hasattr( m, 'qtaction' ):
 				self.qtaction = m.qtaction

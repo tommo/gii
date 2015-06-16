@@ -30,5 +30,5 @@ register( 'component.removed' )
 register( 'animator.start' )
 register( 'animator.stop' )
 
-register( 'tool.change' )
-register( 'tool_category.update' )
+register( 'scene_tool.change' )
+register( 'scene_tool_category.update' )

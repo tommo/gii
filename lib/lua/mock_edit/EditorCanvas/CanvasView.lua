@@ -35,9 +35,11 @@ function CanvasView:initAddons()
 			inputDevice = assert( self:getInputDevice() ),
 			camera      = self:getCamera()
 		} )
-	self.toolManager  = self:addChild( CanvasToolManager() )
-	self.gizmoManager = self:addChild( GizmoManager() )
-	self.itemManager  = self:addChild( CanvasItemManager() )
+	self.toolManager    = self:addChild( CanvasToolManager() )
+	self.gizmoManager   = self:addChild( GizmoManager() )
+	self.itemManager    = self:addChild( CanvasItemManager() )
+	self.pickingManager = PickingManager()
+	self.pickingManager:setTargetScene( self:getScene() )
 end
 
 function CanvasView:onInit()
@@ -95,16 +97,16 @@ end
 function CanvasView:onSelectionChanged( selection )
 	selection = gii.listToTable( selection )
 	--TODO:use signal or message for this
-	self.gizmoManager:onSelectionChanged( selection )
-	self.toolManager:onSelectionChanged( selection )
+	self.gizmoManager :onSelectionChanged( selection )
+	self.toolManager  :onSelectionChanged( selection )
 	self:updateCanvas()
 end
 
 function CanvasView:onEntityEvent( ev, entity, com ) --FIXME: remove this
-	self.gizmoManager:onEntityEvent( ev, entity, com ) 
-	self.toolManager:onEntityEvent( ev, entity, com )
+	self.gizmoManager   :onEntityEvent ( ev, entity, com )
+	self.toolManager    :onEntityEvent ( ev, entity, com )
+	self.pickingManager :onEntityEvent ( ev, entity, com )
 end
-
 
 local function isEntityPickable( ent )
 	if ent.FLAG_EDITOR_OBJECT then return false end
@@ -131,7 +133,16 @@ local function _pick( ent, x, y ) --depth first search
 	return nil
 end
 
-function CanvasView:pick( x, y )
+function CanvasView:pick( x, y, pad )
+	return self.pickingManager:pickPoint( x, y, pad )
+end
+
+function CanvasView:pickRect( x0, y0, x1, y1, pad )
+	return self.pickingManager:pickRect( x0, y0, x1, y1, pad )
+end
+
+
+function CanvasView:__pick( x, y )
 	--TODO: use layer order?
 	local candidates = {}
 	for ent in pairs( self:getScene().entities ) do
@@ -152,6 +163,6 @@ end
 
 function CanvasView:pickAndSelect( x, y, pad )
 	local picked = self:pick( x, y, pad )
-	gii.changeSelection( 'scene', picked )
+	gii.changeSelection( 'scene', unpack( picked ) )
 	return picked
 end

@@ -30,6 +30,7 @@ class SceneEditorModule( SubEditorModule ):
 	def getSceneToolManager( self ):
 		return self.getModule( 'scene_tool_manager' )
 
+
 ##----------------------------------------------------------------##
 class SceneEditor( TopEditorModule ):
 	name       = 'scene_editor'
@@ -84,3 +85,4 @@ class RemoteCommandRunGame( RemoteCommand ):
 	def run( self, target = None, *args ):
 		from gii.core.tools import RunHost
 		RunHost.run( 'main' )
+

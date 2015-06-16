@@ -1,6 +1,6 @@
 import signals
 from SceneEditor import SceneEditor, SceneEditorModule, getSceneSelectionManager
-from SceneTool import SceneTool, SceneToolCategory
+from SceneTool import SceneTool, SceneToolMeta, SceneToolButton
 
 # import SceneToolBox
 

@@ -9,7 +9,7 @@ from gii.qt           import *
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.dialogs   import requestString, alertMessage, requestColor
 
-from gii.SceneEditor  import SceneEditorModule, SceneTool
+from gii.SceneEditor  import SceneEditorModule, SceneTool, SceneToolMeta, SceneToolButton
 
 from gii.moai.MOAIEditCanvas import  MOAIEditCanvas
 
@@ -22,6 +22,38 @@ def _getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 
+##----------------------------------------------------------------##
+class SceneViewTool( SceneTool ):
+	def getSceneViewToolId( self ):
+		toolId = getattr( self.__class__, 'tool' )
+		if not toolId:
+			raise Exception( 'no scene view tool Id specified' )
+		return toolId
+
+	def onStart( self, **context ):
+		canvasToolId = self.getSceneViewToolId()
+		app.getModule( 'scene_view' ).changeEditTool( canvasToolId )
+
+
+##----------------------------------------------------------------##
+class SceneViewToolSelection( SceneViewTool ):
+	name = 'scene_view_selection'
+	tool = 'selection'
+
+##----------------------------------------------------------------##
+class SceneViewToolTranslation( SceneViewTool ):
+	name = 'scene_view_translation'
+	tool = 'translation'
+
+##----------------------------------------------------------------##
+class SceneViewToolRotation( SceneViewTool ):
+	name = 'scene_view_rotation'
+	tool = 'rotation'
+
+##----------------------------------------------------------------##
+class SceneViewToolScale( SceneViewTool ):
+	name = 'scene_view_scale'
+	tool = 'scale'
 
 ##----------------------------------------------------------------##
 class SceneView( SceneEditorModule ):
@@ -59,13 +91,11 @@ class SceneView( SceneEditorModule ):
 		signals.connect( 'preview.pause',  self.onPreviewStop   )
 		signals.connect( 'preview.stop',   self.onPreviewStop   )
 
-		signals.connect( 'tool.change',   self.onSceneToolChanged   )
-
-		self.addShortcut( 'main', 'Q', self.changeEditTool, 'selection' )
-		self.addShortcut( 'main', 'W', self.changeEditTool, 'translation' )
-		self.addShortcut( 'main', 'E', self.changeEditTool, 'rotation' )
-		self.addShortcut( 'main', 'R', self.changeEditTool, 'scale' )
-		self.addShortcut( 'main', 'F', self.focusSelection )
+		# self.addShortcut( 'main', 'Q', self.changeEditTool, 'selection' )
+		# self.addShortcut( 'main', 'W', self.changeEditTool, 'translation' )
+		# self.addShortcut( 'main', 'E', self.changeEditTool, 'rotation' )
+		# self.addShortcut( 'main', 'R', self.changeEditTool, 'scale' )
+		# self.addShortcut( 'main', 'F', self.focusSelection )
 
 		self.addShortcut( 'main', '/', self.toggleDebugLines )
 
@@ -73,28 +103,32 @@ class SceneView( SceneEditorModule ):
 			self.getMainWindow().requestToolBar( 'view_tools' )
 			)
 
-		self.addTool( 'scene_view_tools/tool_selection',
-			label = 'Selection',
-			icon = 'tools/selection',
-			type = 'check'
+		self.addTool(	'scene_view_tools/tool_selection',
+			widget = SceneToolButton( 'scene_view_selection',
+				icon = 'tools/selection',
+				label = 'Selection'
+				)
 			)
 
-		self.addTool( 'scene_view_tools/tool_translation',
-			label = 'Translate',
-			icon = 'tools/translate',
-			type = 'check'
+		self.addTool(	'scene_view_tools/tool_translation',
+			widget = SceneToolButton( 'scene_view_translation',
+				icon = 'tools/translation',
+				label = 'Translation'
+				)
 			)
 
-		self.addTool( 'scene_view_tools/tool_rotation',
-			label = 'Rotate',
-			icon = 'tools/rotate',
-			type = 'check'
+		self.addTool(	'scene_view_tools/tool_rotation',
+			widget = SceneToolButton( 'scene_view_rotation',
+				icon = 'tools/rotation',
+				label = 'Rotation'
+				)
 			)
 
-		self.addTool( 'scene_view_tools/tool_scale',
-			label = 'Scale',
-			icon = 'tools/scale',
-			type = 'check'
+		self.addTool(	'scene_view_tools/tool_scale',
+			widget = SceneToolButton( 'scene_view_scale',
+				icon = 'tools/scale',
+				label = 'Scale'
+				)
 			)
 
 
@@ -192,9 +226,6 @@ class SceneView( SceneEditorModule ):
 			self.changeEditTool( 'rotation' )
 		elif name == 'tool_scale':
 			self.changeEditTool( 'scale' )
-
-	def onSceneToolChanged( self, tool ):
-		pass
 
 	def getCurrentSceneView( self ):
 		#TODO

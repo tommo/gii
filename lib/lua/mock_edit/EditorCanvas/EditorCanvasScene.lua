@@ -93,6 +93,9 @@ function EditorCanvasScene:initLayers()
 	self.layerSource = mock.Layer( '_GII_EDITOR_LAYER' )
 	local l = self.layerSource:makeMoaiLayer()
 	self.layers = { l }
+	self.layersByName = {
+		['_GII_EDITOR_LAYER']	 = l
+	}
 	self.defaultLayer = l
 end
 

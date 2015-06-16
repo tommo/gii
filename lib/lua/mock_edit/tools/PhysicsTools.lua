@@ -132,7 +132,7 @@ end
 function PhysicsShapeEditor:onLoad()
 	local plane = self:addCanvasItem( CanvasPickPlane() )
 	plane:setPickCallback( function( picked )
-		gii.changeSelection( 'scene', picked )
+		gii.changeSelection( 'scene', unpack( picked ) )
 	end)
 	self:updateSelection()
 end

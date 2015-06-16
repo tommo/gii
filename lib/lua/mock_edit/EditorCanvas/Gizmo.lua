@@ -45,6 +45,10 @@ function Gizmo:onDestroy()
 	end
 end
 
+function Gizmo:isPickable()
+	return false
+end
+
 --------------------------------------------------------------------
 CLASS: GizmoManager ( SceneEventListener )
 	:MODEL{}

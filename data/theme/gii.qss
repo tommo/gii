@@ -39,6 +39,7 @@ QToolButton::hover
 	color:#eee;
 }
 
+
 QPushButton
 {
 	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#555,stop:1#444);
@@ -1138,4 +1139,17 @@ QSplitter#TimelineHeaderSplitter::handle{
 	background-color:#444;
 	border-radius:2px;
 	color: #ffb850;
+}
+
+#SceneToolButton:pressed
+{
+	background-color:#4f7a00;
+	border: 1px solid #79a700;
+}
+
+#SceneToolButton
+{
+	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#554,stop:1#333);
+	border: 1px solid #252525;
+	border-radius:3px;
 }

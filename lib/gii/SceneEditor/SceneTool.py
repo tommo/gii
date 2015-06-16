@@ -1,63 +1,28 @@
 import os
+import weakref
+
 ##----------------------------------------------------------------##
 from gii.core     import *
 from gii.qt.controls.PropertyEditor import PropertyEditor
 from gii.qt.controls.Menu import MenuManager
+from gii.qt.IconCache                  import getIcon
+
+from PyQt4 import QtCore,QtGui
+
 
 ##----------------------------------------------------------------##
-class SceneToolCategory():
-	def __init__(self):
-		self.children = []
-		self.parent = None
-		self.tools = {}
-		self.icon  = 'folder'
-		self.name  = 'category'
-		self.options = {}
-
-	def getName( self ):
-		return self.name
-
-	def getChildren( self ):
-		return self.children
-
-	def getParent( self ):
-		return self.parent
-
-	def addChildCategory( self, category ):
-		self.children.append( category )
-		category.parent = self
-		return category
-
-	def createChildCategory( self, id, **option ):
-		category = SceneToolCategory()
-		category.name = option.get( 'name', 'Category' )
-		category.icon = option.get( 'icon', 'folder' )
-		return self.addChildCategory( category )
-
-	def addTool( self, tool ):
-		toolId = tool.getId()
-		if self.tools.has_key( toolId ):
-			raise Exception( 'Duplicated Scene Tool: %s ( %s ) ' % ( toolId, self.getName() ) )
-		tool.category = self
-		self.tools[ toolId ] = tool
-		return tool
-
-	def getToolList( self ):
-		return [ tool for tool in self.tools.values() ]
-
-	def __repr__( self ):
-		return self.getName()
-
-	def getIcon( self ):
-		return self.icon
-
-	def getManager( self ):
-		return app.getModule( 'scene_tool_manager' )
+class SceneToolMeta( type ):
+	def __init__( cls, name, bases, dict ):
+		super( SceneToolMeta, cls ).__init__( name, bases, dict )
+		fullname = dict.get( 'name', None )
+		if not fullname: return
+		app.getModule( 'scene_tool_manager' ).registerSceneTool( fullname, cls )
 
 ##----------------------------------------------------------------##
 class SceneTool():
+	__metaclass__ = SceneToolMeta
+
 	def __init__( self ):
-		self.active = False
 		self.category = None
 		self.lastUseTime = -1
 
@@ -70,60 +35,49 @@ class SceneTool():
 	def getIcon( self ):
 		return 'null_thumbnail'
 
-	def getCategory( self ):
-		return self.category
-
 	def __repr__( self ):
 		return '%s::%s' % ( repr(self.category), self.getId() )
 
-	def isActive( self ):
-		return self.active
-
-	def _activate( self ):
-		self.active = True
-		self.onActivated()
-
-	def _deactivate( self ):
-		self.active = False
-		self.onDeactivated()
-
-	def onActivated( self ):
+	def onStart( self, **context ):
 		pass
 
-	def onDeactivated( self ):
+	def onStop( self ):
 		pass
+
 
 ##----------------------------------------------------------------##
-class RecentToolsCategory( SceneToolCategory ):
-	def getToolList( self ):
-		return self.getManager().getRecentToolList()
+_SceneToolButtons = weakref.WeakKeyDictionary()
+
+##----------------------------------------------------------------##
+class SceneToolButton( QtGui.QToolButton ):
+	def __init__( self, toolId, **options ):
+		super( SceneToolButton, self ).__init__()
+		self.toolId = toolId
+		# self.setDown( True )
+		iconPath = options.get( 'icon', 'tools/' + toolId )
+		self.setIcon( getIcon( iconPath ) )
+		_SceneToolButtons[ self ] = toolId
+		self.setObjectName( 'SceneToolButton' )
+
+	def mousePressEvent( self, event ):
+		if self.isDown(): return;
+		super( SceneToolButton, self ).mousePressEvent( event )
+		app.getModule( 'scene_tool_manager' ).changeTool( self.toolId )
+
+	def mouseReleaseEvent( self, event ):
+		return
+
 
 ##----------------------------------------------------------------##
 class SceneToolManager( EditorModule ):
 	name = 'scene_tool_manager'
 	dependency = [ 'scene_editor' ]
-	def __init__( self ):		
+
+	def __init__( self ):				
 		#
-		self.defaultTool = None
-		self.activeTool  = None
-		self.recentTools = []
-
-		self.toolStack = []
-
-		self.recentLimit = 20
-		self.useTime     = 0
-		#
-		self.rootCategory = SceneToolCategory()
-		
-		self.favoriteCategory = SceneToolCategory()
-		self.favoriteCategory.name = '<Favorites>'
-		self.favoriteCategory.icon = 'star-2'
-		self.rootCategory.addChildCategory( self.favoriteCategory )
-
-		self.recentCategory = RecentToolsCategory()
-		self.recentCategory.name = '<Recent>'
-		self.recentCategory.icon = 'clock'
-		self.rootCategory.addChildCategory( self.recentCategory )
+		self.toolRegistry = {}
+		self.currentToolId = None
+		self.currentTool  = None
 
 	def onLoad( self ):
 		pass
@@ -131,38 +85,39 @@ class SceneToolManager( EditorModule ):
 	def onStart( self ):
 		pass
 
-	def getRootCategory( self ):
-		return self.rootCategory
+	def registerSceneTool( self, toolId, clas ):
+		if self.toolRegistry.has_key( toolId ):
+			logging.warning( 'duplicated scene tool id %s' % toolId )
+			return
+		self.toolRegistry[ toolId ] = clas
 
-	def addCategory( self, category ):
-		return self.rootCategory.addChildCategory( category )
+	def changeTool( self, toolId, **context ):
+		if self.currentToolId == toolId : return
 
-	def createCategory( self, id, **option ):
-		return self.rootCategory.createChildCategory( id, **option )
+		toolClas = self.toolRegistry.get( toolId, None )
+		if not toolClas:
+			logging.warning( 'No scene tool found: %s' % toolId )
+			return
+		toolObj = toolClas()
+		toolObj._toolId = toolId
 
-	def setActiveTool( self, tool ):
-		if self.activeTool == tool : return
-		prevTool = self.activeTool
-		self.useTime += 1
-		self.activeTool = tool
-		if prevTool:
-			prevTool._deactivate()
-		if tool:
-			tool._activate()
+		if self.currentTool:
+			self.currentTool.onStop()
 
-		tool.lastUseTime = self.useTime
-		if not ( tool in self.recentTools ):
-			if len( self.recentTools ) >= self.recentLimit:
-				self.recentTools = self.recentTools[ 1: ]
-			self.recentTools.append( tool )
-		else:
-			self.recentTools.remove( tool )
-			self.recentTools.append( tool )
-		signals.emit( 'tool.change', self.activeTool )
+		self.currentTool = toolObj
+		self.currentToolId = toolId
 
-	def getActiveTool( self ):
-		return self.activeTool
+		toolObj.onStart( **context )
 
-	def getRecentToolList( self ):
-		return self.recentTools
+		for button, buttonToolId in _SceneToolButtons.items():
+			if buttonToolId == toolId:
+				button.setDown( True )
+			else:
+				button.setDown( False )
+		signals.emit( 'scene_tool.change', self.currentToolId )
 
+	def getCurrentTool( self ):
+		return self.currentTool
+
+	def getCurrentToolId( self ):
+		return self.currentToolId
