@@ -18,3 +18,7 @@ addColor( 'gizmo_trigger_border', hexcolor( '#6695ff', 0.7 ) )
 
 addColor( 'cp',  0,1,0, alpha )
 addColor( 'cp-border',  1,1,1, alpha )
+
+
+addColor( 'misc',  hexcolor( '#6695ff', 0.1 ) )
+addColor( 'misc-transform',  hexcolor( '#b8ff00', 1 ) )
