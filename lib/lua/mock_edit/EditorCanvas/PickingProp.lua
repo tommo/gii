@@ -40,8 +40,17 @@ end
 
 function PickingManager:setTargetScene( scene )
 	self.targetScene = scene
-	--scan
-	for e in pairs( self.targetScene.entities ) do
+	self:scanScene()
+end
+
+function PickingManager:refresh()
+	self:clear()
+	self:scanScene()
+end
+
+function PickingManager:scanScene()
+	local entities = table.simplecopy( self.targetScene.entities )
+	for e in pairs( entities ) do
 		self:buildForEntity( e, false )
 	end
 end

@@ -149,7 +149,8 @@ function GizmoManager:refresh()
 end
 
 function GizmoManager:scanScene()
-	for e in pairs( self.scene.entities ) do
+	local entities = table.simplecopy( self.scene.entities )
+	for e in pairs( entities ) do
 		self:buildForEntity( e, false )
 	end
 end

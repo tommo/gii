@@ -59,6 +59,7 @@ end
 function SceneView:postSceneDeserialize( scene )
 	if scene ~= self.scene then return end
 	self.gizmoManager:refresh()
+	self.pickingManager:refresh()
 end
 
 function SceneView:makeCurrent()
