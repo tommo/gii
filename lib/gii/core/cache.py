@@ -9,7 +9,7 @@ from tmpfile import TempDir
 
 _GII_CACHE_PATH       =  'cache'
 _GII_CACHE_INDEX_PATH =  'cache_index.json'
-
+_GII_CACHE_CATEGORY_THUMBNAIL   =  '_thumbnails'
 
 ##----------------------------------------------------------------##
 def _makeMangledFilePath( path ):
@@ -35,22 +35,32 @@ class CacheManager(object):
 		self.cacheAbsPath   = None
 		self.cacheIndexPath = None
 		self.cacheFileTable = {} 
+		self.categories = {}
 
 	def init( self, basePath, absBasePath ):
 		self.cachePath      = basePath + '/' + _GII_CACHE_PATH
 		self.cacheAbsPath   = absBasePath + '/' + _GII_CACHE_PATH
 		self.cacheIndexPath = absBasePath + '/' + _GII_CACHE_INDEX_PATH
+		self.affirmFolders()
+		return True
+
+	def affirmFolders( self ):
+		#check and create cache path exists ( for safety )
 		if not os.path.exists( self.cacheAbsPath ):
 			os.mkdir( self.cacheAbsPath )
-		return True
-		
+		self.affirmCategory( 'thumbnail', _GII_CACHE_CATEGORY_THUMBNAIL )
+
+	def affirmCategory( self, id, subPath ):
+		self.categories[ id ] = subPath
+		absPath = self.cacheAbsPath + '/' + subPath
+		if not os.path.exists( absPath ):
+			os.mkdir( absPath )
+
 	def load( self, basePath, absBasePath ):
 		self.cachePath      = basePath + '/' + _GII_CACHE_PATH
 		self.cacheAbsPath   = absBasePath + '/' + _GII_CACHE_PATH
 		self.cacheIndexPath = absBasePath + '/' + _GII_CACHE_INDEX_PATH
-		#check and create cache path exists ( for safety )
-		if not os.path.exists( self.cacheAbsPath ):
-			os.mkdir( self.cacheAbsPath )
+		self.affirmFolders()
 		#load cache file index
 		self.cacheFileTable = jsonHelper.tryLoadJSON( self.cacheIndexPath ) or {}
 		for path, node in self.cacheFileTable.items():
@@ -71,16 +81,39 @@ class CacheManager(object):
 			return
 		node['touched'] = True
 
-
-	def getCacheFile( self, srcPath, name = None, **option ):
+	def buildCacheFilePath( self, srcPath, name = None, **option ):
 		#make a name for cachefile { hash of srcPath }	
+		category = option.get( 'category', None )
+		
+		cachePath = self.cachePath
+		cacheAbsPath = self.cacheAbsPath
+
+		if category:
+			subPath = self.categories.get( category, None )
+			if subPath:
+				cachePath    += ( '/' + subPath )
+				cacheAbsPath += ( '/' + subPath )
+			else:
+				logging.warning('unkown cache category %s' % repr(category) )
+
 		baseName    = srcPath
 		if name: baseName += '@' + name
 		mangledName = _makeMangledFilePath( baseName )
-		relPath     = self.cachePath + '/' + mangledName
-		filePath    = self.cacheAbsPath + '/' + mangledName
-		isDir       = option.get( 'is_dir',  False )
+		
+		relPath     = cachePath + '/' + mangledName
+		filePath    = cacheAbsPath + '/' + mangledName
+		return ( mangledName, relPath, filePath )
 
+	def checkCacheFile( self, srcPath, name = None, **option ):
+		mangledName, relPath, filePath = self.buildCacheFilePath( srcPath, name, **option )
+		if os.path.exists(filePath):
+			return relPath
+		else:
+			return None
+
+	def getCacheFile( self, srcPath, name = None, **option ):
+		mangledName, relPath, filePath = self.buildCacheFilePath( srcPath, name, **option )
+		isDir       = option.get( 'is_dir',  False )
 		#make an new cache file
 		self.cacheFileTable[ relPath ] = {
 				'src'     : srcPath,

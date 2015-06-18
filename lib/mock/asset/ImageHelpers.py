@@ -165,3 +165,44 @@ def convertToPVR( src, dst = None, **option ):
 ##----------------------------------------------------------------##
 def quantize( src, dst = None, **option ):
 	pass
+
+
+##----------------------------------------------------------------##
+def buildThumbnail( inputPath, outputPath, size ):
+		##----------------------------------------------------------------##
+	if not outputPath: outputPath = inputPath
+	logging.info( u'generating thumbnail: {0} -> {1}'.format( inputPath, outputPath ) ) 
+
+	img = None
+
+	##----------------------------------------------------------------##
+	name, ext = os.path.splitext( inputPath )
+	##----------------------------------------------------------------##
+	if os.path.isfile( inputPath ):
+		img = loadOneImage( inputPath )
+	
+	if not img:
+		logging.warn( 'cannot open texture file' )
+		return False
+
+	if not img.mode in [ 'RGB', 'RGBA' ]:
+		img = img.convert("RGB")
+	
+	img.thumbnail( size )
+	format = 'PNG'
+	w1,h1 = img.size
+	w,h = size
+	if h1 != h:
+		# img = img.resize( ( w2, h2 ) )
+		tmp = Image.new( "RGBA", size, color=(255, 255, 255, 0) )
+		x0 = ( w - w1 ) / 2
+		y0 = ( h - h1 ) / 2
+		tmp.paste( img, ( x0,y0,x0+w1,y0+h1) )
+		img = tmp
+
+	try:
+		img.save( outputPath, format )
+	except Exception, e:
+		logging.exception( e )
+		return False
+	return True

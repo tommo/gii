@@ -79,12 +79,20 @@ end
 
 function PickingManager:isEntityPickable( ent )
 	if not ent:isVisible() then return false end
+	local defaultPickable = true
 	if ent.FLAG_EDITOR_OBJECT then
-		local isPickable = ent.isPickable
-		if not isPickable then return false end
-		if not isPickable( ent ) then return false end
+		defaultPickable = false
 	end
-	return true
+
+	local pickable
+	local isPickable = ent.isPickable
+	if isPickable then
+		pickable = isPickable( ent )
+	else
+		pickable = defaultPickable
+	end
+	
+	return pickable
 end
 
 

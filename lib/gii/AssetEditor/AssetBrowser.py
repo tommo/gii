@@ -3,51 +3,97 @@ import os
 
 from gii.core         import *
 from gii.qt.dialogs   import requestString, alertMessage, requestConfirm
-from gii.qt.controls.AssetTreeView import AssetTreeView, AssetTreeFilter
 from gii.qt.helpers   import setClipboardText
 from gii.SearchView   import requestSearchView, registerSearchEnumerator
 
 from AssetEditor      import AssetEditorModule, getAssetSelectionManager
+from gii.SceneEditor  import SceneEditorModule, getSceneSelectionManager
 
 from PyQt4            import QtCore, QtGui, uic
 from PyQt4.QtCore     import Qt
 
+from AssetBrowserWidgets import *
+
+
 ##----------------------------------------------------------------##
-class AssetBrowser( AssetEditorModule ):
+def _getModulePath( path ):
+	import os.path
+	return os.path.dirname( __file__ ) + '/' + path
+
+
+##----------------------------------------------------------------##
+class AssetBrowser( SceneEditorModule ):
 	name       = 'asset_browser'
 	dependency = ['qt', 'asset_editor']
 
-	def __init__(self):
-		AssetEditorModule.__init__( self )
-		self.newCreateNodePath = None
-
 	def onLoad(self):
-		self.container = self.requestDockWindow('AssetBrowser',
+
+		self.newCreateNodePath = None
+		self.currentContextTargetNode = None
+		self.thumbnailSize = ( 80, 80 )
+		self.updatingSelection = False
+
+		self.window = self.requestDockWindow('AssetBrowser',
 				title='Asset Browser',
 				dock='left',
 				minSize=(200,200)
 			)
-		
-		#Components
-		self.treeFilter = self.container.addWidget(
-			AssetTreeFilter(
-				self.container
-			),
-			expanding = False
-		)
-		self.treeView  = self.container.addWidget(
-				AssetBrowserTreeView(
-					sorting   = True,
-					multiple_selection = True,
-					drag_mode = 'internal'
-				)
-			)
-		
-		signals.connect( 'module.loaded',        self.onModuleLoaded )		
-		signals.connect( 'asset.deploy.changed', self.onAssetDeployChanged )
 
+		ui = self.window.addWidgetFromFile(
+			_getModulePath('AssetBrowser.ui')
+		)
+
+		#
+		self.treeFilter = AssetTreeFilter(
+				self.window
+			)
+		self.treeView  = 	AssetBrowserTreeView(
+			sorting   = True,
+			multiple_selection = True,
+			drag_mode = 'internal',
+			folder_only = True
+		)
+		
+		self.treeView.parentModule = self
 		self.treeView.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
 		self.treeView.customContextMenuRequested.connect( self.onTreeViewContextMenu)
+		#
+
+		treeLayout = QtGui.QVBoxLayout( ui.containerTree )
+		treeLayout.setSpacing( 0 )
+		treeLayout.setMargin( 0 )
+		
+		treeLayout.addWidget( self.treeFilter )
+		treeLayout.addWidget( self.treeView )
+
+		
+		##
+		self.listView  = AssetBrowserListWidget()
+		self.tagFilter = AssetBrowserTagFilterWidget()
+		self.statusBar = AssetBrowserStatusBar()
+
+		self.listView .parentModule = self
+		self.tagFilter.parentModule = self
+		self.statusBar.parentModule = self
+
+		self.listView.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
+		self.listView.customContextMenuRequested.connect( self.onListViewContextMenu )
+
+		listLayout = QtGui.QVBoxLayout( ui.containerRight )
+		listLayout.setSpacing( 0 )
+		listLayout.setMargin( 0 )
+
+		listLayout.addWidget( self.tagFilter )
+		listLayout.addWidget( self.listView )
+		listLayout.addWidget( self.statusBar )
+
+		##
+		self.currentFolders = []
+		
+
+		#
+		signals.connect( 'module.loaded',        self.onModuleLoaded )		
+		signals.connect( 'asset.deploy.changed', self.onAssetDeployChanged )
 
 		self.creatorMenu=self.addMenu(
 			'asset_create_context',
@@ -98,7 +144,7 @@ class AssetBrowser( AssetEditorModule ):
 	def onSetFocus( self ):
 		self.getMainWindow().raise_()
 		self.treeView.setFocus()
-		self.container.raise_()
+		self.window.raise_()
 
 	def onUnload(self):
 		#persist expand state
@@ -116,12 +162,13 @@ class AssetBrowser( AssetEditorModule ):
 		if isinstance( asset, ( str, unicode ) ): #path
 			asset = self.getAssetLibrary().getAssetNode( asset )
 		if not asset: return
-		self.treeView.setFocus( Qt.MouseFocusReason)
-		item = self.treeView.getItemByNode( asset )
-		if item:
-			self.treeView.clearSelection()
-			item.setSelected( True )
-			self.treeView.scrollToItem( item )
+		self.listView.setFocus( Qt.MouseFocusReason)
+		self.selectAsset( asset, goto = True )
+		# item = self.treeView.getItemByNode( asset )
+		# if item:
+		# 	self.treeView.clearSelection()
+		# 	item.setSelected( True )
+		# 	self.treeView.scrollToItem( item )
 
 
 	def loadAssetCreator(self, creator):
@@ -167,11 +214,10 @@ class AssetBrowser( AssetEditorModule ):
 		except Exception,e:
 			logging.exception( e )
 			alertMessage( 'Asset Creation Error', repr(e) )
-	
-	def onTreeViewContextMenu( self, point ):
-		item = self.treeView.itemAt(point)
-		if item:			
-			node=item.node
+
+	def popupAssetContextMenu( self, node ):
+		if node:
+			self.currentContextTargetNode = node
 			deployState=node.deployState
 			self.enableMenu( 'asset_context/open_in_system',  True )
 			self.enableMenu( 'asset_context/copy_node_path',  True )
@@ -187,18 +233,40 @@ class AssetBrowser( AssetEditorModule ):
 			self.enableMenu( 'asset_context/deploy_disallow',False )
 			self.findMenu('asset_context').popUp()
 
+	def onListViewContextMenu( self, point ):
+		item = self.listView.itemAt(point)
+		if item:
+			node = item.node
+		else:
+			node = None
+		self.popupAssetContextMenu( node )
+
+	def onTreeViewContextMenu( self, point ):
+		item = self.treeView.itemAt(point)
+		if item:
+			node = item.node
+		else:
+			node = None
+		self.popupAssetContextMenu( node )
+
 	def onAssetRegister(self, node):
 		pnode = node.getParent()
-		if pnode:
-			self.treeView.addNode( node )
-		if node.getPath() == self.newCreateNodePath:
-			self.newCreateNodePath=None
-			self.treeView.selectNode(node)
+		if node.isGroupType( 'folder', 'package' ):
+			if pnode:
+				self.treeView.addNode( node )
+			if node.getPath() == self.newCreateNodePath:
+				self.newCreateNodePath=None
+				self.treeView.selectNode(node)
+
+		if pnode in self.currentFolders:
+			self.listView.addNode( node )
 
 	def onAssetUnregister(self, node):
 		pnode=node.getParent()
 		if pnode:
 			self.treeView.removeNode(node)
+		if pnode in self.currentFolders:
+			self.listView.removeNode( node )
 
 	def onAssetMoved(self, node):
 		pass
@@ -216,7 +284,7 @@ class AssetBrowser( AssetEditorModule ):
 		app.getAssetLibrary().saveAssetTable()
 
 	def onMenu(self, menuNode):
-		name=menuNode.name
+		name = menuNode.name
 		if name in ('deploy_set', 'deploy_disallow', 'deploy_unset'):
 			if name   == 'deploy_set':      newstate = True
 			elif name == 'deploy_disallow': newstate = False
@@ -240,13 +308,9 @@ class AssetBrowser( AssetEditorModule ):
 			pass
 
 		elif name == 'show_in_browser':
-			if not getAssetSelectionManager().getSelection():
-				return AssetUtils.showFileInBrowser( getProjectPath() )
-				
-			for n in getAssetSelectionManager().getSelection():
-				if isinstance( n, AssetNode ):
-					n.showInBrowser()
-					break
+			n = self.currentContextTargetNode
+			if isinstance( n, AssetNode ):
+				n.showInBrowser()
 
 		elif name == 'open_in_system':
 			for n in getAssetSelectionManager().getSelection():
@@ -285,56 +349,82 @@ class AssetBrowser( AssetEditorModule ):
 				on_selection = self.openAsset
 				)
 
+	def onTreeSelectionChanged( self ):
+		folders = []
+		for anode in self.treeView.getSelection():
+			# assert anode.isType( 'folder' )
+			folders.append( anode )
+		self.currentFolders = folders
+		self.listView.rebuild()
+
+	def onListSelectionChanged( self ):
+		self.updatingSelection = True
+		getAssetSelectionManager().changeSelection( self.listView.getSelection() )
+		self.updatingSelection = False
+
 	def onSelectionChanged( self, selection, context ):
 		if context == 'asset':
+			if self.updatingSelection: return
+			#TODO
 			self.setFocus()
-			self.treeView.refreshingSelection = True
-			
 			firstObj = None
 			for obj in selection:
 				firstObj = obj
 				self.treeView.selectNode( obj, add = True )
 			if firstObj: self.treeView.scrollToNode( firstObj )
+			self.listView.rebuild()
 
-			self.treeView.refreshingSelection = False
+	def onActivateNode( self, node, src ):
+		if src == 'tree':
+			if node.isVirtual():
+				node = node.findNonVirtualParent()
+			if node.isType( 'folder' ):
+				node.openInSystem()
+			else:
+				node.showInBrowser()
 
-	def selectAsset( self, asset ):
-		if asset: self.treeView.selectNode( asset )
+		else:
+			if node.isGroupType( 'folder', 'package' ):
+				self.selectAsset( node )
+			else:
+				self.openAsset( node )
 
-	def openAsset( self, asset ):
+	def selectAsset( self, asset, **options ):
+		if not asset: return
+		#find parent package/folder
+		folder = asset
+		while folder:
+			if folder.getGroupType() in [ 'folder', 'package' ]: break
+			folder = folder.getParent()
+		self.treeView.selectNode( folder )
+		self.listView.selectNode( asset )
+		if options.get( 'goto', False ):
+			self.treeView.scrollToNode( folder )
+			self.listView.scrollToNode( asset )
+
+	def openAsset( self, asset, **option ):
 		if asset:
-			self.treeView.selectNode( asset )
+			if option.get('select', False):
+				self.treeView.selectNode( asset )
 			asset.edit()
 
-##----------------------------------------------------------------##
-class AssetBrowserTreeView( AssetTreeView ):
-	def __init__( self, *args, **option ):
-		super( AssetBrowserTreeView, self ).__init__( *args, **option )
-		self.refreshingSelection = False
+	def getCurrentFolders( self ):
+		return self.currentFolders
 
-	def onClicked(self, item, col):
-		pass
+	def getAssetsInListView( self ):
+		assets = []
+		for folder in self.currentFolders:
+			for subNode in folder.getChildren():
+				assets.append( subNode )
+		return assets
 
-	def onItemActivated(self, item, col):
-		node=item.node
-		if node:
-			node.edit()
-
-	def onItemSelectionChanged(self):
-		if self.refreshingSelection: return
-		items = self.selectedItems()
-		if items:
-			selections = [item.node for item in items]
-			getAssetSelectionManager().changeSelection(selections)
+	def getAssetThumbnailIcon( self, assetNode, size ):
+		thumbnailPath = assetNode.requestThumbnail( size )
+		if thumbnailPath:
+			icon = QtGui.QIcon( QtGui.QPixmap( thumbnailPath ) )
+			return icon
 		else:
-			getAssetSelectionManager().changeSelection(None)
-
-	def onDeletePressed( self ):
-		if requestConfirm( 'delete asset', 'Confirm to delete asset(s)?' ):
-			for node in self.getSelection():
-				if not node.isVirtual():
-					path = node.getAbsFilePath()
-					os.remove( path )
+			return None
 
 ##----------------------------------------------------------------##
 def assetCreatorSearchEnumerator( typeId, context ):
@@ -344,6 +434,4 @@ def assetCreatorSearchEnumerator( typeId, context ):
 		entry = ( creator, creator.getLabel(), 'asset_creator', None )
 		result.append( entry )
 	return result
-
-
 

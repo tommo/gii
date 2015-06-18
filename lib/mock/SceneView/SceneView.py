@@ -191,7 +191,7 @@ class SceneView( SceneEditorModule ):
 	def onPreviewResume( self ):
 		self.previewing = True
 		self.toolbar.setStyleSheet('QToolBar{ border-bottom: 1px solid rgb(0, 120, 0); }')
-		self.previewUpdateTimer = self.window.startTimer( 3, self.updateInPreview )
+		self.previewUpdateTimer = self.window.startTimer( 0.5, self.updateInPreview )
 
 	def onPreviewStop( self ):
 		self.previewing = False

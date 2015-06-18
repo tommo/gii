@@ -6,13 +6,14 @@ from gii.qt.dialogs   import requestString
 from gii.qt.controls.AssetTreeView import AssetTreeView
 
 from AssetEditor      import AssetEditorModule
+from gii.SceneEditor      import SceneEditorModule
 
 
 from PyQt4            import QtCore, QtGui, uic
 from PyQt4.QtCore     import Qt
 
 ##----------------------------------------------------------------##
-class ModAssetPreviewer( AssetEditorModule ):
+class ModAssetPreviewer( SceneEditorModule ):
 	def getName( self ):
 		return 'asset_previewer'
 

@@ -17,6 +17,8 @@ class Deck2DAssetManager(AssetManager):
 	def importAsset(self, node, reload = False ):
 		if node.isVirtual(): return
 		node.assetType = 'deck2d'
+		node.groupType = 'package'
+		
 		pack = _MOCK.deserializeFromFile( None, node.getAbsFilePath() )
 		if not pack:
 			return False

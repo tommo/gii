@@ -5,7 +5,7 @@ scn = mock_edit.createEditorCanvasScene()
 CLASS: Preview ( mock_edit.EditorEntity )
 function Preview:onLoad()
 	self:addSibling( mock_edit.CanvasGrid() )
-	self:addSibling( mock_edit.CanvasNavigate() )
+	self.navigate = self:addSibling( mock_edit.CanvasNavigate() )
 	self.prop = self:addProp{
 		blend = 'alpha'
 	}
@@ -17,6 +17,8 @@ end
 function Preview:show( path )
 	local texture = mock.loadAsset(path)
 	if not texture then return false end 
+
+	self.navigate:reset()
 
 	local deck = MOAIGfxQuad2D.new()
 	local w, h = texture:getSize()	

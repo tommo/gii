@@ -30,11 +30,13 @@ class AssetNode(object):
 		
 		self.nodePath   = nodePath
 		self.assetType  = assetType
+		self.groupType  = None
 		self.parentNode = None
 
 		self.metadata   = None
 
 		self.name = os.path.basename( nodePath )
+		self.shortName = self.name
 		
 		self.children = []
 		self.dependency     = {}     #runtime level dependency
@@ -62,11 +64,23 @@ class AssetNode(object):
 	def getType(self):
 		return self.assetType
 
+	def getGroupType( self ):
+		return self.groupType
+
 	def isType(self, *typeNames ):
 		return self.assetType in list( typeNames )
 
+	def isGroupType(self, *typeNames ):
+		return self.groupType in list( typeNames )
+
 	def getManager(self):
 		return AssetLibrary.get().getAssetManager( self.managerName, True )
+
+	def requestThumbnail( self, size ):
+		manager = self.getManager()
+		if manager:
+			return manager.requestAssetThumbnail( self, size )
+		return None
 
 	def getName(self):
 		return self.name
@@ -74,6 +88,9 @@ class AssetNode(object):
 	def getBaseName(self):
 		name, ext = os.path.splitext(self.name)
 		return name
+
+	def getShortName( self ):
+		return self.shortName
 
 	def getPathDepth(self):
 		return self.nodePath.count('/')
@@ -345,9 +362,12 @@ class AssetNode(object):
 	def getCacheFile( self, name, **option ):
 		cacheFile = self.cacheFiles.get( name, None )
 		if cacheFile: return cacheFile
-		cacheFile = CacheManager.get().getCacheFile( self.getPath(), name, **option )
-		self.cacheFiles[ name ] = cacheFile
-		return cacheFile
+		if option.get( 'affirm', True ):
+			cacheFile = CacheManager.get().getCacheFile( self.getPath(), name, **option )
+			self.cacheFiles[ name ] = cacheFile
+			return cacheFile
+		else:
+			return None
 
 	def getAbsCacheFile( self, name, **option ):
 		path = self.getCacheFile( name, **option )
@@ -359,6 +379,12 @@ class AssetNode(object):
 
 	def checkCacheFiles( self ):
 		for id, path in self.cacheFiles.items():
+			fullpath = AssetLibrary.get().getAbsProjectPath( path )
+			if not os.path.exists( fullpath ): return False
+		return True
+
+	def checkObjectFiles( self ):
+		for id, path in self.objectFiles.items():
 			fullpath = AssetLibrary.get().getAbsProjectPath( path )
 			if not os.path.exists( fullpath ): return False
 		return True
@@ -477,9 +503,6 @@ class AssetManager(object):
 	def editAsset(self, assetNode):
 		assetNode.openInSystem()
 
-	def buildThumbnail( self, assetNode ):
-		return None
-
 	def markModified( self, assetNode ):
 		assetNode.modifyState = 'modified'
 		for child in assetNode.getChildren():
@@ -488,11 +511,35 @@ class AssetManager(object):
 	def getDependency( self, assetNode ):
 		pass
 
-	def onRegister( self ):
+	def onRegister( self ): #manager register
 		pass
 
 	def getMetaType( self ):
 		return None
+
+	def requestAssetThumbnail( self, assetNode, size ):		
+		return None
+
+	def buildAssetThumbnail( self, assetNode, size ):
+		thumbId = 'thumbnail@'+repr(size)
+		thumbPath = assetNode.getAbsCacheFile(
+			thumbId, 
+			category = 'thumbnail',
+			affirm   = False
+		)
+		if thumbPath and os.path.exists( thumbPath ): return thumbPath
+
+		thumbPath = assetNode.getAbsCacheFile(
+			thumbId, 
+			category = 'thumbnail',
+			affirm   = True
+		)
+		if self.onBuildAssetThumbnail( assetNode, thumbPath, size ):
+			return thumbPath
+		return None
+
+	def onBuildAssetThumbnail( self, assetNode, targetPath, size ):
+		return False
 
 ##----------------------------------------------------------------##
 class RawAssetManager(AssetManager):	
@@ -511,10 +558,12 @@ class RawAssetManager(AssetManager):
 			assetNode.assetType = 'file'
 		elif os.path.isdir( path ):
 			assetNode.assetType = 'folder'
+			assetNode.groupType = 'folder'
 		return True
 
 	def markNotified(self, assetNode ):
 		pass #do nothing
+
 
 ##----------------------------------------------------------------##
 class AssetCreator(object):
@@ -533,6 +582,12 @@ class AssetCreator(object):
 
 	def createAsset(self, name, contextNode, assetType):
 		return False
+
+
+##----------------------------------------------------------------##
+class AssetRootNode( AssetNode ):
+	def getName( self ):
+		return 'asset'
 
 
 ##----------------------------------------------------------------##
@@ -574,7 +629,7 @@ class AssetLibrary(object):
 		self.rootAbsPath    = rootAbsPath
 		self.projectAbsPath = projectAbsPath
 		self.assetIndexPath = configPath + '/' +GII_ASSET_INDEX_PATH
-		self.rootNode       = AssetNode( '', 'folder', filePath = self.rootPath )
+		self.rootNode       = AssetRootNode( '', 'folder', filePath = self.rootPath )
 		# self.loadAssetTable()		
 
 	def save( self ):
@@ -832,7 +887,7 @@ class AssetLibrary(object):
 	def tryScanProject( self ):
 		if self.projectScanScheduled:
 			self.scanProject()
-			
+	
 	#Library
 	def scanProject(self): #scan 
 		self.projectScanScheduled = False
@@ -879,7 +934,7 @@ class AssetLibrary(object):
 				if bundle:
 					if mtime > bundle.getFileTime():
 						bundle.markModified()
-					if not bundle.checkCacheFiles():
+					if not bundle.checkObjectFiles():
 						bundle.markModified()
 				else:
 					if not self.getAssetNode( nodePath ): #new
@@ -888,7 +943,7 @@ class AssetLibrary(object):
 						node = self.getAssetNode( nodePath ) #modified
 						if mtime > node.getFileTime():
 							node.markModified()
-						if not node.checkCacheFiles():
+						if not node.checkObjectFiles():
 							node.markModified()
 
 			dirs2 = dirs[:]
@@ -924,6 +979,7 @@ class AssetLibrary(object):
 					fileTime = data.get( 'fileTime', 0 )
 				)
 			node.deployState  = data.get('deploy', None)
+			node.groupType    = data.get( 'groupType', None )
 			node.cacheFiles   = data.get('cacheFiles', {})
 			node.objectFiles  = data.get('objectFiles', {})
 			node.properties   = data.get('properties', {}) 
@@ -931,6 +987,9 @@ class AssetLibrary(object):
 			
 			assetTable[path]  = node
 			node.managerName  = data.get('manager')
+			if node.groupType == None:
+				if node.isType( 'folder' ):
+					node.groupType = 'folder'
 			
 		#relink parent/dependency
 		for path, node in assetTable.items():
@@ -965,6 +1024,7 @@ class AssetLibrary(object):
 			table[ path ]=item
 			#common
 			item['type']        = node.getType()
+			item['groupType']   = node.getGroupType()
 			item['filePath']    = node.getFilePath() or False
 			#oebjectfiles
 			if mapping:

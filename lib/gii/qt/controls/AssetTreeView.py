@@ -10,8 +10,8 @@ from gii.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilt
 
 
 class AssetTreeView( GenericTreeWidget ):
-	def __init__( self, *args, **kwargs ):
-		super( AssetTreeView, self ).__init__( *args, **kwargs )
+	def __init__( self, *args, **options ):
+		super( AssetTreeView, self ).__init__( *args, **options )
 
 	def saveTreeStates( self ):
 		for node, item in self.nodeDict.items():
@@ -20,7 +20,8 @@ class AssetTreeView( GenericTreeWidget ):
 	def loadTreeStates( self ):
 		for node, item in self.nodeDict.items():
 			item.setExpanded( node.getProperty( 'expanded', False ) )
-
+		self.getItemByNode( self.getRootNode() ).setExpanded( True )
+		
 	def getRootNode( self ):
 		return app.getAssetLibrary().getRootNode()
 
@@ -31,6 +32,8 @@ class AssetTreeView( GenericTreeWidget ):
 		result = []
 		for node in node.getChildren():
 			if node.getProperty( 'hidden', False ): continue
+			if self.getOption( 'folder_only', False ):
+				if not node.getGroupType() in ( 'folder', 'package' ) :continue
 			result.append( node )
 		return result
 
@@ -39,7 +42,7 @@ class AssetTreeView( GenericTreeWidget ):
 
 	def updateItemContent( self, item, node, **option ):
 		if option.get('basic', True):
-			assetType=node.getType()
+			assetType = node.getType()
 			item.setText( 0, node.getName() )
 			item.setText( 1, '' )
 			if assetType in [ 'file', 'folder' ] :

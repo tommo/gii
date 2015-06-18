@@ -34,6 +34,12 @@ class BTScriptAssetManager(AssetManager):
 			pass
 		return True
 	
+	def requestAssetThumbnail( self, node, size ):
+		if node.isType( 'bt_script' ):
+			return app.getPath( 'data/icons/thumbnail/behaviour_tree.png' )
+		return None
+
+		
 ##----------------------------------------------------------------##
 class BTScriptCreator(AssetCreator):
 	def getAssetType( self ):
@@ -57,6 +63,7 @@ class BTScriptCreator(AssetCreator):
 		fp.write( '+ root\n\t@action\n' )
 		fp.close()
 		return nodepath
+
 
 ##----------------------------------------------------------------##
 BTScriptCreator().register()

@@ -23,7 +23,8 @@ class DeckPSDAssetManager(AssetManager):
 	def importAsset(self, node, reload = False ):
 		if node.isVirtual(): return
 		node.assetType = 'deck_pack'
-
+		node.groupType = 'package'
+		
 		output = node.getCacheFile( 'export', is_dir = True )
 		node.setObjectFile( 'export', output )
 

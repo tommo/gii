@@ -19,6 +19,13 @@ function CanvasNavigate:onLoad()
 	self.zoom = 1
 end
 
+function CanvasNavigate:reset()
+	self.targetCamera:setLoc( 0,0,0 )
+	self.targetCamera:setRot( 0,0,0 )
+	self.targetCamera:setScl( 1,1,1 )
+	self.targetCamera:com():setZoom( 1 )
+end
+
 function CanvasNavigate:onMouseDown( btn, x, y )
 	if btn == 'middle' then
 		self.dragFrom = { x, y }

@@ -1153,3 +1153,19 @@ QSplitter#TimelineHeaderSplitter::handle{
 	border: 1px solid #252525;
 	border-radius:3px;
 }
+
+
+#AssetBrowserList
+{
+	background-color:#3a3a3a;
+	color:#ccc;
+	/*font-size:11px;*/
+}
+
+#AssetBrowserList::item
+{
+	border-radius:3px;
+	margin-bottom: 15px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}

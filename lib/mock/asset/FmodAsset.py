@@ -79,6 +79,7 @@ class FmodAssetManager(AssetManager):
 		if groups:
 			for name, group in groups.items():
 				groupNode = node.affirmChildNode( name, 'fmod_group', manager = self )
+				groupNode.groupType = 'package'
 				events    = group['events']
 				for name, event in events.items():
 					eventNode = groupNode.affirmChildNode( name, 'fmod_event', manager = self )
@@ -87,7 +88,8 @@ class FmodAssetManager(AssetManager):
 	def importAsset(self, node, reload = False ):
 		if node.isVirtual(): return
 		
-		node.assetType = 'fmod_project'		
+		node.assetType = 'fmod_project'
+		node.groupType = 'package'
 		
 		project = parseFDP( node.getAbsFilePath() )
 

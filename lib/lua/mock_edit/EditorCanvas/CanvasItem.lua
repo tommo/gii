@@ -30,7 +30,7 @@ function CanvasItemManager:onLoad()
 	end
 	self.cameraListenerNode = cameraListenerNode
 	self.factorZoom = 1/cameraCom:getZoom()
-
+	self:setLocZ( -1000 )
 end
 
 function CanvasItemManager:getView()

@@ -12,11 +12,21 @@ function PhysicsShapeGizmo:__init( shape )
 end
 
 function PhysicsShapeGizmo:onLoad()
-	self:attach( mock.DrawScript() ):setBlend( 'alpha' )
+	self.drawScript = self:attach( mock.DrawScript() )
+	self.drawScript:setBlend( 'alpha' )
 end
 
 function PhysicsShapeGizmo:onDraw()
 end
+
+function PhysicsShapeGizmo:getPickingTarget()
+	return self.shape._entity
+end
+
+function PhysicsShapeGizmo:isPickable()
+	return false
+end
+
 
 
 --------------------------------------------------------------------
@@ -38,6 +48,18 @@ function PhysicsShapeBoxGizmo:onDraw()
 	MOAIGfxDevice.setPenWidth(1)
 	
 	MOAIDraw.drawRect( -0.5*w, -0.5*h, 0.5*w, 0.5*h )
+end
+
+function PhysicsShapeBoxGizmo:onGetRect()
+	local shape = self.shape
+	local x, y = shape:getLoc()
+	local w, h = shape.w, shape.h
+	return -0.5*w, -0.5*h, 0.5*w, 0.5*h
+end
+
+
+function PhysicsShapeBoxGizmo:getPickingProp()
+	return self.drawScript:getMoaiProp()
 end
 
 --Install
@@ -63,6 +85,19 @@ function PhysicsShapeCircleGizmo:onDraw()
 	MOAIGfxDevice.setPenWidth(1)
 	
 	MOAIDraw.drawCircle( 0,0, radius )
+end
+
+
+function PhysicsShapeCircleGizmo:onGetRect()
+	local shape = self.shape
+	local x, y = shape:getLoc()
+	local radius = shape.radius
+	return -0.5*radius, -0.5*radius, 0.5*radius, 0.5*radius
+end
+
+
+function PhysicsShapeCircleGizmo:getPickingProp()
+	return self.drawScript:getMoaiProp()
 end
 
 --Install
