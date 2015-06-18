@@ -58,9 +58,10 @@ class AssetBrowserListWidget( GenericListWidget ):
 		self.setMovement( QtGui.QListView.Snap )
 		
 		self.thumbnailIconSize = ( 80, 80 )
-
-		self.setIconSize( QtCore.QSize( 140, 130 ) )
-		self.setGridSize( QtCore.QSize( 140, 130 ) )
+		# self.setIconSize( QtCore.QSize( 32, 32 ) )
+		
+		self.setIconSize( QtCore.QSize( 120, 130 ) )
+		self.setGridSize( QtCore.QSize( 120, 130 ) )
 		self.setWordWrap( True )
 
 	def getItemFlags( self, node ):
@@ -79,8 +80,9 @@ class AssetBrowserListWidget( GenericListWidget ):
 			thumbnailIcon = getIcon( 'thumbnail/%s' % node.getType(), 'thumbnail/default' )
 
 		item.setIcon( thumbnailIcon )
-		item.setSizeHint( QtCore.QSize( 140, 130 ) )
-		item.setTextAlignment( Qt.AlignCenter | Qt.AlignTop )
+		item.setSizeHint( QtCore.QSize( 120, 130 ) )
+		# item.setTextAlignment( Qt.AlignLeft | Qt.AlignVCenter )
+		item.setTextAlignment( Qt.AlignCenter | Qt.AlignVCenter )
 		item.setToolTip( node.getPath() )
 
 	def onItemSelectionChanged(self):

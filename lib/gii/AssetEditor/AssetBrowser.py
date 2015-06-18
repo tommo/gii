@@ -381,7 +381,7 @@ class AssetBrowser( SceneEditorModule ):
 			if node.isType( 'folder' ):
 				node.openInSystem()
 			else:
-				node.showInBrowser()
+				node.edit()
 
 		else:
 			if node.isGroupType( 'folder', 'package' ):
@@ -416,7 +416,15 @@ class AssetBrowser( SceneEditorModule ):
 		for folder in self.currentFolders:
 			for subNode in folder.getChildren():
 				assets.append( subNode )
-		return assets
+
+		def _sortFunc( x, y ):
+			t1 = x.getType()
+			t2 = y.getType()
+			if t1 == 'folder' and t2 != 'folder': return -1
+			if t2 == 'folder' and t1 != 'folder': return 1
+			return cmp( x.getName(), y.getName() )
+
+		return sorted( assets, _sortFunc )
 
 	def getAssetThumbnailIcon( self, assetNode, size ):
 		thumbnailPath = assetNode.requestThumbnail( size )

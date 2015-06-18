@@ -17,6 +17,7 @@ class SceneAssetManager(AssetManager):
 	def importAsset( self, node, reload = False ):
 		node.assetType = 'scene'
 		node.setObjectFile( 'def', node.getFilePath() )
+		node.groupType = 'package'
 		#scan proto nodes
 		data = jsonHelper.tryLoadJSON( node.getFilePath() )
 		protoInfos = data.get( 'protos', None )
