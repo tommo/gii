@@ -1,6 +1,10 @@
 from gii.core import *
 from gii.core.model import *
 
+from gii.qt.helpers import repolishWidget
+
+import json 
+
 from PropertyEditor import FieldEditor, registerSimpleFieldEditorFactory
 from SearchFieldEditor import SearchFieldEditorBase
 
@@ -46,6 +50,53 @@ class AssetRefFieldEditor( SearchFieldEditorBase ):
 		else:
 			return name
 
-##----------------------------------------------------------------##
+	def findMatchedAssetFromMime( self, mime ):
+		if not mime.hasFormat( GII_MIME_ASSET_LIST ): return None
+		assetList = json.loads( str(mime.data( GII_MIME_ASSET_LIST )), 'utf-8' )
+		matched = False
+		assetLib = AssetLibrary.get()
+
+		assets = []
+		for path in assetList:			
+			asset = assetLib.getAssetNode( path )
+			if asset:
+				assets.append( asset )
+
+		result = assetLib.enumerateAsset( self.getSearchType(), subset = assets )
+		if result:
+			return result[0]
+		else:
+			return None
+
+	def dragEnterEvent( self, ev ):
+		mime = ev.mimeData()
+		asset = self.findMatchedAssetFromMime( mime )
+		button = self.getRefButton()
+		if asset:
+			button.setProperty( 'dragover', 'ok' )
+		else:			
+			button.setProperty( 'dragover', 'bad' )
+		repolishWidget( button )
+		ev.acceptProposedAction()
+
+	def dropEvent( self, ev ):
+		button = self.getRefButton()
+		button.setProperty( 'dragover', False )
+		repolishWidget( button )
+		mime = ev.mimeData()
+		asset = self.findMatchedAssetFromMime( mime )		
+		if not asset: return False
+		self.setValue( asset )
+		ev.acceptProposedAction()
+
+	def dragLeaveEvent( self, ev ):
+		button = self.getRefButton()
+		button.setProperty( 'dragover', False )
+		repolishWidget( button )
+
+	def isDropAllowed( self ):
+		return True
+
+
 
 registerSimpleFieldEditorFactory( AssetRefType, AssetRefFieldEditor )

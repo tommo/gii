@@ -1182,3 +1182,16 @@ QSplitter#TimelineHeaderSplitter::handle{
 	background-color:#515c84;
 	color: #fff;
 }
+
+
+#ButtonReferenceField[dragover='ok']
+{
+	border: 1px solid #5f5;
+	background: #98ba56;
+}
+
+#ButtonReferenceField[dragover='bad']
+{
+	border: 1px solid #ff3100;
+	background: #ba3336;
+}

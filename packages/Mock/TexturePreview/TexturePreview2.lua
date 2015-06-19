@@ -19,6 +19,7 @@ function Preview:show( path )
 	if not texture then return false end 
 
 	self.navigate:reset()
+	self.zoom = 1
 
 	local deck = MOAIGfxQuad2D.new()
 	local w, h = texture:getSize()	

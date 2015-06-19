@@ -11,21 +11,24 @@ from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
 from gii.SearchView import requestSearchView
 
-##----------------------------------------------------------------##
 class SearchFieldButton( QtGui.QToolButton ):
 	def sizeHint( self ):
 		return QtCore.QSize( 20, 20)
+
+	
 		
 ##----------------------------------------------------------------##
 class SearchFieldWidget( QtGui.QWidget ):
 	def __init__(self, *args):
 		super(SearchFieldWidget, self).__init__( *args )
+		self.parentEditor = None
 		self.layout = layout = QtGui.QHBoxLayout( self )
 		layout.setSpacing( 0 )
 		layout.setMargin( 0 )
 		self.buttonRef   = buttonRef   = SearchFieldButton( self )
 		self.buttonGoto  = buttonGoto  = SearchFieldButton( self )
 		self.buttonClear = buttonClear = SearchFieldButton( self )
+		buttonRef.setObjectName( 'ButtonReferenceField' )
 		self.buttonRef.setToolButtonStyle( Qt.ToolButtonTextBesideIcon )
 		buttonRef.setSizePolicy(
 			QtGui.QSizePolicy.Expanding,
@@ -48,7 +51,7 @@ class SearchFieldWidget( QtGui.QWidget ):
 		layout.addWidget( buttonClear )
 		self.targetRef = None 
 		self.setRef( None )
-
+		self.setAcceptDrops( False )
 
 	def setRef( self, target ):
 		self.targetRef = target
@@ -73,6 +76,15 @@ class SearchFieldWidget( QtGui.QWidget ):
 	def setRefIcon( self, iconName ):
 		icon = getIcon( iconName )
 		self.buttonRef.setIcon( icon )
+
+	def dragEnterEvent( self, ev ):
+		self.parentEditor.dragEnterEvent( ev )
+
+	def dropEvent( self, ev ):
+		self.parentEditor.dropEvent( ev )
+
+	def dragLeaveEvent( self, ev ):
+		self.parentEditor.dragLeaveEvent( ev )
 
 ##----------------------------------------------------------------##
 class SearchFieldEditorBase( FieldEditor ):	
@@ -109,10 +121,13 @@ class SearchFieldEditorBase( FieldEditor ):
 
 	def initEditor( self, container ):
 		widget = SearchFieldWidget( container )
+		widget.parentEditor = self
 		widget.buttonRef   .clicked .connect( self.openBrowser )
 		widget.buttonClear .clicked .connect( self.clearObject )
 		widget.buttonGoto  .clicked .connect( self.gotoObject  )
 		self.refWidget = widget
+		if self.isDropAllowed():
+			widget.setAcceptDrops( True )
 		return self.refWidget
 
 	def openBrowser( self ):
@@ -137,6 +152,9 @@ class SearchFieldEditorBase( FieldEditor ):
 
 	def setFocus( self ):
 		self.refWidget.setFocus()
+
+	def getRefButton( self ):
+		return self.refWidget.buttonRef
 
 	def onSearchSelection( self, target ):
 		self.setValue( target )
@@ -179,3 +197,12 @@ class SearchFieldEditorBase( FieldEditor ):
 
 	def formatRefName( self, name ): #virtual
 		return name
+
+	def dragEnterEvent( self, ev ):
+		pass
+
+	def dropEvent( self, ev ):
+		pass
+
+	def isDropAllowed( self ):
+		return False

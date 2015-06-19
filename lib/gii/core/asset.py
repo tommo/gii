@@ -671,9 +671,10 @@ class AssetLibrary(object):
 	def enumerateAsset( self, patterns, **options ):
 		noVirtualNode = options.get( 'no_virtual', False )
 		result = []
+		subset = options.get( 'subset', self.assetTable.values() )
 		#all
 		if not patterns:
-			for path, node in self.assetTable.items():
+			for node in subset:
 				if ( noVirtualNode and node.isVirtual() ) : continue
 				result.append( node )
 			return result
@@ -684,7 +685,7 @@ class AssetLibrary(object):
 		for p in patterns:
 			pattern = re.compile( p )
 			matchPatterns.append( pattern )
-		for path, node in self.assetTable.items():
+		for node in subset:
 			if ( noVirtualNode and node.isVirtual() ) : continue
 			for matchPattern in matchPatterns:
 				mo = matchPattern.match( node.getType() )
