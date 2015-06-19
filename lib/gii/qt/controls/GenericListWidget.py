@@ -25,6 +25,9 @@ class GenericListWidget( QtGui.QListWidget ):
 		self.itemActivated        .connect( self.onItemActivated )
 		self.itemChanged          .connect( self._onItemChanged )
 
+		self.setHorizontalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
+		self.setVerticalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
+
 		dragMode = self.getOption( 'drag_mode', None )
 		if dragMode == 'all':
 			self.setDragDropMode( QtGui.QAbstractItemView.DragDrop )
@@ -213,6 +216,19 @@ class GenericListWidget( QtGui.QListWidget ):
 				return
 
 		return super( GenericListWidget, self ).keyPressEvent( ev )
+
+	def mousePressEvent( self, ev ):
+		if ev.button() == Qt.LeftButton:
+			item = self.itemAt( ev.pos() )
+			if not item and ev.modifiers() != Qt.NoModifier: #root
+				self.clearSelection()
+				return 
+		return super( GenericListWidget, self ).mousePressEvent( ev )
+
+	def updateGeometries( self ):
+		super( GenericListWidget, self ).updateGeometries()
+		step = self.verticalScrollBar().singleStep()/5.0
+		self.verticalScrollBar().setSingleStep( step )
 	
 	##----------------------------------------------------------------##
 	##Virtual
