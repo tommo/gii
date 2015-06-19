@@ -11,6 +11,7 @@ from gii.qt.IconCache                  import getIcon
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
 from gii.qt.controls.GenericListWidget import GenericListWidget
 from gii.qt.controls.AssetTreeView import AssetTreeView, AssetTreeFilter
+from gii.qt.dialogs   import requestString, alertMessage, requestConfirm
 
 from AssetEditor      import AssetEditorModule, getAssetSelectionManager
 
@@ -40,12 +41,8 @@ class AssetBrowserTreeView( AssetTreeView ):
 		# 	getAssetSelectionManager().changeSelection(None)
 
 	def onDeletePressed( self ):
-		if requestConfirm( 'delete asset', 'Confirm to delete asset(s)?' ):
-			for node in self.getSelection():
-				if not node.isVirtual():
-					path = node.getAbsFilePath()
-					os.remove( path )
-
+		self.parentModule.onTreeRequestDelete()
+		
 ##----------------------------------------------------------------##
 class AssetBrowserListWidget( GenericListWidget ):
 	def __init__( self, *args, **option ):
@@ -104,6 +101,9 @@ class AssetBrowserListWidget( GenericListWidget ):
 		assetListData = json.dumps( output ).encode('utf-8')
 		data.setData( GII_MIME_ASSET_LIST, assetListData )
 		return data
+
+	def onDeletePressed( self ):
+		self.parentModule.onListRequestDelete()
 
 ##----------------------------------------------------------------##
 class AssetBrowserTagFilterWidget( QtGui.QFrame ):

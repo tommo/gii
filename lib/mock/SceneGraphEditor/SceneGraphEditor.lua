@@ -373,7 +373,7 @@ function CmdCreateEntityBase:redo()
 end
 
 function CmdCreateEntityBase:undo()
-	self.created:destroyNow()
+	self.created:destroyWithChildrenNow()
 	gii.emitPythonSignal( 'entity.removed', self.created )
 end
 

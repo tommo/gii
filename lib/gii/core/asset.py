@@ -32,7 +32,7 @@ class AssetNode(object):
 		
 		self.nodePath   = nodePath
 		self.assetType  = assetType
-		self.groupType  = None
+		self.groupType  = assetType == 'folder' and 'folder' or None
 		self.parentNode = None
 
 		self.metadata   = None
@@ -428,6 +428,11 @@ class AssetNode(object):
 		if path:
 			AssetUtils.openFileInOS(path)
 
+	def deleteFile( self ):
+		manager = self.getManager()
+		if manager:
+			manager.deleteAssetFile( self )
+
 	def _updateFileTime( self, mtime = None ):
 		if self.isVirtual(): return
 		self.fileTime = mtime or os.path.getmtime( self.getAbsFilePath() )
@@ -490,11 +495,15 @@ class AssetManager(object):
 	def forgetAsset( self, assetNode ):
 		pass
 
-	def removeAsset( self, assetNode ):
-		pass
-
 	def cloneAsset( self, assetNode ):
 		pass
+
+	def deleteAssetFile( self, assetNode ):
+		filepath = assetNode.getAbsFilePath()
+		if os.path.isfile( filepath ):
+			os.remove( filepath )
+		else:
+			pass
 
 	#Process asset for deployment. eg.  Filepath replace, Extern file collection
 	def deployAsset( self, assetNode, context ):
@@ -561,6 +570,7 @@ class RawAssetManager(AssetManager):
 		elif os.path.isdir( path ):
 			assetNode.assetType = 'folder'
 			assetNode.groupType = 'folder'
+			print( 'setting assetnode', assetNode )
 		return True
 
 	def markNotified(self, assetNode ):

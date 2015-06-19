@@ -130,7 +130,8 @@ class AssetBrowser( SceneEditorModule ):
 		registerSearchEnumerator( assetCreatorSearchEnumerator  )
 
 	def onStart( self ):
-		self.getAssetLibrary().scheduleScanProject()
+		assetLib = self.getAssetLibrary()
+		assetLib.scheduleScanProject()
 		signals.connect( 'asset.register',   self.onAssetRegister )
 		signals.connect( 'asset.unregister', self.onAssetUnregister )
 		signals.connect( 'asset.moved',      self.onAssetMoved )
@@ -138,7 +139,13 @@ class AssetBrowser( SceneEditorModule ):
 
 		self.treeView.rebuild()
 
+		initialSelection = self.getConfig( 'current_selection', None )
+		if initialSelection:
+			nodes = [ assetLib.getAssetNode( path ) for path in initialSelection ]
+			self.treeView.selectNode( nodes )
+
 	def onStop( self ):
+		self.setConfig( 'current_selection', [ node.getPath() for node in self.currentFolders ] )
 		self.treeView.saveTreeStates()
 
 	def onSetFocus( self ):
@@ -149,6 +156,7 @@ class AssetBrowser( SceneEditorModule ):
 	def onUnload(self):
 		#persist expand state
 		# self.treeView.saveTreeStates()
+
 		pass
 
 	def onModuleLoaded(self):				
@@ -170,13 +178,16 @@ class AssetBrowser( SceneEditorModule ):
 		# 	item.setSelected( True )
 		# 	self.treeView.scrollToItem( item )
 
-
 	def loadAssetCreator(self, creator):
 		label     = creator.getLabel()
 		assetType = creator.getAssetType()		
 
 		def creatorFunc(value=None):
-			contextNode = getAssetSelectionManager().getSingleSelection()
+			if self.currentFolders:
+				contextNode = self.currentFolders[0]
+			else:
+				contextNode = None
+
 			if not isinstance(contextNode, AssetNode):
 				contextNode = app.getAssetLibrary().getRootNode()
 
@@ -184,7 +195,7 @@ class AssetBrowser( SceneEditorModule ):
 			if not name: return
 
 			try:
-				finalpath=creator.createAsset(name, contextNode, assetType)
+				finalpath = creator.createAsset(name, contextNode, assetType)
 				self.newCreateNodePath=finalpath
 			except Exception,e:
 				logging.exception( e )
@@ -201,7 +212,12 @@ class AssetBrowser( SceneEditorModule ):
 	def createAsset( self, creator ):
 		label       = creator.getLabel()
 		assetType   = creator.getAssetType()		
-		contextNode = getAssetSelectionManager().getSingleSelection()
+
+		if self.currentFolders:
+			contextNode = self.currentFolders[0]
+		else:
+			contextNode = None
+
 		if not isinstance(contextNode, AssetNode):
 			contextNode = app.getAssetLibrary().getRootNode()
 
@@ -254,12 +270,12 @@ class AssetBrowser( SceneEditorModule ):
 		if node.isGroupType( 'folder', 'package' ):
 			if pnode:
 				self.treeView.addNode( node )
-			if node.getPath() == self.newCreateNodePath:
-				self.newCreateNodePath=None
-				self.treeView.selectNode(node)
 
 		if pnode in self.currentFolders:
-			self.listView.addNode( node )
+			self.listView.rebuild()
+			if node.getPath() == self.newCreateNodePath:
+				self.newCreateNodePath=None
+				self.listView.selectNode( node )
 
 	def onAssetUnregister(self, node):
 		pnode=node.getParent()
@@ -357,6 +373,16 @@ class AssetBrowser( SceneEditorModule ):
 		self.currentFolders = folders
 		self.listView.rebuild()
 
+	def onTreeRequestDelete( self ):
+		if requestConfirm( 'delete asset package/folder', 'Confirm to delete asset(s)?' ):
+			for node in self.treeView.getSelection():
+				node.deleteFile()
+
+	def onListRequestDelete( self ):
+		if requestConfirm( 'delete asset package/folder', 'Confirm to delete asset(s)?' ):
+			for node in self.listView.getSelection():
+				node.deleteFile()
+				
 	def onListSelectionChanged( self ):
 		self.updatingSelection = True
 		getAssetSelectionManager().changeSelection( self.listView.getSelection() )

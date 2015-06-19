@@ -184,6 +184,35 @@ class GenericListWidget( QtGui.QListWidget ):
 			self.scrollToItem( item )
 			self.setCurrentItem( item, QtGui.QItemSelectionModel.Current )
 			# self.moveCursor( self.MoveUp, Qt.NoModifier )
+
+	##----------------------------------------------------------------##
+	#custom control
+	def keyPressEvent( self, ev ):
+		modifiers = QApplication.keyboardModifiers()
+		key = ev.key()
+
+		if key in ( Qt.Key_Delete, Qt.Key_Backspace ):			
+			self.onDeletePressed()
+		elif key == Qt.Key_Escape: #deselect all
+			self.selectNode( [] )
+
+		#copy&paste
+		elif ( key, modifiers ) == ( Qt.Key_C, Qt.ControlModifier ):
+			if self.onClipboardCopy(): return
+		elif ( key, modifiers ) == ( Qt.Key_X, Qt.ControlModifier ):
+			if self.onClipboardCut(): return
+		elif ( key, modifiers ) == ( Qt.Key_V, Qt.ControlModifier ):
+			if self.onClipboardPaste(): return
+
+		#open
+		elif key == Qt.Key_Down \
+			and ( modifiers in ( Qt.ControlModifier, Qt.ControlModifier | Qt.KeypadModifier ) ):
+			item = self.currentItem() 
+			if item:
+				self.onItemActivated( item )
+				return
+
+		return super( GenericListWidget, self ).keyPressEvent( ev )
 	
 	##----------------------------------------------------------------##
 	##Virtual
