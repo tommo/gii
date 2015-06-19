@@ -25,6 +25,17 @@ class GenericListWidget( QtGui.QListWidget ):
 		self.itemActivated        .connect( self.onItemActivated )
 		self.itemChanged          .connect( self._onItemChanged )
 
+		dragMode = self.getOption( 'drag_mode', None )
+		if dragMode == 'all':
+			self.setDragDropMode( QtGui.QAbstractItemView.DragDrop )
+		elif dragMode == 'drag':
+			self.setDragDropMode( QtGui.QAbstractItemView.DragOnly )
+		elif dragMode == 'drop':
+			self.setDragDropMode( QtGui.QAbstractItemView.DropOnly )
+		elif dragMode == 'internal' or dragMode == True:
+			self.setDragDropMode( QtGui.QAbstractItemView.InternalMove )
+			
+
 	def getOption( self, k, v ):
 		defOption = self.getDefaultOptions()
 		option    = self.option

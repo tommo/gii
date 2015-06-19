@@ -12,6 +12,9 @@ function onSceneOpen( scene )
 	view.updateCanvas = function()
 		_giiSceneView.scheduleUpdate()
 	end
+
+	view:registerDragFactory( mock_edit.ProtoDragInFactory() )
+
 	scene:addEntity( view )
 	view:makeCurrent()
 end

@@ -8,7 +8,10 @@ import logging
 ##----------------------------------------------------------------##
 import signals
 import globalSignals
+
+from mime import *
 ##----------------------------------------------------------------##
+
 from helpers        import *
 from model          import *
 from res            import ResGuard

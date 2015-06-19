@@ -56,6 +56,8 @@ require 'mock_edit.tools'
 
 require 'mock_edit.defaults'
 
+require 'mock_edit.drag'
+
 
 mock._allowAssetCacheWeakMode( false )
 MOAISim.getInputMgr().configuration = 'GII'

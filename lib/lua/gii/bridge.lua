@@ -200,6 +200,7 @@ end
 -- Editor Command
 --------------------------------------------------------------------
 registerLuaEditorCommand = bridge.registerLuaEditorCommand
+doCommand = bridge.doCommand
 
 --------------------------------------------------------------------
 -- MODEL

@@ -30,6 +30,10 @@ function EditorCommand:toString()
 	return self._commandName
 end
 
+function EditorCommand:getResult()
+	return nil
+end
+
 
 --------------------------------------------------------------------
 CLASS: EditorCommandNoHistory (EditorCommand)

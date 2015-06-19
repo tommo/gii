@@ -373,6 +373,7 @@ class SafeDict(object):
 	def values( self ):
 		return self.__dict.values()
 
+
 def registerLuaEditorCommand( fullname, cmdCreator ):
 	class LuaEditorCommand( EditorCommand ):	
 		name = fullname
@@ -399,12 +400,20 @@ def registerLuaEditorCommand( fullname, cmdCreator ):
 			cmd = self.luaCmd
 			return cmd.hasHistory( cmd )
 
+		def getResult( self ):
+			cmd = self.luaCmd
+			return cmd.getResult( cmd )
+
 		def __repr__( self ):
 			cmd = self.luaCmd
 			return cmd.toString( cmd )
 			
 	return LuaEditorCommand
 
+
+def doCommand( cmdId, argTable ):
+	pyArgTable = luaTableToDict( argTable )
+	return app.doCommand( cmdId, **pyArgTable )
 
 ####
 #EXTRA

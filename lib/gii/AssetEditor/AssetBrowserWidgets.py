@@ -1,4 +1,6 @@
 import random
+import json
+
 from PyQt4            import QtCore, QtGui, uic
 from PyQt4.QtCore     import Qt
 
@@ -48,6 +50,7 @@ class AssetBrowserTreeView( AssetTreeView ):
 class AssetBrowserListWidget( GenericListWidget ):
 	def __init__( self, *args, **option ):
 		option[ 'mode' ] = 'icon'
+		option[ 'drag_mode' ] = 'all'
 		super( AssetBrowserListWidget, self ).__init__( *args, **option )
 		self.setObjectName( 'AssetBrowserList' )
 		self.setWrapping( True )
@@ -91,7 +94,16 @@ class AssetBrowserListWidget( GenericListWidget ):
 	def onItemActivated( self, item ):
 		node = item.node
 		self.parentModule.onActivateNode( node, 'list' )
-		
+
+	def mimeData( self, items):
+		data = QtCore.QMimeData()
+		output = []
+		for item in items:
+			asset = item.node
+			output.append( asset.getPath() )
+		assetListData = json.dumps( output ).encode('utf-8')
+		data.setData( GII_MIME_ASSET_LIST, assetListData )
+		return data
 
 ##----------------------------------------------------------------##
 class AssetBrowserTagFilterWidget( QtGui.QFrame ):

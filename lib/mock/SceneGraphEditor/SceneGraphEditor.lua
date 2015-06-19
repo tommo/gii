@@ -355,6 +355,10 @@ end
 function CmdCreateEntityBase:createEntity()
 end
 
+function CmdCreateEntityBase:getResult()
+	return self.created
+end
+
 function CmdCreateEntityBase:redo()
 	local entity = self:createEntity()
 	if not entity then return false end

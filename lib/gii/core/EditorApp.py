@@ -183,7 +183,7 @@ class EditorApp(object):
 			stack.clear()
 
 	def doCommand( self, fullname, *args, **kwargs ):
-		self.commandRegistry.doCommand( fullname, *args, **kwargs )
+		return self.commandRegistry.doCommand( fullname, *args, **kwargs )
 
 	def getPath( self, path = None ):
 		if path:

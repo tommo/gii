@@ -23,7 +23,7 @@ from PyQt4.QtCore    import Qt, QObject
 from mock import _MOCK, isMockInstance
 ##----------------------------------------------------------------##
 
-_GII_ENTITY_DATA_MIME = 'application/gii_entity_data'
+GII_MIME_ENTITY_DATA = 'application/gii.entity-data'
 
 def getModulePath( path ):
 	import os.path
@@ -676,15 +676,15 @@ class SceneGraphEditor( SceneEditorModule ):
 			else:
 				text = text + '\n' + s.name
 		mime.setText( text )
-		mime.setData( _GII_ENTITY_DATA_MIME, entityGroupData.encode('utf-8') )
+		mime.setData( GII_MIME_ENTITY_DATA, entityGroupData.encode('utf-8') )
 		clip.setMimeData( mime )
 		return True
 
 	def onPasteEntity( self ):
 		clip = QtGui.QApplication.clipboard()
 		mime = clip.mimeData()
-		if mime.hasFormat( _GII_ENTITY_DATA_MIME ):
-			data = mime.data( _GII_ENTITY_DATA_MIME )
+		if mime.hasFormat( GII_MIME_ENTITY_DATA ):
+			data = mime.data( GII_MIME_ENTITY_DATA )
 			self.doCommand( 'scene_editor/paste_entity',
 				data = str(data).decode('utf-8')
 			)
@@ -702,15 +702,15 @@ class SceneGraphEditor( SceneEditorModule ):
 			else:
 				text = text + '\n' + s.name
 		mime.setText( text )
-		mime.setData( _GII_ENTITY_DATA_MIME, str(entityGroupData) )
+		mime.setData( GII_MIME_ENTITY_DATA, str(entityGroupData) )
 		clip.setMimeData( mime )
 		return True
 
 	def onPasteComponent( self ):
 		clip = QtGui.QApplication.clipboard()
 		mime = clip.mimeData()
-		if mime.hasFormat( _GII_ENTITY_DATA_MIME ):
-			data = mime.data( _GII_ENTITY_DATA_MIME )
+		if mime.hasFormat( GII_MIME_ENTITY_DATA ):
+			data = mime.data( GII_MIME_ENTITY_DATA )
 			self.doCommand( 'scene_editor/paste_entity',
 				data = str(data)
 			)

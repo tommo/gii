@@ -30,6 +30,9 @@ class EditorCommand( object ):
 	def hasHistory( self ):
 		return True
 
+	def getResult( self ):
+		return None
+
 	def __repr__( self ):
 		return self.fullname
 
@@ -148,4 +151,7 @@ class EditorCommandRegistry(object):
 		cmd = cmdClass()
 		cmd._fullname = fullname
 		if cmd.init( **kwargs ) ==  False: return None
-		return stack.pushCommand( cmd )
+		if stack.pushCommand( cmd ):
+			return cmd
+		else:
+			return None

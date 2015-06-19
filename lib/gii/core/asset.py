@@ -13,6 +13,8 @@ import AssetUtils
 
 from cache import CacheManager
 
+from mime import GII_MIME_ASSET_LIST
+
 GII_ASSET_INDEX_PATH = 'asset_table.json'
 GII_ASSET_META_DIR   = '.assetmeta'
 
@@ -1103,3 +1105,5 @@ class AssetLibrary(object):
 				if mtime1 > mtime:
 					mtime = mtime1
 		return mtime
+
+

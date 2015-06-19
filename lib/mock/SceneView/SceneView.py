@@ -66,8 +66,9 @@ class SceneView( SceneEditorModule ):
 			)
 		self.toolbar = self.window.addToolBar()
 
-		self.canvas = self.window.addWidget( MOAIEditCanvas() )
+		self.canvas = self.window.addWidget( SceneViewCanvas() )
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
+		self.canvas.parentView = self
 		
 		self.canvas.setDelegateEnv( '_giiSceneView', self )
 
@@ -230,4 +231,46 @@ class SceneView( SceneEditorModule ):
 	def getCurrentSceneView( self ):
 		#TODO
 		return self
+
+	def onDragStart( self, mimeType, data, x, y ):
+		return self.canvas.callMethod( 'view', 'startDrag', mimeType, data, x, y )
+
+	def onDragMove( self, x, y ):
+		self.canvas.callMethod( 'view', 'moveDrag', x, y )
+
+	def onDragDrop( self, x, y ):
+		self.canvas.callMethod( 'view', 'finishDrag', x, y )
+
+	def onDragLeave( self ):
+		self.canvas.callMethod( 'view', 'stopDrag' )
+
+
+##----------------------------------------------------------------##
+class SceneViewCanvas( MOAIEditCanvas ):
+	def __init__( self, *args, **kwargs ):
+		super( SceneViewCanvas, self ).__init__( *args, **kwargs )
+		self.setAcceptDrops( True )
+
+	def dragEnterEvent( self, ev ):
+		mimeData = ev.mimeData()
+		pos = ev.pos()
+		accepted = False
+		if mimeData.hasFormat( GII_MIME_ASSET_LIST ):
+			if self.parentView.onDragStart(
+				GII_MIME_ASSET_LIST, str(mimeData.data( GII_MIME_ASSET_LIST )), 
+				pos.x(), pos.y()
+				):
+				accepted = True
+		if accepted:
+			ev.acceptProposedAction()
+
+	def dragMoveEvent( self, ev ):
+		pos = ev.pos()
+		self.parentView.onDragMove( pos.x(), pos.y() )
+		ev.acceptProposedAction()
+
+	def dropEvent( self, ev ):
+		pos = ev.pos()
+		self.parentView.onDragDrop( pos.x(), pos.y() )
+		ev.acceptProposedAction()
 

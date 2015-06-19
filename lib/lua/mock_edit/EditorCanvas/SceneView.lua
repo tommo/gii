@@ -1,5 +1,10 @@
 module 'mock_edit'
 
+
+local function prioritySortFunc( a, b )
+	return  a._priority < b._priority
+end
+
 --------------------------------------------------------------------
 local currentSceneView = false
 
@@ -7,9 +12,41 @@ function getCurrentSceneView()
 	return currentSceneView
 end
 
+--------------------------------------------------------------------
+CLASS: SceneViewDrag ()
+	:MODEL{}
+
+function SceneViewDrag:onStart( view, x, y )
+	print( 'start drag', x, y )
+end
+
+function SceneViewDrag:onMove( view, x, y )
+	print( 'moving drag', x, y )
+end
+
+function SceneViewDrag:onFinish( view, x, y )
+	print( 'finishing drag', x, y )
+end
+
+function SceneViewDrag:onStop( view )
+	print( 'stop drag' )
+end
+
+--------------------------------------------------------------------
+CLASS: SceneViewDragFactory ()
+	:MODEL{}
+
+function SceneViewDragFactory:create( view, mimeType, data, x, y )
+	return false 
+end
+
 
 --------------------------------------------------------------------
 CLASS:SceneView ( CanvasView )
+
+function SceneView:__init()
+	self.dragFactoryList = {}
+end
 
 function SceneView:onInit()
 	self:connect( 'scene.pre_serialize',    'preSceneSerialize'    )
@@ -17,6 +54,13 @@ function SceneView:onInit()
 	self:readConfig()
 	self.gizmoManager:updateConstantSize()
 	self.itemManager:updateAllItemScale()
+	self.activeDrags = {}
+end
+
+function SceneView:registerDragFactory( factory, priority )
+	factory._priorty = priority or 0
+	table.insert( self.dragFactoryList, factory )
+	table.sort( self.dragFactoryList, prioritySortFunc )
 end
 
 function SceneView:readConfig()
@@ -75,6 +119,56 @@ end
 function SceneView:pushObjectAttributeHistory()
 end
 
+function SceneView:startDrag( mimeType, dataString, x, y )
+	local accepted = false
+	local data = MOAIJsonParser.decode( dataString )
+	for i, fac in ipairs( self.dragFactoryList ) do
+		local drag = fac:create( self, mimeType, data, x, y )
+		if drag then
+			drag.view = self
+			local drags
+			if isInstance( drag, SceneViewDrag ) then
+				drags = { drag }
+			elseif type( drag ) == 'table' then
+				drags = drag
+			end
+			for _, drag in ipairs( drags ) do
+				if isInstance( drag, SceneViewDrag ) then
+					self.activeDrags[ drag ] = true
+					drag:onStart(  self, x, y )
+					accepted = true
+				else
+					_warn( 'unkown drag type' )
+				end
+			end
+			if accepted then return true end
+		end
+	end
+	return false
+end
+
+function SceneView:stopDrag()
+	for drag in pairs( self.activeDrags ) do
+		drag:onStop( self )
+	end
+	self.activeDrags = {}
+end
+
+function SceneView:finishDrag( x, y )
+	for drag in pairs( self.activeDrags ) do
+		drag:onFinish( self, x, y )
+	end
+	self.activeDrags = {}
+end
+
+function SceneView:moveDrag( x, y )
+	for drag in pairs( self.activeDrags ) do
+		drag:onMove( self, x, y )
+	end
+end
+
+
+
 --------------------------------------------------------------------
 CLASS: SceneViewFactory ()
 function SceneViewFactory:__init()
@@ -87,9 +181,6 @@ function SceneViewFactory:createSceneView( scene, env )
 end
 
 --------------------------------------------------------------------
-local function prioritySortFunc( a, b )
-	return  a._priority < b._priority
-end
 
 local SceneViewFactories = {}
 function registerSceneViewFactory( key, factory, priority )
