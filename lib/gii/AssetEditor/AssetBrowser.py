@@ -43,6 +43,8 @@ class AssetBrowser( SceneEditorModule ):
 			_getModulePath('AssetBrowser.ui')
 		)
 
+		self.splitter = ui.splitter
+
 		#
 		self.treeFilter = AssetTreeFilter(
 				self.window
@@ -144,8 +146,13 @@ class AssetBrowser( SceneEditorModule ):
 			nodes = [ assetLib.getAssetNode( path ) for path in initialSelection ]
 			self.treeView.selectNode( nodes )
 
+		splitterSizes = self.getConfig( 'splitter_sizes', None )
+		if splitterSizes:
+			self.splitter.setSizes( splitterSizes )
+
 	def onStop( self ):
 		self.setConfig( 'current_selection', [ node.getPath() for node in self.currentFolders ] )
+		self.setConfig( 'splitter_sizes', self.splitter.sizes() )
 		self.treeView.saveTreeStates()
 
 	def onSetFocus( self ):
