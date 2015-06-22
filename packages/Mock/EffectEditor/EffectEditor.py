@@ -16,6 +16,7 @@ from gii.qt.controls.PropertyEditor  import PropertyEditor
 from gii.qt.controls.CodeEditor import CodeEditor
 
 from gii.AssetEditor  import AssetEditorModule
+from gii.SceneEditor  import SceneEditorModule
 
 from gii.moai.MOAIEditCanvas import MOAIEditCanvas
 from gii.moai import _LuaObject
@@ -47,7 +48,7 @@ def _fixDuplicatedName( names, name, id = None ):
 
 ##----------------------------------------------------------------##
 
-class EffectEditor( AssetEditorModule ):
+class EffectEditor( SceneEditorModule ):
 	def __init__(self):
 		super(EffectEditor, self).__init__()
 		self.editingAsset     = None

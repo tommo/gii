@@ -5,7 +5,13 @@ CLASS: ProtoDragIn ( SceneViewDrag )
 	:MODEL{}
 
 function ProtoDragIn:__init( path, x, y  )
-	local cmd = gii.doCommand( 'scene_editor/create_proto_instance', { proto = path } )
+	local cmd = gii.doCommand( 
+		'scene_editor/create_proto_instance', 
+		{ 
+			proto = path,
+			create_sibling = true
+		}
+	)
 	local instance = cmd and cmd.getResult()
 	self.protoInstance = instance or false
 end

@@ -43,7 +43,36 @@ class SelectionManager(object):
 	def addSelection( self, selection ):
 		if not selection: return
 		if not isinstance(selection, list): selection = [ selection ]
-		return self.changeSelection( self.currentSelection + selection )
+		currentSelection = self.currentSelection
+		#avoid duplicated
+		for e in selection:
+			if e in currentSelection:
+				currentSelection.remove( e )
+		return self.changeSelection( currentSelection + selection )
+
+	def removeSelection( self, selection ):
+		if not selection: return
+		if not isinstance(selection, list): selection = [ selection ]
+		currentSelection = self.currentSelection
+		for e in selection:
+			if e in currentSelection:
+				currentSelection.remove( e )
+		return self.changeSelection( self.currentSelection )
+
+	def toggleSelection( self, selection ): #if has exist selection, remove only; otherwise add
+		if not selection: return
+		if not isinstance(selection, list): selection = [ selection ]
+		currentSelection = self.currentSelection
+		#avoid duplicated
+		hasPrevious = False
+		for e in selection:
+			if e in currentSelection:
+				hasPrevious = True
+				currentSelection.remove( e )
+		if hasPrevious:
+			return self.changeSelection( currentSelection )
+		else:
+			return self.changeSelection( currentSelection + selection )
 
 	def historyBack(self):
 		hisSize = len(self.history)

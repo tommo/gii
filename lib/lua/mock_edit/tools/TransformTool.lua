@@ -333,17 +333,14 @@ end
 --------------------------------------------------------------------
 ---Transform Tool
 --------------------------------------------------------------------
-CLASS: TransformTool ( CanvasTool )
+CLASS: TransformTool ( SelectionTool )
 
 function TransformTool:__init()
 	self.handle = false
 end
 
 function TransformTool:onLoad()
-	local plane = self:addCanvasItem( CanvasPickPlane() )
-	plane:setPickCallback( function( picked )
-		gii.changeSelection( 'scene', unpack( picked ) )
-	end)
+	TransformTool.__super.onLoad( self )
 	self:updateSelection()
 end
 

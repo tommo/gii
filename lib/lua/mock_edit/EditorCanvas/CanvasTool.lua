@@ -16,12 +16,7 @@ function CanvasToolManager:__init( option )
 	self.activeTool = false
 end
 
-function CanvasToolManager:onLoad()
-	local inputDevice = self.option.inputDevice or self:getScene().inputDevice
-	self:attach( mock.InputScript{ 
-			device = inputDevice
-		} )
-	self.zoom = 1
+function CanvasToolManager:onLoad()	
 end
 
 function CanvasToolManager:getCurrentView()

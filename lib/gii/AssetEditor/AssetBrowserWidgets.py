@@ -1,8 +1,11 @@
 import random
 import json
+import os
 
 from PyQt4            import QtCore, QtGui, uic
 from PyQt4.QtCore     import Qt
+
+from PyQt4.QtGui      import QBrush, QStyle, QColor
 
 from gii.core         import *
 from gii.qt           import QtEditorModule
@@ -43,6 +46,19 @@ class AssetBrowserTreeView( AssetTreeView ):
 	def onDeletePressed( self ):
 		self.parentModule.onTreeRequestDelete()
 		
+
+##----------------------------------------------------------------##
+
+class AssetListItemDelegate( QtGui.QStyledItemDelegate ):
+	pass
+	# def initStyleOption(self, option, index):
+	# 	# let the base class initStyleOption fill option with the default values
+	# 	super( AssetListItemDelegate, self ).initStyleOption(option, index)
+	# 	# override what you need to change in option
+	# 	if option.state & QStyle.State_Selected:
+	# 		# option.state &= ~ QStyle.State_Selected
+	# 		option.backgroundBrush = QBrush(QColor(100, 200, 100, 200))
+		
 ##----------------------------------------------------------------##
 class AssetBrowserListWidget( GenericListWidget ):
 	def __init__( self, *args, **option ):
@@ -56,9 +72,11 @@ class AssetBrowserListWidget( GenericListWidget ):
 		self.setHorizontalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
 		self.setVerticalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
 		self.setMovement( QtGui.QListView.Snap )
+		self.setTextElideMode( Qt.ElideRight )
 		
 		self.thumbnailIconSize = ( 80, 80 )
 		# self.setIconSize( QtCore.QSize( 32, 32 ) )
+		self.setItemDelegate( AssetListItemDelegate( self ) )
 		
 		self.setIconSize( QtCore.QSize( 120, 130 ) )
 		self.setGridSize( QtCore.QSize( 120, 130 ) )
@@ -74,7 +92,14 @@ class AssetBrowserListWidget( GenericListWidget ):
 		return self.parentModule.getAssetsInListView()
 
 	def updateItemContent( self, item, node, **option ):
-		item.setText( node.getName() )
+		rawName = node.getName()
+		dotIdx = rawName.find( '.' )
+		if dotIdx > 0:
+			name = rawName[ 0:dotIdx ]
+			ext  = rawName[ dotIdx: ]
+			item.setText( name + '\n' + ext )
+		else:
+			item.setText( rawName )
 		thumbnailIcon = self.parentModule.getAssetThumbnailIcon( node, self.thumbnailIconSize )
 		if not thumbnailIcon:
 			thumbnailIcon = getIcon( 'thumbnail/%s' % node.getType(), 'thumbnail/default' )

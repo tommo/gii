@@ -344,11 +344,61 @@ gii.registerObjectEnumerator{
 --------------------------------------------------------------------
 --- COMMAND
 --------------------------------------------------------------------
+
+
+local function extractNumberPrefix( name )
+	local numberPart = string.match( name, '_%d+$' )
+	if numberPart then
+		local mainPart = string.sub( name, 1, -1 - #numberPart )
+		return mainPart, tonumber( numberPart )
+	end
+	return name, nil
+end
+
+local function findNextNumberProfix( scene, name )
+	local max = -1
+	local pattern = name .. '_(%d+)$'
+	for ent in pairs( scene.entities ) do
+		local n = ent:getName()
+		if n then
+			if n == name then 
+				max = math.max( 0, max )
+			else
+				local id = string.match( n, pattern )
+				if id then
+					max = math.max( max, tonumber( id ) )
+				end
+			end
+		end
+	end
+	return max
+end
+
+local function makeNumberProfix( scene, entity )
+	local n = entity:getName()
+	if n then
+		--auto increase prefix
+		local header, profix = extractNumberPrefix( n )
+		local number = findNextNumberProfix( scene, header )
+		if number >= 0 then
+			local profix = '_' .. string.format( '%02d', number + 1 )
+			entity:setName( header .. profix )
+		end
+	end
+end
+
+--------------------------------------------------------------------
 CLASS: CmdCreateEntityBase ( mock_edit.EditorCommand )
 function CmdCreateEntityBase:init( option )
-	local parent = gii.getSelection( 'scene' )[1]
-	if isInstance( parent, mock.Entity ) then
-		self.parentEntity = parent
+	local contextEntity = gii.getSelection( 'scene' )[1]
+	if isInstance( contextEntity, mock.Entity ) then
+		if option[ 'create_sibling' ] then
+			self.parentEntity = contextEntity:getParent()
+		else
+			self.parentEntity = contextEntity
+		end
+	else
+		self.parentEntity = false
 	end
 end
 
@@ -507,49 +557,11 @@ function CmdCloneEntity:init( option )
 	if not next( targets ) then return false end
 end
 
-local function extractNumberPrefix( name )
-	local numberPart = string.match( name, '_%d+$' )
-	if numberPart then
-		local mainPart = string.sub( name, 1, -1 - #numberPart )
-		return mainPart, tonumber( numberPart )
-	end
-	return name, nil
-end
-
-local function findNextNumberProfix( scene, name )
-	local max = -1
-	local pattern = name .. '_(%d+)$'
-	for ent in pairs( scene.entities ) do
-		local n = ent:getName()
-		if n then
-			if n == name then 
-				max = math.max( 0, max )
-			else
-				local id = string.match( n, pattern )
-				if id then
-					max = math.max( max, tonumber( id ) )
-				end
-			end
-		end
-	end
-	return max
-end
-
 function CmdCloneEntity:redo()
 	local createdList = {}
 	for _, target in ipairs( self.targets ) do
 		local created = mock.copyAndPasteEntity( target, generateGUID )
-		local n = created:getName()
-		if n then
-			--auto increase prefix
-			local header, profix = extractNumberPrefix( n )
-			local number = findNextNumberProfix( editor.scene, header )
-			if number >= 0 then
-				local profix = '_' .. string.format( '%02d', number + 1 )
-				created:setName( header .. profix )
-			end
-		end
-
+		makeNumberProfix( editor.scene, created )
 		local parent = target.parent
 		if parent then
 			parent:addChild( created )
@@ -841,6 +853,7 @@ function CmdCreateProtoInstance:createEntity()
 		[ 'loc' ] = true,
 		[ 'name' ] = true,
 	}
+	makeNumberProfix( editor.scene, instance )
 	return instance
 end
 

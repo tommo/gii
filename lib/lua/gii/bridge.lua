@@ -98,6 +98,25 @@ function addSelection( key, obj, ... )
 	end
 end
 
+function removeSelection( key, obj, ... )
+	assert( type(key)=='string', 'selection key expected' )
+	if obj then
+		bridge.removeSelection( key, newPythonList(obj,...) )
+	else
+		bridge.removeSelection( key, nil )
+	end
+end
+
+function toggleSelection( key, obj, ... )
+	assert( type(key)=='string', 'selection key expected' )
+	if obj then
+		bridge.toggleSelection( key, newPythonList(obj,...) )
+	else
+		bridge.toggleSelection( key, nil )
+	end
+end
+
+
 function getSelection( key )
 	assert( type(key)=='string', 'selection key expected' )
 	return listToTable( bridge.getSelection( key ) )
