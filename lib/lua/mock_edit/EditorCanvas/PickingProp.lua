@@ -151,11 +151,35 @@ function PickingManager:getVisibleLayers()
 	local layers = {}
 	for i, layer in ipairs( self.targetScene.layers ) do
 		local srcLayer = layer.source
-		if srcLayer:isEditorVisible() then
+		if srcLayer:isEditorVisible() then			
 			table.insert( layers, layer )
 		end
 	end
 	return table.reversed( layers )
+end
+
+function PickingManager:findProtoInstanceRoot( e )
+	if e.__proto_history then
+		while e do
+			if e.PROTO_INSTANCE_STATE then break end
+			e = e.parent
+		end
+	end
+	return e
+end
+
+function PickingManager:correctPicked( picked )
+	--1.convert parent+child selection to parent only
+	picked = findTopLevelEntities( picked )
+	--2.select instance root 
+	local picked1 = {}
+	for e in pairs( picked ) do
+		e = self:findProtoInstanceRoot( e )
+		if e then
+			picked1[ e ] = true
+		end
+	end
+	return picked1
 end
 
 function PickingManager:pickPoint( x, y, pad )
@@ -172,11 +196,11 @@ function PickingManager:pickPoint( x, y, pad )
 			end
 			if ent and ent:isVisible() then --TODO: sorting & sub picking
 				-- print( ent:getName() )
+				ent = self:findProtoInstanceRoot( ent )
 				return { ent }
 			end
 		end
 	end
-
 	return {}
 end
 
@@ -201,6 +225,32 @@ function PickingManager:pickRect( x0, y0, x1, y1, pad )
 			end
 		end
 	end
-
+	picked = self:correctPicked( picked )
 	return table.keys( picked )
 end
+
+function PickingManager:pickBox( x0, y0, z0, x1, y1, z1, pad )
+	-- print( 'picking rect', x0, y0, x1, y1 )
+	local picked = {}
+	local pickingPropToEntity = self.pickingPropToEntity
+
+	for i, layer in ipairs( self:getVisibleLayers() ) do
+		local partition = layer:getPartition()
+		local result = { partition:propListForBox( x0, y0, z0, x1, y1, z1, defaultSortMode ) }
+		for i, prop in ipairs( result ) do
+			local ent = pickingPropToEntity[ prop ]
+			if ent then --TODO: sub picking
+				if ent.getPickingTarget then
+					ent = ent:getPickingTarget()
+				end
+				if ent:isVisible() then
+					picked[ ent ] = true
+				end
+				-- print( ent:getName() )
+			end
+		end
+	end
+	picked = self:correctPicked( picked )
+	return table.keys( picked )
+end
+
