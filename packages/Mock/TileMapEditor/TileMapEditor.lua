@@ -390,7 +390,7 @@ end
 
 function TileMapEditor:setTerrainBrush( brush )
 	self.currentTerrainBrush = brush
-	self:changeEditTool( 'terrain' )
+	-- self:changeEditTool( 'terrain' )
 end
 
 function TileMapEditor:getTerrainBrush()
@@ -405,7 +405,6 @@ function TileMapEditor:changeEditTool( id )
 	if id == 'pen' then		
 		mock_edit.getCurrentSceneView():changeEditTool( 'tilemap.pen' )
 		_module.clearTerrainSelection()
-
 	elseif id == 'eraser' then
 		mock_edit.getCurrentSceneView():changeEditTool( 'tilemap.eraser' )
 		self.tilesetViewer:clearSelection()
@@ -414,11 +413,18 @@ function TileMapEditor:changeEditTool( id )
 	elseif id == 'terrain' then
 		mock_edit.getCurrentSceneView():changeEditTool( 'tilemap.terrain' )
 		self.tilesetViewer:clearSelection()
-	elseif id == 'clear' then
-		self:getTargetTileMapLayer():getMoaiGrid():fill(0)
-		mock_edit.getCurrentSceneView():updateCanvas()
+		
 	end
 end
+
+function TileMapEditor:clearLayer()
+	if not self.targetTileMapLayer then
+		mock_edit.alertMessage( 'message', 'no target tilemap layer selected', 'info' )
+		return
+	end
+	self:getTargetTileMapLayer():getMoaiGrid():fill(0)
+	mock_edit.getCurrentSceneView():updateCanvas()
+end	
 
 function TileMapEditor:toggleToolRandom( enabled )
 	self.randomEnabled = enabled
@@ -436,14 +442,16 @@ end
 
 function TileMapToolPen:onMouseDown( btn, x, y )
 	if self.pressed then return end
-	self.pressed = btn
 	if btn == 'left' then 
 		self.action = 'normal'
 		self:_doAction( x, y )
 	elseif btn == 'right' then
 		self.action = 'optional'
 		self:_doAction( x, y )
+	else
+		return
 	end
+	self.pressed = btn
 end
 
 function TileMapToolPen:onAction( action, layer, x, y )

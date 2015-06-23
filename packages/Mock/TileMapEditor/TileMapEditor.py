@@ -12,7 +12,7 @@ from gii.qt.dialogs   import requestString, alertMessage, requestColor
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.qt.controls.GenericListWidget import GenericListWidget
 
-from gii.SceneEditor import SceneEditorModule
+from gii.SceneEditor import SceneEditorModule, SceneTool, SceneToolMeta, SceneToolButton
 from gii.SearchView  import requestSearchView
 
 from gii.moai.MOAIEditCanvas import  MOAIEditCanvas
@@ -21,14 +21,37 @@ from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
 
 from mock import _MOCK, isMockInstance
-from mock import SceneViewTool
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 
+##----------------------------------------------------------------##
+class SceneToolTilemapPen( SceneTool ):
+	name = 'tilemap_pen'
+	def onStart( self, **context ):
+		app.getModule( 'tilemap_editor' ).changeEditTool( 'pen' )
 
+##----------------------------------------------------------------##
+class SceneToolTilemapEraser( SceneTool ):
+	name = 'tilemap_eraser'
+	def onStart( self, **context ):
+		app.getModule( 'tilemap_editor' ).changeEditTool( 'eraser' )
+
+##----------------------------------------------------------------##
+class SceneToolTilemapFill( SceneTool ):
+	name = 'tilemap_fill'
+	def onStart( self, **context ):
+		app.getModule( 'tilemap_editor' ).changeEditTool( 'fill' )
+
+##----------------------------------------------------------------##
+class SceneToolTilemapTerrain( SceneTool ):
+	name = 'tilemap_terrain'
+	def onStart( self, **context ):
+		app.getModule( 'tilemap_editor' ).changeEditTool( 'terrain' )
+
+##----------------------------------------------------------------##
 class TileMapEditor( SceneEditorModule ):
 	name       = 'tilemap_editor'
 	dependency = [ 'mock' ]
@@ -66,7 +89,7 @@ class TileMapEditor( SceneEditorModule ):
 		self.listTerrain = TileMapTerrainList(
 			window.containerLayers,
 			editable = False,
-			mode = 'icon'
+			mode = 'list'
 		)
 		self.listTerrain.parentModule = self
 		self.listTerrain.setFixedHeight( 70 )
@@ -96,9 +119,30 @@ class TileMapEditor( SceneEditorModule ):
 		self.addTool( 'tilemap_layers/layer_up',     label = 'up', icon = 'arrow-up' )
 		self.addTool( 'tilemap_layers/layer_down',   label = 'down', icon = 'arrow-down' )
 
-		self.addTool( 'tilemap_main/tool_pen',     label = 'Pen',   icon = 'tilemap/pen' )
-		self.addTool( 'tilemap_main/tool_eraser',  label = 'Eraser', icon = 'tilemap/eraser' )
-		self.addTool( 'tilemap_main/tool_fill',    label = 'Fill', icon = 'tilemap/fill' )
+		self.addTool( 'tilemap_main/tool_pen', 
+			widget = SceneToolButton( 'tilemap_pen',
+				icon = 'tilemap/pen',
+				label = 'Pen'
+			)
+		)
+		self.addTool( 'tilemap_main/tool_terrain', 
+			widget = SceneToolButton( 'tilemap_terrain',
+				icon = 'tilemap/terrain',
+				label = 'Terrain'
+			)
+		)
+		self.addTool( 'tilemap_main/tool_eraser', 
+			widget = SceneToolButton( 'tilemap_eraser',
+				icon = 'tilemap/eraser',
+				label = 'Eraser'
+			)
+		)
+		self.addTool( 'tilemap_main/tool_fill', 
+			widget = SceneToolButton( 'tilemap_fill',
+				icon = 'tilemap/fill',
+				label = 'Fill'
+			)
+		)
 		self.addTool( 'tilemap_main/----' )
 		self.addTool( 'tilemap_main/tool_random',   label = 'Random', icon = 'tilemap/random', type = 'check' )
 		self.addTool( 'tilemap_main/----' )
@@ -134,6 +178,7 @@ class TileMapEditor( SceneEditorModule ):
 	def onTerrainSelectionChanged( self, selection ):
 		if selection:
 			self.canvas.callMethod( 'editor', 'setTerrainBrush', selection[0] )
+			self.changeSceneTool( 'tilemap_terrain' )
 
 	def clearTerrainSelection( self ):
 		self.listTerrain.selectNode( None )
@@ -188,6 +233,13 @@ class TileMapEditor( SceneEditorModule ):
 			entries.append( entry )
 		return entries
 
+	def changeEditTool( self, toolId ):
+		self.canvas.callMethod( 'editor', 'changeEditTool', toolId )
+		if toolId == 'terrain':
+			currentBrush = self.canvas.callMethod( 'editor', 'getTerrainBrush' )
+			self.listTerrain.selectNode( currentBrush )
+			
+
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'add_layer':
@@ -211,18 +263,9 @@ class TileMapEditor( SceneEditorModule ):
 			self.canvas.callMethod( 'editor', 'moveTileMapLayerDown' )
 			self.treeLayers.rebuild()
 
-		elif name == 'tool_pen':
-			self.canvas.callMethod( 'editor', 'changeEditTool', 'pen' )
-
-		elif name == 'tool_eraser':
-			self.canvas.callMethod( 'editor', 'changeEditTool', 'eraser' )
-
-		elif name == 'tool_fill':
-			self.canvas.callMethod( 'editor', 'changeEditTool', 'fill' )
-
 		elif name == 'tool_clear':
-			self.canvas.callMethod( 'editor', 'changeEditTool', 'clear' )
-
+			self.canvas.callMethod( 'editor', 'clearLayer' )
+		
 		elif name == 'tool_random':
 			self.canvas.callMethod( 'editor', 'toggleToolRandom', tool.getValue() )
 
@@ -276,6 +319,7 @@ class TileMapTerrainList( GenericListWidget ):
 
 	def updateItemContent( self, item, node, **option ):
 		item.setText( node.name )
+		item.setIcon( getIcon( 'tilemap/terrain_item' ) )
 
 	def onItemSelectionChanged( self ):
 		self.parentModule.onTerrainSelectionChanged( self.getSelection() )

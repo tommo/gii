@@ -30,6 +30,9 @@ class SceneEditorModule( SubEditorModule ):
 	def getSceneToolManager( self ):
 		return self.getModule( 'scene_tool_manager' )
 
+	def changeSceneTool( self, toolId ):
+		self.getSceneToolManager().changeTool( toolId )
+
 
 ##----------------------------------------------------------------##
 class SceneEditor( TopEditorModule ):

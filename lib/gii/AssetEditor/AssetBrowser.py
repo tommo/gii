@@ -46,10 +46,10 @@ class AssetBrowser( SceneEditorModule ):
 		self.splitter = ui.splitter
 
 		#
-		self.treeFilter = AssetTreeFilter(
+		self.treeFilter = AssetFolderTreeFilter(
 				self.window
 			)
-		self.treeView  = 	AssetBrowserTreeView(
+		self.treeView  = 	AssetFolderTreeView(
 			sorting   = True,
 			multiple_selection = True,
 			drag_mode = 'internal',

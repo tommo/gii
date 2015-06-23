@@ -13,18 +13,103 @@ from gii.qt           import QtEditorModule
 from gii.qt.IconCache                  import getIcon
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
 from gii.qt.controls.GenericListWidget import GenericListWidget
-from gii.qt.controls.AssetTreeView import AssetTreeView, AssetTreeFilter
 from gii.qt.dialogs   import requestString, alertMessage, requestConfirm
 
 from AssetEditor      import AssetEditorModule, getAssetSelectionManager
 
 
+
 ##----------------------------------------------------------------##
-class AssetBrowserTreeView( AssetTreeView ):
+#TODO: allow sort by other column
+class AssetFolderTreeItem(QtGui.QTreeWidgetItem):
+	def __lt__(self, other):
+		node0 = self.node
+		node1 = hasattr(other, 'node') and other.node or None
+		if not node1:
+			return True
+		tree = self.treeWidget()
+
+		# if not tree:
+		# 	col = 0
+		# else:
+		# 	col = tree.sortColumn()		
+		t0 = node0.getType()
+		t1 = node1.getType()
+		if t1!=t0:			
+			if tree.sortOrder() == 0:
+				if t0 == 'folder': return True
+				if t1 == 'folder': return False
+			else:
+				if t0 == 'folder': return False
+				if t1 == 'folder': return True
+		return super( AssetFolderTreeItem, self ).__lt__( other )
+		# return node0.getName().lower()<node1.getName().lower()
+
+##----------------------------------------------------------------##
+
+class AssetFolderTreeFilter( GenericTreeFilter ):
+	pass
+
+##----------------------------------------------------------------##
+class AssetFolderTreeView( GenericTreeWidget ):
 	def __init__( self, *args, **option ):
 		option[ 'show_root' ] = True
-		super( AssetBrowserTreeView, self ).__init__( *args, **option )
+		super( AssetFolderTreeView, self ).__init__( *args, **option )
 		self.refreshingSelection = False
+
+	def saveTreeStates( self ):
+		for node, item in self.nodeDict.items():
+			node.setProperty( 'expanded', item.isExpanded() )
+
+	def loadTreeStates( self ):
+		for node, item in self.nodeDict.items():
+			item.setExpanded( node.getProperty( 'expanded', False ) )
+		self.getItemByNode( self.getRootNode() ).setExpanded( True )
+		
+	def getRootNode( self ):
+		return app.getAssetLibrary().getRootNode()
+
+	def getNodeParent( self, node ): # reimplemnt for target node
+		return node.getParent()
+
+	def getNodeChildren( self, node ):
+		result = []
+		for node in node.getChildren():
+			if node.getProperty( 'hidden', False ): continue
+			if not node.getGroupType() in ( 'folder', 'package' ) :continue
+			result.append( node )
+		return result
+
+	def createItem( self, node ):
+		return AssetFolderTreeItem()
+
+	def updateItemContent( self, item, node, **option ):
+		assetType = node.getType()
+		item.setText( 0, node.getName() )
+		iconName = app.getAssetLibrary().getAssetIcon( assetType )
+		item.setIcon(0, getIcon(iconName,'normal'))
+
+	def onClipboardCopy( self ):
+		clip = QtGui.QApplication.clipboard()
+		out = None
+		for node in self.getSelection():
+			if out:
+				out += "\n"
+			else:
+				out = ""
+			out += node.getNodePath()
+		clip.setText( out )
+		return True
+
+	def getHeaderInfo( self ):
+		return [ ('Name',120) ]
+
+	def _updateItem(self, node, updateLog=None, **option):
+		super( AssetFolderTreeView, self )._updateItem( node, updateLog, **option )
+
+		if option.get('updateDependency',False):
+			for dep in node.dependency:
+				self._updateItem(dep, updateLog, **option)
 
 	def onClicked(self, item, col):
 		pass
