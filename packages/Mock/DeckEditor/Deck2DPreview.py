@@ -17,7 +17,8 @@ class Deck2DPreviewer(AssetPreviewer):
 			'deck2d.stretchpatch',
 			'deck2d.quad_array',
 			'deck2d.tileset',
-			'deck2d.polygon'
+			'deck2d.polygon',
+			'deck2d.mquad'
 			]
 
 	def onStart(self, assetNode):

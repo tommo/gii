@@ -19,6 +19,7 @@ function Preview:show( path )
 		blend = 'alpha'
 	}
 	local deck = mock.loadAsset(path)
+	deck = deck and deck:getMoaiDeck()
 	if not deck then return false end 
 	if deck:getClass() == MOAITileDeck2D then
 		local grid = MOAIGrid.new()
