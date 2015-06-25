@@ -16,9 +16,6 @@ function SceneGraphEditor:__init()
 end
 
 function SceneGraphEditor:getScene()
-end
-
-function SceneGraphEditor:getScene()
 	return self.scene
 end
 
@@ -251,6 +248,12 @@ function SceneGraphEditor:onEntityEvent( action, entity, com )
 	elseif action == 'remove' then
 		_owner.removeEntityNode( entity )
 		-- gii.emitPythonSignal( 'scene.update' )
+	elseif action == 'add_group' then
+		_owner.addEntityNode( entity )
+		-- gii.emitPythonSignal( 'scene.update' )
+	elseif action == 'remove_group' then
+		_owner.removeEntityNode( entity )
+		-- gii.emitPythonSignal( 'scene.update' )
 	end
 
 end
@@ -397,6 +400,8 @@ function CmdCreateEntityBase:init( option )
 		else
 			self.parentEntity = contextEntity
 		end
+	elseif isInstance( contextEntity, mock.EntityGroup ) then
+		self.parentEntity = contextEntity
 	else
 		self.parentEntity = false
 	end
@@ -471,18 +476,21 @@ CLASS: CmdRemoveEntity ( mock_edit.EditorCommand )
 	:register( 'scene_editor/remove_entity' )
 
 function CmdRemoveEntity:init( option )
-	local target = gii.getSelection( 'scene' )[1]
-	if not isInstance( target, mock.Entity ) then return false end
 	self.selection = getTopLevelEntitySelection()
 end
 
 function CmdRemoveEntity:redo()
 	for _, target in ipairs( self.selection ) do
-		if target.scene then 
+		if isInstance( target, mock.Entity ) then
+			if target.scene then 
+				target:destroyWithChildrenNow()
+				gii.emitPythonSignal('entity.removed', target )
+			end
+		elseif isInstance( target, mock.EntityGroup ) then
 			target:destroyWithChildrenNow()
+			gii.emitPythonSignal('entity.removed', target )
 		end
 	end
-	gii.emitPythonSignal('entity.removed', target )
 end
 
 function CmdRemoveEntity:undo()
@@ -560,16 +568,21 @@ end
 function CmdCloneEntity:redo()
 	local createdList = {}
 	for _, target in ipairs( self.targets ) do
-		local created = mock.copyAndPasteEntity( target, generateGUID )
-		makeNumberProfix( editor.scene, created )
-		local parent = target.parent
-		if parent then
-			parent:addChild( created )
+		if isInstance( target, mock.EntityGroup ) then
+			mock_edit.alertMessage( 'todo', 'Group clone not yet implemented', 'info' )
+			return false
 		else
-			editor.scene:addEntity( created )
-		end		
-		gii.emitPythonSignal('entity.added', created, 'clone' )
-		table.insert( createdList, created )
+			local created = mock.copyAndPasteEntity( target, generateGUID )
+			makeNumberProfix( editor.scene, created )
+			local parent = target.parent
+			if parent then
+				parent:addChild( created )
+			else
+				editor.scene:addEntity( created, nil, target._entityGroup )
+			end		
+			gii.emitPythonSignal('entity.added', created, 'clone' )
+			table.insert( createdList, created )
+		end
 	end
 	gii.changeSelection( 'scene', unpack( createdList ) )
 	self.createdList = createdList
@@ -631,41 +644,79 @@ function CmdReparentEntity:init( option )
 	self.target   = option['target']
 	self.children = gii.getSelection( 'scene' )
 	self.oldParents = {}
+	local targetIsEntity = isInstance( self.target, mock.Entity )
+	for i, e in ipairs( self.children ) do
+		if isInstance( e, mock.EntityGroup ) and targetIsEntity then
+			mock_edit.alertMessage( 'fail', 'cannot move Group into Entity', 'info' )
+			return false
+		end
+	end
 end
 
 function CmdReparentEntity:redo()
 	local target = self.target
 	for i, e in ipairs( self.children ) do
-		local e1 = mock.cloneEntity(e)
-		e:forceUpdate()
-		local tx, ty ,tz = e:getWorldLoc()
-		local sx, sy ,sz = e:getWorldScl()
-		local rz = e:getWorldRot()
-		--TODO: world rotation X,Y	
-		if target == 'root' then
-			editor.scene:addEntity( e1 )
-			e1:setLoc( tx, ty, tz )
-			e1:setScl( sx, sy, sz )
-			e1:setRotZ( rz )
-		else
-			target:forceUpdate()
-			local x, y, z = target:worldToModel( tx, ty, tz )
-			e1:setLoc( x, y, z )
-			
-			local sx1, sy1, sz1 = target:getWorldScl()
-			sx = ( sx1 == 0 ) and 0 or sx/sx1
-			sy = ( sy1 == 0 ) and 0 or sy/sy1
-			sz = ( sz1 == 0 ) and 0 or sz/sz1
-			e1:setScl( sx, sy, sz )
-
-			local rz1 = target:getWorldRot()
-			rz = rz1 == 0 and 0 or rz/rz1
-			e1:setRotZ( rz )
-			target:addChild( e1 )
+		if isInstance( e, mock.Entity ) then
+			self:reparentEntity( e, target )
+		elseif isInstance( e, mock.EntityGroup ) then
+			self:reparentEntityGroup( e, target )
 		end
-		e:destroyWithChildrenNow()
 	end	
 end
+
+function CmdReparentEntity:reparentEntityGroup( e, target )
+	local targetGroup = false
+	if target == 'root' then
+		targetGroup = editor.scene:getRootGroup()
+
+	elseif isInstance( target, mock.EntityGroup ) then
+		targetGroup = target
+
+	else
+		error()		
+	end
+
+	e:reparent( targetGroup )
+end
+
+function CmdReparentEntity:reparentEntity( e, target )
+	local e1 = mock.cloneEntity(e)
+	e:forceUpdate()
+	local tx, ty ,tz = e:getWorldLoc()
+	local sx, sy ,sz = e:getWorldScl()
+	local rz = e:getWorldRot()
+	--TODO: world rotation X,Y	
+	if target == 'root' then
+		editor.scene:addEntity( e1 )
+		e1:setLoc( tx, ty, tz )
+		e1:setScl( sx, sy, sz )
+		e1:setRotZ( rz )
+
+	elseif isInstance( target, mock.EntityGroup ) then
+		editor.scene:addEntity( e1, nil, target )
+		e1:setLoc( tx, ty, tz )
+		e1:setScl( sx, sy, sz )
+		e1:setRotZ( rz )
+
+	else
+		target:forceUpdate()
+		local x, y, z = target:worldToModel( tx, ty, tz )
+		e1:setLoc( x, y, z )
+		
+		local sx1, sy1, sz1 = target:getWorldScl()
+		sx = ( sx1 == 0 ) and 0 or sx/sx1
+		sy = ( sy1 == 0 ) and 0 or sy/sy1
+		sz = ( sz1 == 0 ) and 0 or sz/sz1
+		e1:setScl( sx, sy, sz )
+
+		local rz1 = target:getWorldRot()
+		rz = rz1 == 0 and 0 or rz/rz1
+		e1:setRotZ( rz )
+		target:addChild( e1 )
+	end
+	e:destroyWithChildrenNow()
+end
+
 
 function CmdReparentEntity:undo()
 	--todo:
@@ -985,6 +1036,7 @@ function CmdToggleEntityVisibility:redo()
 	for i, e in ipairs( self.entities ) do
 		e:setVisible( vis )
 		mock.markProtoInstanceOverrided( e, 'visible' )
+		gii.emitPythonSignal( 'entity.visible_changed', e )
 		gii.emitPythonSignal( 'entity.modified', e, '' )
 	end
 end
@@ -1038,5 +1090,43 @@ end
 
 function CmdFreezePivot:undo( )
 	--TODO
+end
+
+
+
+--------------------------------------------------------------------
+CLASS: CmdEntityGroupCreate ( mock_edit.EditorCommand )
+	:register( 'scene_editor/entity_group_create')
+
+
+function CmdEntityGroupCreate:init( option )
+	local contextEntity = gii.getSelection( 'scene' )[1]
+	
+	if isInstance( contextEntity, mock.Entity ) then
+		if not contextEntity._entityGroup then
+			mock_edit.alertMessage( 'fail', 'cannot create Group inside Entity', 'info' )
+			return false
+		end
+		self.parentGroup = contextEntity._entityGroup
+	elseif isInstance( contextEntity, mock.EntityGroup ) then
+		self.parentGroup = contextEntity
+	else
+		self.parentGroup = editor.scene:getRootGroup()
+	end
+
+	self.guid = generateGUID()
+
+end
+
+function CmdEntityGroupCreate:redo()
+	self.createdGroup = mock.EntityGroup()
+	self.parentGroup:addChildGroup( self.createdGroup )
+	self.createdGroup.__guid = self.guid
+	gii.emitPythonSignal( 'entity.added', self.createdGroup, 'new' )
+end
+
+function CmdEntityGroupCreate:undo()
+	--TODO
+	self.parentGroup:removeChildGroup( self.createdGroup )
 end
 

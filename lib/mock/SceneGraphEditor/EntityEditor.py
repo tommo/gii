@@ -214,6 +214,8 @@ class EntityEditor( ObjectEditor, SceneObjectEditorMixin ): #a generic property 
 			signals.emit( 'entity.renamed', obj, value )
 		elif id == 'layer':
 			signals.emit( 'entity.renamed', obj, value )
+		elif id == 'visible':
+			signals.emit( 'entity.visible_changed', obj )
 		signals.emit( 'entity.modified', obj, 'introspector' )
 
 	def onPropertyReset( self, obj, id ):
@@ -222,6 +224,8 @@ class EntityEditor( ObjectEditor, SceneObjectEditorMixin ): #a generic property 
 			signals.emit( 'entity.renamed', obj, obj.getName( obj ) )
 		elif id == 'layer':
 			signals.emit( 'entity.renamed', obj, obj.getName( obj ) )
+		elif id == 'visible':
+			signals.emit( 'entity.visible_changed', obj )
 		signals.emit( 'entity.modified', obj, 'introspector' )
 
 	def onGotoProto( self ):
@@ -269,3 +273,21 @@ class EntityEditor( ObjectEditor, SceneObjectEditorMixin ): #a generic property 
 		self.grid.clear()
 
 registerObjectEditor( _MOCK.Entity, EntityEditor )
+
+
+
+##----------------------------------------------------------------##
+class EntityGroupEditor( CommonObjectEditor ):
+	def onPropertyChanged( self, obj, id, value ):
+		if _MOCK.markProtoInstanceOverrided( obj, id ):
+			self.grid.refershFieldState( id )
+		signals.emit( 'entity.modified', obj._entity, 'introspector' )
+
+	def onPropertyChanged( self, obj, id, value ):
+		if id == 'name':
+			signals.emit( 'entity.renamed', obj, value )
+		elif id == 'visible':
+			signals.emit( 'entity.visible_changed', obj )
+		signals.emit( 'entity.modified', obj, 'introspector' )
+
+registerObjectEditor( _MOCK.EntityGroup, EntityGroupEditor )

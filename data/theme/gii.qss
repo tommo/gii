@@ -1138,7 +1138,7 @@ QSplitter#TimelineHeaderSplitter::handle{
 	padding-left: 5px;
 	background-color:#444;
 	border-radius:2px;
-	color: #ffb850;
+	color: #8dbfda;
 }
 
 #SceneToolButton:pressed

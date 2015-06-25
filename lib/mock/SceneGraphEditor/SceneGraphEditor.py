@@ -18,6 +18,7 @@ from gii.SearchView       import requestSearchView, registerSearchEnumerator
 ##----------------------------------------------------------------##
 from PyQt4           import QtCore, QtGui, uic
 from PyQt4.QtCore    import Qt, QObject
+from PyQt4.QtGui     import QApplication, QStyle, QBrush, QColor, QPen, QIcon, QPalette
 
 ##----------------------------------------------------------------##
 from mock import _MOCK, isMockInstance
@@ -89,7 +90,6 @@ class SceneGraphEditor( SceneEditorModule ):
 			{ 'label':'Create Component' }
 			)
 
-
 		#menu
 		self.addMenuItem(
 			'main/file/open_scene', 
@@ -131,8 +131,10 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/find/find_entity', dict( label = 'Find In Scene', shortcut = 'ctrl+f' ) )
 
 		#Toolbars
-		self.addTool( 'scene_graph/make_proto',    label = '> P' )
-		self.addTool( 'scene_graph/create_proto_instance',    label = '+ I' )
+		self.addTool( 'scene_graph/create_group',    label ='+ Group', icon = 'add_folder' )
+		self.addTool( 'scene_graph/----'  )
+		self.addTool( 'scene_graph/make_proto',    label = 'Convert To Proto', icon = 'proto_make' )
+		self.addTool( 'scene_graph/create_proto_instance',    label = 'Create Proto Instance', icon = 'proto_instantiate' )
 		self.addTool( 'scene_graph/----'  )
 		self.addTool( 'scene_graph/fold_all',    label = 'F' )
 		self.addTool( 'scene_graph/unfold_all',  label = 'U' )
@@ -160,6 +162,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'entity.removed',    self.onEntityRemoved    )
 		signals.connect( 'entity.renamed',    self.onEntityRenamed    )
 		signals.connect( 'entity.modified',    self.onEntityModified    )
+		signals.connect( 'entity.visible_changed',    self.onEntityVisibleChanged )
+		signals.connect( 'entity.pickable_changed',   self.onEntityPickableChanged )
 
 
 		signals.connect( 'prefab.unlink',     self.onPrefabUnlink    )
@@ -206,6 +210,13 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def getActiveScene( self ):
 		return self.delegate.safeCallMethod( 'editor', 'getScene' )
+
+	def getActiveSceneRootGroup( self ):
+		scene = self.delegate.safeCallMethod( 'editor', 'getScene' )
+		if scene:
+			return scene.rootGroup
+		else:
+			return None
 
 	def openScene( self, node, protoNode = None ):
 		if self.activeSceneNode == node:			
@@ -386,24 +397,6 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		elif name == 'refresh':
 			self.scheduleRefreshScene()
-		
-		elif name == 'save_prefab':
-			requestSearchView( 
-				info    = 'select a perfab node to store',
-				context = 'asset',
-				type    = 'prefab',
-				on_selection = lambda obj: self.createPrefab( obj )				
-				)
-		
-		elif name == 'load_prefab':
-			requestSearchView( 
-				info    = 'select a perfab node to instantiate',
-				context = 'asset',
-				type    = 'proto;prefab',
-				on_selection = 
-					lambda obj: 
-						self.doCommand( 'scene_editor/create_prefab_entity', prefab = obj.getNodePath() )
-				)
 
 		elif name == 'make_proto':
 			self.makeProto()
@@ -417,6 +410,9 @@ class SceneGraphEditor( SceneEditorModule ):
 					lambda obj: 
 						self.doCommand( 'scene_editor/create_proto_instance', proto = obj.getNodePath() )
 				)
+
+		elif name == 'create_group':
+			self.doCommand( 'scene_editor/entity_group_create' )
 			
 
 	def onMenu( self, menu ):
@@ -597,6 +593,12 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.tree.refreshNodeContent( entity )
 		self.markSceneDirty()
 
+	def onEntityVisibleChanged( self, entity ):
+		self.tree.refreshNodeContent( entity )
+
+	def onEntityPickableChanged( self, entity ):
+		self.tree.refreshNodeContent( entity )
+
 	def onEntityAdded( self, entity, context = None ):
 		if context == 'new':
 			self.setFocus()
@@ -724,6 +726,48 @@ def _sortEntity( a, b ):
 # _BrushEntityHidden = QtGui.QBrush( QColorF( 1,1,0 ) )
 # _BrushEntityPrefab = QtGui.QBrush( QColorF( .5,.5,1 ) )
 
+
+class SceneGraphTreeItemDelegate(QtGui.QStyledItemDelegate):
+	_textBrush      = QBrush( QColor( '#dd5200' ) )
+	_textPen        = QPen( QColor( '#dddddd' ) )
+	_textPenGroup   = QPen( QColor( '#ada993' ) )
+	_backgroundBrushHovered  = QBrush( QColor( '#454768' ) )
+	_backgroundBrushSelected = QBrush( QColor( '#515c84' ) )
+	
+	def paint(self, painter, option, index):
+		painter.save()
+		index0 = index.sibling( index.row(), 0 )
+		utype = index0.data( Qt.UserRole )
+
+		# # set background color
+		if option.state & QStyle.State_Selected:
+			painter.setPen  ( Qt.NoPen )
+			painter.setBrush( SceneGraphTreeItemDelegate._backgroundBrushSelected )
+			painter.drawRect(option.rect)
+		elif option.state & QStyle.State_MouseOver:
+			painter.setPen  ( Qt.NoPen )
+			painter.setBrush( SceneGraphTreeItemDelegate._backgroundBrushHovered )
+			painter.drawRect(option.rect)
+
+		rect = option.rect
+		icon = QIcon( index.data( Qt.DecorationRole) )
+		rect.adjust( 5, 0, 0, 0 )
+		if icon and not icon.isNull():
+			icon.paint( painter, rect, Qt.AlignLeft )
+			rect.adjust( 22, 0, 0, 0 )
+		text = index.data(Qt.DisplayRole)
+		if utype == 1: #GROUP
+			painter.setPen( SceneGraphTreeItemDelegate._textPenGroup )
+		else:
+			painter.setPen( SceneGraphTreeItemDelegate._textPen )
+		painter.drawText( rect, Qt.AlignLeft | Qt.AlignVCenter, text )
+		painter.restore()
+
+
+class ReadonlySceneGraphTreeItemDelegate( SceneGraphTreeItemDelegate ):
+	def createEditor( *args ):
+		return None
+
 ##----------------------------------------------------------------##
 class SceneGraphTreeWidget( GenericTreeWidget ):
 	def __init__( self, *args, **kwargs ):
@@ -734,10 +778,16 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		self.setIndentation( 13 )
 
 	def getHeaderInfo( self ):
-		return [('Name',200), ( 'Layer', 50 ), ('Type', 50)]
+		return [('Name',240), ( 'Layer', 50 ), ('V',27 ), ('L',27 ), ('', -1) ]
+
+	def getReadonlyItemDelegate( self ):
+		return ReadonlySceneGraphTreeItemDelegate( self )
+
+	def getDefaultItemDelegate( self ):
+		return SceneGraphTreeItemDelegate( self )
 
 	def getRootNode( self ):
-		return self.module.getActiveScene()
+		return self.module.getActiveSceneRootGroup()
 
 	def saveFoldState( self ):
 		#TODO: other state?
@@ -766,30 +816,31 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		pass
 
 	def getNodeParent( self, node ): # reimplemnt for target node	
-		if isMockInstance( node, 'Scene' ):
-			return None
-
-		if not isMockInstance( node, 'Entity' ):
-			return None
-		#Entity
-		p = node.parent
-		if p and not p.FLAG_EDITOR_OBJECT : return p
-		return node.scene
+		p = node.getParentOrGroup( node )
+		if p and not p.FLAG_EDITOR_OBJECT :
+			return p
+		return None
 
 	def getNodeChildren( self, node ):
-		if isMockInstance( node, 'Scene' ):
+		if isMockInstance( node, 'EntityGroup' ):
 			output = []
+			#groups
+			for group in node.childGroups:
+				output.append( group )
+			#entities
 			for ent in node.entities:
 				if ( not ent.parent ) and ( not ( ent.FLAG_EDITOR_OBJECT or ent.FLAG_INTERNAL ) ):
 					output.append( ent )
-			output = sorted( output, cmp = _sortEntity )
+			# output = sorted( output, cmp = _sortEntity )
 			return output
 
-		output = []
-		for ent in node.children:
-			if not ( ent.FLAG_EDITOR_OBJECT or ent.FLAG_INTERNAL ):
-				output.append( ent )
-		return output
+		else: #entity
+			output = []
+			for ent in node.children:
+				if not ( ent.FLAG_EDITOR_OBJECT or ent.FLAG_INTERNAL ):
+					output.append( ent )
+			# output = sorted( output, cmp = _sortEntity )
+			return output
 
 	def compareNodes( self, node1, node2 ):
 		return node1._priority >= node2._priority
@@ -797,11 +848,27 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 	def createItem( self, node ):
 		return SceneGraphTreeItem()
 
+	def updateHeaderItem( self, item, col, info ):
+		if info[0] == 'V':
+			item.setText( col, '')
+			item.setIcon( col, getIcon( 'entity_vis' ) )
+		elif info[0] == 'L':
+			item.setText( col, '')
+			item.setIcon( col, getIcon( 'entity_lock' ) )
+
 	def updateItemContent( self, item, node, **option ):
 		name = None
-		if isMockInstance( node, 'Scene' ):
+		item.setData( 0, Qt.UserRole, 0 )
+
+		if isMockInstance( node, 'EntityGroup' ):
 			item.setText( 0, node.name or '<unnamed>' )
-			item.setIcon( 0, getIcon('scene') )
+			item.setIcon( 0, getIcon('entity_group') )
+			if node.isLocalVisible( node ):
+				item.setIcon( 2, getIcon( 'entity_vis' ) )
+			else:
+				item.setIcon( 2, getIcon( 'entity_invis' ) )
+			item.setData( 0, Qt.UserRole, 1 )
+
 		elif isMockInstance( node, 'Entity' ):
 			if node['FLAG_PROTO_SOURCE']:
 				item.setIcon( 0, getIcon('proto') )
@@ -814,12 +881,16 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			item.setText( 0, node.name or '<unnamed>' )
 			layerName = node.getLayer( node )
 			if isinstance( layerName, tuple ):
-				print layerName
 				item.setText( 1, '????' )
 			else:
 				item.setText( 1, layerName )
-			item.setText( 2, node.getClassName( node ) )
+			# item.setText( 2, node.getClassName( node ) )
 			# item.setFont( 0, _fontAnimatable )
+			if node.isLocalVisible( node ):
+				item.setIcon( 2, getIcon( 'entity_vis' ) )
+			else:
+				item.setIcon( 2, getIcon( 'entity_invis' ) )
+		
 		
 	def onItemSelectionChanged(self):
 		if not self.syncSelection: return
@@ -843,12 +914,15 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			pos = 'viewport'
 
 		target = self.itemAt( ev.pos() )
+		ok = False
 		if pos == 'on':
-			self.module.doCommand( 'scene_editor/reparent_entity', target = target.node )
+			ok = self.module.doCommand( 'scene_editor/reparent_entity', target = target.node )
 		elif pos == 'viewport':
-			self.module.doCommand( 'scene_editor/reparent_entity', target = 'root' )
-
-		super( GenericTreeWidget, self ).dropEvent( ev )
+			ok = self.module.doCommand( 'scene_editor/reparent_entity', target = 'root' )
+		if ok:
+			super( GenericTreeWidget, self ).dropEvent( ev )
+		else:
+			ev.setDropAction( Qt.IgnoreAction )
 
 	def onDeletePressed( self ):
 		self.syncSelection = False
@@ -873,6 +947,13 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		self.verticalScrollBar().setRange( min, max + 2 )
 		self.adjustingRange = False
 
+	def onClicked(self, item, col):
+		if col == 2: #editor view toggle
+			self.module.doCommand( 'scene_editor/toggle_entity_visibility' )
+		elif col == 3: #lock toggle
+			pass
+			# app.getModule('layer_manager').toggleLock( self.getNodeByItem(item) )
+
 
 ##----------------------------------------------------------------##
 #TODO: allow sort by other column
@@ -884,9 +965,18 @@ class SceneGraphTreeItem(QtGui.QTreeWidgetItem):
 			return True
 		if not node0:
 			return False
+		tree = self.treeWidget()
+		group0 = isMockInstance( node0, 'EntityGroup' )
+		group1 = isMockInstance( node1, 'EntityGroup' )
+		if group0 != group1:
+			if tree.sortOrder() == 0:
+				if group0: return True
+				if group1: return False
+			else:
+				if group0: return False
+				if group1: return True
 		proto0 = node0[ 'FLAG_PROTO_SOURCE' ]
 		proto1 = node1[ 'FLAG_PROTO_SOURCE' ]
-		tree = self.treeWidget()
 		if proto0 != proto1:
 			if tree.sortOrder() == 0:
 				if proto0: return True

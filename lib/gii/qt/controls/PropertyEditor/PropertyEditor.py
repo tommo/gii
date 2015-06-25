@@ -305,6 +305,3 @@ class FieldEditor( object ):
 	def clear( self ):
 		pass
 
-
-
-

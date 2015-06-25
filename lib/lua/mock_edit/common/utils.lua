@@ -25,6 +25,20 @@ local function affirmSceneGUID( scene )
 end
 
 --------------------------------------------------------------------
+local function findTopLevelGroups( groupSet )
+	local found = {}
+	for g in pairs( groupSet ) do
+		local isTop = true
+		local p = g.parent
+		while p do
+			if groupSet[ p ] then isTop = false break end
+			p = p.parent
+		end
+		if isTop then found[g] = true end
+	end
+	return found
+end
+
 local function findTopLevelEntities( entitySet )
 	local found = {}
 	for e in pairs( entitySet ) do
@@ -39,17 +53,39 @@ local function findTopLevelEntities( entitySet )
 	return found
 end
 
+local function findEntitiesOutsideGroups( entitySet, groupSet )
+	local found = {}
+	for e in pairs( entitySet ) do
+		local g = e:getEntityGroup( true )
+		local isTop = true
+		while g do
+			if entitySet[ g ] then isTop = false break end
+			g = g.parent
+		end
+		if isTop then found[e] = true end
+	end
+	return found
+end
+
 local function getTopLevelEntitySelection()
 	local entitySet = {}
+	local groupSet  = {}
 	for i, e in ipairs( gii.getSelection( 'scene' ) ) do
 		if isInstance( e, mock.Entity ) then 
 			entitySet[ e ] = true
+		elseif isInstance( e, mock.EntityGroup ) then 
+			groupSet[ e ] = true
 		end
 	end
 	local topLevelEntitySet = findTopLevelEntities( entitySet )
+	local topLevelGroupSet = findTopLevelGroups( groupSet )
+	topLevelEntitySet = findEntitiesOutsideGroups( topLevelEntitySet, topLevelGroupSet )
 	local list = {}
 	for ent in pairs( topLevelEntitySet ) do
 		table.insert( list, ent )
+	end
+	for group in pairs( topLevelGroupSet ) do
+		table.insert( list, group )
 	end
 	return list
 end

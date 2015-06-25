@@ -7,10 +7,10 @@ import logging
 from gii.core import app
 
 _iconCache = {}
-
+_nullIcon = QtGui.QIcon()
 def getIcon(name, fallback=None):
 	global _iconCache
-	if not name: return QtGui.QIcon()
+	if not name: return _nullIcon
 
 	icon = _iconCache.get(name,None)
 	if icon: return icon

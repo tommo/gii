@@ -56,6 +56,7 @@ class AssetFolderTreeView( GenericTreeWidget ):
 		option[ 'show_root' ] = True
 		super( AssetFolderTreeView, self ).__init__( *args, **option )
 		self.refreshingSelection = False
+		self.setHeaderHidden( True )
 
 	def saveTreeStates( self ):
 		for node, item in self.nodeDict.items():
@@ -166,6 +167,7 @@ class AssetBrowserListWidget( GenericListWidget ):
 		self.setIconSize( QtCore.QSize( 120, 130 ) )
 		self.setGridSize( QtCore.QSize( 120, 130 ) )
 		self.setWordWrap( True )
+
 
 	def getItemFlags( self, node ):
 		return {}

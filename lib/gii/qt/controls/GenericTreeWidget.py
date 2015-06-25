@@ -1,15 +1,12 @@
 
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import Qt, QSize
-from PyQt4.QtGui import QApplication
+from PyQt4.QtGui import QApplication, QStyle, QBrush, QColor, QPen, QIcon
 ##----------------------------------------------------------------##
-class no_editItemDelegate( QtGui.QStyledItemDelegate ):
+
+class ReadonlyItemDelegate( QtGui.QStyledItemDelegate ):
 	def createEditor( *args ):
 		return None
-
-# class GenericTreeItemDelegate( QtGui.QStyledItemDelegate ):
-# 	def sizeHint( self, option, index ):
-# 		return QSize( 200,50 )
 
 ##----------------------------------------------------------------##
 class GenericTreeWidget( QtGui.QTreeWidget ):
@@ -21,22 +18,26 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.setHorizontalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
 		self.setVerticalScrollMode( QtGui.QAbstractItemView.ScrollPerItem )
 		self.nodeDict = {}
-		self.no_editItemDelegate = no_editItemDelegate( self )
+		
+		self.readonlyItemDelegate = self.getReadonlyItemDelegate()
+		self.defaultItemDelegate  = self.getDefaultItemDelegate()
+
 		self.refreshing = False
 		self.option = option
 		headerInfo = self.getHeaderInfo()
 		headerItem = QtGui.QTreeWidgetItem()
 		self.setHeaderItem(headerItem)
-		# self._itemDelegate = GenericTreeItemDelegate( self )
-		# self.setItemDelegate( self._itemDelegate )
-		for i in range( 0, len(headerInfo) ):
-			info =  headerInfo[i]
-			headerItem.setText ( i, info[0] )
-			w = info[1]
+		self.setItemDelegate( self.defaultItemDelegate )
+		for i in range( 0, len(headerInfo) ):			
 			if i > 0:
-				self.setItemDelegateForColumn( i, self.no_editItemDelegate )
-			if w > 0:
-				self.setColumnWidth ( i, info[1] )
+				self.setItemDelegateForColumn( i, self.readonlyItemDelegate )			
+			info =  headerInfo[i]
+			title = info[ 0 ]
+			width = info[ 1 ]
+			headerItem.setText ( i, title )
+			if width > 0:
+				self.setColumnWidth ( i, width )
+			self.updateHeaderItem( headerItem, i, info )
 			
 		self.setSortingEnabled( self.getOption('sorting', True) )
 		if self.getOption( 'multiple_selection', False ):
@@ -68,6 +69,12 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.setIndentation( 15 )
 
 		self.initRootItem()		
+
+	def getReadonlyItemDelegate( self ):
+		return ReadonlyItemDelegate( self )
+
+	def getDefaultItemDelegate( self ):
+		return QtGui.QStyledItemDelegate( self )
 
 	def getOption( self, k, v ):
 		defOption = self.getDefaultOptions()
@@ -112,7 +119,9 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def addNode( self, node, addChildren = True, **option ):
 		assert not node is None, 'attempt to insert null node '
 		item = self.nodeDict.get( node, None )
-		if item: return item
+		if item:
+			print 'node already inserted?'
+			return item
 		pnode = self.getNodeParent( node )
 		assert pnode != node, 'parent is item itself'
 		if not pnode :
@@ -204,6 +213,9 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 	def updateItem(self, node, **option ):
 		return self._updateItem( node, None, **option )
+
+	def updateHeaderItem( self, item, col, info ):
+		pass
 
 	def setFocusedItem(self, item ):
 		idx = self.indexFromItem( item )

@@ -10,8 +10,12 @@ if app.getModule('asset_browser'):
 	##----------------------------------------------------------------##		
 	class SerializableAssetPreviewer(AssetPreviewer):
 		def createWidget(self,container):
-			self.editor = PropertyEditor( container )
-			return self.editor
+			self.scroll = scroll = QtGui.QScrollArea( container )
+			scroll.verticalScrollBar().setStyleSheet('width:4px')
+			scroll.setWidgetResizable( True )
+			self.editor = PropertyEditor( scroll )
+			scroll.setWidget( self.editor )
+			return self.scroll
 
 		def accept(self, assetNode):
 			return assetNode.getManager().getMetaType() in [ 'serializable' ]

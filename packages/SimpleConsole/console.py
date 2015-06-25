@@ -6,7 +6,7 @@ from PyQt4 import QtCore,QtGui
 from PyQt4.QtCore import Qt, QEvent, QObject
 
 from gii    import signals
-from gii.DebugView import DebugViewModule
+from gii.SceneEditor import SceneEditorModule
 
 import ui_console
 
@@ -45,7 +45,7 @@ class StdouCapture():
 				if not output: output=''
 				output+=line
 		
-class Console( DebugViewModule ):
+class Console( SceneEditorModule ):
 	name = 'console'
 	dependency = 'debug_view'
 		
@@ -53,7 +53,7 @@ class Console( DebugViewModule ):
 		self.panel.appendText(text)		
 
 	def onLoad(self):
-		self.container = self.requestDocumentWindow('Console',
+		self.container = self.requestDockWindow('Console',
 				title   = 'Console',
 				minSize = (100,100),
 				dock    = 'bottom'

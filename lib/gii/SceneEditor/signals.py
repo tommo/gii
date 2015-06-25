@@ -15,6 +15,8 @@ register( 'entity.added' )
 register( 'entity.removed' )
 register( 'entity.modified' )
 register( 'entity.renamed' )
+register( 'entity.visible_changed' )
+register( 'entity.pickable_changed' )
 
 register( 'prefab.unlink' )
 register( 'prefab.relink' )
