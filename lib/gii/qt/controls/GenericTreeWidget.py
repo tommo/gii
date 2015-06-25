@@ -120,7 +120,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		assert not node is None, 'attempt to insert null node '
 		item = self.nodeDict.get( node, None )
 		if item:
-			print 'node already inserted?'
+			# print 'node already inserted?'
 			return item
 		pnode = self.getNodeParent( node )
 		assert pnode != node, 'parent is item itself'

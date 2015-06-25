@@ -129,6 +129,8 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		self.addMenuItem( 'main/entity/----' )
 		self.addMenuItem( 'main/find/find_entity', dict( label = 'Find In Scene', shortcut = 'ctrl+f' ) )
+		self.addMenuItem( 'main/find/find_entity_in_group', dict( label = 'Find In Group', shortcut = 'ctrl+shift+f' ) )
+		self.addMenuItem( 'main/find/find_entity_group', dict( label = 'Find Group', shortcut = 'ctrl+alt+f' ) )
 
 		#Toolbars
 		self.addTool( 'scene_graph/create_group',    label ='+ Group', icon = 'add_folder' )
@@ -489,7 +491,25 @@ class SceneGraphEditor( SceneEditorModule ):
 			requestSearchView( 
 				info    = 'search for entity in current scene',
 				context = 'scene',
-				type    = _MOCK.Entity,
+				type    = 'entity',
+				on_selection = lambda x: self.selectEntity( x, focus_tree = True ) ,
+				on_test      = self.selectEntity
+				)
+
+		elif name == 'find_entity_in_group':
+			requestSearchView( 
+				info    = 'search for entity in current entity group',
+				context = 'scene',
+				type    = 'entity_in_group',
+				on_selection = lambda x: self.selectEntity( x, focus_tree = True ) ,
+				on_test      = self.selectEntity
+				)
+
+		elif name == 'find_entity_group':
+			requestSearchView( 
+				info    = 'search for group in current scene',
+				context = 'scene',
+				type    = 'group',
 				on_selection = lambda x: self.selectEntity( x, focus_tree = True ) ,
 				on_test      = self.selectEntity
 				)
@@ -793,7 +813,6 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		#TODO: other state?
 		result = {}
 		for node, item in self.nodeDict.items():
-			if not isMockInstance( node, 'Entity' ): continue
 			if not item: continue
 			guid     = node['__guid']
 			expanded = item.isExpanded()
@@ -802,7 +821,6 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 
 	def loadFoldState( self, data ):
 		for node, item in self.nodeDict.items():
-			if not isMockInstance( node, 'Entity' ): continue
 			if not item: continue
 			guid  = node['__guid']
 			state = data.get( guid )

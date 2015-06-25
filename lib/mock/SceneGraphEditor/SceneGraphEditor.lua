@@ -202,17 +202,47 @@ local function collectComponent( entity, typeId, collection )
 	end
 end
 
+local function collectEntityGroup( group, collection )
+	if isEditorEntity( group ) then return end
+	collection[ group ] = true 
+	for child in pairs( group.childGroups ) do
+		collectEntityGroup( child, collection )
+	end
+end
 
 function SceneGraphEditor:enumerateObjects( typeId )	
 	local scene = self.scene
 	if not scene then return nil end
 	local result = {}
 	--REMOVE: demo codes
-	if typeId == mock.Entity then	
+	if typeId == 'entity' then	
 		local collection = {}	
 		
 		for e in pairs( scene.entities ) do
-			collectEntity( e, typeId, collection )
+			collectEntity( e, mock.Entity, collection )
+		end
+
+		for e in pairs( collection ) do
+			table.insert( result, e )
+		end
+	
+	elseif typeId == 'group' then	
+		local collection = {}	
+		
+		for g in pairs( scene:getRootGroup().childGroups ) do
+			collectEntityGroup( g, collection )
+		end
+
+		for g in pairs( collection ) do
+			table.insert( result, g )
+		end
+
+	elseif typeId == 'entity_in_group' then	
+		local collection = {}	
+		--TODO:!!!!
+		
+		for e in pairs( scene.entities ) do
+			collectEntity( e, mock.Entity, collection )
 		end
 
 		for e in pairs( collection ) do
@@ -289,6 +319,8 @@ end
 
 function getSceneObjectRepr( enumerator, obj )
 	if isInstance( obj, mock.Entity ) then
+		return obj:getName() or '<unnamed>'
+	elseif isInstance( obj, mock.EntityGroup ) then
 		return obj:getName() or '<unnamed>'
 	end
 	--todo: component

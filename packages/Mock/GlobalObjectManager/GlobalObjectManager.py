@@ -85,8 +85,8 @@ class GlobalObjectManager( SceneEditorModule ):
 		self.addTool( 'global_object_manager/----' )
 		self.addTool( 'global_object_manager/refresh',    label = 'Refresh', icon = 'refresh' )
 		
-		self.addMenuItem( 'main/find/find_global_object', 
-			dict( label = 'Find In Global Objects', shortcut = 'ctrl+g' ) )
+		# self.addMenuItem( 'main/find/find_global_object', 
+		# 	dict( label = 'Find In Global Objects', shortcut = 'ctrl+alt+f' ) )
 
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
