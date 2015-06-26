@@ -28,6 +28,11 @@ class GenericListWidget( QtGui.QListWidget ):
 		self.setHorizontalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
 		self.setVerticalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
 
+		if self.getOption( 'multiple_selection', False ):
+			self.setSelectionMode( QtGui.QAbstractItemView.ExtendedSelection )
+		else:
+			self.setSelectionMode( QtGui.QAbstractItemView.SingleSelection )
+
 		dragMode = self.getOption( 'drag_mode', None )
 		if dragMode == 'all':
 			self.setDragDropMode( QtGui.QAbstractItemView.DragDrop )

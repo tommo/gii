@@ -115,6 +115,7 @@ end
 function CanvasTool:removeCanvasItem( item )
 	if item then
 		item:destroyWithChildrenNow()
+		self.items[ item ] = nil
 	end
 end
 
@@ -126,9 +127,7 @@ function CanvasTool:clearCanvasItems()
 end
 
 function CanvasTool:onDestroy()
-	for item in pairs( self.items ) do
-		item:destroyWithChildrenNow()
-	end
+	self:clearCanvasItems()
 	self:updateCanvas()
 end
 

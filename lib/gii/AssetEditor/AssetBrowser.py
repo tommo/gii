@@ -39,6 +39,9 @@ class AssetBrowser( SceneEditorModule ):
 				minSize=(200,200)
 			)
 
+		self.navigator = self.window.addWidget( AssetBrowserNavigator() )
+		self.navigator.parentModule = self
+
 		ui = self.window.addWidgetFromFile(
 			_getModulePath('AssetBrowser.ui')
 		)
@@ -101,15 +104,22 @@ class AssetBrowser( SceneEditorModule ):
 			'asset_create_context',
 			{ 'label':'Create' }
 		)
+
 		self.addMenuItem(
 			'main/asset/asset_create', dict( label = 'Create', shortcut ='Ctrl+N' )
 		)
 		self.addMenuItem(
+			'main/asset/open_asset',   dict( label = 'Open Asset', shortcut = 'ctrl+O' )
+		)
+
+		self.addMenuItem(
 			'main/find/find_asset',   dict( label = 'Find Asset', shortcut = 'ctrl+T' )
 		)
+
 		self.addMenuItem(
-			'main/find/open_asset',   dict( label = 'Open Asset', shortcut = 'ctrl+O' )
+			'main/find/find_asset_folder',   dict( label = 'Find Folder', shortcut = 'ctrl+shift+T' )
 		)
+		
 
 		self.assetContextMenu=self.addMenu('asset_context')
 		self.assetContextMenu.addChild([
@@ -364,6 +374,14 @@ class AssetBrowser( SceneEditorModule ):
 				on_selection = self.selectAsset
 				)
 
+		elif name == 'find_asset_folder':
+			requestSearchView( 
+				info    = 'search for asset',
+				context = 'asset_folder',
+				on_test      = self.selectAsset,
+				on_selection = self.selectAsset
+				)
+
 		elif name == 'open_asset':
 			requestSearchView( 
 				info    = 'open asset',
@@ -421,6 +439,12 @@ class AssetBrowser( SceneEditorModule ):
 				self.selectAsset( node )
 			else:
 				self.openAsset( node )
+
+	def forwardHistory( self ):
+		pass
+
+	def backwardHistory( self ):
+		pass
 
 	def selectAsset( self, asset, **options ):
 		if not asset: return

@@ -46,6 +46,7 @@ class StoryView( SceneEditorModule ):
 
 	def onStart( self ):
 		self.container.show()
+		pass
 
 	def onSetFocus( self ):
 		self.getModule( 'scene_editor' ).setFocus()

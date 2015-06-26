@@ -50,7 +50,7 @@ function PhysicsShapeBoxGizmo:onDraw()
 	MOAIDraw.drawRect( -0.5*w, -0.5*h, 0.5*w, 0.5*h )
 end
 
-function PhysicsShapeBoxGizmo:onGetRect()
+function PhysicsShapeBoxGizmo:onGetRectX()
 	local shape = self.shape
 	local x, y = shape:getLoc()
 	local w, h = shape.w, shape.h
@@ -88,7 +88,7 @@ function PhysicsShapeCircleGizmo:onDraw()
 end
 
 
-function PhysicsShapeCircleGizmo:onGetRect()
+function PhysicsShapeCircleGizmo:onGetRectX()
 	local shape = self.shape
 	local x, y = shape:getLoc()
 	local radius = shape.radius

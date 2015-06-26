@@ -54,6 +54,7 @@ class AssetEditor( TopEditorModule ):
 		self.projectScanTimer = self.mainWindow.startTimer( 10, self.checkProjectScan )
 		signals.connect( 'app.start', self.postStart )
 		registerSearchEnumerator( assetSearchEnumerator )
+		registerSearchEnumerator( assetFolderSearchEnumerator )
 		
 	def postStart( self ):
 		self.mainWindow.show()
@@ -84,6 +85,19 @@ def assetSearchEnumerator( typeId, context ):
 		result = []
 		lib = AssetLibrary.get()
 		for node in AssetLibrary.get().enumerateAsset( typeId ):
+			assetType = node.getType()
+			iconName = lib.getAssetIcon( assetType ) or 'normal'
+			entry = ( node, node.getNodePath(), node.getType(), iconName )
+			result.append( entry )
+		return result
+
+##----------------------------------------------------------------##
+def assetFolderSearchEnumerator( typeId, context ):
+		if not context in [ 'asset_folder' ] : return
+		result = []
+		lib = AssetLibrary.get()
+		for node in AssetLibrary.get().enumerateAsset( typeId ):
+			if not node.getGroupType() in ('folder','package') : continue
 			assetType = node.getType()
 			iconName = lib.getAssetIcon( assetType ) or 'normal'
 			entry = ( node, node.getNodePath(), node.getType(), iconName )

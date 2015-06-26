@@ -20,6 +20,7 @@ function SceneGraphEditor:getScene()
 end
 
 function SceneGraphEditor:openScene( path )
+	mock_edit.updateMOAIGfxResource()
 	local scene = mock.game:openSceneByPath( path ) --dont start
 	assert( scene )
 	self.scene = scene
@@ -30,6 +31,8 @@ function SceneGraphEditor:openScene( path )
 	GIIHelper.forceGC()
 	mock.setAssetCacheStrong()
 	mock_edit.updateMOAIGfxResource()
+	mock.game:resetClock()
+	
 	return scene
 end
 

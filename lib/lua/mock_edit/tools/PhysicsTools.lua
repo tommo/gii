@@ -8,17 +8,39 @@ CLASS: PhysicsShapeEditorDelegate ()
 function PhysicsShapeEditorDelegate:__init( editor, shape )
 	self.editor = editor
 	self.shape  = shape
+	self.items  = {}
+end
+
+function PhysicsShapeEditorDelegate:addCanvasItem( item )
+	self.items[item] = true
+	return self.editor:addCanvasItem( item )
+end
+
+function PhysicsShapeEditorDelegate:removeCanvasItem( item )
+	self.items[item] = nil
+	self.editor:removeCanvasItem( item )
+end
+
+function PhysicsShapeEditorDelegate:clearCanvasItems()
+	for item in pairs( self.items ) do
+		self.editor:removeCanvasItem( item )
+	end
+	self.items = {}
+end
+
+function PhysicsShapeEditorDelegate:onDestroy()
+	self:clearCanvasItems()
 end
 
 --------------------------------------------------------------------
 CLASS: PhysicsShapeEditorDelegateBox ( PhysicsShapeEditorDelegate )
 
 function PhysicsShapeEditorDelegateBox:onInit( editor, shape )
-	self.vertC = editor:addCanvasItem( CanvasItemVert() )
-	self.vertT = editor:addCanvasItem( CanvasItemVert() )
-	self.vertL = editor:addCanvasItem( CanvasItemVert() )
-	self.vertR = editor:addCanvasItem( CanvasItemVert() )
-	self.vertB = editor:addCanvasItem( CanvasItemVert() )
+	self.vertC = self:addCanvasItem( CanvasItemVert() )
+	self.vertT = self:addCanvasItem( CanvasItemVert() )
+	self.vertL = self:addCanvasItem( CanvasItemVert() )
+	self.vertR = self:addCanvasItem( CanvasItemVert() )
+	self.vertB = self:addCanvasItem( CanvasItemVert() )
 	self.vertC.onMove = function( vert ) return self:onVertDrag( 'C', vert ) end
 	self.vertT.onMove = function( vert ) return self:onVertDrag( 'T', vert ) end
 	self.vertL.onMove = function( vert ) return self:onVertDrag( 'L', vert ) end
@@ -65,8 +87,8 @@ CLASS: PhysicsShapeEditorDelegateCircle ( PhysicsShapeEditorDelegate )
 
 
 function PhysicsShapeEditorDelegateCircle:onInit( editor, shape )
-	self.vertC = editor:addCanvasItem( CanvasItemVert() )
-	self.vertR = editor:addCanvasItem( CanvasItemVert() )
+	self.vertC = self:addCanvasItem( CanvasItemVert() )
+	self.vertR = self:addCanvasItem( CanvasItemVert() )
 	self.vertC.onMove = function( vert ) return self:onVertDrag( 'C', vert ) end
 	self.vertR.onMove = function( vert ) return self:onVertDrag( 'R', vert ) end
 	self.vertC:setShape( 'circle' )
@@ -122,18 +144,16 @@ CLASS: PhysicsShapeEditorDelegateChain ( PhysicsShapeEditorDelegateEdges )
 
 
 --------------------------------------------------------------------
-CLASS: PhysicsShapeEditor ( CanvasTool )
+CLASS: PhysicsShapeEditor ( SelectionTool )
 	:MODEL{}
 
 function PhysicsShapeEditor:__init()
 	self.verts = {}
+	self.delegates = {}
 end
 
 function PhysicsShapeEditor:onLoad()
-	local plane = self:addCanvasItem( CanvasPickPlane() )
-	plane:setPickCallback( function( picked )
-		gii.changeSelection( 'scene', unpack( picked ) )
-	end)
+	PhysicsShapeEditor.__super.onLoad( self )
 	self:updateSelection()
 end
 
@@ -142,7 +162,10 @@ function PhysicsShapeEditor:onSelectionChanged( selection )
 end
 
 function PhysicsShapeEditor:updateSelection()
-	self:clearCanvasItems()
+	for delegate in pairs( self.delegates ) do
+		delegate:onDestroy()
+	end
+	
 	self.delegates = {}
 	local selection = self:getSelection()
 	for i, e in ipairs( selection ) do

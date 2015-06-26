@@ -158,11 +158,21 @@ function PickingManager:getVisibleLayers()
 	return table.reversed( layers )
 end
 
-function PickingManager:findProtoInstanceRoot( e )
+function PickingManager:findBestPickingTarget( e )
+	--proto
 	if e.__proto_history then
 		while e do
 			if e.PROTO_INSTANCE_STATE then break end
 			e = e.parent
+		end
+	else
+		while e do
+			local name = e:getName()
+			if name and name:sub(1,1) == '_' then
+				e = e.parent
+			else
+				break
+			end
 		end
 	end
 	return e
@@ -174,7 +184,7 @@ function PickingManager:correctPicked( picked )
 	--2.select instance root 
 	local picked1 = {}
 	for e in pairs( picked ) do
-		e = self:findProtoInstanceRoot( e )
+		e = self:findBestPickingTarget( e )
 		if e then
 			picked1[ e ] = true
 		end
@@ -196,7 +206,7 @@ function PickingManager:pickPoint( x, y, pad )
 			end
 			if ent and ent:isVisible() then --TODO: sorting & sub picking
 				-- print( ent:getName() )
-				ent = self:findProtoInstanceRoot( ent )
+				ent = self:findBestPickingTarget( ent )
 				return { ent }
 			end
 		end

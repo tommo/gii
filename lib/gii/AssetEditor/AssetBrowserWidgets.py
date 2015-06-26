@@ -3,7 +3,7 @@ import json
 import os
 
 from PyQt4            import QtCore, QtGui, uic
-from PyQt4.QtCore     import Qt
+from PyQt4.QtCore     import Qt, QSize
 
 from PyQt4.QtGui      import QBrush, QStyle, QColor
 
@@ -150,6 +150,7 @@ class AssetBrowserListWidget( GenericListWidget ):
 	def __init__( self, *args, **option ):
 		option[ 'mode' ] = 'icon'
 		option[ 'drag_mode' ] = 'all'
+		option[ 'multiple_selection' ] = True
 		super( AssetBrowserListWidget, self ).__init__( *args, **option )
 		self.setObjectName( 'AssetBrowserList' )
 		self.setWrapping( True )
@@ -217,6 +218,18 @@ class AssetBrowserListWidget( GenericListWidget ):
 	def onDeletePressed( self ):
 		self.parentModule.onListRequestDelete()
 
+	def onClipboardCopy( self ):
+		clip = QtGui.QApplication.clipboard()
+		out = None
+		for node in self.getSelection():
+			if out:
+				out += "\n"
+			else:
+				out = ""
+			out += node.getNodePath()
+		clip.setText( out )
+		return True
+
 ##----------------------------------------------------------------##
 class AssetBrowserTagFilterWidget( QtGui.QFrame ):
 	pass
@@ -225,3 +238,37 @@ class AssetBrowserTagFilterWidget( QtGui.QFrame ):
 ##----------------------------------------------------------------##
 class AssetBrowserStatusBar( QtGui.QWidget ):
 	pass
+
+
+##----------------------------------------------------------------##
+class AssetBrowserNavigatorCrumbBar( QtGui.QWidget ):
+	pass
+
+##----------------------------------------------------------------##
+class AssetBrowserNavigator( QtGui.QWidget ):
+	def __init__( self, *args, **kwargs ):
+		super( AssetBrowserNavigator, self ).__init__( *args, **kwargs )
+		layout = QtGui.QHBoxLayout( self )
+		layout.setSpacing( 1 )
+		layout.setMargin( 0 )
+		self.buttonForward  = QtGui.QToolButton()
+		self.buttonBackward = QtGui.QToolButton()
+		self.buttonForward.setIconSize( QSize( 16, 16 )  )
+		self.buttonBackward.setIconSize( QSize( 16, 16 )  )
+		self.buttonForward.setIcon( getIcon( 'history_forward' ) )
+		self.buttonBackward.setIcon( getIcon( 'history_backward' ) )
+		layout.addWidget( self.buttonBackward )
+		layout.addWidget( self.buttonForward )
+		self.buttonForward.clicked.connect( self.onHistoryForward )
+		self.buttonBackward.clicked.connect( self.onHistoryBackward )
+
+		self.crumbBar = AssetBrowserNavigatorCrumbBar()
+		layout.addWidget( self.crumbBar )
+		self.crumbBar.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding )
+		self.setFixedHeight( 20 )
+
+	def onHistoryForward( self ):
+		self.parentModule.forwardHistory()
+
+	def onHistoryBackward( self ):
+		self.parentModule.backwardHistory()
