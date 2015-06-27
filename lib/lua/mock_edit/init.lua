@@ -60,4 +60,6 @@ require 'mock_edit.drag'
 
 
 mock._allowAssetCacheWeakMode( false )
+mock.TEXTURE_ASYNC_LOAD = false
+
 MOAISim.getInputMgr().configuration = 'GII'

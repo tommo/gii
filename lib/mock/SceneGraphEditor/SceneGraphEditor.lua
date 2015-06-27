@@ -6,6 +6,7 @@ local affirmGUID      = mock_edit.affirmGUID
 local affirmSceneGUID = mock_edit.affirmSceneGUID
 local generateGUID = MOAIEnvironment.generateGUID
 
+local firstRun = true
 --------------------------------------------------------------------
 CLASS:  SceneGraphEditor()
 
@@ -20,20 +21,24 @@ function SceneGraphEditor:getScene()
 end
 
 function SceneGraphEditor:openScene( path )
-	mock_edit.updateMOAIGfxResource()
 	local scene = mock.game:openSceneByPath( path ) --dont start
 	assert( scene )
 	self.scene = scene
 	affirmSceneGUID( scene )
-	--
+	mock_edit.updateMOAIGfxResource()
 	self:postLoadScene()
+	if firstRun then
+		firstRun = false
+		MOAIGfxResourceMgr.renewResources()
+	end
+	return scene
+end
+
+function SceneGraphEditor:postOpenScene()
 	mock.setAssetCacheWeak()
 	GIIHelper.forceGC()
 	mock.setAssetCacheStrong()
-	mock_edit.updateMOAIGfxResource()
 	mock.game:resetClock()
-	
-	return scene
 end
 
 function SceneGraphEditor:closeScene()

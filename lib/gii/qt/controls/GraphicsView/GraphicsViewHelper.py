@@ -7,6 +7,7 @@ from OpenGL.GL import *
 
 try:
 	from gii.qt.controls.GLWidget import GLWidget
+
 	def getSharedGLWidget():
 		return GLWidget.getSharedWidget()
 
@@ -129,7 +130,7 @@ class StyledItemMixin:
 		pass
 
 
-_USE_GL = False
+# _USE_GL = False
 _USE_GL = True
 
 ##----------------------------------------------------------------##
@@ -143,27 +144,48 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		
 		if _USE_GL and kwargs.get( 'use_gl', True ):
 			self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
-			viewport = makeGLWidget()
+			viewport = kwargs.get( 'gl_viewport', makeGLWidget() )
 			self.glViewport = viewport
 			self.setViewport( viewport )
 			# self.setCacheMode( QtGui.QGraphicsView.CacheBackground )
 		else:
-			self.setViewportUpdateMode( QtGui.QGraphicsView.MinimalViewportUpdate )
+			# self.setViewportUpdateMode( QtGui.QGraphicsView.MinimalViewportUpdate )
+			pass
 
 		self.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		self.setRenderHint( QtGui.QPainter.HighQualityAntialiasing, False )
-		# self.setRenderHint( QtGui.QPainter.NonCosmeticDefaultPen, True )
+		self.setRenderHint( QtGui.QPainter.NonCosmeticDefaultPen, True )
 		self.setTransformationAnchor( self.NoAnchor )
 		self.setOptimizationFlags( QtGui.QGraphicsView.DontAdjustForAntialiasing | QtGui.QGraphicsView.DontSavePainterState )
+		
+		self.refreshTimer   = QtCore.QTimer(self)
+		self.refreshTimer.setSingleShot( True )
+		self.refreshTimer.timeout.connect(self.onRefreshTimer)
+		self.refreshTimer.setInterval( 1000/60 )
+
+		self.pendingRefresh = True
+		self.allowRefresh   = True
+
+	def onRefreshTimer(self): #auto render if has pending render
+		if self.pendingRefresh:
+			self.pendingRefresh = False
+			self.allowRefresh = True
+			self.update()
+		self.allowRefresh = True
 
 	def paintEvent( self, ev ):
+		if not self.allowRefresh:
+			self.pendingRefresh = True
+			return
+		self.allowRefresh = False
+		self.refreshTimer.start()
 		if _USE_GL:
-			self.glViewport.makeCurrent()
+			# self.glViewport.makeCurrent()
 			super( GLGraphicsView, self ).paintEvent( ev )
-			self.glViewport.doneCurrent() #dirty workaround...
-			shared = getSharedGLWidget()
-			if shared:
-				shared.makeCurrent()
+			# self.glViewport.doneCurrent() #dirty workaround...
+			# shared = getSharedGLWidget()
+			# if shared:
+			# 	shared.makeCurrent()
 		else:
 			super( GLGraphicsView, self ).paintEvent( ev )
 

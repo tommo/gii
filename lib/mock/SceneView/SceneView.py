@@ -72,7 +72,7 @@ class SceneView( SceneEditorModule ):
 		
 		self.canvas.setDelegateEnv( '_giiSceneView', self )
 
-		self.updateTimer        = self.window.startTimer( 60, self.onUpdateTimer )
+		self.updateTimer        = None
 		self.updatePending      = False
 		self.previewing         = False
 		self.previewUpdateTimer = False
@@ -135,6 +135,8 @@ class SceneView( SceneEditorModule ):
 
 	def onStart( self ):
 		self.scheduleUpdate()
+		self.updateTimer = self.window.startTimer( 60, self.onUpdateTimer )
+		self.updateTimer.stop()
 
 	def changeEditTool( self, name ):
 		self.canvas.makeCurrent()
@@ -149,7 +151,7 @@ class SceneView( SceneEditorModule ):
 			self.updatePending = False
 			self.canvas.updateCanvas( no_sim = self.previewing, forced = True )
 			if not self.previewing:
-				self.getModule( 'scene_preview' ).refresh()
+				self.getModule( 'game_preview' ).refresh()
 
 	def onSetFocus( self ):
 		self.getModule( 'scene_editor' ).setFocus()
@@ -168,16 +170,22 @@ class SceneView( SceneEditorModule ):
 	def onSceneOpen( self, node, scene ):
 		self.window.setDocumentName( node.getPath() )
 		self.canvas.show()
-		self.canvas.safeCall( 'onSceneOpen', scene )
-		self.scheduleUpdate()
+		self.canvas.safeCall( 'onSceneOpen', scene )		
 		self.setFocus()
 		self.changeEditTool( 'translation' )
+		self.updateTimer.start()
+		self.forceUpdate()
+		self.scheduleUpdate()
 		# self.preview.update
+
+	def makeCanvasCurrent( self ):
+		self.canvas.makeCurrent()
 
 	def onSceneClose( self, node ):
 		self.window.setDocumentName( None )
 		self.canvas.safeCall( 'onSceneClose' )
 		self.canvas.hide()
+		self.updateTimer.stop()
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return

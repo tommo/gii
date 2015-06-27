@@ -97,9 +97,10 @@ class EditorApp(object):
 			
 			signals.emitNow('app.start')
 			signals.dispatchAll()
-			signals.emit('app.post_start')
 
 			self.saveConfig()
+
+			signals.emit('app.ready')
 
 			while self.running:
 				self.doMainLoop( sleepTime )
@@ -121,7 +122,7 @@ class EditorApp(object):
 		EditorModuleManager.get().unloadAllModules()
 
 	def doMainLoop( self, sleepTime = 0.01 ):
-		budget = 0.005
+		budget = 0.003
 		t0 = time.time()
 		EditorModuleManager.get().updateAllModules()
 		if signals.dispatchAll():
@@ -132,6 +133,8 @@ class EditorApp(object):
 			rest = budget - elapsed
 		if rest > 0:
 			time.sleep( rest )
+
+		# signals.dispatchAll()
 		# if sleepTime:
 		# 	time.sleep( sleepTime )
 

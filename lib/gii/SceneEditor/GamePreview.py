@@ -17,6 +17,7 @@ import ExternRun
 ##----------------------------------------------------------------##
 class GamePreview( SceneEditorModule ):
 	"""docstring for GamePreview"""
+
 	def __init__(self):
 		super(GamePreview, self).__init__()
 		self.paused         = False
@@ -28,7 +29,7 @@ class GamePreview( SceneEditorModule ):
 		self.nonActiveFPS   = 20
 
 	def getName(self):
-		return 'scene_preview'
+		return 'game_preview'
 
 	def getDependency(self):
 		return [ 'qt', 'moai', 'scene_editor' ]
@@ -129,7 +130,7 @@ class GamePreview( SceneEditorModule ):
 		self.enableMenu( 'main/preview/stop_game',   False )
 
 	def onStart( self ):
-		pass
+		self.updateView()
 
 	def onStop( self ):
 		if self.updateTimer:
@@ -357,24 +358,24 @@ GamePreview().register()
 class RemoteCommandPreviewStart( RemoteCommand ):
 	name = 'preview_start'
 	def run( self, *args ):
-		preview = app.getModule('scene_preview')
+		preview = app.getModule('game_preview')
 		preview.startPreview()
 		
 class RemoteCommandPreviewStart( RemoteCommand ):
 	name = 'preview_stop'
 	def run( self, *args ):
-		preview = app.getModule('scene_preview')
+		preview = app.getModule('game_preview')
 		preview.stopPreview()
 
 class RemoteCommandRunGame( RemoteCommand ):
 	name = 'run_game'
 	def run( self, *args ):
-		preview = app.getModule('scene_preview')
+		preview = app.getModule('game_preview')
 		preview.runGameExternal()
 		
 class RemoteCommandRunScene( RemoteCommand ):
 	name = 'run_scene'
 	def run( self, *args ):
-		preview = app.getModule('scene_preview')
+		preview = app.getModule('game_preview')
 		preview.runSceneExternal()
 		

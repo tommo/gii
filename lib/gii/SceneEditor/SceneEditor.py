@@ -56,10 +56,8 @@ class SceneEditor( TopEditorModule ):
 		return True
 
 	def postStart( self ):
-		logging.info('opening up scene editor')
 		self.mainWindow.show()
-		# self.mainWindow.setUpdatesEnabled( True )
-
+		
 	def onMenu(self, node):
 		name = node.name
 		if name == 'open_scene':

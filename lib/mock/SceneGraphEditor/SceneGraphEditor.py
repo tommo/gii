@@ -177,7 +177,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'component.added',   self.onComponentAdded   )
 		signals.connect( 'component.removed', self.onComponentRemoved )
 
-		signals.connect( 'app.post_start',    self.postStart          )
+		signals.connect( 'app.ready',         self.onAppReady         )
 		signals.connect( 'project.presave',   self.preProjectSave )
 
 		#editor
@@ -192,7 +192,7 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onStart( self ):
 		self.refreshCreatorMenu()
 
-	def postStart( self ):
+	def onAppReady( self ):
 		previousScene = self.getConfig( 'previous_scene', None )
 		if previousScene:
 			node = self.getAssetLibrary().getAssetNode( previousScene )
@@ -232,6 +232,8 @@ class SceneGraphEditor( SceneEditorModule ):
 				
 		else:
 			if not self.closeScene(): return
+			if self.getModule('scene_view'):
+				self.getModule('scene_view').makeCanvasCurrent()
 			self.activeSceneNode = node
 			signals.emitNow( 'scene.pre_open', node )
 			scene = self.delegate.safeCallMethod( 'editor', 'openScene', node.getPath() )
@@ -244,6 +246,8 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.setFocus()
 			self.editingProtoNode = protoNode		
 			self.loadWorkspaceState( False )
+			self.delegate.safeCallMethod( 'editor', 'postOpenScene' )
+
 		
 	def closeScene( self ):
 		if self.sceneDirty:
@@ -310,6 +314,7 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onSceneChange( self ):
 		self.tree.rebuild()
 		self.restoreWorkspaceState()
+		self.tree.verticalScrollBar().setValue( 0 )
 		if self.editingProtoNode:
 			self.delegate.safeCallMethod( 'editor', 'locateProto', self.editingProtoNode.getPath() )
 			self.editingProtoNode = None
@@ -962,6 +967,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 	def onScrollRangeChanged( self, min, max ):
 		if self.adjustingRange: return
 		self.adjustingRange = True
+		pageStep = self.verticalScrollBar().pageStep()
 		self.verticalScrollBar().setRange( min, max + 2 )
 		self.adjustingRange = False
 

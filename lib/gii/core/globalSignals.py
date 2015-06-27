@@ -3,8 +3,9 @@ from signals import register
 register('app.activate')
 register('app.deactivate')
 
+register('app.pre_start')
 register('app.start')
-register('app.post_start')
+register('app.ready')
 register('app.close')
 register('app.stop')
 register('app.chdir')
