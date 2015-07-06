@@ -7,7 +7,7 @@ from gii.qt.helpers   import setClipboardText
 from gii.SearchView   import requestSearchView, registerSearchEnumerator
 
 from AssetEditor      import AssetEditorModule, getAssetSelectionManager
-from gii.SceneEditor  import SceneEditorModule, getSceneSelectionManager
+from gii.SceneEditor  import SceneEditorModule
 
 from PyQt4            import QtCore, QtGui, uic
 from PyQt4.QtCore     import Qt
@@ -461,7 +461,7 @@ class AssetBrowser( SceneEditorModule ):
 
 	def openAsset( self, asset, **option ):
 		if asset:
-			if option.get('select', False):
+			if option.get('select', True):
 				self.treeView.selectNode( asset )
 			asset.edit()
 

@@ -197,6 +197,8 @@ function PhysicsShapeEditor:addDelegate( shape )
 	elseif isInstance( shape, mock.PhysicsShapeChain ) then
 		delegate = PhysicsShapeEditorDelegateChain( self, shape )
 
+	elseif isInstance( shape, mock.PhysicsShapePie ) then
+		return
 	else
 		_error( 'unknown shape', shape:getClassName() )
 		return

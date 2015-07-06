@@ -394,7 +394,6 @@ class IntrospectorInstance(object):
 
 	def scheduleUpdate( self ):
 		self.updatePending = True
-	
 
 ##----------------------------------------------------------------##
 class ObjectEditor( object ):	

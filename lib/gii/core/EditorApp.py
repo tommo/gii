@@ -121,8 +121,8 @@ class EditorApp(object):
 		signals.dispatchAll()
 		EditorModuleManager.get().unloadAllModules()
 
-	def doMainLoop( self, sleepTime = 0.01 ):
-		budget = 0.003
+	def doMainLoop( self, sleepTime = 0.005 ):
+		budget = 0.01
 		t0 = time.time()
 		EditorModuleManager.get().updateAllModules()
 		if signals.dispatchAll():

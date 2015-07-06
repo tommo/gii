@@ -15,7 +15,6 @@ from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.qt.controls.PropertyEditor  import PropertyEditor
 from gii.qt.controls.CodeEditor import CodeEditor
 
-from gii.AssetEditor  import AssetEditorModule
 from gii.SceneEditor  import SceneEditorModule
 
 from gii.moai.MOAIEditCanvas import MOAIEditCanvas
@@ -157,7 +156,6 @@ class EffectEditor( SceneEditorModule ):
 		self.tree.rebuild()
 		self.selectEditTarget( None )
 		self.checkScriptTimer  = self.container.startTimer( 3, self.checkScript )
-		self.checkRefreshTimer = self.container.startTimer( 10, self.checkRefresh )
 
 	def saveAsset( self ):
 		if not self.editingAsset: return

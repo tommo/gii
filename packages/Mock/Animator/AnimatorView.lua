@@ -245,7 +245,7 @@ function AnimatorView:startPreview( t )
 	self.prevClock = false
 	if self.currentTime >= self.targetClip:getLength() then
 		self:applyTime( 0 )
-	end		
+	end
 	return true
 end
 

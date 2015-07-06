@@ -2,7 +2,7 @@ import os
 import logging
 
 from gii.core        import app, signals, EditorCommandStack, RemoteCommand
-from gii.core.selection import SelectionManager
+from gii.core.selection import SelectionManager, getSelectionManager
 
 from gii.qt.controls.Window import MainWindow
 from gii.qt.controls.Menu   import MenuManager
@@ -33,6 +33,9 @@ class SceneEditorModule( SubEditorModule ):
 	def changeSceneTool( self, toolId ):
 		self.getSceneToolManager().changeTool( toolId )
 
+	def getAssetSelection( self ):
+		return getSelectionManager( 'asset' ).getSelection()
+
 
 ##----------------------------------------------------------------##
 class SceneEditor( TopEditorModule ):
@@ -44,7 +47,7 @@ class SceneEditor( TopEditorModule ):
 
 	def getWindowTitle( self ):
 		return 'Scene Editor'
-	
+
 	def onSetupMainWindow( self, window ):
 		self.mainToolBar = self.addToolBar( 'scene', self.mainWindow.requestToolBar( 'main' ) )		
 		window.setMenuWidget( self.getQtSupport().getSharedMenubar() )
@@ -78,7 +81,6 @@ class SceneEditor( TopEditorModule ):
 ##----------------------------------------------------------------##
 def getSceneSelectionManager():
 	return app.getModule('scene_editor').selectionManager
-
 
 ##----------------------------------------------------------------##
 class RemoteCommandRunGame( RemoteCommand ):

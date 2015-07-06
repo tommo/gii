@@ -14,7 +14,7 @@ from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 
 from gii.qt.controls.PropertyEditor  import PropertyEditor
 
-from gii.AssetEditor  import AssetEditorModule
+from gii.SceneEditor  import SceneEditorModule
 
 from gii.moai.MOAIEditCanvas    import MOAIEditCanvas
 
@@ -42,7 +42,7 @@ def _fixDuplicatedName( names, name, id = None ):
 
 ##----------------------------------------------------------------##
 
-class Deck2DEditor( AssetEditorModule ):
+class Deck2DEditor( SceneEditorModule ):
 	"""docstring for Deck2DEditor"""
 	def __init__(self):
 		super(Deck2DEditor, self).__init__()
@@ -173,7 +173,7 @@ class Deck2DEditor( AssetEditorModule ):
 			
 	def addItem( self, atype ):
 		if not self.editingAsset: return
-		selection = self.getSelection()
+		selection = self.getAssetSelection()
 		if not selection: return
 
 		newItems = []		

@@ -180,6 +180,7 @@ class AssetNode(object):
 
 	def setBundle( self, isBundle = True ):
 		self.setProperty( 'is_bundle', isBundle )
+		self.groupType = 'bundle'
 		if isBundle:
 			pass
 

@@ -160,8 +160,7 @@ class FSMParser():
 				if startState :
 					nodeTo = startState
 				else:
-					print( "no 'start' state for group:", nodeTo.getFullName())
-					return error()
+					raise Exception( "no 'start' state for group:" + nodeTo.getFullName() )
 
 			if msg and msg != '' :
 				jump[msg]=nodeTo

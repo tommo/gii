@@ -342,8 +342,8 @@ class AnimatorView( SceneEditorModule ):
 	def onPreviewTimer( self ):
 		playing, currentTime = self.delegate.callMethod( 'view', 'doPreviewStep' )
 		self.previewTime = currentTime
-		self.widget.setCursorPos( self.previewTime )
 		self.getActiveSceneView().forceUpdate()
+		self.widget.setCursorPos( self.previewTime )
 		if not playing:
 			self.stopPreview()
 		# signals.emit( 'entity.modified',  None , '' )

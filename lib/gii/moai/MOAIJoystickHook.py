@@ -68,8 +68,7 @@ class MOAIJoystickHook( EditorModule ):
 		getter = self.joystickSensorGetters[ jid ]
 		sensor = getter.getButtonSensor( inputDevice )
 		if sensor:
-			sensor.enqueueEvent( buttonId, down )
-			# print 'joybutton', buttonId, down
+			sensor.enqueueKeyEvent( buttonId, down )
 
 	def onAxisEvent( self, joystick, axisId, value ):		
 		jid = joystick.getContext()
