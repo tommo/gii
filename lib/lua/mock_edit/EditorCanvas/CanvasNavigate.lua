@@ -16,7 +16,9 @@ function CanvasNavigate:onLoad()
 	self:attach( mock.InputScript{ 
 			device = inputDevice
 		} )
+	self.inputDevice = inputDevice
 	self.zoom = 1
+	self.dragging = false
 end
 
 function CanvasNavigate:reset()
@@ -26,20 +28,37 @@ function CanvasNavigate:reset()
 	self.targetCamera:com():setZoom( 1 )
 end
 
+-- function CanvasNavigate:onKeyEvent( key, down )
+-- 	if key == 'space' then
+-- 	end
+-- end
+
+function CanvasNavigate:startDrag( btn, x, y )
+	self.dragFrom = { x, y }
+	self.cameraFrom = { self.targetCamera:getLoc() }
+	self.dragging = btn
+	self.targetCamera:com():setCursor( 'closed-hand' )
+end
+
+function CanvasNavigate:stopDrag()
+	self.dragging = false
+	self.targetCamera:com():setCursor( 'arrow' )
+end
+
 function CanvasNavigate:onMouseDown( btn, x, y )
 	if btn == 'middle' then
-		self.dragFrom = { x, y }
-		self.cameraFrom = { self.targetCamera:getLoc() }
-		self.dragging = true
-		self.targetCamera:com():setCursor( 'closed-hand' )
+		if self.dragging then return end
+		self:startDrag( btn, x, y )
+	elseif btn == 'left' then
+		if self.dragging then return end
+		if self.inputDevice:isKeyDown( 'space' ) then
+			self:startDrag( btn, x, y )
+		end
 	end
 end
 
 function CanvasNavigate:onMouseUp( btn, x, y )
-	if btn == 'middle' then
-		self.dragging = false
-		self.targetCamera:com():setCursor( 'arrow' )
-	end
+	if btn == self.dragging then self:stopDrag() end
 end
 
 function CanvasNavigate:onMouseMove( x, y )

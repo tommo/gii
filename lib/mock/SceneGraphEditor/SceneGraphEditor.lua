@@ -327,14 +327,16 @@ end
 
 function getSceneObjectRepr( enumerator, obj )
 	if isInstance( obj, mock.Entity ) then
-		return obj:getName() or '<unnamed>'
+		return obj:getFullName() or '<unnamed>'
+
 	elseif isInstance( obj, mock.EntityGroup ) then
-		return obj:getName() or '<unnamed>'
+		return obj:getFullName() or '<unnamed>'
+
 	end
 	--todo: component
 	local ent = obj._entity
 	if ent then
-		return ent:getName() or '<unnamed>'
+		return ent:getFullName() or '<unnamed>'
 	end
 	return nil
 end

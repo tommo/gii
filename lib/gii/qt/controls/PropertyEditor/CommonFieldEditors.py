@@ -32,7 +32,8 @@ class NumberFieldEditor( FieldEditor ):
 		return self.control.value()
 
 	def set( self, value ):
-		self.control.setValue( value or 0 )
+		if value is None: return
+		self.control.setValue( value )
 
 	def setReadonly( self, readonly ):
 		self.control.setReadOnly( readonly )
