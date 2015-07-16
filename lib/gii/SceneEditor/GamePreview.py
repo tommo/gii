@@ -9,7 +9,6 @@ from gii.moai.MOAICanvasBase import MOAICanvasBase
 
 from PyQt4                   import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore            import Qt
-from OpenGL.GL import *
 
 from SceneEditor             import SceneEditorModule
 import ExternRun

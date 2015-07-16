@@ -1172,3 +1172,13 @@ function CmdEntityGroupCreate:undo()
 	self.parentGroup:removeChildGroup( self.createdGroup )
 end
 
+
+--------------------------------------------------------------------
+CLASS: CmdSelectScene ( mock_edit.EditorCommandNoHistory )
+	:register( 'scene_editor/select_scene')
+
+
+function CmdSelectScene:init( option )
+	return gii.changeSelection( 'scene', editor.scene )
+end
+

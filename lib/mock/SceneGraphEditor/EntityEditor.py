@@ -23,6 +23,24 @@ def getProtoPath( obj ):
 	state = obj['PROTO_INSTANCE_STATE']
 	return state['proto'] or state['sub_proto']
 
+
+
+##----------------------------------------------------------------##
+class SceneObjectEditor( CommonObjectEditor ):
+	def setTarget( self, target ):
+		introspector = self.getIntrospector()
+		self.target = target
+		self.grid.setTarget( target )		
+		if isMockInstance( target, 'Scene' ):
+			for mgr in target.getManagers( target ).values():
+				if mgr.FLAG_INTERNAL: continue
+				editor = introspector.addObjectEditor( mgr )
+	# def needCache( self ):
+	# 	return False
+
+registerObjectEditor( _MOCK.Scene, SceneObjectEditor )
+
+
 ##----------------------------------------------------------------##
 class SceneObjectEditorMixin():
 	#field proto state
@@ -156,7 +174,6 @@ class ComponentEditor( CommonObjectEditor, SceneObjectEditorMixin ): #a generic 
 		# for field, editor in self.grid.editors.items():
 		# 	pass
 		
-
 ##----------------------------------------------------------------##
 class EntityEditor( ObjectEditor, SceneObjectEditorMixin ): #a generic property grid 
 	def initWidget( self, container, objectContainer ):
@@ -291,3 +308,6 @@ class EntityGroupEditor( CommonObjectEditor ):
 		signals.emit( 'entity.modified', obj, 'introspector' )
 
 registerObjectEditor( _MOCK.EntityGroup, EntityGroupEditor )
+
+
+

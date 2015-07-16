@@ -156,6 +156,7 @@ class EffectEditor( SceneEditorModule ):
 		self.tree.rebuild()
 		self.selectEditTarget( None )
 		self.checkScriptTimer  = self.container.startTimer( 3, self.checkScript )
+		self.checkRefershTimer  = self.container.startTimer( 10, self.checkRefresh )
 
 	def saveAsset( self ):
 		if not self.editingAsset: return
@@ -163,6 +164,7 @@ class EffectEditor( SceneEditorModule ):
 
 	def closeAsset( self ):
 		self.checkScriptTimer.stop()
+		self.checkRefershTimer.stop()
 
 	def getEditingConfig( self ):
 		return self.editConfig

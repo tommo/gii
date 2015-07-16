@@ -133,6 +133,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/find/find_entity_group', dict( label = 'Find Group', shortcut = 'ctrl+alt+f' ) )
 
 		#Toolbars
+		self.addTool( 'scene_graph/select_scene',    label ='Select Scene', icon = 'settings' )
+		self.addTool( 'scene_graph/----'  )
 		self.addTool( 'scene_graph/create_group',    label ='+ Group', icon = 'add_folder' )
 		self.addTool( 'scene_graph/----'  )
 		self.addTool( 'scene_graph/make_proto',    label = 'Convert To Proto', icon = 'proto_make' )
@@ -262,6 +264,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.markSceneDirty( False )
 		self.tree.clear()
 		self.getApp().clearCommandStack( 'scene_editor' )
+		self.getSelectionManager().removeSelection( self.getActiveScene() )
 		signals.emitNow( 'scene.close', self.activeSceneNode )
 		self.delegate.safeCallMethod( 'editor', 'closeScene' )		
 		self.activeSceneNode = None
@@ -420,6 +423,9 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		elif name == 'create_group':
 			self.doCommand( 'scene_editor/entity_group_create' )
+		
+		elif name == 'select_scene':
+			self.doCommand( 'scene_editor/select_scene' )
 			
 
 	def onMenu( self, menu ):

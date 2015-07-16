@@ -587,7 +587,7 @@ class TileGroup(object):
 
 	def build( self, projContext ):
 		#pass name
-		mo = re.search( '([\w_-]+)\s*:(\w*)\(\s*(\d+)\s*\)', self.rawName )
+		mo = re.search( '([\w_-]+)\s*:\s*(\w*)\(\s*(\d+)\s*\)', self.rawName )
 		if mo:
 			self.name = mo.group( 1 )
 			self.tileType = mo.group( 2 ) or 'C'

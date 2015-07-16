@@ -260,7 +260,7 @@ class SearchViewTree(GenericTreeWidget):
 	def __init__( self, *args, **kwargs ):
 		super( SearchViewTree, self ).__init__( *args, **kwargs )
 		self.testingSelection = False
-		self.setTextElideMode( Qt.ElideMiddle )
+		self.setTextElideMode( Qt.ElideLeft )
 
 	def getHeaderInfo( self ):
 		return [('Sel', 50), ('Name', 650), ('Type', 80)]

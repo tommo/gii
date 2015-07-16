@@ -3,7 +3,6 @@ from PyQt4.QtCore import Qt, QObject, QEvent, pyqtSignal
 from PyQt4.QtCore import QPoint, QRect, QSize
 from PyQt4.QtCore import QPointF, QRectF, QSizeF
 from PyQt4.QtGui import QColor, QTransform
-from OpenGL.GL import *
 
 try:
 	from gii.qt.controls.GLWidget import GLWidget

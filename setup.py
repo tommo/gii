@@ -15,18 +15,31 @@ DATA_FILES = []
 OPTIONS = {
 	'arch': 'x86_64',
 	'argv_emulation': True,
-	'optimize': 0,
+	'optimize': 2,
 	'strip': False,
+	'semi_standalone' : True,
+	'use_pythonpath'  : True,
+	'emulate_shell_environment' : True,
+	# 'includes': [ 
+	# 	'sip',
+	# 	'PyQt4',
+	# 	'PyQt4._qt',
+	# 	'PyQt4.QtCore',
+	# 	'PyQt4.QtGui',
+	# 	'PIL',
+	# ],
 
-	'includes': [ 
-	'sip',
-	'SocketServer', 
-	'watchdog', 
-	'watchdog.observers',
-	'PIL',
-	],
-	
-	#'excludes': [ 'PySide', 'pygame', 'aubio', 'numpy', 'lupa', 'openerp-server', 'wand', 'PIL' ],
+	# 'excludes': [
+	# 	'wx',
+	# 	'PyQt4.QtDesigner',
+	# 	'PyQt4.QtNetwork',
+	# 	'PyQt4.QtScript',
+	# 	'PyQt4.QtSql',
+	# 	'PyQt4.QtTest',
+	# 	'PyQt4.QtXml',
+	# 	'PyQt4.phonon'
+	#  ],
+
 	}
 
 setup(
