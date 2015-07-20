@@ -118,6 +118,8 @@ class DataXLSAssetManager(AssetManager):
 		return True
 
 	def importAsset(self, node, reload = False ):
+		if node.isVirtual(): return
+
 		#JOB: convert xls into json
 		workbook = xlrd.open_workbook( node.getAbsFilePath() )
 		if not workbook:
@@ -136,8 +138,17 @@ class DataXLSAssetManager(AssetManager):
 
 		node.assetType = 'data_xls'
 		node.setObjectFile( 'data', cachePath )
+		node.groupType = 'package'
+		for id, sheet in data.items():
+			node.affirmChildNode( id, 'data_sheet', manager = self )
 		return True
 
+	def editAsset(self, node):
+		if node.isVirtual():
+			return self.editAsset( node.getParent() )
+		node.openInSystem()
+
 DataXLSAssetManager().register()
-AssetLibrary.get().setAssetIcon( 'data_xls', 'data' )
+AssetLibrary.get().setAssetIcon( 'data_xls',   'data' )
+AssetLibrary.get().setAssetIcon( 'data_sheet', 'data' )
 

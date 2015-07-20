@@ -16,7 +16,7 @@ from gii.moai.MOAIEditCanvas import  MOAIEditCanvas
 from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
 
-# from StoryGraphView import StoryGraphView
+from StoryGraphView import StoryGraphView
 
 
 ##----------------------------------------------------------------##
@@ -30,17 +30,18 @@ class StoryView( SceneEditorModule ):
 	dependency = [ 'mock' ]
 
 	def onLoad( self ):
-		self.container = self.requestDocumentWindow(
+		self.container = self.requestDockWindow(
 				title = 'Story'
 			)
 		self.window = window = self.container.addWidgetFromFile(
 			_getModulePath('StoryView.ui')
 		)
 		
-		self.canvas = addWidgetWithLayout(
-			MOAIEditCanvas( window.containerGraph )
-		)
-		self.canvas.loadScript( _getModulePath('StoryView.lua') )
+		# self.canvas = addWidgetWithLayout(
+		# 	MOAIEditCanvas( window.containerGraph )
+		# )
+		# self.canvas.loadScript( _getModulePath('StoryView.lua') )
+		self.view = addWidgetWithLayout( StoryGraphView( window.containerGraph ) )
 		
 		# self.updateTimer        = self.container.startTimer( 60, self.onUpdateTimer )
 		self.updatePending      = False
@@ -48,8 +49,7 @@ class StoryView( SceneEditorModule ):
 		self.previewUpdateTimer = False		
 
 	def onStart( self ):
-		# self.container.show()
-		pass
+		self.container.show()
 
 	def onSetFocus( self ):
 		self.getModule( 'scene_editor' ).setFocus()

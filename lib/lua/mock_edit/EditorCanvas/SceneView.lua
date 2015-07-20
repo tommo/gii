@@ -167,6 +167,13 @@ function SceneView:moveDrag( x, y )
 	end
 end
 
+function SceneView:disableCamera()
+	self:getCameraComponent():setActive( false )
+end
+
+function SceneView:enableCamera()
+	self:getCameraComponent():setActive( true )
+end
 
 
 --------------------------------------------------------------------

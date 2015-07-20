@@ -148,17 +148,20 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 			self.setViewport( viewport )
 			# self.setCacheMode( QtGui.QGraphicsView.CacheBackground )
 		else:
+			# self.setViewportUpdateMode( QtGui.QGraphicsView.MinimalViewportUpdate )
+			# self.setViewportUpdateMode( QtGui.QGraphicsView.BoundingRectViewportUpdate )
 			self.setViewportUpdateMode( QtGui.QGraphicsView.SmartViewportUpdate )
 
 		self.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		self.setRenderHint( QtGui.QPainter.HighQualityAntialiasing, False )
-		self.setRenderHint( QtGui.QPainter.NonCosmeticDefaultPen, True )
+		self.setRenderHint( QtGui.QPainter.NonCosmeticDefaultPen, False )
 		self.setTransformationAnchor( self.NoAnchor )
 		self.setOptimizationFlags( QtGui.QGraphicsView.DontAdjustForAntialiasing | QtGui.QGraphicsView.DontSavePainterState )
 		
 	# 	self.refreshTimer   = QtCore.QTimer(self)
 	# 	self.refreshTimer.timeout.connect(self.onRefreshTimer)
-	# 	self.refreshTimer.setInterval( 1000/25 )
+	# 	self.refreshTimer.setInterval( 1000/30 )
+	# 	self.refreshTimer.setSingleShot( True )
 
 	# 	self.pendingRefresh = True
 	# 	self.allowRefresh   = True

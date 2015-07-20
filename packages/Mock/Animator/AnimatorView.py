@@ -327,7 +327,7 @@ class AnimatorView( SceneEditorModule ):
 			self.previewing = True
 			self.findTool( 'animator_play/play' ).setValue( True )
 			self.previewTimer.start()
-
+			
 	def stopPreview( self, rewind = False ):		
 		if self.previewing:
 			self.delegate.callMethod( 'view', 'stopPreview' )

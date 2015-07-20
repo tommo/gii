@@ -362,7 +362,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		runtime = self.runtime
 		runtime.setBufferSize( self.viewWidth, self.viewHeight )
 		
-		self.makeCurrent()
+		# self.makeCurrent()
 
 		if not option.get( 'no_sim', False ):	
 			runtime.stepSim( step )

@@ -252,6 +252,17 @@ class SceneView( SceneEditorModule ):
 	def onDragLeave( self ):
 		self.canvas.callMethod( 'view', 'stopDrag' )
 
+	def disableCamera( self ):
+		self.canvas.callMethod( 'view', 'disableCamera' )
+
+	def enableCamera( self ):
+		self.canvas.callMethod( 'view', 'disableCamera' )
+
+	def hideEditorLayer( self ):
+		self.canvas.callMethod( 'view', 'hideEditorLayer' )
+
+	def showEditorLayer( self ):
+		self.canvas.callMethod( 'view', 'showEditorLayer' )
 
 ##----------------------------------------------------------------##
 class SceneViewCanvas( MOAIEditCanvas ):

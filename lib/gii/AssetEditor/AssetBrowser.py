@@ -462,7 +462,7 @@ class AssetBrowser( SceneEditorModule ):
 	def openAsset( self, asset, **option ):
 		if asset:
 			if option.get('select', True):
-				self.treeView.selectNode( asset )
+				self.selectAsset( asset )
 			asset.edit()
 
 	def getCurrentFolders( self ):
