@@ -26,6 +26,7 @@ import ShaderAsset
 
 import DataXLSAsset
 import DataJSONAsset
+import DataYAMLAsset
 
 import EffectAsset
 

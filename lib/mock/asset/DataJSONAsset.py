@@ -9,6 +9,9 @@ class DataJSONAssetManager(AssetManager):
 	def getName(self):
 		return 'asset_manager.data_json'
 
+	def getMetaType( self ):
+		return 'script'
+
 	def acceptAssetFile(self, filepath):
 		if not os.path.isfile(filepath): return False		
 		name, ext = os.path.splitext(filepath)

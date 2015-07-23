@@ -118,6 +118,10 @@ class TileMapEditor( SceneEditorModule ):
 		self.addTool( 'tilemap_layers/remove_layer', label = 'Remove', icon = 'remove' )
 		self.addTool( 'tilemap_layers/layer_up',     label = 'up', icon = 'arrow-up' )
 		self.addTool( 'tilemap_layers/layer_down',   label = 'down', icon = 'arrow-down' )
+		self.addTool( 'tilemap_layers/----' )
+		self.addTool( 'tilemap_layers/inc_subdiv',   label = 'subD +' )
+		self.addTool( 'tilemap_layers/dec_subdiv',   label = 'subD -' )
+
 
 		self.addTool( 'tilemap_main/tool_pen', 
 			widget = SceneToolButton( 'tilemap_pen',
@@ -269,11 +273,21 @@ class TileMapEditor( SceneEditorModule ):
 		elif name == 'tool_random':
 			self.canvas.callMethod( 'editor', 'toggleToolRandom', tool.getValue() )
 
+		elif name == 'inc_subdiv':
+			if self.targetTileMapLayer:
+				self.canvas.callMethod( 'editor', 'incSubDivision' )
+				self.treeLayers.refreshNodeContent( self.targetTileMapLayer )
+
+		elif name == 'dec_subdiv':
+			if self.targetTileMapLayer:
+				self.canvas.callMethod( 'editor', 'decSubDivision' )
+				self.treeLayers.refreshNodeContent( self.targetTileMapLayer )
+
 
 ##----------------------------------------------------------------##
 class TileMapLayerTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		return [ ('Name',90), ('Show', 30), ('Tileset',-1) ]
+		return [ ('Name',120),  ('SubD', 30),  ('Show', 30), ('Tileset',-1) ]
 
 	def getRootNode( self ):
 		return self
@@ -299,12 +313,15 @@ class TileMapLayerTreeWidget( GenericTreeWidget ):
 		if node == self: return
 		item.setIcon( 0, getIcon( 'tilemap/layer' ) )
 		item.setText( 0, node.name )
+
+		item.setText( 1, '%d' % node.subDivision )
+
 		if node.visible:
-			item.setText( 1, 'Y' )
+			item.setText( 2, 'Y' )
 		else:
-			item.setText( 1, '' )
+			item.setText( 2, '' )
 		path = node.getTilesetPath( node ) or ''
-		item.setText( 2, os.path.basename(path) )
+		item.setText( 3, os.path.basename(path) )
 
 	def onItemChanged( self, item, col ):
 		self.parentModule.renameLayer( item.node, item.text( col ) )

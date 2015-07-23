@@ -343,6 +343,11 @@ function TileMapEditor:requestAvailTileMapLayerTypes()
 end
 
 function TileMapEditor:createTileMapLayer( tileset )
+	if not self.targetTileMap.initialized then
+		mock_edit.alertMessage( 'message', 'Tilemap not initialized', 'info' )
+		return false
+	end
+
 	local layer = self.targetTileMap:_createLayer( tileset )
 	if not layer then
 		mock_edit.alertMessage( 'message', 'unsupported Tileset type', 'info' )
@@ -430,6 +435,21 @@ function TileMapEditor:toggleToolRandom( enabled )
 	self.randomEnabled = enabled
 end
 
+function TileMapEditor:incSubDivision()
+	if not self.targetTileMapLayer then return end
+	local subD = self.targetTileMapLayer.subDivision + 1
+	if subD < 4 then
+		self.targetTileMapLayer:setSubDivision( subD )
+	end
+end
+
+function TileMapEditor:decSubDivision()
+	if not self.targetTileMapLayer then return end
+	local subD = self.targetTileMapLayer.subDivision - 1
+	if subD >= 1 then
+		self.targetTileMapLayer:setSubDivision( subD )
+	end
+end
 
 --------------------------------------------------------------------
 CLASS: TileMapToolPen ( mock_edit.CanvasTool )
