@@ -108,16 +108,6 @@ function CanvasView:onEntityEvent( ev, entity, com ) --FIXME: remove this
 	self.pickingManager :onEntityEvent ( ev, entity, com )
 end
 
-local function isEntityPickable( ent )
-	if ent.FLAG_EDITOR_OBJECT then return false end
-	if not ent:isVisible() then return false end
-	local layerSrc = ent.layer.source
-	if not layerSrc:isVisible() then return false end
-	if not layerSrc:isEditorVisible() then return false end
-	if layerSrc.editorSolo == 'hidden' then return false end
-	if layerSrc:isLocked() then return false end
-	return true
-end
 
 function CanvasView:pick( x, y, pad )
 	return self.pickingManager:pickPoint( x, y, pad )

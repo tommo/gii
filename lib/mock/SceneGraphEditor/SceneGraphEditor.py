@@ -896,6 +896,11 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 				item.setIcon( 2, getIcon( 'entity_vis' ) )
 			else:
 				item.setIcon( 2, getIcon( 'entity_invis' ) )
+
+			if node.isLocalEditLocked( node ):
+				item.setIcon( 3, getIcon( 'entity_lock' ) )
+			else:
+				item.setIcon( 3, getIcon( 'entity_nolock' ) )
 			item.setData( 0, Qt.UserRole, 1 )
 
 		elif isMockInstance( node, 'Entity' ):
@@ -919,6 +924,11 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 				item.setIcon( 2, getIcon( 'entity_vis' ) )
 			else:
 				item.setIcon( 2, getIcon( 'entity_invis' ) )
+
+			if node.isLocalEditLocked( node ):
+				item.setIcon( 3, getIcon( 'entity_lock' ) )
+			else:
+				item.setIcon( 3, getIcon( 'entity_nolock' ) )
 		
 		
 	def onItemSelectionChanged(self):
@@ -980,8 +990,9 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 	def onClicked(self, item, col):
 		if col == 2: #editor view toggle
 			self.module.doCommand( 'scene_editor/toggle_entity_visibility' )
+
 		elif col == 3: #lock toggle
-			pass
+			self.module.doCommand( 'scene_editor/toggle_entity_lock' )
 			# app.getModule('layer_manager').toggleLock( self.getNodeByItem(item) )
 
 

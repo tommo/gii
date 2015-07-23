@@ -36,7 +36,8 @@ class MOAIInputDevice(object):
 			'button'   : MOAIButtonSensor,
 			'keyboard' : MOAIKeyboardSensor,			
 			'level'    : MOAILevelSensor,
-			'compass'  : MOAICompassSensor
+			'compass'  : MOAICompassSensor,
+			'joystick' : MOAIJoystickExSensor
 			} [sensorType]
 
 		sensor=clas(self, self.lastSensorId, name)
@@ -162,6 +163,24 @@ class MOAIJoystickSensor(MOAIInputSensor):
 
 	def enqueueButtonEvent( self, axis, value ):
 		pass
+
+##----------------------------------------------------------------##
+class MOAIJoystickExSensor(MOAIInputSensor):
+	def enqueueAxisEvent( self, axisId, value ):
+		getAKU().enqueueJoystickExAxisEvent(
+				self.device.id, 
+				self.id,
+				axisId,
+				value
+			)
+
+	def enqueueButtonEvent( self, buttonId, down ):
+		getAKU().enqueueJoystickExButtonEvent(
+				self.device.id, 
+				self.id,
+				buttonId,
+				down
+			)
 
 ##----------------------------------------------------------------##
 class MOAIKeyboardSensor(MOAIInputSensor):

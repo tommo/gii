@@ -204,7 +204,7 @@ function PickingManager:pickPoint( x, y, pad )
 			if ent and ent.getPickingTarget then
 				ent = ent:getPickingTarget()
 			end
-			if ent and ent:isVisible() then --TODO: sorting & sub picking
+			if ent and ent:isVisible() and ( not ent:isEditLocked() ) then --TODO: sorting & sub picking
 				-- print( ent:getName() )
 				ent = self:findBestPickingTarget( ent )
 				return { ent }
@@ -228,7 +228,7 @@ function PickingManager:pickRect( x0, y0, x1, y1, pad )
 				if ent.getPickingTarget then
 					ent = ent:getPickingTarget()
 				end
-				if ent:isVisible() then
+				if ent:isVisible() and ( not ent:isEditLocked()) then
 					picked[ ent ] = true
 				end
 				-- print( ent:getName() )
@@ -253,7 +253,7 @@ function PickingManager:pickBox( x0, y0, z0, x1, y1, z1, pad )
 				if ent.getPickingTarget then
 					ent = ent:getPickingTarget()
 				end
-				if ent:isVisible() then
+				if ent:isVisible() and ( not ent:isEditLocked()) then
 					picked[ ent ] = true
 				end
 				-- print( ent:getName() )

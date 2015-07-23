@@ -1092,6 +1092,25 @@ function CmdToggleEntityVisibility:undo()
 	self.originalVis  = {}
 end
 
+
+--------------------------------------------------------------------
+CLASS: CmdToggleEntityLock ( mock_edit.EditorCommandNoHistory )
+	:register( 'scene_editor/toggle_entity_lock' )
+
+function CmdToggleEntityLock:init( option )
+	local entities  = gii.getSelection( 'scene' )	
+	local locked = false
+	for i, e in ipairs( entities ) do
+		if e:isLocalEditLocked() then locked = true break end
+	end	
+	locked = not locked
+	for i, e in ipairs( entities ) do
+		e:setEditLocked( locked )
+		gii.emitPythonSignal( 'entity.visible_changed', e )
+		gii.emitPythonSignal( 'entity.modified', e, '' )
+	end
+end
+
 --------------------------------------------------------------------
 CLASS: CmdUnifyChildrenLayer ( mock_edit.EditorCommand )
 	:register( 'scene_editor/unify_children_layer' )
