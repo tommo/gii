@@ -104,3 +104,50 @@ end
 mock.PhysicsShapeCircle.onBuildGizmo = function( self )
 	return PhysicsShapeCircleGizmo( self )
 end
+
+
+
+--------------------------------------------------------------------
+CLASS: PhysicsShapeBevelBoxGizmo( PhysicsShapeBoxGizmo )
+
+function PhysicsShapeBevelBoxGizmo:__init( shape )
+end
+
+function PhysicsShapeBevelBoxGizmo:onDraw()
+	local shape = self.shape
+	local x, y = shape:getLoc()
+	local w, h = shape.w, shape.h
+	local rot  = shape.rotation
+	self.transform:setLoc( x, y )
+	self.transform:setRot( 0,0, rot )
+	GIIHelper.setVertexTransform( self.transform )
+
+	applyColor 'physics_gizmo'	
+	MOAIGfxDevice.setPenWidth(1)
+	
+	local w2, h2 = w/2, h/2
+	local b = shape.bevel
+
+	local srcVerts = {
+		-w2,      h2 - b,
+		-w2 + b,  h2,
+
+		 w2 - b,  h2,
+		 w2    ,  h2 - b,
+
+		 w2    , -h2 + b,
+		 w2 - b, -h2,
+
+		-w2 + b, -h2,
+		-w2    , -h2 + b,
+
+		--LOOP
+		-w2,      h2 - b,
+	}
+	MOAIDraw.drawLine( srcVerts )
+end
+
+--Install
+mock.PhysicsShapeBevelBox.onBuildGizmo = function( self )
+	return PhysicsShapeBevelBoxGizmo( self )
+end

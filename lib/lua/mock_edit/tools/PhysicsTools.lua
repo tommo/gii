@@ -184,6 +184,9 @@ function PhysicsShapeEditor:addDelegate( shape )
 
 	if isInstance( shape, mock.PhysicsShapeBox ) then
 		delegate = PhysicsShapeEditorDelegateBox( self, shape )
+
+	elseif isInstance( shape, mock.PhysicsShapeBevelBox ) then
+		delegate = PhysicsShapeEditorDelegateBox( self, shape )
 	
 	elseif isInstance( shape, mock.PhysicsShapeCircle ) then
 		delegate = PhysicsShapeEditorDelegateCircle( self, shape )
