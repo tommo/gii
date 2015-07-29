@@ -77,7 +77,13 @@ end
 function TranslationHandle:onMouseDown( btn, x, y )
 	if btn~='left' then return end
 	self.activeAxis = false
-	self.x0, self.y0 = self:wndToTarget( x, y )	
+	self.x0, self.y0 = self:wndToWorld( x, y )	
+
+	target = self.target
+	target:forceUpdate()
+	local tx, ty = self.target:getLoc()
+	self.tx0, self.ty0 = tx, ty
+
 	self.activeAxis = self:calcActiveAxis( x, y )
 	if self.activeAxis then
 		self.target:preTransform()
@@ -97,34 +103,46 @@ function TranslationHandle:onDrag( btn, x, y )
 	local target = self.target
 	target:forceUpdate()
 	self:forceUpdate()
-	x, y = self:wndToTarget( x, y )
+	x, y = self:wndToWorld( x, y )
 	local dx = x - self.x0
 	local dy = y - self.y0
-	self.x0, self.y0 = x, y 
-	local tx, ty = self.target:getLoc()
+
+	local tx0, ty0 = self.tx0, self.ty0
+	local tx, ty = tx0 + dx, ty0 + dy
 	
-	local mode = 'global'
-	local parent = target.parent
-	if parent and mode == 'global' then
-		local wx, wy   = target:getWorldLoc( 0,0,0 )
-		local wx1, wy1 = parent:modelToWorld( tx + dx, ty + dy )
-		if self.activeAxis == 'all' then
-			--pass			
-		elseif self.activeAxis == 'x' then
-			wy1 = wy
-		elseif self.activeAxis == 'y' then
-			wx1 = wx
-		end
-		tx, ty = parent:worldToModel( wx1, wy1 )
-	else
-		if self.activeAxis == 'all' then
-			tx = tx + dx
-			ty = ty + dy
-		elseif self.activeAxis == 'x' then
-			tx = tx + dx
-		elseif self.activeAxis == 'y' then
-			ty = ty + dy
-		end
+	-- local mode = 'global'
+	-- local parent = target.parent
+	-- if parent and mode == 'global' then
+	-- 	local wx, wy   = target:getWorldLoc()
+	-- 	local wx1, wy1 = parent:modelToWorld( tx + dx, ty + dy )
+	-- 	wx1, wy1 = self:getView():snapLoc( wx1, wy1 )
+	-- 	if self.activeAxis == 'all' then
+	-- 		--pass			
+	-- 	elseif self.activeAxis == 'x' then
+	-- 		wy1 = wy
+	-- 	elseif self.activeAxis == 'y' then
+	-- 		wx1 = wx
+	-- 	end
+	-- 	tx, ty = parent:worldToModel( wx1, wy1 )
+	-- else
+	-- 	local wx1, wy1 = tx + dx, ty + dy
+	-- 	wx1, wy1 = self:getView():snapLoc( wx1, wy1 )
+	-- 	if self.activeAxis == 'all' then
+	-- 		--pass
+	-- 	elseif self.activeAxis == 'x' then
+	-- 		wy1 = ty
+	-- 	elseif self.activeAxis == 'y' then
+	-- 		wx1 = tx
+	-- 	end
+	-- 	tx, ty = wx1, wy1
+	-- end
+	tx, ty = self:getView():snapLoc( tx, ty, nil, self.activeAxis )
+	if self.activeAxis == 'all' then
+		--pass
+	elseif self.activeAxis == 'x' then
+		ty = ty0
+	elseif self.activeAxis == 'y' then
+		tx = tx0
 	end
 	target:setLoc( tx, ty )
 	self.tool:updateCanvas()

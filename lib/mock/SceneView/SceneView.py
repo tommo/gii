@@ -64,7 +64,9 @@ class SceneView( SceneEditorModule ):
 		self.window = self.requestDocumentWindow(
 				title = 'Scene'
 			)
+
 		self.toolbar = self.window.addToolBar()
+		self.addToolBar( 'scene_view_config', self.toolbar )
 
 		self.canvas = self.window.addWidget( SceneViewCanvas() )
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
@@ -132,6 +134,30 @@ class SceneView( SceneEditorModule ):
 				)
 			)
 
+		#config tool
+		self.addTool(	'scene_view_config/toggle_snap_grid', 
+			label = 'snap',
+			icon  = 'magnet',
+			type  = 'check'
+			)
+
+		self.addTool(	'scene_view_config/toggle_grid', 
+			label = 'grid',
+			icon  = 'grid',
+			type  = 'check'
+			)
+
+		self.gridWidthSpinBox = QtGui.QSpinBox()
+		self.gridWidthSpinBox.setRange( 10, 1000 )
+		self.gridWidthSpinBox.valueChanged.connect( self.onGridWidthChange )
+		self.gridWidthSpinBox.setButtonSymbols( QtGui.QAbstractSpinBox.NoButtons )
+		self.toolbar.addWidget( self.gridWidthSpinBox )
+
+		self.gridHeightSpinBox = QtGui.QSpinBox()
+		self.gridHeightSpinBox.setRange( 10, 1000 )
+		self.gridHeightSpinBox.valueChanged.connect( self.onGridHeightChange )
+		self.gridHeightSpinBox.setButtonSymbols( QtGui.QAbstractSpinBox.NoButtons )
+		self.toolbar.addWidget( self.gridHeightSpinBox )
 
 	def onStart( self ):
 		self.scheduleUpdate()
@@ -170,13 +196,23 @@ class SceneView( SceneEditorModule ):
 	def onSceneOpen( self, node, scene ):
 		self.window.setDocumentName( node.getPath() )
 		self.canvas.show()
+		self.toolbar.show()
 		self.canvas.safeCall( 'onSceneOpen', scene )		
 		self.setFocus()
 		self.changeEditTool( 'translation' )
 		self.updateTimer.start()
 		self.forceUpdate()
 		self.scheduleUpdate()
-		# self.preview.update
+
+		#sync toolbar
+		gridWidth   = self.canvas.callMethod( 'view', 'getGridWidth'  )
+		gridHeight  = self.canvas.callMethod( 'view', 'getGridHeight' )
+		gridVisible = self.canvas.callMethod( 'view', 'isGridVisible' )
+		gridSnapping = self.canvas.callMethod( 'view', 'isGridSnapping' )
+		self.gridWidthSpinBox.setValue(	gridWidth	)
+		self.gridHeightSpinBox.setValue( gridHeight )
+		self.findTool( 'scene_view_config/toggle_grid' ).setValue( gridVisible )
+		self.findTool( 'scene_view_config/toggle_snap_grid' ).setValue( gridSnapping )
 
 	def makeCanvasCurrent( self ):
 		self.canvas.makeCurrent()
@@ -185,6 +221,7 @@ class SceneView( SceneEditorModule ):
 		self.window.setDocumentName( None )
 		self.canvas.safeCall( 'onSceneClose' )
 		self.canvas.hide()
+		self.toolbar.hide()
 		self.updateTimer.stop()
 
 	def onSelectionChanged( self, selection, key ):
@@ -236,6 +273,14 @@ class SceneView( SceneEditorModule ):
 		elif name == 'tool_scale':
 			self.changeEditTool( 'scale' )
 
+		elif name == 'toggle_grid':
+			self.canvas.safeCallMethod( 'view', 'setGridVisible', tool.getValue() )
+			self.scheduleUpdate()
+
+		elif name == 'toggle_snap_grid':
+			self.canvas.safeCallMethod( 'view', 'setGridSnapping', tool.getValue() )
+			self.scheduleUpdate()
+
 	def getCurrentSceneView( self ):
 		#TODO
 		return self
@@ -251,6 +296,16 @@ class SceneView( SceneEditorModule ):
 
 	def onDragLeave( self ):
 		self.canvas.callMethod( 'view', 'stopDrag' )
+
+
+	def onGridWidthChange( self, v ):
+		self.canvas.safeCallMethod( 'view', 'setGridWidth', v )
+		self.scheduleUpdate()
+
+	def onGridHeightChange( self, v ):
+		self.canvas.safeCallMethod( 'view', 'setGridHeight', v )
+		self.scheduleUpdate()
+
 
 	def disableCamera( self ):
 		self.canvas.callMethod( 'view', 'disableCamera' )

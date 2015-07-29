@@ -94,6 +94,16 @@ class TileMapEditor( SceneEditorModule ):
 		self.listTerrain.parentModule = self
 		self.listTerrain.setFixedHeight( 70 )
 		self.listTerrain.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
+
+		self.listCodeTile = CodeTilesetList(
+			window.containerLayers,
+			editable = False,
+			mode = 'list'
+		)
+		self.listCodeTile.parentModule = self
+		self.listCodeTile.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding )
+		self.listCodeTile.hide()
+
 		self.canvas.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding )
 
 		canvasLayout = QtGui.QVBoxLayout( window.containerCanvas )
@@ -106,10 +116,11 @@ class TileMapEditor( SceneEditorModule ):
 
 		canvasLayout.addWidget( self.canvas )
 		canvasLayout.addWidget( self.listTerrain )
+		canvasLayout.addWidget( self.listCodeTile )
 		canvasLayout.addWidget( self.toolbarMain )
 
-		layersLayout.addWidget( self.treeLayers )
 		layersLayout.addWidget( self.toolbarLayers )
+		layersLayout.addWidget( self.treeLayers )
 
 		self.addToolBar( 'tilemap_layers', self.toolbarLayers )
 		self.addToolBar( 'tilemap_main', self.toolbarMain )
@@ -184,6 +195,10 @@ class TileMapEditor( SceneEditorModule ):
 			self.canvas.callMethod( 'editor', 'setTerrainBrush', selection[0] )
 			self.changeSceneTool( 'tilemap_terrain' )
 
+	def onCodeTileSelectionChanged( self, selection ):
+		if selection:
+			self.canvas.callMethod( 'editor', 'selectCodeTile', selection[0] )
+
 	def clearTerrainSelection( self ):
 		self.listTerrain.selectNode( None )
 
@@ -205,13 +220,28 @@ class TileMapEditor( SceneEditorModule ):
 		self.canvas.callMethod( 'editor', 'setTargetTileMapLayer', layer )
 		self.canvas.updateCanvas()
 		self.targetTileMapLayer = layer
-		self.listTerrain.rebuild()
+		if isMockInstance( layer, 'CodeTileMapLayer' ):
+			self.listCodeTile.show()
+			self.listTerrain.hide()
+			self.canvas.hide()
+			self.listCodeTile.rebuild()
+		else:
+			self.listCodeTile.hide()
+			self.listTerrain.show()
+			self.canvas.show()
+			self.listTerrain.rebuild()
 
 	def getTerrainTypeList( self ):
 		if self.targetTileMapLayer:
 			tileset = self.targetTileMapLayer.tileset
 			brushTable = tileset.getTerrainBrushes( tileset )
 			return [ brush for brush in brushTable.values() ]
+		return []
+
+	def getCodeTilesetList( self ):
+		if self.targetTileMapLayer:
+			tileset = self.targetTileMapLayer.tileset
+			return [ key for key in tileset.nameToTile.values() ]
 		return []
 
 	def getLayers( self ):
@@ -247,9 +277,11 @@ class TileMapEditor( SceneEditorModule ):
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'add_layer':
+			if not self.targetTileMap: return
+			supportedTilesetTypes = self.targetTileMap.getSupportedTilesetType( self.targetTileMap )
 			requestSearchView( 
 				context      = 'asset',
-				type         = 'deck2d.tileset;named_tileset;deck2d.mtileset',
+				type         = supportedTilesetTypes,
 				multiple_selection = False,
 				on_selection = self.createLayer,
 				# on_search    = self.listTileMapLayerTypes	
@@ -314,7 +346,7 @@ class TileMapLayerTreeWidget( GenericTreeWidget ):
 		item.setIcon( 0, getIcon( 'tilemap/layer' ) )
 		item.setText( 0, node.name )
 
-		item.setText( 1, '%d' % node.subDivision )
+		item.setText( 1, '%d' % node.subdivision )
 
 		if node.visible:
 			item.setText( 2, 'Y' )
@@ -329,6 +361,7 @@ class TileMapLayerTreeWidget( GenericTreeWidget ):
 	def onItemSelectionChanged( self ):
 		self.parentModule.onLayerSelectionChanged( self.getSelection() )
 
+
 ##----------------------------------------------------------------##
 class TileMapTerrainList( GenericListWidget ):
 	def getNodes( self ):
@@ -340,3 +373,16 @@ class TileMapTerrainList( GenericListWidget ):
 
 	def onItemSelectionChanged( self ):
 		self.parentModule.onTerrainSelectionChanged( self.getSelection() )
+
+
+##----------------------------------------------------------------##
+class CodeTilesetList( GenericListWidget ):
+	def getNodes( self ):
+		return self.parentModule.getCodeTilesetList()
+
+	def updateItemContent( self, item, node, **option ):
+		item.setText( node.name )
+		item.setIcon( getIcon( 'tilemap/code_item' ) )
+
+	def onItemSelectionChanged( self ):
+		self.parentModule.onCodeTileSelectionChanged( self.getSelection() )

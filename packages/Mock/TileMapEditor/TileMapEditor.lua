@@ -200,12 +200,20 @@ markTileDeck:setDrawCallback( function( idx, x, y, xScl, yScl )
 	-- x = x - tileSize/2
 	-- y = y - tileSize/2
 	-- MOAIDraw.fillRect( x, y, x+tileSize-1, y+tileSize-1 )
+	local w = xScl * markTileWidth - 2
+	local h = yScl * markTileHeight - 2
 	MOAIDraw.drawRect( 
-		x + 1,
-		y + 1,
-		x + xScl * markTileWidth - 2,
-		y + yScl * markTileHeight - 2
+		x,
+		y,
+		x + w,
+		y + h
 	)
+	-- MOAIDraw.drawRect( 
+	-- 	x - w/2 + 1,
+	-- 	y - h/2 + 1,
+	-- 	x + w/2,
+	-- 	y + h/2
+	-- )
 end
 )
 
@@ -222,7 +230,6 @@ function TileMapGridLines:onLoad()
 	self.markProp = MOAIProp.new()	
 	self.markProp:setDeck( markTileDeck )
 	setPropBlend( self.markProp, 'alpha' )
-	self:_attachProp( self.markProp )
 end
 
 function TileMapGridLines:onDraw()
@@ -233,15 +240,28 @@ end
 
 function TileMapGridLines:onDestroy()
 	self:_detachProp( self.markProp )
+	if self.debugDrawProp then
+		self:_detachProp( self.debugDrawProp )
+	end
 end
 
 function TileMapGridLines:setTarget( targetLayer )
 	self.targetLayer = targetLayer
 	self.markProp:setGrid( targetLayer:getMoaiGrid() )
+	local debugDrawProp = targetLayer:getDebugDrawProp()
+	self.debugDrawProp = debugDrawProp
+	if debugDrawProp then
+		self:_attachProp( debugDrawProp )
+	else
+		self:_attachProp( self.markProp )
+	end
+
 	local tw, th = targetLayer:getTileSize()
-	markTileWidth = tw
-	markTileHeight = th
-	markTileDeck:setRect( 0,0,tw,th)
+	local cw, ch = targetLayer:getCellSize()
+	local w, h = tw/cw, th/ch
+	markTileWidth, markTileHeight = w, h
+	markTileDeck:setRect( 0,0, w, h )
+	-- print( tw/cw, th/ch )
 end
 
 --------------------------------------------------------------------
@@ -385,6 +405,15 @@ function TileMapEditor:moveTileMapLayerDown( layer )
 	end
 end
 
+function TileMapEditor:selectCodeTile( tile )
+	local name = tile.name
+	self:selectTileBrush( name )
+	if mock_edit.getCurrentSceneView():getActiveToolId() ~= 'tilemap.fill' then
+		print('change pen tool')
+		self:changeEditTool( 'pen' )
+	end
+end
+
 function TileMapEditor:selectTileBrush( id, additive )
 	self.currentTileBrush = id
 end
@@ -437,7 +466,7 @@ end
 
 function TileMapEditor:incSubDivision()
 	if not self.targetTileMapLayer then return end
-	local subD = self.targetTileMapLayer.subDivision + 1
+	local subD = self.targetTileMapLayer.subdivision + 1
 	if subD < 4 then
 		self.targetTileMapLayer:setSubDivision( subD )
 	end
@@ -445,7 +474,7 @@ end
 
 function TileMapEditor:decSubDivision()
 	if not self.targetTileMapLayer then return end
-	local subD = self.targetTileMapLayer.subDivision - 1
+	local subD = self.targetTileMapLayer.subdivision - 1
 	if subD >= 1 then
 		self.targetTileMapLayer:setSubDivision( subD )
 	end

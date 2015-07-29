@@ -4,6 +4,10 @@ CLASS:CanvasView ( EditorEntity )
 
 function CanvasView:__init( canvasEnv )
 	self.canvasEnv = assert( canvasEnv )
+	
+	--config
+	self.gridSnapping = false
+
 end
 
 function CanvasView:onLoad()
@@ -122,4 +126,77 @@ function CanvasView:pickAndSelect( x, y, pad )
 	local picked = self:pick( x, y, pad )
 	gii.changeSelection( 'scene', unpack( picked ) )
 	return picked
+end
+
+
+--------------------------------------------------------------------
+function CanvasView:setGridSize( w, h )
+	return self.grid:setSize( w, h )
+end
+
+function CanvasView:getGridSize()
+	return self.grid:getSize()
+end
+
+function CanvasView:getGridWidth()
+	return self.grid:getWidth()
+end
+
+function CanvasView:getGridHeight()
+	return self.grid:getHeight()
+end
+
+function CanvasView:setGridWidth( w )
+	return self.grid:setWidth( w )
+end
+
+function CanvasView:setGridHeight( h )
+	return self.grid:setHeight( h )
+end
+
+function CanvasView:isGridVisible()
+	return self.grid:isVisible()
+end
+
+function CanvasView:setGridVisible( vis )
+	self.grid:setVisible( vis )
+end
+
+function CanvasView:isGridSnapping()
+	return self.gridSnapping
+end
+
+function CanvasView:setGridSnapping( snapping )
+	self.gridSnapping = snapping
+end
+
+function CanvasView:snapLoc( x,y,z, activeAxis )
+	--2d
+	if not self.gridSnapping then return x,y,z end
+	local gw, gh = self:getGridSize()
+	local x1 = math.floor( x/gw ) * gw
+	local y1 = math.floor( y/gh ) * gh
+	local dx = x - x1
+	if dx > gw*0.5 then
+		x1 = x1 + gw
+		dx = dx - gw
+	end
+	local dy = y - y1
+	if dy > gh*0.5 then
+		y1 = y1 + gh
+		dy = dy - gh
+	end
+	local snapX = dx*dx < gw*gw*0.09
+	local snapY = dy*dy < gh*gh*0.09
+	if activeAxis == 'x' then
+		snapY = true
+	elseif activeAxis == 'y' then
+		snapX = true
+	end
+	if snapX and snapY then
+		return x1,y1,z
+	else
+		return x,y,z
+	end
+
 end

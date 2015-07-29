@@ -33,6 +33,7 @@ import EffectAsset
 import PhysicsAsset
 
 import NamedTilesetAsset
+import CodeTilesetAsset
 
 import AnimatorAsset
 

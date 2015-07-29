@@ -65,14 +65,44 @@ end
 
 function SceneView:readConfig()
 	local cfg = self.scene:getMetaData( 'scene_view' )
-	if not cfg then return end
-	local cameraCfg = cfg['camera']
-	if cameraCfg then
-		self.camera:setLoc( unpack(cameraCfg['loc']) )
-		self.navi.zoom = cameraCfg['zoom']
-		local cameraCom = self.camera:getComponent( mock_edit.EditorCanvasCamera )
-		cameraCom:setZoom( cameraCfg['zoom'] )
+	if cfg then
+		local cameraCfg = cfg['camera']
+		if cameraCfg then
+			self.camera:setLoc( unpack(cameraCfg['loc']) )
+			self.navi.zoom = cameraCfg['zoom']
+			local cameraCom = self.camera:getComponent( mock_edit.EditorCanvasCamera )
+			cameraCom:setZoom( cameraCfg['zoom'] )
+		end
+		local gridCfg = cfg['grid']
+		if gridCfg then
+			self:setGridSize( unpack( gridCfg['size'] or { 100, 100 } ) )
+			self:setGridVisible( gridCfg['visible']~=false )
+			self:setGridSnapping( gridCfg['snap']==true )
+		end
+	else
+		self:loadDefaultConfig()
 	end
+end
+
+function SceneView:loadDefaultConfig()
+
+end
+
+function SceneView:saveConfig()
+	local cam = self.camera
+	local cfg = {}
+	self.scene:setMetaData( 'scene_view', cfg )
+	---
+	cfg['camera'] = {
+		loc = { cam:getLoc() },
+		zoom = cam:getComponent( mock_edit.EditorCanvasCamera ):getZoom(),
+	}
+	---
+	cfg['grid'] = {
+		size = { self:getGridSize() },
+		visible = self:isGridVisible(),
+		snap = self:isGridSnapping()
+	}
 end
 
 function SceneView:focusSelection()
@@ -88,16 +118,7 @@ end
 
 function SceneView:preSceneSerialize( scene )
 	if scene ~= self.scene then return end
-	local cam = self.camera
-	self.scene:setMetaData(
-		'scene_view',
-		{
-			camera = {
-				loc = { cam:getLoc() },
-				zoom = cam:getComponent( mock_edit.EditorCanvasCamera ):getZoom(),
-			}
-		}
-	)
+	self:saveConfig()	
 end
 
 function SceneView:postSceneDeserialize( scene )
