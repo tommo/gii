@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>317</width>
-    <height>426</height>
+    <width>179</width>
+    <height>47</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -58,15 +58,21 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="labelName">
+       <widget class="QToolButton" name="buttonName">
+        <property name="maximumSize">
+         <size>
+          <width>500</width>
+          <height>20</height>
+         </size>
+        </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>+</string>
         </property>
-        <property name="margin">
-         <number>0</number>
+        <property name="checkable">
+         <bool>false</bool>
         </property>
-        <property name="indent">
-         <number>10</number>
+        <property name="checked">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -110,11 +116,9 @@
       </item>
      </layout>
      <zorder>buttonFold</zorder>
-     <zorder>labelName</zorder>
      <zorder>buttonContext</zorder>
      <zorder>buttonKey</zorder>
-     <zorder>ObjectInnerContainer</zorder>
-     <zorder>ObjectInnerContainer</zorder>
+     <zorder>buttonName</zorder>
     </widget>
    </item>
    <item>

@@ -1,4 +1,5 @@
 from gii.core import signals
+from gii.qt.helpers import restrainWidgetToScreen
 
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import Qt
@@ -15,23 +16,6 @@ def moveWindowToCenter(window):
 	x=(geom.width()-window.width())/2 +geom.x()
 	y=(geom.height()-window.height())/2+geom.y()
 	window.move(x,y)
-
-def ensureWindowVisible( widget ):
-	screenRect = QtGui.QApplication.desktop().availableGeometry(widget);
-	widgetRect = widget.frameGeometry()
-	pos = widget.pos()
-	
-	if widgetRect.left() < screenRect.left() :
-		pos.setX( pos.x() + screenRect.left() - widgetRect.left() )
-	elif widgetRect.right() > screenRect.right():
-		pos.setX( pos.x() + screenRect.right() - widgetRect.right() )
-
-	if widgetRect.top() < screenRect.top():
-		pos.setY( pos.y() + screenRect.top() - widgetRect.top() )			
-	elif widgetRect.bottom() > screenRect.bottom():
-		pos.setY( pos.y() + screenRect.bottom() - widgetRect.bottom() )
-
-	widget.move( pos )
 
 ##----------------------------------------------------------------##
 class MainWindow(QtGui.QMainWindow):
@@ -67,7 +51,7 @@ class MainWindow(QtGui.QMainWindow):
 		moveWindowToCenter(self)
 
 	def ensureVisible(self):
-		ensureWindowVisible(self)
+		restrainWidgetToScreen(self)
 
 	def startTimer(self, fps, trigger):
 		assert(hasattr(trigger,'__call__'))
@@ -259,7 +243,7 @@ class SubWindowMixin:
 		moveWindowToCenter(self)
 
 	def ensureVisible(self):
-		ensureWindowVisible(self)
+		restrainWidgetToScreen(self)
 
 ##----------------------------------------------------------------##
 				

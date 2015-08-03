@@ -900,6 +900,21 @@ QToolButton::checked{
 
 #ObjectHeader > QToolButton {
 	border-top: 1px solid #222;	
+	border-left: 0px solid #222;
+	text-align: left;
+}
+
+#ObjectHeader #buttonName {
+	text-align: left;
+	/*border-right: 0px solid #222;*/
+	font-size: 12px;
+	font-weight: bold;
+}
+
+
+#ObjectHeader #buttonFold {
+	border-left: 1px solid #222;	
+	border-right: 1px solid #333;
 }
 
 #ObjectInnerContainer{

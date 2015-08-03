@@ -41,12 +41,21 @@ class ObjectContainer( QtGui.QWidget ):
 
 		self.folded = False
 		self.toggleFold( False, True )
+		
 		self.ui.buttonFold.clicked.connect( lambda x: self.toggleFold( None ) )
+		
 		self.ui.buttonContext.clicked.connect( lambda x: self.openContextMenu() )
 		self.ui.buttonContext.setIcon( getIcon( 'menu' ) )
 		
+		self.ui.buttonName.clicked.connect( lambda x: self.toggleFold( None ) )
+		self.ui.buttonName.setIcon( getIcon( 'component' ) )
+		self.ui.buttonName.setToolButtonStyle( Qt.ToolButtonTextBesideIcon )
+		
 		self.ui.buttonKey.setIcon( getIcon( 'key' ) )
 		self.ui.buttonKey.hide()
+
+		self.ui.buttonFold.setIcon( getIcon( 'node_folded' ) )
+
 
 	def getButtonKey( self ):
 		return self.ui.buttonKey
@@ -96,22 +105,25 @@ class ObjectContainer( QtGui.QWidget ):
 		repolishWidget( self.ui.buttonContext )
 		repolishWidget( self.ui.buttonKey )
 		repolishWidget( self.ui.buttonFold )
+		repolishWidget( self.ui.buttonName )
 
 	def toggleFold( self, folded = None, notify = True ):
 		if folded == None:
 			folded = not self.folded
 		self.folded = folded
 		if folded:
-			self.ui.buttonFold.setText( '+' )
+			# self.ui.buttonFold.setText( '+' )
+			self.ui.buttonFold.setIcon( getIcon( 'node_folded' ) )
 			self.ui.ObjectInnerContainer.hide()
 		else:
-			self.ui.buttonFold.setText( '-' )
+			# self.ui.buttonFold.setText( '-' )
+			self.ui.buttonFold.setIcon( getIcon( 'node_unfolded' ) )
 			self.ui.ObjectInnerContainer.show()
 		if notify:
 			self.foldChanged.emit( self.folded )
 
 	def setTitle( self, title ):
-		self.ui.labelName.setText( title )
+		self.ui.buttonName.setText( title )
 
 	def openContextMenu( self ):
 		if self.contextMenu:
