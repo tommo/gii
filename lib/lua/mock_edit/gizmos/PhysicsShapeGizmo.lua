@@ -151,3 +151,35 @@ end
 mock.PhysicsShapeBevelBox.onBuildGizmo = function( self )
 	return PhysicsShapeBevelBoxGizmo( self )
 end
+
+
+
+--------------------------------------------------------------------
+CLASS: PhysicsShapePieGizmo( PhysicsShapeBoxGizmo )
+
+function PhysicsShapePieGizmo:__init( shape )
+end
+
+function PhysicsShapePieGizmo:onDraw()
+	local shape = self.shape
+	local x, y = shape:getLoc()
+	local w, h = shape.w, shape.h
+	local rot  = shape.rotation
+	self.transform:setLoc( x, y )
+	self.transform:setRot( 0,0, rot )
+	GIIHelper.setVertexTransform( self.transform )
+
+	applyColor 'physics_gizmo'	
+	MOAIGfxDevice.setPenWidth(1)
+	
+	local verts = shape:calcVerts()
+	table.insert( verts, verts[1] )
+	table.insert( verts, verts[2] )
+	
+	MOAIDraw.drawLine( verts )
+end
+
+--Install
+mock.PhysicsShapePie.onBuildGizmo = function( self )
+	return PhysicsShapePieGizmo( self )
+end

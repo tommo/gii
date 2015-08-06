@@ -68,6 +68,8 @@ function PhysicsShapeEditorDelegateBox:onVertDrag( id, vert )
 		local x, y = vert:getLoc()
 		local x1, y1 = self.shape:worldToModel( x, y )
 		self.shape:setLoc( x1, y1 )
+		mock.markProtoInstanceFieldsOverrided( self.shape, 'loc' )
+
 		self:syncVerts()
 		gii.emitPythonSignal( 'entity.modified', self.shape._entity )
 	else
@@ -77,6 +79,12 @@ function PhysicsShapeEditorDelegateBox:onVertDrag( id, vert )
 		self.shape:setLoc( self.shape:worldToModel( xc, yc ) )
 		self.shape:setWidth( math.max( x1 - x0, 0 ) )
 		self.shape:setHeight( math.max( y1 - y0, 0 ) )
+
+		mock.markProtoInstanceFieldsOverrided(
+			self.shape, 
+			'loc', 'w', 'h'
+		)
+
 		self:syncVerts()
 		gii.emitPythonSignal( 'entity.modified', self.shape._entity )
 	end
@@ -112,12 +120,20 @@ function PhysicsShapeEditorDelegateCircle:onVertDrag( id, vert )
 		self.shape:setLoc( x1, y1 )
 		self:syncVerts()
 		gii.emitPythonSignal( 'entity.modified', self.shape._entity )
+		mock.markProtoInstanceFieldsOverrided(
+			self.shape, 
+			'loc'
+		)
 	else
 		local x0 = self.vertC:getLocX()
 		local x1 = self.vertR:getLocX()
 		self.shape:setRadius( x1 - x0 )
 		self:syncVerts()
 		gii.emitPythonSignal( 'entity.modified', self.shape._entity )
+		mock.markProtoInstanceFieldsOverrided(
+			self.shape, 
+			'radius'
+		)
 	end
 end
 
