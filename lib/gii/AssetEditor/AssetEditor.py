@@ -80,7 +80,7 @@ def getAssetSelectionManager():
 	return app.getModule('asset_editor').selectionManager
 
 ##----------------------------------------------------------------##
-def assetSearchEnumerator( typeId, context ):
+def assetSearchEnumerator( typeId, context, option ):
 		if not context in [ 'all', 'asset' ] : return
 		result = []
 		lib = AssetLibrary.get()
@@ -92,7 +92,7 @@ def assetSearchEnumerator( typeId, context ):
 		return result
 
 ##----------------------------------------------------------------##
-def assetFolderSearchEnumerator( typeId, context ):
+def assetFolderSearchEnumerator( typeId, context, option ):
 		if not context in [ 'asset_folder' ] : return
 		result = []
 		lib = AssetLibrary.get()

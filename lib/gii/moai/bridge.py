@@ -186,8 +186,8 @@ class LuaObjectEnumerator( ObjectEnumerator ):
 	def getName( self ):
 		return self.name
 
-	def enumerateObjects( self, typeId, context ):
-		result = self._enumerateObject( self, typeId, context )
+	def enumerateObjects( self, typeId, context, option ):
+		result = self._enumerateObject( self, typeId, context, option )
 		if not result: return None
 		return [ obj for obj in result.values() ]			
 

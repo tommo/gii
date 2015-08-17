@@ -259,7 +259,7 @@ class DeployManager( AssetEditorModule ):
 DeployManager().register()
 
 ##----------------------------------------------------------------##
-def deployTargetSearchEnumerator( typeId, context ):
+def deployTargetSearchEnumerator( typeId, context, option ):
 		if not context in [ 'deploy_target_type' ] : return
 		result = []
 		mgr = app.getModule( 'deploy_manager' )

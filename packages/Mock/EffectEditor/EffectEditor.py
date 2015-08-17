@@ -202,7 +202,7 @@ class EffectEditor( SceneEditorModule ):
 		self.tree.editNode( node )
 		self.markNodeDirty( node )
 
-	def listParticleSystemChildTypes( self, typeId, context ):
+	def listParticleSystemChildTypes( self, typeId, context, option ):
 		res = self.canvas.callMethod( 'editor', 'requestAvailSubNodeTypes', self.tree.getFirstSelection() )
 		entries = []
 		for n in res.values():

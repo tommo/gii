@@ -492,7 +492,7 @@ class AssetBrowser( SceneEditorModule ):
 			return None
 
 ##----------------------------------------------------------------##
-def assetCreatorSearchEnumerator( typeId, context ):
+def assetCreatorSearchEnumerator( typeId, context, option ):
 	if not context in [ 'asset_creator' ] : return None
 	result = []
 	for creator in AssetLibrary.get().assetCreators:

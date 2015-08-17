@@ -43,7 +43,7 @@ class SelectionFieldEditor( EnumFieldEditor ):
 			initial      = self.value
 			)
 
-	def onSearch( self, typeId, context ):
+	def onSearch( self, typeId, context, option ):
 		selections = self.selectionFunc( self.getTarget() )
 		entries = []
 		if selections:

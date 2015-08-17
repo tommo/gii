@@ -16,10 +16,10 @@ def getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 		
 class GlobalObjectEditor( CommonObjectEditor ): #a generic property grid 	
-	def setTarget( self, target, introspectorInstance ):
-		super( GlobalObjectEditor, self ).setTarget( target, introspectorInstance )
+	def setTarget( self, target ):
+		super( GlobalObjectEditor, self ).setTarget( target )
 		if target.type == 'object':
-			introspectorInstance.addObjectEditor( target.object )
+			self.getIntrospector().addObjectEditor( target.object )
 		
 	def onPropertyChanged( self, obj, id, value ):
 		if id == 'name':

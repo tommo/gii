@@ -228,7 +228,7 @@ GlobalObjectManager().register()
 
 ##----------------------------------------------------------------##
 		
-def globalObjectNameSearchEnumerator( typeId, context ):
+def globalObjectNameSearchEnumerator( typeId, context, option ):
 	if not context in [ 'global_object_class' ] : return None
 	registry = _MOCK.getGlobalObjectClassRegistry()
 	result = []
@@ -237,7 +237,7 @@ def globalObjectNameSearchEnumerator( typeId, context ):
 		result.append( entry )
 	return result
 
-def globalObjectSearchEnumerator( typeId, context ):
+def globalObjectSearchEnumerator( typeId, context, option ):
 	if not context in [ 'global_object' ] : return None
 	game = _MOCK.game
 	lib = game.getGlobalObjectLibrary( game )

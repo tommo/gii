@@ -259,7 +259,7 @@ class TileMapEditor( SceneEditorModule ):
 	def renameLayer( self, layer, name ):
 		layer.name = name
 
-	def listTileMapLayerTypes( self, typeId, context ):
+	def listTileMapLayerTypes( self, typeId, context, option ):
 		res = self.canvas.callMethod( 'editor', 'requestAvailTileMapLayerTypes' )
 		entries = []
 		for n in res.values():

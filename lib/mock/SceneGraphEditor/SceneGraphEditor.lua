@@ -218,7 +218,7 @@ local function collectEntityGroup( group, collection )
 	end
 end
 
-function SceneGraphEditor:enumerateObjects( typeId )	
+function SceneGraphEditor:enumerateObjects( typeId, context, option )
 	local scene = self.scene
 	if not scene then return nil end
 	local result = {}
@@ -325,9 +325,9 @@ end
 editor = SceneGraphEditor()
 
 --------------------------------------------------------------------
-function enumerateSceneObjects( enumerator, typeId, context )
+function enumerateSceneObjects( enumerator, typeId, context, option )
 	--if context~='scene_editor' then return nil end
-	return editor:enumerateObjects( typeId )
+	return editor:enumerateObjects( typeId, context, option )
 end
 
 function getSceneObjectRepr( enumerator, obj )

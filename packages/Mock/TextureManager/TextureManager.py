@@ -340,7 +340,7 @@ class TextureTreeWidget( GenericTreeWidget ):
 
 
 ##----------------------------------------------------------------##
-def textureGroupSearchEnumerator( typeId, context ):
+def textureGroupSearchEnumerator( typeId, context, option ):
 	if not context in [ 'texture_group' ] : return None
 	result = []
 	for group in app.getModule('mock.texture_manager').getTextureGroups():		

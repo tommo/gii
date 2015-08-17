@@ -439,6 +439,7 @@ class SearchView( EditorModule ):
 		initial    = option.get( 'initial', None )
 		multiple   = option.get( 'multiple_selection', False )
 		terms      = option.get( 'terms', None )
+		searchOption = option.get( 'option', None )
 
 		self.onSelection = option.get( 'on_selection', None )
 		self.onCancel    = option.get( 'on_cancel',    None )
@@ -454,7 +455,7 @@ class SearchView( EditorModule ):
 		self.window.raise_()
 		self.window.setFocus()
 		self.window.setInfo( info )
-		entries = self.enumerateSearch( typeId, context )
+		entries = self.enumerateSearch( typeId, context, searchOption )
 		self.window.initEntries( entries )
 	
 		self.window.setMultipleSelectionEnabled( multiple )
@@ -495,13 +496,13 @@ class SearchView( EditorModule ):
 		#format [  ( obj,  objName, objTypeName, objIcon ), ...  ] or None
 		self.enumerators.append( enumerator )
 
-	def enumerateSearch( self, typeId, context ):
+	def enumerateSearch( self, typeId, context, option = None ):
 		allResult = []
 		if self.onSearch:
-			allResult = self.onSearch( typeId, context )
+			allResult = self.onSearch( typeId, context, option )
 		else:
 			for e in self.enumerators:
-				result = e( typeId, context )
+				result = e( typeId, context, option )
 				if result:
 					allResult += result
 		return [ SearchEntry( *r ) for r in allResult ]

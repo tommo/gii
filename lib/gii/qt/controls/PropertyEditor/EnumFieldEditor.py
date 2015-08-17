@@ -66,12 +66,12 @@ class EnumFieldEditor( FieldEditor ):
 	def onSearchCancel( self ):
 		self.setFocus()
 
-	def onSearch( self, typeId, context ):
+	def onSearch( self, typeId, context, option ):
 		entries = []
 		for item in self.getEnumItems():
 			itemName, itemValue = item
 			entry = ( itemValue, itemName, '', None )
-			entries.append( entry )			
+			entries.append( entry )
 		return entries
 
 	def setFocus( self ):

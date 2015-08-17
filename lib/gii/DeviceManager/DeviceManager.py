@@ -87,7 +87,7 @@ class DeviceManager( EditorModule ):
 
 DeviceManager().register()
 ##----------------------------------------------------------------##
-def deviceSearchEnumerator( typeId, context ):
+def deviceSearchEnumerator( typeId, context, option ):
 		if not context in [ 'device' ]: return
 		result = []
 		dm = app.getModule( 'device_manager' )

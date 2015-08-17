@@ -1031,10 +1031,10 @@ class SceneGraphTreeItem(QtGui.QTreeWidgetItem):
 SceneGraphEditor().register()
 
 ##----------------------------------------------------------------##
-def sceneObjectSearchEnumerator( typeId, context ):
+def sceneObjectSearchEnumerator( typeId, context, option ):
 	if not context in ['scene', 'all']: return None
 	modelMgr = ModelManager.get()
-	objects = modelMgr.enumerateObjects( typeId, context )
+	objects = modelMgr.enumerateObjects( typeId, context, option )
 	if not objects: return None
 	result = []
 	for obj in objects:
@@ -1044,7 +1044,7 @@ def sceneObjectSearchEnumerator( typeId, context ):
 		result.append( entry )
 	return result
 
-def entityNameSearchEnumerator( typeId, context ):
+def entityNameSearchEnumerator( typeId, context, option ):
 	if not context in [ 'entity_creation' ] : return None
 	registry = _MOCK.getEntityRegistry()
 	result = []
@@ -1053,7 +1053,7 @@ def entityNameSearchEnumerator( typeId, context ):
 		result.append( entry )
 	return result
 
-def componentNameSearchEnumerator( typeId, context ):
+def componentNameSearchEnumerator( typeId, context, option ):
 	if not context in [ 'component_creation' ] : return None
 	registry = _MOCK.getComponentRegistry()
 	result = []
@@ -1062,7 +1062,7 @@ def componentNameSearchEnumerator( typeId, context ):
 		result.append( entry )
 	return result
 		
-def layerNameSearchEnumerator( typeId, context ):
+def layerNameSearchEnumerator( typeId, context, option ):
 	if not context in [ 'scene_layer' ] : return None
 	layers = _MOCK.game.layers
 	result = []

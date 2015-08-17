@@ -367,7 +367,7 @@ class ObjectEnumerator(object):
 	def getName( self ):
 		return 'enumerator'
 		
-	def enumerateObjects( self, typeId, context = None ):
+	def enumerateObjects( self, typeId, context = None, options = None ):
 		return None
 
 	def getObjectRepr( self, obj ):
@@ -473,10 +473,10 @@ class ModelManager(object):
 			if model: return model
 		return None
 
-	def enumerateObjects(self, targetTypeId, context = None):
+	def enumerateObjects(self, targetTypeId, context = None, option = None ):
 		res=[]
 		for enumerator in self.objectEnumerators:
-			objectEntries = enumerator.enumerateObjects( targetTypeId, context ) 
+			objectEntries = enumerator.enumerateObjects( targetTypeId, context, option ) 
 			if objectEntries:
 				res += objectEntries
 		return res
