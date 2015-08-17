@@ -156,6 +156,7 @@ function CanvasItemManager:findTopItem( x, y, pad )
 end
 
 function CanvasItemManager:onMouseMove( x, y )	
+	if not self:isActive() then return end
 	if self.activeMouseButton then
 		self.activeItem:onDrag( self.activeMouseButton, x, y )
 		return
@@ -179,6 +180,7 @@ function CanvasItemManager:onMouseMove( x, y )
 end
 
 function CanvasItemManager:onMouseDown( btn, x, y )
+	if not self:isActive() then return end
 	if self.activeItem then return end
 	local item = self:findTopItem( x, y )
 	if item then
@@ -191,6 +193,7 @@ function CanvasItemManager:onMouseDown( btn, x, y )
 end
 
 function CanvasItemManager:onMouseUp( btn, x, y )
+	if not self:isActive() then return end
 	if self.activeMouseButton == btn then
 		self.activeItem:onMouseUp( btn, x, y )
 		self.activeMouseButton = false
@@ -199,6 +202,7 @@ function CanvasItemManager:onMouseUp( btn, x, y )
 end
 
 function CanvasItemManager:onKeyEvent( key, down )
+	if not self:isActive() then return end
 end
 
 

@@ -49,11 +49,13 @@ function CanvasNavigate:onMouseDown( btn, x, y )
 	if btn == 'middle' then
 		if self.dragging then return end
 		self:startDrag( btn, x, y )
+
 	elseif btn == 'left' then
 		if self.dragging then return end
 		if self.inputDevice:isKeyDown( 'space' ) then
 			self:startDrag( btn, x, y )
 		end
+		
 	end
 end
 

@@ -169,6 +169,7 @@ function PickingManager:findBestPickingTarget( e )
 		while e do
 			local name = e:getName()
 			if name and name:sub(1,1) == '_' then
+				if not e.parent then break end
 				e = e.parent
 			else
 				break

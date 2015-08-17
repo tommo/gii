@@ -558,6 +558,10 @@ function CmdCreateComponent:redo()
 	local comType = mock.getComponentType( self.componentName )
 	assert( comType )
 	local component = comType()
+	-- if not component:isAttachable( self.targetEntity ) then
+	-- 	mock_edit.alertMessage( 'todo', 'Group clone not yet implemented', 'info' )
+	-- 	return false
+	-- end
 	component.__guid = generateGUID()
 	self.createdComponent = component
 	self.targetEntity:attach( component )
