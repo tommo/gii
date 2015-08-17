@@ -259,10 +259,15 @@ function SceneGraphEditor:enumerateObjects( typeId )
 
 	else
 		local collection = {}	
-		for e in pairs( scene.entities ) do
-			collectComponent( e, typeId, collection )
+		if isSubclass( typeId, mock.Entity ) then
+			for e in pairs( scene.entities ) do
+				collectEntity( e, typeId, collection )
+			end
+		else
+			for e in pairs( scene.entities ) do
+				collectComponent( e, typeId, collection )
+			end
 		end
-
 		for e in pairs( collection ) do
 			table.insert( result, e )
 		end
