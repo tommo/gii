@@ -200,13 +200,12 @@ class TimelineRulerView( TimelineSubView ):
 	_BG = makeBrush( color = '#222' )
 	def __init__( self, *args, **kwargs ):
 		super( TimelineRulerView, self ).__init__( *args, **kwargs )
-		self.scene = QtGui.QGraphicsScene( self )
+		self.setScene( QtGui.QGraphicsScene( self ) )
 		# self.scene.setBackgroundBrush( TimelineRulerView._BG );
-		self.scene.setSceneRect( QRectF( 0,0, 10000, 10000 ) )
-		self.setScene( self.scene )
+		self.scene().setSceneRect( QRectF( 0,0, 10000, 10000 ) )
 		self.ruler = TimelineRulerItem()
 		self.ruler.view = self
-		self.scene.addItem( self.ruler )
+		self.scene().addItem( self.ruler )
 		self.dragging = False
 		self.draggable = True
 
@@ -762,6 +761,11 @@ class TimelineTrackView( TimelineSubView ):
 		self.gridBackground.setCursorVisible( visible )
 
 
+##----------------------------------------------------------------##
+class TimelineCurveView( CurveView ):
+	pass
+
+
 ##----------------------------------------------------------------##	
 class TimelineView( QtGui.QWidget ):
 	keySelectionChanged   = pyqtSignal()
@@ -797,7 +801,7 @@ class TimelineView( QtGui.QWidget ):
 		self.trackView.timelineView = self
 
 		self.rulerView  = TimelineRulerView( parent = self )
-		self.curveView  = CurveView( parent = self )
+		self.curveView  = TimelineCurveView( parent = self )
 		self.curveView.setAxisShown( False, True )
 		self.curveView.setOffset( _HEAD_OFFSET, 0 )
 		self.curveView.setScrollXLimit( 0, None )
@@ -956,6 +960,7 @@ class TimelineView( QtGui.QWidget ):
 		for node in self.getTrackNodes():
 			self.addTrack( node )
 		self.updateTrackLayout()
+		self.curveView.rebuild()
 		self.rebuilding = False
 		self.setUpdatesEnabled( True )
 

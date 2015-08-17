@@ -2,7 +2,8 @@ from PyQt4 import QtGui, QtCore, QtOpenGL, uic
 from PyQt4.QtCore import Qt, QObject, QEvent, pyqtSignal
 from PyQt4.QtCore import QPoint, QRect, QSize
 from PyQt4.QtCore import QPointF, QRectF, QSizeF
-from PyQt4.QtGui import QColor, QTransform
+from PyQt4.QtGui  import QColor, QTransform
+from PyQt4.QtOpenGL import QGLContext
 
 try:
 	from gii.qt.controls.GLWidget import GLWidget
@@ -10,11 +11,24 @@ try:
 	def getSharedGLWidget():
 		return GLWidget.getSharedWidget()
 
-	def makeGLWidget( *args, **option ):
+	def makeSharedGLWidget( *args, **option ):
 		sharedWidget = None
 		fmt = QtOpenGL.QGLFormat.defaultFormat()
 		sharedWidget = getSharedGLWidget()
 		return QtOpenGL.QGLWidget( fmt, None, sharedWidget )
+
+	def makeNewGLWidget( *args, **option ):
+		fmt = QtOpenGL.QGLFormat()
+		fmt.setRgba(True)
+		fmt.setDepth(False)
+		fmt.setDoubleBuffer(True)
+		fmt.setSwapInterval(0)
+		fmt.setSampleBuffers( True )
+		viewport = QtOpenGL.QGLWidget( fmt )
+		return viewport
+
+	def makeGLWidget( *args, **options ):
+		return makeSharedGLWidget( *args, **options )
 
 except Exception, e:
 	def getSharedGLWidget():
@@ -129,8 +143,8 @@ class StyledItemMixin:
 		pass
 
 
-_USE_GL = False
-# _USE_GL = True
+# _USE_GL = False
+_USE_GL = True
 
 ##----------------------------------------------------------------##
 class GLGraphicsView( QtGui.QGraphicsView ):
@@ -144,6 +158,7 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		if _USE_GL and kwargs.get( 'use_gl', True ):
 			self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
 			viewport = kwargs.get( 'gl_viewport', makeGLWidget() )
+			# viewport = kwargs.get( 'gl_viewport', makeNewGLWidget() )
 			self.glViewport = viewport
 			self.setViewport( viewport )
 			# self.setCacheMode( QtGui.QGraphicsView.CacheBackground )
@@ -155,6 +170,7 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		self.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		self.setRenderHint( QtGui.QPainter.HighQualityAntialiasing, False )
 		self.setRenderHint( QtGui.QPainter.NonCosmeticDefaultPen, False )
+
 		self.setTransformationAnchor( self.NoAnchor )
 		self.setOptimizationFlags( QtGui.QGraphicsView.DontAdjustForAntialiasing | QtGui.QGraphicsView.DontSavePainterState )
 		
@@ -190,12 +206,15 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 
 	def paintEvent( self, ev ):
 		if _USE_GL:
+			current = QGLContext.currentContext()
 			self.glViewport.makeCurrent()
 			super( GLGraphicsView, self ).paintEvent( ev )
-			self.glViewport.doneCurrent() #dirty workaround...
-			shared = getSharedGLWidget()
-			if shared:
-				shared.makeCurrent()
+			# self.glViewport.doneCurrent() #dirty workaround...
+			if current:
+				current.makeCurrent()
+			# shared = getSharedGLWidget()
+			# if shared:
+			# 	shared.makeCurrent()
 		else:
 			super( GLGraphicsView, self ).paintEvent( ev )
 

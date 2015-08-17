@@ -44,18 +44,31 @@
    </item>
    <item>
     <widget class="QStackedWidget" name="containerContents">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="minimumSize">
       <size>
        <width>200</width>
        <height>0</height>
       </size>
      </property>
-     <widget class="QWidget" name="containerTrack" native="true"/>
-     <widget class="QWidget" name="containerCurve" native="true"/>
+     <widget class="QWidget" name="containerTrack"/>
+     <widget class="QWidget" name="containerCurve"/>
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="containerBottom" native="true"/>
+    <widget class="QWidget" name="containerBottom" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

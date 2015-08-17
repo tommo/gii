@@ -194,31 +194,32 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 
 ##----------------------------------------------------------------##
 class CurveSpanItem( QtGui.QGraphicsPathItem ):
-	def setVertex( self, startVert, endVert ):
+	def __init__( self, startVert, *args ):
+		super( CurveSpanItem, self ).__init__( *args )
 		self.startVert = startVert
-		self.endVert   = endVert
-		self.updateShape()
+		self.setParentItem( startVert.parentItem() )
 		applyStyle( 'curve', self )
 
 	def updateShape( self ):
 		mode = self.startVert.spanMode
 		if mode == SPAN_MODE_CONSTANT:
-			self.startVert.postTP.hide()
-			self.endVert.preTP.hide()
 			self.updateConstantCurve()
 		if mode == SPAN_MODE_LINEAR:
-			self.startVert.postTP.hide()
-			self.endVert.preTP.hide()
 			self.updateLinearCurve()
 		if mode == SPAN_MODE_BEZIER:
-			self.startVert.postTP.show()
-			self.endVert.preTP.show()
 			self.updateBezierCurve()
 
 	def updateLinearCurve( self ):
+		startVert = self.startVert
+		endVert = startVert.getNextVert()
+		if not endVert: 
+			self.hide()
+			return
+		self.show()
+
 		path = QtGui.QPainterPath()
-		pos0 = self.startVert.scenePos()
-		pos1 = self.endVert.scenePos()
+		pos0 = startVert.scenePos()
+		pos1 = endVert.scenePos()
 		pos0 = self.mapFromScene( pos0 )
 		self.setPos( pos0 )
 		pos1 = self.mapFromScene( pos1 )
@@ -227,9 +228,16 @@ class CurveSpanItem( QtGui.QGraphicsPathItem ):
 		self.setPath( path )
 
 	def updateConstantCurve( self ):
+		startVert = self.startVert
+		endVert = startVert.getNextVert()
+		if not endVert: 
+			self.hide()
+			return
+		self.show()
+
 		path = QtGui.QPainterPath()
-		pos0 = self.startVert.scenePos()
-		pos1 = self.endVert.scenePos()
+		pos0 = startVert.scenePos()
+		pos1 = endVert.scenePos()
 		pos0 = self.mapFromScene( pos0 )
 		self.setPos( pos0 )
 		pos1 = self.mapFromScene( pos1 )
@@ -239,14 +247,21 @@ class CurveSpanItem( QtGui.QGraphicsPathItem ):
 		self.setPath( path )
 
 	def updateBezierCurve( self ):
+		startVert = self.startVert
+		endVert  = startVert.getNextVert()
+		if not endVert: 
+			self.hide()
+			return
+		self.show()
+
 		path = QtGui.QPainterPath()
-		pos0 = self.startVert.scenePos()
-		pos1 = self.endVert.scenePos()
+		pos0 = startVert.scenePos()
+		pos1 = endVert.scenePos()
 		pos0 = self.mapFromScene( pos0 )
 		self.setPos( pos0 )
 		pos1 = self.mapFromScene( pos1 )
-		tp0 = self.startVert.getPostTP() # + (0,0)
-		preTP = self.endVert.getPreTP() + pos1
+		tp0 = startVert.getPostTP() # + (0,0)
+		preTP = endVert.getPreTP() + pos1
 		path.moveTo( 0, 0 )
 		path.cubicTo( tp0, preTP, pos1 )
 		self.setPath( path )
@@ -257,6 +272,7 @@ class CurveSpanItem( QtGui.QGraphicsPathItem ):
 		path = self.path()
 		painter.drawPath( path )
 
+##----------------------------------------------------------------##
 class CurveTangentPointItem( QtGui.QGraphicsRectItem ):
 	def __init__( self ):
 		super( CurveTangentPointItem, self ).__init__()
@@ -265,7 +281,7 @@ class CurveTangentPointItem( QtGui.QGraphicsRectItem ):
 		self.innerRect = QRectF( -TP_INNER_SIZE/2, -TP_INNER_SIZE/2, TP_INNER_SIZE, TP_INNER_SIZE )
 		self.setCursor( Qt.PointingHandCursor )
 		self.setFlag( self.ItemSendsGeometryChanges, True )
-		
+		self.setFlag( self.ItemIsMovable, True )
 
 	def itemChange( self, change, value ):
 		if change == self.ItemPositionChange or change == self.ItemPositionHasChanged:
@@ -276,6 +292,7 @@ class CurveTangentPointItem( QtGui.QGraphicsRectItem ):
 		applyStyle( 'tp', painter )
 		painter.drawEllipse( self.innerRect )
 
+##----------------------------------------------------------------##
 class CurveVertPointItem( QtGui.QGraphicsRectItem ):
 	def __init__( self, vertItem ):
 		super( CurveVertPointItem, self ).__init__()
@@ -285,6 +302,7 @@ class CurveVertPointItem( QtGui.QGraphicsRectItem ):
 		self.setCursor( Qt.PointingHandCursor )
 		applyStyle( 'cv', self )
 		self.setFlag( self.ItemSendsGeometryChanges, True )
+		self.setFlag( self.ItemIsMovable, True )
 		self.vertItem = vertItem
 		self.setParentItem( vertItem.parentItem() )
 
@@ -297,9 +315,11 @@ class CurveVertPointItem( QtGui.QGraphicsRectItem ):
 		applyStyle( 'cv', painter )
 		painter.drawRect( self.innerRect )
 
+##----------------------------------------------------------------##
 class CurveVertItem( QtGui.QGraphicsRectItem ):
 	def __init__( self, parent ):
 		super( CurveVertItem, self ).__init__()
+		self.index = 0 #update by curve verts sorting
 		self.setParentItem( parent )
 		self.setZValue( 10 )
 		self.setRect( -CV_SIZE/2, -CV_SIZE/2, CV_SIZE, CV_SIZE )
@@ -307,14 +327,15 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		self.updating = False
 
 		self.value    = 0.0
-		self.nextVert = None
-		self.prevVert = None
-		self.span = None
-		self.spanMode = SPAN_MODE_LINEAR
-		# self.tangentMode = 
 
+		self.spanMode = SPAN_MODE_LINEAR
+
+		#components
+		self.VP     = CurveVertPointItem( self )
+		self.span   = CurveSpanItem( self )
 		self.preTP  = CurveTangentPointItem()
 		self.postTP = CurveTangentPointItem()
+
 		self.preTP.setParentItem( self )
 		self.postTP.setParentItem( self )
 		self.preTP.setPos( -100,50 )
@@ -322,7 +343,6 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		self.preTP.hide()
 		self.postTP.hide()
 
-		self.VP = CurveVertPointItem( self )
 
 	def updateZoom( self, zx, zy ):
 		trans = QTransform()
@@ -337,14 +357,7 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		return self.postTP.pos()
 
 	def getPreTP( self ):
-		return self.preTP.pos()
-
-	def createSpan( self ):
-		span = CurveSpanItem()
-		span.setParentItem( self.parentItem() )
-		span.setVertex( self, self.nextVert )
-		self.span = span
-		pass
+		return self.preTP.pos()	
 
 	def itemChange( self, change, value ):		
 		if change == self.ItemPositionChange or change == self.ItemPositionHasChanged:
@@ -368,8 +381,9 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		tp = self.preTP
 		x0 = -100.0
 		x1 = 0.0
-		if self.prevVert:
-			x0 = - ( ( self.x() - self.prevVert.x() ) - self.prevVert.postTP.x()  )
+		prevVert = self.getPrevVert()
+		if prevVert:
+			x0 = - ( ( self.x() - prevVert.x() ) - prevVert.postTP.x()  )
 		tp.setFlag( self.ItemSendsGeometryChanges, False )
 		x = max( x0, min( x1, tp.x() ) )
 		tp.setX( x )
@@ -379,19 +393,30 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		tp = self.postTP
 		x0 = 0.0
 		x1 = 100.0
-		if self.nextVert:
-			x1 = ( self.nextVert.x() - self.x() ) + self.nextVert.preTP.x()
+		nextVert = self.getNextVert()
+		if nextVert:
+			x1 = ( nextVert.x() - self.x() ) + nextVert.preTP.x()
 		tp.setFlag( self.ItemSendsGeometryChanges, False )
 		x = max( x0, min( x1, tp.x() ) )
 		tp.setX( x )
 		tp.setFlag( self.ItemSendsGeometryChanges, True )
 
-	def updateSpan( self ):
-		if self.span:
-			self.span.updateShape()
+	def getIndex( self ):
+		return self.index
 
-		if self.prevVert and self.prevVert.span:
-			self.prevVert.span.updateShape()
+	def getPrevVert( self ):
+		return self.parentItem().getPrevVert( self )
+
+	def getNextVert( self ):
+		return self.parentItem().getNextVert( self )
+
+	def updateSpan( self, updateNeighbor = True ):
+		self.span.updateShape()
+
+		if updateNeighbor:
+			prevVert = self.getPrevVert()
+			if prevVert:
+				prevVert.updateSpan( False )
 
 		bx = ( self.preTP.x(), self.postTP.x(), 0.0 )
 		by = ( self.preTP.y(), self.postTP.y(), 0.0 )
@@ -410,55 +435,93 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 
 	def setSpanMode( self, mode ):
 		self.spanMode = mode
-		# self.updateSpan()
+		self.updateSpan()
 
+	def setParam( self, x,y, curveMode, tanPre, tanPost ):
+		self.setPos( x,y )
+		self.spanMode = curveMode
+		#Todo tangent
+		self.updateSpan()
+		self.showTP()
+
+	def showTP( self ):
+		self.preTP.show()
+		self.postTP.show()
+		prev = self.getPrevVert()
+		if prev:
+			prev.postTP.show()
+		next = self.getNextVert()
+		if next:
+			next.preTP.show()
+
+	def hideTP( self ):
+		self.preTP.hide()
+		self.postTP.hide()
+		prev = self.getPrevVert()
+		if prev:
+			prev.postTP.hide()
+		next = self.getNextVert()
+		if next:
+			next.preTP.hide()
+
+
+
+
+##----------------------------------------------------------------##
 class CurveItem( QtGui.QGraphicsRectItem ):
-	def __init__(self):
+	def __init__( self, curveNode ):
 		super(CurveItem, self).__init__()
+		self.node = curveNode
+
 		self.zx = 1
 		self.zy = 1
-		self.verts = []
-		self.vertDict = {}
-		self.startVert = self.createVert()
-		self.endVert   = self.startVert
-
+		self.vertItems = []
+		self.nodeToVert = {}
+		
 	def getVertByNode( self, node ):
-		return self.vertDict.get( node, None )
+		return self.nodeToVert.get( node, None )
 
 	def addVert( self, node ):
-		vert = self.createVert()
+		vert = CurveVertItem( self )
 		vert.node = node
-		self.verts.append( vert )
-		self.vertDict[ node ] = vert
+		self.vertItems.append( vert )
+		vert.index = len( self.vertItems ) - 1
+		self.nodeToVert[ node ] = vert
+		self.sortVerts()
+		self.updateSpan()
+
+		vert.updateZoom( self.zx, self.zy )
+		return vert
 
 	def removeVert( self, node ):
 		vert = self.getVertByNode( node )
 		if vert :
-			del self.vertDict[ node ]
+			del self.nodeToVert[ node ]
 			vert.setParentItem( None )
 			vert.node = None
-			self.verts.remove( vert )
+			self.vertItems.remove( vert )
+
+	def getPrevVert( self, vert ):
+		index = vert.index
+		index1 = index - 1
+		if index1 >= 0:
+			return self.vertItems[ index1 ]
+		return None
+
+	def getNextVert( self, vert ):
+		index = vert.index
+		index1 = index + 1
+		if index1 < len( self.vertItems ):
+			return self.vertItems[ index1 ]
+		return None
 
 	def clear( self ):
-		for v in self.verts:
-			v.setParentItem( None )
-			del self.vertDict[ v.node ]
-			v.node = None
-		self.verts = []
-
-	def createVert( self ):
-		vert = CurveVertItem( self )
-		vert.updateZoom( self.zx, self.zy )
-		return vert
-
-	def appendVert( self ):
-		vert = self.createVert()
-		vert0 = self.endVert
-		vert0.nextVert = vert
-		vert.prevVert = vert0
-		self.endVert = vert
-		vert0.createSpan()
-		return vert
+		for vert in self.vertItems:
+			vert.setParentItem( None )
+			del self.nodeToVert[ vert.node ]
+			vert.node = None
+		self.vertItems = []
+		self.updateSpan()
 
 	def sortVerts( self ):
 		pass
@@ -469,10 +532,11 @@ class CurveItem( QtGui.QGraphicsRectItem ):
 		trans = QTransform()
 		trans.scale( self.zx, self.zy )
 		self.setTransform( trans )
-		vert = self.startVert
-		while vert:
+		for vert in self.vertItems:
 			vert.updateZoom( self.zx, self.zy )
-			vert = vert.nextVert
+
+	def updateSpan( self ):
+		pass
 
 
 ##----------------------------------------------------------------##
@@ -492,17 +556,20 @@ class CurveView( GLGraphicsView ):
 		self.updating = False
 		self.setScene( QtGui.QGraphicsScene() )
 		self.setBackgroundBrush( _DEFAULT_BG )
-		self.curves = []
 		self.gridBackground = AxisGridBackground()
 		self.scene().addItem( self.gridBackground )
 		self.scene().sceneRectChanged.connect( self.onRectChanged )
 		
+		self.curveItems = []
+		self.nodeToCurve = {}
+
 		#components
 		self.cursorItem = CursorItem()
 		self.cursorItem.setLine( 0,-10000, 0, 20000 )
 		self.cursorItem.setZValue( 1000 )
 		# self.scene().addItem( self.cursorItem )
 
+		self.rebuilding = False
 		self.panning = False
 		self.scrollX = 0
 		self.scrollY = 0
@@ -595,7 +662,7 @@ class CurveView( GLGraphicsView ):
 		self.onZoomChanged()
 
 	def onZoomChanged( self ):
-		for curve in self.curves:
+		for curve in self.curveItems:
 			curve.setZoom( self.zoomX, self.zoomY )
 		self.gridBackground.setZoom( self.zoomX, self.zoomY )
 		self.updateTransfrom()
@@ -653,49 +720,99 @@ class CurveView( GLGraphicsView ):
 	def posToValue( self, xv, yv ):
 		return ( self.xToValue( xv ), self.yToValue( yv ) )
 
+	#====Building
 	def rebuild( self ):
 		self.clear()
+		self.rebuilding = True
 		for curveNode in self.getCurveNodes():
 			self.addCurve( curveNode )
-		
+		self.rebuilding = False
 
 	def clear( self ):
-		for curve in self.curves:
+		for curve in self.curveItems:
 			curve.clear()
 			self.scene().removeItem( curve )
-		self.curves = []
+		self.curveItems = []
 
 	def removeCurve( self, curveNode ):
 		curve = self.getCurveByNode( curveNode )
 		if curve:
+			del self.nodeToCurve[ curveNode ]
 			curve.clear()
 			curve.node = None
 			self.scene().removeItem( curve )
-			self.curves.remove( curve )
+			self.curveItems.remove( curve )
 
-	def addCurve( self, curveNode ):
-		curve = CurveItem()
-		curve.node = curveNode
+	def addCurve( self, curveNode, **option ):
+		curve = CurveItem( curveNode )
 		self.scene().addItem( curve )
-		self.curves.append( curve )
+		self.curveItems.append( curve )
 		curve.setZoom( self.zoomX, self.zoomY )
+		self.nodeToCurve[ curveNode ] = curve
+
+		vertNodes = self.getVertNodes( curveNode )
+		if vertNodes:
+			for vertNode in vertNodes:
+				self.addVert( vertNode )
+
+		self.refreshCurve( curveNode, **option )
+		self.updateCurveLayout()
 		return curve
 
+	def addVert( self, vertNode, **option ):
+		curve = self.affirmParentCurve( vertNode )
+		if not curve: return None
+		vert = curve.addVert( vertNode )
+		if vert:
+			self.refreshVert( vertNode, **option )			
+		return vert
+
+	def removeVert( self, vertNode ):
+		curve = self.getParentCurve( vertNode )
+		if not curve: return
+		curve.removeVert( vertNode )
+		if vertNode in self.selection:
+			self.selection.remove( vertNode )
+
+	def refreshVert( self, vertNode, **option ):
+		vert = self.getVertByNode( vertNode )
+		if vert:
+			x, y, curveMode, tanPre, tanPost = self.getVertParam( vertNode )
+			vert.setParam( x,y, curveMode, tanPre,tanPost )
+			self.updateVertContent( vert, vertNode, **option )
+
+	def refreshCurve( self, curveNode, **option ):
+		curve = self.getCurveByNode( curveNode )
+		if curve:
+			self.updateCurveContent( curve, curveNode, **option )
+
+	def getParentCurve( self, vertNode ):
+		curveNode = self.getParentCurveNode( vertNode )
+		if not curveNode: return None
+		return self.getCurveByNode( curveNode )
+
 	def getCurveByNode( self, curveNode ):
-		for curve in self.curves:
-			if curve.node == curveNode:
-				return curve
-		return None
+		return self.nodeToCurve.get( curveNode, None )
 
 	def getVertByNode( self, vertNode ):
-		parentCurveNode = self.getParentCurveNode( vertNode )
-		if not parentCurveNode: return None
-		curve = self.getCurveByNode( parentCurveNode )
-		if curve:
-			return curve.getVertByNode( vertNode )
-		else:
-			return None
+		curve = self.getParentCurve( vertNode )
+		if not curve: return None
+		return curve.getVertByNode( vertNode )
 
+	def affirmParentCurve( self, vertNode ):
+		curveNode = self.getParentCurveNode( vertNode )
+		if not curveNode: return None
+		curveItem = self.getCurveByNode( curveNode )
+		if not curveItem:
+			return self.addCurve( curveNode )
+		else:
+			return curveItem
+
+	def updateCurveLayout( self ):
+		#TODO: zoom to fit curve value range
+		pass
+
+	#====Selection====
 	def initSelectionRegion( self ):
 		self.selecting = False
 		self.selectionRegion = SelectionRegionItem()
@@ -709,9 +826,6 @@ class CurveView( GLGraphicsView ):
 		self.selectionRegion.setRect( 0,0,0,0 )
 		self.selectionRegion.setVisible( True )
 		self.resizeSelectionRegion( pos )
-		# for keyNode in self.selection:
-		# 	key = self.getKeyByNode( keyNode )
-		# 	key.setSelected( False, False )
 
 	def resizeSelectionRegion( self, pos1 ):
 		pos = self.selectionRegion.pos()
@@ -723,7 +837,7 @@ class CurveView( GLGraphicsView ):
 
 		self.selectingItems = []
 		for item in itemsInRegion:
-			if isinstance( item, TimelineKeyItem ):
+			if isinstance( item, TimelineVertItem ):
 				self.selectingItems.append( item )
 				item.setSelected( True, False )
 
@@ -742,37 +856,82 @@ class CurveView( GLGraphicsView ):
 	def getParentCurveNode( self, vertNode ):
 		return None
 
-	def getVertNodes( self, curveNode ):
+	def getCurveNodes( self ):
 		return []
 
-	def getCurveNodes( self ):
+	def getVertNodes( self, curveNode ):
 		return []
 
 	def getVertParam( self, curveNode ):
 		#x, y, curveMode, pre-tangent, post-tangeng
-		return ( 0,0, SPAN_MODE_LINEAR, 0, 0 )
-	
+		return ( 0,0, SPAN_MODE_BEZIER, 0, 0 )
+
+	def updateCurveContent( self, curve, node, **option ):
+		pass
+
+	def updateVertContent( self, vert, vertNode, **option ):
+		pass
 
 if __name__ == '__main__':
+	from random import random
 	# import testView
 	##----------------------------------------------------------------##
+	class TestCurve(object):
+		def __init__( self ):
+			self.verts = []
+
+		def getVerts( self ):
+			return self.verts
+
+		def randomFill( self, off ):
+			for i in range( 0, 50 ):
+				vert = TestCurveVert( self )
+				vert.x = i * 50 + random()*5
+				vert.y = (random()-0.5)*100 + off
+				self.verts.append( vert )
+
+
+	class TestCurveVert(object):
+		def __init__( self, parent ):
+			self.parentCurve = parent
+			self.x = 0
+			self.y = 1
+			self.curveMode = SPAN_MODE_BEZIER
+			self.tangentPre = 90
+			self.tangentPost = 90
+
+		def getParam( self ):
+			return ( self.x, self.y, self.curveMode, self.tangentPre, self.tangentPost )
+	
+	class TestCurveView( CurveView ):
+		"""docstring for TestCurveView"""
+		def __init__(self, *args):
+			super(TestCurveView, self).__init__( *args )
+			self.testCurves = []
+			for i in range( 0, 3 ):
+				curve = TestCurve()
+				curve.randomFill( i * 100 )
+				self.testCurves.append( curve )
+
+		def getParentCurveNode( self, vertNode ):
+			return vertNode.parentCurve
+
+		def getCurveNodes( self ):
+			return self.testCurves
+
+		def getVertNodes( self, curveNode ):
+			return curveNode.getVerts()
+
+		def getVertParam( self, vertNode ):
+			return vertNode.getParam()
+
 	class CurveWidget( QtGui.QWidget ):
 		def __init__( self, *args, **kwargs ):
 			super( CurveWidget, self ).__init__( *args, **kwargs )		
 			layout = QtGui.QVBoxLayout( self )
-			self.view = CurveView()
+			self.view = TestCurveView()
 			layout.addWidget( self.view )
-
-			c = self.view.addCurve()
-			c.startVert.setPos( 100, 50 )
-			v = c.appendVert()
-			v.setPos( 150,  50 )
-			v.setSpanMode( SPAN_MODE_BEZIER )
-			v = c.appendVert()
-			v.setPos( 250,  50 )
-			v.setSpanMode( SPAN_MODE_BEZIER )
-			v = c.appendVert()
-			v.setPos( 350,  120 )
+			self.view.rebuild()
 
 		def closeEvent( self, event ):
 			self.view.deleteLater()
