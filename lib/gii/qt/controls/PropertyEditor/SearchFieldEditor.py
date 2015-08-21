@@ -46,8 +46,8 @@ class SearchFieldWidget( QtGui.QWidget ):
 		buttonRef.setStyleSheet ("text-align: left;"); 
 		buttonGoto.setIcon( getIcon('search-2') )
 		buttonClear.setIcon( getIcon('remove') )
-		layout.addWidget( buttonRef )
 		layout.addWidget( buttonGoto )
+		layout.addWidget( buttonRef )
 		layout.addWidget( buttonClear )
 		self.targetRef = None 
 		self.setRef( None )

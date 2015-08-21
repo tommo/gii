@@ -95,6 +95,7 @@ function AnimatorView:setCurrentTrack( track )
 end
 
 function AnimatorView:addClip()
+	--FIXME: animator data path might get removed
 	local clip = self.targetAnimatorData:createClip( 'New Clip' )
 	self:markDataDirty()
 	return clip
@@ -370,8 +371,11 @@ end
 function AnimatorView:saveData()
 	if not self.dirty then return end
 	if not( self.targetAnimator and self.targetAnimatorData ) then return end
+	
 	local dataPath = self.targetAnimator:getDataPath()
+	--FIXME: animator data path might get removed
 	assert( dataPath )
+
 	local node = mock.getAssetNode( dataPath )
 	mock.serializeToFile( self.targetAnimatorData, node:getObjectFile( 'data' )  )
 	self.dirty = false
