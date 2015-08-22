@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array>
+		<string>bt_script</string>
+	</array>
+	<key>keyEquivalent</key>
+	<string>^~T</string>
+	<key>name</key>
+	<string>BT Script</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>match</key>
+			<string>\+\s*\w+</string>
+			<key>name</key>
+			<string>meta.annotation.class.priority</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>>\s*\w+</string>
+			<key>name</key>
+			<string>meta.annotation.class.sequence</string>
+		</dict>
+	</array>
+
+	<key>repository</key>
+	<dict>
+		<key>bold</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.bold</string>
+				</dict>
+			</dict>
+			<key>begin</key>
+			<string>(?&lt;=\s|^)(\*\*|__)(?=\S)(?=(?!(?&lt;=\S)\1)[^\n]+(?&lt;=\S)\1)(?=[^\n]+(?&lt;=\S)(\1)((?![\w\d\n])|(?=\s|$)))</string>
+			<key>end</key>
+			<string>(?&lt;=\S)(\1)((?![\w\d\n])|(?=\s|$))</string>
+			<key>name</key>
+			<string>todo.bold</string>
+		</dict>
+		<key>italic</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.italic</string>
+				</dict>
+			</dict>
+			<key>begin</key>
+			<string>(?&lt;=\s|^)(\*|_)(?=\S)(?=(\1\1|(?!(?&lt;=\S)\1).)++(?&lt;=\S)\1)(?=[^\n]+(?&lt;=\S)(\1)(?!\1|[\w\d]))</string>
+			<key>end</key>
+			<string>(?&lt;=\S)(\1)(?!\1|[\w\d])</string>
+			<key>name</key>
+			<string>todo.italic</string>
+		</dict>
+	</dict>
+	<key>scopeName</key>
+	<string>text.todo</string>
+	<key>uuid</key>
+	<string>8fj2g29c-04ef-4330-9a6b-9b99aae1c418</string>
+</dict>
+</plist>
