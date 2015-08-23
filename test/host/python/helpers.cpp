@@ -1,6 +1,6 @@
 #include <helpers.h>
-#include "pch.h"
-#include <moaicore/MOAILua.h>
+#include <moai-core/headers.h>
+
 #include <GIIHelper.h>
 
 

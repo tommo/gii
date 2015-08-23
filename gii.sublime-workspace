@@ -528,6 +528,22 @@
 			}
 		},
 		{
+			"file": "lib/gii/moai/bridge.py",
+			"settings":
+			{
+				"buffer_size": 9121,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/lua/gii/bridge.lua",
+			"settings":
+			{
+				"buffer_size": 5952,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "lib/gii/qt/QtSupport.py",
 			"settings":
 			{
@@ -541,30 +557,6 @@
 			{
 				"buffer_size": 1638,
 				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "LUA Version:  Lua 5.1\n...s/prj/gii/test/game/lib/mock/core/MOAIInterfaces.lua:291: attempt to index global 'MOAIGraphicsProp' (a nil value)\nstack traceback:\n  [C] ?\n  ...s/prj/gii/test/game/lib/mock/core/MOAIInterfaces.lua:291 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/test/game/lib/mock/core/init.lua:1 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/test/game/lib/mock/env.lua:41 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/test/game/lib/mock/init.lua:1 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/test/game/lib/gamelib.lua:2 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/lib/lua/init.lua:48 in main chunk\nTraceback (most recent call last):\n  File \"/Users/tommo/dev/shared/gii\", line 4, in <module>\n    gii_bin.main()\n  File \"/Volumes/prj/gii/gii_bin.py\", line 64, in main\n    gii.startup()\n  File \"/Volumes/prj/gii/lib/gii/__init__.py\", line 6, in startup\n    startupTool( info )\n  File \"/Volumes/prj/gii/lib/gii/core/tool.py\", line 138, in startupTool\n    return startTool( toolInfo )\n  File \"/Volumes/prj/gii/lib/gii/core/tool.py\", line 79, in startTool\n    m.main( sys.argv[ 1: ] )\n  File \"/Volumes/prj/gii/tools/ide/__init__.py\", line 15, in main\n    app.run()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorApp.py\", line 87, in run\n    if not self.initialized: self.init()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorApp.py\", line 75, in init\n    EditorModuleManager.get().loadAllModules()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 204, in loadAllModules\n    if not self.loadModule(m): \n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 192, in loadModule\n    m.load()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 102, in load\n    self.onLoad()\n  File \"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreview.py\", line 123, in onLoad\n    self.onMoaiReset()\n  File \"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreview.py\", line 172, in onMoaiReset\n    runtime.addDefaultInputDevice( 'device' )\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIRuntime.py\", line 298, in addDefaultInputDevice\n    device.addJoystickSensors( i + 1 )\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIInputDevice.py\", line 25, in addJoystickSensors\n    self.addSensor( axisSensorName, 'wheel' )\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIInputDevice.py\", line 49, in addSensor\n    sensor.onRegister()\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIInputDevice.py\", line 118, in onRegister\n    getAKU().setInputDeviceWheel(self.device.id, self.id, self.name)\nAttributeError: 'AKU.AKU' object has no attribute 'setInputDeviceWheel'\n\n[Finished in 1.7s with exit code 1]\n",
-			"file": "BUILD_RESULT",
-			"file_size": -1,
-			"file_write_time": -1,
-			"settings":
-			{
-				"buffer_size": 2646,
-				"line_ending": "Unix",
-				"scratch": true
-			}
-		},
-		{
-			"contents": "age 31\nbalance 0.5\nready True\ncategory 1\ncolor (1.0, 1.0, 0.0, 0.4980392156862745)\nage 32\nage 33\nage 34\nage 35\nage 36\nage 35\nage 34\nage 33\nage 32\n\n[Finished in 26.4s]\n",
-			"file": "lib/gii/qt/controls/prop/BUILD_RESULT",
-			"file_size": -1,
-			"file_write_time": -1,
-			"settings":
-			{
-				"buffer_size": 167,
-				"line_ending": "Unix",
-				"scratch": true
 			}
 		},
 		{
@@ -1011,7 +1003,15 @@
 	},
 	"console":
 	{
-		"height": 247.0
+		"height": 247.0,
+		"history":
+		[
+			"sys.version_info",
+			"import sys",
+			"print(\"A\")",
+			"python --version",
+			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
 	},
 	"distraction_free":
 	{
@@ -1022,8 +1022,15 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
+	"expanded_folders":
+	[
+		"/Users/feng_ye/Projects/gii"
+	],
 	"file_history":
 	[
+		"/Users/feng_ye/Projects/gii/gii_bin.py",
+		"/Users/feng_ye/Projects/gii/lib/gii/qt/controls/prop/BUILD_RESULT",
+		"/Users/feng_ye/Projects/gii/BUILD_RESULT",
 		"/Volumes/prj/gii/lib/gii/core/BUILD_RESULT",
 		"/Volumes/prj/gii/lib/gii/qt/controls/PropertyEditor/CommonFieldEditors.py",
 		"/Volumes/prj/gii/lib/gii/qt/controls/PropertyEditor/EnumFieldEditor.py",
@@ -1148,14 +1155,11 @@
 		"/Volumes/prj/gii/lib/gii/SceneEditor/Introsepctor.py",
 		"/Volumes/prj/gii/lib/gii/core/IDPool.py",
 		"/Volumes/prj/gii/test/game/lib/mock/component/Prop.lua",
-		"/Volumes/prj/gii/test/env/packages/-EditCanvsTest/test.py",
-		"/Volumes/prj/gii/test/game/lib/mock/asset/Deck2D.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/asset/Scene.lua",
-		"/Volumes/prj/gii/data/lua/bridge.lua"
+		"/Volumes/prj/gii/test/env/packages/-EditCanvsTest/test.py"
 	],
 	"find":
 	{
-		"height": 37.0
+		"height": 35.0
 	},
 	"find_in_files":
 	{
@@ -1237,6 +1241,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"guid",
 			"horse",
 			"yaka",
 			"mod",
@@ -1363,8 +1368,7 @@
 			"colorBlock",
 			"QColorF",
 			"pyqtSignal",
-			"Qsignal",
-			"QSignal"
+			"Qsignal"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1510,12 +1514,13 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
 					"file": "lib/gii/core/model.py",
+					"semi_transient": false,
 					"settings":
 					{
 						"buffer_size": 13015,
@@ -1525,8 +1530,8 @@
 						"selection":
 						[
 							[
-								446,
-								446
+								369,
+								369
 							]
 						],
 						"settings":
@@ -1539,17 +1544,77 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "lib/gii/moai/bridge.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9121,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								588,
+								588
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "lib/lua/gii/bridge.lua",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5952,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4554,
+								4554
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": -0.0,
+						"translation.y": 2399.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
 		},
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
-					"buffer": 1,
+					"buffer": 3,
 					"file": "lib/gii/qt/QtSupport.py",
+					"semi_transient": false,
 					"settings":
 					{
 						"buffer_size": 5512,
@@ -1570,14 +1635,16 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 436.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 4,
 					"file": "gii.sublime-project",
+					"semi_transient": false,
 					"settings":
 					{
 						"buffer_size": 1638,
@@ -1587,8 +1654,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								383,
+								383
 							]
 						],
 						"settings":
@@ -1601,6 +1668,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -1610,70 +1678,9 @@
 			"sheets":
 			[
 				{
-					"buffer": 3,
-					"file": "BUILD_RESULT",
-					"settings":
-					{
-						"buffer_size": 2646,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2646,
-								2646
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"result_base_dir": "/Volumes/prj/gii",
-							"result_file_regex": "",
-							"result_line_regex": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/gii/qt/controls/prop/BUILD_RESULT",
-					"settings":
-					{
-						"buffer_size": 167,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								167,
-								167
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Volumes/prj/gii/lib/gii/qt/controls/prop",
-							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
-							"result_line_regex": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 2.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
 					"buffer": 5,
 					"file": "gii_cfg.py",
+					"semi_transient": false,
 					"settings":
 					{
 						"buffer_size": 394,
@@ -1696,6 +1703,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
@@ -1758,6 +1766,10 @@
 	{
 		"height": 91.0
 	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
 	"output.git":
 	{
 		"height": 112.0
@@ -1770,6 +1782,7 @@
 	{
 		"height": 110.0
 	},
+	"project": "gii.sublime-project",
 	"replace":
 	{
 		"height": 62.0
@@ -1780,6 +1793,10 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"bridge",
+				"lib/lua/gii/bridge.lua"
+			],
 			[
 				"proj",
 				"gii.sublime-project"
@@ -2287,10 +2304,6 @@
 			[
 				"scene.lu",
 				"test/game/lib/mock/core/Scene.lua"
-			],
-			[
-				"scen",
-				"test/game/lib/mock/asset/Scene.lua"
 			]
 		],
 		"width": 0.0
@@ -2443,10 +2456,25 @@
 		],
 		"width": 380.0
 	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
 	"show_minimap": false,
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": false,
 	"side_bar_width": 207.0,
-	"status_bar_visible": true
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
 }

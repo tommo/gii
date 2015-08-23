@@ -1,3 +1,4 @@
+STUFF = "Hi"
 from AKU cimport *
 
 import atexit
@@ -34,6 +35,7 @@ cdef class AKU:
 	cdef object _funcOpenWindow
 	cdef object _funcEnterFS
 	cdef object _funcExitFS
+	cdef object _initialized
 
 	def __cinit__(self):
 		global _aku
@@ -41,28 +43,23 @@ cdef class AKU:
 		
 	def __dealloc__(self): 
 		global _aku
-		_aku=None
-		self.deleteContext()		
+		_aku = None
+		self.deleteContext()
+		if self._initialized:
+			AKUAppFinalize()
+
+	def __init__( self ):
+		self._initialized = False
 
 	def createContext(self):
-		AKUCreateContext()
-		
-		AKUExtLoadLuacrypto()
-		# print("loading luacurl")
-		AKUExtLoadLuacurl()
-		# print("loading lfs")
-		AKUExtLoadLuafilesystem()
-		# print("loading socket")
-		AKUExtLoadLuasocket()
-		# print("loading luasql")
-		AKUExtLoadLuasql()
-		# print("loading lpeg")
-		AKUExtLoadLPeg()
-		
-		AKUExtLoadStruct()
+		if not self._initialized:
+			AKUAppInitialize ()
+			AKUModulesAppInitialize()
+			self._initialized = True
 
-		# AKUUntzInit()
-		AKUFmodDesignerInit()
+		AKUCreateContext()
+
+		AKUModulesContextInitialize()
 
 		registerHelpers()
 		registerExtensionClasses()
@@ -75,7 +72,7 @@ cdef class AKU:
 
 		cdef lua_State *L = AKUGetLuaState()
 		self.lua=LuaRuntime()
-		self.lua.init(L)
+		self.lua.initWithState(L)
 
 	def setFuncOpenWindow(self, f):
 		self._funcOpenWindow=f
@@ -102,6 +99,7 @@ cdef class AKU:
 			self.lua.destroy()
 			self.lua = None
 			AKUDeleteContext(context)
+			self.finalize()
 
 	def clearMemPool(self):
 		AKUClearMemPool()
@@ -139,6 +137,9 @@ cdef class AKU:
 	def setInputDevicePointer(self, devId, sensorId, name):
 		AKUSetInputDevicePointer(devId, sensorId, name)
 
+	def setInputDeviceWheel(self, devId, sensorId, name):
+		AKUSetInputDeviceWheel(devId, sensorId, name)
+
 	def setInputDeviceButton(self, devId, sensorId, name):
 		AKUSetInputDeviceButton(devId, sensorId, name)
 
@@ -169,25 +170,24 @@ cdef class AKU:
 	def enqueueCompassEvent(self, deviceID, sensorID, heading):
 		AKUEnqueueCompassEvent(deviceID, sensorID, heading)
 
-	def enqueueKeyboardAltEvent(self, deviceID, sensorID, down):
-		AKUEnqueueKeyboardAltEvent(deviceID, sensorID, down)
+	def enqueueKeyboardKeyEvent(self, deviceID, sensorID, keyID, down):
+		AKUEnqueueKeyboardKeyEvent(deviceID, sensorID, keyID, down)
 
-	def enqueueKeyboardControlEvent(self, deviceID, sensorID, down):
-		AKUEnqueueKeyboardControlEvent(deviceID, sensorID, down)
+	def enqueueKeyboardCharEvent(self, deviceID, sensorID, character ):
+		AKUEnqueueKeyboardCharEvent(deviceID, sensorID, character)
 
-	def enqueueKeyboardShiftEvent(self, deviceID, sensorID, down):
-		AKUEnqueueKeyboardShiftEvent(deviceID, sensorID, down)
-
-	def enqueueKeyboardEvent(self, deviceID, sensorID, keyID, down):
-		AKUEnqueueKeyboardEvent(deviceID, sensorID, keyID, down)
+	def enqueueKeyboardTextEvent(self, deviceID, sensorID, text):
+		AKUEnqueueKeyboardTextEvent(deviceID, sensorID, text)
 
 	def enqueueLevelEvent(self, deviceID, sensorID, x, y, z):
 		AKUEnqueueLevelEvent(deviceID, sensorID, x, y, z)
 
 	def update(self):
-		AKUUpdate()
-		AKUFmodDesignerUpdate( AKUGetSimStep() )
+		AKUModulesUpdate()
 
+	def updateFMOD( self ):
+		AKUFmodDesignerUpdate()
+		
 	def pause(self, paused=True):
 		AKUPause(paused)
 
@@ -198,13 +198,15 @@ cdef class AKU:
 		AKUDetectGfxContext()
 
 	def finalize(self):
-		AKUFinalize()
+		AKUModulesAppFinalize()
 		
 	def runString(self, text):
-		AKURunString(text)
+		AKULoadFuncFromString( text )
+		AKUCallFunc()
 
 	def runScript(self, filename):
-		AKURunScript(filename)
+		AKULoadFuncFromFile( filename )
+		AKUCallFunc()
 
 	def evalString(self, text):
 		return self.lua.eval(text)

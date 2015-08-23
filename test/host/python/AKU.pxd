@@ -5,15 +5,9 @@ ctypedef void (*funcOpenWindow)( const_char_ptr title, int width, int height)
 ctypedef void (*funcEnterFullscreen)()
 ctypedef void (*funcExitFullscreen)()
 
-cdef extern from "aku/AKU.h" nogil:
-	ctypedef struct lua_State:
-		pass
-	# call back
-	
-	void AKUSetFunc_OpenWindow(funcOpenWindow func)
-	void AKUSetFunc_EnterFullscreenMode(funcEnterFullscreen func)
-	void AKUSetFunc_ExitFullscreenMode(funcExitFullscreen func)
 
+cdef extern from "moai-core/host.h" nogil:
+	# moai-core
 	# context api
 	void		AKUClearMemPool				()
 	int			AKUCreateContext			()
@@ -25,25 +19,53 @@ cdef extern from "aku/AKU.h" nogil:
 	void		AKUSetContext				( int context )
 	void		AKUSetUserdata				( void* user )
 
-	# management api
-	void		AKUDetectGfxContext			()
+	#management
 	lua_State*		AKUGetLuaState				()
-	double		AKUGetSimStep				()
-	char*		AKUGetWorkingDirectory		( char* buffer, int length )
+	char*		AKUGetMoaiVersion       		( char* buffer, int length )
+	char*		AKUGetWorkingDirectory  		( char* buffer, int length )
 	int			AKUMountVirtualDirectory		( const_char_ptr virtualPath, const_char_ptr archive )
-	void		AKUPause				( bint pause )
-	void		AKUReleaseGfxContext		()
-	void		AKURender				()
-	void		AKURunBytecode				( void* data, size_t size )
-	void		AKURunScript				( const char* filename )
-	void		AKURunString				( const char* script )
+	
+	void		AKULoadFuncFromBuffer   	( void* data, size_t size, int dataType, int compression )
+	void		AKULoadFuncFromFile				( const char* filename )
+	void		AKULoadFuncFromString			( const char* script )
+	void		AKUCallFunc						()
+ 	# void		AKUCallFuncWithArgArray			( char* exeName, char* scriptName, int argc, char** argv, int asParams );
+ 	# void		AKUCallFuncWithArgString		( char* exeName, char* scriptName, char* args, int asParams );
+
+	int			AKUSetWorkingDirectory		( const_char_ptr path )
+	
+
+cdef extern from "moai-sim/host.h" nogil:
+	ctypedef struct lua_State:
+		pass
+		
+	#...
+	# void		AKUFinalizeSim	   		()
+	# void		AKUInitializeSim			()
+	void    AKUAppInitialize()
+	void    AKUAppFinalize()
+
+	#....
 	void		AKUSetOrientation			( int orientation )
 	void		AKUSetScreenDpi				( int dpi )
 	void		AKUSetScreenSize			( int width, int height )
 	void		AKUSetViewSize				( int width, int height )
 	void		AKUSoftReleaseGfxResources		( int age )
-	int			AKUSetWorkingDirectory		( const_char_ptr path )
 	void		AKUUpdate				()
+
+
+	# call back
+	void AKUSetFunc_OpenWindow(funcOpenWindow func)
+	void AKUSetFunc_EnterFullscreenMode(funcEnterFullscreen func)
+	void AKUSetFunc_ExitFullscreenMode(funcExitFullscreen func)
+
+
+	#moai-sim
+	void		AKUDetectGfxContext			()
+	double		AKUGetSimStep				()
+	void		AKUPause				( bint pause )
+	void		AKUReleaseGfxContext		()
+	void		AKURender				()
 
 	# input device api
 	void		AKUReserveInputDevices		( int total )
@@ -63,10 +85,9 @@ cdef extern from "aku/AKU.h" nogil:
 	# input events api
 	void		AKUEnqueueButtonEvent		( int deviceID, int sensorID, bint down )
 	void		AKUEnqueueCompassEvent		( int deviceID, int sensorID, float heading )
-	void		AKUEnqueueKeyboardAltEvent		( int deviceID, int sensorID, bint down )
-	void		AKUEnqueueKeyboardControlEvent	( int deviceID, int sensorID, bint down )
-	void		AKUEnqueueKeyboardEvent		( int deviceID, int sensorID, int keyID, bint down )
-	void		AKUEnqueueKeyboardShiftEvent	( int deviceID, int sensorID, bint down )
+	void		AKUEnqueueKeyboardKeyEvent		( int deviceID, int sensorID, int keyID, bint down )
+	void		AKUEnqueueKeyboardTextEvent		( int deviceID, int sensorID, const_char_ptr text )
+	void		AKUEnqueueKeyboardCharEvent		( int deviceID, int sensorID, int char )
 	void		AKUEnqueueLevelEvent		( int deviceID, int sensorID, float x, float y, float z )
 	void		AKUEnqueueLocationEvent		( int deviceID, int sensorID, double longitude, double latitude, double altitude, float hAccuracy, float vAccuracy, float speed )
 	void		AKUEnqueuePointerEvent		( int deviceID, int sensorID, int x, int y )
@@ -74,28 +95,16 @@ cdef extern from "aku/AKU.h" nogil:
 	void		AKUEnqueueTouchEventCancel		( int deviceID, int sensorID )
 	void		AKUEnqueueWheelEvent		( int deviceID, int sensorID, float value )
 
-	# extra
-	
-cdef extern from "aku/AKU-luaext.h" nogil:
-	void AKUExtLoadLuacrypto()
-	void AKUExtLoadLuacurl()
-	void AKUExtLoadLuafilesystem()
-	void AKUExtLoadLuasocket()
-	void AKUExtLoadLuasql()
-	void AKUExtLoadLPeg()
-	void AKUExtLoadStruct()
+cdef extern from "moai-fmod-designer/host.h" nogil:
+	void    AKUFmodDesignerUpdate()
 
-cdef extern from "aku/AKU-untz.h" nogil:
-	void AKUUntzInit()
+cdef extern from "aku_modules.h" nogil:
+	void		AKUModulesAppFinalize       ()
+	void		AKUModulesAppInitialize     ()
+	void		AKUModulesContextInitialize ()
+	void		AKUModulesRunLuaAPIWrapper  ()
+	void		AKUModulesUpdate            ()
 
-cdef extern from "aku/AKU-fmod-designer.h" nogil:
-	void AKUFmodDesignerUpdate( float step )
-	void AKUFmodDesignerInit()
-
-
-cdef extern from "aku/AKU-audiosampler.h" nogil:
-	void AKUAudioSamplerInit()
-	# extension loaders
 cdef extern from "extensionClasses.h" nogil:
 	void registerExtensionClasses()
 

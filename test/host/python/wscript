@@ -1,12 +1,30 @@
+import moai_env
+import sys
+
+TARGET_NAME  = 'python'
+INSTALL_NAME = 'AKU.so'
+
 def options( opt ):
 	opt.load( 'compiler_cxx compiler_c' )
 	opt.load( 'python' )
 	opt.load( 'cython' )
-
+	
 def configure( conf ):
-	conf.load( 'compiler_cxx compiler_c' )
-	conf.load( 'python' )
-	conf.load( 'cython' )
+	if sys.platform == 'darwin':
+		MOAITargetName = 'osx'
+	elif sys.platform == 'win32':
+		MOAITargetName = 'win'
+	else:
+		conf.fatal( 'unknown moai target for current platform' ) 
+
+	for config in [ 'release', 'debug' ]:
+		name = '%s-%s' % ( TARGET_NAME, config )
+		conf.setenv( name )
+		moai_env.setup_moai_env( conf, MOAITargetName, config )
+		moai_env.setup_fmod_env( conf, MOAITargetName, config )
+		conf.load( 'compiler_cxx compiler_c' )
+		conf.load( 'python' )
+		conf.load( 'cython' )
 
 def build( bld ):		
 	binPath = bld.env.GII_BINARY_PATH
@@ -21,11 +39,11 @@ def build( bld ):
 	bld(
 		source   = 'AKU.pyx GIIHelper.cpp helpers.cpp',
 		features = 'cxx cxxshlib pyext',
-		target   = 'AKU.so',
+		target   = INSTALL_NAME,
 		name     = 'host-python',
-		use      = 'MOAI FMOD extension',
+		use      = 'MOAI FMOD modules extension LUA',
 
-		includes = [ '../extension', '/usr/include/python2.7' ],
+		includes = [ '../extension', findPythonInclude() ],
 
 		framework = [ 
 			'CoreServices',
@@ -36,17 +54,21 @@ def build( bld ):
 			'GLUT',
 			'IOKit',
 			'OpenGL',
-			'Python',
 		],
 
-		stlib      = LIBS_SYSTEM,
+		stlib      = LIBS_SYSTEM + [ 'python2.7' ],
 		cxxflags   = [ 
-			'-DGLUTHOST_USE_LUAEXT', 
-			'-DGLUTHOST_USE_FMOD_DESIGNER' 
+			'-DMOAI_WITH_LUAEXT', 
+			'-DMOAI_WITH_FMOD_DESIGNER',
+			'-fvisibility=default'
+		],
+
+		linkflags = [
+			'-L/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/config'
 		],
 
 		install_path = output
 	)
 
-
-
+def findPythonInclude():
+	return '/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7'
