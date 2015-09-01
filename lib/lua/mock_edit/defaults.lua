@@ -22,3 +22,5 @@ addColor( 'cp-border',  1,1,1, alpha )
 
 addColor( 'misc',  hexcolor( '#6695ff', 0.1 ) )
 addColor( 'misc-transform',  hexcolor( '#b8ff00', 1 ) )
+
+addColor( 'camera-bound', hexcolor( '#ffc900', alpha ) )

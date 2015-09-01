@@ -17,7 +17,7 @@ end
 function SimpleBoundGizmo:onDraw()
 	local drawBounds = self.drawBounds
 	if drawBounds then
-		applyColor 'selection'	
+		applyColor 'selection'
 		MOAIGfxDevice.setPenWidth(1)
 		return drawBounds( self.target )
 	end	
