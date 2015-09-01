@@ -336,7 +336,7 @@ class ColorPickerWidget( QtGui.QWidget ):
 		self.colorPlane  = ColorPlaneWidget( self.ui.containerColorPlane )
 
 		self.hueSlider   .valueChanged .connect( self.onHueChanged )
-		self.alphaSlider .valueChanged .connect( self.onAlphaChanged )
+		self.alphaSlider .valueChanged .connect( self.onAlphaSliderChanged )
 		self.colorPlane  .valueChanged .connect( self.onColorBaseChanged )
 
 		self.ui.buttonOK      .clicked .connect( self.onButtonOK )
@@ -355,7 +355,7 @@ class ColorPickerWidget( QtGui.QWidget ):
 		self.ui.numS.valueChanged.connect( self.onTextHSVChanged )
 		self.ui.numV.valueChanged.connect( self.onTextHSVChanged )
 
-		self.ui.numA.valueChanged.connect( self.onAlphaChanged )
+		self.ui.numA.valueChanged.connect( self.onAlphaSliderChanged )
 
 		self.originalColor = QColor.fromRgbF( 0.0, 0.0, 0.0 )
 		self.currentColor  = QColor.fromRgbF( 1.0, 1.0, 0.0 )
@@ -373,15 +373,17 @@ class ColorPickerWidget( QtGui.QWidget ):
 		self.currentColor = color
 		self.updateTextWidgets()
 		self.updateColorPlane()
+		self.updateAlphaWidgets()
 		self.onColorChange( color )
 
 	def setOriginalColor( self, color ):
-		self.originalColor = color
+		self.originalColor = QColor( color )
 		self.preview.setOriginalColor( self.originalColor )
 
 	def setAlpha( self, alpha ):
 		self.currentColor.setAlphaF( alpha )
 		self.updateAlphaWidgets()
+		self.onColorChange( self.currentColor )
 
 	def updateAlphaWidgets( self ):
 		if self.updatingAlpha: return
@@ -452,7 +454,7 @@ class ColorPickerWidget( QtGui.QWidget ):
 		if self.updating: return
 		self.colorPlane.setValueZ( value )
 
-	def onAlphaChanged( self, value ):
+	def onAlphaSliderChanged( self, value ):
 		self.setAlpha( value )
 
 	def onColorBaseChanged( self, x,y,z ):

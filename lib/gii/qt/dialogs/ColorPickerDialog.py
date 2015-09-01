@@ -8,6 +8,7 @@ from gii.qt.IconCache  import getIcon
 from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QEventLoop, QEvent, QObject, QPoint
+from PyQt4.QtGui import QColor, QTransform, QStyle, qRgb
 
 ##----------------------------------------------------------------##
 class WindowAutoHideEventFilter(QObject):
@@ -23,9 +24,13 @@ class WindowAutoHideEventFilter(QObject):
 
 class ColorPickerDialog( ColorPickerWidget ):
 	def __init__( self, *args ):
+		self.onCancel  = None
+		self.onChange  = None
+		self.onChanged = None
+		self.cancelled = False
+
 		super(ColorPickerDialog, self).__init__( *args )
 		self.installEventFilter( WindowAutoHideEventFilter( self ) )
-		self.cancelled = False
 		self.setWindowTitle( 'Colors' )
 	
 	def request( self, **option ):
@@ -34,12 +39,13 @@ class ColorPickerDialog( ColorPickerWidget ):
 		self.onChanged = None
 		original = option.get( 'original_color', None )
 		if original:
+			self.setColor( QColor( original ) )
 			self.setOriginalColor( original )
-			self.setColor( original )
 
-		self.onCancel  = option.get( 'on_cancel', None )
-		self.onChange  = option.get( 'on_change', None )
+		self.onCancel  = option.get( 'on_cancel',  None )
+		self.onChange  = option.get( 'on_change',  None )
 		self.onChanged = option.get( 'on_changed', None )
+
 		pos       = option.get( 'pos', QtGui.QCursor.pos() )
 		self.move( pos + QPoint( -50, 0 ) )
 		restrainWidgetToScreen( self )
