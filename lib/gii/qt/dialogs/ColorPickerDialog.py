@@ -15,6 +15,7 @@ class WindowAutoHideEventFilter(QObject):
 	def eventFilter(self, obj, event):
 		e = event.type()		
 		if e == QEvent.KeyPress and event.key() == Qt.Key_Escape:
+			obj.cancelled = True
 			obj.hide()
 		elif e == QEvent.WindowDeactivate:
 			obj.hide()

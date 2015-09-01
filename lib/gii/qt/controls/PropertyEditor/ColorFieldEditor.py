@@ -94,6 +94,7 @@ class ColorBlock( QtGui.QToolButton ):
 			None,
 			on_cancel = self.onCancel,
 			on_change = self.onChange,
+			on_changed = self.onChanged,
 			original_color  = self.color
 		)
 		# if not self.dialog:
@@ -109,10 +110,15 @@ class ColorBlock( QtGui.QToolButton ):
 
 	def onCancel( self ):
 		self.setColor( self.prevColor )
+		self.setFocus()
 		#TODO:remove undo and proto history?
 
 	def onChange( self, color ):
 		self.setColor( color )
+
+	def onChanged( self, color ):
+		self.setColor( color )
+		self.setFocus()
 
 
 ##----------------------------------------------------------------##
@@ -122,6 +128,7 @@ class ColorFieldEditor( FieldEditor ):
 
 	def set( self, value ):
 		self.colorBlock.setColor( QColorF( *value ) )
+
 
 	def onColorChanged( self, state ):
 		return self.notifyChanged( self.get() )

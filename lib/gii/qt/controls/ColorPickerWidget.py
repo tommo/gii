@@ -327,7 +327,7 @@ class ColorPickerWidget( QtGui.QWidget ):
 		self.ui = ColorPickerForm()
 		self.ui.setupUi( self )
 
-		self.setWindowFlags( Qt.Dialog )
+		self.setWindowFlags( Qt.Popup )
 
 		self.preview     = ColorPreviewWidget( self.ui.containerPreview )
 		self.hueSlider   = HueSliderWidget( self.ui.containerHueSlider )
