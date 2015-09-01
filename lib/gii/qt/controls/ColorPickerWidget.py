@@ -13,6 +13,7 @@ def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 
 
+
 ColorPickerForm,BaseClass = uic.loadUiType( _getModulePath('ColorPicker.ui') )
 
 def clampOne( v ):
@@ -318,9 +319,9 @@ class ScreenColorPicker( QtGui.QWidget ):
 		
 
 #####
-class ColorPicker( QtGui.QWidget ):
+class ColorPickerWidget( QtGui.QWidget ):
 	def __init__( self, *args ):
-		super(ColorPicker, self).__init__( *args )
+		super(ColorPickerWidget, self).__init__( *args )
 		self.updating = False
 		self.updatingAlpha = False
 		self.ui = ColorPickerForm()
@@ -328,21 +329,21 @@ class ColorPicker( QtGui.QWidget ):
 
 		self.setWindowFlags( Qt.Dialog )
 
-		self.preview = ColorPreviewWidget( self.ui.containerPreview )
-		self.hueSlider = HueSliderWidget( self.ui.containerHueSlider )
+		self.preview     = ColorPreviewWidget( self.ui.containerPreview )
+		self.hueSlider   = HueSliderWidget( self.ui.containerHueSlider )
 		self.alphaSlider = AlphaSliderWidget( self.ui.containerAlphaSlider )
 
-		self.colorPlane = ColorPlaneWidget( self.ui.containerColorPlane )
+		self.colorPlane  = ColorPlaneWidget( self.ui.containerColorPlane )
 
-		self.hueSlider.valueChanged.connect( self.onHueChanged )
-		self.alphaSlider.valueChanged.connect( self.onAlphaChanged )
-		self.colorPlane.valueChanged.connect( self.onColorBaseChanged )
+		self.hueSlider   .valueChanged .connect( self.onHueChanged )
+		self.alphaSlider .valueChanged .connect( self.onAlphaChanged )
+		self.colorPlane  .valueChanged .connect( self.onColorBaseChanged )
 
-		self.ui.buttonOK.clicked.connect( self.onButtonOK )
-		self.ui.buttonCancel.clicked.connect( self.onButtonCancel )
-		self.ui.buttonCopyHEX.clicked.connect( self.onButtonCopyHEX )
-		self.ui.buttonCopyRGB.clicked.connect( self.onButtonCopyRGBA )
-		self.ui.buttonCopyHSV.clicked.connect( self.onButtonCopyHSV )
+		self.ui.buttonOK      .clicked .connect( self.onButtonOK )
+		self.ui.buttonCancel  .clicked .connect( self.onButtonCancel )
+		self.ui.buttonCopyHEX .clicked .connect( self.onButtonCopyHEX )
+		self.ui.buttonCopyRGB .clicked .connect( self.onButtonCopyRGBA )
+		self.ui.buttonCopyHSV .clicked .connect( self.onButtonCopyHSV )
 
 		self.ui.buttonScreenPick.clicked.connect( self.onButtonScreenPick )
 
@@ -372,6 +373,7 @@ class ColorPicker( QtGui.QWidget ):
 		self.currentColor = color
 		self.updateTextWidgets()
 		self.updateColorPlane()
+		self.onColorChange( color )
 
 	def setOriginalColor( self, color ):
 		self.originalColor = color
@@ -423,10 +425,13 @@ class ColorPicker( QtGui.QWidget ):
 		self.updating = False
 
 	def onButtonOK( self ):
-		self.colorPlane.setValue( 0.2 )
+		pass
 
 	def onButtonCancel( self ):
-		print 'cancel'
+		pass
+
+	def onColorChange( self, color ):
+		pass
 
 	def onButtonCopyHEX( self ):
 		print 'copy hex'
@@ -478,7 +483,6 @@ class ColorPicker( QtGui.QWidget ):
 		self.updateColorPlane()
 
 
-
 ######TEST
 if __name__ == '__main__':
 	import sys
@@ -488,7 +492,7 @@ if __name__ == '__main__':
 			open( '/Users/tommo/prj/gii/data/theme/' + styleSheetName ).read() 
 		)
 
-	widget = ColorPicker()
+	widget = ColorPickerWidget()
 	widget.show()
 	widget.raise_()
 

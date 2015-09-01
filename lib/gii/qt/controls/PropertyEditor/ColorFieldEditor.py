@@ -4,6 +4,8 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
+from gii.qt.dialogs import requestColorDialog
+
 ##----------------------------------------------------------------##
 class DialogAutoAcceptEventFilter(QObject):
 	def eventFilter(self, obj, event):
@@ -20,20 +22,6 @@ def unpackQColor( c ):
 def QColorF( r, g, b, a =1 ):
 	return QtGui.QColor( r*255, g*255, b*255, a*255)
 
-def requestColor(prompt, initColor = None, **kwargs):
-	dialog = QtGui.QColorDialog( initColor or QtCore.Qt.white )
-	dialog.setOption( QtGui.QColorDialog.ShowAlphaChannel, True )
-	dialog.move( QtGui.QCursor.pos() )
-	dialog.setWindowTitle( prompt )
-	onColorChanged = kwargs.get( 'onColorChanged', None )
-	if onColorChanged:
-		dialog.currentColorChanged.connect( onColorChanged )
-	if dialog.exec_() == 1:
-		col = dialog.currentColor()
-		dialog.destroy()
-		if col.isValid(): return col
-	return initColor
-
 class ColorBlock( QtGui.QToolButton ):
 	colorChanged = QtCore.pyqtSignal( QtGui.QColor )
 	def __init__(self, parent, color = None, **option ):
@@ -49,8 +37,7 @@ class ColorBlock( QtGui.QToolButton ):
 		self.pen = QtGui.QPen()
 		self.brush = QtGui.QBrush()
 		self.brush.setStyle( Qt.SolidPattern )
-		self.dialog = None
-
+		
 	def sizeHint( self ):
 		return QtCore.QSize( 60, 20 )
 
@@ -103,24 +90,29 @@ class ColorBlock( QtGui.QToolButton ):
 
 	def onClicked( self ):
 		self.prevColor = self.color
-		if not self.dialog:
-			self.dialog = QtGui.QColorDialog( self.color )
-		dialog = self.dialog
-		dialog.setOption( 
-			QtGui.QColorDialog.ShowAlphaChannel,
-			True
-			)
-		dialog.rejected.connect( self.onCancel )
-		dialog.currentColorChanged.connect( self.setColor )
-		dialog.show()
-		pass
-		# color = requestColor( self.title, self.color, onColorChanged = self.setColor )
-		# self.setColor( color )
+		requestColorDialog(
+			None,
+			on_cancel = self.onCancel,
+			on_change = self.onChange,
+			original_color  = self.color
+		)
+		# if not self.dialog:
+		# 	self.dialog = QtGui.QColorDialog( self.color )
+		# dialog = self.dialog
+		# dialog.setOption( 
+		# 	QtGui.QColorDialog.ShowAlphaChannel,
+		# 	True
+		# 	)
+		# dialog.rejected.connect( self.onCancel )
+		# dialog.currentColorChanged.connect( self.setColor )
+		# dialog.show()
 
 	def onCancel( self ):
 		self.setColor( self.prevColor )
+		#TODO:remove undo and proto history?
 
-
+	def onChange( self, color ):
+		self.setColor( color )
 
 
 ##----------------------------------------------------------------##
