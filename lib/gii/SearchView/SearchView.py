@@ -125,14 +125,20 @@ class SearchViewWidget( QtGui.QWidget ):
 		tree.show()
 
 	def updateSearchTerms( self, text ):
+		def _buildREPattern( term ):
+			pat = '.*?'.join(map(re.escape, term))
+			regex = re.compile(pat)
+			return regex
+		
 		tree = self.treeResult
 		# import pudb; pu.db
 		if text:
 			textU = text.upper()
 			globs = textU.split()
 			visEntries = []
+			regexList = [ _buildREPattern( term ) for term in globs ]
 			for entry in self.entries:
-				if entry.matchQuery( globs, textU ):
+				if entry.matchQuery( globs, textU, regexList ):
 					visEntries.append( entry )				
 			self.updateVisibleEntries( visEntries, True, sort_method = 'score' )
 		else:
@@ -377,35 +383,27 @@ class SearchEntry(object):
 		self.compareStr = typeName + ': ' + name
 		self.checked    = False	
 
-	def matchQuery( self, globs, text ):
-		#method 1
-		# score = 0
-		# name = self.nameU
-		# typeName = self.typeNameU
-		# for i, t in enumerate( globs ):
-		# 	pos = name.find( t )
-		# 	if pos >= 0:
-		# 		score += ( 2 + len(t) + i*0.5 )
-		# if globs[0] in typeName:
-		# 	findInType = True
-		# 	score += 1		
+	def matchQuery( self, globs, text, regexList ):
 		score = 0
 		name = self.nameU
 		typeName = self.typeNameU
-		for i, t in enumerate( globs ):
+
+		for regex in regexList:
+			if not regex.search( name ):
+				return False
+		
+		l = len( name )
+		for t in globs:
 			pos = name.find( t )
 			if pos >= 0:
-				score += 2
-			else:
-				score += ratio( t, name ) * 1
+				k1 = 1.0 - float(pos)/l
+				k = k1 * k1
+				score += ( k * 1.0 + 0.1 )
+			score += ( ratio( t, name ) * 0.1 )
 		
 		if globs[0] in typeName:
 			findInType = True
-			score += 0.5
-
-		# score1 = SequenceMatcher( None, self.typeNameU, text ).ratio()
-		# score2 = SequenceMatcher( None, self.nameU, text ).ratio()
-		# score = score1 + score2 * 5		
+			score *= 1.1
 		
 		self.matchScore = score
 		return score > 0
