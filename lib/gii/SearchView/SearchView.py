@@ -392,13 +392,11 @@ class SearchEntry(object):
 			if not regex.search( name ):
 				return False
 		
-		l = len( name )
 		for t in globs:
 			pos = name.find( t )
 			if pos >= 0:
-				k1 = 1.0 - float(pos)/l
-				k = k1 * k1
-				score += ( k * 1.0 + 0.1 )
+				k = max( 1.0 - float(pos)/20.0, 0.0 )
+				score += ( k * k * 1.0 + 0.1 )
 			score += ( ratio( t, name ) * 0.1 )
 		
 		if globs[0] in typeName:
