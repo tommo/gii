@@ -355,6 +355,8 @@ class ColorPickerWidget( QtGui.QWidget ):
 		self.ui.numS.valueChanged.connect( self.onTextHSVChanged )
 		self.ui.numV.valueChanged.connect( self.onTextHSVChanged )
 
+		self.ui.textHex.textChanged.connect( self.onTextHexChanged )
+
 		self.ui.numA.valueChanged.connect( self.onAlphaSliderChanged )
 
 		self.originalColor = QColor.fromRgbF( 0.0, 0.0, 0.0 )
@@ -414,15 +416,22 @@ class ColorPickerWidget( QtGui.QWidget ):
 		self.preview.setColor( color )
 		self.preview.update()
 		#update fields
-		self.ui.numR.setValue( color.redF() )
-		self.ui.numG.setValue( color.greenF() )
-		self.ui.numB.setValue( color.blueF() )
+		if not self.ui.numR.hasFocus():
+			self.ui.numR.setValue( color.redF() )
+		if not self.ui.numG.hasFocus():
+			self.ui.numG.setValue( color.greenF() )
+		if not self.ui.numB.hasFocus():
+			self.ui.numB.setValue( color.blueF() )
 
-		self.ui.numH.setValue( color.hueF() * 360 )
-		self.ui.numS.setValue( color.saturationF() )
-		self.ui.numV.setValue( color.valueF() )
+		if not self.ui.numH.hasFocus():
+			self.ui.numH.setValue( color.hueF() * 360 )
+		if not self.ui.numS.hasFocus():
+			self.ui.numS.setValue( color.saturationF() )
+		if not self.ui.numV.hasFocus():
+			self.ui.numV.setValue( color.valueF() )
 
-		self.ui.textHex.setText( color.name() )
+		if not self.ui.textHex.hasFocus:
+			self.ui.textHex.setText( color.name() )
 
 		self.updating = False
 
@@ -480,6 +489,14 @@ class ColorPickerWidget( QtGui.QWidget ):
 		s = self.ui.numS.value()
 		v = self.ui.numV.value()
 		color = QColor.fromHsvF( h, s, v )
+		color.setAlphaF( self.currentColor.alphaF() )
+		self.setColor( color )
+		self.updateColorPlane()
+
+	def onTextHexChanged( self, value ):
+		if self.updating: return
+		hexText = value
+		color = QColor( value )
 		color.setAlphaF( self.currentColor.alphaF() )
 		self.setColor( color )
 		self.updateColorPlane()

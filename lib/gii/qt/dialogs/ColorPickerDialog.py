@@ -50,6 +50,7 @@ class ColorPickerDialog( ColorPickerWidget ):
 		pos       = option.get( 'pos', QtGui.QCursor.pos() )
 		self.move( pos + QPoint( -50, 0 ) )
 		restrainWidgetToScreen( self )
+		self.ui.buttonOK.setFocus()
 		self.show()
 		self.raise_()
 		self.cancelled = False

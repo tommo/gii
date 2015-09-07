@@ -83,6 +83,11 @@ function CanvasTool:installInput( inputDevice )
 	self:attach( mock.InputScript{ 
 			device = inputDevice
 		} )
+	self.inputDevice = inputDevice
+end
+
+function CanvasTool:getInputDevice()
+	return self.inputDevice
 end
 
 --TODO:use more unified framework for editor canvas scene

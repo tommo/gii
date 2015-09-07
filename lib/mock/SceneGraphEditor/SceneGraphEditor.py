@@ -90,6 +90,7 @@ class SceneGraphEditor( SceneEditorModule ):
 			{ 'label':'Create Component' }
 			)
 
+
 		#menu
 		self.addMenuItem(
 			'main/file/open_scene', 
@@ -114,7 +115,10 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		self.addMenu( 'main/entity', dict( label = 'Entity' ) )
 		self.addMenuItem( 'main/entity/add_empty_entity',    dict( label = 'Create Empty', shortcut = 'ctrl+alt+N' ) )
-		self.addMenuItem( 'main/entity/add_entity',          dict( label = 'Create', shortcut = 'ctrl+shift+N' ) )
+		self.addMenuItem( 'main/entity/add_entity',          dict( label = 'Create',       shortcut = 'ctrl+shift+N' ) )
+		self.addMenuItem( 'main/entity/----' )
+		self.addMenuItem( 'main/entity/group_entity',        dict( label = 'Group Entites',    shortcut = 'ctrl+G' ) )
+		self.addMenuItem( 'main/entity/create_group',        dict( label = 'Create Empty Group',    shortcut = 'ctrl+shift+G' ) )
 		self.addMenuItem( 'main/entity/----' )
 		self.addMenuItem( 'main/entity/load_prefab',         dict( label = 'Load Prefab', shortcut = 'ctrl+alt+shift+N' ) )
 		self.addMenuItem( 'main/entity/load_prefab_in_container', dict( label = 'Load Prefab In Container', shortcut = 'ctrl+shift+=' ) )
@@ -423,6 +427,9 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		elif name == 'create_group':
 			self.doCommand( 'scene_editor/entity_group_create' )
+
+		elif name == 'group_entity':
+			self.doCommand( 'scene_editor/group_entities' )
 		
 		elif name == 'select_scene':
 			self.doCommand( 'scene_editor/select_scene' )
@@ -524,6 +531,9 @@ class SceneGraphEditor( SceneEditorModule ):
 				on_selection = lambda x: self.selectEntity( x, focus_tree = True ) ,
 				on_test      = self.selectEntity
 				)
+
+		elif name == 'create_group':
+			self.doCommand( 'scene_editor/entity_group_create' )
 
 		elif name == 'remove_component':
 			context = menu.getContext()

@@ -1202,6 +1202,42 @@ end
 
 
 --------------------------------------------------------------------
+CLASS: CmdGroupEntities ( mock_edit.EditorCommand )
+	:register( 'scene_editor/group_entities')
+
+function CmdGroupEntities:init( option )
+	--TODO:!!!
+	local contextEntity = gii.getSelection( 'scene' )[1]
+	if isInstance( contextEntity, mock.Entity ) then
+		if not contextEntity._entityGroup then
+			mock_edit.alertMessage( 'fail', 'cannot create Group inside Entity', 'info' )
+			return false
+		end
+		self.parentGroup = contextEntity._entityGroup
+	elseif isInstance( contextEntity, mock.EntityGroup ) then
+		self.parentGroup = contextEntity
+	else
+		self.parentGroup = editor.scene:getRootGroup()
+	end
+
+	self.guid = generateGUID()
+
+end
+
+function CmdGroupEntities:redo()
+	self.createdGroup = mock.EntityGroup()
+	self.parentGroup:addChildGroup( self.createdGroup )
+	self.createdGroup.__guid = self.guid
+	gii.emitPythonSignal( 'entity.added', self.createdGroup, 'new' )
+end
+
+function CmdGroupEntities:undo()
+	--TODO
+	self.parentGroup:removeChildGroup( self.createdGroup )
+end
+
+
+--------------------------------------------------------------------
 CLASS: CmdSelectScene ( mock_edit.EditorCommandNoHistory )
 	:register( 'scene_editor/select_scene')
 

@@ -7,13 +7,13 @@ function SelectionTool:onLoad()
 	local plane = self:addCanvasItem( CanvasPickPlane() )	
 	local inputDevice = plane:getView():getInputDevice()
 	plane:setPickCallback( function( picked )
-		if inputDevice:isKeyDown( 'ctrl' ) then
+		if inputDevice:isCtrlDown() then
 			gii.toggleSelection( 'scene', unpack( picked ) )
 
-		elseif inputDevice:isKeyDown( 'shift' ) then
+		elseif inputDevice:isShiftDown() then
 			gii.addSelection( 'scene', unpack( picked ) )
 
-		elseif inputDevice:isKeyDown( 'alt' ) then
+		elseif inputDevice:isAltDown() then
 			gii.removeSelection( 'scene', unpack( picked ) )
 		
 		else

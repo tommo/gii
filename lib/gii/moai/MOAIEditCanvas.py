@@ -25,7 +25,7 @@ def boundToClosure( value ):
 		
 
 QTKeymap={
-	205 : "alt" ,
+	205 : "lalt" ,
 	178 : "pause" ,
 	255 : "menu" ,
 	44  : "," ,
@@ -60,7 +60,7 @@ QTKeymap={
 	67  : "c" ,
 	90  : "z" ,
 	71  : "g" ,
-	202 : "shift" ,
+	202 : "lshift" ,
 	75  : "k" ,
 	79  : "o" ,
 	83  : "s" ,
@@ -85,7 +85,7 @@ QTKeymap={
 	228 : "f11" ,
 	231 : "f14" ,
 	232 : "f15" ,
-	203 : "ctrl" ,
+	203 : "lctrl" ,
 	218 : "f1" ,
 	219 : "f2" ,
 	220 : "f3" ,

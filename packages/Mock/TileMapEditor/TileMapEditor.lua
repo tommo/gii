@@ -487,6 +487,16 @@ CLASS: TileMapToolPen ( mock_edit.CanvasTool )
 function TileMapToolPen:__init()
 	self.pressed = false
 	self.action = false
+	self.drawFromPos = { 0, 0 }
+
+end
+
+function TileMapToolPen:updateDrawFromPos( x, y )
+	self.drawFromPos = { x, y }
+end
+
+function TileMapToolPen:getDrawFromPos()
+	return unpack( self.drawFromPos )
 end
 
 function TileMapToolPen:onMouseDown( btn, x, y )
@@ -494,27 +504,74 @@ function TileMapToolPen:onMouseDown( btn, x, y )
 	if btn == 'left' then 
 		self.action = 'normal'
 		self:_doAction( x, y )
+
 	elseif btn == 'right' then
 		self.action = 'optional'
 		self:_doAction( x, y )
+
 	else
 		return
 	end
 	self.pressed = btn
 end
 
-function TileMapToolPen:onAction( action, layer, x, y )
+local function _drawLine( x0, y0, x1, y1, step, func )
+	print( x0, y0, x1, y1 )
+	local dx = x1 - x0
+	local dy = y1 - y0
+	step = step or 1
+	if math.abs( dx ) > math.abs( dy ) then
+		--loop x axis
+		local count = math.floor( math.abs( dx ) / step )
+		if count == 0 then return end
+		local stepY = dy / count
+		local stepX = dx > 0 and step or - step
+		for i = 0, count do
+			local x = i * stepX + x0
+			local y = i * stepY + y0
+			func( x, y )
+		end
+	else
+		--loop y axis
+		local count = math.floor( math.abs( dy ) / step )
+		if count == 0 then return end
+		local stepX = dx / count
+		local stepY = dy > 0 and step or - step
+		for i = 0, count do
+			local x = i * stepX + x0
+			local y = i * stepY + y0
+			func( x, y )
+		end
+	end
+
+end
+
+function TileMapToolPen:onAction( action, layer, x, y, dragging )
 	if action == 'normal' then
-		local brush = editor:getTileBrush()
-		if brush then
-			layer:setTile( x,y, brush )
+		if self:getInputDevice():isShiftDown() and ( not dragging ) then
+			--Draw Line
+			local brush = editor:getTileBrush()
+			if brush then
+				local x0, y0 = self:getDrawFromPos()
+				_drawLine( x0, y0, x, y, 1, 
+					function( tx, ty )
+						layer:setTile( tx,ty, brush )
+					end
+				)
+				self:updateDrawFromPos( x, y )
+			end
+		else
+			local brush = editor:getTileBrush()
+			if brush then
+				layer:setTile( x,y, brush )
+				self:updateDrawFromPos( x, y )
+			end
 		end
 	elseif action == 'optional' then
 		local tx, ty = editor:wndToCoord( x, y )
 		local layer  = editor:getTargetTileMapLayer()
 		if layer:isValidCoord( tx, ty ) then
 			local id = layer:getTile( tx, ty )
-			-- print( tx,ty, id )
 		end
 	end
 end
@@ -527,14 +584,14 @@ end
 
 function TileMapToolPen:onMouseMove( x, y )
 	if not self.pressed then return end
-	self:_doAction( x, y )
+	self:_doAction( x, y, true )
 end
 
-function TileMapToolPen:_doAction( x, y )
+function TileMapToolPen:_doAction( x, y, dragging )
 	local tx, ty = editor:wndToCoord( x, y )
 	local layer  = editor:getTargetTileMapLayer()
 	if layer:isValidCoord( tx, ty ) then
-		self:onAction( self.action, layer, tx, ty )
+		self:onAction( self.action, layer, tx, ty, dragging )
 		mock_edit.getCurrentSceneView():updateCanvas()
 	end
 end
@@ -545,7 +602,7 @@ mock_edit.registerCanvasTool( 'tilemap.pen', TileMapToolPen )
 --------------------------------------------------------------------
 CLASS: TileMapToolEraser ( TileMapToolPen )
 
-function TileMapToolEraser:onAction( action, layer, x, y )
+function TileMapToolEraser:onAction( action, layer, x, y, dragging )
 	if action == 'normal' then
 		layer:setTile( x, y, false )
 	else
@@ -572,7 +629,7 @@ local function _floodFill( grid, x, y, w, h, id0, id1 )
 	_floodFill( grid, x, y-1, w, h, id0, id1 )
 end
 
-function TileMapToolFill:onAction( action, layer, x, y )
+function TileMapToolFill:onAction( action, layer, x, y, dragging )
 	if action == 'normal' then
 		local brush = editor:getTileBrush()
 		--flood fill
@@ -595,7 +652,7 @@ mock_edit.registerCanvasTool( 'tilemap.fill', TileMapToolFill )
 --------------------------------------------------------------------
 CLASS: TileMapToolTerrain ( TileMapToolPen )
 
-function TileMapToolTerrain:onAction( action, layer, x, y )
+function TileMapToolTerrain:onAction( action, layer, x, y, dragging )
 	if action == 'normal' then
 		self:paint( layer, x, y )
 	else
