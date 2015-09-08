@@ -186,8 +186,8 @@ function CanvasView:snapLoc( x,y,z, activeAxis )
 		y1 = y1 + gh
 		dy = dy - gh
 	end
-	local snapX = dx*dx < gw*gw*0.09
-	local snapY = dy*dy < gh*gh*0.09
+	local snapX = true --dx*dx < gw*gw*0.09
+	local snapY = true --dy*dy < gh*gh*0.09
 	if activeAxis == 'x' then
 		snapY = true
 	elseif activeAxis == 'y' then

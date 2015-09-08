@@ -588,8 +588,12 @@ function TileMapToolPen:onMouseMove( x, y )
 end
 
 function TileMapToolPen:_doAction( x, y, dragging )
-	local tx, ty = editor:wndToCoord( x, y )
 	local layer  = editor:getTargetTileMapLayer()
+	if not layer then
+		mock_edit.alertMessage( 'message', 'no target tile map', 'info' )
+		return false
+	end
+	local tx, ty = editor:wndToCoord( x, y )
 	if layer:isValidCoord( tx, ty ) then
 		self:onAction( self.action, layer, tx, ty, dragging )
 		mock_edit.getCurrentSceneView():updateCanvas()

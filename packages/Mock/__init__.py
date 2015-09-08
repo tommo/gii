@@ -1,4 +1,5 @@
 import mock
+
 ##----------------------------------------------------------------##
 import TextureManager
 import TexturePreview
@@ -43,3 +44,5 @@ import LuaProfiler
 import TileMapEditor
 
 import PhysicsTools
+
+import WaypointGraphEditor

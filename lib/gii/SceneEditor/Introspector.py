@@ -192,12 +192,13 @@ class SceneIntrospector( SceneEditorModule ):
 		assert typeId, 'null typeid'
 		self.objectEditorRegistry[ typeId ] = editorClas
 
-	def getObjectEditor( self, typeId ):		
+	def getObjectEditor( self, typeId, defaultClass = None ):
 		while True:
 			clas = self.objectEditorRegistry.get( typeId, None )
 			if clas: return clas
 			typeId = getSuperType( typeId )
 			if not typeId: break
+		if defaultClass: return defaultClass
 		return CommonObjectEditor
 
 	def onSelectionChanged( self, selection, key ):
@@ -334,9 +335,8 @@ class IntrospectorInstance(object):
 			self.editors.append( editor )
 
 		else:
-			editorClas = option.get( 'editor_class', None )
-			if not editorClas: #get default object editors
-				editorClas = parent.getObjectEditor( typeId )
+			defaultEditorClas = option.get( 'editor_class', None )
+			editorClas = parent.getObjectEditor( typeId, defaultEditorClas )
 
 			editor = editorClas()
 			editor.targetTypeId = typeId
@@ -346,7 +346,12 @@ class IntrospectorInstance(object):
 			widget = editor.initWidget( container.getInnerContainer(), container )
 			container.setContextObject( target )
 			if widget:
-				container.addWidget( widget )				
+				if isinstance( widget, list ):
+					for w in widget:
+						container.addWidget( w )
+				else:
+					container.addWidget( widget )
+
 				model = ModelManager.get().getModelFromTypeId( typeId )
 				if model:
 					container.setTitle( model.getShortName() )
@@ -359,6 +364,7 @@ class IntrospectorInstance(object):
 				menuName = option.get( 'context_menu', editor.getContextMenu() )
 				container.setContextMenu( menuName )
 				container.ownerEditor = editor
+				
 			else:
 				container.hide()
 

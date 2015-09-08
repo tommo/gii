@@ -186,10 +186,6 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'app.ready',         self.onAppReady         )
 		signals.connect( 'project.presave',   self.preProjectSave )
 
-		#editor
-		if self.getModule('introspector'):
-			import EntityEditor
-
 		registerSearchEnumerator( sceneObjectSearchEnumerator )
 		registerSearchEnumerator( entityNameSearchEnumerator )
 		registerSearchEnumerator( componentNameSearchEnumerator )

@@ -17,6 +17,27 @@ def getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 
+##----------------------------------------------------------------##
+_mockInited = False
+_mockObjecteEditors = {}
+
+def registerMOCKObjectEditor( mockClassName, editorClass ):
+	_mockObjecteEditors[ mockClassName ] = editorClass
+	if _mockInited:
+		mockClass = _MOCK[ mockClassName ]
+		registerObjectEditor( mockClass, editorClass )
+
+def onMockInited():
+	global _mockInited
+	_mockInited = True
+	for mockClassName, editorClass in  _mockObjecteEditors.items():
+		mockClass = _MOCK[ mockClassName ]
+		registerObjectEditor( mockClass, editorClass )
+
+signals.connect( 'mock.init', onMockInited )
+
+
+##----------------------------------------------------------------##
 EntityHeaderBase, BaseClass = uic.loadUiType(getModulePath('EntityHeader.ui'))
 
 def getProtoPath( obj ):
@@ -38,7 +59,6 @@ class SceneObjectEditor( CommonObjectEditor ):
 	# def needCache( self ):
 	# 	return False
 
-registerObjectEditor( _MOCK.Scene, SceneObjectEditor )
 
 
 ##----------------------------------------------------------------##
@@ -289,9 +309,6 @@ class EntityEditor( ObjectEditor, SceneObjectEditorMixin ): #a generic property 
 		self.target = None
 		self.grid.clear()
 
-registerObjectEditor( _MOCK.Entity, EntityEditor )
-
-
 
 ##----------------------------------------------------------------##
 class EntityGroupEditor( CommonObjectEditor ):
@@ -307,7 +324,8 @@ class EntityGroupEditor( CommonObjectEditor ):
 			signals.emit( 'entity.visible_changed', obj )
 		signals.emit( 'entity.modified', obj, 'introspector' )
 
-registerObjectEditor( _MOCK.EntityGroup, EntityGroupEditor )
 
-
+registerMOCKObjectEditor( 'Scene',       SceneObjectEditor )
+registerMOCKObjectEditor( 'Entity',      EntityEditor      )
+registerMOCKObjectEditor( 'EntityGroup', EntityGroupEditor )
 
