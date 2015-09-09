@@ -1,1 +1,10 @@
-{}
+{
+  "asset_browser/current_selection": [
+    "test.scene"
+  ], 
+  "asset_browser/splitter_sizes": [
+    256, 
+    225
+  ], 
+  "scenegraph_editor/previous_scene": "test.scene"
+}

@@ -33,12 +33,11 @@ namespace InputSensorID {
 		MOUSE_LEFT,
 		MOUSE_MIDDLE,
 		MOUSE_RIGHT,
-		JOYSTICK_BUTTONS,
-		JOYSTICK_AXIS_1,
-		JOYSTICK_AXIS_2,
-		JOYSTICK_AXIS_3,
-		JOYSTICK_AXIS_4,
 		TOUCH,
+		JOYSTICK_1,
+		JOYSTICK_2,
+		JOYSTICK_3,
+		JOYSTICK_4,
 		TOTAL,
 	};
 }
@@ -94,8 +93,10 @@ void _AKUOpenWindowFunc ( const char* title, int width, int height ) {
 	
 	if ( !sWindow ) {
 		sWindow = SDL_CreateWindow ( title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE );
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
 		SDL_GL_CreateContext ( sWindow );
 		SDL_GL_SetSwapInterval ( 1 );
+		// SDL_SetWindowGrab( sWindow, SDL_TRUE );
 		AKUDetectGfxContext ();
 		AKUSetScreenSize ( width, height );
 		// AKUSdlSetWindow ( sWindow );
@@ -117,34 +118,28 @@ void SetScreenSize(DisplayModeFunc func ) {
 
 //----------------------------------------------------------------//
 static void _JoyButtonFunc ( int joyId, int buttonId, bool down ) {
+	printf("%d,%d,%d\n", joyId, buttonId, down );
 	if( joyId == 1 ) {
-		// printf("%d,%d,%d\n", joyId, buttonId, down );
-		AKUEnqueueKeyboardKeyEvent( 
-			InputDeviceID::DEVICE, InputSensorID::JOYSTICK_BUTTONS, buttonId, down
-		);
+		AKUEnqueueJoystickExButtonEvent( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_1, buttonId, down );
+	} else if( joyId == 2 ) {
+		AKUEnqueueJoystickExButtonEvent( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_2, buttonId, down );
+	} else if( joyId == 3 ) {
+		AKUEnqueueJoystickExButtonEvent( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_3, buttonId, down );
+	} else if( joyId == 4 ) {
+		AKUEnqueueJoystickExButtonEvent( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_4, buttonId, down );
 	}
 }
 
 static void _JoyAxisFunc ( int joyId, int axisId, float value ) {
-	// printf("%d,%d,%.2f\n", joyId, axisId, value );
+	printf("%d,%d,%.2f\n", joyId, axisId, value );
 	if( joyId == 1 ) {
-		if( axisId == 0 ) {
-			AKUEnqueueWheelEvent( 
-				InputDeviceID::DEVICE, InputSensorID::JOYSTICK_AXIS_1, value
-				);
-		} else if( axisId == 1 ) {
-			AKUEnqueueWheelEvent( 
-				InputDeviceID::DEVICE, InputSensorID::JOYSTICK_AXIS_2, value
-				);
-		} else if( axisId == 2 ) {
-			AKUEnqueueWheelEvent( 
-				InputDeviceID::DEVICE, InputSensorID::JOYSTICK_AXIS_3, value
-				);
-		} else if( axisId == 3 ) {
-			AKUEnqueueWheelEvent( 
-				InputDeviceID::DEVICE, InputSensorID::JOYSTICK_AXIS_4, value
-				);
-		}
+		AKUEnqueueJoystickExAxisEvent( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_1, axisId, value );
+	} else if( joyId == 2 ) {
+		AKUEnqueueJoystickExAxisEvent( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_2, axisId, value );
+	} else if( joyId == 3 ) {
+		AKUEnqueueJoystickExAxisEvent( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_3, axisId, value );
+	} else if( joyId == 4 ) {
+		AKUEnqueueJoystickExAxisEvent( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_4, axisId, value );
 	}
 }
 
@@ -200,11 +195,10 @@ void Init ( int argc, char** argv ) {
 	AKUSetInputDeviceButton			( InputDeviceID::DEVICE, InputSensorID::MOUSE_MIDDLE,	"mouseMiddle" );
 	AKUSetInputDeviceButton			( InputDeviceID::DEVICE, InputSensorID::MOUSE_RIGHT,	"mouseRight" );
 
-	AKUSetInputDeviceKeyboard ( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_BUTTONS,		"joy-1.button" );
-	AKUSetInputDeviceWheel	  ( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_AXIS_1,		"joy-1.axis-1" );
-	AKUSetInputDeviceWheel	  ( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_AXIS_2,		"joy-1.axis-2" );
-	AKUSetInputDeviceWheel	  ( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_AXIS_3,		"joy-1.axis-3" );
-	AKUSetInputDeviceWheel	  ( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_AXIS_4,		"joy-1.axis-4" );
+	AKUSetInputDeviceJoystickEx			( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_1,	"joystick-1" );
+	AKUSetInputDeviceJoystickEx			( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_2,	"joystick-2" );
+	AKUSetInputDeviceJoystickEx			( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_3,	"joystick-3" );
+	AKUSetInputDeviceJoystickEx			( InputDeviceID::DEVICE, InputSensorID::JOYSTICK_4,	"joystick-4" );
 
 	//init joysticks
 	sJoystickManager.Refresh();

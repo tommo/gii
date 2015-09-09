@@ -523,7 +523,7 @@
 			"file": "lib/gii/core/model.py",
 			"settings":
 			{
-				"buffer_size": 13015,
+				"buffer_size": 13548,
 				"line_ending": "Unix"
 			}
 		},
@@ -531,7 +531,7 @@
 			"file": "lib/gii/moai/bridge.py",
 			"settings":
 			{
-				"buffer_size": 9121,
+				"buffer_size": 11340,
 				"line_ending": "Unix"
 			}
 		},
@@ -539,7 +539,23 @@
 			"file": "lib/lua/gii/bridge.lua",
 			"settings":
 			{
-				"buffer_size": 5952,
+				"buffer_size": 6487,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/qt/controls/GraphicsView/CurveView.py",
+			"settings":
+			{
+				"buffer_size": 25740,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/qt/controls/ColorPicker.py",
+			"settings":
+			{
+				"buffer_size": 2473,
 				"line_ending": "Unix"
 			}
 		},
@@ -547,7 +563,7 @@
 			"file": "lib/gii/qt/QtSupport.py",
 			"settings":
 			{
-				"buffer_size": 5512,
+				"buffer_size": 5901,
 				"line_ending": "Unix"
 			}
 		},
@@ -555,7 +571,7 @@
 			"file": "gii.sublime-project",
 			"settings":
 			{
-				"buffer_size": 1638,
+				"buffer_size": 1521,
 				"line_ending": "Unix"
 			}
 		},
@@ -566,9 +582,33 @@
 				"buffer_size": 394,
 				"line_ending": "Unix"
 			}
+		},
+		{
+			"contents": "",
+			"file": "BUILD_RESULT",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix",
+				"scratch": true
+			}
+		},
+		{
+			"contents": "Traceback (most recent call last):\n  File \"/Users/tommo/Projects/gii/lib/gii/qt/controls/ColorPicker.py\", line 4, in <module>\n    from PyQt4 import QtGui, QtCore, QtOpenGL, uic\nImportError: No module named PyQt4\n\n[Finished in 0.1s with exit code 1]\n",
+			"file": "lib/gii/qt/controls/BUILD_RESULT",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 249,
+				"line_ending": "Unix",
+				"scratch": true
+			}
 		}
 	],
-	"build_system": "Run",
+	"build_system": "Python32",
 	"command_palette":
 	{
 		"height": 375.0,
@@ -999,19 +1039,11 @@
 				"Package Control: List Packages"
 			]
 		],
-		"width": 551.0
+		"width": 579.0
 	},
 	"console":
 	{
-		"height": 247.0,
-		"history":
-		[
-			"sys.version_info",
-			"import sys",
-			"print(\"A\")",
-			"python --version",
-			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
-		]
+		"height": 247.0
 	},
 	"distraction_free":
 	{
@@ -1022,12 +1054,9 @@
 		"side_bar_visible": false,
 		"status_bar_visible": false
 	},
-	"expanded_folders":
-	[
-		"/Users/feng_ye/Projects/gii"
-	],
 	"file_history":
 	[
+		"/Users/tommo/Projects/gii/gii.sublime-project",
 		"/Users/feng_ye/Projects/gii/gii_bin.py",
 		"/Users/feng_ye/Projects/gii/lib/gii/qt/controls/prop/BUILD_RESULT",
 		"/Users/feng_ye/Projects/gii/BUILD_RESULT",
@@ -1154,8 +1183,7 @@
 		"/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua",
 		"/Volumes/prj/gii/lib/gii/SceneEditor/Introsepctor.py",
 		"/Volumes/prj/gii/lib/gii/core/IDPool.py",
-		"/Volumes/prj/gii/test/game/lib/mock/component/Prop.lua",
-		"/Volumes/prj/gii/test/env/packages/-EditCanvsTest/test.py"
+		"/Volumes/prj/gii/test/game/lib/mock/component/Prop.lua"
 	],
 	"find":
 	{
@@ -1514,24 +1542,23 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 4,
 			"sheets":
 			[
 				{
 					"buffer": 0,
 					"file": "lib/gii/core/model.py",
-					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 13015,
+						"buffer_size": 13548,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								369,
-								369
+								3601,
+								3601
 							]
 						],
 						"settings":
@@ -1541,27 +1568,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2754.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
 					"file": "lib/gii/moai/bridge.py",
-					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9121,
+						"buffer_size": 11340,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								588,
-								588
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1573,59 +1598,50 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
 					"file": "lib/lua/gii/bridge.lua",
-					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5952,
+						"buffer_size": 6487,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4554,
-								4554
+								2734,
+								2734
 							]
 						],
 						"settings":
 						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
 							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
-						"translation.x": -0.0,
-						"translation.y": 2399.0,
+						"translation.x": 0.0,
+						"translation.y": 1231.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
 					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
+				},
 				{
 					"buffer": 3,
-					"file": "lib/gii/qt/QtSupport.py",
-					"semi_transient": false,
+					"file": "lib/gii/qt/controls/GraphicsView/CurveView.py",
 					"settings":
 					{
-						"buffer_size": 5512,
+						"buffer_size": 25740,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1416,
-								1416
+								1303,
+								1303
 							]
 						],
 						"settings":
@@ -1638,37 +1654,34 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "gii.sublime-project",
-					"semi_transient": false,
+					"file": "lib/gii/qt/controls/ColorPicker.py",
 					"settings":
 					{
-						"buffer_size": 1638,
+						"buffer_size": 2473,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								383,
-								383
+								715,
+								715
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -1679,8 +1692,69 @@
 			[
 				{
 					"buffer": 5,
+					"file": "lib/gii/qt/QtSupport.py",
+					"settings":
+					{
+						"buffer_size": 5901,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "gii.sublime-project",
+					"settings":
+					{
+						"buffer_size": 1521,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 7,
 					"file": "gii_cfg.py",
-					"semi_transient": false,
 					"settings":
 					{
 						"buffer_size": 394,
@@ -1696,14 +1770,73 @@
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
 							"syntax": "Packages/Python/Python.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "BUILD_RESULT",
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"result_base_dir": "/Users/tommo/Projects/gii",
+							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+							"result_line_regex": "",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "lib/gii/qt/controls/BUILD_RESULT",
+					"settings":
+					{
+						"buffer_size": 249,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								249,
+								249
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"result_base_dir": "/Users/tommo/Projects/gii/lib/gii/qt/controls",
+							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+							"result_line_regex": "",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
 					"type": "text"
 				}
 			]
@@ -1782,7 +1915,6 @@
 	{
 		"height": 110.0
 	},
-	"project": "gii.sublime-project",
 	"replace":
 	{
 		"height": 62.0
@@ -1793,6 +1925,18 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"colorpi",
+				"lib/gii/qt/controls/ColorPicker.py"
+			],
+			[
+				"",
+				"gii.sublime-project"
+			],
+			[
+				"curve",
+				"lib/gii/qt/controls/GraphicsView/CurveView.py"
+			],
 			[
 				"bridge",
 				"lib/lua/gii/bridge.lua"
@@ -2292,18 +2436,6 @@
 			[
 				"teste",
 				"test/game/script/TestEntity.lua"
-			],
-			[
-				"startup",
-				"test/game/startup.lua"
-			],
-			[
-				"scenete",
-				"test/game/script/sceneTest.lua"
-			],
-			[
-				"scene.lu",
-				"test/game/lib/mock/core/Scene.lua"
 			]
 		],
 		"width": 0.0
@@ -2456,25 +2588,10 @@
 		],
 		"width": 380.0
 	},
-	"select_symbol":
-	{
-		"height": 0.0,
-		"selected_items":
-		[
-		],
-		"width": 0.0
-	},
-	"selected_group": 0,
-	"settings":
-	{
-	},
 	"show_minimap": false,
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": false,
 	"side_bar_width": 207.0,
-	"status_bar_visible": true,
-	"template_settings":
-	{
-	}
+	"status_bar_visible": true
 }

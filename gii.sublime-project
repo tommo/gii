@@ -70,7 +70,8 @@
 				"host/ios/content",
 				"audio",
 				"cache",
-				"test/bin"
+				"test/bin",
+				"template"
 			],
 			"path": "./"
 		}
@@ -82,9 +83,9 @@
 		},
 		"build_switcher_systems":
 		[
-			"Run",
+			"IDE",
 			"Python32",
-			"Test"
+			"GII Python"
 		],
 		"show_panel_on_build": false,
 		"sublimeclang_options":

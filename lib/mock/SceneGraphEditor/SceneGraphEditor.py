@@ -972,7 +972,11 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 
 	def onDeletePressed( self ):
 		self.syncSelection = False
+		item0 = self.currentItem()
+		item1 = self.itemBelow( item0 )
 		self.module.doCommand( 'scene_editor/remove_entity' )
+		if item1:
+			self.setFocusedItem( item1 )
 		self.syncSelection = True
 		self.onItemSelectionChanged()
 
