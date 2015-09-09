@@ -815,7 +815,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		self.setIndentation( 13 )
 
 	def getHeaderInfo( self ):
-		return [('Name',240), ( 'Layer', 50 ), ('V',27 ), ('L',27 ), ('', -1) ]
+		return [('Name',240), ('V',27 ), ('L',27 ), ( 'Layer', 50 ), ('', -1) ]
 
 	def getReadonlyItemDelegate( self ):
 		return ReadonlySceneGraphTreeItemDelegate( self )
@@ -899,14 +899,14 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			item.setText( 0, node.name or '<unnamed>' )
 			item.setIcon( 0, getIcon('entity_group') )
 			if node.isLocalVisible( node ):
-				item.setIcon( 2, getIcon( 'entity_vis' ) )
+				item.setIcon( 1, getIcon( 'entity_vis' ) )
 			else:
-				item.setIcon( 2, getIcon( 'entity_invis' ) )
+				item.setIcon( 1, getIcon( 'entity_invis' ) )
 
 			if node.isLocalEditLocked( node ):
-				item.setIcon( 3, getIcon( 'entity_lock' ) )
+				item.setIcon( 2, getIcon( 'entity_lock' ) )
 			else:
-				item.setIcon( 3, getIcon( 'entity_nolock' ) )
+				item.setIcon( 2, getIcon( 'entity_nolock' ) )
 			item.setData( 0, Qt.UserRole, 1 )
 
 		elif isMockInstance( node, 'Entity' ):
@@ -919,22 +919,23 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			else:
 				item.setIcon( 0, getIcon('obj') )
 			item.setText( 0, node.name or '<unnamed>' )
+	
 			layerName = node.getLayer( node )
 			if isinstance( layerName, tuple ):
-				item.setText( 1, '????' )
+				item.setText( 3, '????' )
 			else:
-				item.setText( 1, layerName )
+				item.setText( 3, layerName )
 			# item.setText( 2, node.getClassName( node ) )
 			# item.setFont( 0, _fontAnimatable )
 			if node.isLocalVisible( node ):
-				item.setIcon( 2, getIcon( 'entity_vis' ) )
+				item.setIcon( 1, getIcon( 'entity_vis' ) )
 			else:
-				item.setIcon( 2, getIcon( 'entity_invis' ) )
+				item.setIcon( 1, getIcon( 'entity_invis' ) )
 
 			if node.isLocalEditLocked( node ):
-				item.setIcon( 3, getIcon( 'entity_lock' ) )
+				item.setIcon( 2, getIcon( 'entity_lock' ) )
 			else:
-				item.setIcon( 3, getIcon( 'entity_nolock' ) )
+				item.setIcon( 2, getIcon( 'entity_nolock' ) )
 		
 		
 	def onItemSelectionChanged(self):
@@ -994,10 +995,10 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		self.adjustingRange = False
 
 	def onClicked(self, item, col):
-		if col == 2: #editor view toggle
+		if col == 1: #editor view toggle
 			self.module.doCommand( 'scene_editor/toggle_entity_visibility' )
 
-		elif col == 3: #lock toggle
+		elif col == 2: #lock toggle
 			self.module.doCommand( 'scene_editor/toggle_entity_lock' )
 			# app.getModule('layer_manager').toggleLock( self.getNodeByItem(item) )
 

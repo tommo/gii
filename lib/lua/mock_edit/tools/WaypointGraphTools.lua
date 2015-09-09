@@ -65,9 +65,9 @@ function WapypointGraphToolMain:onMouseDown( btn, x, y )
 				local dx, dy = px - x, py - y
 				self.currentWaypointDragOffset = { dx, dy }
 			end
-			self:updateCanvas()	
 		end
 
+		self:updateCanvas()	
 	end
 
 end
@@ -143,6 +143,7 @@ function WapypointGraphToolLink:onMouseUp( btn, x, y )
 		end
 		self.currentGraph:_clearTmpConnections()
 		self:updateCanvas()
+		self.startWaypoint = false
 	end
 end
 
