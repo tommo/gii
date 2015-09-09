@@ -998,13 +998,21 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		self.verticalScrollBar().setRange( min, max + 2 )
 		self.adjustingRange = False
 
-	def onClicked(self, item, col):
-		if col == 1: #editor view toggle
-			self.module.doCommand( 'scene_editor/toggle_entity_visibility' )
-
-		elif col == 2: #lock toggle
-			self.module.doCommand( 'scene_editor/toggle_entity_lock' )
-			# app.getModule('layer_manager').toggleLock( self.getNodeByItem(item) )
+	def mousePressEvent( self, ev ):
+		if ev.button() == Qt.LeftButton:
+			item = self.itemAt( ev.pos() )
+			if item:
+				col = self.columnAt( ev.pos().x() )
+				if col == 1:
+					node = self.getNodeByItem( item )
+					self.module.doCommand( 'scene_editor/toggle_entity_visibility', target = node )
+					return
+				elif col == 2:
+					node = self.getNodeByItem( item )
+					self.module.doCommand( 'scene_editor/toggle_entity_lock', target = node )
+					return
+			
+		return super( SceneGraphTreeWidget, self ).mousePressEvent( ev )
 
 
 ##----------------------------------------------------------------##

@@ -1072,7 +1072,12 @@ CLASS: CmdToggleEntityVisibility ( mock_edit.EditorCommand )
 	:register( 'scene_editor/toggle_entity_visibility' )
 
 function CmdToggleEntityVisibility:init( option )
-	self.entities  = gii.getSelection( 'scene' )	
+	local target = option[ 'target' ]
+	if target then
+		self.entities = { target }
+	else
+		self.entities  = gii.getSelection( 'scene' )
+	end
 	self.originalVis  = {}
 end
 
@@ -1107,13 +1112,19 @@ CLASS: CmdToggleEntityLock ( mock_edit.EditorCommandNoHistory )
 	:register( 'scene_editor/toggle_entity_lock' )
 
 function CmdToggleEntityLock:init( option )
-	local entities  = gii.getSelection( 'scene' )	
+	local target = option[ 'target' ]
+	if target then
+		self.entities = { target }
+	else
+		self.entities  = gii.getSelection( 'scene' )
+	end
+
 	local locked = false
-	for i, e in ipairs( entities ) do
+	for i, e in ipairs( self.entities ) do
 		if e:isLocalEditLocked() then locked = true break end
 	end	
 	locked = not locked
-	for i, e in ipairs( entities ) do
+	for i, e in ipairs( self.entities ) do
 		e:setEditLocked( locked )
 		gii.emitPythonSignal( 'entity.visible_changed', e )
 		gii.emitPythonSignal( 'entity.modified', e, '' )

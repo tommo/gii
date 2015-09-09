@@ -527,7 +527,8 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			item = self.itemAt( ev.pos() )
 			if not item and ev.modifiers() != Qt.NoModifier: #root
 				self.clearSelection()
-				return 
+				return
+			
 		return super( GenericTreeWidget, self ).mousePressEvent( ev )
 
 	
