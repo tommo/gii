@@ -15,6 +15,17 @@ class WaypointTool( SceneViewTool ):
 	tool = 'waypoint_tool'
 
 ##----------------------------------------------------------------##
+class WaypointForceLinkTool( SceneViewTool ):
+	name = 'waypoint_forcelink'
+	tool = 'waypoint_forcelink'
+
+##----------------------------------------------------------------##
+class WaypointNoLinkTool( SceneViewTool ):
+	name = 'waypoint_nolink'
+	tool = 'waypoint_nolink'
+
+
+##----------------------------------------------------------------##
 class WaypointGraphEditor( SceneEditorModule ):
 	name = 'waypoint_graph_tools'
 	dependency = [ 'scene_view' ]
@@ -31,6 +42,22 @@ class WaypointGraphEditor( SceneEditorModule ):
 				'waypoint_tool',
 				label = 'Waypoint Editor',
 				icon = 'tools/waypoint'
+			)
+		)
+
+		self.addTool( 'waypoint_graph_editor/waypoint_forcelink',
+			widget = SceneToolButton(
+				'waypoint_forcelink',
+				label = 'Link Waypoint',
+				icon = 'tools/waypoint_forcelink'
+			)
+		)
+
+		self.addTool( 'waypoint_graph_editor/waypoint_nolink',
+			widget = SceneToolButton(
+				'waypoint_nolink',
+				label = 'Forbid Waypoint Link',
+				icon = 'tools/waypoint_nolink'
 			)
 		)
 

@@ -13,3 +13,4 @@ require 'mock_edit.tools.TransformToolHelper'
 --------------------------------------------------------------------
 --PHYSICS
 require 'mock_edit.tools.PhysicsTools'
+require 'mock_edit.tools.WaypointGraphTools'

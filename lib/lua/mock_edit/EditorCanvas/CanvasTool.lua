@@ -79,6 +79,9 @@ function CanvasTool:getIcon()
 	return false
 end
 
+function CanvasTool:onLoad()
+end
+
 function CanvasTool:installInput( inputDevice )
 	self:attach( mock.InputScript{ 
 			device = inputDevice
