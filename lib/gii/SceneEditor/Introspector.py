@@ -192,7 +192,7 @@ class SceneIntrospector( SceneEditorModule ):
 		assert typeId, 'null typeid'
 		self.objectEditorRegistry[ typeId ] = editorClas
 
-	def getObjectEditor( self, typeId, defaultClass = None ):
+	def getObjectEditorByTypeId( self, typeId, defaultClass = None ):
 		while True:
 			clas = self.objectEditorRegistry.get( typeId, None )
 			if clas: return clas
@@ -218,6 +218,7 @@ class SceneIntrospector( SceneEditorModule ):
 		if not self.activeInstance: return
 		if self.activeInstance.target == entity:
 			self.activeInstance.setTarget( [entity], True )
+			self.activeInstance.focusTarget( com )
 
 	def onComponentRemoved( self, com, entity ):
 		if not self.activeInstance: return
@@ -310,9 +311,27 @@ class IntrospectorInstance(object):
 		self.addObjectEditor( self.target )
 
 	def hasTarget( self, target ):
-		for editor in self.editors:
-			if editor.getTarget() == target: return True
+		if self.getObjectEditor( target ): return True
 		return False
+
+	def focusTarget( self, target ):
+		editor = self.getObjectEditor( target )
+		if not editor: return
+		#scroll to editor
+		editorContainer = editor.getContainer()
+		y = editorContainer.y()
+		# h = editorContainer.height()
+		# y1 = y + h
+		scrollBar = self.scroll.verticalScrollBar()
+		# containerH = self.container.height()
+		# scrollY = max( containerH - h )
+		scrollBar.setValue( y )
+		editor.setFocus()
+
+	def getObjectEditor( self, targetObject ):
+		for editor in self.editors:
+			if editor.getTarget() == targetObject: return editor
+		return None
 
 	def addObjectEditor( self, target, **option ):
 		self.scroll.hide()
@@ -336,7 +355,7 @@ class IntrospectorInstance(object):
 
 		else:
 			defaultEditorClas = option.get( 'editor_class', None )
-			editorClas = parent.getObjectEditor( typeId, defaultEditorClas )
+			editorClas = parent.getObjectEditorByTypeId( typeId, defaultEditorClas )
 
 			editor = editorClas()
 			editor.targetTypeId = typeId
@@ -444,6 +463,9 @@ class ObjectEditor( object ):
 
 	def needCache( self ):
 		return True
+
+	def setFocus( self ):
+		pass
 
 		
 ##----------------------------------------------------------------##
