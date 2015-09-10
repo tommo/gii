@@ -381,6 +381,10 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 
 
 class MOAIEditCanvas( MOAIEditCanvasBase ):
+	def __init__( self, *args, **kwargs ):
+		super( MOAIEditCanvas, self ).__init__( *args, **kwargs )
+		self.keyGrabbingCount = 0
+
 	def mousePressEvent(self, event):
 		button=event.button()		
 		x,y=event.x(), event.y()
@@ -434,11 +438,17 @@ class MOAIEditCanvas( MOAIEditCanvasBase ):
 
 	def keyPressEvent(self, event):
 		if event.isAutoRepeat(): return
+		if self.keyGrabbingCount == 0:
+			self.grabKeyboard()
+		self.keyGrabbingCount += 1
 		key=event.key()
 		self.makeCurrent()
 		self.delegate.onKeyDown(convertKeyCode(key))
 
 	def keyReleaseEvent(self, event):
+		self.keyGrabbingCount -= 1
+		if self.keyGrabbingCount == 0:
+			self.releaseKeyboard()
 		key=event.key()
 		self.makeCurrent()
 		self.delegate.onKeyUp(convertKeyCode(key))

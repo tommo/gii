@@ -7,6 +7,8 @@ from gii.core                import signals, app, RemoteCommand
 from gii.moai.MOAIRuntime    import getAKU
 from gii.moai.MOAICanvasBase import MOAICanvasBase
 
+from gii.qt.dialogs          import ProcessDialog
+
 from PyQt4                   import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore            import Qt
 
@@ -264,7 +266,10 @@ class GamePreview( SceneEditorModule ):
 		scnEditor = self.getModule( 'scenegraph_editor' )
 		if scnEditor and scnEditor.activeSceneNode:
 			path = scnEditor.activeSceneNode.getNodePath()
-			ExternRun.runScene( path )
+			def runTask():
+				ExternRun.runScene( path )	
+			dialog = ProcessDialog()
+			dialog.startTask( runTask )
 
 	def pausePreview( self ):
 		if self.paused: return
