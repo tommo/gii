@@ -143,6 +143,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addTool( 'scene_graph/----'  )
 		self.addTool( 'scene_graph/make_proto',    label = 'Convert To Proto', icon = 'proto_make' )
 		self.addTool( 'scene_graph/create_proto_instance',    label = 'Create Proto Instance', icon = 'proto_instantiate' )
+		self.addTool( 'scene_graph/create_proto_container',    label = 'Create Proto Container', icon = 'proto_container' )
 		self.addTool( 'scene_graph/----'  )
 		self.addTool( 'scene_graph/fold_all',    label = 'F' )
 		self.addTool( 'scene_graph/unfold_all',  label = 'U' )
@@ -413,12 +414,22 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		elif name == 'create_proto_instance':
 			requestSearchView( 
-				info    = 'select a perfab node to instantiate',
+				info    = 'select a proto to instantiate',
 				context = 'asset',
 				type    = 'proto',
 				on_selection = 
 					lambda obj: 
 						self.doCommand( 'scene_editor/create_proto_instance', proto = obj.getNodePath() )
+				)
+
+		elif name == 'create_proto_container':
+			requestSearchView( 
+				info    = 'select a proto to create contained instance',
+				context = 'asset',
+				type    = 'proto',
+				on_selection = 
+					lambda obj: 
+						self.doCommand( 'scene_editor/create_proto_container', proto = obj.getNodePath() )
 				)
 
 		elif name == 'create_group':
@@ -916,6 +927,8 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 				item.setIcon( 0, getIcon('instance') )
 			elif node['__proto_history']:
 				item.setIcon( 0, getIcon('instance-sub') )
+			elif isMockInstance( node, 'ProtoContainer' ):
+				item.setIcon( 0, getIcon('instance-container') )
 			else:
 				item.setIcon( 0, getIcon('obj') )
 			item.setText( 0, node.name or '<unnamed>' )

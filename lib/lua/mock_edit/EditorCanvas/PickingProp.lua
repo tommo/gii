@@ -176,6 +176,13 @@ function PickingManager:findBestPickingTarget( e )
 			end
 		end
 	end
+	--internal flag check
+	local p = e
+	while p do
+		if p.FLAG_INTERNAL then e = p.parent end
+		p = p.parent
+	end
+
 	return e
 end
 

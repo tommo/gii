@@ -961,6 +961,26 @@ end
 
 
 --------------------------------------------------------------------
+CLASS: CmdCreateProtoContainer ( CmdCreateEntityBase )
+	:register( 'scene_editor/create_proto_container' )
+
+function CmdCreateProtoContainer:init( option )
+	CmdCreateEntityBase.init( self, option )
+	self.protoPath = option['proto']
+end
+
+function CmdCreateProtoContainer:createEntity()
+	local proto = mock.loadAsset( self.protoPath )
+	local name = proto:getRootName()
+	print( 'proto name', name )
+	local container = mock.ProtoContainer()
+	container:setName( name )
+	container.proto = self.protoPath
+	makeNumberProfix( editor.scene, container )
+	return container
+end
+
+--------------------------------------------------------------------
 CLASS: CmdUnlinkProto ( mock_edit.EditorCommand )
 	:register( 'scene_editor/unlink_proto' )
 
