@@ -266,10 +266,7 @@ class GamePreview( SceneEditorModule ):
 		scnEditor = self.getModule( 'scenegraph_editor' )
 		if scnEditor and scnEditor.activeSceneNode:
 			path = scnEditor.activeSceneNode.getNodePath()
-			def runTask():
-				ExternRun.runScene( path )	
-			dialog = ProcessDialog()
-			dialog.startTask( runTask )
+			ExternRun.runScene( path )
 
 	def pausePreview( self ):
 		if self.paused: return

@@ -3,8 +3,8 @@
     "test.scene"
   ], 
   "asset_browser/splitter_sizes": [
-    256, 
-    225
+    155, 
+    42
   ], 
   "scenegraph_editor/previous_scene": "test.scene"
 }
