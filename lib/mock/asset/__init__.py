@@ -9,7 +9,7 @@ import FontAsset
 import StyleSheetAsset
 import AuroraAsset
 import MSpriteAsset
-import DeckPSDAsset
+import PSDDeckPackAsset
 import SpineAsset
 
 import ParticleAsset

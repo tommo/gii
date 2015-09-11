@@ -27,6 +27,7 @@ class DeckPSDAssetManager(AssetManager):
 
 	def importAsset(self, node, reload = False ):
 		if node.isVirtual(): return
+		print '?????'
 		node.assetType = 'deck_pack'
 		node.groupType = 'package'
 		
@@ -34,6 +35,8 @@ class DeckPSDAssetManager(AssetManager):
 		node.setObjectFile( 'export', output )
 
 		proj = PSDDeckPackProject()
+		proj.setDefaultProcessor( 'mquad' )
+
 		proj.loadPSD( node.getAbsFilePath() )
 		proj.save( output+'/', 'decks', (2048,2048) )
 

@@ -182,6 +182,7 @@ class TextureLibrary( EditorModule ):
 
 	def onStart( self ):
 		self.lib = _MOCK.getTextureLibrary()
+		print 'texture libray start'
 		if not os.path.exists( self.dataPath ):
 			self.saveIndex()
 		for group in self.lib.groups.values():

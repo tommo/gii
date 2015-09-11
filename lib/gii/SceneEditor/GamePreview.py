@@ -131,7 +131,11 @@ class GamePreview( SceneEditorModule ):
 		self.enableMenu( 'main/preview/stop_game',   False )
 
 	def onStart( self ):
-		self.updateView()
+		pass
+
+	def onAppReady( self ):
+		# self.updateView()
+		pass
 
 	def onStop( self ):
 		if self.updateTimer:

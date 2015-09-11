@@ -101,7 +101,7 @@ class GlobalObjectManager( SceneEditorModule ):
 		registerSearchEnumerator( globalObjectNameSearchEnumerator )
 		registerSearchEnumerator( globalObjectSearchEnumerator )
 
-	def onStart( self ):
+	def onAppReady( self ):
 		self.tree.rebuild()
 
 	def onMoaiClean( self ):

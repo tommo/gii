@@ -105,9 +105,10 @@ class DeckItem(object):
 		return None
 
 ##----------------------------------------------------------------##
-class DeckProcesser(object):
+class DeckProcessor(object):
 	def __init__( self, project ):
 		self.project = project 
+		self.isDefaultProcessor = False
 
 	def onInit( self, project ):
 		pass
@@ -121,6 +122,9 @@ class DeckProcesser(object):
 	def generateDecks( self, context ):
 		pass
 
+	def setDefault( self, default ):
+		self.isDefaultProcessor = default
+
 ##----------------------------------------------------------------##
 class DeckPackBuildContext(object):
 	def pushAtlasItem( self, imgSet, img ):
@@ -128,8 +132,13 @@ class DeckPackBuildContext(object):
 
 ##----------------------------------------------------------------##
 _DeckProcessorClassRegistry = []
-def registerDeckProcessor( clas ):
-	_DeckProcessorClassRegistry.append( clas )
+def registerDeckProcessor( id, clas, **options ):
+	entry = {
+		'id': id,
+		'clas':clas,
+		'options': options
+	}
+	_DeckProcessorClassRegistry.append( entry )
 
 
 ##----------------------------------------------------------------##
@@ -143,13 +152,30 @@ class PSDDeckPackProject(object):
 		self.dirty = True
 
 		self.options = {}
+
+		self.defaultProcessor = None
 		#init
 		self.processors = []
-		for clas in _DeckProcessorClassRegistry:
+		self.processorMap = {}
+		for entry in _DeckProcessorClassRegistry:
+			id = entry[ 'id' ]
+			clas = entry[ 'clas' ]
 			processor = clas( self )
 			processor.onInit( self )
+			self.processorMap[ id ] = processor
 			self.processors.append( processor )
 
+	def findProcessor( self, id ):
+		return self.processorMap.get( id, None )
+
+	def setDefaultProcessor( self, id ):
+		if self.defaultProcessor:
+			self.defaultProcessor.setDefault( False )
+		processor = self.findProcessor( id )
+		self.defaultProcessor = processor
+		if processor:
+			processor.setDefault( True )
+				
 	##for building context
 	def getOption( self, key, default = None ):
 		return self.options.get( key, default )
@@ -191,6 +217,11 @@ class PSDDeckPackProject(object):
 		
 	def processLayer( self, layer ):
 		metaInfo = parseMetaTag( layer.name )
+		if not metaInfo:
+			#invalid name, skip
+			logging.warning( 'invalid psd deck layer name:' + layer.name )
+			return False
+
 		for processor in self.processors:
 			if processor.acceptLayer( layer, metaInfo ):
 				processor.processLayer( layer, metaInfo )

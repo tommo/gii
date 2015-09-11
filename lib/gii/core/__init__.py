@@ -29,7 +29,9 @@ from Command        import EditorCommand, EditorCommandStack, EditorCommandRegis
 from RemoteCommand  import RemoteCommand, RemoteCommandRegistry
 from EditorModule   import EditorModule
 from EditorApp      import app
+
 ##----------------------------------------------------------------##
+import CoreModule
 
 ##----------------------------------------------------------------##
 import CommonAsset

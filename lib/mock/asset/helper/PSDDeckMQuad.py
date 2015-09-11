@@ -23,7 +23,11 @@ class MQuadDeckPart( DeckPart ):
 		self.globalMeshes = []
 		layerName = psdLayer.name
 		meta = parseMetaTag( layerName )
-		tags = meta[ 'tags' ]
+		if meta:
+			tags = meta[ 'tags' ]
+		else:
+			tags = {}
+
 		self.foldMode = 'auto'
 
 		if tags.has_key( 'FOLD' ):
@@ -291,7 +295,7 @@ class MQuadDeckItem(DeckItem):
 		return infos
 
 ##----------------------------------------------------------------##
-class MQuadDeckProcesser( DeckProcesser ):
+class MQuadDeckProcessor( DeckProcessor ):
 	def onLoadImage( self, psdImage ):
 		#root layers
 		for layer in psdImage.layers:
@@ -304,7 +308,10 @@ class MQuadDeckProcesser( DeckProcesser ):
 
 	def acceptLayer( self, psdLayer, metaInfo ):
 		tags = metaInfo[ 'tags' ]
-		return tags.has_key( 'MQ' )
+		if self.isDefaultProcessor:
+			return True
+		else:
+			return tags.has_key( 'MQ' )
 
 	def processLayer( self, psdLayer, metaInfo ):
 		project = self.project
@@ -319,7 +326,7 @@ class MQuadDeckProcesser( DeckProcesser ):
 		project.addDeckItem( deck )
 
 ##----------------------------------------------------------------##
-registerDeckProcessor( MQuadDeckProcesser )
+registerDeckProcessor( 'mquad', MQuadDeckProcessor )
 
 
 ##----------------------------------------------------------------##

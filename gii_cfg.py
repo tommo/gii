@@ -2,7 +2,7 @@ import logging
 ##----------------------------------------------------------------##
 #CONFIG
 LOG_LEVEL = logging.WARNING
-# LOG_LEVEL = logging.INFO
+LOG_LEVEL = logging.INFO
 # LOG_LEVEL = logging.DEBUG
 
 ##----------------------------------------------------------------##

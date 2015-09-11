@@ -164,6 +164,9 @@ class EditorModule( ResHolder ):
 	def onStart( self ):
 		pass
 
+	def onAppReady( self ):
+		pass
+		
 	def onStop( self ):
 		pass
 
@@ -230,6 +233,13 @@ class EditorModuleManager(object):
 		logging.info( 'stop all modules' )
 		for m in self.moduleQueue:
 			if m.alive: m.stop()
+
+	def tellAllModulesAppReady( self ):
+		logging.info( 'post start all modules' )
+		for m in self.moduleQueue:
+			if m.alive: 
+				logging.info( 'app ready for module:' + m.getName() )
+				m.onAppReady()
 
 	def _loadModules(self):
 		while True:

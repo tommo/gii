@@ -94,14 +94,17 @@ class EditorApp(object):
 		hasError = False
 		try:
 			EditorModuleManager.get().startAllModules()
-			
+			self.getProject().getAssetLibrary().scanProject()
+
 			signals.emitNow('app.start')
 			signals.dispatchAll()
 
 			self.saveConfig()
 
 			signals.emit('app.ready')
+			EditorModuleManager.get().tellAllModulesAppReady()
 
+			#main loop
 			while self.running:
 				self.doMainLoop( sleepTime )
 
@@ -125,6 +128,7 @@ class EditorApp(object):
 		budget = 0.01
 		t0 = time.time()
 		EditorModuleManager.get().updateAllModules()
+		
 		if signals.dispatchAll():
 			rest = 0
 		else:

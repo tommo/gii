@@ -143,7 +143,7 @@ class AssetBrowser( SceneEditorModule ):
 
 	def onStart( self ):
 		assetLib = self.getAssetLibrary()
-		assetLib.scheduleScanProject()
+		
 		signals.connect( 'asset.register',   self.onAssetRegister )
 		signals.connect( 'asset.unregister', self.onAssetUnregister )
 		signals.connect( 'asset.moved',      self.onAssetMoved )

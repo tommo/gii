@@ -184,7 +184,6 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'component.added',   self.onComponentAdded   )
 		signals.connect( 'component.removed', self.onComponentRemoved )
 
-		signals.connect( 'app.ready',         self.onAppReady         )
 		signals.connect( 'project.presave',   self.preProjectSave )
 
 		registerSearchEnumerator( sceneObjectSearchEnumerator )

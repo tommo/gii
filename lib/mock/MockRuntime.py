@@ -47,8 +47,9 @@ class MockRuntime( EditorModule ):
 		signals.connect( 'moai.ready', self.onMoaiReady )
 
 		signals.connect( 'project.post_deploy', self.postDeploy )
-		signals.connect( 'project.save', self.onProjectSave )
+		signals.connect( 'project.save',        self.onProjectSave )
 
+		self.initMock()
 
 	def affirmConfigFile( self ):
 		proj = self.getProject()
@@ -76,8 +77,8 @@ class MockRuntime( EditorModule ):
 		jsonHelper.trySaveJSON( defaultConfigData, self.configPath )
 
 
-	def onStart( self ):
-		self.initMockGame()
+	def onAppReady( self ):
+		self.postInitMock()
 
 	def postDeploy( self, context ):
 		configPath = context.getPath( 'game_config' )
@@ -96,10 +97,17 @@ class MockRuntime( EditorModule ):
 	def syncAssetLibrary(self): #TODO:
 		pass
 
-	def initMockGame( self ):
+	def initMock( self ):
 		try:
 			self.runtime.changeRenderContext( 'game', 100, 100 )
 			_MOCK.init( self.configPath, True )
+		except Exception, e:
+			raise e
+
+	def postInitMock( self ):
+		try:
+			game = _MOCK.game
+			game.initCommonDataFromEditor( game )
 			signals.emit( 'mock.init' )
 		except Exception, e:
 			raise e
@@ -115,7 +123,7 @@ class MockRuntime( EditorModule ):
 		self.setupLuaModule()
 
 	def onMoaiReady( self ):
-		self.initMockGame()
+		self.initMock()
 
 	def getMockEnv( self ):
 		return _MOCK

@@ -363,7 +363,7 @@ class MTilesetDeckItem( DeckItem ):
 
 
 ##----------------------------------------------------------------##
-class MTilesetDeckProcesser( DeckProcesser ):
+class MTilesetDeckProcessor( DeckProcessor ):
 	def onLoadImage( self, psdImage ):
 		pass
 
@@ -380,7 +380,7 @@ class MTilesetDeckProcesser( DeckProcesser ):
 
 
 ##----------------------------------------------------------------##
-registerDeckProcessor( MTilesetDeckProcesser )
+registerDeckProcessor( 'mtileset', MTilesetDeckProcessor )
 
 ##----------------------------------------------------------------##
 

@@ -132,7 +132,6 @@ class MOAIRuntime( EditorModule ):
 
 	def onStart( self ):
 		pass
-		
 
 	def reset(self):
 		if not self.AKUReady: return

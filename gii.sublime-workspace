@@ -4,6 +4,38 @@
 		"selected_items":
 		[
 			[
+				"Edi",
+				"EditorModule  (module)"
+			],
+			[
+				"vert",
+				"verticalScrollBar"
+			],
+			[
+				"setMO",
+				"setWindowModality"
+			],
+			[
+				"entit",
+				"entities"
+			],
+			[
+				"cla",
+				"classc	class"
+			],
+			[
+				"pyqt",
+				"pyqtSignal"
+			],
+			[
+				"setV",
+				"setValue  (function)"
+			],
+			[
+				"current",
+				"currentColor"
+			],
+			[
 				"main",
 				"mainWindow"
 			],
@@ -320,10 +352,6 @@
 				"currentColorChanged"
 			],
 			[
-				"cla",
-				"class	New Class"
-			],
-			[
 				"defa",
 				"defaultValue"
 			],
@@ -486,92 +514,112 @@
 			[
 				"Obj",
 				"ObjectHistory"
-			],
-			[
-				"Glo",
-				"GlobalEntity"
-			],
-			[
-				"pop",
-				"pop  (function)"
-			],
-			[
-				"modepro",
-				"buildLuaObjectModelProvider  (function)"
-			],
-			[
-				"CLA",
-				"CLASS"
-			],
-			[
-				"isSub",
-				"issubclass"
-			],
-			[
-				"CL",
-				"CLASS"
-			],
-			[
-				"Dunm",
-				"DungeonMap"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "lib/gii/core/model.py",
+			"file": "test/game/lib/mock/component/WaypointPathFinder.lua",
 			"settings":
 			{
-				"buffer_size": 13548,
+				"buffer_size": 6336,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/gii/moai/bridge.py",
+			"file": "lib/gii/SceneEditor/Introspector.py",
 			"settings":
 			{
-				"buffer_size": 11340,
+				"buffer_size": 13984,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/lua/gii/bridge.lua",
+			"file": "lib/gii/SceneEditor/SceneTool.py",
 			"settings":
 			{
-				"buffer_size": 6487,
+				"buffer_size": 3187,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/gii/qt/controls/GraphicsView/CurveView.py",
+			"file": "lib/mock/MockRuntime.py",
 			"settings":
 			{
-				"buffer_size": 25740,
+				"buffer_size": 3648,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/gii/qt/controls/ColorPicker.py",
+			"file": "lib/mock/asset/helper/PSDDeckMQuad.py",
 			"settings":
 			{
-				"buffer_size": 2473,
+				"buffer_size": 7387,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/gii/qt/QtSupport.py",
+			"file": "lib/mock/asset/helper/PSDDeckPackProject.py",
 			"settings":
 			{
-				"buffer_size": 5901,
+				"buffer_size": 6281,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "gii.sublime-project",
+			"file": "gii_bin.py",
 			"settings":
 			{
-				"buffer_size": 1521,
+				"buffer_size": 1948,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/mock/asset/helper/MetaTag.py",
+			"settings":
+			{
+				"buffer_size": 734,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/SceneEditor/GamePreview.py",
+			"settings":
+			{
+				"buffer_size": 10990,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/core/tools/RunHost.py",
+			"settings":
+			{
+				"buffer_size": 915,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/AssetEditor/AssetBrowser.py",
+			"settings":
+			{
+				"buffer_size": 14304,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/core/EditorModule.py",
+			"settings":
+			{
+				"buffer_size": 7932,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/core/EditorApp.py",
+			"settings":
+			{
+				"buffer_size": 6316,
 				"line_ending": "Unix"
 			}
 		},
@@ -579,7 +627,7 @@
 			"file": "gii_cfg.py",
 			"settings":
 			{
-				"buffer_size": 394,
+				"buffer_size": 392,
 				"line_ending": "Unix"
 			}
 		},
@@ -596,24 +644,100 @@
 			}
 		},
 		{
-			"contents": "Traceback (most recent call last):\n  File \"/Users/tommo/Projects/gii/lib/gii/qt/controls/ColorPicker.py\", line 4, in <module>\n    from PyQt4 import QtGui, QtCore, QtOpenGL, uic\nImportError: No module named PyQt4\n\n[Finished in 0.1s with exit code 1]\n",
+			"contents": "2015-09-01 00:29:36.370 Python[3735:87558] modalSession has been exited prematurely - check for a reentrant call to endModalSession:\nTraceback (most recent call last):\n  File \"/Users/tommo/Projects/gii/lib/gii/qt/controls/ColorPicker.py\", line 426, in onButtonOK\n    self.colorPlane.setValue( 0.2 )\nTypeError: setValue() takes exactly 4 arguments (2 given)\n\n[Finished in 27.1s]\n",
 			"file": "lib/gii/qt/controls/BUILD_RESULT",
 			"file_size": -1,
 			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 249,
+				"buffer_size": 378,
+				"line_ending": "Unix",
+				"scratch": true
+			}
+		},
+		{
+			"contents": "[WARN:Lua]  no joystick sensor registered \n[WARN:Lua]  no joystick sensor registered \n[WARN:Lua]  no joystick sensor registered \n[WARN:Lua]  no joystick sensor registered \ntexture libray start\nException in thread Thread-2 (most likely raised during interpreter shutdown):\nTraceback (most recent call last):\n  File \"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/threading.py\", line 810, in __bootstrap_inner\n  File \"/Users/tommo/Projects/gii/lib/3rdparty/common/watchdog/observers/api.py\", line 199, in run\n  File \"/Users/tommo/Projects/gii/lib/3rdparty/common/watchdog/observers/api.py\", line 365, in dispatch_events\n  File \"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/Queue.py\", line 177, in get\n  File \"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/threading.py\", line 355, in wait\n<type 'exceptions.TypeError'>: 'NoneType' object is not callable\n\n[Finished in 6.8s]\n",
+			"file": "test/BUILD_RESULT",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 925,
+				"line_ending": "Unix",
+				"scratch": true
+			}
+		},
+		{
+			"contents": "        saved atlas image file 'test/testpack.png' in 0.043 seconds\n        saved atlas image file 'test/testpack_n.png' in 0.037 seconds\n\n[Finished in 1.1s]\n",
+			"file": "lib/mock/asset/helper/BUILD_RESULT",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 158,
+				"line_ending": "Unix",
+				"scratch": true
+			}
+		},
+		{
+			"contents": "\n[Finished in 3.0s]\n",
+			"file": "lib/gii/qt/controls/GraphicsView/BUILD_RESULT",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 20,
+				"line_ending": "Unix",
+				"scratch": true
+			}
+		},
+		{
+			"contents": "\n[Finished in 30.6s]\n",
+			"file": "lib/gii/qt/controls/ToolWindowManager/BUILD_RESULT",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 21,
 				"line_ending": "Unix",
 				"scratch": true
 			}
 		}
 	],
-	"build_system": "Python32",
+	"build_system": "IDE",
 	"command_palette":
 	{
-		"height": 375.0,
+		"height": 250.0,
 		"selected_items":
 		[
+			[
+				"diff",
+				"Git: Diff All"
+			],
+			[
+				"checkou",
+				"Git: Checkout Current File"
+			],
+			[
+				"python",
+				"Set Syntax: Python"
+			],
+			[
+				"pytho",
+				"Set Syntax: Python"
+			],
+			[
+				"tab",
+				"Indentation: Convert to Tabs"
+			],
+			[
+				"packin",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Preferences: Browse Packages"
+			],
 			[
 				"git diff",
 				"Git: Diff Current File"
@@ -637,10 +761,6 @@
 			[
 				"pci",
 				"Package Control: Install Package"
-			],
-			[
-				"tab",
-				"Indentation: Convert to Tabs"
 			],
 			[
 				"git dif",
@@ -779,10 +899,6 @@
 				"Git: Log Current File"
 			],
 			[
-				"diff",
-				"Git: Diff Current File"
-			],
-			[
 				"preview",
 				"Markdown Preview: preview in Browser"
 			],
@@ -831,16 +947,8 @@
 				"Indentation: Convert to Tabs"
 			],
 			[
-				"pack",
-				"Preferences: Browse Packages"
-			],
-			[
 				"pcu",
 				"Package Control: Upgrade Package"
-			],
-			[
-				"python",
-				"Set Syntax: Python"
 			],
 			[
 				"sessin",
@@ -1039,7 +1147,7 @@
 				"Package Control: List Packages"
 			]
 		],
-		"width": 579.0
+		"width": 588.0
 	},
 	"console":
 	{
@@ -1056,7 +1164,92 @@
 	},
 	"file_history":
 	[
+		"/Users/tommo/Projects/gii/packages/Mock/GlobalObjectManager/GlobalObjectManager.py",
+		"/Users/tommo/Projects/gii/lib/mock/SceneGraphEditor/SceneGraphEditor.py",
+		"/Users/tommo/Projects/gii/lib/mock/asset/helper/PSDDeckMQuad.py",
+		"/Users/tommo/Projects/gii/lib/mock/asset/helper/PSDDeckPackProject.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/core/Game.lua",
+		"/Users/tommo/Projects/gii/lib/mock/MockRuntime.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/asset/Texture.lua",
+		"/Users/tommo/Projects/gii/lib/mock/asset/TextureAsset.py",
+		"/Users/tommo/Projects/gii/lib/gii/core/EditorApp.py",
+		"/Users/tommo/Projects/gii/lib/gii/core/EditorModule.py",
+		"/Users/tommo/Projects/gii/lib/gii/moai/MOAIRuntime.py",
+		"/Users/tommo/Projects/gii/lib/mock/asset/TextureLibrary.lua",
+		"/Users/tommo/Projects/gii/lib/gii/AssetEditor/AssetBrowser.py",
+		"/Users/tommo/Projects/gii/lib/gii/AssetEditor/AssetEditor.py",
+		"/Users/tommo/Projects/gii/lib/gii/moai/LuaScriptAsset.py",
+		"/Users/tommo/Projects/gii/test/host/osx/SDLHost.cpp",
+		"/Users/tommo/Projects/gii/lib/gii/qt/dialogs/ProcessDialog.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/component/InputListener.lua",
+		"/Users/tommo/Projects/gii/lib/gii/moai/MOAIEditCanvas.py",
+		"/Users/tommo/Projects/gii/lib/gii/core/asset.py",
+		"/Users/tommo/Projects/gii/lib/gii/core/__init__.py",
+		"/Users/tommo/Projects/gii/lib/gii/core/CoreModule.py",
+		"/Users/tommo/Projects/gii/lib/gii/core/CoreModule.lua",
+		"/Users/tommo/.zshrc",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/env.lua",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/core/init.lua",
+		"/Users/tommo/Projects/gii/lib/gii/core/project.py",
+		"/Users/tommo/Projects/gii/test/host/sdl-common/MOCKJoystickManger.h",
+		"/Users/tommo/.bash_profile",
+		"/Applications/FMOD Studio/examples/Events/Main Menu {a7b81216-fb0b-4b9c-9e7d-b897825d9821}.event",
+		"/Applications/FMOD Studio/examples/Examples.fspro",
+		"/Users/tommo/Projects/gii/test/host/sdl-common/MOCKJoystickManger.cpp",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/component/WaypointGraph.lua",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/ColorPickerWidget.py",
+		"/Users/tommo/Projects/gii/lib/gii/SceneEditor/GamePreview.py",
+		"/Users/tommo/Projects/gii/test/host/host-modules/aku_modules.cpp",
+		"/Users/tommo/Projects/gii/test/host/host-modules/aku_modules_util.cpp",
+		"/Users/tommo/Projects/gii/lib/gii/SceneEditor/ExternRun.py",
+		"/Users/tommo/Projects/moai-dev/3rdparty/sdl2-2.0.0/include/SDL_video.h",
+		"/Users/tommo/Downloads/anura-trunk/src/xhtml/xhtml.hpp",
+		"/Users/tommo/Downloads/anura-trunk/src/xhtml/display_list.hpp",
+		"/Users/tommo/Projects/moai-dev/3rdparty/sdl2-2.0.0/include/SDL_version.h",
+		"/Users/tommo/Projects/gii/test/host/osx/SDLHostMain.cpp",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/PropertyEditor/ColorFieldEditor.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GenericTreeWidget.py",
+		"/Users/tommo/Projects/gii/lib/mock/SceneGraphEditor/SceneGraphEditor.lua",
+		"/Users/tommo/Projects/gii/test/game/asset/script/TestJoystick.lua",
+		"/Users/tommo/Projects/gii/packages/Mock/WaypointGraphEditor/WaypointGraphEditor.py",
+		"/Users/tommo/Projects/gii/lib/3rdparty/common/pyqode/qt/QtCore.py",
+		"/Users/tommo/Projects/gii/test/host/sdl-common/wscript",
+		"/Users/tommo/Projects/gii/test/host/extension/MOCKNetworkView.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOCKNetworkBroadcast.cpp",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/CurveView.py",
+		"/Users/tommo/Downloads/host-stirfirestudios-sdl-master/sledge/SledgeHost.h",
+		"/Users/tommo/Downloads/host-stirfirestudios-sdl-master/sledge/SledgeInputManager.cpp",
+		"/Users/tommo/Projects/gii/test/host/wscript",
+		"/Users/tommo/Projects/gii/test/host/moai_env.py",
+		"/Users/tommo/Projects/gii/test/host/extension/wscript",
+		"/Users/tommo/Projects/eastward/game/asset/script/actor/PlayerInputJoystick.lua",
 		"/Users/tommo/Projects/gii/gii.sublime-project",
+		"/Users/tommo/Projects/gii/lib/gii/qt/QtSupport.py",
+		"/Users/tommo/Downloads/host-stirfirestudios-sdl-master/host-info.yml",
+		"/Users/tommo/Projects/gii/test/host/extension/extensionClasses.cpp",
+		"/Users/tommo/Projects/gii/template/host/ios-release/Classes/ParticlePresets.cpp",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/ToolWindowManager/ToolWindowManager.py",
+		"/Users/tommo/Projects/gii/lib/gii/SearchView/SearchView.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/component/BTController.lua",
+		"/Users/tommo/Projects/gii/test/host/extension/MOCKNetworkRPC.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOCKNetworkPeer.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOCKNetworkStream.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOCKNetworkHost.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MDDHelper.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAIRandom.cpp",
+		"/Users/tommo/Projects/gii/test/env/config/game_config.json",
+		"/Users/tommo/Projects/gii/template/game/lib/mock/core/keymaps.lua",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/shader.fsh",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/ScreenColorPicker.py",
+		"/Users/tommo/Projects/gii/lib/lua/gii/bridge.lua",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/shader.vsh",
+		"/Users/tommo/Projects/gii/lib/gii/moai/bridge.py",
+		"/Users/tommo/Projects/gii/lib/gii/core/model.py",
+		"/Users/tommo/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/ColorPicker.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GLWidget.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/TestColor.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/colorTest.py",
 		"/Users/feng_ye/Projects/gii/gii_bin.py",
 		"/Users/feng_ye/Projects/gii/lib/gii/qt/controls/prop/BUILD_RESULT",
 		"/Users/feng_ye/Projects/gii/BUILD_RESULT",
@@ -1098,92 +1291,7 @@
 		"/Volumes/prj/gii/lib/gii/qt/controls/GenericTreeWidget.py",
 		"/Volumes/prj/gii/packages/Mock/StyleSheetEditor/StyleSheetEditor.py",
 		"/Volumes/prj/gii/support/waf/waf",
-		"/Volumes/prj/gii/lib/gii/core/platforms.py",
-		"/Volumes/prj/gii/support/sublimeGii/README",
-		"/Volumes/prj/gii/packages/-SimpleConsole/console.py",
-		"/Volumes/prj/gii/support/waf/.waf-1.7.11-8d403a04185e11c15a223ac7fdadb4a9/waflib/Tools/qt4.py",
-		"/Volumes/prj/gii/lib/gii/core/__init__.py",
-		"/Volumes/prj/gii/lib/gii/qt/BUILD_RESULT",
-		"/Volumes/prj/gii/lib/gii/qt/controls/BUILD_RESULT",
-		"/Volumes/prj/gii/lib/gii/moai/MOAIEditCanvas.py",
-		"/Volumes/prj/gii/gii.sublime-project",
-		"/Volumes/prj/gii/data/theme/dark.qss",
-		"/Volumes/prj/gii/lib/gii/moai/MOAIRuntime.py",
-		"/Volumes/prj/gii/lib/mock/MockRuntime.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/prop/PropEditor.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/prop/PropGrid.py",
-		"/Volumes/prj/gii/template/host/wscript",
-		"/Volumes/prj/gii/test/game/lib/mock/core/Game.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/core/Component.lua",
-		"/Volumes/prj/gii/lib/gii/core/project.py",
-		"/Volumes/prj/gii/test/env/packages/SceneView/SceneView.lua",
-		"/Volumes/prj/gii/data/lua/renderContext.lua",
-		"/Volumes/prj/gii/packages/Mock/LayerManager/LayerManager.lua",
-		"/Volumes/prj/gii/tools/run/__init__.py",
-		"/Volumes/prj/gii/start",
-		"/Volumes/prj/gii/data/lua/runtime.lua",
-		"/Volumes/prj/gii/packages/Mock/SceneView/SceneView.py",
-		"/Volumes/prj/gii/lib/gii/core/tool.py",
-		"/Volumes/prj/gii/lib/mock/MockRuntime.lua",
-		"/Volumes/prj/gii/lib/gii/__init__.py",
-		"/Volumes/prj/gii/lib/gii/core/package.py",
-		"/Volumes/prj/gii/template/host/osx/wscript",
-		"/Volumes/prj/gii/.gitignore",
-		"/Volumes/prj/gii/test/project.json",
-		"/Volumes/prj/gii/packages/Mock/__init__.py",
-		"/Volumes/prj/gii/lib/gii/core/jsonHelper.py",
-		"/Volumes/prj/mdd/project.json",
-		"/Volumes/prj/gii/lib/gii/ScriptView/__init__.py",
-		"/Volumes/prj/gii/test/env/lib/mock/editor/MOCKEditCanvas.lua",
-		"/Volumes/prj/gii/test/env/packages/SceneView/SceneView.py",
-		"/Volumes/prj/gii/test/env/packages/TexturePreview/TexturePreview.lua",
-		"/Volumes/prj/gii/lib/gii/qt/controls/GLWidget.py",
-		"/Volumes/prj/gii/test/game/script/TestEntity.lua",
-		"/Volumes/prj/gii/test/env/lib/mock/asset/SceneAsset.py",
-		"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreview.py",
-		"/Volumes/prj/gii/lib/gii/core/globalSignals.py",
-		"/Volumes/prj/gii/test/env/lib/mock/MockRuntime.lua",
-		"/Volumes/prj/gii/test/env/packages/-DeckEditor/Deck2DEditor.py",
-		"/Volumes/prj/gii/packages/ScriptView/ScriptView.py",
-		"/Volumes/prj/gii/test/game/lib/mock/component/Camera.lua",
-		"/Volumes/prj/gii/test/env/lib/mock/editor/EditCamera.lua",
-		"/Volumes/prj/gii/test/env/lib/mock/editor/MOCKEditCanvas.py",
-		"/Volumes/prj/gii/test/env/packages/-EditCanvsTest/test.lua",
-		"/Volumes/prj/gii/test/host/osx/GlutHost.cpp",
-		"/Volumes/prj/gii/test/env/packages/TexturePreview/TexturePreview.py",
-		"/Volumes/prj/gii/lib/gii/SceneEditor/__init__.py",
-		"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreviw.py",
-		"/Volumes/prj/gii/lib/gii/moai/MOAIGameView.py",
-		"/Volumes/prj/gii/lib/gii/moai/MOAICanvasBase.py",
-		"/Volumes/prj/gii/test/env/lib/mock/editor/__init__.py",
-		"/Volumes/prj/gii/test/env/packages/TexturePreview/TexturePreview2.lua",
-		"/Volumes/prj/gii/test/env/lib/mock/MockRuntime.py",
-		"/Volumes/prj/gii/test/env/lib/editor/MOCKEditCanvas.py",
-		"/Volumes/prj/gii/test/env/packages/DeckEditor/Deck2DEditor.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/component/InputScript.lua",
-		"/Volumes/prj/gii/test/env/packages/DeckEditor/Deck2DEditor.py",
-		"/Volumes/prj/gii/test/env/packages/TexturePreview/TexturePreview2.py",
-		"/Volumes/prj/gii/test/game/lib/mock/core/InputManager.lua",
-		"/Volumes/prj/gii/test/env/lib/editor/EditCamera.lua",
-		"/Volumes/prj/gii/test/env/lib/editor/MOCKEditCanvas.lua",
-		"/Volumes/prj/gii/test/game/script/test.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/core/Class.lua",
-		"/Volumes/prj/gii/test/env/lib/mock/asset/Deck2DAsset.py",
-		"/Volumes/prj/gii/test/env/packages/DeckEditor1/Deck2DEditor.lua",
-		"/Volumes/prj/gii/test/env/packages/DeckEditor1/Deck2DEditor.py",
-		"/Volumes/prj/gii/lib/gii/core/asset.py",
-		"/Volumes/prj/gii/test/game/asset/test.deck2d",
-		"/Volumes/prj/gii/test/game/lib/mock/component/AuroraSprite.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/asset/Common.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/core/AssetLibrary.lua",
-		"/Volumes/prj/gii/lib/gii/qt/QtEditorModule.py",
-		"/Volumes/prj/gii/test/env/packages/SceneGraphBrowser/SceneGraphBrowser.lua",
-		"/Volumes/prj/gii/test/env/packages/SceneGraphBrowser/SceneGraphBrowser.py",
-		"/Volumes/prj/gii/test/game/lib/mock/core/ClassTest.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua",
-		"/Volumes/prj/gii/lib/gii/SceneEditor/Introsepctor.py",
-		"/Volumes/prj/gii/lib/gii/core/IDPool.py",
-		"/Volumes/prj/gii/test/game/lib/mock/component/Prop.lua"
+		"/Volumes/prj/gii/lib/gii/core/platforms.py"
 	],
 	"find":
 	{
@@ -1191,9 +1299,10 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 97.0,
 		"where_history":
 		[
+			"*.py",
 			"",
 			"*.py",
 			"*.lua",
@@ -1269,134 +1378,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"guid",
-			"horse",
-			"yaka",
-			"mod",
-			"SRCROOT",
-			"EXTRA",
-			"EXTRA_LIB_PATH",
-			"SRCROOT",
-			"fmoddesigner",
-			"debug",
-			"SRC_PATH",
-			"MOAI_",
-			"$(SRCROOT)/../../../lib/",
-			"SRC_PATH",
-			"True",
-			"False",
-			"postStart",
-			"set",
-			"getFieldValue",
-			"id",
-			"field",
-			"refreshField",
-			"editors",
-			"field",
-			"id",
+			"logging.warn",
+			"metaInfo",
+			"acceptLayer",
+			"onStart",
+			"onUpdate",
+			"updateAllModules",
+			"onStart",
+			"tellAllModulesAppReady",
+			"postStartAllModules",
+			"onAppReady",
+			"start",
+			"lib",
+			"initMock",
+			")\n",
+			"getDependency",
+			"MOAIRuntime",
+			"getProject",
+			"pass",
+			"robbyrussell",
+			"postInitMock",
+			"initCommonData",
+			"init",
+			"initCommonDataFromEditor",
+			"fromEditor",
 			"option",
-			"field",
-			"fieldId",
-			"fieldid",
-			"field",
-			"enumType",
-			"fieldId",
-			"getSuperType",
-			"ObjectModel",
-			"getSuperType",
-			"subType",
-			"dataType",
-			",",
-			"editors",
-			"self",
-			"label",
-			"ft",
-			"field",
-			"Editor( FieldEditor ):\n	def get( self ):\n		return self.checkBox.isChecked()\n\n	def set( self, value ):\n		self.checkBox.setChecked( value )\n\n	def onStateChanged( self, state ):\n		return self.notifyChanged( self.get() )\n\n	def initEditor( self, container ):\n		self.checkBox = QtGui.QCheckBox( container )\n		self.checkBox.stateChanged.connect( self.onStateChanged )\n		return self.checkBox\n\n\n##----------------------------------------------------------------##\n\nregisterFieldEditor( str, StringFieldEditor )\nregisterFieldEditor( unicode, StringFieldEditor )\nregisterFieldEditor( int, IntFieldEditor )\nregisterFieldEditor( float, FloatFieldEditor )\nregisterFieldEditor( bool, BoolFieldEditor )\n\n",
-			"bool",
-			"float",
-			"int",
-			"unicode",
-			"str",
-			"registerFieldEditor",
-			"StringFieldEditor",
-			"refershField",
-			"refreshField",
-			"setUpdateEnabled",
-			"False",
-			"onValueChanged",
-			"label",
-			"_buildSubEditor",
-			"label",
-			"False",
-			"append",
-			"_buildSubEditor",
-			"editor",
-			"setTarget",
+			"initCommonData",
+			"fromEditor",
+			"postInit",
+			"initCommonData",
+			"postInit",
+			"initMockGame",
+			"pass",
+			"initMockGame",
+			"onAppStart",
+			"onProjectSave",
+			"save",
+			"project",
+			"getAssetLibrary",
+			"assetLib",
+			"scanProject",
+			"scan",
+			"end",
+			"assetLibraryIndex",
+			"(",
+			"initAsset",
+			"initSystem",
+			"initGraphics",
 			"option",
-			"field",
-			"prop",
+			"graphicsOption",
+			"initgraphics",
+			"initSystem",
+			"postInit",
+			"initGlobalManagers",
+			"initSystem",
+			"option",
+			"globalObjectLibrary",
 			"editor",
-			"editorClas",
-			"_FieldEditorRegistry",
-			"registerFieldEditor",
-			"pass",
-			"_ModelEditorRegistry",
-			"pass",
-			"\n	",
-			"_FieldEditorRegistry",
-			"field",
-			"prop",
-			"editor",
-			"pass",
-			"obj",
-			"False",
-			"print",
-			"pass",
-			"refershField",
-			"kwargs",
+			"editorContainer",
+			"getContainer",
+			"focusTarget",
 			"target",
-			"PropertyGrid",
-			"propGrid",
-			"pro",
-			"PropertyGrid",
-			"propGrid",
-			"PropertyGrid",
-			"property",
-			"PropertyGrid",
-			"StringFieldEditor",
-			"import",
-			"Color",
-			"ColorFieldEditor",
-			"2px",
-			"bottom",
-			"padding",
-			"QCheckBox",
-			"Expanding",
-			"Fixed",
-			"Expanding",
-			"spinBox",
-			"14",
-			"option",
+			"contai",
+			"pos",
+			"scrolba",
+			"pos",
+			"scroll",
+			"getobjecteditor",
+			"getObjectEditorByTypeId",
+			"getObjectEditorClassByTypeId",
+			"registerObjectEditor",
+			"getObjectEditor",
+			"getObjectEditorClassByTypeId",
+			"getObjectEditorClass",
+			"getObjectEditor",
+			"False",
+			"True",
+			"s",
+			"introspector",
+			"onComponentAdded",
+			"DISPLAY",
+			"Ext",
+			"pipeline",
+			"_terminating",
+			"QFrame",
+			"QDialog",
+			"ApplicationModal",
+			"suepr",
+			"Close",
+			"close",
+			"value",
+			"_currentExternRunDialog",
+			"QFrame",
+			"self",
+			"ExternRun",
+			"main_preview_scene",
+			"targetName",
+			"main_preview_scene",
+			"' ",
+			"onButtonTerminate",
+			"onTimerTick",
+			"playerThread",
+			"hostThread",
+			"ExternDialog",
+			"main_preview_scene",
+			"dialog",
+			"main_preview_scene",
+			"targetName",
+			"main_preview_scene",
+			"Exterutn",
+			"targetName",
+			"start",
+			"DialogForm",
+			"ProcessDialog",
+			"ProcessDialogForm",
+			"pass",
+			"entities",
+			"target",
+			"docom",
+			"node",
+			"getNodefrom",
+			"node",
+			"toggle_entity_visibility",
 			"col",
-			"category",
-			"notifyChanged",
-			"onColorChanged",
-			"return",
-			"QColorF",
-			"unpackQColor",
-			"QColorF",
-			"qcolorf",
-			"QColor",
-			"QColorF",
-			"QtGui",
-			"ColorFieldEditors",
-			"setChecked",
-			"checkBox",
-			"colorBlock",
-			"QColorF",
-			"pyqtSignal",
-			"Qsignal"
+			"not",
+			"GenericTreeWidget",
+			"r",
+			"focus",
+			"belowItem"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1404,6 +1513,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"MOCKJoystickMgr",
 			"getCurrentRenderContext",
 			"GII",
 			"Tool",
@@ -1530,8 +1640,7 @@
 			"TMOFFSETGRIDDECK_H",
 			"OBJC_SRC",
 			"CPP_SRC",
-			"TMOffsetGridDeck",
-			"TMGridDeckBrush"
+			"TMOffsetGridDeck"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -1542,23 +1651,51 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 8,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "lib/gii/core/model.py",
+					"file": "test/game/lib/mock/component/WaypointPathFinder.lua",
 					"settings":
 					{
-						"buffer_size": 13548,
+						"buffer_size": 6336,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3601,
-								3601
+								1438,
+								1438
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 569.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "lib/gii/SceneEditor/Introspector.py",
+					"settings":
+					{
+						"buffer_size": 13984,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9218,
+								9218
 							]
 						],
 						"settings":
@@ -1568,17 +1705,129 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2754.0,
+						"translation.y": 4988.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "lib/gii/moai/bridge.py",
+					"buffer": 2,
+					"file": "lib/gii/SceneEditor/SceneTool.py",
 					"settings":
 					{
-						"buffer_size": 11340,
+						"buffer_size": 3187,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2688,
+								2688
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/mock/MockRuntime.py",
+					"settings":
+					{
+						"buffer_size": 3648,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2370,
+								2370
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 610.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "lib/mock/asset/helper/PSDDeckMQuad.py",
+					"settings":
+					{
+						"buffer_size": 7387,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6763,
+								6763
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 4656.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "lib/mock/asset/helper/PSDDeckPackProject.py",
+					"settings":
+					{
+						"buffer_size": 6281,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4734,
+								4734
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2830.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "gii_bin.py",
+					"settings":
+					{
+						"buffer_size": 1948,
 						"regions":
 						{
 						},
@@ -1591,6 +1840,35 @@
 						],
 						"settings":
 						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 423.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "lib/mock/asset/helper/MetaTag.py",
+					"settings":
+					{
+						"buffer_size": 734,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								637,
+								641
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
 							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
@@ -1601,75 +1879,193 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "lib/lua/gii/bridge.lua",
+					"buffer": 8,
+					"file": "lib/gii/SceneEditor/GamePreview.py",
 					"settings":
 					{
-						"buffer_size": 6487,
+						"buffer_size": 10990,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2734,
-								2734
+								4036,
+								4036
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1231.0,
+						"translation.y": 1792.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 5,
+			"sheets":
+			[
+				{
+					"buffer": 9,
+					"file": "lib/gii/core/tools/RunHost.py",
+					"settings":
+					{
+						"buffer_size": 915,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								467,
+								467
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "lib/gii/SceneEditor/Introspector.py",
+					"settings":
+					{
+						"buffer_size": 13984,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								12588,
+								12588
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 7309.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "lib/gii/AssetEditor/AssetBrowser.py",
+					"settings":
+					{
+						"buffer_size": 14304,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13950,
+								13950
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 7988.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "lib/gii/core/EditorModule.py",
+					"settings":
+					{
+						"buffer_size": 7932,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3944,
+								3944
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2395.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "lib/gii/core/EditorApp.py",
+					"settings":
+					{
+						"buffer_size": 6316,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3441,
+								3441
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2163.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "lib/gii/qt/controls/GraphicsView/CurveView.py",
+					"file": "lib/mock/MockRuntime.py",
 					"settings":
 					{
-						"buffer_size": 25740,
+						"buffer_size": 3648,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1303,
-								1303
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "lib/gii/qt/controls/ColorPicker.py",
-					"settings":
-					{
-						"buffer_size": 2473,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								715,
-								715
+								3467,
+								3467
 							]
 						],
 						"settings":
@@ -1679,7 +2075,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1885.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1691,81 +2087,19 @@
 			"sheets":
 			[
 				{
-					"buffer": 5,
-					"file": "lib/gii/qt/QtSupport.py",
-					"settings":
-					{
-						"buffer_size": 5901,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "gii.sublime-project",
-					"settings":
-					{
-						"buffer_size": 1521,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"syntax": "Packages/JavaScript/JSON.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 2,
-			"sheets":
-			[
-				{
-					"buffer": 7,
+					"buffer": 13,
 					"file": "gii_cfg.py",
 					"settings":
 					{
-						"buffer_size": 394,
+						"buffer_size": 392,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								144,
+								144
 							]
 						],
 						"settings":
@@ -1780,7 +2114,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 14,
 					"file": "BUILD_RESULT",
 					"settings":
 					{
@@ -1810,25 +2144,147 @@
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 15,
 					"file": "lib/gii/qt/controls/BUILD_RESULT",
 					"settings":
 					{
-						"buffer_size": 249,
+						"buffer_size": 378,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								249,
-								249
+								378,
+								378
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"result_base_dir": "/Users/tommo/Projects/gii/lib/gii/qt/controls",
+							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+							"result_line_regex": "",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 16,
+					"file": "test/BUILD_RESULT",
+					"settings":
+					{
+						"buffer_size": 925,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								925,
+								925
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Users/tommo/Projects/gii/lib/gii/qt/controls",
+							"result_base_dir": "/Users/tommo/Projects/gii/test",
+							"result_file_regex": "",
+							"result_line_regex": "",
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 17,
+					"file": "lib/mock/asset/helper/BUILD_RESULT",
+					"settings":
+					{
+						"buffer_size": 158,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								158,
+								158
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"result_base_dir": "/Users/tommo/Projects/gii/lib/mock/asset/helper",
+							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+							"result_line_regex": "",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 18,
+					"file": "lib/gii/qt/controls/GraphicsView/BUILD_RESULT",
+					"settings":
+					{
+						"buffer_size": 20,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"result_base_dir": "/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView",
+							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+							"result_line_regex": "",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 19,
+					"file": "lib/gii/qt/controls/ToolWindowManager/BUILD_RESULT",
+					"settings":
+					{
+						"buffer_size": 21,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								21,
+								21
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"result_base_dir": "/Users/tommo/Projects/gii/lib/gii/qt/controls/ToolWindowManager",
 							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
 							"result_line_regex": "",
 							"syntax": "Packages/Text/Plain text.tmLanguage"
@@ -1926,6 +2382,290 @@
 		"selected_items":
 		[
 			[
+				"mockrunt",
+				"lib/mock/MockRuntime.py"
+			],
+			[
+				"gameprevi",
+				"lib/gii/SceneEditor/GamePreview.py"
+			],
+			[
+				"giibin",
+				"gii_bin.py"
+			],
+			[
+				"meta",
+				"lib/mock/asset/helper/MetaTag.py"
+			],
+			[
+				"psddeck",
+				"lib/mock/asset/helper/PSDDeckMQuad.py"
+			],
+			[
+				"edia",
+				"lib/gii/core/EditorApp.py"
+			],
+			[
+				"editor",
+				"lib/gii/core/EditorModule.py"
+			],
+			[
+				"glob",
+				"packages/Mock/GlobalObjectManager/GlobalObjectManager.py"
+			],
+			[
+				"editorm",
+				"lib/gii/core/EditorModule.py"
+			],
+			[
+				"edita",
+				"lib/gii/core/EditorApp.py"
+			],
+			[
+				"globobjm",
+				"packages/Mock/GlobalObjectManager/GlobalObjectManager.py"
+			],
+			[
+				"moairunt",
+				"lib/gii/moai/MOAIRuntime.py"
+			],
+			[
+				"texture.lu",
+				"test/game/lib/mock/asset/Texture.lua"
+			],
+			[
+				"textlibra",
+				"lib/mock/asset/TextureLibrary.lua"
+			],
+			[
+				"asset",
+				"lib/gii/AssetEditor/AssetBrowser.py"
+			],
+			[
+				"textureas",
+				"lib/mock/asset/TextureAsset.py"
+			],
+			[
+				"editora",
+				"lib/gii/core/EditorApp.py"
+			],
+			[
+				"intro",
+				"lib/gii/SceneEditor/Introspector.py"
+			],
+			[
+				"mockrun",
+				"lib/mock/MockRuntime.py"
+			],
+			[
+				"luascrip",
+				"lib/gii/moai/LuaScriptAsset.py"
+			],
+			[
+				"editap",
+				"lib/gii/core/EditorApp.py"
+			],
+			[
+				"moairu",
+				"lib/gii/moai/MOAIRuntime.py"
+			],
+			[
+				"coremo",
+				"lib/gii/core/CoreModule.py"
+			],
+			[
+				"edimo",
+				"lib/gii/core/EditorModule.py"
+			],
+			[
+				"moairun",
+				"lib/gii/moai/MOAIRuntime.py"
+			],
+			[
+				"globalobj",
+				"packages/Mock/GlobalObjectManager/GlobalObjectManager.py"
+			],
+			[
+				"game.lua",
+				"test/game/lib/mock/core/Game.lua"
+			],
+			[
+				"mockruntim",
+				"lib/mock/MockRuntime.py"
+			],
+			[
+				"project",
+				"lib/gii/core/project.py"
+			],
+			[
+				"ditorap",
+				"lib/gii/core/EditorApp.py"
+			],
+			[
+				"game",
+				"test/game/lib/mock/core/Game.lua"
+			],
+			[
+				"psdmqu",
+				"lib/mock/asset/helper/PSDDeckMQuad.py"
+			],
+			[
+				"sceneto",
+				"lib/gii/SceneEditor/SceneTool.py"
+			],
+			[
+				"introspe",
+				"lib/gii/SceneEditor/Introspector.py"
+			],
+			[
+				"scenegraph",
+				"lib/mock/SceneGraphEditor/SceneGraphEditor.py"
+			],
+			[
+				"hostm",
+				"test/host/osx/SDLHostMain.cpp"
+			],
+			[
+				"sdlhost",
+				"test/host/osx/SDLHost.cpp"
+			],
+			[
+				"runhost",
+				"lib/gii/core/tools/RunHost.py"
+			],
+			[
+				"gamepre",
+				"lib/gii/SceneEditor/GamePreview.py"
+			],
+			[
+				"colorwi",
+				"lib/gii/qt/controls/ColorPickerWidget.py"
+			],
+			[
+				"procesd",
+				"lib/gii/qt/dialogs/ProcessDialog.py"
+			],
+			[
+				"waygraph",
+				"test/game/lib/mock/component/WaypointGraph.lua"
+			],
+			[
+				"waypointfinder",
+				"test/game/lib/mock/component/WaypointPathFinder.lua"
+			],
+			[
+				"scegralu",
+				"lib/mock/SceneGraphEditor/SceneGraphEditor.lua"
+			],
+			[
+				"scegraph",
+				"lib/mock/SceneGraphEditor/SceneGraphEditor.py"
+			],
+			[
+				"genertrew",
+				"lib/gii/qt/controls/GenericTreeWidget.py"
+			],
+			[
+				"waypointgra",
+				"packages/Mock/WaypointGraphEditor/WaypointGraphEditor.py"
+			],
+			[
+				"waypon",
+				"test/game/lib/mock/component/WaypointGraph.lua"
+			],
+			[
+				"sdlcommon",
+				"test/host/sdl-common/MOCKJoystickManger.cpp"
+			],
+			[
+				"curvi",
+				"lib/gii/qt/controls/GraphicsView/CurveView.py"
+			],
+			[
+				"host",
+				"test/host/osx/SDLHost.cpp"
+			],
+			[
+				"editorapp",
+				"lib/gii/core/EditorApp.py"
+			],
+			[
+				"game.lu",
+				"test/game/lib/mock/core/Game.lua"
+			],
+			[
+				"btcon",
+				"test/game/lib/mock/component/BTController.lua"
+			],
+			[
+				"searchv",
+				"lib/gii/SearchView/SearchView.py"
+			],
+			[
+				"pyqqo",
+				"lib/3rdparty/common/pyqode/qt/QtCore.py"
+			],
+			[
+				"inputl",
+				"test/game/lib/mock/component/InputListener.lua"
+			],
+			[
+				"host.cpp",
+				"test/host/osx/SDLHost.cpp"
+			],
+			[
+				"network",
+				"test/host/extension/MOCKNetworkRPC.cpp"
+			],
+			[
+				"mock",
+				"test/host/extension/MOCKNetworkPeer.cpp"
+			],
+			[
+				"broadc",
+				"test/host/extension/MOCKNetworkBroadcast.cpp"
+			],
+			[
+				"mddhe",
+				"test/host/extension/MDDHelper.cpp"
+			],
+			[
+				"moairam",
+				"test/host/extension/MOAIRandom.cpp"
+			],
+			[
+				"extension",
+				"test/host/extension/extensionClasses.cpp"
+			],
+			[
+				"cpp",
+				"template/host/ios-release/Classes/ParticlePresets.cpp"
+			],
+			[
+				"mocklua",
+				"template/game/lib/mock/core/keymaps.lua"
+			],
+			[
+				"toolman",
+				"lib/gii/qt/controls/ToolWindowManager/ToolWindowManager.py"
+			],
+			[
+				"game.j",
+				"test/env/config/game_config.json"
+			],
+			[
+				"moaedca",
+				"lib/gii/moai/MOAIEditCanvas.py"
+			],
+			[
+				"glwi",
+				"lib/gii/qt/controls/GLWidget.py"
+			],
+			[
+				"curview",
+				"lib/gii/qt/controls/GraphicsView/CurveView.py"
+			],
+			[
 				"colorpi",
 				"lib/gii/qt/controls/ColorPicker.py"
 			],
@@ -1972,10 +2712,6 @@
 			[
 				"qtsu",
 				"lib/gii/qt/QtSupport.py"
-			],
-			[
-				"edita",
-				"lib/gii/core/EditorApp.py"
 			],
 			[
 				"progr",
@@ -2086,10 +2822,6 @@
 				"data/theme/dark.qss"
 			],
 			[
-				"moairu",
-				"lib/gii/moai/MOAIRuntime.py"
-			],
-			[
 				"rn",
 				"data/lua/runtime.lua"
 			],
@@ -2160,282 +2892,6 @@
 			[
 				"moaied",
 				"lib/gii/moai/MOAIEditCanvas.py"
-			],
-			[
-				"game",
-				"test/game/lib/mock/core/Game.lua"
-			],
-			[
-				"rencon",
-				"data/lua/renderContext.lua"
-			],
-			[
-				"render",
-				"data/lua/renderContext.lua"
-			],
-			[
-				"edic",
-				"test/env/lib/mock/editor/MOCKEditCanvas.lua"
-			],
-			[
-				"scenee",
-				"test/env/lib/mock/asset/SceneAsset.py"
-			],
-			[
-				"testen",
-				"test/game/script/TestEntity.lua"
-			],
-			[
-				"gamepre",
-				"lib/gii/SceneEditor/GamePreview.py"
-			],
-			[
-				"previ",
-				"lib/gii/SceneEditor/GamePreview.py"
-			],
-			[
-				"glwi",
-				"lib/gii/qt/controls/GLWidget.py"
-			],
-			[
-				"editca",
-				"lib/gii/moai/MOAIEditCanvas.py"
-			],
-			[
-				"signa",
-				"lib/gii/core/globalSignals.py"
-			],
-			[
-				"intro",
-				"lib/gii/SceneEditor/Introspector.py"
-			],
-			[
-				"deck2d.py",
-				"test/env/packages/-DeckEditor/Deck2DEditor.py"
-			],
-			[
-				"intros",
-				"lib/gii/SceneEditor/Introspector.py"
-			],
-			[
-				"propg",
-				"lib/gii/qt/controls/PropertyGrid.py"
-			],
-			[
-				"moaed",
-				"lib/gii/moai/MOAIEditCanvas.py"
-			],
-			[
-				"tesen",
-				"test/game/script/TestEntity.lua"
-			],
-			[
-				"sce",
-				"test/env/packages/SceneView/SceneView.lua"
-			],
-			[
-				"scv",
-				"packages/ScriptView/ScriptView.py"
-			],
-			[
-				"scedi",
-				"lib/gii/SceneEditor/SceneEditor.py"
-			],
-			[
-				"ren",
-				"data/lua/renderContext.lua"
-			],
-			[
-				"camera",
-				"test/game/lib/mock/component/Camera.lua"
-			],
-			[
-				"cenvi",
-				"test/env/packages/SceneView/SceneView.lua"
-			],
-			[
-				"gamepr",
-				"lib/gii/SceneEditor/GamePreview.py"
-			],
-			[
-				"gamev",
-				"lib/gii/moai/MOAIGameView.py"
-			],
-			[
-				"gamevi",
-				"lib/gii/moai/MOAIGameView.py"
-			],
-			[
-				"scened",
-				"lib/gii/SceneEditor/SceneEditor.py"
-			],
-			[
-				"test.lua",
-				"test/env/packages/-EditCanvsTest/test.lua"
-			],
-			[
-				"moaru",
-				"lib/gii/moai/MOAIRuntime.py"
-			],
-			[
-				"ggamev",
-				"lib/gii/moai/MOAIGameView.py"
-			],
-			[
-				"canvas",
-				"lib/gii/moai/MOAICanvasBase.py"
-			],
-			[
-				"moaiedit",
-				"lib/gii/moai/MOAIEditCanvas.py"
-			],
-			[
-				"test.",
-				"test/env/packages/-EditCanvsTest/test.lua"
-			],
-			[
-				"moaiedic",
-				"lib/gii/moai/MOAIEditCanvas.py"
-			],
-			[
-				"mocked",
-				"test/env/lib/mock/editor/MOCKEditCanvas.lua"
-			],
-			[
-				"texturepre",
-				"test/env/packages/TexturePreview/TexturePreview2.lua"
-			],
-			[
-				"editcanva",
-				"lib/gii/moai/MOAIEditCanvas.py"
-			],
-			[
-				"mockedi",
-				"test/env/lib/editor/MOCKEditCanvas.py"
-			],
-			[
-				"inputs",
-				"test/game/lib/mock/component/InputScript.lua"
-			],
-			[
-				"texturep",
-				"test/env/packages/TexturePreview/TexturePreview2.py"
-			],
-			[
-				"inputm",
-				"test/game/lib/mock/core/InputManager.lua"
-			],
-			[
-				"intsc",
-				"test/game/lib/mock/component/InputScript.lua"
-			],
-			[
-				"textureprev",
-				"test/env/packages/TexturePreview/TexturePreview.lua"
-			],
-			[
-				"asset",
-				"lib/gii/core/asset.py"
-			],
-			[
-				"dekc2de",
-				"test/env/packages/DeckEditor/Deck2DEditor.lua"
-			],
-			[
-				".deck",
-				"test/game/asset/test.deck2d"
-			],
-			[
-				"common",
-				"test/game/lib/mock/asset/Common.lua"
-			],
-			[
-				"assetl",
-				"test/game/lib/mock/core/AssetLibrary.lua"
-			],
-			[
-				"aurora",
-				"test/game/lib/mock/component/AuroraSprite.lua"
-			],
-			[
-				"qte",
-				"lib/gii/qt/QtEditorModule.py"
-			],
-			[
-				"scenegl",
-				"test/env/packages/SceneGraphBrowser/SceneGraphBrowser.lua"
-			],
-			[
-				"sceneg",
-				"test/env/packages/SceneGraphBrowser/SceneGraphBrowser.lua"
-			],
-			[
-				"editor",
-				"lib/gii/core/EditorApp.py"
-			],
-			[
-				"deck2",
-				"test/env/packages/DeckEditor/Deck2DEditor.py"
-			],
-			[
-				"core/",
-				"lib/gii/core/__init__.py"
-			],
-			[
-				"scenedi",
-				"lib/gii/SceneEditor/SceneEditor.py"
-			],
-			[
-				"test.lu",
-				"test/env/packages/-EditCanvsTest/test.lua"
-			],
-			[
-				"cla",
-				"test/game/lib/mock/core/Class.lua"
-			],
-			[
-				"scen.lu",
-				"test/game/lib/mock/core/Scene.lua"
-			],
-			[
-				"scene",
-				"lib/gii/SceneEditor/SceneEditor.py"
-			],
-			[
-				"scengr",
-				"test/env/packages/SceneGraphBrowser/SceneGraphBrowser.lua"
-			],
-			[
-				"star",
-				"start"
-			],
-			[
-				"camer",
-				"test/game/lib/mock/component/Camera.lua"
-			],
-			[
-				"mains",
-				"test/game/asset/scenes/main.scene"
-			],
-			[
-				"main.s",
-				"test/game/asset/scenes/main.scene"
-			],
-			[
-				"scene.lua",
-				"test/game/lib/mock/asset/Scene.lua"
-			],
-			[
-				"compon",
-				"test/game/lib/mock/core/Component.lua"
-			],
-			[
-				"entiy",
-				"test/game/lib/mock/core/Entity.lua"
-			],
-			[
-				"teste",
-				"test/game/script/TestEntity.lua"
 			]
 		],
 		"width": 0.0
