@@ -8,7 +8,7 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QMessageBox
 
 import threading
-
+import time
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -17,46 +17,69 @@ def _getModulePath( path ):
 
 DialogForm,BaseClass = uic.loadUiType( _getModulePath('ExternRun.ui') )
 
+
+##----------------------------------------------------------------##
+def _formatSeconds( seconds ):
+	m, s = divmod(seconds, 60)
+	h, m = divmod(m, 60)
+	return "%d:%02d:%02d" % (h, m, s)
+
 ##----------------------------------------------------------------##
 _currentExternRunDialog = None
 
 class ExternRunDialog( QtGui.QDialog ):
-	def __init__( self, targetName ):
+	def __init__( self, targetName, **kwargs ):
 		global _currentExternRunDialog
-		super( ExternRunDialog, self ).__init__()
+		super( ExternRunDialog, self ).__init__( **kwargs )
 		_currentExternRunDialog = self
 		self.ui = DialogForm()
 		self.ui.setupUi( self )
 		self.targetName = targetName
 		self.playerThread = ExternRunThread( self.targetName )
-		
+		self.finished = False
 		self.timer = QtCore.QTimer( self )
 		self.timer.setInterval( 50 )
 		self.timer.timeout.connect( self.onTimerTick )
 		self.timer.start()
+
+		self.startTime = time.time()
 
 		self.ui.buttonTerminate.clicked.connect( self.onButtonTerminate )
 
 		self.setWindowModality( Qt.ApplicationModal )
 		self.show()
 
+		signals.emit( 'external_player.start', targetName )
 		self.playerThread.start()
 
+
+	def setMessage( self, msg ):
+		self.ui.labelMessage.setText( msg )
+
 	def onTimerTick( self ):
+		elapsed = time.time() - self.startTime
+		self.ui.labelElapsed.setText( 'Elapsed: ' + _formatSeconds( elapsed ) )
 		if self.playerThread.isAlive(): return
 		self.timer.stop()
 		self.onFinish()
 
 	def onFinish( self ):
+		self.ui.buttonTerminate.setText( 'OK' )
+		self.finished = True
 		self.setWindowModality( Qt.NonModal )
+		self.setMessage( 'Finished' )
+		signals.emit( 'external_player.stop' )
+
 		if self.ui.checkAutoClose.isChecked():
 			self.hide()
 			self.close()
 
 	def onButtonTerminate( self ):
-		RunHost.terminate()
-		self.ui.buttonTerminate.setEnabled( False )
-		pass
+		if self.finished:
+			self.close()
+		else:
+			RunHost.terminate()
+			self.ui.buttonTerminate.setEnabled( False )
 
 	def closeEvent( self ,ev ):
 		_currentExternRunDialog = None
@@ -75,11 +98,17 @@ class ExternRunThread( threading.Thread ):
 
 
 ##----------------------------------------------------------------##
-def runScene( scnPath ):
+def runScene( scnPath, **kwargs ):
 	app.getProject().save()
-	dialog = ExternRunDialog( 'main_preview_scene' )
+	parentWindow = kwargs.get( 'parent_window', None )
+	dialog = ExternRunDialog( 'main_preview_scene', parent = parentWindow )
+	dialog.setMessage( 'Running current scene' )
+	dialog.setWindowTitle( 'Running current scene' )
 
-def runGame():
+def runGame( **kwargs ):
 	app.getProject().save()
-	dialog = ExternRunDialog( 'main' )
+	parentWindow = kwargs.get( 'parent_window', None )
+	dialog = ExternRunDialog( 'main', parent = parentWindow )
+	dialog.setMessage( 'Running game' )
+	dialog.setWindowTitle( 'Running game' )
 

@@ -436,19 +436,26 @@ class MOAIEditCanvas( MOAIEditCanvasBase ):
 		self.makeCurrent()
 		self.delegate.onMouseLeave()
 
+	def clearModifierKeyState( self ): #workaround for canvas focus loss without give keyrelease event
+		self.makeCurrent()
+		self.delegate.onKeyUp( 'lshift' )
+		self.delegate.onKeyUp( 'lctrl'  )
+		self.delegate.onKeyUp( 'lalt'   )
+		self.delegate.onKeyUp( 'meta'   )
+
 	def keyPressEvent(self, event):
 		if event.isAutoRepeat(): return
-		if self.keyGrabbingCount == 0:
-			self.grabKeyboard()
-		self.keyGrabbingCount += 1
+		# if self.keyGrabbingCount == 0:
+		# 	self.grabKeyboard()
+		# self.keyGrabbingCount += 1
 		key=event.key()
 		self.makeCurrent()
 		self.delegate.onKeyDown(convertKeyCode(key))
 
 	def keyReleaseEvent(self, event):
-		self.keyGrabbingCount -= 1
-		if self.keyGrabbingCount == 0:
-			self.releaseKeyboard()
+		# self.keyGrabbingCount -= 1
+		# if self.keyGrabbingCount == 0:
+		# 	self.releaseKeyboard()
 		key=event.key()
 		self.makeCurrent()
 		self.delegate.onKeyUp(convertKeyCode(key))

@@ -94,6 +94,8 @@ class SceneView( SceneEditorModule ):
 		signals.connect( 'preview.pause',  self.onPreviewStop   )
 		signals.connect( 'preview.stop',   self.onPreviewStop   )
 
+		signals.connect( 'external_player.start', self.onExternRun )
+
 		# self.addShortcut( 'main', 'Q', self.changeEditTool, 'selection' )
 		# self.addShortcut( 'main', 'W', self.changeEditTool, 'translation' )
 		# self.addShortcut( 'main', 'E', self.changeEditTool, 'rotation' )
@@ -243,6 +245,9 @@ class SceneView( SceneEditorModule ):
 		self.previewing = False
 		self.toolbar.setStyleSheet('QToolBar{ border-bottom: none }')
 		self.previewUpdateTimer.stop()
+
+	def onExternRun( self, reason ):
+		self.canvas.clearModifierKeyState()
 
 	def onAnimatorStart( self ):
 		self.toolbar.setStyleSheet('QToolBar{ border-bottom: 1px solid rgb(255, 0, 120); }')

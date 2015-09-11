@@ -19,7 +19,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QLabel" name="labelTitle">
+        <widget class="QLabel" name="labelMessage">
          <property name="text">
           <string>Task Title</string>
          </property>

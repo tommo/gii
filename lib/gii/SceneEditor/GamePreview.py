@@ -258,7 +258,7 @@ class GamePreview( SceneEditorModule ):
 	
 	def runGameExternal( self ):
 		#TODO: use a modal window to indicate external host state
-		ExternRun.runGame()
+		ExternRun.runGame( parent_window = self.getMainWindow() )
 
 
 	def runSceneExternal( self ):
@@ -266,7 +266,7 @@ class GamePreview( SceneEditorModule ):
 		scnEditor = self.getModule( 'scenegraph_editor' )
 		if scnEditor and scnEditor.activeSceneNode:
 			path = scnEditor.activeSceneNode.getNodePath()
-			ExternRun.runScene( path )
+			ExternRun.runScene( path, parent_window = self.getMainWindow() )
 
 	def pausePreview( self ):
 		if self.paused: return
