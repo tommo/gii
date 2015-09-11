@@ -2,18 +2,16 @@ from os.path import basename, splitext
 import math
 import StringIO
 from PIL import Image
-from psd_tools import PSDImage, Group, Layer
-from psd_tools.constants import ImageResourceID
-from psd_tools.utils import read_fmt, read_unicode_string, read_pascal_string
-from atlas2 import AtlasGenerator, Img
 import copy
-
 import logging
 import json
-
 import re
 
+from psd_tools import PSDImage, Group, Layer
+from atlas2 import AtlasGenerator, Img
+
 from NormalMapHelper import makeNormalMap
+from MetaTag import parseMetaTag
 
 def clamp( x, a, b ):
 	return max( a, min( b, x ) )
@@ -38,121 +36,6 @@ def trySaveJSON( data, path, dataName = None, **option ):
 		logging.warn( 'failed to save %s: %s' % ( dataName or 'JSON', path ) )
 		logging.exception( e )
 		return False
-
-
-##----------------------------------------------------------------##
-def read_psd_string ( f ):
-	l, = read_fmt("I", f)
-	if l==0: l = 4;
-	return f.read( l )
-
-def read_psd_obj( f, vt = None ):
-	if not vt: vt = f.read( 4 )
-	if vt == 'long':
-		v, = read_fmt('l', f)
-		return v
-
-	elif vt == 'bool':
-		result, = read_fmt('b', f)
-		return result != 0
-
-	elif vt == 'doub':
-		result, = read_fmt('d', f)
-		return result
-
-	elif vt == 'VlLs':
-		count, = read_fmt('I', f)
-		result = []
-		for i in range( 0, count ):
-			v = read_psd_obj( f )
-			result.append (v)
-		return result
-
-	elif vt == 'Objc':
-		nameLen, = read_fmt("I", f)
-		f.seek( nameLen * 2, 1 ) #skip name
-		classId = read_psd_string( f )
-		count, = read_fmt("I", f)
-		result = {}
-		for i in range( 0, count ):
-			key = read_psd_string( f )
-			value = read_psd_obj( f )
-			result[key] = value
-		return result
-
-	elif vt == 'enum':
-		typeId = read_psd_string( f )
-		value = read_psd_string( f )
-		return ( typeId, value )
-
-	elif vt == 'UntF':
-		unit = f.read(4)
-		value, = read_fmt('d', f)
-		return (value, unit)
-	
-	elif vt == 'TEXT':
-		size, = read_fmt("I", f)
-		text = f.read( size * 2 ) #TODO: unicode?
-		return text
-
-	else:
-		raise Exception('not implement: %s ' % vt )
-
-def get_mlst( layer ):
-	for md in layer._tagged_blocks['shmd']:
-		if md.key == 'mlst':
-			f = StringIO.StringIO( md.data )
-			f.read(4)
-			desc = read_psd_obj( f, 'Objc' )
-			return desc
-	return None
-
-def get_mani( image ):
-	for r in image.decoded_data.image_resource_blocks:
-		if r.resource_id == 4000:
-			f = StringIO.StringIO( r.data )		
-			pluginName = f.read(4)
-			assert pluginName == 'mani', pluginName 
-			f.seek( 24, 1 )
-			desc = read_psd_obj( f, 'Objc' )
-			return desc
-	return None
-
-def extractLeafLayers( image ):
-	def extractGroup( layers, result, parent ):
-		for l in layers:
-			if isinstance( l, Group ):
-				extractGroup( l.layers, result, l )
-			else:
-				l.parent = parent
-				result.append( l )
-	result = []
-	extractGroup( image.layers, result, None )
-	return result
-
-def extract_layer_channel_data( l ):
-	decoded_data = l._psd.decoded_data
-	layer_index = l._index
-	layers = decoded_data.layer_and_mask_data.layers
-	layer = layers.layer_records[layer_index]
-	channels_data = layers.channel_image_data[layer_index]
-	return ( channels_data, layer.width(), layer.height() )
-
-def compare_layer_image( l1, l2 ):
-	d1 = extract_layer_channel_data(l1)
-	d2 = extract_layer_channel_data(l2)
-	#compare size
-	if d1[1] != d2[1]: return False
-	if d1[2] != d2[2]: return False
-	#compare channel raw data
-	chs1 = d1[0]
-	chs2 = d2[0]
-	if len(chs1) != len(chs2): return False
-	for i in range(0, len(chs1)):
-		ch1 = chs1[i]
-		ch2 = chs2[i]
-		if ch1.data != ch2.data: return False
-	return True
 
 ##----------------------------------------------------------------##
 class DeckPartImg(Img): #	
@@ -213,7 +96,7 @@ class DeckPart( object ):
 
 ##----------------------------------------------------------------##
 class DeckFactory():
-	def build( self, project, psdLayerGroup, name, profix ):
+	def build( self, project, psdLayerGroup, name, profix, meta ):
 		return None
 
 ##----------------------------------------------------------------##
@@ -239,8 +122,11 @@ class DeckPartMQuad( DeckPart ):
 		self.globalMeshes = []		
 		#parameter
 		layerName = self.rawName
+		metaInfo = parseMetaTag( layerName )
+		print( metaInfo )
 		self.options[ 'floor' ] = (':FLOOR' in layerName)
-		self.options[ 'wall' ]  = (':WALL' in layerName)
+		self.options[ 'wall'  ] = (':WALL' in layerName)
+		self.options[ 'fold'  ] = ('')
 
 	def getImage( self, imgSet ):
 		if imgSet == 'normal':
@@ -379,8 +265,6 @@ class DeckPartMQuad( DeckPart ):
 	def getGlobalMeshes( self ):
 		return self.globalMeshes
 
-
-
 ##----------------------------------------------------------------##
 class DeckItemMQuad(DeckItem):
 	def __init__( self ):
@@ -423,7 +307,7 @@ class DeckItemMQuad(DeckItem):
 
 ##----------------------------------------------------------------##
 class DeckFactoryMQuad( DeckFactory ):
-	def build( self, project, psdLayerGroup, name, profix ):
+	def build( self, project, psdLayerGroup, name, profix, meta ):
 		if not profix.startswith( 'MQUAD' ): return
 		group = psdLayerGroup
 		deck = DeckItemMQuad()
@@ -715,14 +599,15 @@ class TileGroup(object):
 ##----------------------------------------------------------------##
 class DeckItemTileset(DeckItem):
 	def __init__( self ):
-		self.groups = []
+		self.groups      = []
 		self.wallTiles   = {}
 		self.groundTiles = {}
-		self.tiles = []
-		self.rawName = ''
-		self.name = None
-		self.tileWidth = 0
-		self.tileDepth = 0
+		self.tiles       = []
+		self.rawName     = ''
+		self.name        = None
+
+		self.tileWidth  = 0
+		self.tileDepth  = 0
 		self.tileHeight = 0
 
 	def addGroup( self, group ):
@@ -776,8 +661,8 @@ class DeckItemTileset(DeckItem):
 
 ##----------------------------------------------------------------##
 class DeckFactoryTileset( DeckFactory ):
-	def build( self, project, psdLayerGroup, name, profix ):
-		if not profix.startswith( 'TILESET' ): return
+	def build( self, project, psdLayerGroup, name, profix, meta ):
+		if not meta['tags'].has_key( 'TILESET' ): return
 		tileset = DeckItemTileset()
 		tileset.rawName = psdLayerGroup.name.encode( 'utf-8' )
 		tileset.name    = name
@@ -839,8 +724,9 @@ class DeckPackProject(object):
 				mo = re.match( r'\s*([\w\-\._]+)(\s*:\s*(.*))?\s*', layerName )
 				if mo:
 					name, profix = mo.group(1), mo.group(3) or self.defaultDeckProfix
+					meta = parseMetaTag( layerName )
 					for factory in self.deckFactories:
-						deck = factory.build( self, layer, name, profix )
+						deck = factory.build( self, layer, name, profix, meta )
 						if deck: self.decks.append( deck )
 
 	def save( self, path, prefix, size ):
@@ -866,7 +752,7 @@ class DeckPackProject(object):
 			'atlas' : {
 				'w' : atlas.w,
 				'h' : atlas.h
-			},
+ 			},
 			'decks' : deckDatas
 		}
 		saveJSON( output, path + prefix + '.json' )
@@ -891,12 +777,6 @@ class DeckPackProject(object):
 
 if __name__ == '__main__':
 	proj = DeckPackProject()
-	proj.loadPSD( 'test.decks.psd' )
-	proj.save( './', 'testpack', ( 2048, 2048 ) )
-	# proj.save( 'chicago' )
-
-	# proj.loadPSD( 'tmpnumber.psd' )
-	# proj.save( 'numbers' )
-
-	# proj.loadPSD( 'number2.psd' )
-	# proj.save( 'numbers2' )
+	proj.loadPSD( 'test/test.decks.psd' )
+	proj.save( 'test/', 'testpack', ( 2048, 2048 ) )
+	

@@ -1,6 +1,11 @@
 import os.path
 from gii.core import AssetManager, AssetLibrary, getProjectPath, app, jsonHelper
-from helper.psd2deckpack import DeckPackProject
+# from helper.psd2deckpack import DeckPackProject
+
+from helper.PSDDeckPackProject import PSDDeckPackProject
+import helper.PSDDeckMTileset
+import helper.PSDDeckMQuad
+
 import json
 
 def _getModulePath( path ):
@@ -28,7 +33,7 @@ class DeckPSDAssetManager(AssetManager):
 		output = node.getCacheFile( 'export', is_dir = True )
 		node.setObjectFile( 'export', output )
 
-		proj = DeckPackProject()
+		proj = PSDDeckPackProject()
 		proj.loadPSD( node.getAbsFilePath() )
 		proj.save( output+'/', 'decks', (2048,2048) )
 

@@ -37,7 +37,6 @@ class MSpriteAssetManager(AssetManager):
 			fullPath = filePath + '/' + fileName
 			name, ext = os.path.splitext( fileName )
 			if ext == '.psd':
-				print fullPath
 				proj.loadPSD( fullPath )
 
 		#TODO: let texture library handle atlas

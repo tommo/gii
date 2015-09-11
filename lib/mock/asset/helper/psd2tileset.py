@@ -37,19 +37,6 @@ def trySaveJSON( data, path, dataName = None, **option ):
 		logging.exception( e )
 		return False
 
-
-def extractLeafLayers( image ):
-	def extractGroup( layers, result, parent ):
-		for l in layers:
-			if isinstance( l, Group ):
-				extractGroup( l.layers, result, l )
-			else:
-				l.parent = parent
-				result.append( l )
-	result = []
-	extractGroup( image.layers, result, None )
-	return result
-
 ##----------------------------------------------------------------##
 class LayerImg(Img): #	
 	def getImage(self, imgSet = None ):

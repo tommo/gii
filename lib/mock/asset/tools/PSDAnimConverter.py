@@ -310,7 +310,7 @@ class AnimProject(object):
 		bx0 ,	by0 ,	bx1 ,	by1 = image.bbox
 		mani = get_mani( image )
 		# print(mani)
-		layers = extractLeafLayers ( image )
+		layers = extract_leaf_layers ( image )
 		layerModifyDict = {}
 		outputLayers = []
 		#1. extract meta data:  X/Y axis,  output bound box

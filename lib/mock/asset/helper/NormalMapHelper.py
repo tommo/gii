@@ -49,25 +49,6 @@ def calcNormal( pix, x, y, w, h ):
 	
 	return fx, fy + h0 / 2.0, 1
 
-# img = Image.open( 'tile.tileset.png' )
-# w,h = img.size
-# imgOut = Image.new( 'RGBA', ( w,h ), (0,0,0,0 ) )
-# pixIn = img.load()
-# pixOut= imgOut.load()
-# for y in range( h ):
-# 	for x in range( w ):
-# 		mx,my,mz = calcNormal( pixIn, x, y, w, h )
-# 		l = math.sqrt( mx*mx + my*my + mz*mz )
-# 		if l > 0:
-# 			nx,ny,nz = mx/l, my/l, mz/l
-# 		else:
-# 			nx,ny,nz = 0,0,0
-# 		pixOut[ x, y ] = ( 
-# 			int(nx*255), int(ny*255), int(nz*255), 255 
-# 			)
-# imgOut.save( 'output.png', 'PNG' )
-
-
 PI4 = -math.pi/4
 PI2 = -math.pi/2
 CosPI2 = math.cos( PI2 )
@@ -105,6 +86,10 @@ def makeNormalMap( img, option ):
 	pixIn = img.load()
 	pixOut= imgOut.load()
 	guideTopFace = option.get( 'guide-top-face', 0 )
+	concave      = option.get( 'concave', False )
+	normalGuideImage   = option.get( 'normal_guide', None )
+	normalGuideOpacity = option.get( 'normal_guide_opacity', 0.7 )
+
 	for y in range( h ):
 		for x in range( w ):
 			mx,my,mz = calcNormal( pixIn, x, y, w, h )
@@ -127,12 +112,16 @@ def makeNormalMap( img, option ):
 			nx= ( nx/255.0 - 0.5 ) * 2.0
 			ny= ( ny/255.0 - 0.5 ) * 2.0
 			nz= ( nz/255.0 - 0.5 ) * 2.0
-			if y < guideTopFace:
-				ny, nz = rotateTop( ny, nz )
-			elif guideTopFace > 0 and y < guideTopFace + 1:
-				ny, nz = rotateTopHalf( ny, nz )
-			# else:
-			# 	ny, nz = rotateFront( ny, nz )
+			if concave:
+				if y > guideTopFace:
+					ny, nz = rotateTop( ny, nz )
+				elif y > guideTopFace - 1:
+					ny, nz = rotateTopHalf( ny, nz )
+			else:
+				if y < guideTopFace:
+					ny, nz = rotateTop( ny, nz )
+				elif guideTopFace > 0 and y < guideTopFace + 1:
+					ny, nz = rotateTopHalf( ny, nz )
 			nx = nx/2.0 + 0.5
 			ny = ny/2.0 + 0.5
 			nz = nz/2.0 + 0.5
@@ -145,3 +134,20 @@ def makeNormalMap( img, option ):
 
 if __name__ == '__main__':
 	import psd2deckpack
+	# img = Image.open( 'tile.tileset.png' )
+	# w,h = img.size
+	# imgOut = Image.new( 'RGBA', ( w,h ), (0,0,0,0 ) )
+	# pixIn = img.load()
+	# pixOut= imgOut.load()
+	# for y in range( h ):
+	# 	for x in range( w ):
+	# 		mx,my,mz = calcNormal( pixIn, x, y, w, h )
+	# 		l = math.sqrt( mx*mx + my*my + mz*mz )
+	# 		if l > 0:
+	# 			nx,ny,nz = mx/l, my/l, mz/l
+	# 		else:
+	# 			nx,ny,nz = 0,0,0
+	# 		pixOut[ x, y ] = ( 
+	# 			int(nx*255), int(ny*255), int(nz*255), 255 
+	# 			)
+	# imgOut.save( 'output.png', 'PNG' )
