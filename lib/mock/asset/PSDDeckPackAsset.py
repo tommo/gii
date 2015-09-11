@@ -27,7 +27,6 @@ class DeckPSDAssetManager(AssetManager):
 
 	def importAsset(self, node, reload = False ):
 		if node.isVirtual(): return
-		print '?????'
 		node.assetType = 'deck_pack'
 		node.groupType = 'package'
 		
