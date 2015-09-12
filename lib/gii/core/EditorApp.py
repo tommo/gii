@@ -92,6 +92,7 @@ class EditorApp(object):
 		if not self.initialized: self.init()
 		sleepTime = kwargs.get( 'sleep', 0.003 )
 		hasError = False
+		
 		try:
 			EditorModuleManager.get().startAllModules()
 			self.getProject().getAssetLibrary().scanProject()

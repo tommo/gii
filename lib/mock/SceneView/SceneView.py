@@ -58,7 +58,7 @@ class SceneViewToolScale( SceneViewTool ):
 ##----------------------------------------------------------------##
 class SceneView( SceneEditorModule ):
 	name       = 'scene_view'
-	dependency = [ 'mock', 'scene_editor', 'scenegraph_editor', 'scene_tool_box' ]
+	dependency = [ 'mock', 'scene_editor', 'scenegraph_editor' ]
 
 	def onLoad( self ):
 		self.window = self.requestDocumentWindow(

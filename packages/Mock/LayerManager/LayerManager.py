@@ -42,7 +42,7 @@ class LayerManager( SceneEditorModule ):
 		return 'layer_manager'
 
 	def getDependency( self ):
-		return [ 'scene_editor' ]
+		return [ 'scene_editor', 'mock' ]
 
 	def onLoad( self ):
 		#UI

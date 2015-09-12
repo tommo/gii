@@ -48,7 +48,7 @@ class GlobalObjectManager( SceneEditorModule ):
 		return 'global_object_manager'
 
 	def getDependency( self ):
-		return [ 'scene_editor' ]
+		return [ 'scene_editor', 'mock' ]
 
 	def onLoad( self ):
 		#UI

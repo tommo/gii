@@ -17,6 +17,9 @@ class CoreModule( EditorModule ):
 	def getDependency( self ):
 		return []
 
+	def getBaseDependency( self ):
+		return []
+
 	def onStart( self ):
 		pass
 

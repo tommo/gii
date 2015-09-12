@@ -35,6 +35,9 @@ class QtSupport( QtEditorModule ):
 	def getDependency( self ):
 		return []
 
+	def getBaseDependency( self ):
+		return []
+
 	def setupStyle( self ):
 		# setup styles
 		# QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Windows'))

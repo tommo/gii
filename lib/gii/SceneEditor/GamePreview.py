@@ -36,7 +36,7 @@ class GamePreview( SceneEditorModule ):
 		return [ 'qt', 'moai', 'scene_editor' ]
 
 	def getRuntime(self):
-		return self.getManager().affirmModule('moai')
+		return self.affirmModule('moai')
 
 	def tryResizeContainer(self, w,h):
 		#TODO:client area
@@ -134,7 +134,6 @@ class GamePreview( SceneEditorModule ):
 		pass
 
 	def onAppReady( self ):
-		# self.updateView()
 		pass
 
 	def onStop( self ):

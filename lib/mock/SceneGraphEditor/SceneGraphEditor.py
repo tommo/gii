@@ -47,7 +47,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		return 'scenegraph_editor'
 
 	def getDependency( self ):
-		return [ 'scene_editor' ]
+		return [ 'scene_editor', 'mock' ]
 
 	def onLoad( self ):
 		#UI
@@ -252,6 +252,7 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		
 	def closeScene( self ):
+		if not self.activeSceneNode: return True
 		if self.sceneDirty:
 			res = requestConfirm( 'scene modified!', 'save scene before close?' )
 			if res == True:   #save

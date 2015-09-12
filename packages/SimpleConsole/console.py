@@ -46,9 +46,8 @@ class StdouCapture():
 				output+=line
 		
 class Console( SceneEditorModule ):
-	name = 'console'
+	name       = 'console'
 	dependency = 'debug_view'
-		
 	def write(self,text):
 		self.panel.appendText(text)		
 

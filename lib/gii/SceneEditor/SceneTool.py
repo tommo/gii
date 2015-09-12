@@ -71,7 +71,7 @@ class SceneToolButton( QtGui.QToolButton ):
 ##----------------------------------------------------------------##
 class SceneToolManager( EditorModule ):
 	name = 'scene_tool_manager'
-	dependency = [ 'scene_editor' ]
+	dependency = [ 'scene_editor', 'mock' ]
 
 	def __init__( self ):				
 		#

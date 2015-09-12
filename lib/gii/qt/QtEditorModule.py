@@ -22,6 +22,9 @@ class QtEditorModule( EditorModule ):
 		return None
 
 	def getDependency( self ):
+		return self._dependency
+
+	def getBaseDependency( self ):
 		return [ 'qt' ]
 
 	def getQtSupport( self ):

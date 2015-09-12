@@ -31,7 +31,7 @@ def getMockClassName( obj ):
 class MockRuntime( EditorModule ):
 	
 	def getDependency(self):
-		return ['moai']
+		return [ 'moai', 'game_preview', 'script_library' ]
 
 	def getName(self):
 		return 'mock'
@@ -79,6 +79,7 @@ class MockRuntime( EditorModule ):
 
 	def onAppReady( self ):
 		self.postInitMock()
+		# self.getModule( 'game_preview' ).updateView()
 
 	def postDeploy( self, context ):
 		configPath = context.getPath( 'game_config' )
