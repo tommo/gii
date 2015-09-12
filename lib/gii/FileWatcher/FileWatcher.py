@@ -56,7 +56,7 @@ class ModuleFileWatcher( EditorModule ):
 	def onStop( self ):
 		# print 'stop file watcher'
 		self.observer.stop()
-		self.stopAllWatches()
+		self.observer.join( 0.5 )
 		# print 'stopped file watcher'
 
 	def stopWatch(self, path):

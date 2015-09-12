@@ -1,6 +1,8 @@
 from psd_tools import PSDImage, Group, Layer
 from psd_tools_helper import extract_leaf_layers
 
+from PIL import Image
+
 from PSDDeckPackProject import *
 from NormalMapHelper import makeNormalMap
 from MetaTag import parseMetaTag
@@ -15,10 +17,21 @@ def getArray( l, idx, default = None ):
 	if v is None: return default
 	return v
 
+def alphaPasted( im, mark, position ):
+	if im.mode != 'RGBA':
+		im = im.convert('RGBA')
+	# create a transparent layer the size of the image and draw the
+	# watermark in that layer.
+	layer = Image.new('RGBA', im.size, (0,0,0,0))
+	layer.paste(mark, position)
+	# composite the watermark with the layer
+	return Image.composite( layer, im, layer )
+
 ##----------------------------------------------------------------##
 class MQuadDeckPart( DeckPart ):
-	def __init__( self, psdLayer ):
+	def __init__( self, parentItem, psdLayer ):
 		super( MQuadDeckPart, self ).__init__( psdLayer )
+		self.parentItem = parentItem
 		self.meshes = []
 		self.globalMeshes = []
 		layerName = psdLayer.name
@@ -94,10 +107,16 @@ class MQuadDeckPart( DeckPart ):
 		self.imgInfo = img
 
 		#build normal
+		px0, py0, px1, py1 = self.parentItem.aabb
+		offx = self.getLeft() - px0
+		offy = self.getTop()  - py0
 		tex = self.getTextureMap()
 		normalOption = {
-			'guide-top-face' : localGuideTopFace,
-			'concave'        : concave,
+			'guide-top-face'      : localGuideTopFace,
+			'concave'             : concave,
+			'height_guide'        : self.parentItem.heightGuideImage,
+			'height_guide_offset' : ( offx, offy ),
+			'height_guide_opacity': 1.0
 		}
 		self.imgNormal    = makeNormalMap( tex, normalOption )
 		self.guideTopFace = localGuideTopFace
@@ -221,6 +240,12 @@ class MQuadDeckPart( DeckPart ):
 	def getLeft( self ):
 		return self.x
 
+	def getRight( self ):
+		return self.x + self.w
+
+	def getTop( self ):
+		return self.y
+
 	def updateGlobalMeshOffset( self, globalLeft, globalBottom ):
 		offy = globalBottom - self.getBottom()
 		offx = globalLeft   - self.getLeft()
@@ -254,11 +279,17 @@ class MQuadDeckItem(DeckItem):
 		self.name = name
 		self.rawName = name
 		self.parts = []
+		self.heightGuides = []
+		self.heightGuideImage = None
 		for layer in partLayers:
 			layerName = layer.name.encode( 'utf-8' )
 			if layerName.startswith( '//' ): continue
-			if layerName.startswith( '@' ) : continue
-			part = MQuadDeckPart( layer )
+			if layerName.startswith( '@' ) :
+				if layerName.startswith( '@hmap' ):
+					#normal guide
+					self.heightGuides.append( layer )
+				continue
+			part = MQuadDeckPart( self, layer )
 			self.parts.append( part )
 
 	def getData( self ):
@@ -272,17 +303,43 @@ class MQuadDeckItem(DeckItem):
 		}
 
 	def onBuild( self, project ):
-		meshDatas = []
 		bottom = 0
+		right  = 0
+		top    = 0xffffffff #huge number
 		left   = 0xffffffff #huge number
 		for part in self.parts:
-			part.onBuild( project )
 			bottom = max( bottom, part.getBottom() )
-			left   = min( left, part.getLeft() )
+			left   = min( left,   part.getLeft()   )
+			right  = max( right,  part.getRight()  )
+			top    = min( top,    part.getTop()    )
+
+		self.aabb = ( left, top, right, bottom )
+		self.buildHeightGuide( left, top, right, bottom )
+		
+		for part in self.parts:
+			part.onBuild( project )
 
 		#move mesh
 		for part in self.parts:
 			part.updateGlobalMeshOffset( left, bottom )
+
+
+	def buildHeightGuide( self, x0, y0, x1, y1 ):
+		if not self.heightGuides: return
+		w, h = x1-x0, y1-y0
+		self.heightGuideImage = None
+		targetImage = Image.new( "RGBA", (w,h), (0,0,0,0) )
+		for layer in reversed(self.heightGuides):
+			lx0, ly0, lx1, ly1 = layer.bbox
+			if lx0 == lx1 and ly0 == ly1: continue
+			image = layer.as_PIL()
+			px, py = lx0 - x0, ly0 - y0
+			tmpLayer = Image.new( "RGBA", (w,h), (0,0,0,0) )
+			tmpLayer.paste( image, (px, py) )
+			targetImage = Image.blend( targetImage, tmpLayer, layer.opacity/255.0 )
+
+		self.heightGuideImage = targetImage
+
 
 	def postBuild( self, project ):
 		for part in self.parts:

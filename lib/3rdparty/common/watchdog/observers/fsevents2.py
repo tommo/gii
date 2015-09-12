@@ -76,6 +76,8 @@ from FSEvents import (
     kFSEventStreamEventFlagItemIsSymlink,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class FSEventsQueue(Thread):
     """ Low level FSEvents client. """
@@ -86,8 +88,8 @@ class FSEventsQueue(Thread):
         self._run_loop = None
 
         if isinstance(path, bytes):
-            self._path = path.decode('utf-8')
-        self._path = unicodedata.normalize('NFC', self._path)
+            path = path.decode('utf-8')
+        self._path = unicodedata.normalize('NFC', path)
 
         context = None
         latency = 1.0
@@ -123,9 +125,9 @@ class FSEventsQueue(Thread):
     def _callback(self, streamRef, clientCallBackInfo, numEvents, eventPaths, eventFlags, eventIDs):
         events = [NativeEvent(path, flags, _id) for path, flags, _id in
                   zip(eventPaths, eventFlags, eventIDs)]
-        logging.debug("FSEvents callback. Got %d events:" % numEvents)
+        logger.debug("FSEvents callback. Got %d events:" % numEvents)
         for e in events:
-            logging.debug(e)
+            logger.debug(e)
         self._queue.put(events)
 
     def read_events(self):

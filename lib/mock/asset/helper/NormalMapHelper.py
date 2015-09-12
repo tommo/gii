@@ -8,12 +8,23 @@ def calcHeight( r,g,b, a ):
 	# return h1 * h1 * 0.2
 	return h1 * 0.3
 
-def calcNormal( pix, x, y, w, h ):
+def calcPixHeight( pix, x,y, heightPix, heightOffset, heightOpacity ):
+	r,g,b,a = pix[ x, y ]
+	if a < 5: return 0
+	h = (r/255.0 + g/255.0  + b/255.0) / 3.0
+	if not heightPix is None:
+		ox, oy = heightOffset
+		r,g,b,a = heightPix[ x + ox, y + oy ]
+		k = heightOpacity * a/255.0
+		h = ( h * ( 1.0 - k ) +  r/255.0 * k )
+	return h 
+
+def calcNormal( pix, x, y, w, h, heightPix = None, heightOffset = None, heightOpacity = 0.7 ):
 	r,g,b,a = pix[ x, y ]
 	if a == 0:
 		return 0, 0, 0
 	
-	h0 = calcHeight( r,g,b,a )
+	h0 = calcPixHeight( pix, x,y, heightPix, heightOffset, heightOpacity )
 	if h0 < 0.03:
 		return 0, 0, 0.5
 
@@ -22,32 +33,35 @@ def calcNormal( pix, x, y, w, h ):
 	fx, fy = 0, 0
 	for r in range( 1, 2 ):
 		if x > r:
-			r1,g1,b1,a1 = pix[ x - r, y ]
-			h1 = calcHeight( r1, g1, b1, a1 )
-			fx = fx + ( h1 - h0 ) * 1
+			xx, yy = x - r, y
+			h1 = calcPixHeight( pix, xx, yy, heightPix, heightOffset, heightOpacity )
+			# r1,g1,b1,a1 = pix[ xx, yy ]
+			# h1 = calcHeight( r1, g1, b1, a1 )
+			fx = fx + ( h1 - h0 ) * 1.0/r
 
 		if x < w - r:
-			r1,g1,b1,a1 = pix[ x + r, y ]
-			h1 = calcHeight( r1, g1, b1, a1 )
-			fx = fx + ( h1 - h0 ) * -1
+			xx, yy = x + r, y
+			h1 = calcPixHeight( pix, xx, yy, heightPix, heightOffset, heightOpacity )
+			# r1,g1,b1,a1 = pix[ xx, yy ]
+			# h1 = calcHeight( r1, g1, b1, a1 )
+			fx = fx + ( h1 - h0 ) * -1.0/r
 
 		if y > r:
-			r1,g1,b1,a1 = pix[ x, y  - r ]
-			h1 = calcHeight( r1, g1, b1, a1 )
-			fy = fy + ( h1 - h0 ) * -.5
+			xx, yy = x, y  - r
+			h1 = calcPixHeight( pix, xx, yy, heightPix, heightOffset, heightOpacity )
+			# r1,g1,b1,a1 = pix[ xx, yy ]
+			# h1 = calcHeight( r1, g1, b1, a1 )
+			fy = fy + ( h1 - h0 ) * -.5/r
 	
-	for r in range( 1, 2 ):
+	for r in range( 1, 1 ):
 		if y < h - r:
-			r1,g1,b1,a1 = pix[ x, y + r ]
-			h1 = calcHeight( r1, g1, b1, a1 )
+			xx, yy = x, y + r
+			h1 = calcPixHeight( pix, xx, yy, heightPix, heightOffset, heightOpacity )
+			# r1,g1,b1,a1 = pix[ xx, yy ]
+			# h1 = calcHeight( r1, g1, b1, a1 )
 			fy = fy + ( h1 - h0 ) * ( 1 - r/3 ) * 0.5
 
-	# if y < h - 2:
-	# 	r1,g1,b1,a1 = pix[ x, y + 2 ]
-	# 	h1 = calcHeight( r1, g1, b1, a1 )
-	# 	fy = fy + ( h1 - h0 ) * 1
-	
-	return fx, fy + h0 / 2.0, 1
+	return fx * 0.5, ( fy + h0 * 0.5 ), 1
 
 PI4 = -math.pi/4
 PI2 = -math.pi/2
@@ -87,12 +101,24 @@ def makeNormalMap( img, option ):
 	pixOut= imgOut.load()
 	guideTopFace = option.get( 'guide-top-face', 0 )
 	concave      = option.get( 'concave', False )
-	normalGuideImage   = option.get( 'normal_guide', None )
-	normalGuideOpacity = option.get( 'normal_guide_opacity', 0.7 )
+	heightGuideImage   = option.get( 'height_guide', None )
+	heightGuideOffset  = option.get( 'height_guide_offset', None )
+	heightGuideOpacity = option.get( 'height_guide_opacity', 0.7 )
+
+	if heightGuideImage :
+		pixHeight = heightGuideImage.load()
+	else:
+		pixHeight = None
 
 	for y in range( h ):
 		for x in range( w ):
-			mx,my,mz = calcNormal( pixIn, x, y, w, h )
+			mx,my,mz = calcNormal( 
+				pixIn, x, y, w, h,
+				pixHeight,
+				heightGuideOffset,
+				heightGuideOpacity
+			 )
+			# if my > 1.0: my = 1.0
 			l = math.sqrt( mx*mx + my*my + mz*mz )
 			if l > 0:
 				nx,ny,nz = mx/l, my/l, mz/l
@@ -133,7 +159,7 @@ def makeNormalMap( img, option ):
 
 
 if __name__ == '__main__':
-	import psd2deckpack
+	import PSDDeckPackTest
 	# img = Image.open( 'tile.tileset.png' )
 	# w,h = img.size
 	# imgOut = Image.new( 'RGBA', ( w,h ), (0,0,0,0 ) )
