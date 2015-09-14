@@ -180,6 +180,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'proto.unlink',      self.onPrefabUnlink    )
 		signals.connect( 'proto.relink',      self.onPrefabRelink    )
 
+		signals.connect( 'app.ready', self.postAppReady )
+
 
 		signals.connect( 'component.added',   self.onComponentAdded   )
 		signals.connect( 'component.removed', self.onComponentRemoved )
@@ -194,7 +196,10 @@ class SceneGraphEditor( SceneEditorModule ):
 	def onStart( self ):
 		self.refreshCreatorMenu()
 
-	def onAppReady( self ):
+	def postAppReady( self ):
+		self.openPreviousScene()
+
+	def openPreviousScene( self ):
 		previousScene = self.getConfig( 'previous_scene', None )
 		if previousScene:
 			node = self.getAssetLibrary().getAssetNode( previousScene )

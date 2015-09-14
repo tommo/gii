@@ -37,23 +37,33 @@ class SceneViewTool( SceneTool ):
 
 ##----------------------------------------------------------------##
 class SceneViewToolSelection( SceneViewTool ):
-	name = 'scene_view_selection'
-	tool = 'selection'
+	name     = 'scene_view_selection'
+	shortcut = 'Q'
+	tool     = 'selection'
 
 ##----------------------------------------------------------------##
 class SceneViewToolTranslation( SceneViewTool ):
-	name = 'scene_view_translation'
-	tool = 'translation'
+	name     = 'scene_view_translation'
+	shortcut = 'W'
+	tool     = 'translation'
 
 ##----------------------------------------------------------------##
 class SceneViewToolRotation( SceneViewTool ):
-	name = 'scene_view_rotation'
-	tool = 'rotation'
+	name     = 'scene_view_rotation'
+	shortcut = 'E'
+	tool     = 'rotation'
 
 ##----------------------------------------------------------------##
 class SceneViewToolScale( SceneViewTool ):
-	name = 'scene_view_scale'
-	tool = 'scale'
+	name     = 'scene_view_scale'
+	shortcut = 'R'
+	tool     = 'scale'
+
+# ##----------------------------------------------------------------##
+# class SceneViewToolFocusSelection( SceneViewTool ):
+# 	name     = 'scene_view_scale'
+# 	shortcut = 'R'
+# 	tool     = 'scale'
 
 ##----------------------------------------------------------------##
 class SceneView( SceneEditorModule ):
@@ -96,14 +106,11 @@ class SceneView( SceneEditorModule ):
 
 		signals.connect( 'external_player.start', self.onExternRun )
 
-		# self.addShortcut( 'main', 'Q', self.changeEditTool, 'selection' )
-		# self.addShortcut( 'main', 'W', self.changeEditTool, 'translation' )
-		# self.addShortcut( 'main', 'E', self.changeEditTool, 'rotation' )
-		# self.addShortcut( 'main', 'R', self.changeEditTool, 'scale' )
-		# self.addShortcut( 'main', 'F', self.focusSelection )
-
+		##----------------------------------------------------------------##
+		self.addShortcut( 'main', 'F', self.focusSelection )
 		self.addShortcut( 'main', '/', self.toggleDebugLines )
 
+		##----------------------------------------------------------------##
 		self.mainToolBar = self.addToolBar( 'scene_view_tools', 
 			self.getMainWindow().requestToolBar( 'view_tools' )
 			)

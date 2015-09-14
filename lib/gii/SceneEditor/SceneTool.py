@@ -15,8 +15,13 @@ class SceneToolMeta( type ):
 	def __init__( cls, name, bases, dict ):
 		super( SceneToolMeta, cls ).__init__( name, bases, dict )
 		fullname = dict.get( 'name', None )
+		shortcut = dict.get( 'shortcut', None )
 		if not fullname: return
-		app.getModule( 'scene_tool_manager' ).registerSceneTool( fullname, cls )
+		app.getModule( 'scene_tool_manager' ).registerSceneTool( 
+			fullname,
+			cls,
+			shortcut = shortcut
+		 )
 
 ##----------------------------------------------------------------##
 class SceneTool():
@@ -83,18 +88,29 @@ class SceneToolManager( EditorModule ):
 		pass
 
 	def onStart( self ):
-		pass
+		#register shortcuts
+		for toolId, entry in self.toolRegistry.items():
+			clas, options = entry
+			shortcut = options.get( 'shortcut', None )
+			if shortcut:
+				self.addSceneToolShortcut( toolId, shortcut, context = 'main' )
 
-	def registerSceneTool( self, toolId, clas ):
+	def registerSceneTool( self, toolId, clas, **options ):
 		if self.toolRegistry.has_key( toolId ):
 			logging.warning( 'duplicated scene tool id %s' % toolId )
 			return
-		self.toolRegistry[ toolId ] = clas
+		self.toolRegistry[ toolId ] = ( clas, options )
+
+	def addSceneToolShortcut( self, toolId, shortcut, **kwargs ):
+		def shortcutAction():
+			return self.changeTool( toolId )
+		context = kwargs.get( 'context', 'main' )
+		self.getModule( 'scene_editor' ).addShortcut( context, shortcut, shortcutAction )
 
 	def changeTool( self, toolId, **context ):
 		if self.currentToolId == toolId : return
 
-		toolClas = self.toolRegistry.get( toolId, None )
+		toolClas, options = self.toolRegistry.get( toolId, None )
 		if not toolClas:
 			logging.warning( 'No scene tool found: %s' % toolId )
 			return

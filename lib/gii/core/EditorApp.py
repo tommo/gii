@@ -102,8 +102,8 @@ class EditorApp(object):
 
 			self.saveConfig()
 
-			signals.emit('app.ready')
 			EditorModuleManager.get().tellAllModulesAppReady()
+			signals.emit('app.ready')
 
 			#main loop
 			while self.running:
