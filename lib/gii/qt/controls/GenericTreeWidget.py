@@ -23,6 +23,8 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.defaultItemDelegate  = self.getDefaultItemDelegate()
 
 		self.refreshing = False
+		self.rebuilding = False
+		
 		self.option = option
 		headerInfo = self.getHeaderInfo()
 		headerItem = QtGui.QTreeWidgetItem()
@@ -106,6 +108,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.setUpdatesEnabled( True )
 
 	def rebuild( self ):
+		self.rebuilding = True
 		self.hide()
 		self.setUpdatesEnabled( False )
 		self.clear()
@@ -115,6 +118,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			self.loadTreeStates()
 		self.setUpdatesEnabled( True )
 		self.show()
+		self.rebuilding = False
 
 	def addNode( self, node, addChildren = True, **option ):
 		assert not node is None, 'attempt to insert null node '

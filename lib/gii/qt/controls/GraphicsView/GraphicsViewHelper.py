@@ -158,13 +158,9 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		if _USE_GL and kwargs.get( 'use_gl', True ):
 			self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
 			viewport = kwargs.get( 'gl_viewport', makeGLWidget() )
-			# viewport = kwargs.get( 'gl_viewport', makeNewGLWidget() )
 			self.glViewport = viewport
 			self.setViewport( viewport )
-			# self.setCacheMode( QtGui.QGraphicsView.CacheBackground )
 		else:
-			# self.setViewportUpdateMode( QtGui.QGraphicsView.MinimalViewportUpdate )
-			# self.setViewportUpdateMode( QtGui.QGraphicsView.BoundingRectViewportUpdate )
 			self.setViewportUpdateMode( QtGui.QGraphicsView.SmartViewportUpdate )
 
 		self.setRenderHint( QtGui.QPainter.Antialiasing, False )

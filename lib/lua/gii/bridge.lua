@@ -136,6 +136,10 @@ function getApp()
 	return app
 end
 
+function getModule( id )
+	return app:getModule( id )
+end
+
 function findDataFile( name )
 	return app:findDataFile( name )
 end

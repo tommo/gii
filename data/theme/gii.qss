@@ -783,6 +783,11 @@ QTreeView:active,QTreeView:!active
 	selection-background-color:transparent;
 }
 
+QTreeView[filterd="true"], QListView:!active[filterd="true"]
+{
+	border:1px solid #baff00;
+}
+
 QTreeView::item:selected:!active,QListView::item:selected:!active
 {
 	background-color:#6d7284;

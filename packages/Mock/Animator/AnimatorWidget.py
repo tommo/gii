@@ -88,7 +88,10 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		pass
 
 	def loadTreeStates( self ):
-		pass
+		for node, item in self.nodeDict.items():
+			if not item: continue
+			expanded = not node._folded
+			item.setExpanded( expanded )
 
 	def createItem( self, node ):
 		return AnimatorTrackTreeItem()
@@ -133,10 +136,12 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		self.setColumnWidth ( 1, 25 )
 
 	def onItemExpanded( self, item ):
+		if self.rebuilding: return
 		node = item.node
 		self.parentView.onTrackFolded( node, False )
 
 	def onItemCollapsed( self, item ):
+		if self.rebuilding: return
 		node = item.node
 		self.parentView.onTrackFolded( node, True )
 
@@ -159,24 +164,34 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		if p == QtGui.QAbstractItemView.OnItem: #reparent
 			pos = 'on'
 		elif p == QtGui.QAbstractItemView.AboveItem:
-			return False
+			pos = 'above'
 		elif p == QtGui.QAbstractItemView.BelowItem:
-			return False
+			pos = 'below'
 		else:
 			pos = 'viewport'
+		
+		if pos == 'above' or pos =='below':
+			#TODO: reorder
+			ev.setDropAction( Qt.IgnoreAction )
+			return
 
 		target = self.itemAt( ev.pos() )
+		source = self.getSelection()
+
 		if pos == 'on':
-			# self.owner.doCommand( 'animator/reparent_track',  )
-			# self.module.doCommand( 'scene_editor/reparent_entity', target = target.node )
-			pass
-		elif pos == 'viewport':
-			# self.module.doCommand( 'scene_editor/reparent_entity', target = 'root' )
-			pass
+			targetTrack = target.node
+		else:
+			targetTrack = 'root'
 
-
-		super( GenericTreeWidget, self ).dropEvent( ev )
-
+		succ = self.owner.doCommand( 
+			'scene_editor/animator_reparent_track', 
+			source = source,
+			target = targetTrack
+		)
+		if not succ:
+			ev.setDropAction( Qt.IgnoreAction )
+		else:
+			ev.acceptProposedAction()
 
 
 ##----------------------------------------------------------------##
@@ -258,8 +273,8 @@ class AnimatorTimelineWidget( TimelineView ):
 
 	def getKeyParam( self, keyNode ):
 		resizable = keyNode.isResizable( keyNode )
-		length = resizable and keyNode.length or 0
-		return keyNode.getPos( keyNode ), length, resizable 
+		length    = resizable and keyNode.length or 0
+		return keyNode.getPos( keyNode ), length, resizable
 
 	def onSelectionChanged( self, selection ):
 		if selection:
@@ -442,6 +457,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 	def onTrackFolded( self, track, folded ):
 		self.timeline.updateTrackLayout()
 		self.timeline.clearSelection()
+		track._folded = folded
 
 	def onKeyChanged( self, key, pos, length ):
 		self.propertyEditor.refreshFor( key )

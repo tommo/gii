@@ -39,7 +39,7 @@ def _fixDuplicatedName( names, name, id = None ):
 
 ##----------------------------------------------------------------##
 class AnimatorView( SceneEditorModule ):
-	name = 'animator'
+	name = 'animator_view'
 	dependency = [ 'scene_editor', 'mock' ]
 
 	def onLoad( self ):
@@ -380,3 +380,8 @@ class AnimatorView( SceneEditorModule ):
 		if self.targetAnimator:
 			self.applyTime( self.previewTime )
 
+	def refreshTimeline( self ):
+		self.widget.rebuildTimeline()
+
+	def refreshAll( self ):
+		self.widget.rebuild()

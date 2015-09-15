@@ -34,8 +34,8 @@ _DEFAULT_BG = makeBrush( color = '#222' )
 ##styles:  ID                     Pen           Brush          Text
 makeStyle( 'black',              '#000000',    '#000000'              )
 makeStyle( 'default',            '#000000',    '#ff0ecf'              )
-makeStyle( 'key',                '#000000',    '#acbcff'              )
-makeStyle( 'key:hover',          '#dfecff',    '#acbcff'              )
+makeStyle( 'key',                '#000000',    '#4e8afc'              )
+makeStyle( 'key:hover',          '#55aeff',    '#345ead'              )
 makeStyle( 'key:selected',       '#dfecff',    '#a0ff00'              )
 makeStyle( 'key-span',           '#000',       '#303459'    ,'#c2c2c2' )
 makeStyle( 'key-span:selected',  '#ffffff',    '#303459'               )
@@ -289,7 +289,7 @@ class TimelinekeyItemspanItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		self.setItemState( 'normal' )
 
 	def updateShape( self ):
-		spanHeight = _TRACK_SIZE - 2
+		spanHeight = _TRACK_SIZE - 0
 		self.width = self.keyItem.timeToPos( self.keyItem.timeLength )
 		self.setRect( 0, (_TRACK_SIZE - spanHeight)/2 + 1, self.width, spanHeight )
 		self.leftHandle.setRect( - TimelinekeyItemspanItem._handleWidth/2, 0, 10, spanHeight )
@@ -341,7 +341,6 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		self.timeLength = 0
 		self.updatingPos = False
 		self.span = TimelinekeyItemspanItem( self )
-		self.span.hide()
 		self.track = track
 
 		self.selected = False

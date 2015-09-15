@@ -10,8 +10,8 @@ class TestKey():
 		global _keyid
 		_keyid += 1
 		self.name = 'key - %d' % _keyid
-		# self.length = random()*500/1000.0
-		self.length = 0.0
+		self.length = random()*500/1000.0
+		# self.length = 0.5
 		self.pos    = ( random()*1000 + 50 ) /1000.0
 		self.track  = track
 
