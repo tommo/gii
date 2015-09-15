@@ -233,3 +233,15 @@ function createSceneView( scene, env )
 	--fallback
 	return SceneView( env )
 end
+
+
+--------------------------------------------------------------------
+CLASS: CmdFocusSelection ( mock_edit.EditorCommandNoHistory )
+	:register( 'scene_editor/focus_selection' )
+
+function CmdFocusSelection:init( option )
+	local view = getCurrentSceneView()
+	if view then
+		view:focusSelection()
+	end
+end

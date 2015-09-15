@@ -1,4 +1,8 @@
+# -*- coding: utf-8 -*-
 from abc import ABCMeta, abstractmethod
+
+import colorama
+from colorama import Fore, Back, Style
 
 import logging
 import json
@@ -12,6 +16,12 @@ import globalSignals
 import jsonHelper
 
 from MainModulePath import getMainModulePath
+
+##----------------------------------------------------------------##
+def _getModulePath( path ):
+	import os.path
+	return os.path.dirname( __file__ ) + '/' + path
+
 
 ##----------------------------------------------------------------##
 class ToolBase(object):
@@ -79,36 +89,57 @@ def startTool( toolInfo ):
 		m.main( sys.argv[ 1: ] )
 
 ##----------------------------------------------------------------##
+def printGII():
+	ansPath = _getModulePath( 'gii.ans' )
+	fp = file( ansPath, 'r' )
+	txt = fp.read()
+	fp.close()
+	print txt
+
+def printGII2():
+	print Fore.RED + Style.BRIGHT +"""
+ -------------------------------------------------------------- 
+       _______  ___   ___                                       
+      |       ||   | |   |                                      
+      |    ___||   | |   |                                      
+      |   | __ |   | |   |                                      
+      |   ||  ||   | |   |                                      
+      |   |_| ||   | |   |       .............................. 
+      |_______||___| |___|        GII development environment   
+ -------------------------------------------------------------- """
+	print Style.RESET_ALL + ''
+
 def printHeader():
-	print '---------------------------'
-	print 'GII development environment'
-	print '---------------------------'
+	printGII2()
+	# print '---------------------------'
+	# print Fore.CYAN + Style.BRIGHT + 'GII development environment' + Fore.RESET + Style.RESET_ALL
+	# print '---------------------------'
 
 def printProjectInfo( info ):
 	if not info: return
-	print '  current project: ' + info.get('path')
+	print '  current project: ' + ( Fore.GREEN + info.get('path') + Fore.RESET )
 	print ''
-	print '    - NAME   : \t%s' % ( info.get('name', 'N/A') )
-	print '    - AUTHOR : \t%s' % ( info.get('author', 'N/A') )
-	print '    - VERSION: \t%s' % ( info.get('version', 'N/A') )
+	print '    - NAME   : \t%s' % ( Fore.GREEN + info.get('name', 'N/A') + Fore.RESET )
+	print '    - AUTHOR : \t%s' % ( Fore.GREEN + info.get('author', 'N/A') + Fore.RESET )
+	print '    - VERSION: \t%s' % ( Fore.GREEN + info.get('version', 'N/A') + Fore.RESET )
 	print ''
 
 def printToolInfo( info ):
-	output = '    %s \t %s' % ( info.get('name', '???') , info.get('help','') )
+	output = '    %s \t %s' % ( Fore.RED + info.get('name', '???') + Fore.RESET, info.get('help','') )
 	output = output.expandtabs( 16 )
 	print output
 
 def printAvailTools():	
-	print '  available tool(s):'
+	print Style.DIM+'  available tool(s):'
 	print ''
 	print '    + BUILTIN TOOLS'
-	print ''
+	print Style.RESET_ALL + ''
 	for info in _libTools:
 		printToolInfo( info )	
 	if _prjTools:
-		print ''
+		print Style.DIM + ''
 		print '    + PROJECT TOOLS'
-		print ''
+		print Style.RESET_ALL + ''
 		for info in _prjTools:
 			printToolInfo( info )	
 	print ''
@@ -125,6 +156,8 @@ def printMissingCommand( cmd ):
 	
 ##----------------------------------------------------------------##
 def startupTool( info ):	
+	colorama.init()
+
 	scanTools( info and info['path'] or None )
 	argv = sys.argv
 	if len( argv ) < 2:

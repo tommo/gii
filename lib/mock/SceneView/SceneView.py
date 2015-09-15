@@ -107,8 +107,9 @@ class SceneView( SceneEditorModule ):
 		signals.connect( 'external_player.start', self.onExternRun )
 
 		##----------------------------------------------------------------##
-		self.addShortcut( 'main', 'F', self.focusSelection )
-		self.addShortcut( 'main', '/', self.toggleDebugLines )
+		self.addShortcut( 'main', 'F',  'scene_editor/focus_selection' )
+		self.addShortcut( 'main', 'Delete', 'scene_editor/remove_entity' )
+		self.addShortcut( 'main', '/',  self.toggleDebugLines )
 
 		##----------------------------------------------------------------##
 		self.mainToolBar = self.addToolBar( 'scene_view_tools', 
@@ -270,9 +271,6 @@ class SceneView( SceneEditorModule ):
 	def forceUpdate( self ):
 		self.scheduleUpdate()
 		self.onUpdateTimer()
-
-	def focusSelection( self ):
-		self.canvas.safeCallMethod( 'view', 'focusSelection' )
 
 	def onTool( self, tool ):
 		name = tool.name
