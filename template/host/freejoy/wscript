@@ -14,7 +14,9 @@ def build( bld ):
 	buildTarget = bld.env.TARGET
 	if buildTarget == 'html5':
 		return
-		
+	
+	import sys		
+
 	if buildTarget == 'python':
 		binPath = bld.env.GII_BINARY_PATH
 		import os.path
@@ -49,7 +51,7 @@ def build( bld ):
 			install_path = output
 		)
 	else:
-		import sys
+		
 		if sys.platform == 'darwin':
 			source = [ 'freejoyWrapper.cpp', 'freejoy.macosx.c' ]
 		elif sys.platform == 'win32':

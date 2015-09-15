@@ -16,7 +16,7 @@ def build( bld ):
 		source   = 'ParticlePresets.cpp SDLHostMain.cpp SDLHost.cpp',
 		target   = 'moai',
 		name     = 'host-osx',
-		use      = 'modules MOAI FMOD extension LUAJIT freejoy',
+		use      = 'modules MOAI FMOD extension freejoy',
 
 		includes = '../extension',
 

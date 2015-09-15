@@ -1,9 +1,10 @@
 import os
 
 ##----------------------------------------------------------------##
-MOAI_LIB_DEFAULT  = '/Users/tommo/prj/moai/lib'
-MOAI_ROOT_DEFAULT = '/Users/tommo/dev/moai-dev'
-FMOD_ROOT         = '/Users/tommo/dev/fmod'
+MOAI_LIB_DEFAULT  = '/Users/feng_ye/Projects/moai-lib'
+MOAI_ROOT_DEFAULT = '/Users/feng_ye/Projects/moai-dev'
+FMOD_ROOT_DEFAULT = '/Users/feng_ye/DevLibrary/fmodex'
+FMOD_ROOT         = '/Users/feng_ye/DevLibrary/fmodex'
 
 ##----------------------------------------------------------------##
 #env path helpers
@@ -171,6 +172,11 @@ def find_moai_lib_root():
 	MOAI_ROOT =  os.environ.get( 'MOAI_ROOT', MOAI_ROOT_DEFAULT )
 	return MOAI_ROOT
 
+####----------------------------------------------------------------##
+def find_fmod_lib_root():
+	FMOD_ROOT =  os.environ.get( 'FMOD_ROOT', FMOD_ROOT_DEFAULT )
+	return FMOD_ROOT
+
 ##----------------------------------------------------------------##
 def find_moai_includes():
 	MOAI_ROOT =  find_moai_lib_root()
@@ -201,6 +207,8 @@ def find_moai_includes():
 
 ##----------------------------------------------------------------##
 def setup_fmod_env( ctx, target, config ):
+	FMOD_ROOT =  find_fmod_lib_root()
+
 	ctx.env.LIBPATH_FMOD   = [ FMOD_ROOT + '/%s/api/lib' % target ]
 	ctx.env.LIBPATH_FMOD  += [ FMOD_ROOT + '/%s/fmoddesignerapi/api/lib' % target ]
 	ctx.env.INCLUDES_FMOD  = [ FMOD_ROOT + '/%s/api/inc' % target ]

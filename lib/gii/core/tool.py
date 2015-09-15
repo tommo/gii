@@ -5,6 +5,7 @@ import colorama
 from colorama import Fore, Back, Style
 
 import logging
+import string
 import json
 import os
 import os.path
@@ -97,17 +98,25 @@ def printGII():
 	print txt
 
 def printGII2():
-	print Fore.RED + Style.BRIGHT +"""
- -------------------------------------------------------------- 
-       _______  ___   ___                                       
-      |       ||   | |   |                                      
-      |    ___||   | |   |                                      
-      |   | __ |   | |   |                                      
-      |   ||  ||   | |   |                                      
-      |   |_| ||   | |   |       .............................. 
-      |_______||___| |___|        GII development environment   
- -------------------------------------------------------------- """
+	output = Fore.YELLOW + Style.BRIGHT +"""
+ &b--&y     ,_______    &b------------------------------------------------------ 
+   &y    /        \\  &r     _______  ___   ___                               
+   &y   /        |  > &r   |       ||   | |   |                              
+   &y   |          ;  &r   |    ___||   | |   |                                
+   &y  /           |  &r   |   | __ |   | |   |                                
+   &y / <_         |  &r   |   ||  ||   | |   |                                
+   &y/             |  &r   |   |_| ||   | |   |                               
+   &y\\,,,,,,,,,,,,/  &r    |_______||___| |___|   &wGII development environment 
+ &b--&y      |   |      &b------------------------------------------------------
+ """
+
+	output = string.replace( output, '&y', Fore.YELLOW + Style.BRIGHT )
+	output = string.replace( output, '&r', Fore.BLUE + Style.NORMAL )
+	output = string.replace( output, '&w', Fore.BLUE + Style.NORMAL )
+	output = string.replace( output, '&b', Fore.BLUE + Style.NORMAL )
+	print output
 	print Style.RESET_ALL + ''
+
 
 def printHeader():
 	printGII2()
@@ -119,7 +128,7 @@ def printProjectInfo( info ):
 	if not info: return
 	print '  current project: ' + ( Fore.GREEN + info.get('path') + Fore.RESET )
 	print ''
-	print '    - NAME   : \t%s' % ( Fore.GREEN + info.get('name', 'N/A') + Fore.RESET )
+	print '    - NAME   : \\t%s' % ( Fore.GREEN + info.get('name', 'N/A') + Fore.RESET )
 	print '    - AUTHOR : \t%s' % ( Fore.GREEN + info.get('author', 'N/A') + Fore.RESET )
 	print '    - VERSION: \t%s' % ( Fore.GREEN + info.get('version', 'N/A') + Fore.RESET )
 	print ''
