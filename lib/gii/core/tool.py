@@ -126,11 +126,11 @@ def printHeader():
 
 def printProjectInfo( info ):
 	if not info: return
-	print '  current project: ' + ( Fore.GREEN + info.get('path') + Fore.RESET )
+	print '  current project: ' + ( Fore.CYAN + info.get('path') + Fore.RESET )
 	print ''
-	print '    - NAME   : \\t%s' % ( Fore.GREEN + info.get('name', 'N/A') + Fore.RESET )
-	print '    - AUTHOR : \t%s' % ( Fore.GREEN + info.get('author', 'N/A') + Fore.RESET )
-	print '    - VERSION: \t%s' % ( Fore.GREEN + info.get('version', 'N/A') + Fore.RESET )
+	print '    - NAME   : \t%s' % ( Fore.CYAN + info.get('name', 'N/A') + Fore.RESET )
+	print '    - AUTHOR : \t%s' % ( Fore.CYAN + info.get('author', 'N/A') + Fore.RESET )
+	print '    - VERSION: \t%s' % ( Fore.CYAN + info.get('version', 'N/A') + Fore.RESET )
 	print ''
 
 def printToolInfo( info ):
@@ -139,9 +139,9 @@ def printToolInfo( info ):
 	print output
 
 def printAvailTools():	
-	print Style.DIM+'  available tool(s):'
-	print ''
-	print '    + BUILTIN TOOLS'
+	print Fore.GREEN+'  available tool(s):'
+	print Style.DIM+''
+	print Fore.WHITE + '    + BUILTIN TOOLS'
 	print Style.RESET_ALL + ''
 	for info in _libTools:
 		printToolInfo( info )	
