@@ -391,6 +391,9 @@ class SceneGraphEditor( SceneEditorModule ):
 		for comName in sorted( registry.keys() ):
 			addComponentMenuItem( comName )
 
+	def needUpdate( self ):
+		return True
+		
 	def onUpdate( self ):
 		if self.refreshScheduled:
 			self.refreshScene()

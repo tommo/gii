@@ -39,7 +39,7 @@ def _fixDuplicatedName( names, name, id = None ):
 
 ##----------------------------------------------------------------##
 class AnimatorView( SceneEditorModule ):
-	name = 'animator_view'
+	name = 'animator'
 	dependency = [ 'scene_editor', 'mock' ]
 
 	def onLoad( self ):

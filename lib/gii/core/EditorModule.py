@@ -151,6 +151,9 @@ class EditorModule( ResHolder ):
 			depModule.stop()
 		self.onStop()
 
+	def needUpdate( self ):
+		return False
+		
 	def update( self ):
 		self.onUpdate()
 
@@ -206,6 +209,7 @@ class EditorModuleManager(object):
 		EditorModuleManager._singleton = self
 		self.modules     = {}
 		self.moduleQueue = []
+		self.updatingModuleQueue = []
 		self.sortedModuleQueue = []
 		self.moduleChanged = False
 
@@ -246,10 +250,10 @@ class EditorModuleManager(object):
 		for m in queue:
 			self.loadModule( m )
 
-
 	def updateAllModules( self ):
-		for m in self.affirmSortedModuleQueue():
-			if m.alive: m.update()
+		for m in self.getUpdatingModuleQueue():
+			if m.alive: 
+				m.update()
 
 	def startAllModules( self ):
 		logging.info( 'start all modules' )
@@ -308,6 +312,9 @@ class EditorModuleManager(object):
 			else:
 				return False
 
+	def getUpdatingModuleQueue( self ):
+		return self.updatingModuleQueue
+
 	def affirmSortedModuleQueue( self ):
 		if self.moduleChanged:
 			#clear moduleIndex
@@ -347,6 +354,14 @@ class EditorModuleManager(object):
 					raise Exception('Modules may have cyclic Dependency')
 
 			self.sortedModuleQueue = sorted( self.moduleQueue, cmp = _sortModuleIndex )
+			for m in self.sortedModuleQueue:
+				if m.needUpdate():
+					if not m.__class__.update == EditorModule.update:
+						print 'update overrided', m.getName()
+					if not m.__class__.onUpdate == EditorModule.onUpdate:
+						print 'update overrided', m.getName()
+					self.updatingModuleQueue.append( m )
+
 			self.moduleChanged = False
 			# for m in self.sortedModuleQueue:
 			# 	print m.getName(), m.moduleIndex, m.regIndex	

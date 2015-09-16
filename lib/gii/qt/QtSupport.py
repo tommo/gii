@@ -136,10 +136,14 @@ class QtSupport( QtEditorModule ):
 		self.running     = False
 		return True
 
-	def update( self ):
-		self.qtApp.processEvents( QEventLoop.AllEvents )
+	def needUpdate( self ):
+		return True
+
+	def onUpdate( self ):
+		if not self.qtApp.hasPendingEvents(): return
+		self.qtApp.processEvents( QEventLoop.AllEvents, 5 )
+		# self.qtApp.processEvents( QEventLoop.AllEvents )
 		# self.qtApp.processEvents( QEventLoop.WaitForMoreEvents )
-		# self.qtApp.processEvents( QEventLoop.AllEvents, 10 )
 	
 	def getMainWindow( self ):
 		return self.mainWindow

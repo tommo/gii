@@ -138,6 +138,9 @@ class GlobalObjectManager( SceneEditorModule ):
 				on_selection = lambda node: self.selectObject( node, True )
 				)
 
+	def needUpdate( self ):
+		return True
+		
 	def onUpdate( self ):
 		if self.refreshScheduled :
 			self.refreshScheduled = False

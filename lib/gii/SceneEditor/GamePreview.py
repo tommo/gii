@@ -212,7 +212,7 @@ class GamePreview( SceneEditorModule ):
 		runtime.changeRenderContext( 'game', self.viewWidth, self.viewHeight )
 		self.canvas.setInputDevice( runtime.getInputDevice('device') )
 		self.canvas.startRefreshTimer( self.activeFPS )
-		
+		self.getApp().setMinimalMainLoopBudget()
 		jhook = self.getModule( 'joystick_hook' )
 		if jhook:
 			jhook.refreshJoysticks()
@@ -244,6 +244,8 @@ class GamePreview( SceneEditorModule ):
 		self.canvas.setInputDevice( None )
 		jhook = self.getModule( 'joystick_hook' )
 		if jhook: jhook.setInputDevice( None )
+		
+		self.getApp().resetMainLoopBudget()
 
 		signals.emitNow( 'preview.stop' )
 		self.updateTimer.stop()
@@ -276,6 +278,8 @@ class GamePreview( SceneEditorModule ):
 		self.canvas.setInputDevice( None )
 		jhook = self.getModule( 'joystick_hook' )
 		if jhook: jhook.setInputDevice( None )
+
+		self.getApp().resetMainLoopBudget()
 
 		signals.emitNow( 'preview.pause' )
 		logging.info('pause game preview')

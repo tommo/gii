@@ -35,6 +35,8 @@ class EditorApp(object):
 		EditorApp._singleton = self
 		EditorModuleManager.get()._app = self
 
+		self.defaultMainloopBudget = 0.005
+
 		self.initialized   = False
 		self.projectLoaded = False
 		self.flagModified  = False
@@ -90,8 +92,8 @@ class EditorApp(object):
 
 	def run( self, **kwargs ):
 		if not self.initialized: self.init()
-		sleepTime = kwargs.get( 'sleep', 0.003 )
 		hasError = False
+		self.resetMainLoopBudget()
 		
 		try:
 			EditorModuleManager.get().startAllModules()
@@ -107,7 +109,7 @@ class EditorApp(object):
 
 			#main loop
 			while self.running:
-				self.doMainLoop( sleepTime )
+				self.doMainLoop()
 
 		except Exception, e:
 			#TODO: popup a alert window?
@@ -125,11 +127,21 @@ class EditorApp(object):
 		signals.dispatchAll()
 		EditorModuleManager.get().unloadAllModules()
 
-	def doMainLoop( self, sleepTime = 0.005 ):
-		budget = 0.01
+	def setMainLoopBudget( self, budget = 0.001 ):
+		self.mainLoopBudget = budget
+
+	def resetMainLoopBudget( self ):
+		return self.setMainLoopBudget( self.defaultMainloopBudget )
+
+	def setMinimalMainLoopBudget( self ):
+		return self.setMainLoopBudget( 0.001 )
+
+	def doMainLoop( self ):
+		budget = self.mainLoopBudget
 		t0 = time.time()
 		EditorModuleManager.get().updateAllModules()
-		
+		tx = time.time()
+		# print '%d' % ( (tx - t0) * 1000 )
 		if signals.dispatchAll():
 			rest = 0
 		else:
@@ -138,10 +150,7 @@ class EditorApp(object):
 			rest = budget - elapsed
 		if rest > 0:
 			time.sleep( rest )
-
-		# signals.dispatchAll()
-		# if sleepTime:
-		# 	time.sleep( sleepTime )
+		
 
 	def stop( self ):
 		self.running = False
