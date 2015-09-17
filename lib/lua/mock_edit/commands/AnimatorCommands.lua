@@ -199,3 +199,8 @@ end
 function CmdAnimatorCloneClipNode:getResult()
 	return self.cloned
 end
+
+---------------------------------------------------------------------
+CLASS: CmdAnimatorAddTrack ( mock_edit.EditorCommand )
+	:register( 'scene_editor/animator_add_track' )
+

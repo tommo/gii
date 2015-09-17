@@ -92,6 +92,7 @@ end
 
 function AnimatorView:setCurrentTrack( track )
 	self.currentTrack = track
+	print('setting track', self.currentTrack)
 end
 
 function AnimatorView:addClip()
@@ -214,13 +215,16 @@ end
 function AnimatorView:findParentTrackGroup()
 	if not self.targetClip then return nil end
 	local parent = self.currentTrack 
+	print( parent )
 	while parent do
+		print( parent.name )
 		if parent:isInstance( mock.AnimatorTrackGroup ) then
 			break
 		end
 		parent = parent.parent
 	end
 	parent = parent or self.targetClip:getRoot()
+
 	return parent
 end
 

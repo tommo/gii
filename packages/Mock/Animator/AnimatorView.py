@@ -161,6 +161,10 @@ class AnimatorView( SceneEditorModule ):
 		self.applyTime( 0, True )
 		if wasPreviewing:
 			self.startPreview()
+
+	def setCurrentTrack( self, track ):
+		self.currentTrack = track
+		self.delegate.callMethod( 'view', 'setCurrentTrack', track )
 	
 	def getClipList( self ):
 		if self.targetAnimatorData:

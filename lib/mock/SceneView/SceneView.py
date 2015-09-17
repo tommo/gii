@@ -108,8 +108,9 @@ class SceneView( SceneEditorModule ):
 
 		##----------------------------------------------------------------##
 		self.addShortcut( 'main', 'F',  'scene_editor/focus_selection' )
-		self.addShortcut( 'main', 'Delete', 'scene_editor/remove_entity' )
 		self.addShortcut( 'main', '/',  self.toggleDebugLines )
+
+		self.addShortcut( self.canvas, 'Delete', 'scene_editor/remove_entity' )
 
 		##----------------------------------------------------------------##
 		self.mainToolBar = self.addToolBar( 'scene_view_tools', 

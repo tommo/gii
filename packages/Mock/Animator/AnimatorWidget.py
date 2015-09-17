@@ -187,10 +187,10 @@ class AnimatorTrackTree( GenericTreeWidget ):
 			source = source,
 			target = targetTrack
 		)
+		
 		if not succ:
 			ev.setDropAction( Qt.IgnoreAction )
-		else:
-			ev.acceptProposedAction()
+		return super( AnimatorTrackTree, self ).dropEvent( ev )
 
 
 ##----------------------------------------------------------------##
@@ -499,6 +499,11 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 	def onTrackSelectioChanged( self ):
 		selection = self.treeTracks.getSelection()
 		self.timeline.setTrackSelection( selection )
+		if selection:
+			track = selection[0]
+		else:
+			track = None
+		self.owner.setCurrentTrack( track )
 		
 	def onClipSelectioChanged( self ):
 		selection = self.treeClips.getSelection()
