@@ -21,9 +21,9 @@ TimelineForm,BaseClass = uic.loadUiType( _getModulePath('timeline2.ui') )
 
 ##----------------------------------------------------------------##
 
-_RULER_SIZE = 23
-_TRACK_SIZE = 16
-_TRACK_MARGIN = 3
+_RULER_SIZE = 25
+_TRACK_SIZE = 17
+_TRACK_MARGIN = 2
 _PIXEL_PER_SECOND = 100.0 #basic scale
 _HEAD_OFFSET = 30
 

@@ -96,7 +96,16 @@ end
 
 function AnimatorView:addClip()
 	--FIXME: animator data path might get removed
+	--TODO: move this to eidtor command
 	local clip = self.targetAnimatorData:createClip( 'New Clip' )
+	self:markDataDirty()
+	return clip
+end
+
+function AnimatorView:addClipGroup()
+	--FIXME: animator data path might get removed
+	--TODO: move this to eidtor command
+	local clip = self.targetAnimatorData:createGroup( 'New Clip' )
 	self:markDataDirty()
 	return clip
 end

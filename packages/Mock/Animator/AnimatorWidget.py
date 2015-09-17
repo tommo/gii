@@ -54,7 +54,6 @@ class AnimatorTrackTreeItem(QtGui.QTreeWidgetItem):
 		return super( AnimatorTrackTreeItem, self ).__lt__( other )
 		# return node0.getName().lower()<node1.getName().lower()
 
-
 ##----------------------------------------------------------------##
 class AnimatorTrackTree( GenericTreeWidget ):
 	layoutChanged = pyqtSignal()
@@ -198,14 +197,14 @@ class AnimatorTrackTree( GenericTreeWidget ):
 class AnimatorClipListTree( GenericTreeWidget ):
 	def __init__( self, *args, **kwargs ):
 		super( AnimatorClipListTree, self ).__init__( *args, **kwargs )
-		self.setIndentation( 0 )
+		self.setIndentation( 10 )
 		self.option['editable'] = True
 
 	def getHeaderInfo( self ):
 		return [ ('Name',50) ]
 
 	def getRootNode( self ):
-		return self.owner
+		return self.owner.getRootClipGroup()
 
 	def saveTreeStates( self ):
 		pass
@@ -214,22 +213,25 @@ class AnimatorClipListTree( GenericTreeWidget ):
 		pass
 
 	def getNodeParent( self, node ): # reimplemnt for target node	
-		if node == self.owner:
-			return None
-		return self.owner
+		return node.parentGroup
 
 	def getNodeChildren( self, node ):
-		if node == self.owner:
-			return self.owner.getClipList()
+		if isMockInstance( node, 'AnimatorClipGroup' ):
+			children = node.getChildNodes( node )
+			return [ child for child in children.values() ]
 		else:
 			return []
 
 	def updateItemContent( self, item, node, **option ):
-		pal = self.palette()
-		defaultBrush = QColorF( .8,.8,.8 )
-		name = None
-		item.setText( 0, node.name )
-		item.setIcon( 0, getIcon('clip') )
+		if isMockInstance( node, 'AnimatorClipGroup' ):
+			# pal = self.palette()
+			# defaultBrush = QColorF( .8,.8,.8 )
+			# name = None
+			item.setText( 0, node.name )
+			item.setIcon( 0, getIcon('folder') )
+		else:
+			item.setText( 0, node.name )
+			item.setIcon( 0, getIcon('clip') )
 		
 	def onItemSelectionChanged(self):
 		self.parentView.onClipSelectioChanged()
@@ -504,7 +506,26 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 			clip = selection[0]
 		else:
 			clip = None
-		self.owner.setTargetClip( clip )
+		if isMockInstance( clip, 'AnimatorClip' ):
+			self.owner.setTargetClip( clip )
+		else:
+			#TODO
+			pass
 
 	def getTrackSelection( self ):
 		return self.timeline.getTrackSelection()
+
+	def getClipSelection( self ):
+		return self.treeClips.getSelection()
+
+	def getCurrentClipGroup( self ):
+		selection = self.treeClips.getSelection()
+		if selection:
+			node = selection[ 0 ]
+			while node:
+				if isMockInstance( node, 'AnimatorClipGroup' ):
+					return node
+				node = node.parentGroup
+		return None
+
+	

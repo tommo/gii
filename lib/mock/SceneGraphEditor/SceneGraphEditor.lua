@@ -771,6 +771,7 @@ end
 
 function CmdReparentEntity:undo()
 	--todo:
+	_error( 'NOT IMPLEMENTED' )
 end
 
 --------------------------------------------------------------------

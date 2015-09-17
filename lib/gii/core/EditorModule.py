@@ -68,7 +68,7 @@ class EditorModule( ResHolder ):
 		return self.getApp().findDataFile( filename )
 
 	def doCommand( self, fullname, *args, **kwargs ):
-		self._app.doCommand( fullname, *args, **kwargs )
+		return self._app.doCommand( fullname, *args, **kwargs )
 
 	def getProject( self ):
 		return Project.get()
@@ -356,10 +356,10 @@ class EditorModuleManager(object):
 			self.sortedModuleQueue = sorted( self.moduleQueue, cmp = _sortModuleIndex )
 			for m in self.sortedModuleQueue:
 				if m.needUpdate():
-					if not m.__class__.update == EditorModule.update:
-						print 'update overrided', m.getName()
-					if not m.__class__.onUpdate == EditorModule.onUpdate:
-						print 'update overrided', m.getName()
+					# if not m.__class__.update == EditorModule.update:
+						# print 'update overrided', m.getName()
+					# if not m.__class__.onUpdate == EditorModule.onUpdate:
+						# print 'onUpdate overrided', m.getName()
 					self.updatingModuleQueue.append( m )
 
 			self.moduleChanged = False

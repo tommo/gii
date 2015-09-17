@@ -64,6 +64,7 @@ class AnimatorView( SceneEditorModule ):
 
 		# addWidgetWithLaytut( toolbar,
 		# 	self.widget.containerEditTool )
+		self.addTool( 'animator_clips/add_clip_group',   label = 'add group',    icon = 'add_folder' )
 		self.addTool( 'animator_clips/add_clip',    label = 'add',    icon = 'add' )
 		self.addTool( 'animator_clips/remove_clip', label = 'remove', icon = 'remove' )
 		self.addTool( 'animator_clips/clone_clip', label = 'clone', icon = 'clone' )
@@ -81,7 +82,7 @@ class AnimatorView( SceneEditorModule ):
 		#SIGNALS
 		self.addTool( 'animator_track/add_track',    label = 'add',    icon = 'add' )
 		self.addTool( 'animator_track/remove_track', label = 'remove', icon = 'remove' )
-		self.addTool( 'animator_track/add_group',    label = 'add group',    icon = 'add_folder' )
+		self.addTool( 'animator_track/add_track_group',    label = 'add group',    icon = 'add_folder' )
 
 		#
 		signals.connect( 'selection.changed', self.onSceneSelectionChanged )
@@ -168,6 +169,10 @@ class AnimatorView( SceneEditorModule ):
 		else:
 			return []
 
+	def getRootClipGroup( self ):
+		if self.targetAnimatorData:
+			return self.targetAnimatorData.getRootGroup( self.targetAnimatorData )
+
 	def getTrackList( self ):
 		if self.targetClip:
 			trackList = self.targetClip.getTrackList( self.targetClip )
@@ -182,18 +187,50 @@ class AnimatorView( SceneEditorModule ):
 			return None
 
 	def addClip( self ):
-		if not self.targetAnimator: return
-		clip = self.delegate.callMethod( 'view', 'addClip' )
+		if not self.targetAnimatorData: return
+		targetGroup = self.widget.getCurrentClipGroup()
+		cmd = self.doCommand( 'scene_editor/animator_add_clip',
+			animator_data = self.targetAnimatorData,
+			parent_group  = targetGroup
+		  )
+		clip = cmd.getResult()
 		if clip:
 			self.widget.addClip( clip, True )
 		return clip
 
-	def cloneClip( self ):
+	def addClipGroup( self ):
+		if not self.targetAnimatorData: return
+		targetGroup = self.widget.getCurrentClipGroup()
+		cmd = self.doCommand( 'scene_editor/animator_add_clip_group',
+			animator_data = self.targetAnimatorData,
+			parent_group  = targetGroup
+		  )
+		group = cmd.getResult()
+		if group:
+			self.widget.addClip( group, True )
+		return group
+
+	def removeClipNode( self ):
+		for clip in self.widget.treeClips.getSelection():
+			if self.doCommand( 'scene_editor/animator_remove_clip_node',
+				animator_data = self.targetAnimatorData,
+				target_node   = clip
+			):
+				self.widget.removeClip( clip )
+
+	def cloneClipNode( self ):
 		if not self.targetClip: return
-		clip = self.delegate.callMethod( 'view', 'cloneClip', self.targetClip )
-		if clip:
-			self.widget.addClip( clip, True )
-		return clip
+		result = []
+		for clip in self.widget.treeClips.getSelection():
+			cmd = self.doCommand( 'scene_editor/animator_clone_clip_node',
+				animator_data = self.targetAnimatorData,
+				target_node   = clip
+			)
+			if cmd:
+				cloned = cmd.getResult()
+				self.widget.addClip( cloned )
+				result.append( cloned )
+		return cloned
 
 	def onObjectEdited( self, obj ):
 		if self.targetClip:
@@ -260,16 +297,17 @@ class AnimatorView( SceneEditorModule ):
 		name = tool.name
 		if name == 'add_clip':
 			self.addClip()			
-			
+
+		if name == 'add_clip_group':
+			self.addClipGroup()
+
 		elif name == 'remove_clip':
-			for clip in self.widget.treeClips.getSelection():
-				self.delegate.callMethod( 'view', 'removeClip', clip )
-				self.widget.removeClip( clip )
+			self.removeClipNode()			
 
 		if name == 'clone_clip':
-			self.cloneClip()			
+			self.cloneClipNode()			
 
-		elif name == 'add_group':
+		elif name == 'add_track_group':
 			group = self.delegate.callMethod( 'view', 'addTrackGroup' )
 			if group:
 				self.widget.addTrack( group, True )

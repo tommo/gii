@@ -141,7 +141,7 @@ class QtSupport( QtEditorModule ):
 
 	def onUpdate( self ):
 		if not self.qtApp.hasPendingEvents(): return
-		self.qtApp.processEvents( QEventLoop.AllEvents, 5 )
+		self.qtApp.processEvents( QEventLoop.AllEvents, 4 )
 		# self.qtApp.processEvents( QEventLoop.AllEvents )
 		# self.qtApp.processEvents( QEventLoop.WaitForMoreEvents )
 	

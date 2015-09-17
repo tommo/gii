@@ -412,6 +412,9 @@ def registerLuaEditorCommand( fullname, cmdCreator ):
 			cmd = self.luaCmd
 			return cmd.getResult( cmd )
 
+		def getLuaCommand( self ):
+			return self.luaCmd
+
 		def __repr__( self ):
 			cmd = self.luaCmd
 			return cmd.toString( cmd )
