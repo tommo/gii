@@ -328,15 +328,30 @@ QTreeWidget
 	border:0 solid green;
 }
 
-QTreeView::branch:closed:has-children:!has-siblings,QTreeView::branch:closed:has-children:has-siblings
-{
-	image:url(theme:treeview_arrow_right.png);
+QTreeView::branch:has-siblings:!adjoins-item {
+    border-image: url(theme:vline.png) 0;
 }
 
-QTreeView::branch:open:has-children:!has-siblings,QTreeView::branch:open:has-children:has-siblings
-{
-	image:url(theme:treeview_arrow_down.png);
+QTreeView::branch:has-siblings:adjoins-item {
+    border-image: url(theme:branch_more.png) 0;
 }
+
+QTreeView::branch:!has-children:!has-siblings:adjoins-item {
+    border-image: url(theme:branch_end.png) 0;
+}
+
+QTreeView::branch:has-children:!has-siblings:closed,
+QTreeView::branch:closed:has-children:has-siblings {
+        border-image: none;
+        image: url(theme:branch_closed.png);
+}
+
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings  {
+        border-image: none;
+        image: url(theme:branch_open.png);
+}
+
 
 QTreeView::indicator
 {
@@ -1111,6 +1126,26 @@ QSplitter#TimelineHeaderSplitter::handle{
 	background-color:#383838;
 	alternate-background-color:#404040;
 	font-size: 10px;
+}
+/*
+QTreeView#AnimatorTrackTree::branch {
+	border-bottom: 1px solid #292929;
+}*/
+
+QTreeView#AnimatorTrackTree::branch:has-siblings:!adjoins-item {
+    border-image: none;
+}
+
+QTreeView#AnimatorTrackTree::branch:has-siblings:adjoins-item {
+    border-image: none;
+}
+
+QTreeView#AnimatorTrackTree::branch:!has-children:!has-siblings:adjoins-item {
+    border-image: none;
+}
+
+QTreeView#AnimatorTrackTree::item{
+	border-bottom: 1px solid #292929;
 }
 
 #TimelineStatusLabel{
