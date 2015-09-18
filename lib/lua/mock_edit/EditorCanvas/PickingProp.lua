@@ -158,7 +158,8 @@ function PickingManager:getVisibleLayers()
 	return table.reversed( layers )
 end
 
-function PickingManager:findBestPickingTarget( e )
+function PickingManager:findBestPickingTarget( e, pickingChild )
+	local e0 = e
 	--proto
 	if e.__proto_history then
 		while e do
@@ -182,7 +183,9 @@ function PickingManager:findBestPickingTarget( e )
 		if p.FLAG_INTERNAL then e = p.parent end
 		p = p.parent
 	end
-
+	if pickingChild then
+		
+	end
 	return e
 end
 
@@ -214,7 +217,7 @@ function PickingManager:pickPoint( x, y, pad )
 			end
 			if ent and ent:isVisible() and ( not ent:isEditLocked() ) then --TODO: sorting & sub picking
 				-- print( ent:getName() )
-				ent = self:findBestPickingTarget( ent )
+				ent = self:findBestPickingTarget( ent, true )
 				return { ent }
 			end
 		end

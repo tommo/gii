@@ -61,12 +61,14 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		option['editable']  = True
 		option['drag_mode'] = 'internal'
 		option['multiple_selection'] = True
+		# option['alternating_color'] = True
 		super( AnimatorTrackTree, self ).__init__( *args, **option )
 		self.setItemDelegate( AnimatorTrackTreeItemDelegate() )
 		self.setVerticalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
 		self.adjustingRange = False
 		self.verticalScrollBar().rangeChanged.connect( self.onScrollRangeChanged )		
 		self.setIndentation( 10 )
+		self.setAttribute(Qt.WA_MacShowFocusRect, False)
 
 	def event( self, ev ):
 		if ev.type() == 26:
@@ -115,7 +117,7 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		name = None
 
 		if isMockInstance( node, 'AnimatorTrackGroup' ):
-			item.setText( 0, node.name )
+			item.setText( 0, node.toString( node ) )
 			item.setIcon( 0, getIcon('track_group') )
 		elif isMockInstance( node, 'AnimatorClipSubNode' ):
 			item.setText( 0, node.toString( node ) )

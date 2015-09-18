@@ -68,7 +68,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.itemSelectionChanged .connect( self.onItemSelectionChanged )
 		self.itemActivated        .connect( self.onItemActivated )
 		self.itemChanged          .connect( self._onItemChanged )
-		self.setIndentation( 15 )
+		self.setIndentation( 12 )
 
 		self.initRootItem()		
 

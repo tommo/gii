@@ -90,7 +90,7 @@ QDockWidget
 
 QDockWidget::title
 {
-  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
+	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
 	padding-top: 5px;
 	padding-left: 45px;
 	border: 1px solid #222;
@@ -101,8 +101,8 @@ QDockWidget::title
 QHeaderView::section
 {
 	color:#b9b9b9;
-  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
-  border-top:0 solid #000;
+	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
+	border-top:0 solid #000;
 	border-right:1 solid #000;
 	border-bottom:1px solid #222;
 	border-left:1px solid #444;
@@ -329,27 +329,27 @@ QTreeWidget
 }
 
 QTreeView::branch:has-siblings:!adjoins-item {
-    border-image: url(theme:vline.png) 0;
+		border-image: url(theme:vline.png) 0;
 }
 
 QTreeView::branch:has-siblings:adjoins-item {
-    border-image: url(theme:branch_more.png) 0;
+		border-image: url(theme:branch_more.png) 0;
 }
 
 QTreeView::branch:!has-children:!has-siblings:adjoins-item {
-    border-image: url(theme:branch_end.png) 0;
+		border-image: url(theme:branch_end.png) 0;
 }
 
 QTreeView::branch:has-children:!has-siblings:closed,
 QTreeView::branch:closed:has-children:has-siblings {
-        border-image: none;
-        image: url(theme:branch_closed.png);
+				border-image: none;
+				image: url(theme:branch_closed.png);
 }
 
 QTreeView::branch:open:has-children:!has-siblings,
 QTreeView::branch:open:has-children:has-siblings  {
-        border-image: none;
-        image: url(theme:branch_open.png);
+				border-image: none;
+				image: url(theme:branch_open.png);
 }
 
 
@@ -468,13 +468,13 @@ QTabBar::tab:selected
 
 QTabBar::tab:bottom:selected
 {
-  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #333, stop:1 #444);
+	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #333, stop:1 #444);
 	border-bottom: 2px solid #466dc6;
 }
 
 QTabBar::tab:top:selected
 {
-  background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
+	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
 	border-top: 2px solid #466dc6;
 }
 
@@ -761,18 +761,18 @@ QMainWindow,QScrollBar,QTableView
 
 QMainWindow::separator
 {
-    background-color: #222;
-    width:4px;
-    height:3px;
+		background-color: #222;
+		width:4px;
+		height:3px;
 }
 
 QMainWindow::separator:hover
 {
-    background-color: #383838;
-    color: white;
-    padding-left: 4px;
-    border: 1px solid #4b4b4b;
-    spacing: 3px; /* spacing between items in the tool bar */
+		background-color: #383838;
+		color: white;
+		padding-left: 4px;
+		border: 1px solid #4b4b4b;
+		spacing: 3px; /* spacing between items in the tool bar */
 }
 
 
@@ -1123,7 +1123,7 @@ QSplitter#TimelineHeaderSplitter::handle{
 }
 
 #AnimatorTrackTree{
-	background-color:#383838;
+	background-color:#222;
 	alternate-background-color:#404040;
 	font-size: 10px;
 }
@@ -1133,19 +1133,58 @@ QTreeView#AnimatorTrackTree::branch {
 }*/
 
 QTreeView#AnimatorTrackTree::branch:has-siblings:!adjoins-item {
-    border-image: none;
+	border-image: none;
 }
 
 QTreeView#AnimatorTrackTree::branch:has-siblings:adjoins-item {
-    border-image: none;
+		border-image: none;
+	background: #383838;
+	border-top: 1px solid #444;
+	border-bottom: 1px solid #222;
 }
 
 QTreeView#AnimatorTrackTree::branch:!has-children:!has-siblings:adjoins-item {
-    border-image: none;
+		border-image: none;
+	background: #383838;
+	border-top: 1px solid #444;
+	border-bottom: 1px solid #222;
+}
+
+QTreeView#AnimatorTrackTree::branch:has-children:!has-siblings:closed,
+QTreeView#AnimatorTrackTree::branch:closed:has-children:has-siblings {
+	border-image: none;
+	image: url(theme:branch_closed.png);
+	background: #383838;
+	border-top: 1px solid #444;
+	border-bottom: 1px solid #222;
+}
+
+QTreeView#AnimatorTrackTree::branch:open:has-children:!has-siblings,
+QTreeView#AnimatorTrackTree::branch:open:has-children:has-siblings  {
+	border-image: none;
+	image: url(theme:branch_open.png);
+	background: #383838;
+	border-top: 1px solid #444;
+	border-bottom: 1px solid #222;			
 }
 
 QTreeView#AnimatorTrackTree::item{
-	border-bottom: 1px solid #292929;
+	border-top: 1px solid #444;
+	border-bottom: 1px solid #222;
+	background: #383838;
+}
+
+
+QTreeView#AnimatorTrackTree::item:selected:!active
+{
+	background-color:#383b51;
+	color: #fff;
+}
+
+QTreeView#AnimatorTrackTree::item:selected:active
+{
+	background-color:#383b51;
+	color: #fff;
 }
 
 #TimelineStatusLabel{

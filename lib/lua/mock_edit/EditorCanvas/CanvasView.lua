@@ -121,7 +121,6 @@ function CanvasView:pickRect( x0, y0, x1, y1, pad )
 	return self.pickingManager:pickRect( x0, y0, x1, y1, pad )
 end
 
-
 function CanvasView:pickAndSelect( x, y, pad )
 	local picked = self:pick( x, y, pad )
 	gii.changeSelection( 'scene', unpack( picked ) )

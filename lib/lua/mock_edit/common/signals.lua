@@ -1,9 +1,9 @@
 module 'mock_edit'
 
-registerSignals{
+registerGlobalSignals{
 	'asset.modified'
 }
 
-registerSignals{
+registerGlobalSignals{
 	'scene.entity_event'
 }

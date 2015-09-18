@@ -1,6 +1,6 @@
 module 'mock_edit'
 
-registerSignals{	
+registerGlobalSignals{	
 }
 
 local function unloadRegistredObject( registry, m, info )

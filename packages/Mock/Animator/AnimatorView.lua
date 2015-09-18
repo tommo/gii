@@ -92,41 +92,7 @@ end
 
 function AnimatorView:setCurrentTrack( track )
 	self.currentTrack = track
-	print('setting track', self.currentTrack)
 end
-
-function AnimatorView:addClip()
-	--FIXME: animator data path might get removed
-	--TODO: move this to eidtor command
-	local clip = self.targetAnimatorData:createClip( 'New Clip' )
-	self:markDataDirty()
-	return clip
-end
-
-function AnimatorView:addClipGroup()
-	--FIXME: animator data path might get removed
-	--TODO: move this to eidtor command
-	local clip = self.targetAnimatorData:createGroup( 'New Clip' )
-	self:markDataDirty()
-	return clip
-end
-
-function AnimatorView:removeClip( clip )
-	self.targetAnimatorData:removeClip( clip )
-	self:markDataDirty()
-	return true
-end
-
-function AnimatorView:cloneClip( clip )
-	local serializedData = mock.serialize( clip )
-	local clip1 = mock.deserialize( nil, serializedData )
-	clip1.name = clip.name .. '_copy'
-	clip1:getRoot():_load()
-	self.targetAnimatorData:addClip( clip1 )
-	self:markDataDirty()
-	return clip1
-end
-
 
 function AnimatorView:addKeyForField( target, fieldId )
 	--find existed track
@@ -215,9 +181,7 @@ end
 function AnimatorView:findParentTrackGroup()
 	if not self.targetClip then return nil end
 	local parent = self.currentTrack 
-	print( parent )
 	while parent do
-		print( parent.name )
 		if parent:isInstance( mock.AnimatorTrackGroup ) then
 			break
 		end
