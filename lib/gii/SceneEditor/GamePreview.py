@@ -6,6 +6,7 @@ from gii.core                import signals, app, RemoteCommand
 
 from gii.moai.MOAIRuntime    import getAKU
 from gii.moai.MOAICanvasBase import MOAICanvasBase
+from gii.moai.MOAIEditCanvas import MOAIEditCanvas
 
 from gii.qt.dialogs          import ProcessDialog
 
@@ -352,6 +353,26 @@ class GamePreview( SceneEditorModule ):
 
 ##----------------------------------------------------------------##
 class GamePreviewCanvas(MOAICanvasBase):
+	def __init__( self, *args, **kwargs ):
+		super( GamePreviewCanvas, self ).__init__( *args, **kwargs )
+		self.installEventFilter( self )
+
+	def eventFilter( self, obj, ev ):
+		if obj == self:
+			etype = ev.type()
+			# if etype == QtCore.QEvent.KeyPress :
+			# 	self.keyPressEvent( ev )
+			# 	return True
+			# elif etype == QtCore.QEvent.KeyRelease :
+			# 	self.keyReleaseEvent( ev )
+			# 	return True
+			if etype == QtCore.QEvent.ShortcutOverride:
+				self.keyPressEvent( ev )
+				ev.accept()
+				return True
+		return False
+		# return super( GamePreviewCanvas, self ).eventFilter( obj, ev )
+
 	def resizeGL(self, width, height):
 		self.module.resizeView(width,height)
 		MOAICanvasBase.resizeGL( self, width, height )
