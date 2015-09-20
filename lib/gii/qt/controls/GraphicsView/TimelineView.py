@@ -317,11 +317,22 @@ class TimelinekeyItemspanItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 
 ##----------------------------------------------------------------##
 class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
+	# _polyMark = QtGui.QPolygonF([
+	# 		QPointF( -0, 0 ),
+	# 		QPointF( 10, 0 ),
+	# 		QPointF( 0, -10 ),
+	# 	]).translated( 0, _TRACK_SIZE )
+	# _polyMark = QtGui.QPolygonF([
+	# 		QPointF( -5, 0 ),
+	# 		QPointF( 5, 0 ),
+	# 		QPointF( 0, -5 ),
+	# 	]).translated( 0, _TRACK_SIZE )
 	_polyMark = QtGui.QPolygonF([
 			QPointF( -0, 0 ),
-			QPointF( 10, 0 ),
-			QPointF( 0, -10 ),
-		]).translated( 0, _TRACK_SIZE )
+			QPointF( 5, 5 ),
+			QPointF( 0, 10 ),
+			QPointF( -5, 5 ),
+		]).translated( 0, (_TRACK_SIZE - 10 )/2 + 1 )
 
 	def __init__( self, track ):
 		super( TimelineKeyItem, self ).__init__( parent = track )
@@ -346,9 +357,11 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		self.selected = False
 
 	def onPaint( self, painter, option, widget ):
+		painter.setRenderHint( QtGui.QPainter.Antialiasing, True )
 		rect = self.rect()
-		painter.drawRect( QRectF( 0,0,4, rect.height() ) )
-		# painter.drawPolygon( TimelineKeyItem._polyMark )
+		# painter.drawRect( QRectF( 0,0,4, rect.height() ) )
+		# painter.drawEllipse( QRectF( -5 ,-5 + 9, 8, 11) )
+		painter.drawPolygon( TimelineKeyItem._polyMark )
 
 	def itemChange( self, change, value ):
 		if change == self.ItemPositionChange:

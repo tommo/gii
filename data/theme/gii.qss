@@ -1105,8 +1105,6 @@ QSplitter#TimelineHeaderSplitter::handle{
 	color: #eee;
 }
 
-
-
 #containerPlayTool{
 	background-color:#333;
 	border-bottom:1px solid #222;
@@ -1131,6 +1129,10 @@ QSplitter#TimelineHeaderSplitter::handle{
 QTreeView#AnimatorTrackTree::branch {
 	border-bottom: 1px solid #292929;
 }*/
+
+QTreeView#AnimatorTrackTree {
+	color: #ccc;
+}
 
 QTreeView#AnimatorTrackTree::branch:has-siblings:!adjoins-item {
 	border-image: none;
