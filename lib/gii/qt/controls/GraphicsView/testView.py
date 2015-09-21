@@ -24,8 +24,8 @@ class TestTrack():
 		self.name = name
 		self.keys = [
 			TestKey( self ),
-			# TestKey( self ),
-			# TestKey( self ),
+			TestKey( self ),
+			TestKey( self ),
 			# TestKey( self )
 		]
 		self.pos = pos

@@ -347,6 +347,7 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		self.node = None
 
 		self.dragging = False
+		self.draggingSpan = None
 		self.setItemType( 'key' )
 		self.setItemState( 'normal' )
 		self.timePos    = 0
@@ -395,12 +396,14 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		if self.resizable:
 			x = event.pos().x()
 			width = self.rect().width()
-			sizeHandle = max( 5, min( 12, width/5 ) )
-			if x < sizeHandle:
+			left = self.rect().left()
+			right = self.rect().right()
+			sizeHandle = max( 2, min( 12, width/5 ) )
+			if x < (left+sizeHandle):
 				self.mouseOp = 'left-size'
 				self.setCursor( Qt.SizeHorCursor )
 				return
-			elif x > width-sizeHandle:
+			elif x > (right-sizeHandle):
 				self.mouseOp = 'right-size'
 				self.setCursor( Qt.SizeHorCursor )
 				return
@@ -423,6 +426,8 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 			t0 = self.getTimePos()
 			l0 = self.getTimeLength()
 			self.dragging = ( x0, mx0, t0, l0 )
+			self.draggingSpan = None
+			self.track.sortKeys() #prepare for drag
 			if event.modifiers() == Qt.ShiftModifier:
 				if self.selected:
 					self.getTimelineView().deselectKey( self.node )
@@ -439,21 +444,38 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 			self.prepareGeometryChange()
 			op = self.mouseOp
 			if op == 'move':
-				x1 = x0 + delta
-				self.setPos( max( x1, _HEAD_OFFSET ), 0 )
+				t1 = self.posToTime( x0 + delta )
+				span = self.track.findEmptySpan( t1, self.timeLength, self ) or self.draggingSpan
+				if span:
+					self.draggingSpan = span
+					s0, s1 = span
+					t1 = max(t1,s0)
+					if s1 != None: t1 = min( t1, s1 - self.timeLength )
+					self.setTimePos( t1 )
 
 			elif op == 'left-size':
-				x2 = self.timeToPos( self.getEndTimePos() )
-				x1 = x0 + delta
-				x1 = min( max( x1, _HEAD_OFFSET ), x2 )
-				deltaTime = self.widthToTimeLength( delta )
-				self.setPos( x1, 0 )
-				self.setTimeLength( l0 - deltaTime )
+				t2 = self.getEndTimePos()
+				t1 = min( self.posToTime( x0 + delta ), t2 )
+				span = self.track.findEmptySpan( t1, self.timeLength, self ) or self.draggingSpan
+				if span:
+					self.draggingSpan = span
+					s0, s1 = span
+					t1 = max(t1,s0)
+					if s1 != None: 
+						t2 = min( t2, s1 )
+					self.setTimePos( t1 )
+					self.setTimeLength( t2 - t1 )
 
 			elif op == 'right-size':
-				deltaTime = self.widthToTimeLength( delta )
-				self.setTimeLength( l0 + deltaTime )
-
+				span = self.track.findEmptySpan( t0, self.timeLength, self ) or self.draggingSpan
+				if span:
+					self.draggingSpan = span
+					s0, s1 = span
+					deltaTime = self.widthToTimeLength( delta )
+					l1 = l0 + deltaTime
+					t2 = t0 + l1
+					if s1 != None: t2 = min( t2, s1 )
+					self.setTimeLength( t2 - t0 )
 
 	def mouseReleaseEvent( self, event ):
 		if event.button() == Qt.LeftButton:
@@ -522,24 +544,35 @@ class TimelineEventKeyItem( TimelineKeyItem ):
 	
 	def updateWidth( self ):
 		spanHeight = _TRACK_SIZE - 0
-		width = max( self.timeLengthToWidth( self.timeLength ), 5 )
-		self.setRect( 0, (_TRACK_SIZE - spanHeight)/2 + 1, width, spanHeight )
-		# self.leftHandle.setRect( - TimelinekeyItemspanItem._handleWidth/2, 0, 10, spanHeight )
-		# self.RightHandle.setRect( self.width - TimelinekeyItemspanItem._handleWidth/2, 0, 10, spanHeight )
+		width = max( self.timeLengthToWidth( self.timeLength ), 0 )
+		self.setRect( -5, (_TRACK_SIZE - spanHeight)/2 + 1, width + 10, spanHeight )
 
 	def onPaint( self, painter, option, widget ):
 		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
-		rect = self.rect()
+		rect = self.rect().adjusted( 6, 0, -6, 0 )
 		painter.drawRect( rect )
 		x0 = rect.left()
 		x1 = rect.right()
 		y0 = rect.top()
-		painter.setPen( QColor( 255,255,255, 70 ))
-		# painter.drawLine( x0,y0, x0+5, y0 )
-		# painter.drawLine( x0,y0, x0, y0+5 )
-		# painter.drawLine( x1,y0, x1-5, y0 )
-		# painter.drawLine( x1,y0, x1, y0+5 )
-		painter.drawStyledText( rect.adjusted( 4, 2, -2, 0 ), Qt.AlignVCenter | Qt.AlignLeft, self.getLabel() )
+		y1 = rect.bottom()
+		w = x1 - x0
+		painter.setPen( QColor( 0,0,0,50 ) )
+		painter.drawLine( x0-1,y0,x0-1,y1 )
+		painter.drawLine( x1+1,y0,x1+1,y1 )
+		if w > 10:
+			painter.drawStyledText( rect.adjusted( 4, 2, -4, 0 ), Qt.AlignVCenter | Qt.AlignLeft, self.getLabel() )
+
+
+
+
+
+##----------------------------------------------------------------##
+def _KeyCmp( k1, k2 ):
+	t1 = k1.timePos
+	t2 = k2.timePos
+	if t1 < t2 : return -1
+	if t1 > t2 : return 1
+	return 0
 
 ##----------------------------------------------------------------##
 class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
@@ -574,6 +607,9 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		key.setParentItem( None )
 		self.keys.remove( key )
 		key.delete()
+
+	def sortKeys( self ):
+		self.keys = sorted( self.keys, cmp = _KeyCmp )
 
 	def getKeyByNode( self, keyNode ):
 		for key in self.keys:
@@ -627,6 +663,23 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		if ev.button() == Qt.LeftButton:
 			self.getTimelineView().onTrackClicked( self, ev.pos() )
 
+	def findEmptySpan( self, pos, length, ignoreKey = None ):
+		#assume key is sorted
+		#assume keys dont overlap
+		x0 = 0
+		x1 = None
+		for key in self.keys:
+			if key is ignoreKey: continue
+			l = key.getTimePos()
+			r = key.getEndTimePos()
+			if l > pos:
+				x1 = l
+				if x1 - x0 < length: return None
+				break
+			if r > pos: return None #inside span
+			x0 = r
+
+		return ( x0, x1 )
 
 ##----------------------------------------------------------------##
 class SelectionRegionItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
