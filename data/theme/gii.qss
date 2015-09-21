@@ -1139,15 +1139,17 @@ QTreeView#AnimatorTrackTree::branch:has-siblings:!adjoins-item {
 }
 
 QTreeView#AnimatorTrackTree::branch:has-siblings:adjoins-item {
-		border-image: none;
+	border-image: none;
 	background: #383838;
+	border-left: 1px solid #555;
 	border-top: 1px solid #444;
 	border-bottom: 1px solid #222;
 }
 
 QTreeView#AnimatorTrackTree::branch:!has-children:!has-siblings:adjoins-item {
-		border-image: none;
+	border-image: none;
 	background: #383838;
+	border-left: 1px solid #555;
 	border-top: 1px solid #444;
 	border-bottom: 1px solid #222;
 }
@@ -1155,8 +1157,9 @@ QTreeView#AnimatorTrackTree::branch:!has-children:!has-siblings:adjoins-item {
 QTreeView#AnimatorTrackTree::branch:has-children:!has-siblings:closed,
 QTreeView#AnimatorTrackTree::branch:closed:has-children:has-siblings {
 	border-image: none;
-	image: url(theme:branch_closed.png);
+	image: url(theme:track_branch_closed.png);
 	background: #383838;
+	border-left: 1px solid #555;
 	border-top: 1px solid #444;
 	border-bottom: 1px solid #222;
 }
@@ -1164,8 +1167,9 @@ QTreeView#AnimatorTrackTree::branch:closed:has-children:has-siblings {
 QTreeView#AnimatorTrackTree::branch:open:has-children:!has-siblings,
 QTreeView#AnimatorTrackTree::branch:open:has-children:has-siblings  {
 	border-image: none;
-	image: url(theme:branch_open.png);
+	image: url(theme:track_branch_open.png);
 	background: #383838;
+	border-left: 1px solid #555;
 	border-top: 1px solid #444;
 	border-bottom: 1px solid #222;			
 }
