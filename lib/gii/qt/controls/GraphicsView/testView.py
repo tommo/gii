@@ -10,8 +10,8 @@ class TestKey():
 		global _keyid
 		_keyid += 1
 		self.name = 'key - %d' % _keyid
-		self.length = random()*500/1000.0
-		# self.length = 0.5
+		# self.length = random()*500/1000.0
+		self.length = 1
 		self.pos    = ( random()*1000 + 50 ) /1000.0
 		self.track  = track
 
@@ -24,9 +24,9 @@ class TestTrack():
 		self.name = name
 		self.keys = [
 			TestKey( self ),
-			TestKey( self ),
-			TestKey( self ),
-			TestKey( self )
+			# TestKey( self ),
+			# TestKey( self ),
+			# TestKey( self )
 		]
 		self.pos = pos
 

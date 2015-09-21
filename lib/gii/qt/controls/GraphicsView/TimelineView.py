@@ -37,6 +37,11 @@ makeStyle( 'default',            '#000000',    '#ff0ecf'              )
 makeStyle( 'key',                '#000000',    '#a0a0a0'              )
 makeStyle( 'key:hover',          '#c2c2c2',    '#a0a0a0'              )
 makeStyle( 'key:selected',       '#000000',    '#5c83ff'              )
+
+makeStyle( 'eventkey',                '#737373',    '#5b5c63', '#c2c2c2' )
+makeStyle( 'eventkey:hover',          '#737373',    '#75777f', '#dddddd' )
+makeStyle( 'eventkey:selected',       '#5c7340',    '#608d34', '#ffffff' )
+
 makeStyle( 'key-span',           '#000',       '#303459'    ,'#c2c2c2' )
 makeStyle( 'key-span:selected',  '#ffffff',    '#303459'               )
 makeStyle( 'track',                None,       dict( color = '#444', alpha = 0.2 ) )
@@ -61,6 +66,12 @@ class TimelineSubView( GLGraphicsView ):
 
 	def posToTime( self, p ):
 		return ( p - _HEAD_OFFSET ) / ( self.zoom * _PIXEL_PER_SECOND )
+
+	def timeLengthToWidth( self, l ):
+		return l * self.zoom * _PIXEL_PER_SECOND
+
+	def widthToTimeLengfth( self, w ):
+		return l / ( self.zoom * _PIXEL_PER_SECOND )
 
 	def setZoom( self, zoom, update = True ):
 		self.zoom = zoom
@@ -127,14 +138,14 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		self.rangeMax = 100
 
 	def mousePressEvent( self, event ):
-		if event.button() == Qt.RightButton:
+		if event.button() == Qt.LeftButton:
 			if not self.view.draggable: return
 			self.dragging = True
 			x = event.scenePos().x()
 			self.view.setCursorPos( self.view.posToTime( x ) + self.view.scrollPos )
 
 	def mouseReleaseEvent( self, event ):
-		if event.button() == Qt.RightButton:
+		if event.button() == Qt.LeftButton:
 			self.dragging = False
 
 	def mouseMoveEvent( self, event ):
@@ -341,7 +352,6 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		self.timePos    = 0
 		self.timeLength = 0
 		self.updatingPos = False
-		self.span = TimelinekeyItemspanItem( self )
 		self.track = track
 
 		self.selected = False
@@ -368,7 +378,7 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		scn.removeItem( self )
 
 	def updateKey( self ):
-		self.span.setPos( self.pos() )
+		pass
 
 	def hoverEnterEvent( self, event ):
 		if self.selected: return
@@ -420,14 +430,20 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def posToTime( self, t ):
 		return self.track.posToTime( t )
 
+	def timeLengthToWidth( self, l ):
+		return self.track.timeLengthToWidth( l )
+
+	def widthToTimeLengfth( self, w ):
+		return self.track.widthToTimeLengfth( w )
+
 	def updateShape( self ):
 		self.setTimePos( self.timePos, False )
-		self.span.updateShape()
 
 	def setTimePos( self, tpos, notify = True ):
 		tpos = max( 0, tpos )
 		self.timePos = tpos
 		x = self.timeToPos( tpos )
+		self.setZValue( tpos*0.0001 )
 		if notify:
 			self.getTimelineView().notifyKeyChanged( self.node, self.timePos, self.timeLength )
 		if not self.updatingPos:
@@ -440,11 +456,6 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 
 	def setTimeLength( self, l ):
 		self.timeLength = max( l, 0 )
-		if self.timeLength > 0:
-			self.span.updateShape()
-			self.span.show()
-		else:
-			self.span.hide()
 
 	def getTimeLength( self ):
 		return self.timeLength
@@ -454,7 +465,43 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 
 	def getTimelineView( self ):
 		return self.track.getTimelineView()
-	
+
+
+class TimelineEventKeyItem( TimelineKeyItem ):
+	"""docstring for TimelineEventKeyItem"""
+	def __init__(self, *args):
+		super(TimelineEventKeyItem, self).__init__( *args )
+		self.setItemType( 'eventkey' )
+
+	def updateShape( self ):
+		self.setTimePos( self.timePos, False )
+		self.updateWidth()
+
+	def setTimeLength( self, l ):
+		self.timeLength = max( l, 0 )
+		self.updateWidth()
+
+	def updateWidth( self ):
+		spanHeight = _TRACK_SIZE - 0
+		width = min( self.timeLengthToWidth( self.timeLength ), 5 )
+		self.setRect( 0, (_TRACK_SIZE - spanHeight)/2 + 1, width, spanHeight )
+		# self.leftHandle.setRect( - TimelinekeyItemspanItem._handleWidth/2, 0, 10, spanHeight )
+		# self.RightHandle.setRect( self.width - TimelinekeyItemspanItem._handleWidth/2, 0, 10, spanHeight )
+
+	def onPaint( self, painter, option, widget ):
+		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
+		rect = self.rect()
+		painter.drawRect( rect )
+		x0 = rect.left()
+		x1 = rect.right()
+		y0 = rect.top()
+		painter.setPen( QColor( 255,255,255, 70 ))
+		painter.drawLine( x0,y0, x0+5, y0 )
+		painter.drawLine( x0,y0, x0, y0+5 )
+		painter.drawLine( x1,y0, x1-5, y0 )
+		painter.drawLine( x1,y0, x1, y0+5 )
+		painter.drawStyledText( rect.adjusted( 4, 2, -2, 0 ), Qt.AlignVCenter | Qt.AlignLeft, self.getLabel() )
+
 ##----------------------------------------------------------------##
 class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def __init__( self ):
@@ -472,6 +519,7 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 			if key.node == keyNode:
 				return key
 		if not keyItemClass:
+			# keyItemClass = TimelineEventKeyItem	
 			keyItemClass = TimelineKeyItem
 		keyItem = keyItemClass( self )
 		keyItem.track = self
@@ -512,6 +560,12 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def posToTime( self, p ):
 		return self.view.posToTime( p )
 
+	def timeLengthToWidth( self, l ):
+		return self.view.timeLengthToWidth( l )
+
+	def widthToTimeLengfth( self, w ):
+		return self.view.widthToTimeLengfth( w )
+
 	def onKeyUpdate( self, key ):
 		self.view.onKeyUpdate( self, key )
 
@@ -544,7 +598,6 @@ class SelectionRegionItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def onPaint( self, painter, option, widget ):
 		rect = self.rect()
 		painter.drawRect( rect )
-
 
 ##----------------------------------------------------------------##
 class TimelineTrackView( TimelineSubView ):
@@ -950,6 +1003,14 @@ class TimelineView( QtGui.QWidget ):
 		zoom = self.getZoom()
 		pos0 = self.getScrollPos()
 		return ( pos - pos0 ) * zoom
+
+	def timeLengthToWidth( self, length ):
+		zoom = self.getZoom()
+		return zoom * length
+
+	def widthToTimeLengfth( self, w ):
+		zoom = self.getZoom()
+		return w/zoom
 
 	def setShiftMode( self, enabled = True ):
 		self.shiftMode = enabled
