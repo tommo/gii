@@ -7,7 +7,6 @@ function CanvasView:__init( canvasEnv )
 	
 	--config
 	self.gridSnapping = false
-
 end
 
 function CanvasView:onLoad()
@@ -198,4 +197,13 @@ function CanvasView:snapLoc( x,y,z, activeAxis )
 		return x,y,z
 	end
 
+end
+
+
+function CanvasView:isGizmoVisible()
+	return self.gizmoManager:isGizmoVisible()
+end
+
+function CanvasView:setGizmoVisible( vis )
+	self.gizmoManager:setGizmoVisible( vis )
 end

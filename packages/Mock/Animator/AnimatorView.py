@@ -274,12 +274,31 @@ class AnimatorView( SceneEditorModule ):
 			self.widget.addTrack( track )
 
 	def addKeyForSelectedTracks( self ):
+		#TODO: command
 		selectedTracks = self.widget.getTrackSelection()
 		for track in selectedTracks:
 			keys = self.delegate.callMethod( 'view', 'addKeyForSelectedTrack', track )
 			if keys:
 				for key in keys.values():
 					self.widget.addKey( key, True )
+
+	def removeSelectedKeys( self ):
+		#TODO: command
+		selectedKeys = self.widget.getKeySelection()
+		for key in selectedKeys:
+			self.widget.removeKey( key )
+
+	def cloneSelectedKeys( self ):
+		#TODO: command
+		selectedKeys = self.widget.getKeySelection()
+		cloned = []
+		for key in selectedKeys:
+			clonedKey = self.delegate.callMethod( 'view', 'cloneKey', key )
+			if clonedKey:
+				cloned.append( clonedKey )
+
+		for clonedKey in cloned:
+			self.widget.addKey( clonedKey, False )
 
 	def onKeyRemoving( self, key ):
 		if self.delegate.callMethod( 'view', 'removeKey', key ) != False:
@@ -340,10 +359,10 @@ class AnimatorView( SceneEditorModule ):
 			self.addKeyForSelectedTracks()
 
 		elif toolName == 'remove_key':
-			pass
+			self.removeSelectedKeys()
 
 		elif toolName == 'clone_key':
-			pass
+			self.cloneSelectedKeys()
 
 		elif toolName == 'curve_mode_linear':
 			pass

@@ -143,8 +143,8 @@ class StyledItemMixin:
 		pass
 
 
-# _USE_GL = False
-_USE_GL = True
+_USE_GL = False
+# _USE_GL = True
 
 ##----------------------------------------------------------------##
 class GLGraphicsView( QtGui.QGraphicsView ):
@@ -205,12 +205,9 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 			current = QGLContext.currentContext()
 			self.glViewport.makeCurrent()
 			super( GLGraphicsView, self ).paintEvent( ev )
-			# self.glViewport.doneCurrent() #dirty workaround...
+			self.glViewport.doneCurrent() #dirty workaround...
 			if current:
 				current.makeCurrent()
-			# shared = getSharedGLWidget()
-			# if shared:
-			# 	shared.makeCurrent()
 		else:
 			super( GLGraphicsView, self ).paintEvent( ev )
 

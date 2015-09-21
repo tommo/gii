@@ -57,6 +57,7 @@ function GizmoManager:__init()
 	self.normalGizmoMap   = {}
 	self.selectedGizmoMap = {}
 	self.constantSizeGizmos = {}
+	self.gizmoVisible = true
 end
 
 function GizmoManager:onLoad()
@@ -193,6 +194,7 @@ function GizmoManager:buildForObject( obj, selected )
 				local giz0 = self.normalGizmoMap[ obj ]
 				if giz0 then giz0:destroyWithChildrenNow() end
 				self.normalGizmoMap[ obj ] = giz
+				giz:setVisible( self.gizmoVisible )
 			end
 			self:addChild( giz )
 			if obj:isInstance( mock.Entity ) then
@@ -204,6 +206,19 @@ function GizmoManager:buildForObject( obj, selected )
 		end
 	end
 end
+
+function GizmoManager:setGizmoVisible( vis )
+	self.gizmoVisible = vis
+	for _, giz in pairs( self.normalGizmoMap ) do
+		giz:setVisible( vis )
+	end
+end
+
+
+function GizmoManager:isGizmoVisible()
+	return self.gizmoVisible
+end
+
 
 function GizmoManager:removeForObject( obj )
 	local giz = self.normalGizmoMap[ obj ]

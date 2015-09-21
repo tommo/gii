@@ -103,6 +103,10 @@ function SceneView:saveConfig()
 		visible = self:isGridVisible(),
 		snap = self:isGridSnapping()
 	}
+	---
+	cfg['gizmo'] = {
+		visible = self:isGizmoVisible()
+	}
 end
 
 function SceneView:focusSelection()

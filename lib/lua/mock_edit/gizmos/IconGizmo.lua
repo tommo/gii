@@ -10,10 +10,6 @@ function IconGizmo:__init()
 	self.pickingTarget = false
 end
 
-function IconGizmo:inheritVisible( prop )
-	inheritVisible( self.iconProp, prop )
-end
-
 function IconGizmo:setTransform( transform )
 	inheritLoc( self:getProp(), transform )
 end
@@ -28,10 +24,9 @@ local ATTR_VISIBLE = MOAIProp. ATTR_VISIBLE
 function IconGizmo:setParentEntity( ent, propRole )
 	self:setPickingTarget( ent )
 	local prop = ent:getProp( propRole or 'render' )
-	inheritVisible( self:getProp(), prop )
+	-- inheritVisible( self:getProp(), prop )
 	inheritLoc( self:getProp(), prop )
 end
-
 
 function IconGizmo:getPickingTarget()
 	return self.pickingTarget

@@ -121,7 +121,9 @@ function AnimatorView:addKeyForField( target, fieldId )
 			return false
 		end
 		parent:addChild( track )
-		track:initFromObject( target, fieldId, self.targetRootEntity )
+		track:setTargetObject( target, self.targetRootEntity )
+		track:setFieldId( fieldId )
+		track:init()
 	end
 
 	local keys = { 
@@ -164,7 +166,8 @@ function AnimatorView:addCustomAnimatorTrack( target, trackClasId )
 	local clas = classes[ trackClasId ]
 	local track = clas()
 	parent:addChild( track )
-	track:initFromObject( target, self.targetRootEntity )
+	track:setTargetObject( target, self.targetRootEntity )
+	track:init()
 	track:collectObjectRecordingState( self.targetAnimator, self.retainedRecordingState )
 	self:markClipDirty()
 	return track

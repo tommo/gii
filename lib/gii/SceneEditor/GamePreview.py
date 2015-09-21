@@ -213,6 +213,7 @@ class GamePreview( SceneEditorModule ):
 		runtime.changeRenderContext( 'game', self.viewWidth, self.viewHeight )
 		self.canvas.setInputDevice( runtime.getInputDevice('device') )
 		self.canvas.startRefreshTimer( self.activeFPS )
+		self.canvas.interceptShortcut = True
 		self.getApp().setMinimalMainLoopBudget()
 		jhook = self.getModule( 'joystick_hook' )
 		if jhook:
@@ -243,6 +244,7 @@ class GamePreview( SceneEditorModule ):
 		if self.paused is None: return
 		logging.info('stop game preview')
 		self.canvas.setInputDevice( None )
+		self.canvas.interceptShortcut = False
 		jhook = self.getModule( 'joystick_hook' )
 		if jhook: jhook.setInputDevice( None )
 		
@@ -355,9 +357,11 @@ class GamePreview( SceneEditorModule ):
 class GamePreviewCanvas(MOAICanvasBase):
 	def __init__( self, *args, **kwargs ):
 		super( GamePreviewCanvas, self ).__init__( *args, **kwargs )
+		self.interceptShortcut = False
 		self.installEventFilter( self )
 
 	def eventFilter( self, obj, ev ):
+		if not self.interceptShortcut: return False
 		if obj == self:
 			etype = ev.type()
 			# if etype == QtCore.QEvent.KeyPress :

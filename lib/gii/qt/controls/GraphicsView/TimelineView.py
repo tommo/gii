@@ -34,9 +34,9 @@ _DEFAULT_BG = makeBrush( color = '#222' )
 ##styles:  ID                     Pen           Brush          Text
 makeStyle( 'black',              '#000000',    '#000000'              )
 makeStyle( 'default',            '#000000',    '#ff0ecf'              )
-makeStyle( 'key',                '#000000',    '#4e8afc'              )
-makeStyle( 'key:hover',          '#55aeff',    '#345ead'              )
-makeStyle( 'key:selected',       '#dfecff',    '#a0ff00'              )
+makeStyle( 'key',                '#000000',    '#a0a0a0'              )
+makeStyle( 'key:hover',          '#c2c2c2',    '#a0a0a0'              )
+makeStyle( 'key:selected',       '#000000',    '#5c83ff'              )
 makeStyle( 'key-span',           '#000',       '#303459'    ,'#c2c2c2' )
 makeStyle( 'key-span:selected',  '#ffffff',    '#303459'               )
 makeStyle( 'track',                None,       dict( color = '#444', alpha = 0.2 ) )
@@ -127,14 +127,14 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		self.rangeMax = 100
 
 	def mousePressEvent( self, event ):
-		if event.button() == Qt.LeftButton:
+		if event.button() == Qt.RightButton:
 			if not self.view.draggable: return
 			self.dragging = True
 			x = event.scenePos().x()
 			self.view.setCursorPos( self.view.posToTime( x ) + self.view.scrollPos )
 
 	def mouseReleaseEvent( self, event ):
-		if event.button() == Qt.LeftButton:
+		if event.button() == Qt.RightButton:
 			self.dragging = False
 
 	def mouseMoveEvent( self, event ):
@@ -317,22 +317,12 @@ class TimelinekeyItemspanItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 
 ##----------------------------------------------------------------##
 class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
-	# _polyMark = QtGui.QPolygonF([
-	# 		QPointF( -0, 0 ),
-	# 		QPointF( 10, 0 ),
-	# 		QPointF( 0, -10 ),
-	# 	]).translated( 0, _TRACK_SIZE )
-	# _polyMark = QtGui.QPolygonF([
-	# 		QPointF( -5, 0 ),
-	# 		QPointF( 5, 0 ),
-	# 		QPointF( 0, -5 ),
-	# 	]).translated( 0, _TRACK_SIZE )
 	_polyMark = QtGui.QPolygonF([
 			QPointF( -0, 0 ),
-			QPointF( 5, 5 ),
-			QPointF( 0, 10 ),
-			QPointF( -5, 5 ),
-		]).translated( 0, (_TRACK_SIZE - 10 )/2 + 1 )
+			QPointF( 6, 6 ),
+			QPointF( 0, 12 ),
+			QPointF( -6, 6 ),
+		]).translated( -0.5, (_TRACK_SIZE - 12 )/2 + 1 )
 
 	def __init__( self, track ):
 		super( TimelineKeyItem, self ).__init__( parent = track )
@@ -359,8 +349,6 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def onPaint( self, painter, option, widget ):
 		painter.setRenderHint( QtGui.QPainter.Antialiasing, True )
 		rect = self.rect()
-		# painter.drawRect( QRectF( 0,0,4, rect.height() ) )
-		# painter.drawEllipse( QRectF( -5 ,-5 + 9, 8, 11) )
 		painter.drawPolygon( TimelineKeyItem._polyMark )
 
 	def itemChange( self, change, value ):
@@ -479,11 +467,13 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		self.setItemState( 'normal' )
 		self.node = None
 
-	def addKey( self, keyNode ):
+	def addKey( self, keyNode, keyItemClass = None ):
 		for key in self.keys:
 			if key.node == keyNode:
 				return key
-		keyItem = TimelineKeyItem( self )
+		if not keyItemClass:
+			keyItemClass = TimelineKeyItem
+		keyItem = keyItemClass( self )
 		keyItem.track = self
 		keyItem.node  = keyNode
 		self.keys.append( keyItem )
@@ -492,12 +482,12 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 
 	def removeKey( self, keyNode ):
 		key = self.getKeyByNode( keyNode )
-		if key:
-			if self.getTimelineView().onKeyRemoving( keyNode ) == False: return
-			key.setParentItem( None )
-			self.keys.remove( key )
-			key.delete()
-		
+		assert key, 'attempt to remove key not in this timeline'
+		if self.getTimelineView().onKeyRemoving( keyNode ) == False: return
+		key.setParentItem( None )
+		self.keys.remove( key )
+		key.delete()
+
 	def getKeyByNode( self, keyNode ):
 		for key in self.keys:
 			if key.node == keyNode:
@@ -544,6 +534,7 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		if ev.button() == Qt.LeftButton:
 			self.getTimelineView().onTrackClicked( self, ev.pos() )
 
+
 ##----------------------------------------------------------------##
 class SelectionRegionItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def __init__( self, *args, **kwargs ):
@@ -556,23 +547,15 @@ class SelectionRegionItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 
 
 ##----------------------------------------------------------------##
-class TestEventFilter( QtCore.QObject):
-	def eventFilter(self, obj, event):
-		e=event.type()
-		return QObject.eventFilter( self, obj, event )
-
-
-##----------------------------------------------------------------##
 class TimelineTrackView( TimelineSubView ):
 	scrollYChanged   = pyqtSignal( float )
 	def __init__( self, *args, **kwargs ):
 		super( TimelineTrackView, self ).__init__( *args, **kwargs )
-		# self.eventFilter = TestEventFilter( self )
-		# self.installEventFilter( self.eventFilter )
 		self.gridSize  = 100
 		self.scrollPos = 0.0
 		self.cursorPos = 0.0
 		self.scrollY   = 0.0
+		self.scrollYRange = 200.0
 		self.zoom      = 1
 		self.panning   = False
 		self.updating  = False
@@ -642,7 +625,7 @@ class TimelineTrackView( TimelineSubView ):
 		track.scene().removeItem( track )
 
 	def setScrollY( self, y, update = True ):
-		self.scrollY = min( y, 0.0 )
+		self.scrollY = max( min( y, 0.0 ), -self.scrollYRange )
 		if self.updating: return
 		self.updating = True
 		self.scrollYChanged.emit( self.scrollY )
@@ -652,6 +635,9 @@ class TimelineTrackView( TimelineSubView ):
 
 	def getScrollY( self ):
 		return self.scrollY
+
+	def setScrollYRange( self, maxRange ):
+		self.scrollYRange = maxRange
 
 	def onCursorPosChanged( self, pos ):
 		x = self.timeToPos( self.cursorPos )
@@ -719,7 +705,7 @@ class TimelineTrackView( TimelineSubView ):
 			sp1 = sp0 - dx
 			sy1 = sy0 + dy
 			self.setScrollPos( self.posToTime( sp1 ), True )
-			# self.setScrollY( sy1, False )
+			self.setScrollY( sy1, False )
 			self.updateTransfrom()
 		elif self.selecting:
 			self.resizeSelectionRegion( self.mapToScene( event.pos() ) )
@@ -935,6 +921,9 @@ class TimelineView( QtGui.QWidget ):
 
 	def setScrollPos( self, pos ):
 		self.rulerView.setScrollPos( pos )
+
+	def setTrackViewScrollRange( self, maxRange ):
+		self.trackView.setScrollYRange( maxRange )
 
 	def setTrackViewScroll( self, y ):
 		self.trackView.setScrollY( y )

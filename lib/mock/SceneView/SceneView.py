@@ -146,6 +146,12 @@ class SceneView( SceneEditorModule ):
 			)
 
 		#config tool
+		self.addTool(	'scene_view_config/toggle_gizmo_visible', 
+			label = 'toggle gizmo',
+			icon  = 'gizmo-all',
+			type  = 'check'
+			)
+
 		self.addTool(	'scene_view_config/toggle_snap_grid', 
 			label = 'snap',
 			icon  = 'magnet',
@@ -220,10 +226,12 @@ class SceneView( SceneEditorModule ):
 		gridHeight  = self.canvas.callMethod( 'view', 'getGridHeight' )
 		gridVisible = self.canvas.callMethod( 'view', 'isGridVisible' )
 		gridSnapping = self.canvas.callMethod( 'view', 'isGridSnapping' )
+		gizmoVisible = self.canvas.callMethod( 'view', 'isGizmoVisible' )
 		self.gridWidthSpinBox.setValue(	gridWidth	)
 		self.gridHeightSpinBox.setValue( gridHeight )
 		self.findTool( 'scene_view_config/toggle_grid' ).setValue( gridVisible )
 		self.findTool( 'scene_view_config/toggle_snap_grid' ).setValue( gridSnapping )
+		self.findTool( 'scene_view_config/toggle_gizmo_visible' ).setValue( gizmoVisible )
 
 	def makeCanvasCurrent( self ):
 		self.canvas.makeCurrent()
@@ -273,6 +281,9 @@ class SceneView( SceneEditorModule ):
 		self.scheduleUpdate()
 		self.onUpdateTimer()
 
+	def focusSelection( self ):
+		self.canvas.safeCallMethod( 'view', 'focusSelection' )
+
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'tool_selection':
@@ -290,6 +301,10 @@ class SceneView( SceneEditorModule ):
 
 		elif name == 'toggle_snap_grid':
 			self.canvas.safeCallMethod( 'view', 'setGridSnapping', tool.getValue() )
+			self.scheduleUpdate()
+
+		elif name == 'toggle_gizmo_visible':
+			self.canvas.safeCallMethod( 'view', 'setGizmoVisible', tool.getValue() )
 			self.scheduleUpdate()
 
 	def getCurrentSceneView( self ):

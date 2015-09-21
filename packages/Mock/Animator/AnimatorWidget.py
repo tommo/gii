@@ -67,7 +67,7 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		self.setVerticalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
 		self.adjustingRange = False
 		self.verticalScrollBar().rangeChanged.connect( self.onScrollRangeChanged )		
-		self.setIndentation( 10 )
+		self.setIndentation( 14 )
 		self.setAttribute(Qt.WA_MacShowFocusRect, False)
 
 	def event( self, ev ):
@@ -149,7 +149,9 @@ class AnimatorTrackTree( GenericTreeWidget ):
 	def onScrollRangeChanged( self, min, max ):
 		if self.adjustingRange: return
 		self.adjustingRange = True
-		self.verticalScrollBar().setRange( min, max + self.height() - 25 )
+		maxRange = max + self.height() - 25
+		self.verticalScrollBar().setRange( min, maxRange )
+		self.parentView.setTrackViewScrollRange( maxRange )
 		self.adjustingRange = False
 
 	def mousePressEvent( self, ev ):
@@ -388,8 +390,10 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		#signals
 		self.treeTracks.verticalScrollBar().valueChanged.connect( self.onTrackTreeScroll )
 		self.timeline.cursorPosChanged.connect( self.onCursorPosChanged )
+		self.timeline.trackView.scrollYChanged.connect( self.onTrackViewScrollDragged )
 		self.treeTracks.layoutChanged.connect( self.updateTrackLayout )
-		self.cursorMovable = True
+		self.cursorMovable  = True
+		self.updatingScroll = False
 
 	def setOwner( self, owner ):
 		self.owner = owner
@@ -445,6 +449,9 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.treeTracks.removeNode( track )
 		self.timeline.removeTrack( track )
 
+	def removeKey( self, key ):
+		self.timeline.removeKey( key )
+
 	def setPropertyTarget( self, target ):
 		self.propertyEditor.setTarget( target )
 
@@ -453,15 +460,26 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 
 	def getTrackPos( self, trackNode ):
 		rect = self.treeTracks.getNodeVisualRect( trackNode )
-		return rect.y() + 2
+		scrollY = self.treeTracks.verticalScrollBar().value()
+		pos = rect.y() + 3 + scrollY
+		return pos
+
+	def onTrackViewScrollDragged( self, y ):
+		if self.updatingScroll: return
+		self.updatingScroll = True
+		self.treeTracks.verticalScrollBar().setValue( -y )
+		self.updatingScroll = False
+
+	def setTrackViewScrollRange( self, maxRange ):
+		self.timeline.setTrackViewScrollRange( maxRange )
 
 	def onTrackTreeScroll( self, v ):
 		self.timeline.setTrackViewScroll( -v )
 
 	def onTrackFolded( self, track, folded ):
+		track._folded = folded
 		self.timeline.updateTrackLayout()
 		self.timeline.clearSelection()
-		track._folded = folded
 
 	def onKeyChanged( self, key, pos, length ):
 		self.propertyEditor.refreshFor( key )
@@ -524,6 +542,9 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 
 	def getClipSelection( self ):
 		return self.treeClips.getSelection()
+
+	def getKeySelection( self ):
+		return self.timeline.getSelection()
 
 	def getCurrentClipGroup( self ):
 		selection = self.treeClips.getSelection()
