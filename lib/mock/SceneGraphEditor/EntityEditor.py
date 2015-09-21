@@ -3,6 +3,7 @@ from gii.SceneEditor.Introspector   import ObjectEditor, CommonObjectEditor, reg
 from gii.qt.controls.PropertyEditor import PropertyEditor
 from gii.qt.helpers import addWidgetWithLayout, repolishWidget
 from gii.qt.IconCache               import getIcon
+from gii.SearchView       import requestSearchView, registerSearchEnumerator
 
 from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt, pyqtSlot
@@ -241,8 +242,23 @@ class EntityEditor( ObjectEditor, SceneObjectEditorMixin ): #a generic property 
 						editor_class = ComponentEditor
 					)
 				container = editor.getContainer()
+			self.buttonAddComponent = buttonAddComponent = QtGui.QToolButton()
+			buttonAddComponent.setObjectName( 'ButtonIntrospectorAddComponent' )
+			buttonAddComponent.setText( 'Add Component ...' )
+			buttonAddComponent.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
+			buttonAddComponent.clicked.connect( self.onButtonAddComponent )
+			introspector.addWidget( self.buttonAddComponent )
+
 		self.restoreFoldState()
 		self.updateAnimatorButton()
+
+	def onButtonAddComponent( self ):
+		requestSearchView( 
+				info    = 'select component type to create',
+				context = 'component_creation',
+				on_selection = lambda obj: 
+					app.doCommand( 'scene_editor/create_component', name = obj )
+				)
 
 	def onPropertyChanged( self, obj, id, value ):
 		if _MOCK.markProtoInstanceOverrided( obj, id ):

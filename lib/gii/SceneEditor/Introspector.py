@@ -333,6 +333,13 @@ class IntrospectorInstance(object):
 			if editor.getTarget() == targetObject: return editor
 		return None
 
+	def addWidget( self, widget, **option ):
+		self.scroll.hide()
+		widget.setParent( self.body )
+		count = self.body.mainLayout.count()
+		self.body.mainLayout.insertWidget( count - 1, widget )
+		self.scroll.show()
+
 	def addObjectEditor( self, target, **option ):
 		self.scroll.hide()
 		parent = app.getModule('introspector')

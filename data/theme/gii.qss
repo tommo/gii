@@ -969,6 +969,14 @@ QToolButton::checked{
 	background-color: transparent;
 }
 
+#ButtonIntrospectorAddComponent {
+	color:#777;
+	margin-left: 20px;
+	margin-right: 20px;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
 QSplitter#TimelineSplitter::handle{
 	background-color:#333;
 	/*border-left: 1px solid #111;
