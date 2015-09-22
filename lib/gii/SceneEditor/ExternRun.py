@@ -37,8 +37,11 @@ class ExternRunDialog( QtGui.QDialog ):
 		self.targetName = targetName
 		self.playerThread = ExternRunThread( self.targetName )
 		self.finished = False
+		
+		self.playerThread.start()
+
 		self.timer = QtCore.QTimer( self )
-		self.timer.setInterval( 100 )
+		self.timer.setInterval( 50 )
 		self.timer.timeout.connect( self.onTimerTick )
 		self.timer.start()
 
@@ -51,7 +54,6 @@ class ExternRunDialog( QtGui.QDialog ):
 		self.show()
 
 		signals.emit( 'external_player.start', targetName )
-		self.playerThread.start()
 
 
 	def setMessage( self, msg ):
@@ -60,7 +62,7 @@ class ExternRunDialog( QtGui.QDialog ):
 	def onTimerTick( self ):
 		elapsed = time.time() - self.startTime
 		self.ui.labelElapsed.setText( 'Elapsed: ' + _formatSeconds( elapsed ) )
-		if self.playerThread.isAlive(): return
+		if not self.playerThread.finished: return
 		self.timer.stop()
 		self.onFinish()
 
@@ -80,6 +82,7 @@ class ExternRunDialog( QtGui.QDialog ):
 			self.close()
 		else:
 			RunHost.terminate()
+			self.playerThread.finished = True
 			self.ui.buttonTerminate.setEnabled( False )
 
 	def closeEvent( self ,ev ):
@@ -91,11 +94,13 @@ class ExternRunThread( threading.Thread ):
 	def __init__( self, targetName ):
 		super( ExternRunThread, self ).__init__()
 		self.targetName = targetName
+		self.finished = False
 
 	def run( self ):
 		if not self.targetName:
 			return
 		RunHost.run( self.targetName )
+		self.finished = True
 
 
 ##----------------------------------------------------------------##
