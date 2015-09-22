@@ -591,8 +591,8 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 			if key.node == keyNode:
 				return key
 		if not keyItemClass:
-			keyItemClass = TimelineEventKeyItem	
-			# keyItemClass = TimelineKeyItem
+			# keyItemClass = TimelineEventKeyItem	
+			keyItemClass = TimelineKeyItem
 		keyItem = keyItemClass( self )
 		keyItem.track = self
 		keyItem.node  = keyNode

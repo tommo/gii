@@ -594,7 +594,9 @@ end
 function TileMapToolPen:_doAction( x, y, dragging )
 	local layer  = editor:getTargetTileMapLayer()
 	if not layer then
-		mock_edit.alertMessage( 'message', 'no target tile map', 'info' )
+		if not dragging then
+			mock_edit.alertMessage( 'message', 'no target tile map', 'info' )
+		end
 		return false
 	end
 	local tx, ty = editor:wndToCoord( x, y )

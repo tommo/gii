@@ -32,7 +32,7 @@ def run( target, *args, **options ):
 		pipeline = sarge.run( arglist, async = True )
 		command = pipeline.commands[0]
 		while True:
-			time.sleep( 0.05 )
+			time.sleep( 0.1 )
 			returncode = command.poll()
 			if returncode != None:
 				break

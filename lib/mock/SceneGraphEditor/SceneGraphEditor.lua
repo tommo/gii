@@ -152,7 +152,7 @@ function SceneGraphEditor:restoreScene()
 		local tracebackMsg = debug.traceback(2)
 		return errMsg .. '\n' .. tracebackMsg
 	end
-
+	self.scene:init()
 	local ok, msg = xpcall( function()
 			mock.deserializeScene( self.retainedSceneData, self.scene )
 		end,
