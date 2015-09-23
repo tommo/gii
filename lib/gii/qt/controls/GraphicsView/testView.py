@@ -15,6 +15,13 @@ class TestKey():
 		self.pos    = ( random()*1000 + 50 ) /1000.0
 		self.track  = track
 
+	def isResizable( self ):
+		return False
+
+class TestEventKey( TestKey ):
+	def isResizable( self ):
+		return True
+
 _trackId = 0
 class TestTrack():
 	def __init__( self, name, pos = None ):
@@ -22,13 +29,28 @@ class TestTrack():
 		pos = _trackId * 25
 		_trackId += 1
 		self.name = name
-		self.keys = [
-			TestKey( self ),
-			TestKey( self ),
-			TestKey( self ),
-			# TestKey( self )
-		]
+		if self.isResizable():
+			self.keys = [
+				TestEventKey( self ),
+				TestEventKey( self ),
+				TestEventKey( self ),
+				# TestKey( self )
+			]
+		else:
+			self.keys = [
+				TestKey( self ),
+				TestKey( self ),
+				TestKey( self ),
+				TestKey( self )
+			]
 		self.pos = pos
+
+	def isResizable( self ):
+		return False
+
+class TestEventTrack( TestTrack ):
+	def isResizable( self ):
+		return True
 
 class TestEvent():
 	def __init__( self ):
@@ -37,14 +59,14 @@ class TestEvent():
 dataset = [
 	TestTrack( 'track' ),
 	TestTrack( 'track0' ),
-	TestTrack( 'track1' ),
+	TestEventTrack( 'track1' ),
 	TestTrack( 'track2' ),
 	TestTrack( 'track3' ),
 	TestTrack( 'track1' ),
-	TestTrack( 'track2' ),
+	TestEventTrack( 'track2' ),
 	TestTrack( 'track3' ),
 	TestTrack( 'track1' ),
-	TestTrack( 'track2' ),
+	TestEventTrack( 'track2' ),
 	TestTrack( 'track3' )
 ]
 
@@ -56,7 +78,7 @@ class TestTimeline( TimelineView ):
 		return trackNode.keys
 
 	def getKeyParam( self, keyNode ): #pos, length, resizable
-		return keyNode.pos, keyNode.length, True
+		return keyNode.pos, keyNode.length, keyNode.isResizable()
 
 	def getParentTrackNode( self, keyNode ):
 		return keyNode.track

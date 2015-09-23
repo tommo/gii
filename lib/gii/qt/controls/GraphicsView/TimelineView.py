@@ -445,12 +445,15 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 			op = self.mouseOp
 			if op == 'move':
 				t1 = self.posToTime( x0 + delta )
-				span = self.track.findEmptySpan( t1, self.timeLength, self ) or self.draggingSpan
-				if span:
-					self.draggingSpan = span
-					s0, s1 = span
-					t1 = max(t1,s0)
-					if s1 != None: t1 = min( t1, s1 - self.timeLength )
+				if self.resizable:
+					span = self.track.findEmptySpan( t1, self.timeLength, self ) or self.draggingSpan
+					if span:
+						self.draggingSpan = span
+						s0, s1 = span
+						t1 = max(t1,s0)
+						if s1 != None: t1 = min( t1, s1 - self.timeLength )
+						self.setTimePos( t1 )
+				else:
 					self.setTimePos( t1 )
 
 			elif op == 'left-size':
@@ -476,6 +479,7 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 					t2 = t0 + l1
 					if s1 != None: t2 = min( t2, s1 )
 					self.setTimeLength( t2 - t0 )
+
 
 	def mouseReleaseEvent( self, event ):
 		if event.button() == Qt.LeftButton:
@@ -586,13 +590,11 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		self.setItemState( 'normal' )
 		self.node = None
 
-	def addKey( self, keyNode, keyItemClass = None ):
+	def addKey( self, keyNode, **options ):
 		for key in self.keys:
 			if key.node == keyNode:
 				return key
-		if not keyItemClass:
-			# keyItemClass = TimelineEventKeyItem	
-			keyItemClass = TimelineKeyItem
+		keyItemClass = options.get( 'key_item_class', TimelineKeyItem )
 		keyItem = keyItemClass( self )
 		keyItem.track = self
 		keyItem.node  = keyNode
@@ -1157,7 +1159,7 @@ class TimelineView( QtGui.QWidget ):
 		keyNodes = self.getKeyNodes( node )
 		if keyNodes:
 			for keyNode in keyNodes:
-				self.addKey( keyNode )
+				self.addKey( keyNode, **option )
 
 		self.refreshTrack( node, **option )
 		self.updateTrackLayout()
@@ -1178,7 +1180,9 @@ class TimelineView( QtGui.QWidget ):
 	def addKey( self, keyNode, **option ):
 		track = self.affirmParentTrack( keyNode )
 		if not track: return None
-		key = track.addKey( keyNode )
+		keyItemClass = self.getKeyItemClass( keyNode )
+		option[ 'key_item_class' ] = keyItemClass
+		key = track.addKey( keyNode, **option )
 		if key:
 			self.refreshKey( keyNode, **option )			
 		return key
@@ -1342,6 +1346,13 @@ class TimelineView( QtGui.QWidget ):
 
 	def getKeyParam( self, keyNode ):
 		return ( 0, 10, True )
+
+	def getKeyItemClass( self, keyNode ):
+		p, l, resizable = self.getKeyParam( keyNode )
+		if resizable:
+			return TimelineEventKeyItem
+		else:
+			return TimelineKeyItem
 
 	def getParentTrackNode( self, keyNode ):
 		return None

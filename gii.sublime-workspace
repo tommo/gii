@@ -520,30 +520,6 @@
 	"buffers":
 	[
 		{
-			"file": "lib/mock/MockRuntime.py",
-			"settings":
-			{
-				"buffer_size": 3734,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/mock/asset/helper/PSDDeckMQuad.py",
-			"settings":
-			{
-				"buffer_size": 9215,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/mock/asset/helper/PSDDeckPackProject.py",
-			"settings":
-			{
-				"buffer_size": 6924,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "gii_bin.py",
 			"settings":
 			{
@@ -560,10 +536,26 @@
 			}
 		},
 		{
+			"file": "test/host/osx/SDLHost.cpp",
+			"settings":
+			{
+				"buffer_size": 9369,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/qt/controls/GraphicsView/GraphView.py",
+			"settings":
+			{
+				"buffer_size": 8409,
+				"line_ending": "Unix"
+			}
+		},
+		{
 			"file": "lib/gii/core/tools/RunHost.py",
 			"settings":
 			{
-				"buffer_size": 915,
+				"buffer_size": 914,
 				"line_ending": "Unix"
 			}
 		},
@@ -571,7 +563,7 @@
 			"file": "lib/gii/SceneEditor/Introspector.py",
 			"settings":
 			{
-				"buffer_size": 13984,
+				"buffer_size": 14197,
 				"line_ending": "Unix"
 			}
 		},
@@ -600,10 +592,18 @@
 			}
 		},
 		{
-			"file": "lib/lua/mock_edit/common/signals.lua",
+			"file": "lib/mock/MockRuntime.py",
 			"settings":
 			{
-				"buffer_size": 111,
+				"buffer_size": 3734,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/mock/SceneGraphEditor/SceneGraphEditor.py",
+			"settings":
+			{
+				"buffer_size": 35894,
 				"line_ending": "Unix"
 			}
 		},
@@ -640,13 +640,13 @@
 			}
 		},
 		{
-			"contents": "2015-09-20 15:06:30.175 Python[3373:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-09-20 15:06:30.175 Python[3373:d0b] CoreText performance note: Set a breakpoint on CTFontLogSuboptimalRequest to debug.\n2015-09-20 15:06:30.176 Python[3373:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n...es/prj/gii/test/game/lib/mock/asset/NamedTileset.lua:94: attempt to index global 'bit' (a nil value)\nstack traceback:\n  [C] ?\n  ...es/prj/gii/test/game/lib/mock/asset/NamedTileset.lua:94 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/test/game/lib/mock/asset/init.lua:26 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/test/game/lib/mock/env.lua:55 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/test/game/lib/mock/init.lua:2 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/test/game/lib/gamelib.lua:2 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/lib/lua/init.lua:48 in main chunk\n...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:5: invalid superclass for:EditorCanvasCamera\nstack traceback:\n  [C] ?\n  [C] in function 'error'\n  /Volumes/prj/gii/test/game/lib/mock/core/Class.lua:415 in function 'EditorCanvasCamera'\n  ...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:5 in main chunk\n  [C] in function 'require'\n  ...umes/prj/gii/lib/lua/mock_edit/EditorCanvas/init.lua:10 in main chunk\n  [C] in function 'require'\n  /Volumes/prj/gii/lib/lua/mock_edit/init.lua:30 in main chunk\n  [C] in function 'require'\n  [string \"require \"mock_edit\"\"]:1 in main chunk\nTraceback (most recent call last):\n  File \"/Users/tommo/prj/gii/gii\", line 5, in <module>\n    gii_bin.main()\n  File \"/Volumes/prj/gii/gii_bin.py\", line 73, in main\n    gii.startup()\n  File \"/Volumes/prj/gii/lib/gii/__init__.py\", line 6, in startup\n    startupTool( info )\n  File \"/Volumes/prj/gii/lib/gii/core/tool.py\", line 180, in startupTool\n    return startTool( toolInfo )\n  File \"/Volumes/prj/gii/lib/gii/core/tool.py\", line 90, in startTool\n    m.main( sys.argv[ 1: ] )\n  File \"/Volumes/prj/gii/tools/ide/__init__.py\", line 15, in main\n    app.run()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorApp.py\", line 94, in run\n    if not self.initialized: self.init()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorApp.py\", line 81, in init\n    EditorModuleManager.get().loadAllModules()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 251, in loadAllModules\n    self.loadModule( m )\n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 234, in loadModule\n    m.load()\n  File \"/Volumes/prj/gii/lib/gii/core/EditorModule.py\", line 126, in load\n    self.onLoad()\n  File \"/Volumes/prj/gii/lib/mock/MockRuntime.py\", line 52, in onLoad\n    self.initMock()\n  File \"/Volumes/prj/gii/lib/mock/MockRuntime.py\", line 106, in initMock\n    raise e\nTypeError: 'NoneType' object is not callable\n\n[Finished in 2.6s with exit code 1]\n",
+			"contents": "[WARN:Lua]  no joystick sensor registered \n[WARN:Lua]  no joystick sensor registered \n[WARN:Lua]  no joystick sensor registered \n[WARN:Lua]  no joystick sensor registered \ntexture libray start\nfound joy: 1\n2015-09-21 22:18:52.807 Python[2701:32739] modalSession has been exited prematurely - check for a reentrant call to endModalSession:\nfound joy: 1\n2015-09-21 22:19:27.310 Python[2701:32739] modalSession has been exited prematurely - check for a reentrant call to endModalSession:\n[ERROR] cannot start host: list index out of range \nfound joy: 1\n2015-09-21 22:19:58.467 Python[2701:32739] modalSession has been exited prematurely - check for a reentrant call to endModalSession:\nfound joy: 1\n2015-09-21 22:20:17.908 Python[2701:32739] modalSession has been exited prematurely - check for a reentrant call to endModalSession:\n\n[Finished in 140.3s]\n",
 			"file": "test/BUILD_RESULT",
 			"file_size": -1,
 			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 3207,
+				"buffer_size": 851,
 				"line_ending": "Unix",
 				"scratch": true
 			}
@@ -664,13 +664,13 @@
 			}
 		},
 		{
-			"contents": "\n[Finished in 3.0s]\n",
+			"contents": "\n[Finished in 20.7s]\n",
 			"file": "lib/gii/qt/controls/GraphicsView/BUILD_RESULT",
 			"file_size": -1,
 			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 20,
+				"buffer_size": 21,
 				"line_ending": "Unix",
 				"scratch": true
 			}
@@ -688,12 +688,16 @@
 			}
 		}
 	],
-	"build_system": "IDE",
+	"build_system": "GII Python",
 	"command_palette":
 	{
-		"height": 250.0,
+		"height": 375.0,
 		"selected_items":
 		[
+			[
+				"css",
+				"Set Syntax: CSS"
+			],
 			[
 				"diff",
 				"Git: Diff All"
@@ -733,10 +737,6 @@
 			[
 				"checkout",
 				"Git: Checkout Current File"
-			],
-			[
-				"css",
-				"Set Syntax: CSS"
 			],
 			[
 				"git add",
@@ -1131,7 +1131,7 @@
 				"Package Control: List Packages"
 			]
 		],
-		"width": 588.0
+		"width": 579.0
 	},
 	"console":
 	{
@@ -1148,21 +1148,31 @@
 	},
 	"file_history":
 	[
-		"/Volumes/prj/gii/lib/gii/SceneEditor/SceneTool.py",
-		"/Volumes/prj/gii/lib/gii/SceneEditor/Introspector.py",
-		"/Volumes/prj/gii/test/game/lib/mock/component/WaypointPathFinder.lua",
-		"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreview.py",
-		"/Volumes/prj/gii/lib/lua/mock_edit/init.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/core/signal.lua",
+		"/Users/tommo/Projects/gii/lib/gii/SceneEditor/Introspector.py",
+		"/Users/tommo/Projects/gii/lib/mock/SceneGraphEditor/EntityEditor.py",
+		"/Users/tommo/Projects/gii/data/theme/gii.qss",
+		"/Users/tommo/Projects/gii/lib/gii/core/EditorApp.py",
+		"/Users/tommo/Projects/gii/lib/mock/asset/helper/PSDDeckPackProject.py",
+		"/Users/tommo/Projects/gii/lib/mock/asset/helper/PSDDeckMQuad.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/anim/AnimatorClip.lua",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/CurveView.py",
+		"/Users/tommo/Projects/gii/test/host/wscript",
+		"/Users/tommo/Projects/gii/lib/gii/moai/MOAIEditCanvas.py",
+		"/Users/tommo/Projects/gii/lib/gii/SceneEditor/GamePreview.py",
+		"/Users/tommo/Projects/gii/lib/mock/MockRuntime.py",
+		"/Users/tommo/Projects/gii/lib/gii/SceneEditor/SceneTool.py",
+		"/Users/tommo/Projects/gii/lib/gii/core/tool.py",
+		"/Users/tommo/Projects/gii/test/project.json",
+		"/Users/tommo/Projects/gii/test/project.jsongii",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/component/WaypointPathFinder.lua",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/TimelineView.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/TimelineWidget.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/testView.py",
 		"/Users/tommo/Projects/gii/packages/Mock/GlobalObjectManager/GlobalObjectManager.py",
 		"/Users/tommo/Projects/gii/lib/mock/SceneGraphEditor/SceneGraphEditor.py",
-		"/Users/tommo/Projects/gii/lib/mock/asset/helper/PSDDeckMQuad.py",
-		"/Users/tommo/Projects/gii/lib/mock/asset/helper/PSDDeckPackProject.py",
 		"/Users/tommo/Projects/gii/test/game/lib/mock/core/Game.lua",
-		"/Users/tommo/Projects/gii/lib/mock/MockRuntime.py",
 		"/Users/tommo/Projects/gii/test/game/lib/mock/asset/Texture.lua",
 		"/Users/tommo/Projects/gii/lib/mock/asset/TextureAsset.py",
-		"/Users/tommo/Projects/gii/lib/gii/core/EditorApp.py",
 		"/Users/tommo/Projects/gii/lib/gii/core/EditorModule.py",
 		"/Users/tommo/Projects/gii/lib/gii/moai/MOAIRuntime.py",
 		"/Users/tommo/Projects/gii/lib/mock/asset/TextureLibrary.lua",
@@ -1172,7 +1182,6 @@
 		"/Users/tommo/Projects/gii/test/host/osx/SDLHost.cpp",
 		"/Users/tommo/Projects/gii/lib/gii/qt/dialogs/ProcessDialog.py",
 		"/Users/tommo/Projects/gii/test/game/lib/mock/component/InputListener.lua",
-		"/Users/tommo/Projects/gii/lib/gii/moai/MOAIEditCanvas.py",
 		"/Users/tommo/Projects/gii/lib/gii/core/asset.py",
 		"/Users/tommo/Projects/gii/lib/gii/core/__init__.py",
 		"/Users/tommo/Projects/gii/lib/gii/core/CoreModule.py",
@@ -1188,7 +1197,6 @@
 		"/Users/tommo/Projects/gii/test/host/sdl-common/MOCKJoystickManger.cpp",
 		"/Users/tommo/Projects/gii/test/game/lib/mock/component/WaypointGraph.lua",
 		"/Users/tommo/Projects/gii/lib/gii/qt/controls/ColorPickerWidget.py",
-		"/Users/tommo/Projects/gii/lib/gii/SceneEditor/GamePreview.py",
 		"/Users/tommo/Projects/gii/test/host/host-modules/aku_modules.cpp",
 		"/Users/tommo/Projects/gii/test/host/host-modules/aku_modules_util.cpp",
 		"/Users/tommo/Projects/gii/lib/gii/SceneEditor/ExternRun.py",
@@ -1206,10 +1214,8 @@
 		"/Users/tommo/Projects/gii/test/host/sdl-common/wscript",
 		"/Users/tommo/Projects/gii/test/host/extension/MOCKNetworkView.cpp",
 		"/Users/tommo/Projects/gii/test/host/extension/MOCKNetworkBroadcast.cpp",
-		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/CurveView.py",
 		"/Users/tommo/Downloads/host-stirfirestudios-sdl-master/sledge/SledgeHost.h",
 		"/Users/tommo/Downloads/host-stirfirestudios-sdl-master/sledge/SledgeInputManager.cpp",
-		"/Users/tommo/Projects/gii/test/host/wscript",
 		"/Users/tommo/Projects/gii/test/host/moai_env.py",
 		"/Users/tommo/Projects/gii/test/host/extension/wscript",
 		"/Users/tommo/Projects/eastward/game/asset/script/actor/PlayerInputJoystick.lua",
@@ -1266,16 +1272,10 @@
 		"/Volumes/prj/gii/lib/gii/qt/QtSupport.py",
 		"/Volumes/prj/gii/lib/gii/qt/controls/prop/ColorFieldEditor.py",
 		"/Volumes/prj/gii/lib/gii/qt/controls/prop/CommonFieldEditors.py",
+		"/Volumes/prj/gii/lib/gii/SceneEditor/Introspector.py",
 		"/Volumes/prj/gii/lib/gii/qt/helpers/helper.py",
 		"/Volumes/prj/gii/lib/gii/qt/controls/prop/PropertyEditor.py",
-		"/Volumes/prj/gii/packages/Mock/DeckEditor/Deck2DEditor.py",
-		"/Volumes/prj/gii/packages/Mock/TextureManager/BUILD_RESULT",
-		"/Volumes/prj/gii/lib/gii/qt/controls/AssetTreeView.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/prop/test.py",
-		"/Volumes/prj/gii/lib/gii/qt/helpers/BUILD_RESULT",
-		"/Volumes/prj/gii/lib/gii/qt/controls/prop/ReferenceFieldEditor.py",
-		"/Volumes/prj/gii/data/theme/BUILD_RESULT",
-		"/Volumes/prj/gii/lib/gii/qt/dialogs/Dialogs.py"
+		"/Volumes/prj/gii/packages/Mock/DeckEditor/Deck2DEditor.py"
 	],
 	"find":
 	{
@@ -1362,7 +1362,71 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"registerGlobalSignals",
+			"self",
+			"requestSearchView",
+			"buttonAddComponent",
+			" )",
+			"buttonAddComponent",
+			"getIcon",
+			"self",
+			"buttonAddComponent",
+			"getIcon",
+			"555",
+			"5px",
+			"ButtonIntrospectorAddComponent",
+			"Qt",
+			"policy",
+			"resizepolicy",
+			"onButtonAddComponent",
+			"QPushButton",
+			"Create",
+			"Add",
+			"addComponent",
+			"body",
+			"addWidget",
+			"container",
+			"stre",
+			"insertWidget",
+			"common",
+			"author",
+			"GREEN",
+			"WHITE",
+			"RED",
+			"WHITE",
+			"YELLOW",
+			"BLUE",
+			"WHITE",
+			"NORMAL",
+			"RED",
+			"WHITE",
+			"YELLOW",
+			"NORMAL",
+			"BRIGHT",
+			"BLUE",
+			"GREEN",
+			"NORMAL",
+			"BLUE",
+			"RED",
+			"YELLOW",
+			"WHITE",
+			"NORMAL",
+			"GREEN",
+			"BRIGHT",
+			"RESET",
+			"RED",
+			"b",
+			"DIM",
+			"RESET",
+			"YELLOW",
+			"RED",
+			"YELLOW",
+			"output",
+			"print",
+			"\\",
+			"tracksize",
+			"10",
+			"_TRACK_SIZE",
+			"17",
 			"logging.warn",
 			"metaInfo",
 			"acceptLayer",
@@ -1425,71 +1489,7 @@
 			"focusTarget",
 			"target",
 			"contai",
-			"pos",
-			"scrolba",
-			"pos",
-			"scroll",
-			"getobjecteditor",
-			"getObjectEditorByTypeId",
-			"getObjectEditorClassByTypeId",
-			"registerObjectEditor",
-			"getObjectEditor",
-			"getObjectEditorClassByTypeId",
-			"getObjectEditorClass",
-			"getObjectEditor",
-			"False",
-			"True",
-			"s",
-			"introspector",
-			"onComponentAdded",
-			"DISPLAY",
-			"Ext",
-			"pipeline",
-			"_terminating",
-			"QFrame",
-			"QDialog",
-			"ApplicationModal",
-			"suepr",
-			"Close",
-			"close",
-			"value",
-			"_currentExternRunDialog",
-			"QFrame",
-			"self",
-			"ExternRun",
-			"main_preview_scene",
-			"targetName",
-			"main_preview_scene",
-			"' ",
-			"onButtonTerminate",
-			"onTimerTick",
-			"playerThread",
-			"hostThread",
-			"ExternDialog",
-			"main_preview_scene",
-			"dialog",
-			"main_preview_scene",
-			"targetName",
-			"main_preview_scene",
-			"Exterutn",
-			"targetName",
-			"start",
-			"DialogForm",
-			"ProcessDialog",
-			"ProcessDialogForm",
-			"pass",
-			"entities",
-			"target",
-			"docom",
-			"node",
-			"getNodefrom",
-			"node",
-			"toggle_entity_visibility",
-			"col",
-			"not",
-			"GenericTreeWidget",
-			"r",
-			"focus"
+			"pos"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1635,28 +1635,28 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "lib/mock/MockRuntime.py",
+					"file": "gii_bin.py",
 					"settings":
 					{
-						"buffer_size": 3734,
+						"buffer_size": 1948,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								627,
+								627
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
 							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
@@ -1668,90 +1668,6 @@
 				},
 				{
 					"buffer": 1,
-					"file": "lib/mock/asset/helper/PSDDeckMQuad.py",
-					"settings":
-					{
-						"buffer_size": 9215,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 4656.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "lib/mock/asset/helper/PSDDeckPackProject.py",
-					"settings":
-					{
-						"buffer_size": 6924,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2830.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "gii_bin.py",
-					"settings":
-					{
-						"buffer_size": 1948,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 423.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
 					"file": "lib/mock/asset/helper/MetaTag.py",
 					"settings":
 					{
@@ -1777,27 +1693,83 @@
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 6,
-			"sheets":
-			[
+				},
 				{
-					"buffer": 5,
-					"file": "lib/gii/core/tools/RunHost.py",
+					"buffer": 2,
+					"file": "test/host/osx/SDLHost.cpp",
 					"settings":
 					{
-						"buffer_size": 915,
+						"buffer_size": 9369,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								467,
-								467
+								621,
+								621
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "lib/gii/qt/controls/GraphicsView/GraphView.py",
+					"settings":
+					{
+						"buffer_size": 8409,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								448,
+								448
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 4,
+					"file": "lib/gii/core/tools/RunHost.py",
+					"settings":
+					{
+						"buffer_size": 914,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1813,35 +1785,35 @@
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 5,
 					"file": "lib/gii/SceneEditor/Introspector.py",
 					"settings":
 					{
-						"buffer_size": 13984,
+						"buffer_size": 14197,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								12588,
-								12588
+								10319,
+								10319
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
 							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 7309.0,
+						"translation.y": 5678.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 6,
 					"file": "lib/gii/AssetEditor/AssetBrowser.py",
 					"settings":
 					{
@@ -1863,13 +1835,13 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 7988.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 7,
 					"file": "lib/gii/core/EditorModule.py",
 					"settings":
 					{
@@ -1891,13 +1863,13 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2395.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 8,
 					"file": "lib/gii/core/EditorApp.py",
 					"settings":
 					{
@@ -1919,13 +1891,13 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2163.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 0,
+					"buffer": 9,
 					"file": "lib/mock/MockRuntime.py",
 					"settings":
 					{
@@ -1936,8 +1908,8 @@
 						"selection":
 						[
 							[
-								3475,
-								3475
+								3452,
+								3452
 							]
 						],
 						"settings":
@@ -1954,24 +1926,25 @@
 				},
 				{
 					"buffer": 10,
-					"file": "lib/lua/mock_edit/common/signals.lua",
+					"file": "lib/mock/SceneGraphEditor/SceneGraphEditor.py",
 					"settings":
 					{
-						"buffer_size": 111,
+						"buffer_size": 35894,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								111,
-								111
+								321,
+								321
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage"
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1982,7 +1955,7 @@
 			]
 		},
 		{
-			"selected": 3,
+			"selected": 5,
 			"sheets":
 			[
 				{
@@ -2077,28 +2050,28 @@
 					"file": "test/BUILD_RESULT",
 					"settings":
 					{
-						"buffer_size": 3207,
+						"buffer_size": 851,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								755,
-								755
+								851,
+								851
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Volumes/prj/gii/test",
+							"result_base_dir": "/Users/tommo/Projects/gii/test",
 							"result_file_regex": "",
 							"result_line_regex": "",
 							"syntax": "Packages/Text/Plain text.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
-						"translation.x": 12.0,
+						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
@@ -2139,20 +2112,20 @@
 					"file": "lib/gii/qt/controls/GraphicsView/BUILD_RESULT",
 					"settings":
 					{
-						"buffer_size": 20,
+						"buffer_size": 21,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								21,
+								21
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
 							"result_base_dir": "/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView",
 							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
 							"result_line_regex": "",
@@ -2281,16 +2254,64 @@
 		"selected_items":
 		[
 			[
-				"signal.lua",
-				"test/game/lib/mock/core/signal.lua"
+				"graphvi",
+				"lib/gii/qt/controls/GraphicsView/GraphView.py"
 			],
 			[
-				"mock_editinit",
-				"lib/lua/mock_edit/init.lua"
+				"editap",
+				"lib/gii/core/EditorApp.py"
 			],
 			[
-				"signals.lua",
-				"lib/lua/mock_edit/common/signals.lua"
+				"scenegra",
+				"lib/mock/SceneGraphEditor/SceneGraphEditor.py"
+			],
+			[
+				"qss",
+				"data/theme/gii.qss"
+			],
+			[
+				"intro",
+				"lib/gii/SceneEditor/Introspector.py"
+			],
+			[
+				"entited",
+				"lib/mock/SceneGraphEditor/EntityEditor.py"
+			],
+			[
+				"introspect",
+				"lib/gii/SceneEditor/Introspector.py"
+			],
+			[
+				"moaiedc",
+				"lib/gii/moai/MOAIEditCanvas.py"
+			],
+			[
+				"gameprev",
+				"lib/gii/SceneEditor/GamePreview.py"
+			],
+			[
+				"animclip",
+				"test/game/lib/mock/anim/AnimatorClip.lua"
+			],
+			[
+				"wsc",
+				"test/host/wscript"
+			],
+			[
+				"host",
+				"test/host/osx/SDLHost.cpp"
+			],
+			[
+				"tool",
+				"lib/gii/core/tool.py"
+			],
+			[
+				"tool.py",
+				"lib/gii/core/tool.py"
+			],
+			[
+				"curve",
+				"lib/gii/qt/controls/GraphicsView/CurveView.py"
 			],
 			[
 				"mockrunt",
@@ -2361,20 +2382,12 @@
 				"lib/gii/core/EditorApp.py"
 			],
 			[
-				"intro",
-				"lib/gii/SceneEditor/Introspector.py"
-			],
-			[
 				"mockrun",
 				"lib/mock/MockRuntime.py"
 			],
 			[
 				"luascrip",
 				"lib/gii/moai/LuaScriptAsset.py"
-			],
-			[
-				"editap",
-				"lib/gii/core/EditorApp.py"
 			],
 			[
 				"moairu",
@@ -2493,10 +2506,6 @@
 				"lib/gii/qt/controls/GraphicsView/CurveView.py"
 			],
 			[
-				"host",
-				"test/host/osx/SDLHost.cpp"
-			],
-			[
 				"editorapp",
 				"lib/gii/core/EditorApp.py"
 			],
@@ -2583,10 +2592,6 @@
 			[
 				"",
 				"gii.sublime-project"
-			],
-			[
-				"curve",
-				"lib/gii/qt/controls/GraphicsView/CurveView.py"
 			],
 			[
 				"bridge",
@@ -2725,10 +2730,6 @@
 				"packages/Mock/LayerManager/LayerManager.lua"
 			],
 			[
-				"qss",
-				"data/theme/dark.qss"
-			],
-			[
 				"dark",
 				"data/theme/dark.qss"
 			],
@@ -2757,40 +2758,12 @@
 				"lib/gii/__init__.py"
 			],
 			[
-				"tool",
-				"lib/gii/core/tool.py"
-			],
-			[
 				"runt",
 				"data/lua/runtime.lua"
 			],
 			[
 				"run",
 				"tools/run/__init__.py"
-			],
-			[
-				"start",
-				"start"
-			],
-			[
-				"osxw",
-				"template/host/osx/wscript"
-			],
-			[
-				"proje",
-				"lib/gii/core/project.py"
-			],
-			[
-				"projec",
-				"test/project.json"
-			],
-			[
-				"jsonh",
-				"lib/gii/core/jsonHelper.py"
-			],
-			[
-				".proj",
-				"gii.sublime-project"
 			]
 		],
 		"width": 0.0
