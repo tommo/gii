@@ -44,7 +44,6 @@ function ProtoDragInFactory:create( view, mimeType, data, x, y )
 	for i, path in ipairs( data ) do
 		local node = mock.getAssetNode( path )
 		local assetType = node:getType()
-		print( 'asset', assetType )
 		if assetType == 'proto' then
 			return ProtoDragIn( path, x, y )
 		end

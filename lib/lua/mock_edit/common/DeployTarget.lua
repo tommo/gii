@@ -83,6 +83,12 @@ function DeployManagerConfig:addDeployScene( path )
 	return entry
 end
 
+function DeployManagerConfig:changeTargetScene( entry, scene )
+	entry.path = scene
+	-- self:updateSceneId()
+	return entry
+end
+
 function DeployManagerConfig:removeDeployScene( entry )
 	for i,t in ipairs( self.scenes ) do
 		if t == entry then

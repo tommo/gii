@@ -82,6 +82,9 @@ class DeployManager( AssetEditorModule ):
 		self.addTool( 'deploy_scene/remove_scene',      label = 'remove'  ,icon = 'remove' )
 		self.addTool( 'deploy_scene/move_up_scene',     label = 'up'      ,icon = 'arrow-up'     )
 		self.addTool( 'deploy_scene/move_down_scene',   label = 'down'    ,icon = 'arrow-down'   )
+		self.addTool( 'deploy_scene/----' )
+		self.addTool( 'deploy_scene/edit_scene',   label = 'change target scene' ,icon = 'pencil'   )
+		self.addTool( 'deploy_scene/----' )
 		self.addTool( 'deploy_scene/set_entry_scene',   label = 'set as entry' ,icon = 'flag'   )
 
 		#deploy target tree
@@ -165,6 +168,12 @@ class DeployManager( AssetEditorModule ):
 		self.treeTarget.addNode( target )
 		self.treeTarget.editNode( target )
 
+	def changeDeployScene( self, targetScene ):
+		for sceneEntry in self.treeScene.getSelection():
+			self.delegate.safeCallMethod( 'config', 'changeTargetScene', sceneEntry, targetScene.getPath() )
+			self.treeScene.refreshNode( sceneEntry )
+			return
+
 	def renameDeployTarget( self, target, name ):
 		target.name = name #avoid duplicated name
 
@@ -201,6 +210,7 @@ class DeployManager( AssetEditorModule ):
 				context = 'deploy_target_type',
 				on_selection = self.addDeployTarget
 				)
+
 		elif name == 'remove_target':
 			for target in self.treeTarget.getSelection():
 				self.treeTarget.removeNode( target )
@@ -212,6 +222,14 @@ class DeployManager( AssetEditorModule ):
 				context = 'asset',
 				type    = 'scene',
 				on_selection = self.addDeployScene
+				)
+
+		elif name == 'edit_scene':
+			requestSearchView( 
+				info    = 'select new target scene ',
+				context = 'asset',
+				type    = 'scene',
+				on_selection = self.changeDeployScene
 				)
 
 		elif name == 'remove_scene':

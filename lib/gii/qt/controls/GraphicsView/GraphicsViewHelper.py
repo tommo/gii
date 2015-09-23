@@ -143,8 +143,8 @@ class StyledItemMixin:
 		pass
 
 
-# _USE_GL = False
-_USE_GL = True
+_USE_GL = False
+# _USE_GL = True
 
 ##----------------------------------------------------------------##
 class GLGraphicsView( QtGui.QGraphicsView ):

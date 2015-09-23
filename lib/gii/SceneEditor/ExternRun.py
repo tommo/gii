@@ -38,7 +38,6 @@ class ExternRunDialog( QtGui.QDialog ):
 		self.playerThread = ExternRunThread( self.targetName )
 		self.finished = False
 		
-		self.playerThread.start()
 
 		self.timer = QtCore.QTimer( self )
 		self.timer.setInterval( 50 )
@@ -52,6 +51,7 @@ class ExternRunDialog( QtGui.QDialog ):
 		# self.setWindowModality( Qt.ApplicationModal )
 		self.setWindowModality( Qt.WindowModal )
 		self.show()
+		self.playerThread.start()
 
 		signals.emit( 'external_player.start', targetName )
 
@@ -86,6 +86,7 @@ class ExternRunDialog( QtGui.QDialog ):
 			self.ui.buttonTerminate.setEnabled( False )
 
 	def closeEvent( self ,ev ):
+		if not self.finished: return
 		_currentExternRunDialog = None
 		return super( ExternRunDialog, self ).closeEvent( ev )
 
