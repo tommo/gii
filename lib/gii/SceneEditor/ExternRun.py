@@ -62,9 +62,9 @@ class ExternRunDialog( QtGui.QDialog ):
 	def onTimerTick( self ):
 		elapsed = time.time() - self.startTime
 		self.ui.labelElapsed.setText( 'Elapsed: ' + _formatSeconds( elapsed ) )
-		if not self.playerThread.finished: return
-		self.timer.stop()
-		self.onFinish()
+		if self.playerThread.finished: 
+			self.timer.stop()
+			self.onFinish()
 
 	def onFinish( self ):
 		self.ui.buttonTerminate.setText( 'OK' )
@@ -100,7 +100,7 @@ class ExternRunThread( threading.Thread ):
 	def run( self ):
 		if not self.targetName:
 			return
-		RunHost.run( self.targetName )
+		returncode = RunHost.run( self.targetName )
 		self.finished = True
 
 
