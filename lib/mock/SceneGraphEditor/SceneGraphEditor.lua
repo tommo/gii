@@ -21,7 +21,14 @@ function SceneGraphEditor:getScene()
 end
 
 function SceneGraphEditor:openScene( path )
-	local scene = mock.game:openSceneByPath( path ) --dont start
+	local scene = mock.game:openSceneByPath(
+		path, 
+		false,
+		{
+			fromEditor = true,
+		},
+		false
+	) --dont start
 	assert( scene )
 	self.scene = scene
 	affirmSceneGUID( scene )
