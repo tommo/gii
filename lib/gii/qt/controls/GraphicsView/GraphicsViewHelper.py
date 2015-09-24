@@ -161,7 +161,7 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 			self.glViewport = viewport
 			self.setViewport( viewport )
 		else:
-			self.setViewportUpdateMode( QtGui.QGraphicsView.SmartViewportUpdate )
+			self.setViewportUpdateMode( QtGui.QGraphicsView.MinimalViewportUpdate )
 
 		self.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		self.setRenderHint( QtGui.QPainter.HighQualityAntialiasing, False )
