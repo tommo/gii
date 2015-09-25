@@ -12,9 +12,9 @@ from GraphicsViewHelper import *
 from GraphNode import *
 
 ##----------------------------------------------------------------##
-class GraphScene( QtGui.QGraphicsScene ):
+class GraphNodeViewScene( QtGui.QGraphicsScene ):
 	def __init__( self, parent ):
-		super( GraphScene, self ).__init__( parent = parent )
+		super( GraphNodeViewScene, self ).__init__( parent = parent )
 		dummyPort = GraphNodePort()
 		dummyPort.setFlag( dummyPort.ItemHasNoContents, True )
 		dummyPort.hide()
@@ -45,7 +45,7 @@ class GraphScene( QtGui.QGraphicsScene ):
 		if isinstance( item, GraphNodePort ):
 			self.dummyPort.setPos( event.scenePos() )
 			if self.tryStartConnection( item ): return
-		super( GraphScene, self ).mousePressEvent( event )
+		super( GraphNodeViewScene, self ).mousePressEvent( event )
 
 	def mouseMoveEvent( self, event ):
 		if self.connecting:
@@ -55,47 +55,55 @@ class GraphScene( QtGui.QGraphicsScene ):
 				self.dummyPort.dir = 1
 			self.dummyPort.setPos( event.scenePos() )
 			self.dummyPort.updateConnections()
-		super( GraphScene, self ).mouseMoveEvent( event )
+		super( GraphNodeViewScene, self ).mouseMoveEvent( event )
 
 	def mouseReleaseEvent( self, event ):
 		if self.connecting:
 			self.dummyPort.setPos( event.scenePos() )
 			item = self.itemAt( event.scenePos() )
 			if isinstance( item, GraphNodePort ):
-				self.connecting.setDstPort( item )
+				if not self.connecting.setDstPort( item ): #not accepted
+					self.connecting.delete()
 			else:
 				self.connecting.delete()
 			self.connecting = None
-		super( GraphScene, self ).mouseReleaseEvent( event )
+		super( GraphNodeViewScene, self ).mouseReleaseEvent( event )
 
-class GraphView( GLGraphicsView ):
+class GraphNodeView( GLGraphicsView ):
 	def __init__( self, *args, **kwargs ):
-		super( GraphView, self ).__init__( *args, **kwargs )
+		super( GraphNodeView, self ).__init__( *args, **kwargs )
 
-class GraphWidget( QtGui.QWidget ):
+class GraphNodeViewWidget( QtGui.QWidget ):
 	def __init__( self, *args, **kwargs ):
-		super( GraphWidget, self ).__init__( *args, **kwargs )		
+		super( GraphNodeViewWidget, self ).__init__( *args, **kwargs )		
 		layout = QtGui.QVBoxLayout( self )
 
-		self.scene = GraphScene( parent = self )
+		self.scene = GraphNodeViewScene( parent = self )
 		self.scene.setBackgroundBrush( Qt.black );
-		self.view = GraphView( self.scene, parent = self )
+		self.view = GraphNodeView( self.scene, parent = self )
 		self.view.setSceneRect( QRectF( 0,0, 10000, 10000 ) )
 		layout.addWidget( self.view )
 		self.testData()
 
 	def testData( self ):
+		group = GraphNodeGroup()
+		self.scene.addItem( group )
+
 		node1 = GraphNode()
-		self.scene.addItem( node1 )
 		node2 = GraphNode()
-		self.scene.addItem( node2 )
 		node3 = GraphNode()
-		self.scene.addItem( node3 )
+
 		node1.setPos( 200, 100 )
+		
+		self.scene.addItem( node1 )#.setParentItem( group )
+		self.scene.addItem( node2 )#.setParentItem( group )
+		self.scene.addItem( node3 )#.setParentItem( group )
+
 		conn = GraphNodeConnection( node1.getPort( 'out-1' ), node2.getPort( 'in-0' ) )
 		self.scene.addItem( conn )
 		conn = GraphNodeConnection( node2.getPort( 'out-1' ), node3.getPort( 'in-0' ) )
 		self.scene.addItem( conn )
+
 
 	def closeEvent( self, event ):
 		self.view.deleteLater()

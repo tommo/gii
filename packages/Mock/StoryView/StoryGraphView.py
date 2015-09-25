@@ -9,7 +9,7 @@ from gii.qt           import *
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.dialogs   import requestString, alertMessage, requestColor
 
-from gii.qt.controls.GraphicsView.GraphicsViewHelper import  *
+from gii.qt.controls.GraphicsView.GraphNodeView import  *
 
 from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
@@ -22,19 +22,6 @@ makeStyle( 'curve',             '#c1ff03',    None             )
 
 
 ##----------------------------------------------------------------##
-class StoryGraphView( GLGraphicsView ):
+class StoryGraphView( GraphNodeViewWidget ):
 	def __init__(self, *args, **kwargs ):
 		super(StoryGraphView, self).__init__( *args, **kwargs )
-
-		scene = QtGui.QGraphicsScene()
-		self.setScene( scene )
-		self.setBackgroundBrush( _DEFAULT_BG )
-		
-		#grid
-		self.gridSize = 100
-		self.gridBackground = GridBackground()
-		self.gridBackground.setGridSize( self.gridSize, self.gridSize )
-		self.gridBackground.setAxisShown( True, True )
-		self.gridBackground.setCursorVisible( False )
-		scene.addItem( self.gridBackground )
-

@@ -11,6 +11,36 @@ from GraphicsViewHelper import *
 import sys
 import math
 
+
+##----------------------------------------------------------------##
+class GraphNodeGroup( QtGui.QGraphicsRectItem ):
+	_pen   = makePen( color = '#808080', style = Qt.DashLine )
+	_brush = makeBrush( color = '#1a1a1a' )
+	def __init__( self ):
+		super(GraphNodeGroup, self).__init__()
+		self.title = 'Group'
+		self.setRect( 0,0, 400, 400 )
+		self.setFlag( self.ItemIsSelectable, True )
+		self.setFlag( self.ItemIsMovable, True )
+		self.setFlag( self.ItemSendsGeometryChanges, True )
+		self.setFlag( self.ItemClipsChildrenToShape, True )
+		self.setZValue( -100 )
+
+	def getTitle( self ):
+		return self.title
+
+	def setTitle( self, title ):
+		self.title = title
+
+	def paint( self, painter, option, widget ):
+		painter.setPen( GraphNodeGroup._pen )
+		painter.setBrush( GraphNodeGroup._brush )
+		rect = self.rect()
+		painter.drawRoundedRect( rect, 10, 10 )
+		trect = rect.adjusted( 10, 10, -4, -4 )
+		painter.drawText( trect, Qt.AlignLeft|Qt.AlignTop, self.getTitle() )
+
+
 ##----------------------------------------------------------------##
 class GraphNodePort( QtGui.QGraphicsRectItem ):
 	_pen = makePen( color = '#a4a4a4' )
@@ -102,7 +132,7 @@ class GraphNodeHeader( QtGui.QGraphicsRectItem ):
 	_brush = makeBrush( color = '#3a3a3a' )
 	def __init__( self ):
 		super( GraphNodeHeader, self ).__init__()
-		self.headerText = u'MOAIShaderNode'
+		self.headerText = u'アバンシュPeut-être'
 		self.headerHeight = 20
 
 	def setText( self, t ):
@@ -208,9 +238,9 @@ class GraphNode( QtGui.QGraphicsRectItem ):
 		return QtGui.QGraphicsRectItem.itemChange( self, change, value )
 
 	def paint( self, painter, option, widget ):
+		rect = self.rect()
 		painter.setPen( GraphNode._pen )
 		painter.setBrush( GraphNode._brush )
-		rect = self.rect()
 		painter.drawRoundedRect( rect, 3,3 )
 
 
@@ -249,6 +279,7 @@ class GraphNodeConnection( QtGui.QGraphicsPathItem ):
 		self.updatePath()
 
 	def setDstPort( self, port ):
+		if self.srcPort == port: return False
 		if self.dstPort:
 			self.dstPort.update()
 			if self in self.dstPort.connections:
@@ -258,6 +289,7 @@ class GraphNodeConnection( QtGui.QGraphicsPathItem ):
 			port.connections[ self ] = True
 			port.update()
 		self.updatePath()
+		return True
 
 	def delete( self ):
 		if self.srcPort:
@@ -304,8 +336,8 @@ class GraphNodeConnection( QtGui.QGraphicsPathItem ):
 		super( GraphNodeConnection, self ).paint( painter, option, widget )
 		#draw arrow
 		path = self.path()
-		midDir   = path.angleAtPercent( 0.5 )
-		midPoint = path.pointAtPercent( 0.5 )
+		midDir   = path.angleAtPercent( 0.7 )
+		midPoint = path.pointAtPercent( 0.7 )
 		trans = QTransform()
 		trans.translate( midPoint.x(), midPoint.y() )
 		trans.rotate( -midDir )

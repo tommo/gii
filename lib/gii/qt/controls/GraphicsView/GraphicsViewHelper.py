@@ -149,15 +149,17 @@ _USE_GL = True
 ##----------------------------------------------------------------##
 class GLGraphicsView( QtGui.QGraphicsView ):
 	def __init__( self, *args, **kwargs ):
-		super( GLGraphicsView, self ).__init__( *args, **kwargs )
+		option = kwargs
+		super( GLGraphicsView, self ).__init__( *args, parent = option.get('parent', None) )
 		self.setHorizontalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
 		self.setVerticalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
 		self.setAttribute( Qt.WA_NoSystemBackground, True )
 		self.setAttribute( Qt.WA_OpaquePaintEvent, True )
+		self.usingGL = _USE_GL and option.get( 'use_gl', True )
 		
-		if _USE_GL and kwargs.get( 'use_gl', True ):
+		if self.usingGL:
 			self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
-			viewport = kwargs.get( 'gl_viewport', makeGLWidget() )
+			viewport = option.get( 'gl_viewport', makeGLWidget() )
 			self.glViewport = viewport
 			self.setViewport( viewport )
 		else:
@@ -201,7 +203,7 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 	# 		super( GLGraphicsView, self ).paintEvent( ev )
 
 	def paintEvent( self, ev ):
-		if _USE_GL:
+		if self.usingGL:
 			current = QGLContext.currentContext()
 			self.glViewport.makeCurrent()
 			super( GLGraphicsView, self ).paintEvent( ev )

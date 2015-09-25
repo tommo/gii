@@ -3,7 +3,7 @@ import os
 
 from PyQt4 import QtGui, QtCore, QtOpenGL, uic
 
-from GraphView import *
+from GraphNodeView import *
 
 app = QtGui.QApplication( sys.argv )
 styleSheetName = 'gii.qss'
@@ -11,7 +11,7 @@ app.setStyleSheet(
 		open( '/Users/tommo/prj/gii/data/theme/' + styleSheetName ).read() 
 	)
 
-g = GraphWidget()
+g = GraphNodeViewWidget()
 g.resize( 600, 300 )
 g.show()
 g.raise_()
