@@ -134,6 +134,8 @@ class GraphNodeHeader( QtGui.QGraphicsRectItem ):
 		super( GraphNodeHeader, self ).__init__()
 		self.headerText = u'アバンシュPeut-être'
 		self.headerHeight = 20
+		self.setCursor( Qt.PointingHandCursor )
+
 
 	def setText( self, t ):
 		self.headerText = t
@@ -159,12 +161,14 @@ class GraphNodeHeader( QtGui.QGraphicsRectItem ):
 
 
 ##----------------------------------------------------------------##
+_GraphNodeZValue = 10
 class GraphNode( QtGui.QGraphicsRectItem ):
 	_pen = QtGui.QPen( QColor( '#a4a4a4' ) )
 	_brush = makeBrush( color = '#676767' )
 	def __init__( self ):
 		super( GraphNode, self ).__init__()
-		self.portDict = {}
+		self.inPortDict = {}
+		self.outPortDict = {}
 		self.inPorts  = []
 		self.outPorts = []
 		self.header = self.createHeader()
@@ -176,10 +180,8 @@ class GraphNode( QtGui.QGraphicsRectItem ):
 		self.setFlag( self.ItemSendsGeometryChanges, True )
 		self.setCursor( Qt.PointingHandCursor )
 		self.buildPorts()
+		self.setZValue( _GraphNodeZValue )
 		self.updateShape()
-
-	def getPort( self, id ):
-		return self.portDict.get( id, None )
 
 	def createHeader( self ):
 		return GraphNodeHeader()
@@ -187,23 +189,35 @@ class GraphNode( QtGui.QGraphicsRectItem ):
 	def getHeader( self ):
 		return self.header
 
+	def getInPort( self, id ):
+		return self.inPortDict.get( id, None )
+
+	def getOutPort( self, id ):
+		return self.outPortDict.get( id, None )
+
+	def addInPort( self, key, port ):
+		port.dir = -1
+		port.setParentItem( self )
+		port.key = key
+		self.inPortDict[ key ] = port
+		self.inPorts.append( port )
+
+	def addOutPort( self, key, port ):
+		port.dir = 1
+		port.setParentItem( self )
+		port.key = key
+		self.outPortDict[ key ] = port
+		self.outPorts.append( port )
+
 	def buildPorts( self ):
 		#input
 		for i in range( 4 ):
 			port = GraphNodePort()
-			port.setParentItem( self )
-			port.dir = -1
-			self.portDict[ 'in-%d' % i ] = port
-			self.inPorts.append( port )
+			self.addInPort( 'p%d'%i, port )
 		#output
 		for i in range( 2 ):
 			port = GraphNodePort()
-			port.setParentItem( self )
-			port.dir = 1
-			self.portDict[ 'out-%d' % i ] = port
-			self.outPorts.append( port )
-
-		self.updateShape()
+			self.addOutPort( 'p%d'%i, port )
 
 	def updateShape( self ):
 		h = self.rect().height()
@@ -213,29 +227,40 @@ class GraphNode( QtGui.QGraphicsRectItem ):
 		headerMargin = 10
 		footerMargin = 10
 		minHeight = 20
+		nodeWidth = 120
 		totalHeight = max( row * rowSize, minHeight ) + headerMargin + headerSize + footerMargin
 		y0 = headerMargin + headerSize
-		self.setRect( 0,0,120, totalHeight )
+		self.setRect( 0,0, nodeWidth, totalHeight )
 
 		for i, port in enumerate( self.inPorts ):
-			port.setPos( 0, y0 + i*rowSize + rowSize/2 )
+			port.setPos( 1, y0 + i*rowSize + rowSize/2 )
 
 		for i, port in enumerate( self.outPorts ):
-			port.setPos( 120, y0 + i*rowSize + rowSize/2 )
+			port.setPos( nodeWidth - 1, y0 + i*rowSize + rowSize/2 )
 
 		self.header.updateShape()
 
 	def delete( self ):
-		for port in self.portDict.values():
+		for port in self.inPorts:
+			port.clearConnections()
+		for port in self.outPorts:
 			port.clearConnections()
 		self.scene().removeItem( self )
 
 	def itemChange( self, change, value ):
 		if change == self.ItemPositionChange or change == self.ItemPositionHasChanged:
-			for port in self.portDict.values():
+			for port in self.inPorts:
+				port.updateConnections()
+			for port in self.outPorts:
 				port.updateConnections()
 
 		return QtGui.QGraphicsRectItem.itemChange( self, change, value )
+
+	def mousePressEvent( self, ev ):
+		global _GraphNodeZValue 
+		_GraphNodeZValue += 0.000001 #shitty reordering
+		self.setZValue( _GraphNodeZValue )
+		return super( GraphNode, self ).mousePressEvent( ev )
 
 	def paint( self, painter, option, widget ):
 		rect = self.rect()
@@ -246,13 +271,14 @@ class GraphNode( QtGui.QGraphicsRectItem ):
 
 ##----------------------------------------------------------------##
 class GraphNodeConnection( QtGui.QGraphicsPathItem ):
-	_pen = makePen( color = '#ffffff', width = 1.2, style=Qt.SolidLine )
-	_pen_arrow   = makePen( color = '#ffffff', width = 1, style=Qt.SolidLine )
-	_brush_arrow = makeBrush( color = '#ffffff' )
+	_pen                  = makePen( color = '#ffffff', width = 1 )
+	_brush_arrow          = makeBrush( color = '#ffffff' )
+	_pen_selected         = makePen( color = '#ff4700', width = 2 )
+	_brush_arrow_selected = makeBrush( color = '#ff4700' )
 	_polyTri = QtGui.QPolygonF([
 			QPointF(  0,   0 ),
-			QPointF( -10, -5 ),
-			QPointF( -10,  5 ),
+			QPointF( -12, -6 ),
+			QPointF( -12,  6 ),
 			])
 	def __init__( self, srcPort, dstPort ):
 		super( GraphNodeConnection, self ).__init__()
@@ -264,8 +290,9 @@ class GraphNodeConnection( QtGui.QGraphicsPathItem ):
 		self.setZValue( -1 )
 		self.updatePath()
 		self.setPen( GraphNodeConnection._pen )
+		self.setCursor( Qt.PointingHandCursor )
 		self.setAcceptHoverEvents( True )
-
+		self.selected = False
 
 	def setSrcPort( self, port ):
 		if self.srcPort:
@@ -333,6 +360,11 @@ class GraphNodeConnection( QtGui.QGraphicsPathItem ):
 		self.setPath( path )
 
 	def paint( self, painter, option, widget ):
+		if self.selected:
+			self.setPen( GraphNodeConnection._pen_selected )
+		else:
+			self.setPen( GraphNodeConnection._pen )
+
 		super( GraphNodeConnection, self ).paint( painter, option, widget )
 		#draw arrow
 		path = self.path()
@@ -342,9 +374,22 @@ class GraphNodeConnection( QtGui.QGraphicsPathItem ):
 		trans.translate( midPoint.x(), midPoint.y() )
 		trans.rotate( -midDir )
 		painter.setTransform( trans, True )
-		painter.setPen( GraphNodeConnection._pen_arrow )
-		painter.setBrush( GraphNodeConnection._brush_arrow )
+		if self.selected:
+			painter.setBrush( GraphNodeConnection._brush_arrow_selected )
+		else:
+			painter.setBrush( GraphNodeConnection._brush_arrow )
 		painter.drawPolygon( GraphNodeConnection._polyTri )
+
+	def mousePressEvent( self, ev ):
+		if ev.button() == Qt.LeftButton:
+			self.selected = True
+			self.update()
+
+	def mouseReleaseEvent( self, ev ):
+		if ev.button() == Qt.LeftButton:
+			self.selected = False
+			self.update()
+
 
 
 if __name__ == '__main__':
