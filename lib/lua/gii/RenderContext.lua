@@ -65,7 +65,9 @@ function changeRenderContext( key, w, h )
 		local renderTableMap = {}
 		local hasDeviceBuffer = false
 		for i, fb in pairs( bufferTable ) do
-			renderTableMap[fb] = fb:getRenderTable()
+			if fb.getRenderTarget then
+				renderTableMap[fb] = fb:getRenderTable()
+			end
 		end		
 		currentContext.bufferTable       = bufferTable
 		currentContext.renderTableMap    = renderTableMap

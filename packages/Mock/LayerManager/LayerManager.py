@@ -79,7 +79,7 @@ class LayerManager( SceneEditorModule ):
 		#SIGNALS
 		signals.connect( 'moai.clean', self.onMoaiClean )
 
-	def onStart( self ):
+	def onAppReady( self ):
 		self.tree.rebuild()
 
 	def onMoaiClean( self ):

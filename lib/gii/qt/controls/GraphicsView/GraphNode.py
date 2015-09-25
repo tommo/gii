@@ -1,0 +1,320 @@
+# -*- coding: utf-8 -*-
+
+from PyQt4 import QtGui, QtCore, QtOpenGL, uic
+from PyQt4.QtCore import Qt, QObject, QEvent, pyqtSignal
+from PyQt4.QtCore import QPoint, QRect, QSize
+from PyQt4.QtCore import QPointF, QRectF, QSizeF
+from PyQt4.QtGui import QColor, QTransform
+
+from GraphicsViewHelper import *
+
+import sys
+import math
+
+##----------------------------------------------------------------##
+class GraphNodePort( QtGui.QGraphicsRectItem ):
+	_pen = makePen( color = '#a4a4a4' )
+	_brush = makeBrush( color = '#000000' )
+	_pen_text = makePen( color = '#ffffff' )
+
+	_pen_hover = makePen( color = '#ffffff' )
+	_brush_hover = makeBrush( color = '#000000' )
+
+	_pen_fill = Qt.NoPen
+	_brush_fill = makeBrush( color = '#ffffff' )
+
+	def __init__( self ):
+		super( GraphNodePort, self ).__init__()
+		size = 16
+		self.dir = -1
+		self.setRect( -size/2, -size/2, size, size )
+		self.setCursor( Qt.PointingHandCursor )
+		self.connections = {}
+		self._pen = GraphNodePort._pen
+		self._brush = GraphNodePort._brush
+		self.setAcceptHoverEvents( True )
+
+	def getText( self ):
+		return 'X'
+	
+	def clearConnections( self ):
+		for conn in self.connections:
+			if conn.srcPort == self:
+				conn.setSrcPort( None )
+			if conn.dstPort == self:
+				conn.setDstPort( None )
+
+	def updateConnections( self ):
+		for conn in self.connections:
+			conn.updatePath()
+
+	def hasConnection( self ):
+		if self.connections:
+			return True
+		else:
+			return False
+
+	def hoverEnterEvent( self, event ):
+		self._pen = GraphNodePort._pen_hover
+		self._brush = GraphNodePort._brush_hover
+		self.update()
+		return super( GraphNodePort, self ).hoverEnterEvent( event )
+
+	def hoverLeaveEvent( self, event ):
+		self._pen = GraphNodePort._pen
+		self._brush = GraphNodePort._brush
+		self.update()
+		return super( GraphNodePort, self ).hoverLeaveEvent( event )
+
+	def paint( self, painter, option, widget ):
+		painter.setPen( self._pen )
+		painter.setBrush( self._brush )
+		rect = self.rect()
+		painter.drawEllipse( rect.adjusted(  2,2,-2,-2 ) )
+		if self.hasConnection():
+			painter.setPen( GraphNodePort._pen_fill )
+			painter.setBrush( GraphNodePort._brush_fill )
+			painter.drawEllipse( -3,-3,6,6 )
+		text = self.getText()
+		painter.setPen( GraphNodePort._pen_text )
+		if self.dir == -1: #in
+			trect = QRect( rect.right() + 2, rect.top(), 100, 20 )
+			painter.drawText( trect, Qt.AlignLeft|Qt.AlignVCenter, text )
+		elif self.dir == 1: #out
+			trect = QRect( rect.left() - 2 -100, rect.top(), 100, 20 )
+			painter.drawText( trect, Qt.AlignRight|Qt.AlignVCenter, text )
+
+
+	def CPNormal( self ):
+		p0 = self.scenePos()
+		if self.dir == -1: #in node
+			return QPointF( -1, 0 )
+		elif self.dir == 1: #out node
+			return QPointF( 1, 0 )
+		else:
+			raise Exception( 'invalid port dir: %d' % self.dir )
+
+
+##----------------------------------------------------------------##
+class GraphNodeHeader( QtGui.QGraphicsRectItem ):
+	_pen = Qt.NoPen
+	_textPen = makePen( color = '#ffffff' )
+	_brush = makeBrush( color = '#3a3a3a' )
+	def __init__( self ):
+		super( GraphNodeHeader, self ).__init__()
+		self.headerText = u'MOAIShaderNode'
+		self.headerHeight = 20
+
+	def setText( self, t ):
+		self.headerText = t
+
+	def getText( self ):
+		return self.headerText
+
+	def updateShape( self ):
+		rect = self.parentItem().rect()
+		rect.setHeight( self.headerHeight )
+		rect.adjust( 1,1,-1,0)
+		self.setRect( rect )
+
+	def paint( self, painter, option, widget ):
+		painter.setPen( Qt.NoPen )
+		painter.setBrush( GraphNodeHeader._brush )
+		rect = self.rect()
+		painter.drawRect( rect )
+		trect = rect.adjusted( 4, 2, 0, 0 )
+		painter.setPen( GraphNodeHeader._textPen )
+		painter.drawText( trect, Qt.AlignLeft|Qt.AlignVCenter, self.getText() )
+
+
+
+##----------------------------------------------------------------##
+class GraphNode( QtGui.QGraphicsRectItem ):
+	_pen = QtGui.QPen( QColor( '#a4a4a4' ) )
+	_brush = makeBrush( color = '#676767' )
+	def __init__( self ):
+		super( GraphNode, self ).__init__()
+		self.portDict = {}
+		self.inPorts  = []
+		self.outPorts = []
+		self.header = self.createHeader()
+		self.header.setParentItem( self )
+		self.setCacheMode( QtGui.QGraphicsItem.ItemCoordinateCache )
+		self.setRect( 0, 0, 100, 120 )
+		self.setFlag( self.ItemIsSelectable, True )
+		self.setFlag( self.ItemIsMovable, True )
+		self.setFlag( self.ItemSendsGeometryChanges, True )
+		self.setCursor( Qt.PointingHandCursor )
+		self.buildPorts()
+		self.updateShape()
+
+	def getPort( self, id ):
+		return self.portDict.get( id, None )
+
+	def createHeader( self ):
+		return GraphNodeHeader()
+
+	def getHeader( self ):
+		return self.header
+
+	def buildPorts( self ):
+		#input
+		for i in range( 4 ):
+			port = GraphNodePort()
+			port.setParentItem( self )
+			port.dir = -1
+			self.portDict[ 'in-%d' % i ] = port
+			self.inPorts.append( port )
+		#output
+		for i in range( 2 ):
+			port = GraphNodePort()
+			port.setParentItem( self )
+			port.dir = 1
+			self.portDict[ 'out-%d' % i ] = port
+			self.outPorts.append( port )
+
+		self.updateShape()
+
+	def updateShape( self ):
+		h = self.rect().height()
+		row = max( len(self.inPorts), len(self.outPorts) )
+		rowSize = 20
+		headerSize = 20
+		headerMargin = 10
+		footerMargin = 10
+		minHeight = 20
+		totalHeight = max( row * rowSize, minHeight ) + headerMargin + headerSize + footerMargin
+		y0 = headerMargin + headerSize
+		self.setRect( 0,0,120, totalHeight )
+
+		for i, port in enumerate( self.inPorts ):
+			port.setPos( 0, y0 + i*rowSize + rowSize/2 )
+
+		for i, port in enumerate( self.outPorts ):
+			port.setPos( 120, y0 + i*rowSize + rowSize/2 )
+
+		self.header.updateShape()
+
+	def delete( self ):
+		for port in self.portDict.values():
+			port.clearConnections()
+		self.scene().removeItem( self )
+
+	def itemChange( self, change, value ):
+		if change == self.ItemPositionChange or change == self.ItemPositionHasChanged:
+			for port in self.portDict.values():
+				port.updateConnections()
+
+		return QtGui.QGraphicsRectItem.itemChange( self, change, value )
+
+	def paint( self, painter, option, widget ):
+		painter.setPen( GraphNode._pen )
+		painter.setBrush( GraphNode._brush )
+		rect = self.rect()
+		painter.drawRoundedRect( rect, 3,3 )
+
+
+##----------------------------------------------------------------##
+class GraphNodeConnection( QtGui.QGraphicsPathItem ):
+	_pen = makePen( color = '#ffffff', width = 1.2, style=Qt.SolidLine )
+	_pen_arrow   = makePen( color = '#ffffff', width = 1, style=Qt.SolidLine )
+	_brush_arrow = makeBrush( color = '#ffffff' )
+	_polyTri = QtGui.QPolygonF([
+			QPointF(  0,   0 ),
+			QPointF( -10, -5 ),
+			QPointF( -10,  5 ),
+			])
+	def __init__( self, srcPort, dstPort ):
+		super( GraphNodeConnection, self ).__init__()
+		self.useCurve = True
+		self.srcPort = None
+		self.dstPort = None
+		self.setSrcPort( srcPort )
+		self.setDstPort( dstPort )
+		self.setZValue( -1 )
+		self.updatePath()
+		self.setPen( GraphNodeConnection._pen )
+		self.setAcceptHoverEvents( True )
+
+
+	def setSrcPort( self, port ):
+		if self.srcPort:
+			self.srcPort.update()
+			if self in self.srcPort.connections:
+				del self.srcPort.connections[ self ]
+		self.srcPort = port
+		if port:
+			port.connections[ self ] = True
+			port.update()
+		self.updatePath()
+
+	def setDstPort( self, port ):
+		if self.dstPort:
+			self.dstPort.update()
+			if self in self.dstPort.connections:
+				del self.dstPort.connections[ self ]
+		self.dstPort = port
+		if port:
+			port.connections[ self ] = True
+			port.update()
+		self.updatePath()
+
+	def delete( self ):
+		if self.srcPort:
+			del self.srcPort.connections[ self ]
+
+		if self.dstPort:
+			del self.dstPort.connections[ self ]
+
+		self.scene().removeItem( self )
+
+
+	def updatePath( self ):
+		if not ( self.srcPort and self.dstPort ):
+			path = QtGui.QPainterPath() #empty
+			self.setPath( path )
+			return
+
+		pos0 = self.srcPort.scenePos()
+		pos1 = self.dstPort.scenePos()
+		n0 = self.srcPort.CPNormal()
+		n1 = self.dstPort.CPNormal()
+		self.setPos( pos0 )
+		pos1 = self.mapFromScene( pos1 )
+		path = QtGui.QPainterPath()
+		path.moveTo( 0, 0 )		
+		dx = pos1.x()
+
+		if self.useCurve:
+			diff = abs(dx) * 0.7
+			cpos0 = n0 * diff
+			cpos1 = pos1 + n1 * diff
+			path.cubicTo( cpos0, cpos1, pos1 )
+		else:
+			diff = dx / 4
+			cpos0 = n0 * diff
+			cpos1 = pos1 + n1 * diff
+			path.lineTo( cpos0 )
+			path.lineTo( cpos1 )
+			path.lineTo( pos1 )				
+
+		self.setPath( path )
+
+	def paint( self, painter, option, widget ):
+		super( GraphNodeConnection, self ).paint( painter, option, widget )
+		#draw arrow
+		path = self.path()
+		midDir   = path.angleAtPercent( 0.5 )
+		midPoint = path.pointAtPercent( 0.5 )
+		trans = QTransform()
+		trans.translate( midPoint.x(), midPoint.y() )
+		trans.rotate( -midDir )
+		painter.setTransform( trans, True )
+		painter.setPen( GraphNodeConnection._pen_arrow )
+		painter.setBrush( GraphNodeConnection._brush_arrow )
+		painter.drawPolygon( GraphNodeConnection._polyTri )
+
+
+if __name__ == '__main__':
+	import TestGraphView
+	
