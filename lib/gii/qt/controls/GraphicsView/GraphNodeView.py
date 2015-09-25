@@ -97,11 +97,11 @@ class GraphNodeViewWidget( QtGui.QWidget ):
 
 		node1.setPos( 200, 100 )
 		
-		self.scene.addItem( node1 )#.setParentItem( group )
-		self.scene.addItem( node2 )#.setParentItem( group )
-		self.scene.addItem( node3 )#.setParentItem( group )
-		self.scene.addItem( node4 )#.setParentItem( group )
-		self.scene.addItem( node5 )#.setParentItem( group )
+		self.scene.addItem( node1 )
+		self.scene.addItem( node2 )
+		self.scene.addItem( node3 )
+		self.scene.addItem( node4 )
+		self.scene.addItem( node5 )
 
 		conn = GraphNodeConnection( node1.getOutPort( 'p1' ), node2.getInPort( 'p0' ) )
 		self.scene.addItem( conn )

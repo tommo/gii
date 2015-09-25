@@ -178,6 +178,7 @@ class GraphNode( QtGui.QGraphicsRectItem ):
 		self.setFlag( self.ItemIsSelectable, True )
 		self.setFlag( self.ItemIsMovable, True )
 		self.setFlag( self.ItemSendsGeometryChanges, True )
+		self.setAcceptHoverEvents( True )
 		self.setCursor( Qt.PointingHandCursor )
 		self.buildPorts()
 		self.setZValue( _GraphNodeZValue )
@@ -384,11 +385,13 @@ class GraphNodeConnection( QtGui.QGraphicsPathItem ):
 		if ev.button() == Qt.LeftButton:
 			self.selected = True
 			self.update()
+		return super( GraphNodeConnection, self ).mousePressEvent( ev )
 
 	def mouseReleaseEvent( self, ev ):
 		if ev.button() == Qt.LeftButton:
 			self.selected = False
 			self.update()
+		return super( GraphNodeConnection, self ).mouseReleaseEvent( ev )
 
 
 

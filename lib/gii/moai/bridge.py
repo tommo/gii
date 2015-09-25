@@ -110,14 +110,18 @@ def decodeDict(data):
 def encodeDict(dict):
 	return json.dumps(dict).encode('utf-8')
 
-def luaTableToDict(luat): #no deep conversion
+def luaTableToDict( luat, deepCopy = False ): #no deep conversion
 	assert isinstance(luat , _LuaTable)
 	res={}
-	for k in luat:
-		v = luat[k]
-		if isinstance( v, _LuaTable ):
-			v = luaTableToDict( v )
-		res[k] = v
+	if deepCopy:
+		for k in luat:
+			v = luat[k]
+			if isinstance( v, _LuaTable ):
+				v = luaTableToDict( v, deepCopy )
+			res[k] = v
+	else:
+		for k in luat:
+			res[k] = luat[k]
 	return res
 
 def newPythonList(*arg):

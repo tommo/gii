@@ -14,6 +14,7 @@ function onSceneOpen( scene )
 	end
 
 	view:registerDragFactory( mock_edit.ProtoDragInFactory() )
+	view:registerDragFactory( mock_edit.TextureDragInFactory() )
 
 	scene:addEntity( view )
 	view:makeCurrent()

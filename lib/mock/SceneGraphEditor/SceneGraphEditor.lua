@@ -486,14 +486,6 @@ function CmdCreateEntityBase:undo()
 	gii.emitPythonSignal( 'entity.removed', self.created )
 end
 
---------------------------------------------------------------------
-CLASS: CmdCreateEntity ( CmdCreateEntityBase )
-	:register( 'scene_editor/create_entity' )
-
-function CmdCreateEntity:init( option )
-	CmdCreateEntityBase.init( self, option )
-	self.entityName = option.name
-end
 
 local function _editorInitEntity( e )
 	if e.onEditorInit then
@@ -509,6 +501,32 @@ local function _editorInitEntity( e )
 	for child in pairs( e.children ) do
 		_editorInitEntity( child )
 	end
+end
+
+--------------------------------------------------------------------
+CLASS: CmdAddEntity ( CmdCreateEntityBase )
+	:register( 'scene_editor/add_entity' )
+
+function CmdAddEntity:init( option )
+	CmdCreateEntityBase.init( self, option )
+	self.precreatedEntity = option.entity
+	if not self.precreatedEntity then
+		return false
+	end
+	_editorInitEntity( self.precreatedEntity )
+end
+
+function CmdAddEntity:createEntity()
+	return self.precreatedEntity
+end
+
+--------------------------------------------------------------------
+CLASS: CmdCreateEntity ( CmdCreateEntityBase )
+	:register( 'scene_editor/create_entity' )
+
+function CmdCreateEntity:init( option )
+	CmdCreateEntityBase.init( self, option )
+	self.entityName = option.name
 end
 
 function CmdCreateEntity:createEntity()

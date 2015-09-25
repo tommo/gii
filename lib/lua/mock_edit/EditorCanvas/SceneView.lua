@@ -58,7 +58,7 @@ function SceneView:onInit()
 end
 
 function SceneView:registerDragFactory( factory, priority )
-	factory._priorty = priority or 0
+	factory._priority = priority or 0
 	table.insert( self.dragFactoryList, factory )
 	table.sort( self.dragFactoryList, prioritySortFunc )
 end
