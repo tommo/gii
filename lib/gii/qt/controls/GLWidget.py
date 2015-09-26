@@ -24,7 +24,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	def __init__( self, parent=None, **option ):
 		fmt = QtOpenGL.QGLFormat()
-		if option.get( 'vsync', False ):
+		if option.get( 'vsync', True ):
 			fmt.setSwapInterval( 1 )
 		else:
 			fmt.setSwapInterval( 0 )

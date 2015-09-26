@@ -402,6 +402,15 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.cursorMovable  = True
 		self.updatingScroll = False
 
+		self.testMarker = object()
+		self.timeline.addMarker( self.testMarker )
+
+		self.testMarker2 = object()
+		mitem = self.timeline.addMarker( self.testMarker2 )
+		mitem.setText( 'FightStart')
+		mitem.setTimePos( 2.3 )
+
+
 	def setOwner( self, owner ):
 		self.owner = owner
 		self.treeTracks.parentView = self

@@ -122,17 +122,27 @@ class TimelineMarkerLineItem( QtGui.QGraphicsLineItem ):
 	_pen  = makePen( color = '#4d83f6', width = 1 )
 	def __init__( self ):
 		super( TimelineMarkerLineItem, self ).__init__()
+		self.setLine( 0,0,0,1000)
+		self.setZValue( 800 )
 		self.setPen( self._pen )
 		self.parentMarker = None
 
 	def setMarker( self, marker ):
 		self.parentMarker = marker
+		self.parentMarker.lineItems.append( self )
 
 	def getTimePos( self ):
 		return self.parentMarker.timePos
 
 	def getTimeLength( self ):
 		return self.parentMarker.timeLength
+
+	def paint( self, painter, option, widget ):
+		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
+		return super( TimelineMarkerLineItem, self ).paint( painter, option, widget )
+
+	def updateShape( self ):
+		self.view.updateMarkerPos( self )
 
 class TimelineMarkerItem( QtGui.QGraphicsRectItem ):
 	_polyMarker = QtGui.QPolygonF([
@@ -149,16 +159,29 @@ class TimelineMarkerItem( QtGui.QGraphicsRectItem ):
 		self.timePos = 0
 		self.timeLength = 0
 		self.text = 'marker'
+		self.lineItems = []
 
 	def getText( self ):
 		return self.text
+
+	def setText( self, text ):
+		self.text = text
+
+	def setTimePos( self, timePos ):
+		self.timePos = timePos
+		self.updateShape()
+	
+	def updateShape( self ):
+		self.parentItem().updateMarkerPos( self )
+		for lineItem in self.lineItems:
+			lineItem.updateShape()
 
 	def paint( self, painter, option, widget ):
 		rect = self.rect()
 		painter.setPen( self.pen() )
 		painter.setBrush( self.brush() )
 		painter.drawPolygon( TimelineMarkerItem._polyMarker )
-		painter.drawLine( 0,0, 0, 100 )
+		painter.drawLine( 0,0, 0, 200 )
 		painter.setPen( self.penText )
 		painter.drawText( 10, 10 , self.getText() )
 
@@ -180,15 +203,19 @@ class TimelineMarkerSlotItem( QtGui.QGraphicsRectItem ):
 		marker = TimelineMarkerItem()
 		marker.setParentItem( self )
 		self.markers.append( marker )
+		self.updateMarkerPos( marker )
 		return marker
 
-	def updateMarkerPos( self ):
+	def updateMarkerPos( self, marker ):
 		scroll = self.view.scrollPos
-		for m in self.markers:
-			mp = m.timePos - scroll
-			x = self.view.timeToPos( mp )
-			m.prepareGeometryChange()
-			m.setPos( x, 5 )
+		mp = marker.timePos - scroll
+		x = self.view.timeToPos( mp )
+		marker.prepareGeometryChange()
+		marker.setPos( x, 5 )
+
+	def updateAllMarkerPos( self ):
+		for marker in self.markers:
+			self.updateMarkerPos( marker )
 
 	def paint( self, painter, option, widget ):
 		rect = self.rect()
@@ -204,9 +231,17 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 	_gridPenV  = makePen( color = '#777', width = 1 )
 	_gridPenH  = makePen( color = '#555', width = 1 )
 	_cursorPen = makePen( color = '#ff7cb7', width = 1 )
+	_cursorBrush = makeBrush( color = '#ff7cb7' )
 	_bgBrush   = makeBrush( color = '#333' )
 	_bgActiveBrush  = makeBrush( color = '#c8ff00', alpha = 0.1 )
 	_bgEditingBrush = makeBrush( color = '#232e35' )
+	
+	_polyCursor = QtGui.QPolygonF([
+		QPointF(   0, 0  ),
+		QPointF(   -5, -10  ),
+		QPointF(   5, -10 ),
+	])
+
 	def __init__( self ):
 		super( TimelineRulerItem, self ).__init__()
 		self.setCursor( Qt.PointingHandCursor)
@@ -281,8 +316,10 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		#draw cursor
 		if self.cursorVisible:
 			painter.setPen( TimelineRulerItem._cursorPen )
+			painter.setBrush( TimelineRulerItem._cursorBrush )
 			cx = float( self.view.cursorPos - t0 ) * u + _HEAD_OFFSET
-			painter.drawLine( cx, 0, cx, h-1 )
+			painter.translate( cx - .5, h )
+			painter.drawPolygon( TimelineRulerItem._polyCursor )
 
 
 ##----------------------------------------------------------------##
@@ -334,11 +371,11 @@ class TimelineRulerView( TimelineSubView ):
 				self.setZoom( self.zoom / zoomRate )
 
 	def onZoomChanged( self, zoom ):
-		self.markerSlot.updateMarkerPos()
+		self.markerSlot.updateAllMarkerPos()
 		self.update()
 
 	def onScrollPosChanged( self, p ):
-		self.markerSlot.updateMarkerPos()
+		self.markerSlot.updateAllMarkerPos()
 		self.update()
 
 	def onCursorPosChanged( self, pos ):
@@ -380,10 +417,10 @@ class TimelineKeyResizeHandle( QtGui.QGraphicsRectItem ):
 class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	_polyMark = QtGui.QPolygonF([
 			QPointF( -0, 0 ),
-			QPointF( 6, 6 ),
-			QPointF( 0, 12 ),
-			QPointF( -6, 6 ),
-		]).translated( -0.5, (_TRACK_SIZE - 12 )/2 + 1 )
+			QPointF( 5, 5 ),
+			QPointF( 0, 10 ),
+			QPointF( -5, 5 ),
+		]).translated( -0.5, (_TRACK_SIZE - 10 )/2 + 1 )
 
 	def __init__( self, *args, **kwargs ):
 		super( TimelineKeyItem, self ).__init__( *args, **kwargs )
@@ -806,10 +843,6 @@ class TimelineTrackView( TimelineSubView ):
 
 		self.markerLines = []
 
-	# def paintEvent( self, ev ):
-	# 	super( TimelineTrackView, self ).paintEvent( ev )
-	# 	pass
-
 	def clear( self ):
 		scn = self.scene()
 		for trackItem in self.trackItems:
@@ -836,12 +869,13 @@ class TimelineTrackView( TimelineSubView ):
 		track.node = None
 		track.scene().removeItem( track )
 
-	def addMarkerLine( self ):
+	def addMarkerLine( self, marker ):
 		lineItem = TimelineMarkerLineItem()
-		lineItem.setLine( 0,0,0,1000)
-		lineItem.setZValue( 800 )
+		lineItem.setMarker( marker )
+		lineItem.view = self
 		self.markerLines.append( lineItem )
 		self.scene().addItem( lineItem )
+		self.updateMarkerPos( lineItem )
 		return lineItem
 
 	def removeMarkerLine( self, markerLine ):
@@ -871,6 +905,10 @@ class TimelineTrackView( TimelineSubView ):
 	def onScrollPosChanged( self, p ):
 		self.updateTransfrom()
 
+	def updateMarkerPos( self, mline ):
+		x = self.timeToPos( mline.getTimePos() )
+		mline.setPos( x, 0 )
+
 	def onZoomChanged( self, zoom ):
 		self.updateTransfrom()
 		for track in self.trackItems:
@@ -879,6 +917,8 @@ class TimelineTrackView( TimelineSubView ):
 		x = self.timeToPos( self.cursorPos )
 		# self.cursorItem.setX( self.timeToPos( self.cursorPos ) )
 		self.gridBackground.setCursorPos( x )
+		for mline in self.markerLines:
+			self.updateMarkerPos( mline )
 
 	def updateTransfrom( self ):
 		trans = QTransform()
@@ -1397,10 +1437,10 @@ class TimelineView( QtGui.QWidget ):
 
 	def addMarker( self, node ):
 		markerItem = self.rulerView.addMarker()
-		markerLine = self.trackView.addMarkerLine()
-		markerLine.setMarker( markerItem )
+		markerLine = self.trackView.addMarkerLine( markerItem )
 		markerItem.node = node
 		self.nodeToMarker[ node ] = markerItem
+		return markerItem
 
 	def removeMarker( self, node ):
 		item = self.nodeToMarker.get( node, None )

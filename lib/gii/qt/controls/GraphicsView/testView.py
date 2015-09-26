@@ -120,6 +120,11 @@ class TestFrame( QtGui.QFrame ):
 		self.testMarker = TestMarker()
 		timeline.addMarker( self.testMarker )
 
+		self.testMarker2 = TestMarker()
+		mitem = timeline.addMarker( self.testMarker2 )
+		mitem.setText( 'FightStart')
+		mitem.setTimePos( 2.3 )
+
 		timeline.keyChanged.connect( self.onKeyChanged )
 		self.timer = QtCore.QTimer( self )
 		self.timer.timeout.connect( self.onTimer )
