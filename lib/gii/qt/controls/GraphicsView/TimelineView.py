@@ -21,6 +21,7 @@ TimelineForm,BaseClass = uic.loadUiType( _getModulePath('timeline2.ui') )
 
 ##----------------------------------------------------------------##
 
+_MARKER_SIZE = 20
 _RULER_SIZE = 25
 _TRACK_SIZE = 17
 _TRACK_MARGIN = 2
@@ -111,16 +112,97 @@ class TimelineSubView( GLGraphicsView ):
 		pass
 
 ##----------------------------------------------------------------##
-class CursorItem( QtGui.QGraphicsLineItem ):
+class TimelineCursorItem( QtGui.QGraphicsLineItem ):
 	_pen  = makePen( color = '#ff7cb7', width = 1 )
 	def __init__( self ):
-		super( CursorItem, self ).__init__()
+		super( TimelineCursorItem, self ).__init__()
 		self.setPen( self._pen )
+
+class TimelineMarkerLineItem( QtGui.QGraphicsLineItem ):
+	_pen  = makePen( color = '#4d83f6', width = 1 )
+	def __init__( self ):
+		super( TimelineMarkerLineItem, self ).__init__()
+		self.setPen( self._pen )
+		self.parentMarker = None
+
+	def setMarker( self, marker ):
+		self.parentMarker = marker
+
+	def getTimePos( self ):
+		return self.parentMarker.timePos
+
+	def getTimeLength( self ):
+		return self.parentMarker.timeLength
+
+class TimelineMarkerItem( QtGui.QGraphicsRectItem ):
+	_polyMarker = QtGui.QPolygonF([
+		QPointF(   0, 0  ),
+		QPointF(   8, 0  ),
+		QPointF(   0, 8 ),
+	])
+	def __init__( self ):
+		super(TimelineMarkerItem, self).__init__()
+		self.setRect( 0, 0, 20, 10 )
+		self.setPen( makePen( color = '#4d83f6' ) )
+		self.setBrush( makeBrush( color = '#4d83f6' ) )
+		self.penText = makePen( color = '#888' )
+		self.timePos = 0
+		self.timeLength = 0
+		self.text = 'marker'
+
+	def getText( self ):
+		return self.text
+
+	def paint( self, painter, option, widget ):
+		rect = self.rect()
+		painter.setPen( self.pen() )
+		painter.setBrush( self.brush() )
+		painter.drawPolygon( TimelineMarkerItem._polyMarker )
+		painter.drawLine( 0,0, 0, 100 )
+		painter.setPen( self.penText )
+		painter.drawText( 10, 10 , self.getText() )
+
+
+class TimelineMarkerSlotItem( QtGui.QGraphicsRectItem ):
+	def __init__( self ):
+		super(TimelineMarkerSlotItem, self).__init__()
+		self.setRect( 0,0,10000, _MARKER_SIZE )
+		self.brushPlain = makeBrush( color = '#2a2a2a' )
+		self.brushSlot = makeBrush( color = '#222' )
+		self.markers = []
+		
+	def findMarker( self, id ):
+		for m in self.markers:
+			if m.getId() == id: return m
+		return None
+
+	def addMarker( self ):
+		marker = TimelineMarkerItem()
+		marker.setParentItem( self )
+		self.markers.append( marker )
+		return marker
+
+	def updateMarkerPos( self ):
+		scroll = self.view.scrollPos
+		for m in self.markers:
+			mp = m.timePos - scroll
+			x = self.view.timeToPos( mp )
+			m.prepareGeometryChange()
+			m.setPos( x, 5 )
+
+	def paint( self, painter, option, widget ):
+		rect = self.rect()
+		painter.setPen( Qt.NoPen )
+		painter.setBrush( self.brushPlain )
+		painter.drawRect( rect )
+		painter.setBrush( self.brushSlot )
+		painter.drawRect( rect.adjusted( 0,4,0,-4 ) )
 
 
 class TimelineRulerItem( QtGui.QGraphicsRectItem ):
+	_pen_top  = makePen( color = '#3a3a3a', width = 1 )
 	_gridPenV  = makePen( color = '#777', width = 1 )
-	_gridPenH  = makePen( color = '#444', width = 1 )
+	_gridPenH  = makePen( color = '#555', width = 1 )
 	_cursorPen = makePen( color = '#ff7cb7', width = 1 )
 	_bgBrush   = makeBrush( color = '#333' )
 	_bgActiveBrush  = makeBrush( color = '#c8ff00', alpha = 0.1 )
@@ -129,13 +211,10 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		super( TimelineRulerItem, self ).__init__()
 		self.setCursor( Qt.PointingHandCursor)
 		self.step = 1
-		self.size = 50
 		self.view = None		
-		self.setRect( 0,0,10000,50 )
+		self.setRect( 0,_MARKER_SIZE,10000,_RULER_SIZE )
 		self.dragging = False
 		self.cursorVisible = True
-		self.rangeMin = 50
-		self.rangeMax = 100
 
 	def mousePressEvent( self, event ):
 		if event.button() == Qt.LeftButton:
@@ -165,15 +244,11 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		y = -transform.dy()
 		w = rect.width()
 		h = rect.height()
-		size = self.size
 
-		painter.setPen( Qt.transparent )
+		painter.setPen( Qt.NoPen )
 		painter.setBrush( TimelineRulerItem._bgBrush )
 		painter.drawRect( rect )
-		painter.drawRect( self.rangeMin,0, self.rangeMax, h )
-		painter.setBrush( TimelineRulerItem._bgActiveBrush )
-		painter.drawRect( self.rangeMin,0, self.rangeMax, h )
-
+		
 		painter.setPen( TimelineRulerItem._gridPenH )
 		painter.drawLine( 0,h-1,w,h-1 ) #topline
 		painter.setPen( TimelineRulerItem._gridPenV )
@@ -193,12 +268,15 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		for i in range( count ): #V lines
 			t = start + i * step
 			xx = (t-t0) * u + _HEAD_OFFSET
-			painter.drawLine( xx, h-25, xx, h - 1 )
+			painter.drawLine( xx, h-_RULER_SIZE, xx, h - 1 )
 			for j in range( 1, subStep ):
 				sxx = xx + j * subPitch
-				painter.drawLine( sxx, h-8, sxx, h - 1 )
+				painter.drawLine( sxx, h-5, sxx, h - 1 )
 			markText = '%.1f'%( t )
-			painter.drawText( QRectF( xx + 2, h-20, 100, 100 ), Qt.AlignTop|Qt.AlignLeft, markText )
+			painter.drawText( QRectF( xx + 4, h-_RULER_SIZE+4, 100, 100 ), Qt.AlignTop|Qt.AlignLeft, markText )
+		
+		painter.setPen( TimelineRulerItem._pen_top )
+		painter.drawLine( 0, h-_RULER_SIZE, w, h-_RULER_SIZE ) #topline
 
 		#draw cursor
 		if self.cursorVisible:
@@ -206,17 +284,23 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 			cx = float( self.view.cursorPos - t0 ) * u + _HEAD_OFFSET
 			painter.drawLine( cx, 0, cx, h-1 )
 
+
 ##----------------------------------------------------------------##
 class TimelineRulerView( TimelineSubView ):
 	_BG = makeBrush( color = '#222' )
 	def __init__( self, *args, **kwargs ):
 		super( TimelineRulerView, self ).__init__( *args, **kwargs )
 		self.setScene( QtGui.QGraphicsScene( self ) )
-		# self.scene.setBackgroundBrush( TimelineRulerView._BG );
+		self.scene().setBackgroundBrush( TimelineRulerView._BG );
 		self.scene().setSceneRect( QRectF( 0,0, 10000, 10000 ) )
+		self.markerSlot = TimelineMarkerSlotItem()
+		self.markerSlot.view = self
+
 		self.ruler = TimelineRulerItem()
 		self.ruler.view = self
+
 		self.scene().addItem( self.ruler )
+		self.scene().addItem( self.markerSlot )
 		self.dragging = False
 		self.draggable = True
 
@@ -250,9 +334,11 @@ class TimelineRulerView( TimelineSubView ):
 				self.setZoom( self.zoom / zoomRate )
 
 	def onZoomChanged( self, zoom ):
+		self.markerSlot.updateMarkerPos()
 		self.update()
 
 	def onScrollPosChanged( self, p ):
+		self.markerSlot.updateMarkerPos()
 		self.update()
 
 	def onCursorPosChanged( self, pos ):
@@ -260,6 +346,10 @@ class TimelineRulerView( TimelineSubView ):
 
 	def setDraggable( self, draggable ):
 		self.draggable = draggable
+
+	def addMarker( self ):
+		markerItem = self.markerSlot.addMarker()
+		return markerItem
 
 ##----------------------------------------------------------------##
 class TimelineKeyResizeHandle( QtGui.QGraphicsRectItem ):
@@ -287,46 +377,6 @@ class TimelineKeyResizeHandle( QtGui.QGraphicsRectItem ):
 		self.parentItem().onResize( self, diff )
 
 ##----------------------------------------------------------------##
-class TimelinekeyItemspanItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
-	_handleWidth = 10
-	def __init__( self, keyItem, *args, **kwargs ):
-		super( TimelinekeyItemspanItem, self ).__init__( parent = keyItem.parentItem() )
-		self.keyItem = keyItem
-		self.width = 100
-		self.setFlag( self.ItemSendsGeometryChanges, True )
-		self.leftHandle = TimelineKeyResizeHandle( self )
-		self.RightHandle = TimelineKeyResizeHandle( self )
-		self.setItemType( 'key-span' )
-		self.setItemState( 'normal' )
-
-	def updateShape( self ):
-		spanHeight = _TRACK_SIZE - 0
-		self.width = self.keyItem.timeToPos( self.keyItem.timeLength )
-		self.setRect( 0, (_TRACK_SIZE - spanHeight)/2 + 1, self.width, spanHeight )
-		self.leftHandle.setRect( - TimelinekeyItemspanItem._handleWidth/2, 0, 10, spanHeight )
-		self.RightHandle.setRect( self.width - TimelinekeyItemspanItem._handleWidth/2, 0, 10, spanHeight )
-
-	def onResizeStart( self, handle ):
-		self.width0 = self.width
-		self.x0 = self.x()
-
-	def onResizeStop( self, handle ):
-		pass
-
-	def onResize( self, handle, diff ):
-		if handle == self.leftHandle:
-			self.setX( self.x0 + diff )
-			self.width = self.width0 - diff
-		else:
-			self.width = self.width0 + diff
-		self.keyItem.setTimeLength( self.keyItem.posToTime( self.width ) )
-
-	def onPaint( self, painter, option, widget ):
-		rect = self.rect()
-		painter.drawRect( rect.translated( 0, -1 ) )
-		painter.drawStyledText( rect.translated( 4, 0 ), Qt.AlignVCenter | Qt.AlignLeft, self.keyItem.getLabel() )
-
-##----------------------------------------------------------------##
 class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	_polyMark = QtGui.QPolygonF([
 			QPointF( -0, 0 ),
@@ -335,8 +385,8 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 			QPointF( -6, 6 ),
 		]).translated( -0.5, (_TRACK_SIZE - 12 )/2 + 1 )
 
-	def __init__( self, track ):
-		super( TimelineKeyItem, self ).__init__( parent = track )
+	def __init__( self, *args, **kwargs ):
+		super( TimelineKeyItem, self ).__init__( *args, **kwargs )
 		#
 		self.setRect( -10, 0, 20, _TRACK_SIZE)
 		self.setZValue( 10 )
@@ -353,10 +403,12 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		self.timePos    = 0
 		self.timeLength = 0
 		self.updatingPos = False
-		self.track = track
 
 		self.resizable = False
 		self.selected = False
+
+	def setResizable( self, resizable = True ):
+		self.resizable = resizable
 
 	def onPaint( self, painter, option, widget ):
 		painter.setRenderHint( QtGui.QPainter.Antialiasing, True )
@@ -518,8 +570,10 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def getEndTimePos( self ):
 		return self.timePos + self.timeLength
 
-	def setTimeLength( self, l ):
+	def setTimeLength( self, l, notify = True ):
 		self.timeLength = max( l, 0 )
+		if notify:
+			self.getTimelineView().notifyKeyChanged( self.node, self.timePos, self.timeLength )
 
 	def getTimeLength( self ):
 		return self.timeLength
@@ -531,19 +585,24 @@ class TimelineKeyItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		return self.track.getTimelineView()
 
 
+class TimelineAtomicKeyItem(TimelineKeyItem):
+	def setResizable( self, resizable = True ):
+		#do nothing
+		return
+		
 class TimelineEventKeyItem( TimelineKeyItem ):
 	"""docstring for TimelineEventKeyItem"""
-	def __init__(self, *args):
-		super(TimelineEventKeyItem, self).__init__( *args )
+	def __init__(self, *args, **kwargs ):
+		super(TimelineEventKeyItem, self).__init__( *args, **kwargs )
 		self.setItemType( 'eventkey' )
 		self.resizable = True
-
+	
 	def updateShape( self ):
 		self.setTimePos( self.timePos, False )
 		self.updateWidth()
 
 	def setTimeLength( self, l ):
-		self.timeLength = max( l, 0 )
+		super( TimelineEventKeyItem, self ).setTimeLength( l )
 		self.updateWidth()
 	
 	def updateWidth( self ):
@@ -565,8 +624,6 @@ class TimelineEventKeyItem( TimelineKeyItem ):
 		painter.drawLine( x1+1,y0,x1+1,y1 )
 		if w > 10:
 			painter.drawStyledText( rect.adjusted( 4, 2, -4, 0 ), Qt.AlignVCenter | Qt.AlignLeft, self.getLabel() )
-
-
 
 
 
@@ -594,14 +651,16 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		for key in self.keys:
 			if key.node == keyNode:
 				return key
-		keyItemClass = options.get( 'key_item_class', TimelineKeyItem )
-		keyItem = keyItemClass( self )
-		keyItem.track = self
+		keyItem = self.createKey()
 		keyItem.node  = keyNode
+		keyItem.track = self
 		self.keys.append( keyItem )
 		keyItem.updateShape()
 		return keyItem
 
+	def createKey( self, **options ):
+		return TimelineKeyItem( self )
+		
 	def removeKey( self, keyNode ):
 		key = self.getKeyByNode( keyNode )
 		assert key, 'attempt to remove key not in this timeline'
@@ -684,6 +743,11 @@ class TimelineTrackItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 		return ( x0, x1 )
 
 ##----------------------------------------------------------------##
+class TimelineEventTrackItem( TimelineTrackItem ):
+	def createKey( self, **options ):
+		return TimelineEventKeyItem( self )
+
+##----------------------------------------------------------------##
 class SelectionRegionItem( QtGui.QGraphicsRectItem, StyledItemMixin ):
 	def __init__( self, *args, **kwargs ):
 		super( SelectionRegionItem, self ).__init__( *args, **kwargs )
@@ -735,10 +799,12 @@ class TimelineTrackView( TimelineSubView ):
 		scene.addItem( self.selectionRegion )
 
 		#components
-		self.cursorItem = CursorItem()
-		self.cursorItem.setLine( 0,0, 0, 10000 )
+		self.cursorItem = TimelineCursorItem()
+		self.cursorItem.setLine( 0,0, 0, 20000 )
 		self.cursorItem.setZValue( 1000 )
 		# scene.addItem( self.cursorItem )
+
+		self.markerLines = []
 
 	# def paintEvent( self, ev ):
 	# 	super( TimelineTrackView, self ).paintEvent( ev )
@@ -755,21 +821,32 @@ class TimelineTrackView( TimelineSubView ):
 	def setCursorVisible( self, visible ):
 		self.cursorItem.setVisible( visible )
 
-	def addTrackItem( self ):
-		item = TimelineTrackItem()
-		item.view = self
-		item.setRect( 0,-1, 10000, _TRACK_SIZE + 2 )
-		self.scene().addItem( item )
-		self.trackItems.append( item )
-		item.index = len( self.trackItems )
-		item.setPos( 0, ( item.index - 1 ) * ( _TRACK_SIZE + _TRACK_MARGIN ) )
-		return item
+	def addTrackItem( self, trackItem, **option ):
+		trackItem.view = self
+		trackItem.setRect( 0,-1, 100000, _TRACK_SIZE + 2 )
+		self.scene().addItem( trackItem )
+		self.trackItems.append( trackItem )
+		trackItem.index = len( self.trackItems )
+		trackItem.setPos( 0, ( trackItem.index - 1 ) * ( _TRACK_SIZE + _TRACK_MARGIN ) )
+		return trackItem
 
 	def removeTrackItem( self, track ):
 		self.trackItems.remove( track )
 		track.setParentItem( None )
 		track.node = None
 		track.scene().removeItem( track )
+
+	def addMarkerLine( self ):
+		lineItem = TimelineMarkerLineItem()
+		lineItem.setLine( 0,0,0,1000)
+		lineItem.setZValue( 800 )
+		self.markerLines.append( lineItem )
+		self.scene().addItem( lineItem )
+		return lineItem
+
+	def removeMarkerLine( self, markerLine ):
+		self.markerLines.remove( markerLine )
+		markerLine.delete()
 
 	def setScrollY( self, y, update = True ):
 		self.scrollY = max( min( y, 0.0 ), -self.scrollYRange )
@@ -905,11 +982,9 @@ class TimelineTrackView( TimelineSubView ):
 	def setCursorVisible( self, visible ):
 		self.gridBackground.setCursorVisible( visible )
 
-
 ##----------------------------------------------------------------##
 class TimelineCurveView( CurveView ):
 	pass
-
 
 ##----------------------------------------------------------------##	
 class TimelineView( QtGui.QWidget ):
@@ -924,18 +999,19 @@ class TimelineView( QtGui.QWidget ):
 	def __init__( self, *args, **kwargs ):
 		super( TimelineView, self ).__init__( *args, **kwargs )
 		#start up
-		self.rebuilding = False
-		self.updating   = False
-		self.shiftMode  = False
-		self.selection = []
+		self.rebuilding   = False
+		self.updating     = False
+		self.shiftMode    = False
+		self.selection    = []
 
 		self.initData()
 		self.initUI()
 		self.setEnabled( True )
 
 	def initData( self ):
-		self.tracks      = []
-		self.nodeToTrack = {}
+		self.tracks       = []
+		self.nodeToTrack  = {}
+		self.nodeToMarker = {}
 
 	def initUI( self ):
 		self.setObjectName( 'Timeline' )
@@ -951,7 +1027,7 @@ class TimelineView( QtGui.QWidget ):
 		self.curveView.setOffset( _HEAD_OFFSET, 0 )
 		self.curveView.setScrollXLimit( 0, None )
 
-		self.ui.containerRuler.setFixedHeight( _RULER_SIZE )
+		self.ui.containerRuler.setFixedHeight( _RULER_SIZE + _MARKER_SIZE )
 		
 		trackLayout = QtGui.QVBoxLayout( self.ui.containerTrack )
 		trackLayout.setSpacing( 0)
@@ -1049,7 +1125,7 @@ class TimelineView( QtGui.QWidget ):
 			return 'curve'
 
 	def getRulerHeight( self ):
-		return _RULER_SIZE
+		return _RULER_SIZE + _MARKER_SIZE
 
 	def getBottomToolHeight( self ):
 		return self.toolbarEdit.height()
@@ -1147,13 +1223,17 @@ class TimelineView( QtGui.QWidget ):
 		track = self.getParentTrack( keyNode )
 		return track and track.getKeyByNode( keyNode ) or None
 
+	def createTrackItem( self, node ):
+		return TimelineTrackItem()
+
 	def addTrack( self, node, **option ):
-		track = self.nodeToTrack.get( node, None )
-		if track: return track
-		track =  self.trackView.addTrackItem()
-		track.node = node
-		self.nodeToTrack[ node ] = track
-		self.tracks.append( track )
+		trackItem = self.nodeToTrack.get( node, None )
+		if trackItem: return trackItem
+		trackItem = self.createTrackItem( node )
+		trackItem =  self.trackView.addTrackItem( trackItem, **option )
+		trackItem.node = node
+		self.nodeToTrack[ node ] = trackItem
+		self.tracks.append( trackItem )
 
 		#add keys
 		keyNodes = self.getKeyNodes( node )
@@ -1164,25 +1244,23 @@ class TimelineView( QtGui.QWidget ):
 		self.refreshTrack( node, **option )
 		self.updateTrackLayout()
 		
-		return track
+		return trackItem
 
 	def removeTrack( self, trackNode ):
-		track = self.getTrackByNode( trackNode )
-		if not track: return
-		i = self.tracks.index( track ) #excpetion catch?
+		trackItem = self.getTrackByNode( trackNode )
+		if not trackItem: return
+		i = self.tracks.index( trackItem ) #excpetion catch?
 		del self.tracks[i]
-		del self.nodeToTrack[ track.node ]
-		track.node = None
-		track.clear()
-		self.trackView.removeTrackItem( track )
+		del self.nodeToTrack[ trackItem.node ]
+		trackItem.node = None
+		trackItem.clear()
+		self.trackView.removeTrackItem( trackItem )
 		self.updateTrackLayout()
 
 	def addKey( self, keyNode, **option ):
-		track = self.affirmParentTrack( keyNode )
-		if not track: return None
-		keyItemClass = self.getKeyItemClass( keyNode )
-		option[ 'key_item_class' ] = keyItemClass
-		key = track.addKey( keyNode, **option )
+		trackItem = self.affirmParentTrack( keyNode )
+		if not trackItem: return None
+		key = trackItem.addKey( keyNode, **option )
 		if key:
 			self.refreshKey( keyNode, **option )			
 		return key
@@ -1262,7 +1340,7 @@ class TimelineView( QtGui.QWidget ):
 			pos, length, resizable = self.getKeyParam( keyNode )
 			key.setTimePos( pos )
 			key.setTimeLength( length )
-			key.resizable = resizable
+			key.setResizable( resizable )
 			self.updateKeyContent( key, keyNode, **option )
 
 	def refreshTrack( self, trackNode, **option ):
@@ -1317,6 +1395,21 @@ class TimelineView( QtGui.QWidget ):
 		for keyNode in oldSelection:
 			self.removeKey( keyNode )
 
+	def addMarker( self, node ):
+		markerItem = self.rulerView.addMarker()
+		markerLine = self.trackView.addMarkerLine()
+		markerLine.setMarker( markerItem )
+		markerItem.node = node
+		self.nodeToMarker[ node ] = markerItem
+
+	def removeMarker( self, node ):
+		item = self.nodeToMarker.get( node, None )
+		if not item: return
+		# for line in item.markerLines:
+		# 	line.view.removeMarkerLine( line )
+		self.rulerView.removeMarker( item )
+		del self.nodeToMarker[ node ]
+
 	#####
 	#VIRUTAL data model functions
 	#####
@@ -1332,11 +1425,8 @@ class TimelineView( QtGui.QWidget ):
 	def updateKeyContent( self, key, keyNode, **option ):
 		pass
 
-	def createKey( self ):
-		return TimelineKeyItem( )
-
 	def createTrack( self, node ):
-		return TimelineTrackItem( )
+		return TimelineTrackItem()
 
 	def getTrackNodes( self ):
 		return []
@@ -1346,14 +1436,7 @@ class TimelineView( QtGui.QWidget ):
 
 	def getKeyParam( self, keyNode ):
 		return ( 0, 10, True )
-
-	def getKeyItemClass( self, keyNode ):
-		p, l, resizable = self.getKeyParam( keyNode )
-		if resizable:
-			return TimelineEventKeyItem
-		else:
-			return TimelineKeyItem
-
+	
 	def getParentTrackNode( self, keyNode ):
 		return None
 

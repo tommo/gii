@@ -70,6 +70,9 @@ dataset = [
 	TestTrack( 'track3' )
 ]
 
+class TestMarker(object):
+	pass
+
 class TestTimeline( TimelineView ):
 	def getTrackNodes( self ):
 		return dataset
@@ -114,6 +117,8 @@ class TestFrame( QtGui.QFrame ):
 		timeline = TestTimeline()
 		layout.addWidget( timeline )
 		timeline.rebuild()
+		self.testMarker = TestMarker()
+		timeline.addMarker( self.testMarker )
 
 		timeline.keyChanged.connect( self.onKeyChanged )
 		self.timer = QtCore.QTimer( self )

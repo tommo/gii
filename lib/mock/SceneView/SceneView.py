@@ -178,7 +178,7 @@ class SceneView( SceneEditorModule ):
 
 	def onStart( self ):
 		self.scheduleUpdate()
-		self.updateTimer = self.window.startTimer( 60, self.onUpdateTimer )
+		self.updateTimer = self.window.startTimer( 62, self.onUpdateTimer )
 		self.updateTimer.stop()
 
 	def changeEditTool( self, name ):

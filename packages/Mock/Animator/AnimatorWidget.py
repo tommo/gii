@@ -1,7 +1,7 @@
 import sys
 import math
 
-from gii.qt.controls.GraphicsView.TimelineView import TimelineView
+from gii.qt.controls.GraphicsView.TimelineView import *
 from gii.qt.controls.GenericTreeWidget     import GenericTreeWidget
 from gii.qt.controls.PropertyEditor        import PropertyEditor
 from gii.qt.IconCache                      import getIcon
@@ -296,6 +296,12 @@ class AnimatorTimelineWidget( TimelineView ):
 	def getRulerParam( self ):
 		return dict( zoom = 0.1, pos_step = 1000, sub_step = 100 )
 
+	def createTrackItem( self, trackNode, **options ):
+		if isMockInstance( trackNode, 'AnimatorEventTrack' ):
+			return TimelineEventTrackItem()
+		else:
+			return TimelineTrackItem()
+
 	def onEditTool( self, toolName ):
 		self.owner.onTimelineEditTool( toolName )	
 
@@ -366,20 +372,21 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		playToolLayout.setSpacing( 0 )
 		playToolLayout.setMargin( 0 )
 		playToolLayout.addWidget( self.toolbarPlay )		
+		playToolLayout.addStretch( )
 
 		trackToolLayout = QtGui.QVBoxLayout(self.containerTrackTool) 
 		trackToolLayout.setSpacing( 0 )
 		trackToolLayout.setMargin( 0 )
 		trackToolLayout.addWidget( self.toolbarTrack )		
 
-		toolHeight = 20
-		self.containerTrackTool.setFixedHeight( toolHeight )
-		self.toolbarTrack.setFixedHeight( toolHeight )
+		bottomToolHeight = 20
+		self.containerTrackTool.setFixedHeight( bottomToolHeight )
+		self.toolbarTrack.setFixedHeight( bottomToolHeight )
 		
-		toolHeight = self.timeline.getRulerHeight()
-		self.containerPlayTool.setFixedHeight( toolHeight )
-		self.toolbarPlay.setFixedHeight( toolHeight )
-		self.toolbarClips.setFixedHeight( toolHeight )
+		topToolHeight = self.timeline.getRulerHeight()
+		self.containerPlayTool.setFixedHeight( topToolHeight )
+		self.toolbarPlay.setFixedHeight( topToolHeight )
+		self.toolbarClips.setFixedHeight( topToolHeight )
 		self.treeTracks.header().hide()
 
 		self.treeTracks.setObjectName( 'AnimatorTrackTree' )
@@ -555,5 +562,3 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 					return node
 				node = node.parentGroup
 		return None
-
-	

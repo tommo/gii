@@ -11,7 +11,7 @@ from gii.qt.dialogs   import requestString, alertMessage, requestColor
 
 from gii.SceneEditor  import SceneEditorModule
 
-from gii.moai.MOAIEditCanvas import  MOAIEditCanvas
+from gii.moai.MOAIRuntime import MOAILuaDelegate
 
 from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
@@ -40,8 +40,11 @@ class StoryView( SceneEditorModule ):
 		# self.canvas = addWidgetWithLayout(
 		# 	MOAIEditCanvas( window.containerGraph )
 		# )
-		# self.canvas.loadScript( _getModulePath('StoryView.lua') )
-		self.view = addWidgetWithLayout( StoryGraphView( window.containerGraph ) )
+		self.delegate = MOAILuaDelegate( self )
+		self.delegate.load( _getModulePath( 'StoryView.lua' ) )
+
+		self.graphView = addWidgetWithLayout( StoryGraphView( window.containerGraph ) )
+		self.graphView.setOwner( self )
 		
 		# self.updateTimer        = self.container.startTimer( 60, self.onUpdateTimer )
 		self.updatePending      = False
@@ -60,3 +63,4 @@ class StoryView( SceneEditorModule ):
 		if self.updatePending == True:
 			self.updatePending = False
 			#TODO
+	

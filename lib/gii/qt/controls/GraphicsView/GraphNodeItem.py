@@ -349,7 +349,7 @@ class GraphNodeConnectionItem( QtGui.QGraphicsPathItem ):
 		dx = pos1.x()
 
 		if self.useCurve:
-			diff = abs(dx) * 0.7
+			diff = max( abs(dx) * 0.7, 30 )
 			cpos0 = n0 * diff
 			cpos1 = pos1 + n1 * diff
 			path.cubicTo( cpos0, cpos1, pos1 )

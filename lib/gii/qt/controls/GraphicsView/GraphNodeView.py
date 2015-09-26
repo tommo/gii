@@ -77,6 +77,7 @@ class GraphNodeView( GLGraphicsView ):
 
 ##----------------------------------------------------------------##
 class GraphNodeViewWidget( QtGui.QWidget ):
+		
 	def __init__( self, *args, **kwargs ):
 		super( GraphNodeViewWidget, self ).__init__( *args, **kwargs )		
 		layout = QtGui.QVBoxLayout( self )
@@ -102,7 +103,7 @@ class GraphNodeViewWidget( QtGui.QWidget ):
 		self.nodeToItem[ node ] = item
 		return
 
-	def remvoeNode( self, node ):
+	def removeNode( self, node ):
 		item = self.getItemByNode( node )
 		if not item: return
 		del self.nodeToItem[ node ]

@@ -141,7 +141,6 @@ class EditorApp(object):
 		t0 = time.time()
 		EditorModuleManager.get().updateAllModules()
 		tx = time.time()
-		# print '%d' % ( (tx - t0) * 1000 )
 		if signals.dispatchAll():
 			rest = 0
 		else:
@@ -150,7 +149,6 @@ class EditorApp(object):
 			rest = budget - elapsed
 		if rest > 0:
 			time.sleep( rest )
-		
 
 	def stop( self ):
 		self.running = False

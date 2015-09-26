@@ -51,7 +51,7 @@ class CursorItem( QtGui.QGraphicsLineItem ):
 class AxisGridBackground( QtGui.QGraphicsRectItem ):
 	_gridPen  = makePen( color = '#333', width = 1 )
 	_axisPen  = makePen( color = '#777', width = 1 )
-	_originPen  = makePen( color = '#49599c', width = 1 )
+	_originPen  = makePen( color = '#204800', width = 2 )
 	_cursorPen  = makePen( color = '#ff7cb7', width = 1 )
 	def __init__( self ):
 		super( AxisGridBackground, self ).__init__()

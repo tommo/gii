@@ -10,7 +10,7 @@ from PyQt4.QtCore import QEventLoop, QEvent, QObject
 from gii.qt.IconCache  import getIcon
 from gii.qt.controls.CodeEditor import CodeEditor
 from gii.qt.helpers    import addWidgetWithLayout, restrainWidgetToScreen
-from gii.core import app, jsonHelper
+from gii.core import app, jsonHelper, signals
 
 from LongTextFieldEditor import *
 
@@ -126,5 +126,7 @@ class CodeBoxFieldEditorFactory( FieldEditorFactory ):
 			editor = CodeBoxFieldEditor( parentEditor, field )
 			return editor
 		return None
+
+signals.connect( 'app.ready', getCodeBoxEditorWidget )
 
 registerFieldEditorFactory( CodeBoxFieldEditorFactory() )

@@ -1,4 +1,6 @@
 import random
+import time
+
 ##----------------------------------------------------------------##
 from gii.core        import app, signals
 from gii.qt          import QtEditorModule
@@ -107,7 +109,7 @@ class AnimatorView( SceneEditorModule ):
 		self.previewStep = 1.0/60.0
 
 		self.previewTimer  = QtCore.QTimer( self.widget )
-		self.previewTimer.setInterval( 1000.0/60 )
+		self.previewTimer.setInterval( 1000.0/65 )
 		self.previewTimer.stop()
 
 		self.previewTimer.timeout.connect( self.onPreviewTimer )
@@ -388,10 +390,12 @@ class AnimatorView( SceneEditorModule ):
 			self.previewing = True
 			self.findTool( 'animator_play/play' ).setValue( True )
 			self.previewTimer.start()
+			self.getApp().setMinimalMainLoopBudget()
 			
 	def stopPreview( self, rewind = False ):		
 		if self.previewing:
 			self.delegate.callMethod( 'view', 'stopPreview' )
+			self.getApp().resetMainLoopBudget()
 			self.widget.setCursorMovable( True )
 			self.previewing = False
 			self.findTool( 'animator_play/play' ).setValue( False )
