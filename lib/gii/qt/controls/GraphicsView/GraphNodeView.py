@@ -9,13 +9,13 @@ from PyQt4.QtCore import QPointF, QRectF, QSizeF
 from PyQt4.QtGui import QColor
 
 from GraphicsViewHelper import *
-from GraphNode import *
+from GraphNodeItem import *
 
 ##----------------------------------------------------------------##
 class GraphNodeViewScene( QtGui.QGraphicsScene ):
 	def __init__( self, parent ):
 		super( GraphNodeViewScene, self ).__init__( parent = parent )
-		dummyPort = GraphNodePort()
+		dummyPort = GraphNodePortItem()
 		dummyPort.setFlag( dummyPort.ItemHasNoContents, True )
 		dummyPort.hide()
 		self.dummyPort = dummyPort
@@ -30,7 +30,7 @@ class GraphNodeViewScene( QtGui.QGraphicsScene ):
 
 	def tryStartConnection( self, port ):
 		targetPort = self.dummyPort
-		conn = GraphNodeConnection( port, targetPort )
+		conn = GraphNodeConnectionItem( port, targetPort )
 		if port.dir == -1:
 			targetPort.dir = 1
 		else:
@@ -42,7 +42,7 @@ class GraphNodeViewScene( QtGui.QGraphicsScene ):
 	def mousePressEvent( self, event ):
 		item = self.itemAt( event.scenePos() )
 		if not item: return
-		if isinstance( item, GraphNodePort ):
+		if isinstance( item, GraphNodePortItem ):
 			self.dummyPort.setPos( event.scenePos() )
 			if self.tryStartConnection( item ): return
 		super( GraphNodeViewScene, self ).mousePressEvent( event )
@@ -61,7 +61,7 @@ class GraphNodeViewScene( QtGui.QGraphicsScene ):
 		if self.connecting:
 			self.dummyPort.setPos( event.scenePos() )
 			item = self.itemAt( event.scenePos() )
-			if isinstance( item, GraphNodePort ):
+			if isinstance( item, GraphNodePortItem ):
 				if not self.connecting.setDstPort( item ): #not accepted
 					self.connecting.delete()
 			else:
@@ -69,10 +69,13 @@ class GraphNodeViewScene( QtGui.QGraphicsScene ):
 			self.connecting = None
 		super( GraphNodeViewScene, self ).mouseReleaseEvent( event )
 
+##----------------------------------------------------------------##
 class GraphNodeView( GLGraphicsView ):
 	def __init__( self, *args, **kwargs ):
 		super( GraphNodeView, self ).__init__( *args, **kwargs )
 
+
+##----------------------------------------------------------------##
 class GraphNodeViewWidget( QtGui.QWidget ):
 	def __init__( self, *args, **kwargs ):
 		super( GraphNodeViewWidget, self ).__init__( *args, **kwargs )		
@@ -85,15 +88,39 @@ class GraphNodeViewWidget( QtGui.QWidget ):
 		layout.addWidget( self.view )
 		self.testData()
 
+		self.nodeToItem = {}
+
+	def getItemByNode( self, node ):
+		return self.nodeToItem.get( node )
+
+	def getNodeByItem( self, item ):
+		return item.node
+
+	def addNode( self, node ):
+		item = createItemForNode( node )
+		item.node = node
+		self.nodeToItem[ node ] = item
+		return
+
+	def remvoeNode( self, node ):
+		item = self.getItemByNode( node )
+		if not item: return
+		del self.nodeToItem[ node ]
+		item.delete()
+
+	def createItemForNode( self, node ):
+		item = GraphNodeItem()
+		return item
+
 	def testData( self ):
-		group = GraphNodeGroup()
+		group = GraphNodeGroupItem()
 		self.scene.addItem( group )
 
-		node1 = GraphNode()
-		node2 = GraphNode()
-		node3 = GraphNode()
-		node4 = GraphNode()
-		node5 = GraphNode()
+		node1 = GraphNodeItem()
+		node2 = GraphNodeItem()
+		node3 = GraphNodeItem()
+		node4 = GraphNodeItem()
+		node5 = GraphNodeItem()
 
 		node1.setPos( 200, 100 )
 		
@@ -103,9 +130,9 @@ class GraphNodeViewWidget( QtGui.QWidget ):
 		self.scene.addItem( node4 )
 		self.scene.addItem( node5 )
 
-		conn = GraphNodeConnection( node1.getOutPort( 'p1' ), node2.getInPort( 'p0' ) )
+		conn = GraphNodeConnectionItem( node1.getOutPort( 'p1' ), node2.getInPort( 'p0' ) )
 		self.scene.addItem( conn )
-		conn = GraphNodeConnection( node2.getOutPort( 'p1' ), node3.getInPort( 'p0' ) )
+		conn = GraphNodeConnectionItem( node2.getOutPort( 'p1' ), node3.getInPort( 'p0' ) )
 		self.scene.addItem( conn )
 
 

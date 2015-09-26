@@ -13,11 +13,11 @@ import math
 
 
 ##----------------------------------------------------------------##
-class GraphNodeGroup( QtGui.QGraphicsRectItem ):
+class GraphNodeGroupItem( QtGui.QGraphicsRectItem ):
 	_pen   = makePen( color = '#808080', style = Qt.DashLine )
 	_brush = makeBrush( color = '#1a1a1a' )
 	def __init__( self ):
-		super(GraphNodeGroup, self).__init__()
+		super(GraphNodeGroupItem, self).__init__()
 		self.title = 'Group'
 		self.setRect( 0,0, 400, 400 )
 		self.setFlag( self.ItemIsSelectable, True )
@@ -33,8 +33,8 @@ class GraphNodeGroup( QtGui.QGraphicsRectItem ):
 		self.title = title
 
 	def paint( self, painter, option, widget ):
-		painter.setPen( GraphNodeGroup._pen )
-		painter.setBrush( GraphNodeGroup._brush )
+		painter.setPen( GraphNodeGroupItem._pen )
+		painter.setBrush( GraphNodeGroupItem._brush )
 		rect = self.rect()
 		painter.drawRoundedRect( rect, 10, 10 )
 		trect = rect.adjusted( 10, 10, -4, -4 )
@@ -42,7 +42,7 @@ class GraphNodeGroup( QtGui.QGraphicsRectItem ):
 
 
 ##----------------------------------------------------------------##
-class GraphNodePort( QtGui.QGraphicsRectItem ):
+class GraphNodePortItem( QtGui.QGraphicsRectItem ):
 	_pen = makePen( color = '#a4a4a4' )
 	_brush = makeBrush( color = '#000000' )
 	_pen_text = makePen( color = '#ffffff' )
@@ -54,14 +54,14 @@ class GraphNodePort( QtGui.QGraphicsRectItem ):
 	_brush_fill = makeBrush( color = '#ffffff' )
 
 	def __init__( self ):
-		super( GraphNodePort, self ).__init__()
+		super( GraphNodePortItem, self ).__init__()
 		size = 16
 		self.dir = -1
 		self.setRect( -size/2, -size/2, size, size )
 		self.setCursor( Qt.PointingHandCursor )
 		self.connections = {}
-		self._pen = GraphNodePort._pen
-		self._brush = GraphNodePort._brush
+		self._pen = GraphNodePortItem._pen
+		self._brush = GraphNodePortItem._brush
 		self.setAcceptHoverEvents( True )
 
 	def getText( self ):
@@ -85,16 +85,16 @@ class GraphNodePort( QtGui.QGraphicsRectItem ):
 			return False
 
 	def hoverEnterEvent( self, event ):
-		self._pen = GraphNodePort._pen_hover
-		self._brush = GraphNodePort._brush_hover
+		self._pen = GraphNodePortItem._pen_hover
+		self._brush = GraphNodePortItem._brush_hover
 		self.update()
-		return super( GraphNodePort, self ).hoverEnterEvent( event )
+		return super( GraphNodePortItem, self ).hoverEnterEvent( event )
 
 	def hoverLeaveEvent( self, event ):
-		self._pen = GraphNodePort._pen
-		self._brush = GraphNodePort._brush
+		self._pen = GraphNodePortItem._pen
+		self._brush = GraphNodePortItem._brush
 		self.update()
-		return super( GraphNodePort, self ).hoverLeaveEvent( event )
+		return super( GraphNodePortItem, self ).hoverLeaveEvent( event )
 
 	def paint( self, painter, option, widget ):
 		painter.setPen( self._pen )
@@ -102,11 +102,11 @@ class GraphNodePort( QtGui.QGraphicsRectItem ):
 		rect = self.rect()
 		painter.drawEllipse( rect.adjusted(  2,2,-2,-2 ) )
 		if self.hasConnection():
-			painter.setPen( GraphNodePort._pen_fill )
-			painter.setBrush( GraphNodePort._brush_fill )
+			painter.setPen( GraphNodePortItem._pen_fill )
+			painter.setBrush( GraphNodePortItem._brush_fill )
 			painter.drawEllipse( -3,-3,6,6 )
 		text = self.getText()
-		painter.setPen( GraphNodePort._pen_text )
+		painter.setPen( GraphNodePortItem._pen_text )
 		if self.dir == -1: #in
 			trect = QRect( rect.right() + 2, rect.top(), 100, 20 )
 			painter.drawText( trect, Qt.AlignLeft|Qt.AlignVCenter, text )
@@ -126,12 +126,12 @@ class GraphNodePort( QtGui.QGraphicsRectItem ):
 
 
 ##----------------------------------------------------------------##
-class GraphNodeHeader( QtGui.QGraphicsRectItem ):
+class GraphNodeHeaderItem( QtGui.QGraphicsRectItem ):
 	_pen = Qt.NoPen
 	_textPen = makePen( color = '#ffffff' )
 	_brush = makeBrush( color = '#3a3a3a' )
 	def __init__( self ):
-		super( GraphNodeHeader, self ).__init__()
+		super( GraphNodeHeaderItem, self ).__init__()
 		self.headerText = u'アバンシュPeut-être'
 		self.headerHeight = 20
 		self.setCursor( Qt.PointingHandCursor )
@@ -151,22 +151,22 @@ class GraphNodeHeader( QtGui.QGraphicsRectItem ):
 
 	def paint( self, painter, option, widget ):
 		painter.setPen( Qt.NoPen )
-		painter.setBrush( GraphNodeHeader._brush )
+		painter.setBrush( GraphNodeHeaderItem._brush )
 		rect = self.rect()
 		painter.drawRect( rect )
 		trect = rect.adjusted( 4, 2, 0, 0 )
-		painter.setPen( GraphNodeHeader._textPen )
+		painter.setPen( GraphNodeHeaderItem._textPen )
 		painter.drawText( trect, Qt.AlignLeft|Qt.AlignVCenter, self.getText() )
 
 
 
 ##----------------------------------------------------------------##
 _GraphNodeZValue = 10
-class GraphNode( QtGui.QGraphicsRectItem ):
+class GraphNodeItem( QtGui.QGraphicsRectItem ):
 	_pen = QtGui.QPen( QColor( '#a4a4a4' ) )
 	_brush = makeBrush( color = '#676767' )
 	def __init__( self ):
-		super( GraphNode, self ).__init__()
+		super( GraphNodeItem, self ).__init__()
 		self.inPortDict = {}
 		self.outPortDict = {}
 		self.inPorts  = []
@@ -185,7 +185,7 @@ class GraphNode( QtGui.QGraphicsRectItem ):
 		self.updateShape()
 
 	def createHeader( self ):
-		return GraphNodeHeader()
+		return GraphNodeHeaderItem()
 
 	def getHeader( self ):
 		return self.header
@@ -213,11 +213,11 @@ class GraphNode( QtGui.QGraphicsRectItem ):
 	def buildPorts( self ):
 		#input
 		for i in range( 4 ):
-			port = GraphNodePort()
+			port = GraphNodePortItem()
 			self.addInPort( 'p%d'%i, port )
 		#output
 		for i in range( 2 ):
-			port = GraphNodePort()
+			port = GraphNodePortItem()
 			self.addOutPort( 'p%d'%i, port )
 
 	def updateShape( self ):
@@ -246,7 +246,10 @@ class GraphNode( QtGui.QGraphicsRectItem ):
 			port.clearConnections()
 		for port in self.outPorts:
 			port.clearConnections()
-		self.scene().removeItem( self )
+		if self.parentItem():
+			self.parentItem().removeItem( self )
+		else:
+			self.scene().removeItem( self )
 
 	def itemChange( self, change, value ):
 		if change == self.ItemPositionChange or change == self.ItemPositionHasChanged:
@@ -261,17 +264,17 @@ class GraphNode( QtGui.QGraphicsRectItem ):
 		global _GraphNodeZValue 
 		_GraphNodeZValue += 0.000001 #shitty reordering
 		self.setZValue( _GraphNodeZValue )
-		return super( GraphNode, self ).mousePressEvent( ev )
+		return super( GraphNodeItem, self ).mousePressEvent( ev )
 
 	def paint( self, painter, option, widget ):
 		rect = self.rect()
-		painter.setPen( GraphNode._pen )
-		painter.setBrush( GraphNode._brush )
+		painter.setPen( GraphNodeItem._pen )
+		painter.setBrush( GraphNodeItem._brush )
 		painter.drawRoundedRect( rect, 3,3 )
 
 
 ##----------------------------------------------------------------##
-class GraphNodeConnection( QtGui.QGraphicsPathItem ):
+class GraphNodeConnectionItem( QtGui.QGraphicsPathItem ):
 	_pen                  = makePen( color = '#ffffff', width = 1 )
 	_brush_arrow          = makeBrush( color = '#ffffff' )
 	_pen_selected         = makePen( color = '#ff4700', width = 2 )
@@ -282,7 +285,7 @@ class GraphNodeConnection( QtGui.QGraphicsPathItem ):
 			QPointF( -12,  6 ),
 			])
 	def __init__( self, srcPort, dstPort ):
-		super( GraphNodeConnection, self ).__init__()
+		super( GraphNodeConnectionItem, self ).__init__()
 		self.useCurve = True
 		self.srcPort = None
 		self.dstPort = None
@@ -290,7 +293,7 @@ class GraphNodeConnection( QtGui.QGraphicsPathItem ):
 		self.setDstPort( dstPort )
 		self.setZValue( -1 )
 		self.updatePath()
-		self.setPen( GraphNodeConnection._pen )
+		self.setPen( GraphNodeConnectionItem._pen )
 		self.setCursor( Qt.PointingHandCursor )
 		self.setAcceptHoverEvents( True )
 		self.selected = False
@@ -359,39 +362,41 @@ class GraphNodeConnection( QtGui.QGraphicsPathItem ):
 			path.lineTo( pos1 )				
 
 		self.setPath( path )
+		self.pathLength = path.length()
+		self.arrowPercent = path.percentAtLength( self.pathLength - 8 )
 
 	def paint( self, painter, option, widget ):
 		if self.selected:
-			self.setPen( GraphNodeConnection._pen_selected )
+			self.setPen( GraphNodeConnectionItem._pen_selected )
 		else:
-			self.setPen( GraphNodeConnection._pen )
+			self.setPen( GraphNodeConnectionItem._pen )
 
-		super( GraphNodeConnection, self ).paint( painter, option, widget )
+		super( GraphNodeConnectionItem, self ).paint( painter, option, widget )
 		#draw arrow
 		path = self.path()
-		midDir   = path.angleAtPercent( 0.7 )
-		midPoint = path.pointAtPercent( 0.7 )
+		midDir   = path.angleAtPercent( self.arrowPercent )
+		midPoint = path.pointAtPercent( self.arrowPercent )
 		trans = QTransform()
 		trans.translate( midPoint.x(), midPoint.y() )
 		trans.rotate( -midDir )
 		painter.setTransform( trans, True )
 		if self.selected:
-			painter.setBrush( GraphNodeConnection._brush_arrow_selected )
+			painter.setBrush( GraphNodeConnectionItem._brush_arrow_selected )
 		else:
-			painter.setBrush( GraphNodeConnection._brush_arrow )
-		painter.drawPolygon( GraphNodeConnection._polyTri )
+			painter.setBrush( GraphNodeConnectionItem._brush_arrow )
+		painter.drawPolygon( GraphNodeConnectionItem._polyTri )
 
 	def mousePressEvent( self, ev ):
 		if ev.button() == Qt.LeftButton:
 			self.selected = True
 			self.update()
-		return super( GraphNodeConnection, self ).mousePressEvent( ev )
+		return super( GraphNodeConnectionItem, self ).mousePressEvent( ev )
 
 	def mouseReleaseEvent( self, ev ):
 		if ev.button() == Qt.LeftButton:
 			self.selected = False
 			self.update()
-		return super( GraphNodeConnection, self ).mouseReleaseEvent( ev )
+		return super( GraphNodeConnectionItem, self ).mouseReleaseEvent( ev )
 
 
 
