@@ -17,7 +17,9 @@ _MOCK_GAME_CONFIG_NAME = 'game_config.json'
 
 def isMockInstance( obj, name ):
 	if isinstance( obj, _LuaObject ):
-		return  _MOCK.isInstance( obj, _MOCK[name] )
+		clas = _MOCK[name]
+		assert clas
+		return  _MOCK.isInstance( obj, clas )
 	else:
 		return False
 

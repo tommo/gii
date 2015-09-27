@@ -96,6 +96,8 @@ class EditorApp(object):
 		self.resetMainLoopBudget()
 		
 		try:
+			signals.emitNow('app.pre_start')
+
 			EditorModuleManager.get().startAllModules()
 			self.getProject().getAssetLibrary().scanProject()
 

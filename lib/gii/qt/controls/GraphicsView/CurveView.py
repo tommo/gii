@@ -38,7 +38,7 @@ TANGENT_MODE_SMOOTH  = 2
 
 ##----------------------------------------------------------------##
 class CursorItem( QtGui.QGraphicsLineItem ):
-	_pen  = makePen( color = '#ff7cb7', width = 1 )
+	_pen  = makePen( color = '#a3ff00', width = 1 )
 	def __init__( self ):
 		super( CursorItem, self ).__init__()
 		self.setPen( self._pen )
@@ -52,7 +52,7 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 	_gridPen  = makePen( color = '#333', width = 1 )
 	_axisPen  = makePen( color = '#777', width = 1 )
 	_originPen  = makePen( color = '#204800', width = 2 )
-	_cursorPen  = makePen( color = '#ff7cb7', width = 1 )
+	_cursorPen  = makePen( color = '#a3ff00', width = 1 )
 	def __init__( self ):
 		super( AxisGridBackground, self ).__init__()
 		self.setZValue( -100 )

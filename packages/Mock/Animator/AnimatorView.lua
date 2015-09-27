@@ -216,6 +216,11 @@ function AnimatorView:updateTimelineKey( key, pos, length )
 	self:markTrackDirty()
 end
 
+function AnimatorView:updateTimelineMarker( marker, pos )
+	marker:setPos( pos )
+	self:markTrackDirty()
+end
+
 function AnimatorView:updateKeyCurveMode( key, mode )
 end
 

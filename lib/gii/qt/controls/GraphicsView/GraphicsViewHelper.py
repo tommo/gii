@@ -144,7 +144,7 @@ class StyledItemMixin:
 
 
 _USE_GL = False
-# _USE_GL = True
+_USE_GL = True
 
 ##----------------------------------------------------------------##
 class GLGraphicsView( QtGui.QGraphicsView ):
@@ -218,7 +218,7 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 class GridBackground( QtGui.QGraphicsRectItem ):
 	_gridPenV  = makePen( color = '#333', width = 1 )
 	_gridPenH  = makePen( color = '#333', width = 1 )
-	_cursorPen  = makePen( color = '#ff7cb7', width = 1 )
+	_cursorPen  = makePen( color = '#a3ff00', width = 1 )
 	def __init__( self ):
 		super( GridBackground, self ).__init__()
 		self.setZValue( -100 )

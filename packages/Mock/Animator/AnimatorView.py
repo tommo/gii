@@ -186,6 +186,13 @@ class AnimatorView( SceneEditorModule ):
 		else:
 			return []
 
+	def getMarkerList( self ):
+		if self.targetClip:
+			markerList = self.targetClip.getMarkerList( self.targetClip )
+			return [ track for track in markerList.values()  ]
+		else:
+			return []
+
 	def getClipRoot( self ):
 		if self.targetClip:
 			return self.targetClip.getRoot( self.targetClip )
@@ -236,7 +243,7 @@ class AnimatorView( SceneEditorModule ):
 				cloned = cmd.getResult()
 				self.widget.addClip( cloned )
 				result.append( cloned )
-		return cloned
+		return result
 
 	def onObjectEdited( self, obj ):
 		if self.targetClip:
@@ -248,6 +255,16 @@ class AnimatorView( SceneEditorModule ):
 		#find animator component
 		target = self.delegate.callMethod( 'view', 'findTargetAnimator' )
 		self.setTargetAnimator( target )
+
+	def addMarker( self ):
+		if not self.targetClip: return
+		cmd = self.doCommand( 'scene_editor/animator_add_marker' ,
+				target_clip = self.targetClip,
+				target_pos  = self.widget.getCursorPos()
+			)
+		if cmd:
+			marker = cmd.getResult()
+			self.widget.addMarker( marker )
 
 	def addKeyForField( self, target, fieldId ):
 		if not self.targetAnimator:
@@ -309,6 +326,9 @@ class AnimatorView( SceneEditorModule ):
 	def onTimelineKeyChanged( self, key, pos, length ):
 		self.delegate.callMethod( 'view', 'updateTimelineKey', key, pos, length )
 
+	def onTimelineMarkerChanged( self, marker, pos ):
+		self.delegate.callMethod( 'view', 'updateTimelineMarker', marker, pos )
+
 	def renameTrack( self, track, name ):
 		self.delegate.callMethod( 'view', 'renameTrack', track, name )
 
@@ -365,6 +385,9 @@ class AnimatorView( SceneEditorModule ):
 
 		elif toolName == 'clone_key':
 			self.cloneSelectedKeys()
+
+		elif toolName == 'add_marker':
+			self.addMarker()
 
 		elif toolName == 'curve_mode_linear':
 			pass

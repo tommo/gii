@@ -249,6 +249,9 @@ class AnimatorTimelineWidget( TimelineView ):
 	def getTrackNodes( self ):
 		return self.owner.getTrackList()
 
+	def getMarkerNodes( self ):
+		return self.owner.getMarkerList()
+
 	def getKeyNodes( self, trackNode ):
 		keys = trackNode['keys']
 		if keys:
@@ -273,9 +276,17 @@ class AnimatorTimelineWidget( TimelineView ):
 		# track.getHeader().setIcon( icon )
 		pass
 
+	def updateMarkerContent( self, marker, markerNode, **option ):
+		name = markerNode.getName( markerNode )
+		marker.setText( name )
+		pass
+
 	def updateKeyContent( self, key, keyNode, **option ):
 		# key.setText( keyNode.toString( keyNode ) )
 		pass
+
+	def getMarkerParam( self, markerNode ):
+		return markerNode.getPos( markerNode )
 
 	def getKeyParam( self, keyNode ):
 		resizable = keyNode.isResizable( keyNode )
@@ -285,6 +296,12 @@ class AnimatorTimelineWidget( TimelineView ):
 	def onSelectionChanged( self, selection ):
 		if selection:
 			self.parentView.setPropertyTarget( selection[0] )
+		else:
+			self.parentView.setPropertyTarget( None )
+
+	def onMarkerSelectionChanged( self, markerSelection ):
+		if markerSelection:
+			self.parentView.setPropertyTarget( markerSelection[0] )
 		else:
 			self.parentView.setPropertyTarget( None )
 
@@ -340,6 +357,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.timeline.toolbuttonCurveModeBezier   .setIcon( getIcon( 'curve_mode_bezier'   ) )
 		self.timeline.toolbuttonCurveModeBezierS  .setIcon( getIcon( 'curve_mode_bezier_s' ) )
 
+		self.timeline.toolbuttonAddMarker .setIcon( getIcon( 'marker' ) )
 		self.timeline.toolbuttonAddKey    .setIcon( getIcon( 'add'    ) )
 		self.timeline.toolbuttonRemoveKey .setIcon( getIcon( 'remove' ) )
 		self.timeline.toolbuttonCloneKey  .setIcon( getIcon( 'clone'  ) )
@@ -402,14 +420,6 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.cursorMovable  = True
 		self.updatingScroll = False
 
-		self.testMarker = object()
-		self.timeline.addMarker( self.testMarker )
-
-		self.testMarker2 = object()
-		mitem = self.timeline.addMarker( self.testMarker2 )
-		mitem.setText( 'FightStart')
-		mitem.setTimePos( 2.3 )
-
 
 	def setOwner( self, owner ):
 		self.owner = owner
@@ -422,6 +432,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 
 		#signals
 		self.timeline.keyChanged.connect( self.onKeyChanged )
+		self.timeline.markerChanged.connect( self.onMarkerChanged )
 
 	def rebuild( self ):
 		self.treeTracks.rebuild()
@@ -447,6 +458,9 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 	def addKey( self, key, focus = False ):
 		self.addTrack( key.parent )
 		self.timeline.addKey( key )
+		if focus:
+			#TODO: select key
+			pass
 
 	def addTrack( self, track, focus = False ):
 		self.treeTracks.addNode( track )
@@ -454,6 +468,12 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		if focus:
 			self.treeTracks.editNode( track )
 			self.timeline.setTrackSelection( [track] )
+
+	def addMarker( self, marker, focus = False ):
+		self.timeline.addMarker( marker )
+		if focus:
+			#TODO: select marker
+			pass
 
 	def selectTrack( self, trackNode ):
 		self.treeTracks.selectNode( trackNode )
@@ -497,6 +517,10 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.timeline.updateTrackLayout()
 		self.timeline.clearSelection()
 
+	def onMarkerChanged( self, marker, pos ):
+		self.propertyEditor.refreshFor( marker )
+		self.owner.onTimelineMarkerChanged( marker, pos )
+
 	def onKeyChanged( self, key, pos, length ):
 		self.propertyEditor.refreshFor( key )
 		self.owner.onTimelineKeyChanged( key, pos, length )
@@ -505,8 +529,12 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		return self.owner.onKeyRemoving( key )
 
 	def onPropertyChanged( self, obj, fid, value ):
-		if fid == 'pos' or fid == 'length':
-			self.timeline.refreshKey( obj )
+		if isMockInstance( obj, 'AnimatorKey' ):
+			if fid == 'pos' or fid == 'length':
+				self.timeline.refreshKey( obj )
+		elif isMockInstance( obj, 'AnimatorClipMarker' ):
+			if fid == 'name' or fid =='pos':
+				self.timeline.refreshMarker( obj )
 		self.owner.onObjectEdited( obj )
 
 	def setEnabled( self, enabled ):
@@ -531,6 +559,9 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 
 	def setCursorPos( self, pos, focus = False ):
 		self.timeline.setCursorPos( pos, focus )
+
+	def getCursorPos( self ):
+		return self.timeline.getCursorPos()
 
 	def onTrackSelectioChanged( self ):
 		selection = self.treeTracks.getSelection()

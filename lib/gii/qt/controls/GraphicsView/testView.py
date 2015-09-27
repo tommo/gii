@@ -126,14 +126,18 @@ class TestFrame( QtGui.QFrame ):
 		mitem.setTimePos( 2.3 )
 
 		timeline.keyChanged.connect( self.onKeyChanged )
+		timeline.markerChanged.connect( self.onMarkerChanged )
 		self.timer = QtCore.QTimer( self )
 		self.timer.timeout.connect( self.onTimer )
 		self.timer.setInterval( 100 )
 		self.timer.start()
 		self.t0 = time()
 
-	def onKeyChanged( self, key ):
-		pass
+	def onKeyChanged( self, key, pos, length ):
+		print 'key changed', key, pos
+
+	def onMarkerChanged( self, marker, pos ):
+		print 'marker changed', marker, pos
 
 	def onTimer( self ):
 		t1 = time()

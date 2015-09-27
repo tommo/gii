@@ -204,3 +204,30 @@ end
 CLASS: CmdAnimatorAddTrack ( mock_edit.EditorCommand )
 	:register( 'scene_editor/animator_add_track' )
 
+--------------------------------------------------------------------
+CLASS: CmdAnimatorAddMarker ( mock_edit.EditorCommand )
+	:register( 'scene_editor/animator_add_marker')
+
+function CmdAnimatorAddMarker:init( option )
+	self.targetClip     = option[ 'target_clip'  ]
+	self.targetPos      = option[ 'target_pos' ] or 0
+	self.createdMarker  = false
+end
+
+function CmdAnimatorAddMarker:redo()
+	local marker = self.targetClip:addMarker()
+	if self.createdMarker then --TODO
+		_cloneObject( self.createdMarker, marker )
+	else
+		marker:setPos( self.targetPos )
+	end
+	self.createdMarker = marker
+end
+
+function CmdAnimatorAddMarker:undo()
+	self.targetClip:removeMarker( self.createdMarker )
+end
+
+function CmdAnimatorAddMarker:getResult()
+	return self.createdMarker
+end

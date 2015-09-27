@@ -127,6 +127,6 @@ class CodeBoxFieldEditorFactory( FieldEditorFactory ):
 			return editor
 		return None
 
-signals.connect( 'app.ready', getCodeBoxEditorWidget )
+signals.connect( 'app.pre_start', getCodeBoxEditorWidget )
 
 registerFieldEditorFactory( CodeBoxFieldEditorFactory() )
