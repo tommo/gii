@@ -61,8 +61,6 @@ function PickingManager:onEntityEvent( ev, entity, com )
 		return
 	end
 
-	if entity.FLAG_EDITOR_OBJECT then return end
-
 	if ev == 'add' then
 		self:buildForEntity( entity ) 
 	elseif ev == 'remove' then
