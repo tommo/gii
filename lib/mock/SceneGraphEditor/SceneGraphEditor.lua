@@ -717,13 +717,18 @@ CLASS: CmdReparentEntity ( mock_edit.EditorCommand )
 	:register( 'scene_editor/reparent_entity' )
 
 function CmdReparentEntity:init( option )
-	self.target   = option['target']
-	self.children = gii.getSelection( 'scene' )
+	local mode = option[ 'mode' ] or 'child'
+	if mode == 'sibling' then
+		self.target   = option['target']:getParentOrGroup()
+	else
+		self.target   = option['target']
+	end
+	self.children = getTopLevelEntitySelection()
 	self.oldParents = {}
 	local targetIsEntity = isInstance( self.target, mock.Entity )
 	for i, e in ipairs( self.children ) do
 		if isInstance( e, mock.EntityGroup ) and targetIsEntity then
-			mock_edit.alertMessage( 'fail', 'cannot move Group into Entity', 'info' )
+			mock_edit.alertMessage( 'fail', 'cannot make Group child of Entity', 'info' )
 			return false
 		end
 	end
@@ -740,7 +745,7 @@ function CmdReparentEntity:redo()
 	end	
 end
 
-function CmdReparentEntity:reparentEntityGroup( e, target )
+function CmdReparentEntity:reparentEntityGroup( group, target )
 	local targetGroup = false
 	if target == 'root' then
 		targetGroup = editor.scene:getRootGroup()
@@ -752,45 +757,49 @@ function CmdReparentEntity:reparentEntityGroup( e, target )
 		error()		
 	end
 
-	e:reparent( targetGroup )
+	group:reparent( targetGroup )
 end
 
+
 function CmdReparentEntity:reparentEntity( e, target )
-	local e1 = mock.cloneEntity(e)
 	e:forceUpdate()
 	local tx, ty ,tz = e:getWorldLoc()
 	local sx, sy ,sz = e:getWorldScl()
 	local rz = e:getWorldRot()
+	
 	--TODO: world rotation X,Y	
 	if target == 'root' then
-		editor.scene:addEntity( e1 )
-		e1:setLoc( tx, ty, tz )
-		e1:setScl( sx, sy, sz )
-		e1:setRotZ( rz )
+		e:setLoc( tx, ty, tz )
+		e:setScl( sx, sy, sz )
+		e:setRotZ( rz )
+		e:reparent( nil )
+		e:reparentGroup( editor.scene:getRootGroup() )
 
 	elseif isInstance( target, mock.EntityGroup ) then
-		editor.scene:addEntity( e1, nil, target )
-		e1:setLoc( tx, ty, tz )
-		e1:setScl( sx, sy, sz )
-		e1:setRotZ( rz )
+		e:setLoc( tx, ty, tz )
+		e:setScl( sx, sy, sz )
+		e:setRotZ( rz )
+		e:reparent( nil )
+		e:reparentGroup( target )
 
 	else
 		target:forceUpdate()
 		local x, y, z = target:worldToModel( tx, ty, tz )
-		e1:setLoc( x, y, z )
 		
 		local sx1, sy1, sz1 = target:getWorldScl()
 		sx = ( sx1 == 0 ) and 0 or sx/sx1
 		sy = ( sy1 == 0 ) and 0 or sy/sy1
 		sz = ( sz1 == 0 ) and 0 or sz/sz1
-		e1:setScl( sx, sy, sz )
+		
 
 		local rz1 = target:getWorldRot()
 		rz = rz1 == 0 and 0 or rz/rz1
-		e1:setRotZ( rz )
-		target:addChild( e1 )
+		e:setLoc( x, y, z )
+		e:setScl( sx, sy, sz )
+		e:setRotZ( rz )
+		e:reparent( target )
 	end
-	e:destroyWithChildrenNow()
+
 end
 
 

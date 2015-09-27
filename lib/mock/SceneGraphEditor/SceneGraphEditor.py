@@ -147,6 +147,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addTool( 'scene_graph/----'  )
 		self.addTool( 'scene_graph/fold_all',    label = 'F' )
 		self.addTool( 'scene_graph/unfold_all',  label = 'U' )
+		self.addTool( 'scene_graph/refresh_tree',  label = 'R' )
 		# self.addTool( 'scene_graph/load_prefab', label = '+ P' )
 		# self.addTool( 'scene_graph/save_prefab', label = '>>P' )
 
@@ -413,6 +414,9 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		elif name == 'unfold_all':
 			self.tree.expandAllItems()
+
+		elif name == 'refresh_tree':
+			self.tree.rebuild()
 
 		elif name == 'refresh':
 			self.scheduleRefreshScene()
@@ -958,7 +962,6 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			else:
 				item.setIcon( 2, getIcon( 'entity_nolock' ) )
 		
-		
 	def onItemSelectionChanged(self):
 		if not self.syncSelection: return
 		items = self.selectedItems()
@@ -986,6 +989,9 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 			ok = self.module.doCommand( 'scene_editor/reparent_entity', target = target.node )
 		elif pos == 'viewport':
 			ok = self.module.doCommand( 'scene_editor/reparent_entity', target = 'root' )
+		elif pos == 'above' or pos == 'below':
+			ok = self.module.doCommand( 'scene_editor/reparent_entity', target = target.node, mode = 'sibling' )
+
 		if ok:
 			super( GenericTreeWidget, self ).dropEvent( ev )
 		else:
