@@ -18,8 +18,6 @@ class ToolBarItem(object):
 		self.cmdArgs  = option.get( 'command_args', None )
 		iconName      = option.get( 'icon', None )
 		self.icon     = iconName and getIcon( iconName ) or None
-		
-
 
 		self.module   = None
 		
@@ -56,6 +54,9 @@ class ToolBarItem(object):
 
 	def setEnabled( self, enabled = True ):
 		self.qtaction.setEnabled( enabled )
+
+	def getAction( self ):
+		return self.qtaction
 
 	def getValue(self):
 		if self.itemType in ('check','radio'):

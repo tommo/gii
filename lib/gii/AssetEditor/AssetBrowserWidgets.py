@@ -146,12 +146,12 @@ class AssetListItemDelegate( QtGui.QStyledItemDelegate ):
 	# 		option.backgroundBrush = QBrush(QColor(100, 200, 100, 200))
 		
 ##----------------------------------------------------------------##
-class AssetBrowserListWidget( GenericListWidget ):
+class AssetBrowserIconListWidget( GenericListWidget ):
 	def __init__( self, *args, **option ):
 		option[ 'mode' ] = 'icon'
 		option[ 'drag_mode' ] = 'all'
 		option[ 'multiple_selection' ] = True
-		super( AssetBrowserListWidget, self ).__init__( *args, **option )
+		super( AssetBrowserIconListWidget, self ).__init__( *args, **option )
 		self.setObjectName( 'AssetBrowserList' )
 		self.setWrapping( True )
 		self.setLayoutMode( QtGui.QListView.Batched )
@@ -177,7 +177,7 @@ class AssetBrowserListWidget( GenericListWidget ):
 		return None
 
 	def getNodes( self ):
-		return self.parentModule.getAssetsInListView()
+		return self.parentModule.getAssetsInList()
 
 	def updateItemContent( self, item, node, **option ):
 		rawName = node.getName()
@@ -230,10 +230,46 @@ class AssetBrowserListWidget( GenericListWidget ):
 		clip.setText( out )
 		return True
 
+
+##----------------------------------------------------------------##
+class AssetBrowserDetailListWidget( GenericTreeWidget ):
+	def getHeaderInfo( self ):
+		return [ ('Name',150), ('Type', 60), ( 'Desc', 50 ) ]
+
+	def getRootNode( self ):
+		return self.parentModule
+
+	def getNodeParent( self, node ): # reimplemnt for target node	
+		if node == self.parentModule: return None
+		return self.parentModule
+
+	def getNodeChildren( self, node ):
+		if node == self.parentModule:
+			return self.parentModule.getAssetsInList()
+		else:
+			return []
+
+	def createItem( self, node ):
+		return AssetFolderTreeItem()
+		
+	def updateItemContent( self, item, node, **option ):
+		if node == self.parentModule: return 
+		assetType = node.getType()
+		item.setText( 0, node.getName() )
+		iconName = app.getAssetLibrary().getAssetIcon( assetType )
+		item.setIcon(0, getIcon(iconName,'normal'))
+		item.setText( 1, assetType )
+
+	def onItemSelectionChanged(self):
+		self.parentModule.onListSelectionChanged()
+
+	def onItemActivated( self, item ):
+		node = item.node
+		self.parentModule.onActivateNode( node, 'list' )
+
 ##----------------------------------------------------------------##
 class AssetBrowserTagFilterWidget( QtGui.QFrame ):
 	pass
-
 
 ##----------------------------------------------------------------##
 class AssetBrowserStatusBar( QtGui.QWidget ):

@@ -27,7 +27,7 @@ class AssetBrowser( SceneEditorModule ):
 	dependency = ['qt', 'asset_editor']
 
 	def onLoad(self):
-
+		self.viewMode = 'icon'
 		self.newCreateNodePath = None
 		self.currentContextTargetNode = None
 		self.thumbnailSize = ( 80, 80 )
@@ -73,28 +73,43 @@ class AssetBrowser( SceneEditorModule ):
 
 		
 		##
-		self.listView  = AssetBrowserListWidget()
-		self.tagFilter = AssetBrowserTagFilterWidget()
-		self.statusBar = AssetBrowserStatusBar()
+		self.iconList       = AssetBrowserIconListWidget()
+		self.detailList     = AssetBrowserDetailListWidget()
+		self.tagFilter      = AssetBrowserTagFilterWidget()
+		self.statusBar      = AssetBrowserStatusBar()
+		self.contentToolbar = QtGui.QToolBar()
 
-		self.listView .parentModule = self
-		self.tagFilter.parentModule = self
-		self.statusBar.parentModule = self
+		self.detailList .parentModule = self
+		self.iconList   .parentModule = self
+		self.tagFilter  .parentModule = self
+		self.statusBar  .parentModule = self
 
-		self.listView.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
-		self.listView.customContextMenuRequested.connect( self.onListViewContextMenu )
+		self.iconList.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
+		self.iconList.customContextMenuRequested.connect( self.onItemContextMenu )
+		self.detailList.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
+		self.detailList.customContextMenuRequested.connect( self.onItemContextMenu )
 
 		listLayout = QtGui.QVBoxLayout( ui.containerRight )
 		listLayout.setSpacing( 0 )
 		listLayout.setMargin( 0 )
 
+		listLayout.addWidget( self.contentToolbar )
 		listLayout.addWidget( self.tagFilter )
-		listLayout.addWidget( self.listView )
+		listLayout.addWidget( self.iconList )
+		listLayout.addWidget( self.detailList )
 		listLayout.addWidget( self.statusBar )
 
 		##
+		self.actionGroupView = QtGui.QActionGroup( self.contentToolbar )
+		self.contentTool = self.addToolBar( 'asset_browser_content', self.contentToolbar )
+		tool = self.addTool( 'asset_browser_content/detail_view', label = 'L', type = 'check' )
+		self.actionGroupView.addAction( tool.getAction() )
+		tool = self.addTool( 'asset_browser_content/icon_view', label = 'I', type = 'check' )
+		self.actionGroupView.addAction( tool.getAction() )
+
+
+		##
 		self.currentFolders = []
-		
 
 		#
 		signals.connect( 'module.loaded',        self.onModuleLoaded )		
@@ -160,6 +175,8 @@ class AssetBrowser( SceneEditorModule ):
 		if splitterSizes:
 			self.splitter.setSizes( splitterSizes )
 
+		self.setViewMode( 'icon' )
+
 	def onStop( self ):
 		self.setConfig( 'current_selection', [ node.getPath() for node in self.currentFolders ] )
 		self.setConfig( 'splitter_sizes', self.splitter.sizes() )
@@ -173,7 +190,6 @@ class AssetBrowser( SceneEditorModule ):
 	def onUnload(self):
 		#persist expand state
 		# self.treeView.saveTreeStates()
-
 		pass
 
 	def onModuleLoaded(self):				
@@ -187,7 +203,7 @@ class AssetBrowser( SceneEditorModule ):
 		if isinstance( asset, ( str, unicode ) ): #path
 			asset = self.getAssetLibrary().getAssetNode( asset )
 		if not asset: return
-		self.listView.setFocus( Qt.MouseFocusReason)
+		self.getCurrentView().setFocus( Qt.MouseFocusReason)
 		self.selectAsset( asset, goto = True )
 		# item = self.treeView.getItemByNode( asset )
 		# if item:
@@ -266,8 +282,8 @@ class AssetBrowser( SceneEditorModule ):
 			self.enableMenu( 'asset_context/deploy_disallow',False )
 			self.findMenu('asset_context').popUp()
 
-	def onListViewContextMenu( self, point ):
-		item = self.listView.itemAt(point)
+	def onItemContextMenu( self, point ):
+		item = self.getCurrentView().itemAt(point)
 		if item:
 			node = item.node
 		else:
@@ -289,17 +305,17 @@ class AssetBrowser( SceneEditorModule ):
 				self.treeView.addNode( node )
 
 		if pnode in self.currentFolders:
-			self.listView.rebuild()
+			self.rebuildItemView()
 			if node.getPath() == self.newCreateNodePath:
 				self.newCreateNodePath=None
-				self.listView.selectNode( node )
+				self.selectAsset( node )
 
 	def onAssetUnregister(self, node):
 		pnode=node.getParent()
 		if pnode:
 			self.treeView.removeNode(node)
 		if pnode in self.currentFolders:
-			self.listView.removeNode( node )
+			self.removeItemFromView( node )
 
 	def onAssetMoved(self, node):
 		pass
@@ -390,27 +406,76 @@ class AssetBrowser( SceneEditorModule ):
 				on_selection = self.openAsset
 				)
 
+	def onTool( self, tool ):
+		name = tool.name
+		if name == 'icon_view':
+			self.setViewMode( 'icon', False )
+
+		elif name == 'detail_view':
+			self.setViewMode( 'detail', False )
+
+	def setViewMode( self, mode, changeToolState = True ):
+		prevSelection = self.getItemSelection()
+		self.viewMode = mode
+		if mode == 'icon':
+			self.iconList.show()
+			self.detailList.hide()
+			if changeToolState: self.findTool( 'asset_browser_content/icon_view' ).setValue( True )
+			self.rebuildItemView( True )
+		else: #if mode == 'detail'
+			self.iconList.hide()
+			self.detailList.show()
+			if changeToolState: self.findTool( 'asset_browser_content/detail_view' ).setValue( True )
+			self.rebuildItemView( True )
+
+		if prevSelection:
+			for node in prevSelection:
+				self.getCurrentView().selectNode( node, add = True, goto = False )
+			self.getCurrentView().gotoNode( prevSelection[0] )
+
+	def getCurrentView( self ):
+		if self.viewMode == 'icon':
+			return self.iconList
+		else: #if mode == 'detail'
+			return self.detailList
+
+	def getItemSelection( self ):
+		return self.getCurrentView().getSelection()
+
+	def removeItemFromView( self, node ):
+		self.getCurrentView().removeNode( node )
+
+	def getFolderSelection( self ):
+		return self.treeView.getSelection()
+
+	def rebuildItemView( self, retainSelection = False ):
+		if self.viewMode == 'icon':
+			self.iconList.rebuild()
+		else: #if mode == 'detail'
+			self.detailList.rebuild()
+
 	def onTreeSelectionChanged( self ):
 		folders = []
-		for anode in self.treeView.getSelection():
+		for anode in self.getFolderSelection():
 			# assert anode.isType( 'folder' )
 			folders.append( anode )
 		self.currentFolders = folders
-		self.listView.rebuild()
+		self.rebuildItemView()
 
 	def onTreeRequestDelete( self ):
 		if requestConfirm( 'delete asset package/folder', 'Confirm to delete asset(s)?' ):
-			for node in self.treeView.getSelection():
+			for node in self.getFolderSelection():
 				node.deleteFile()
 
 	def onListRequestDelete( self ):
 		if requestConfirm( 'delete asset package/folder', 'Confirm to delete asset(s)?' ):
-			for node in self.listView.getSelection():
+			for node in self.getItemSelection():
 				node.deleteFile()
 				
 	def onListSelectionChanged( self ):
 		self.updatingSelection = True
-		getAssetSelectionManager().changeSelection( self.listView.getSelection() )
+		selection = self.getItemSelection()
+		getAssetSelectionManager().changeSelection( selection )
 		self.updatingSelection = False
 
 	def onSelectionChanged( self, selection, context ):
@@ -423,7 +488,7 @@ class AssetBrowser( SceneEditorModule ):
 				firstObj = obj
 				self.treeView.selectNode( obj, add = True )
 			if firstObj: self.treeView.scrollToNode( firstObj )
-			self.listView.rebuild()
+			self.rebuildItemView()
 
 	def onActivateNode( self, node, src ):
 		if src == 'tree':
@@ -453,11 +518,12 @@ class AssetBrowser( SceneEditorModule ):
 		while folder:
 			if folder.getGroupType() in [ 'folder', 'package' ]: break
 			folder = folder.getParent()
+		itemView = self.getCurrentView()
 		self.treeView.selectNode( folder )
-		self.listView.selectNode( asset )
+		itemView.selectNode( asset )
 		if options.get( 'goto', False ):
 			self.treeView.scrollToNode( folder )
-			self.listView.scrollToNode( asset )
+			itemView.scrollToNode( asset )
 
 	def openAsset( self, asset, **option ):
 		if asset:
@@ -468,7 +534,7 @@ class AssetBrowser( SceneEditorModule ):
 	def getCurrentFolders( self ):
 		return self.currentFolders
 
-	def getAssetsInListView( self ):
+	def getAssetsInList( self ):
 		assets = []
 		for folder in self.currentFolders:
 			for subNode in folder.getChildren():
