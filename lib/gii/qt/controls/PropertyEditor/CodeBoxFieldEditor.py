@@ -27,6 +27,7 @@ class WindowAutoHideEventFilter(QObject):
 		if e == QEvent.WindowDeactivate:
 			obj.hide()
 		return QObject.eventFilter( self, obj, event )
+		
 
 class CodeBoxEditorWidget( QtGui.QWidget ):
 	def __init__( self, *args ):
@@ -84,6 +85,7 @@ class CodeBoxEditorWidget( QtGui.QWidget ):
 	def keyPressEvent( self, ev ):
 		key = ev.key()
 		if ( key, ev.modifiers() ) == ( Qt.Key_Return, Qt.ControlModifier ):
+			print("????" )
 			self.apply()
 			return
 		# if key == Qt.Key_Escape:

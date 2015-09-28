@@ -279,11 +279,10 @@ class AnimatorTimelineWidget( TimelineView ):
 	def updateMarkerContent( self, marker, markerNode, **option ):
 		name = markerNode.getName( markerNode )
 		marker.setText( name )
-		pass
 
 	def updateKeyContent( self, key, keyNode, **option ):
-		# key.setText( keyNode.toString( keyNode ) )
-		pass
+		text = keyNode.toString( keyNode )
+		key.setText( text )
 
 	def getMarkerParam( self, markerNode ):
 		return markerNode.getPos( markerNode )

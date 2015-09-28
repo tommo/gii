@@ -328,6 +328,7 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 	_gridPenV  = makePen( color = '#777', width = 1 )
 	_gridPenH  = makePen( color = '#555', width = 1 )
 	_cursorPen = makePen( color = '#a3ff00', width = 1 )
+	_cursorTextPen = makePen( color = '#89ae3f', width = 1 )
 	_cursorBrush = makeBrush( color = '#a3ff00' )
 	_bgBrush   = makeBrush( color = '#333' )
 	_bgActiveBrush  = makeBrush( color = '#c8ff00', alpha = 0.1 )
@@ -417,6 +418,9 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 			cx = float( self.view.cursorPos - t0 ) * u + _HEAD_OFFSET
 			painter.translate( cx - .5, h )
 			painter.drawPolygon( TimelineRulerItem._polyCursor )
+			painter.setPen( TimelineRulerItem._cursorTextPen )
+			cursorText = '%.2f' % ( self.view.cursorPos )
+			painter.drawText( 10, -4 , cursorText )
 
 
 ##----------------------------------------------------------------##
