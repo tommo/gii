@@ -614,7 +614,18 @@ CLASS: TileMapToolEraser ( TileMapToolPen )
 
 function TileMapToolEraser:onAction( action, layer, x, y, dragging )
 	if action == 'normal' then
-		layer:setTile( x, y, false )
+		if self:getInputDevice():isShiftDown() and ( not dragging ) then
+			local x0, y0 = self:getDrawFromPos()
+			_drawLine( x0, y0, x, y, 1, 
+				function( tx, ty )
+					layer:setTile( tx,ty, false )
+				end
+			)
+			self:updateDrawFromPos( x, y )
+		else
+			layer:setTile( x,y, false )
+			self:updateDrawFromPos( x, y )
+		end
 	else
 	end
 end

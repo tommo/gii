@@ -419,7 +419,6 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.cursorMovable  = True
 		self.updatingScroll = False
 
-
 	def setOwner( self, owner ):
 		self.owner = owner
 		self.treeTracks.parentView = self

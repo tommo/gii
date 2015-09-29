@@ -30,7 +30,7 @@ class StoryView( SceneEditorModule ):
 	dependency = [ 'mock' ]
 
 	def onLoad( self ):
-		self.container = self.requestSubWindow(
+		self.container = self.requestDockWindow(
 				title = 'Story'
 			)
 		self.window = window = self.container.addWidgetFromFile(

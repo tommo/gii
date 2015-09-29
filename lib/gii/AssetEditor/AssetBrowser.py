@@ -28,6 +28,9 @@ class AssetBrowser( SceneEditorModule ):
 
 	def onLoad(self):
 		self.viewMode = 'icon'
+		self.browseHistory = []
+		self.updatingHistory = False
+		self.historyCursor = 0
 		self.newCreateNodePath = None
 		self.currentContextTargetNode = None
 		self.thumbnailSize = ( 80, 80 )
@@ -38,9 +41,6 @@ class AssetBrowser( SceneEditorModule ):
 				dock='left',
 				minSize=(200,200)
 			)
-
-		self.navigator = self.window.addWidget( AssetBrowserNavigator() )
-		self.navigator.parentModule = self
 
 		ui = self.window.addWidgetFromFile(
 			_getModulePath('AssetBrowser.ui')
@@ -77,12 +77,15 @@ class AssetBrowser( SceneEditorModule ):
 		self.detailList     = AssetBrowserDetailListWidget()
 		self.tagFilter      = AssetBrowserTagFilterWidget()
 		self.statusBar      = AssetBrowserStatusBar()
+		self.navigator      = AssetBrowserNavigator()
+
 		self.contentToolbar = QtGui.QToolBar()
 
 		self.detailList .parentModule = self
 		self.iconList   .parentModule = self
 		self.tagFilter  .parentModule = self
 		self.statusBar  .parentModule = self
+		self.navigator  .parentModule = self
 
 		self.iconList.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
 		self.iconList.customContextMenuRequested.connect( self.onItemContextMenu )
@@ -100,11 +103,15 @@ class AssetBrowser( SceneEditorModule ):
 		listLayout.addWidget( self.statusBar )
 
 		##
-		self.actionGroupView = QtGui.QActionGroup( self.contentToolbar )
 		self.contentTool = self.addToolBar( 'asset_browser_content', self.contentToolbar )
-		tool = self.addTool( 'asset_browser_content/detail_view', label = 'L', type = 'check' )
+
+		self.addTool( 'asset_browser_content/navigator', widget = self.navigator )
+		self.addTool( 'asset_browser_content/----' )
+
+		self.actionGroupView = QtGui.QActionGroup( self.contentToolbar )
+		tool = self.addTool( 'asset_browser_content/detail_view', label = 'L', type = 'check', icon = 'list' )
 		self.actionGroupView.addAction( tool.getAction() )
-		tool = self.addTool( 'asset_browser_content/icon_view', label = 'I', type = 'check' )
+		tool = self.addTool( 'asset_browser_content/icon_view', label = 'I', type = 'check', icon = 'grid-2' )
 		self.actionGroupView.addAction( tool.getAction() )
 
 
@@ -459,6 +466,7 @@ class AssetBrowser( SceneEditorModule ):
 		for anode in self.getFolderSelection():
 			# assert anode.isType( 'folder' )
 			folders.append( anode )
+		self.pushHistory()
 		self.currentFolders = folders
 		self.rebuildItemView()
 
@@ -494,6 +502,7 @@ class AssetBrowser( SceneEditorModule ):
 		if src == 'tree':
 			if node.isVirtual():
 				node = node.findNonVirtualParent()
+				node.edit()
 			if node.isType( 'folder' ):
 				node.openInSystem()
 			else:
@@ -505,11 +514,38 @@ class AssetBrowser( SceneEditorModule ):
 			else:
 				self.openAsset( node )
 
+	def pushHistory( self ):
+		if self.updatingHistory: return
+		currentSelection = self.getFolderSelection()
+		if not currentSelection: return
+		count = self.historyCursor
+		if count > 0 and currentSelection == self.browseHistory[ count - 1 ]: return
+		self.browseHistory = self.browseHistory[ 0: count ]
+		self.browseHistory.append( currentSelection )
+		self.historyCursor = count + 1
+
+	def clearHistory( self ):
+		self.browseHistory = []
+		self.historyCursor = 0
+
 	def forwardHistory( self ):
-		pass
+		count = len( self.browseHistory )
+		if self.historyCursor >= count: return
+		self.updatingHistory = True
+		self.historyCursor = min( self.historyCursor + 1, count )
+		selection = self.browseHistory[ self.historyCursor - 1 ]
+		for asset in selection:
+			self.selectAsset( asset, update_history = False )
+		self.updatingHistory = False
 
 	def backwardHistory( self ):
-		pass
+		self.historyCursor = max( self.historyCursor - 1, 0 )
+		if self.historyCursor == 0: return #no more history
+		self.updatingHistory = True
+		selection = self.browseHistory[ self.historyCursor - 1 ]
+		for asset in selection:
+			self.selectAsset( asset, update_history = False, goto = True )
+		self.updatingHistory = False
 
 	def selectAsset( self, asset, **options ):
 		if not asset: return
@@ -520,6 +556,9 @@ class AssetBrowser( SceneEditorModule ):
 			folder = folder.getParent()
 		itemView = self.getCurrentView()
 		self.treeView.selectNode( folder )
+		if options.get( 'update_history', True ):
+			self.pushHistory()
+
 		itemView.selectNode( asset )
 		if options.get( 'goto', False ):
 			self.treeView.scrollToNode( folder )

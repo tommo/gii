@@ -357,6 +357,8 @@ function AnimatorView:saveData()
 	if not self.dirty then return end
 	if not( self.targetAnimator and self.targetAnimatorData ) then return end
 	
+	if self.targetAnimator:isInstance( mock.EmbedAnimator ) then return true end
+	
 	local dataPath = self.targetAnimator:getDataPath()
 	--FIXME: animator data path might get removed
 	assert( dataPath )

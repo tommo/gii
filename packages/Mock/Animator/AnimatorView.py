@@ -66,6 +66,8 @@ class AnimatorView( SceneEditorModule ):
 
 		# addWidgetWithLaytut( toolbar,
 		# 	self.widget.containerEditTool )
+		self.addTool( 'animator_clips/change_context', label = 'Change Context', icon = 'in' )
+		self.addTool( 'animator_clips/----' )
 		self.addTool( 'animator_clips/add_clip_group',   label = 'add group',    icon = 'add_folder' )
 		self.addTool( 'animator_clips/add_clip',    label = 'add',    icon = 'add' )
 		self.addTool( 'animator_clips/remove_clip', label = 'remove', icon = 'remove' )
@@ -82,9 +84,9 @@ class AnimatorView( SceneEditorModule ):
 		self.addTool( 'animator_play/toggle_repeat',  label = 'toggle repeat',  icon = 'repeat', type = 'check' )
 		
 		#SIGNALS
+		self.addTool( 'animator_track/add_track_group',    label = 'add group',    icon = 'add_folder' )
 		self.addTool( 'animator_track/add_track',    label = 'add',    icon = 'add' )
 		self.addTool( 'animator_track/remove_track', label = 'remove', icon = 'remove' )
-		self.addTool( 'animator_track/add_track_group',    label = 'add group',    icon = 'add_folder' )
 
 		#
 		signals.connect( 'selection.changed', self.onSceneSelectionChanged )
@@ -96,7 +98,7 @@ class AnimatorView( SceneEditorModule ):
 
 		#playback
 		self.previewing = False
-		self.widget.setEnabled( False )
+		self.setEditing( False )
 
 		self.targetAnimator     = None
 		self.targetClip         = None
@@ -118,6 +120,16 @@ class AnimatorView( SceneEditorModule ):
 	def onStart( self ):
 		pass
 
+	def setEditing( self, editing ):
+		self.widget.timeline.setEnabled( editing )
+		self.widget.treeTracks.setEnabled( editing )
+		self.findTool( 'animator_play'  ).setEnabled( editing )
+		self.findTool( 'animator_track' ).setEnabled( editing )
+		self.findTool( 'animator_clips/add_clip_group').setEnabled( editing )
+		self.findTool( 'animator_clips/add_clip'      ).setEnabled( editing )
+		self.findTool( 'animator_clips/remove_clip'   ).setEnabled( editing )
+		self.findTool( 'animator_clips/clone_clip'    ).setEnabled( editing )
+
 	def setTargetAnimator( self, target ):
 		self.saveAnimatorData()
 		if target == self.targetAnimator: return
@@ -129,10 +141,10 @@ class AnimatorView( SceneEditorModule ):
 		self.targetAnimatorData = self.delegate.callMethod( 'view', 'getTargetAnimatorData' )
 		self.widget.rebuild()
 		if self.targetAnimator:
-			self.widget.setEnabled( True )
+			self.setEditing( True )
 			signals.emit( 'animator.start' )
 		else:
-			self.widget.setEnabled( False )
+			self.setEditing( False )
 			signals.emit( 'animator.stop' )
 			
 		path = self.delegate.callMethod( 'view', 'getTargetAnimatorDataPath' )
@@ -253,8 +265,18 @@ class AnimatorView( SceneEditorModule ):
 	def onSceneSelectionChanged( self, selection, key ):
 		if key != 'scene': return
 		#find animator component
+		# self.findTargetAnimator()
+
+	def findTargetAnimator( self ):
 		target = self.delegate.callMethod( 'view', 'findTargetAnimator' )
 		self.setTargetAnimator( target )
+		return target
+
+	def checkTargetAnimator( self ):
+		if not self.targetAnimator:
+			alertMessage( 'No Animator', 'No Animator Selected', 'question' )
+			return False
+		return True
 
 	def addMarker( self ):
 		if not self.targetClip: return
@@ -267,9 +289,7 @@ class AnimatorView( SceneEditorModule ):
 			self.widget.addMarker( marker )
 
 	def addKeyForField( self, target, fieldId ):
-		if not self.targetAnimator:
-			alertMessage( 'No Animator', 'No Animator found in current entity scope', 'question' )
-			return False
+		if not self.checkTargetAnimator(): return 
 
 		if not self.targetClip:
 			self.addClip()
@@ -284,9 +304,7 @@ class AnimatorView( SceneEditorModule ):
 		pass
 
 	def addCustomAnimatorTrack( self, target, trackClasId ):
-		if not self.targetAnimator:
-			alertMessage( 'No Animator', 'No Animator found in current entity scope', 'question' )
-			return False
+		if not self.checkTargetAnimator(): return
 			
 		track = self.delegate.callMethod( 'view', 'addCustomAnimatorTrack', target, trackClasId )
 		if track:
@@ -340,17 +358,27 @@ class AnimatorView( SceneEditorModule ):
 
 	def onTool( self, tool ):
 		name = tool.name
-		if name == 'add_clip':
-			self.addClip()			
+		if name == 'change_context':
+			target0 = self.targetAnimator
+			target1 = self.findTargetAnimator()
+			if ( not target0 ) and ( not target1 ):
+				alertMessage( 'No Animator', 'No Animator found in selected entity scope', 'question' )
 
-		if name == 'add_clip_group':
-			self.addClipGroup()
+		elif name == 'add_clip':
+			if self.checkTargetAnimator():
+				self.addClip()
+
+		elif name == 'add_clip_group':
+			if self.checkTargetAnimator():
+				self.addClipGroup()
 
 		elif name == 'remove_clip':
-			self.removeClipNode()			
+			if self.checkTargetAnimator():
+				self.removeClipNode()			
 
-		if name == 'clone_clip':
-			self.cloneClipNode()			
+		elif name == 'clone_clip':
+			if self.checkTargetAnimator():
+				self.cloneClipNode()			
 
 		elif name == 'add_track_group':
 			group = self.delegate.callMethod( 'view', 'addTrackGroup' )
