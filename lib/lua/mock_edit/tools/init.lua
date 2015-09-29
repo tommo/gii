@@ -13,4 +13,11 @@ require 'mock_edit.tools.TransformToolHelper'
 --------------------------------------------------------------------
 --PHYSICS
 require 'mock_edit.tools.PhysicsTools'
+
+--------------------------------------------------------------------
+--AI
 require 'mock_edit.tools.WaypointGraphTools'
+
+--------------------------------------------------------------------
+--ETC
+require 'mock_edit.tools.PathTools'

@@ -34,15 +34,14 @@ import ScreenProfileManager
 
 import StoryView
 
+import TileMapEditor
+
+import PathEditor
+import PhysicsTools
+
+import WaypointGraphEditor
 
 ##----------------------------------------------------------------##
 import DebugInfo
 import LuaProfiler
 
-# import ProtoToolBox
-
-import TileMapEditor
-
-import PhysicsTools
-
-import WaypointGraphEditor
