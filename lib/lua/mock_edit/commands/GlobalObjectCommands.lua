@@ -1,7 +1,9 @@
+module 'mock_edit'
+
 --------------------------------------------------------------------
 --COMMAND: create global object
 --------------------------------------------------------------------
-CLASS: CmdCreateGlobalObject ( mock_edit.EditorCommand )
+CLASS: CmdCreateGlobalObject ( EditorCommand )
 	:register( 'scene_editor/create_global_object' )
 
 function CmdCreateGlobalObject:init( option )
@@ -27,7 +29,7 @@ end
 --------------------------------------------------------------------
 --COMMAND: remove global object
 --------------------------------------------------------------------
-CLASS: CmdRemoveGlobalObject ( mock_edit.EditorCommand )
+CLASS: CmdRemoveGlobalObject ( EditorCommand )
 	:register( 'scene_editor/remove_global_object' )
 
 function CmdRemoveGlobalObject:init( option )
@@ -59,7 +61,7 @@ end
 --------------------------------------------------------------------
 --COMMAND: clone global object
 --------------------------------------------------------------------
-CLASS: CmdCloneGlobalObject ( mock_edit.EditorCommand )
+CLASS: CmdCloneGlobalObject ( EditorCommand )
 	:register( 'scene_editor/clone_global_object' )
 
 function CmdCloneGlobalObject:init( option )

@@ -674,11 +674,29 @@ mock_edit.registerCanvasTool( 'tilemap.fill', TileMapToolFill )
 CLASS: TileMapToolTerrain ( TileMapToolPen )
 
 function TileMapToolTerrain:onAction( action, layer, x, y, dragging )
-	if action == 'normal' then
-		self:paint( layer, x, y )
+	if self:getInputDevice():isShiftDown() and ( not dragging ) then
+		local x0, y0 = self:getDrawFromPos()
+		if action == 'normal' then
+			_drawLine( x0, y0, x, y, 1, 
+				function( tx, ty )
+					self:paint( layer, tx, ty )
+				end
+			)
+		else
+			_drawLine( x0, y0, x, y, 1, 
+				function( tx, ty )
+					self:remove( layer, tx, ty )
+				end
+			)
+		end
 	else
-		self:remove( layer, x, y )
+		if action == 'normal' then
+			self:paint( layer, x, y )
+		else
+			self:remove( layer, x, y )
+		end
 	end
+	self:updateDrawFromPos( x, y )
 end
 
 function TileMapToolTerrain:paint( layer, x, y )

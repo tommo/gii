@@ -69,7 +69,6 @@ class GlobalObjectManager( SceneEditorModule ):
 			)
 
 		self.tool = self.addToolBar( 'global_object_manager', self.window.addToolBar() )
-		self.getModule( 'moai' ).runScript( _getModulePath('commands.lua') )
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( _getModulePath( 'GlobalObjectManager.lua' ) )
 

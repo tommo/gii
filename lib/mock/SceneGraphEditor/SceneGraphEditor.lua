@@ -486,6 +486,29 @@ function CmdCreateEntityBase:undo()
 	gii.emitPythonSignal( 'entity.removed', self.created )
 end
 
+local function _editorInitCom( com )
+	if com.onEditorInit then
+		com:onEditorInit()
+	end
+end
+
+local function _editorDeleteCom( com )
+	if com.onEditorDelete then
+		com:onEditorDelete()
+	end
+end
+
+local function _editorDeleteEntity( e )
+	if e.onEditorDelete then
+		e:onEditorDelete()
+	end
+	for com in pairs( e.components ) do
+		_editorDeleteCom( com )
+	end
+	for child in pairs( e.children ) do
+		_editorDeleteEntity( child )
+	end
+end
 
 local function _editorInitEntity( e )
 	if e.onEditorInit then
@@ -493,9 +516,7 @@ local function _editorInitEntity( e )
 	end
 
 	for com in pairs( e.components ) do
-		if com.onEditorInit then
-		com:onEditorInit()
-		end
+		_editorInitCom( com )
 	end
 
 	for child in pairs( e.children ) do
