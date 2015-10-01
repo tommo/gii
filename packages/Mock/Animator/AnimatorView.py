@@ -61,6 +61,7 @@ class AnimatorView( SceneEditorModule ):
 		self.toolbarTrack = self.addToolBar( 'animator_track', self.widget.toolbarTrack )
 		# self.toolbarEdit  = self.addToolBar( 'animator_play',  self.widget.toolbarEdit )
 
+		signals.connect( 'scene.close', self.onSceneClose )
 		signals.connect( 'scene.save', self.preSceneSave )
 		signals.connect( 'scene.saved', self.postSceneSave )
 
@@ -495,6 +496,9 @@ class AnimatorView( SceneEditorModule ):
 	def postSceneSave( self ):
 		if self.targetAnimator:
 			self.applyTime( self.previewTime )
+
+	def onSceneClose( self, scene ):
+		self.setTargetAnimator( None )
 
 	def refreshTimeline( self ):
 		self.widget.rebuildTimeline()
