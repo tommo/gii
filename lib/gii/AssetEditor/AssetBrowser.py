@@ -539,8 +539,8 @@ class AssetBrowser( SceneEditorModule ):
 		self.updatingHistory = False
 
 	def backwardHistory( self ):
+		if self.historyCursor <= 1: return #no more history
 		self.historyCursor = max( self.historyCursor - 1, 0 )
-		if self.historyCursor == 0: return #no more history
 		self.updatingHistory = True
 		selection = self.browseHistory[ self.historyCursor - 1 ]
 		for asset in selection:

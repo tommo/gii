@@ -69,6 +69,7 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		self.verticalScrollBar().rangeChanged.connect( self.onScrollRangeChanged )		
 		self.setIndentation( 14 )
 		self.setAttribute(Qt.WA_MacShowFocusRect, False)
+		self.setTextElideMode( Qt.ElideMiddle )
 
 	def event( self, ev ):
 		if ev.type() == 26:
