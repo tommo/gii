@@ -12,18 +12,17 @@ def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 	
 ##----------------------------------------------------------------##
-class StoryAssetManager(AssetManager):
+class StoryGraphAssetManager(AssetManager):
 	def getName(self):
-		return 'asset_manager.story'
+		return 'asset_manager.story_graph'
 
 	def acceptAssetFile( self, filePath ):
-		if not os.path.isdir(filePath): return False		
-		if not filePath.endswith( '.story' ): return False
+		if os.path.isdir(filePath): return False		
+		if not filePath.endswith( '.story.graphml' ): return False
 		return True
 
 	def importAsset( self, node, reload = False ):
-		node.assetType = 'story'
-		node.setBundle()
+		node.assetType = 'story_graph'
 		node.setObjectFile( 'def', node.getCacheFile( 'def' ) )
 		parser = StoryGraphParser()
 		if parser.parse( node.getAbsFilePath() ):
@@ -33,5 +32,5 @@ class StoryAssetManager(AssetManager):
 		else:
 			return False
 
-StoryAssetManager().register()
-AssetLibrary.get().setAssetIcon( 'story',  'story' )
+StoryGraphAssetManager().register()
+AssetLibrary.get().setAssetIcon( 'story_graph',  'story' )

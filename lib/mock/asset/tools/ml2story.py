@@ -38,11 +38,12 @@ class StoryGraphParser(object):
 		self.edges = []
 		self.parsed = {}
 
-	def parse( self, rootFolder ):
+	def parse( self, filePath ):
 		try:
-			self.parseFolder( rootFolder, rootFolder )
+			self.parseGraph( filePath )
+
 		except Exception, e:
-			print rootFolder
+			print filePath
 			print 'error parsing story graph', e
 			logging.exception( e )
 			return False
@@ -99,29 +100,15 @@ class StoryGraphParser(object):
 		data = self.saveToData()
 		trySaveJSON( data, path )
 
-	def parseGraph( self, graphFile, rootFolder, refNode = None ):
+	def parseGraph( self, graphFile ):
 		graphFile = graphFile.replace( '\\', '/' )
-		graphDir  = os.path.dirname( graphFile )
-		graphName, _ext = os.path.splitext( os.path.basename( graphFile ) )
-		relativeDir = os.path.relpath( graphDir, rootFolder )
-
-		ns = relativeDir.replace( '/', '.' )
-		if ns == '.':
-			ns = graphName
-		else:
-			ns += ( '.' + graphName )
 		parser = YEdGraphMLParser()
 		g = parser.parse( graphFile )
 		#get story node type
 
 		for node in g.nodes.values():
-			if refNode:
-				if not node.group:
-					node.group = refNode
-					refNode.children.append( node )
-			else:
-				if not node.group:
-					self.rootScope.append( node )
+			if not node.group:
+				self.rootScope.append( node )
 
 			nodeDesc = node.getAttr( 'description' )
 			storyNodeType = None
@@ -132,14 +119,14 @@ class StoryGraphParser(object):
 			if mo :
 				storyNodeType = mo.groups()[0]
 				node.setAttr( 'story-node-type', storyNodeType )
-				if storyNodeType == 'REF':
-					url = graphDir + '/' + node.getAttr('url')
-					if self.parsed.has_key( url ):
-						print 'ERROR: duplicated sub graph reference', url
-					else:
-						node.children = []
-						self.parsed[ url ] = True
-						self.parseGraph( url, rootFolder, node )
+				# if storyNodeType == 'REF':
+				# 	url = graphDir + '/' + node.getAttr('url')
+				# 	if self.parsed.has_key( url ):
+				# 		print 'ERROR: duplicated sub graph reference', url
+				# 	else:
+				# 		node.children = []
+				# 		self.parsed[ url ] = True
+				# 		self.parseGraph( url, rootFolder, node )
 
 			if not storyNodeType and isinstance( node, YEdGraphGroup ):
 				node.setAttr( 'story-node-type', 'GROUP' )
@@ -147,16 +134,12 @@ class StoryGraphParser(object):
 			if not storyNodeType:
 				print 'WARNING: unknown story node type', graphFile, node.id, node.getAttr( 'label' )
 
-			node.fullId = ns + '::' + node.id
+			node.fullId = node.id
 			node.storyNodeType = storyNodeType
 			self.nodes.append( node )
 
 		for edge in g.edges.values():
 			self.edges.append( edge )
-
-	def parseFolder( self, folder, rootFolder ):
-		rootFile = folder + '/' + _ROOT_ML
-		self.parseGraph( rootFile, rootFolder )
 
 		
 if __name__ == '__main__':
