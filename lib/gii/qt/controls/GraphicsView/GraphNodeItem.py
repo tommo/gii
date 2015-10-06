@@ -1,4 +1,18 @@
+# -*- coding: utf-8 -*-
 from GraphNodeItemBase import *
+
+##----------------------------------------------------------------##
+class DialogueNodeItem( QtGui.QGraphicsRectItem ):
+	_pen   = makePen( color = '#808080', )
+	_brush = makeBrush( color = '#1a1a1a' )
+
+	def paint( self, painter, option, widget ):
+		painter.setPen( DialogueNodeItem._pen )
+		painter.setBrush( DialogueNodeItem._brush )
+		rect = self.rect()
+		painter.drawRoundedRect( rect, 10, 10 )
+		trect = rect.adjusted( 2,2, -2,-2 )
+		painter.drawText( trect, Qt.AlignLeft|Qt.AlignVCenter, 'Hello, long time no see' )
 
 ##----------------------------------------------------------------##
 class GraphNodeGroupItem( QtGui.QGraphicsRectItem, GraphNodeItemBase ):
@@ -32,7 +46,6 @@ class GraphNodeGroupItem( QtGui.QGraphicsRectItem, GraphNodeItemBase ):
 		painter.drawText( trect, Qt.AlignLeft|Qt.AlignTop, self.getTitle() )
 
 
-##----------------------------------------------------------------##
 class GraphNodePortItem( QtGui.QGraphicsRectItem, GraphNodeItemBase ):
 	_pen = makePen( color = '#a4a4a4' )
 	_brush = makeBrush( color = '#000000' )
@@ -56,7 +69,7 @@ class GraphNodePortItem( QtGui.QGraphicsRectItem, GraphNodeItemBase ):
 		self.setAcceptHoverEvents( True )
 
 	def getText( self ):
-		return 'X'
+		return '>'
 	
 	def clearConnections( self ):
 		for conn in self.connections:
@@ -119,8 +132,8 @@ class GraphNodePortItem( QtGui.QGraphicsRectItem, GraphNodeItemBase ):
 ##----------------------------------------------------------------##
 class GraphNodeHeaderItem( QtGui.QGraphicsRectItem, GraphNodeItemBase ):
 	_pen = Qt.NoPen
-	_textPen = makePen( color = '#ffffff' )
-	_brush = makeBrush( color = '#3a3a3a' )
+	_textPen = makePen( color = '#777' )
+	_brush = makeBrush( color = '#444' )
 	def __init__( self ):
 		super( GraphNodeHeaderItem, self ).__init__()
 		self.headerText = u'Dialogue'
@@ -164,7 +177,7 @@ class GraphNodeItem( QtGui.QGraphicsRectItem ):
 		self.header = self.createHeader()
 		self.header.setParentItem( self )
 		self.setCacheMode( QtGui.QGraphicsItem.ItemCoordinateCache )
-		self.setRect( 0, 0, 100, 120 )
+		self.setRect( 0, 0, 300, 120 )
 		self.setFlag( self.ItemIsSelectable, True )
 		self.setFlag( self.ItemIsMovable, True )
 		self.setFlag( self.ItemSendsGeometryChanges, True )
@@ -173,6 +186,13 @@ class GraphNodeItem( QtGui.QGraphicsRectItem ):
 		self.buildPorts()
 		self.setZValue( _GraphNodeZValue )
 		self.updateShape()
+		self.textItem = QtGui.QGraphicsTextItem()
+		self.textItem.setParentItem( self )
+		self.textItem.setPlainText( 'Hello, World' )
+		self.textItem.setDefaultTextColor( QColor('#fff') )
+		self.textItem.setPos( 10, 25 )
+		self.textItem.setTextInteractionFlags( Qt.TextEditorInteraction )
+		self.textItem.setTextWidth( 280 )
 
 	def createHeader( self ):
 		return GraphNodeHeaderItem()
@@ -202,11 +222,11 @@ class GraphNodeItem( QtGui.QGraphicsRectItem ):
 
 	def buildPorts( self ):
 		#input
-		for i in range( 2 ):
+		for i in range( 1 ):
 			port = GraphNodePortItem()
 			self.addInPort( 'p%d'%i, port )
 		#output
-		for i in range( 2 ):
+		for i in range( 1 ):
 			port = GraphNodePortItem()
 			self.addOutPort( 'p%d'%i, port )
 
@@ -216,11 +236,12 @@ class GraphNodeItem( QtGui.QGraphicsRectItem ):
 		rowSize = 20
 		headerSize = 20
 		headerMargin = 5
+		contentSize = 50
 		footerMargin = 5
 		minHeight = 20
-		nodeWidth = 150
-		totalHeight = max( row * rowSize, minHeight ) + headerMargin + headerSize + footerMargin
-		y0 = headerMargin + headerSize
+		nodeWidth = 300
+		totalHeight = max( row * rowSize, minHeight ) + headerMargin + contentSize + headerSize + footerMargin
+		y0 = headerMargin + contentSize + headerSize
 		self.setRect( 0,0, nodeWidth, totalHeight )
 
 		for i, port in enumerate( self.inPorts ):
@@ -261,7 +282,6 @@ class GraphNodeItem( QtGui.QGraphicsRectItem ):
 		painter.setPen( GraphNodeItem._pen )
 		painter.setBrush( GraphNodeItem._brush )
 		painter.drawRoundedRect( rect, 3,3 )
-
 
 if __name__ == '__main__':
 	import TestGraphView

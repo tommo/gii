@@ -24,6 +24,7 @@ class GraphNodeConnectionItem( QtGui.QGraphicsPathItem ):
 		self.setCursor( Qt.PointingHandCursor )
 		self.setAcceptHoverEvents( True )
 		self.selected = False
+		self.arrowPercent = 0.5
 
 	def setSrcPort( self, port ):
 		if self.srcPort:

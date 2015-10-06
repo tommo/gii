@@ -55,8 +55,8 @@ class StoryGraphWidget( QtGui.QWidget, StoryGraphWidgetUI ):
 		scene.addItem( node4 )
 		scene.addItem( node5 )
 
-		conn = GraphNodeConnectionItem( node1.getOutPort( 'p1' ), node2.getInPort( 'p0' ) )
-		scene.addItem( conn )
-		conn = GraphNodeConnectionItem( node2.getOutPort( 'p1' ), node3.getInPort( 'p0' ) )
-		scene.addItem( conn )
+		# conn = GraphNodeConnectionItem( node1.getOutPort( 'p1' ), node2.getInPort( 'p0' ) )
+		# scene.addItem( conn )
+		# conn = GraphNodeConnectionItem( node2.getOutPort( 'p1' ), node3.getInPort( 'p0' ) )
+		# scene.addItem( conn )
 		
