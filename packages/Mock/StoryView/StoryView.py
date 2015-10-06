@@ -16,7 +16,7 @@ from gii.moai.MOAIRuntime import MOAILuaDelegate
 from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
 
-from StoryGraphView import StoryGraphView
+from StoryGraphWidget import StoryGraphWidget
 
 
 ##----------------------------------------------------------------##
@@ -33,18 +33,13 @@ class StoryView( SceneEditorModule ):
 		self.container = self.requestDockWindow(
 				title = 'Story'
 			)
-		self.window = window = self.container.addWidgetFromFile(
-			_getModulePath('StoryView.ui')
-		)
+		self.widget = widget = self.container.addWidget( StoryGraphWidget() )
 		
 		# self.canvas = addWidgetWithLayout(
 		# 	MOAIEditCanvas( window.containerGraph )
 		# )
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( _getModulePath( 'StoryView.lua' ) )
-
-		self.graphView = addWidgetWithLayout( StoryGraphView( window.containerGraph ) )
-		self.graphView.setOwner( self )
 		
 		# self.updateTimer        = self.container.startTimer( 60, self.onUpdateTimer )
 		self.updatePending      = False

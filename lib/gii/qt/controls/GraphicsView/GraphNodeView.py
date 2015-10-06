@@ -9,7 +9,13 @@ from PyQt4.QtCore import QPointF, QRectF, QSizeF
 from PyQt4.QtGui import QColor
 
 from GraphicsViewHelper import *
-from GraphNodeItem import *
+from GraphNodeConnectionItem import *
+
+
+##----------------------------------------------------------------##
+class GraphNodeViewRoot( QtGui.QGraphicsItemGroup ):
+	pass
+
 
 ##----------------------------------------------------------------##
 class GraphNodeViewScene( QtGui.QGraphicsScene ):
@@ -18,19 +24,28 @@ class GraphNodeViewScene( QtGui.QGraphicsScene ):
 		dummyPort = GraphNodePortItem()
 		dummyPort.setFlag( dummyPort.ItemHasNoContents, True )
 		dummyPort.hide()
+		self.rootItem = GraphNodeViewRoot()
+		self.addItem( self.rootItem )
+
 		self.dummyPort = dummyPort
 		self.addItem( dummyPort )
-		self.connecting = None
+
 		self.gridBackground = GridBackground()
 		self.addItem( self.gridBackground )
+
+		self.connecting = None
 		self.sceneRectChanged.connect( self.onRectChanged )
+
+	def clear( self ):
+		super( GraphNodeViewScene, self ).clear()
+		
 
 	def onRectChanged( self, rect ):
 		self.gridBackground.setRect( rect )
 
 	def tryStartConnection( self, port ):
 		targetPort = self.dummyPort
-		conn = GraphNodeConnectionItem( port, targetPort )
+		conn = GraphNodeLineConnectionItem( port, targetPort )
 		if port.dir == -1:
 			targetPort.dir = 1
 		else:
@@ -87,7 +102,8 @@ class GraphNodeViewWidget( QtGui.QWidget ):
 		self.view = GraphNodeView( self.scene, parent = self )
 		self.view.setSceneRect( QRectF( 0,0, 10000, 10000 ) )
 		layout.addWidget( self.view )
-		self.testData()
+		layout.setSpacing( 0 )
+		layout.setMargin( 0 )
 
 		self.nodeToItem = {}
 
@@ -113,29 +129,12 @@ class GraphNodeViewWidget( QtGui.QWidget ):
 		item = GraphNodeItem()
 		return item
 
-	def testData( self ):
-		group = GraphNodeGroupItem()
-		self.scene.addItem( group )
+	def rebuild( self ):
+		pass
 
-		node1 = GraphNodeItem()
-		node2 = GraphNodeItem()
-		node3 = GraphNodeItem()
-		node4 = GraphNodeItem()
-		node5 = GraphNodeItem()
-
-		node1.setPos( 200, 100 )
-		
-		self.scene.addItem( node1 )
-		self.scene.addItem( node2 )
-		self.scene.addItem( node3 )
-		self.scene.addItem( node4 )
-		self.scene.addItem( node5 )
-
-		conn = GraphNodeConnectionItem( node1.getOutPort( 'p1' ), node2.getInPort( 'p0' ) )
-		self.scene.addItem( conn )
-		conn = GraphNodeConnectionItem( node2.getOutPort( 'p1' ), node3.getInPort( 'p0' ) )
-		self.scene.addItem( conn )
-
+	def clear( self ):
+		self.scene.clear()
+		self.nodeToItem = {}
 
 	def closeEvent( self, event ):
 		self.view.deleteLater()
