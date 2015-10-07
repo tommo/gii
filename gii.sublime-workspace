@@ -539,7 +539,7 @@
 			"file": "/Users/tommo/Projects/mock/mock/anim/EmbedAnimator.lua",
 			"settings":
 			{
-				"buffer_size": 1093,
+				"buffer_size": 0,
 				"line_ending": "Unix"
 			}
 		},
@@ -552,21 +552,10 @@
 			}
 		},
 		{
-			"contents": "//joystick\n//haptic\n",
-			"file": "test/host/sdl-common/MOAISDLJoystickManager.h",
-			"file_size": 20,
-			"file_write_time": 1443623868000000,
-			"settings":
-			{
-				"buffer_size": 20,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "test/game/lib/mock/core/Joystick.lua",
 			"settings":
 			{
-				"buffer_size": 110,
+				"buffer_size": 0,
 				"line_ending": "Unix"
 			}
 		},
@@ -638,7 +627,7 @@
 			"file": "packages/Mock/Animator/AnimatorView.py",
 			"settings":
 			{
-				"buffer_size": 15705,
+				"buffer_size": 15827,
 				"line_ending": "Unix"
 			}
 		},
@@ -659,13 +648,13 @@
 			}
 		},
 		{
-			"contents": "[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\ntexture libray start\nattach	table: 0x1179d5550\n\n[Finished in 18.2s]\n",
+			"contents": "2015-10-06 10:10:21.443 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:21.443 Python[54290:d0b] CoreText performance note: Set a breakpoint on CTFontLogSuboptimalRequest to debug.\n2015-10-06 10:10:21.445 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\n2015-10-06 10:10:21.873 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:22.585 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:22.587 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:22.589 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:22.642 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:23.295 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:23.296 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:23.298 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:24.081 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:24.082 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:24.084 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\ntexture libray start\n2015-10-06 10:10:24.278 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:24.330 Python[54290:d0b] invalid drawable\n2015-10-06 10:10:24.331 Python[54290:d0b] invalid drawable\n2015-10-06 10:10:24.331 Python[54290:d0b] invalid drawable\n2015-10-06 10:10:24.332 Python[54290:d0b] invalid drawable\n2015-10-06 10:10:24.491 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:24.555 Python[54290:d0b] invalid drawable\n2015-10-06 10:10:24.557 Python[54290:d0b] invalid drawable\n2015-10-06 10:10:24.557 Python[54290:d0b] invalid drawable\n2015-10-06 10:10:24.559 Python[54290:d0b] invalid drawable\n2015-10-06 10:10:27.429 Python[54290:d0b] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-10-06 10:10:29.931 Python[54290:d0b] invalid drawable\n\n[Finished in 19.8s with exit code -15]\n",
 			"file": "test/BUILD_RESULT",
 			"file_size": -1,
 			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 236,
+				"buffer_size": 4950,
 				"line_ending": "Unix",
 				"scratch": true
 			}
@@ -1191,6 +1180,7 @@
 	},
 	"file_history":
 	[
+		"/Volumes/prj/gii/test/host/sdl-common/MOAISDLJoystickManager.h",
 		"/Users/tommo/Projects/gii/lib/gii/moai/MOAIJoystickHook.py",
 		"/Users/tommo/Projects/gii/test/host/sdl-common/SDLJoystickManager.h",
 		"/Users/tommo/Projects/gii/lib/lua/mock_edit/EditorCanvas/CanvasView.lua",
@@ -1317,8 +1307,7 @@
 		"/Users/tommo/Projects/gii/test/host/extension/MDDHelper.cpp",
 		"/Users/tommo/Projects/gii/test/host/extension/MOAIRandom.cpp",
 		"/Users/tommo/Projects/gii/test/env/config/game_config.json",
-		"/Users/tommo/Projects/gii/template/game/lib/mock/core/keymaps.lua",
-		"/Users/tommo/Projects/gii/lib/gii/qt/controls/shader.fsh"
+		"/Users/tommo/Projects/gii/template/game/lib/mock/core/keymaps.lua"
 	],
 	"find":
 	{
@@ -1326,7 +1315,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 97.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"*.lua",
@@ -1681,7 +1670,7 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -1747,7 +1736,7 @@
 					"file": "/Users/tommo/Projects/mock/mock/anim/EmbedAnimator.lua",
 					"settings":
 					{
-						"buffer_size": 1093,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
@@ -1782,8 +1771,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								848,
+								848
 							]
 						],
 						"settings":
@@ -1800,45 +1789,18 @@
 				},
 				{
 					"buffer": 4,
-					"file": "test/host/sdl-common/MOAISDLJoystickManager.h",
-					"settings":
-					{
-						"buffer_size": 20,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								20,
-								20
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
 					"file": "test/game/lib/mock/core/Joystick.lua",
 					"settings":
 					{
-						"buffer_size": 110,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								109,
-								109
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1853,7 +1815,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 5,
 					"file": "test/host/freejoy/freejoyWrapper.cpp",
 					"settings":
 					{
@@ -1870,7 +1832,7 @@
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
 							"syntax": "Packages/C++/C++.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
@@ -1887,7 +1849,7 @@
 			"sheets":
 			[
 				{
-					"buffer": 7,
+					"buffer": 6,
 					"file": "lib/mock/SceneGraphEditor/SceneGraphEditor.py",
 					"settings":
 					{
@@ -1915,7 +1877,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 7,
 					"file": "lib/mock/SceneGraphEditor/SceneGraphEditor.lua",
 					"settings":
 					{
@@ -1943,7 +1905,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 8,
 					"file": "lib/gii/moai/bridge.py",
 					"settings":
 					{
@@ -1999,7 +1961,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 9,
 					"file": "lib/gii/SceneEditor/SceneTool.py",
 					"settings":
 					{
@@ -2027,7 +1989,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 11,
+					"buffer": 10,
 					"file": "test/game/lib/mock/core/Serializer.lua",
 					"settings":
 					{
@@ -2055,7 +2017,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 12,
+					"buffer": 11,
 					"file": "test/game/lib/mock/anim/Animator.lua",
 					"settings":
 					{
@@ -2083,7 +2045,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 13,
+					"buffer": 12,
 					"file": "test/game/lib/mock/anim/AnimatorData.lua",
 					"settings":
 					{
@@ -2094,8 +2056,8 @@
 						"selection":
 						[
 							[
-								3485,
-								3485
+								3294,
+								3294
 							]
 						],
 						"settings":
@@ -2111,11 +2073,11 @@
 					"type": "text"
 				},
 				{
-					"buffer": 14,
+					"buffer": 13,
 					"file": "packages/Mock/Animator/AnimatorView.py",
 					"settings":
 					{
-						"buffer_size": 15705,
+						"buffer_size": 15827,
 						"regions":
 						{
 						},
@@ -2139,7 +2101,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 15,
+					"buffer": 14,
 					"file": "packages/Mock/Animator/AnimatorView.lua",
 					"settings":
 					{
@@ -2173,7 +2135,7 @@
 			"sheets":
 			[
 				{
-					"buffer": 16,
+					"buffer": 15,
 					"file": "gii_cfg.py",
 					"settings":
 					{
@@ -2200,38 +2162,38 @@
 					"type": "text"
 				},
 				{
-					"buffer": 17,
+					"buffer": 16,
 					"file": "test/BUILD_RESULT",
 					"settings":
 					{
-						"buffer_size": 236,
+						"buffer_size": 4950,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								236,
-								236
+								4950,
+								4950
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Users/tommo/Projects/gii/test",
+							"result_base_dir": "/Volumes/prj/gii/test",
 							"result_file_regex": "",
 							"result_line_regex": "",
 							"syntax": "Packages/Text/Plain text.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 292.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 18,
+					"buffer": 17,
 					"file": "BUILD_RESULT",
 					"settings":
 					{
@@ -2261,7 +2223,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 19,
+					"buffer": 18,
 					"file": "lib/gii/qt/controls/BUILD_RESULT",
 					"settings":
 					{
@@ -2291,7 +2253,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 20,
+					"buffer": 19,
 					"file": "lib/gii/qt/controls/GraphicsView/BUILD_RESULT",
 					"settings":
 					{
@@ -2321,7 +2283,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 21,
+					"buffer": 20,
 					"file": "lib/mock/asset/helper/BUILD_RESULT",
 					"settings":
 					{
@@ -2351,7 +2313,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 22,
+					"buffer": 21,
 					"file": "lib/gii/qt/controls/ToolWindowManager/BUILD_RESULT",
 					"settings":
 					{

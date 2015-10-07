@@ -103,6 +103,9 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'main/scene/save_scene',
 			dict( label = 'Save', shortcut = 'Ctrl+S' )
 			)
+		self.addMenuItem( 'main/scene/locate_scene_asset',
+			dict( label = 'Locate Scene Asset' )
+			)
 
 		self.addMenu( 'main/scene/----' )
 		self.addMenu( 'component_context', dict( label = 'Selected Component' ) )
@@ -478,6 +481,12 @@ class SceneGraphEditor( SceneEditorModule ):
 				alertMessage( 'Warning', 'Stop previewing before saving' )
 				return
 			self.saveScene()
+
+		elif name == 'locate_scene_asset':
+			if self.activeSceneNode:
+				assetBrowser = self.getModule( 'asset_browser' )
+				if assetBrowser:
+					assetBrowser.selectAsset( self.activeSceneNode )
 
 		elif name == 'add_entity':
 			requestSearchView( 

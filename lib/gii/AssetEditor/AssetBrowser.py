@@ -561,6 +561,7 @@ class AssetBrowser( SceneEditorModule ):
 
 		itemView.selectNode( asset )
 		if options.get( 'goto', False ):
+			self.setFocus()
 			self.treeView.scrollToNode( folder )
 			itemView.scrollToNode( asset )
 
