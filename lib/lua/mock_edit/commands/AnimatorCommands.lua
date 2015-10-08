@@ -200,6 +200,62 @@ function CmdAnimatorCloneClipNode:getResult()
 	return self.cloned
 end
 
+
+--------------------------------------------------------------------
+CLASS: CmdAnimatorReparentClip ( mock_edit.EditorCommand )
+	:register( 'scene_editor/animator_reparent_clip' )
+
+
+function CmdAnimatorReparentClip:init( option )
+	local sources = gii.listToTable( option['source'] )
+	local sourceSet = {}
+	for i, node in ipairs( sources ) do
+		sourceSet[ node ] = true
+	end
+
+	local target = option['target']
+	if target == 'root' then
+		local node1 = next( sourceSet )
+		target = node1:getRootGroup()
+	end
+	
+	if not target:isInstance( mock.AnimatorClipGroup ) then
+		target = target:getParentGroup()
+	end
+	
+	local prevParents = {}
+	for node in pairs( sourceSet ) do
+		prevParents[ node ] = node:getParentGroup()
+	end
+	self.prevParents = prevParents
+	self.source = sourceSet
+	self.target = target
+end
+
+function CmdAnimatorReparentClip:redo()
+	local target = self.target
+	for node in pairs( self.source ) do
+		node:setParentGroup( target )
+	end
+	local view = gii.getModule( 'animator_view' )
+	if view then
+		view:refreshClipList()
+	end
+end
+
+function CmdAnimatorReparentClip:undo()
+	local prevParents = self.prevParents
+	for node in pairs( self.source ) do
+		local prevParent = prevParents[ node ]
+		node:setParentGroup( prevParent )
+	end
+	local view = gii.getModule( 'animator_view' )
+	if view then
+		view:refreshClipList()
+	end
+end
+
+
 ---------------------------------------------------------------------
 CLASS: CmdAnimatorAddTrack ( mock_edit.EditorCommand )
 	:register( 'scene_editor/animator_add_track' )

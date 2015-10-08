@@ -503,5 +503,8 @@ class AnimatorView( SceneEditorModule ):
 	def refreshTimeline( self ):
 		self.widget.rebuildTimeline()
 
+	def refreshClipList( self ):
+		self.widget.rebuildClipList()
+
 	def refreshAll( self ):
 		self.widget.rebuild()

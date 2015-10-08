@@ -198,12 +198,41 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		return super( AnimatorTrackTree, self ).dropEvent( ev )
 
 
+
+##----------------------------------------------------------------##
+class AnimatorClipListTreeItem(QtGui.QTreeWidgetItem):
+	def __lt__(self, other):
+		node0 = self.node
+		node1 = hasattr(other, 'node') and other.node or None
+		if not node1:
+			return True
+		tree = self.treeWidget()
+
+		# 	col = tree.sortColumn()
+		t0 = isMockInstance( node0, 'AnimatorClipGroup' ) and 'group' or 'node'
+		t1 = isMockInstance( node1, 'AnimatorClipGroup' ) and 'group' or 'node'
+
+		if t1!=t0:			
+			if tree.sortOrder() == 0:
+				if t0 == 'group': return True
+				if t1 == 'group': return False
+			else:
+				if t0 == 'group': return False
+				if t1 == 'group': return True
+		return super( AnimatorClipListTreeItem, self ).__lt__( other )
+
+
 ##----------------------------------------------------------------##
 class AnimatorClipListTree( GenericTreeWidget ):
-	def __init__( self, *args, **kwargs ):
-		super( AnimatorClipListTree, self ).__init__( *args, **kwargs )
-		self.setIndentation( 10 )
+	def __init__( self, *args, **option ):
+		option['drag_mode'] = 'internal'
+		super( AnimatorClipListTree, self ).__init__( *args, **option )
+		self.setIndentation( 10 )		
 		self.option['editable'] = True
+
+
+	def createItem( self, node ):
+		return AnimatorClipListTreeItem()
 
 	def getHeaderInfo( self ):
 		return [ ('Name',50) ]
@@ -215,7 +244,20 @@ class AnimatorClipListTree( GenericTreeWidget ):
 		pass
 
 	def loadTreeStates( self ):
-		pass
+		for node, item in self.nodeDict.items():
+			if not item: continue
+			expanded = not node._folded
+			item.setExpanded( expanded )
+
+	def onItemExpanded( self, item ):
+		if self.rebuilding: return
+		node = item.node
+		node._folded = False
+
+	def onItemCollapsed( self, item ):
+		if self.rebuilding: return
+		node = item.node
+		node._folded = True
 
 	def getNodeParent( self, node ): # reimplemnt for target node	
 		return node.parentGroup
@@ -243,6 +285,41 @@ class AnimatorClipListTree( GenericTreeWidget ):
 
 	def onItemChanged( self, item, col ):
 		self.owner.renameClip( item.node, item.text(0) )
+
+	def dropEvent( self, ev ):		
+		p = self.dropIndicatorPosition()
+		pos = False
+		if p == QtGui.QAbstractItemView.OnItem: #reparent
+			pos = 'on'
+		elif p == QtGui.QAbstractItemView.AboveItem:
+			pos = 'above'
+		elif p == QtGui.QAbstractItemView.BelowItem:
+			pos = 'below'
+		else:
+			pos = 'viewport'
+		
+		if pos == 'above' or pos =='below':
+			#TODO: reorder
+			ev.setDropAction( Qt.IgnoreAction )
+			return
+
+		target = self.itemAt( ev.pos() )
+		source = self.getSelection()
+
+		if pos == 'on':
+			targetClip = target.node
+		else:
+			targetClip = 'root'
+
+		succ = self.owner.doCommand( 
+			'scene_editor/animator_reparent_clip', 
+			source = source,
+			target = targetClip
+		)
+		
+		if not succ:
+			ev.setDropAction( Qt.IgnoreAction )
+		return super( AnimatorClipListTree, self ).dropEvent( ev )
 
 
 ##----------------------------------------------------------------##
@@ -441,6 +518,9 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 	def rebuildTimeline( self ):
 		self.timeline.rebuild()
 		self.treeTracks.rebuild()
+
+	def rebuildClipList( self ):
+		self.treeClips.rebuild()
 
 	def updateTrackLayout( self ):
 		self.timeline.updateTrackLayout()
