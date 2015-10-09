@@ -424,6 +424,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.treeTracks.verticalScrollBar().setStyleSheet('width:4px')
 		self.treeTracks.setHorizontalScrollBarPolicy( Qt.ScrollBarAlwaysOff )
 
+		self.toolbarTarget = QtGui.QToolBar()
 		self.toolbarClips = QtGui.QToolBar()
 		self.toolbarPlay  = QtGui.QToolBar()
 		self.toolbarTrack = QtGui.QToolBar()
@@ -452,8 +453,9 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		treeClipsLayout = QtGui.QVBoxLayout(self.containerClips) 
 		treeClipsLayout.setSpacing( 0 )
 		treeClipsLayout.setMargin( 0 )
-		treeClipsLayout.addWidget( self.toolbarClips )
+		treeClipsLayout.addWidget( self.toolbarTarget )
 		treeClipsLayout.addWidget( self.treeClips )
+		treeClipsLayout.addWidget( self.toolbarClips )
 		self.treeClips.setHeaderHidden( True )
 		self.treeClips.verticalScrollBar().setStyleSheet('width:4px')
 
@@ -476,6 +478,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 
 		bottomToolHeight = 20
 		self.containerTrackTool.setFixedHeight( bottomToolHeight )
+		self.toolbarClips.setFixedHeight( bottomToolHeight )
 		self.toolbarTrack.setFixedHeight( bottomToolHeight )
 		
 		topToolHeight = self.timeline.getRulerHeight()

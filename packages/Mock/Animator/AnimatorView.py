@@ -56,9 +56,10 @@ class AnimatorView( SceneEditorModule ):
 		
 		self.widget = AnimatorWidget()
 		self.window.addWidget( self.widget )
-		self.toolbarClips = self.addToolBar( 'animator_clips', self.widget.toolbarClips )
-		self.toolbarPlay  = self.addToolBar( 'animator_play',  self.widget.toolbarPlay )
-		self.toolbarTrack = self.addToolBar( 'animator_track', self.widget.toolbarTrack )
+		self.toolbarTarget = self.addToolBar( 'animator_target', self.widget.toolbarTarget )
+		self.toolbarClips  = self.addToolBar( 'animator_clips', self.widget.toolbarClips )
+		self.toolbarPlay   = self.addToolBar( 'animator_play',  self.widget.toolbarPlay )
+		self.toolbarTrack  = self.addToolBar( 'animator_track', self.widget.toolbarTrack )
 		# self.toolbarEdit  = self.addToolBar( 'animator_play',  self.widget.toolbarEdit )
 
 		signals.connect( 'scene.close', self.onSceneClose )
@@ -67,8 +68,9 @@ class AnimatorView( SceneEditorModule ):
 
 		# addWidgetWithLaytut( toolbar,
 		# 	self.widget.containerEditTool )
-		self.addTool( 'animator_clips/change_context', label = 'Change Context', icon = 'in' )
-		self.addTool( 'animator_clips/----' )
+		self.addTool( 'animator_target/change_context', label = 'Change Context', icon = 'in' )
+		self.addTool( 'animator_target/save_data', label = 'Save Data', icon = 'save' )
+
 		self.addTool( 'animator_clips/add_clip_group',   label = 'add group',    icon = 'add_folder' )
 		self.addTool( 'animator_clips/add_clip',    label = 'add',    icon = 'add' )
 		self.addTool( 'animator_clips/remove_clip', label = 'remove', icon = 'remove' )
@@ -364,6 +366,9 @@ class AnimatorView( SceneEditorModule ):
 			target1 = self.findTargetAnimator()
 			if ( not target0 ) and ( not target1 ):
 				alertMessage( 'No Animator', 'No Animator found in selected entity scope', 'question' )
+				
+		elif name == 'save_data':
+			self.saveAnimatorData()
 
 		elif name == 'add_clip':
 			if self.checkTargetAnimator():

@@ -430,7 +430,7 @@ class ColorPickerWidget( QtGui.QWidget ):
 		if not self.ui.numV.hasFocus():
 			self.ui.numV.setValue( color.valueF() )
 
-		if not self.ui.textHex.hasFocus:
+		if not self.ui.textHex.hasFocus():
 			self.ui.textHex.setText( color.name() )
 
 		self.updating = False
