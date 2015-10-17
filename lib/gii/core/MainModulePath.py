@@ -4,7 +4,7 @@ import platform
 import sys
 
 def isPythonFrozen():
-	return hasattr(sys, "frozen")
+	return hasattr( sys, "frozen" )
 
 def _getMainModulePath():
 		if isPythonFrozen():
@@ -20,8 +20,11 @@ def _getMainModulePath():
 			return os.path.dirname( mainfile )
 		else:
 			import __main__
-			mainfile = os.path.realpath( __main__.__file__ )
-			return os.path.dirname( mainfile )
+			if hasattr( __main__, "__gii_path__" ):
+				return __main__.__gii_path__
+			else:
+				mainfile = os.path.realpath( __main__.__file__ )
+				return os.path.dirname( mainfile )
 
 
 def getMainModulePath( path = None ):
