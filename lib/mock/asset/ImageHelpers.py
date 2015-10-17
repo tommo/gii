@@ -106,9 +106,9 @@ def convertToPNG( inputPath, outputPath, **options ):
 ##----------------------------------------------------------------##
 def convertToWebP( src, dst = None, **option ):
 	if app.getPlatformName() == 'osx':
-		cwebp = app.getPath( 'support/webp/osx/cwebp' )
+		cwebp = app.getPath( 'support/osx/webp/cwebp' )
 	elif app.getPlatformName() == 'win':
-		cwebp = app.getPath( 'support/webp/win/cwebp.exe' )
+		cwebp = app.getPath( 'support/win/webp/cwebp.exe' )
 
 	arglist = [
 		cwebp,
@@ -137,7 +137,7 @@ def convertToWebP( src, dst = None, **option ):
 #texturetool -e PVRTC --channel-weighting-linear --bits-per-pixel-4 -o ImageL4.pvrtc Image.png
 def convertToPVR( src, dst = None, **option ):
 	if app.getPlatformName() == 'osx':
-		app.getPath( 'support/pvrtc/texturetool' ),
+		app.getPath( 'support/osx/pvrtc/texturetool' ),
 		arglist = [
 			'-e', 'PVRTC',
 			'-f', 'PVR',

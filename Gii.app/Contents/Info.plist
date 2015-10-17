@@ -18,36 +18,27 @@
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
-	<string>Python</string>
+	<string>GII</string>
 	<key>CFBundleGetInfoString</key>
-	<string>2.7.3, (c) 2004-2012 Python Software Foundation.</string>
-	<key>CFBundleHelpBookFolder</key>
-	<array>
-		<string>Documentation</string>
-		<string>PythonDocumentation</string>
-	</array>
-	<key>CFBundleHelpBookName</key>
-	<string>MacPython Help</string>
-	<key>CFBundleHelpTOCFile</key>
-	<string>index.html</string>
+	<string>0.1.0, (c) 2013-2015 tommo.zhou@gmail.com</string>
 	<key>CFBundleIconFile</key>
 	<string>Gii.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.python.python</string>
+	<string>com.pixpil.gii</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLongVersionString</key>
-	<string>2.7.3, (c) 2004-2012 Python Software Foundation.</string>
+	<string>0.1.0, (c) 2013-2015 tommo.zhou@gmail.com</string>
 	<key>CFBundleName</key>
-	<string>Python</string>
+	<string>Gii</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.7.3</string>
+	<string>0.1.0</string>
 	<key>CFBundleSignature</key>
-	<string>PytX</string>
+	<string>Gii</string>
 	<key>CFBundleVersion</key>
-	<string>2.7.3</string>
+	<string>0.1.0</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
 	<key>LSRequiresCarbon</key>
@@ -55,6 +46,6 @@
 	<key>NSAppleScriptEnabled</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>
-	<string>(c) 2012 Python Software Foundation.</string>
+	<string>0.1.0, (c) 2013-2015 tommo.zhou@gmail.com</string>
 </dict>
 </plist>

@@ -1,0 +1,60 @@
+{
+  "asset_library": "env/config/asset_table.json",
+  "global_managers": {
+    "StoryManager": {},
+    "WaypointPathFinderManager": {},
+    "scene_reference": {}
+  },
+  "global_objects": {
+    "children": {},
+    "name": "GlobalObjectNode",
+    "type": "group"
+  },
+  "graphics": {},
+  "layers": [
+    {
+      "default": true,
+      "editor_visible": true,
+      "locked": false,
+      "name": "main",
+      "parallax": [
+        1,
+        1,
+        1
+      ],
+      "sort": "z_ascending",
+      "visible": true
+    },
+    {
+      "default": false,
+      "editor_visible": true,
+      "name": "default",
+      "parallax": [
+        1,
+        1
+      ],
+      "sort": "priority_ascending",
+      "visible": true
+    }
+  ],
+  "name": "GAME",
+  "physics": {
+    "angularSleepTolerance": 0,
+    "autoClearForces": true,
+    "gravity": [
+      0,
+      -10
+    ],
+    "linearSleepTolerance": 0,
+    "positionIterations": 8,
+    "timeToSleep": 0,
+    "unitsToMeters": 0.01,
+    "velocityIterations": 6,
+    "world": "EWBox2DWorld"
+  },
+  "previewing_scene": "test.scene",
+  "scenes": {},
+  "texture_library": "env/config/texture_library.json",
+  "title": "GAME",
+  "version": "0.0.1"
+}

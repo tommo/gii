@@ -1,0 +1,38 @@
+{
+  "map": {
+    "!10001": {
+      "body": {
+        "groups": [
+          "!10002"
+        ]
+      },
+      "extra": false,
+      "model": "mock.TextureLibrary"
+    },
+    "!10002": {
+      "body": {
+        "atlasCachePath": false,
+        "atlasMode": false,
+        "default": true,
+        "expanded": true,
+        "filter": "linear",
+        "format": "auto",
+        "maxAtlasHeight": 1024,
+        "maxAtlasWidth": 1024,
+        "mipmap": false,
+        "name": "DEFAULT",
+        "parent": "!10001",
+        "pow2": false,
+        "premultiplyAlpha": true,
+        "repackPrebuiltAtlas": false,
+        "scale": 1,
+        "textures": {},
+        "wrap": false
+      },
+      "extra": false,
+      "model": "mock.TextureGroup"
+    }
+  },
+  "model": "mock.TextureLibrary",
+  "root": "!10001"
+}

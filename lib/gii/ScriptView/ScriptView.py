@@ -92,7 +92,7 @@ class ScriptView( DebugViewModule ):
 		if not toggle:
 			for path in self.scriptPages:
 				p = self.scriptPages[path]
-				p.clearHilight( 'normal' )
+				# p.clearHilight( 'normal' )
 
 	def onMenu(self, node):
 		name=node.name

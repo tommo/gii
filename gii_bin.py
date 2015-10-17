@@ -28,8 +28,11 @@ def getMainModulePath():
 			return os.path.dirname( mainfile )
 		else:
 			import __main__
-			mainfile = os.path.realpath( __main__.__file__ )
-			return os.path.dirname( mainfile )
+			if hasattr( __main__, "__gii_path__" ):
+				return __main__.__gii_path__
+			else:
+				mainfile = os.path.realpath( __main__.__file__ )
+				return os.path.dirname( mainfile )
 
 giipath = getMainModulePath() + '/lib'
 thirdPartyPathBase = getMainModulePath() + '/lib/3rdparty'

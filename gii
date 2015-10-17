@@ -1,5 +1,4 @@
-#! /usr/bin/env python
+#!/bin/bash
 
-import gii_bin
-#from pudb import set_interrupt_handler; set_interrupt_handler()
-gii_bin.main()
+d=`dirname $0`
+${d}/Gii.app/Contents/MacOS/Python ${d}/gii_bin.py $@
