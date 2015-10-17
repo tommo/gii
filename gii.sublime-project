@@ -37,6 +37,18 @@
 			"selector": "source.python",
 			"working_dir": "$file_path",
 			"target":"exec_in_window"
+		},
+		{
+			"cmd":
+			[
+				"gii",
+				"run",
+				"-b",
+				"test"
+			],
+			"name": "Run Project Test",
+			"working_dir": "$project_path/test",
+			"target":"exec_in_window"
 		}
 	],
 	"folders":
@@ -85,7 +97,8 @@
 		[
 			"IDE",
 			"Python32",
-			"GII Python"
+			"GII Python",
+			"Run Project Test"
 		],
 		"show_panel_on_build": false,
 		"sublimeclang_options":

@@ -16,7 +16,7 @@ _AVAILABLE_TARGET  = [
 	'html5'
 ]
 
-_DEPENDENCIES      = [ 'host-modules', 'extension', 'freejoy', 'sdl-common' ]
+_DEPENDENCIES      = [ 'host-modules', 'extension', 'freejoy' ]
 _AVAILABLE_CONFIG  = [ 'debug', 'release' ]
 _TARGET_ARCH       = {
 	# 'osx'           : 'i386',

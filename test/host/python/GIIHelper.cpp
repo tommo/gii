@@ -38,19 +38,35 @@ int GIIHelper::_setBufferSize( lua_State *L){
 int GIIHelper::_renderFrameBuffer( lua_State *L ){
 	MOAILuaState state (L);
 	if ( !state.CheckParams ( 1, "U" )) return 0;
-	MOAIFrameBuffer* frameBuffer = state.GetLuaObject < MOAIFrameBuffer >( 1, false );
-	if (frameBuffer) {
-		zglBegin();
-		frameBuffer->Render();
-		zglEnd();
+	MOAIFrameBufferRenderCommand* command = state.GetLuaObject < MOAIFrameBufferRenderCommand >( -1, false );
+	if ( command ) {
+		if ( command->IsEnabled() && command->GetFrameBuffer() ) {
+			zglBegin();
+			command->Render();
+			zglEnd();
+		}
+	} else {
+		MOAIFrameBuffer* frameBuffer = state.GetLuaObject < MOAIFrameBuffer >( -1, false );
+		if ( frameBuffer ) {
+			zglBegin();
+			frameBuffer->Render ( NULL );
+			zglEnd();
+		}
 	}
+	// MOAIFrameBuffer* frameBuffer = state.GetLuaObject < MOAIFrameBuffer >( 1, false );
+	// MOAIGfxDevice& device = MOAIGfxDevice::Get ();
+	// if (frameBuffer) {
+	// 	zglBegin();
+	// 	frameBuffer->Render( NULL );
+	// 	zglEnd();
+	// }
 	return 0;
 }
 
 int GIIHelper::_setVertexTransform( lua_State *L){
 	MOAILuaState state (L);
 	if ( !state.CheckParams ( 1, "U" )) return 0;
-	MOAITransform* trans = state.GetLuaObject< MOAITransform >(1, true);
+	MOAITransformBase* trans = state.GetLuaObject< MOAITransformBase >(1, true);
 	if ( trans ) {
 		MOAIGfxDevice::Get().SetVertexTransform( MOAIGfxDevice::VTX_WORLD_TRANSFORM, trans->GetLocalToWorldMtx() );
 	}

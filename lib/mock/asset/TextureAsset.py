@@ -188,6 +188,11 @@ class TextureLibrary( EditorModule ):
 		for group in self.lib.groups.values():
 			if group.atlasCachePath:
 				CacheManager.get().touchCacheFile( group.atlasCachePath )
+		# self.forceRebuildAllTextures()
+		# self.saveIndex()
+
+	def onAppReady( self ):
+		pass
 		
 	def getLibrary( self ):
 		return self.lib

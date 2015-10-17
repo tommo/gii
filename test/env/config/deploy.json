@@ -1,0 +1,14 @@
+{
+  "map": {
+    "!10001": {
+      "body": {
+        "scenes": {},
+        "targets": {}
+      },
+      "extra": false,
+      "model": "mock_edit.DeployManagerConfig"
+    }
+  },
+  "model": "mock_edit.DeployManagerConfig",
+  "root": "!10001"
+}

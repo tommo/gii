@@ -40,6 +40,8 @@
 #include "MOCKProp.h"
 #include "EWProp.h"
 
+#include "MOAIJoystickManagerSDL.h"
+
 
 #include "moai-steer/host.h"
 
@@ -101,6 +103,8 @@ void registerExtensionClasses(){
 	REGISTER_LUA_CLASS(MOCKProp)
 	REGISTER_LUA_CLASS(EWProp)
 	
+	REGISTER_LUA_CLASS(MOAIJoystickManagerSDL)
+	MOAIJoystickManagerSDL::Affirm();
 }
 
 
