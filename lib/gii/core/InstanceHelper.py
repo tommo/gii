@@ -2,10 +2,12 @@ import sys
 import logging
 import os
 import SocketServer
+import SimpleSocket
 import socket
 import threading
 
 RemoteArgumentCallBack=None
+_GII_INSTANCE_PORT = 61957
 
 class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
@@ -55,7 +57,9 @@ def start_server(host, port):
     return server
 
 server = None
-def checkSingleInstance(PORT=61957):
+def checkSingleInstance(PORT=0):
+    if PORT == 0:
+        PORT = _GII_INSTANCE_PORT
     # HOST = socket.gethostname()
     HOST = '127.0.0.1'
     argv=sys.argv[:]
@@ -63,15 +67,19 @@ def checkSingleInstance(PORT=61957):
     # if len(argv) > 1:
     #     argv[1]=os.path.realpath(argv[1])
     try:
-        send_to_server(HOST, PORT, ' '.join(argv))
-        logging.warn( "running instance detected" )
-        sys.exit()
-    except socket.error:
+        send_to_server(HOST, PORT, ' '.join(argv)) #send a message to server
+        return False        
+    except socket.error: #port not occupied, it's safe to start a new instance
         server = start_server(HOST, PORT)
-        
-    return True
+        return True
 
 def setRemoteArgumentCallback(callback):
     global RemoteArgumentCallBack
     RemoteArgumentCallBack=callback
 
+def sendRemoteMsg( msg ):
+    PORT = _GII_INSTANCE_PORT
+    HOST = '127.0.0.1'
+    response = SimpleSocket.send_to_server( HOST, PORT, msg )
+    return response
+    

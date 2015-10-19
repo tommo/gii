@@ -15,9 +15,9 @@ from project        import Project
 from package        import PackageManager
 from MainModulePath import getMainModulePath
 from Command        import EditorCommandRegistry
-from RemoteCommand  import RemoteCommandRegistry
+from RemoteCommand  import RemoteCommandRegistry, RemoteCommand
 
-from InstanceHelper import checkSingleInstance, setRemoteArgumentCallback
+from InstanceHelper import checkSingleInstance, setRemoteArgumentCallback, sendRemoteMsg
 
 
 _GII_BUILTIN_PACKAGES_PATH = 'packages'
@@ -59,13 +59,20 @@ class EditorApp(object):
 			logging.info('registered in runtime:'+m.getName())
 			EditorModuleManager.get().loadModule(m)
 
-	def init( self ):
+	def init( self, **options ):
 		if not checkSingleInstance():
-			raise Exception('running instance detected')
+			if options.get( 'stop_other_instance', False ):
+				logging.warning( 'running instance detected, trying to shut it down' )
+				sendRemoteMsg( 'shut_down' )
+				#TODO:wait for other instance shut down
+
+			else:
+				logging.warning( 'running instance detected' )
+				return False
 		
 		self.loadConfig()
 
-		if self.initialized: return
+		if self.initialized: return True
 		self.openProject()
 		
 		#scan packages
@@ -89,9 +96,13 @@ class EditorApp(object):
 
 		signals.connect( 'app.remote', self.onRemote )
 
+		return True
+
 
 	def run( self, **kwargs ):
-		if not self.initialized: self.init()
+		if not self.initialized: 
+			if not self.init( **kwargs ):
+				return False
 		hasError = False
 		self.resetMainLoopBudget()
 		
@@ -128,6 +139,7 @@ class EditorApp(object):
 
 		signals.dispatchAll()
 		EditorModuleManager.get().unloadAllModules()
+		return True
 
 	def setMainLoopBudget( self, budget = 0.001 ):
 		self.mainLoopBudget = budget
@@ -151,6 +163,11 @@ class EditorApp(object):
 			rest = budget - elapsed
 		if rest > 0:
 			time.sleep( rest )
+
+	def tryStop( self, timeout = 0 ):
+		#TODO: alert if any asset is not saved
+		self.stop()
+		return True
 
 	def stop( self ):
 		self.running = False
@@ -263,3 +280,12 @@ def _onRemoteArgument( data, output ):
 		signals.emit( 'app.remote', data, output )
 
 setRemoteArgumentCallback( _onRemoteArgument )
+
+
+##----------------------------------------------------------------##
+class RemoteCommandShutDown( RemoteCommand ):
+	name = 'shut_down'
+	def run( self, *args ):
+		app.tryStop()
+		
+
