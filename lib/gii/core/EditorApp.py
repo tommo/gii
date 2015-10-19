@@ -60,13 +60,23 @@ class EditorApp(object):
 			EditorModuleManager.get().loadModule(m)
 
 	def init( self, **options ):
-		if not checkSingleInstance():
-			if options.get( 'stop_other_instance', False ):
+		if options.get( 'stop_other_instance', False ):
+			if not checkSingleInstance():
+				retryCount = 5
 				logging.warning( 'running instance detected, trying to shut it down' )
 				sendRemoteMsg( 'shut_down' )
-				#TODO:wait for other instance shut down
+				ready = False
+				for i in range( retryCount ):
+					time.sleep( 1 )
+					if checkSingleInstance():
+						ready = True
+						break
+				if not ready:
+					logging.warning( 'timeout for shuting down other instance' )
+					return False
 
-			else:
+		else:
+			if not checkSingleInstance():
 				logging.warning( 'running instance detected' )
 				return False
 		
