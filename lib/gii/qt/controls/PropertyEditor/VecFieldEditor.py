@@ -31,6 +31,7 @@ class VecEditorWidget( QtGui.QWidget ):
 	def setValue( self, value ):
 		if value:
 			for i, v in enumerate( value ):
+				if i >= self.dim: break
 				self.fields[i].setValue( v )
 		else:
 			for field in self.fields:

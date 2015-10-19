@@ -70,7 +70,7 @@ class MOAICanvasBase(GLWidget):
 		# else:
 		# 	dy = steps
 		# x,y=event.x(), event.y()
-		# self.delegate.onScroll( dx, dy, x, y )
+		# self.delegate.onMouseScroll( dx, dy, x, y )
 
 	def keyPressEvent(self, event):
 		if event.isAutoRepeat(): return

@@ -174,7 +174,7 @@ function createEditorCanvasInputDevice( env )
 		inputDevice:sendMouseEvent( 'move', x, y, false )
 	end
 
-	function env.onScroll( dx, dy, x, y )
+	function env.onMouseScroll( dx, dy, x, y )
 		inputDevice:sendMouseEvent( 'scroll', dx, dy, false )
 	end
 

@@ -38,3 +38,5 @@ import CodeTilesetAsset
 import AnimatorAsset
 
 import StoryAsset
+
+import TBAsset
