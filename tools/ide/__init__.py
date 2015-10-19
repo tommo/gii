@@ -20,6 +20,8 @@ def run(
 	
 	options = {}
 	options[ 'stop_other_instance' ] = stop_other_instance
+
+	print 'starting gii IDE...'
 	app.run( **options )		
 
 def main( argv ):

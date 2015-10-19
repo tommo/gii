@@ -21,3 +21,4 @@ require 'mock_edit.tools.WaypointGraphTools'
 --------------------------------------------------------------------
 --ETC
 require 'mock_edit.tools.PathTools'
+require 'mock_edit.tools.TBWidgetTools'

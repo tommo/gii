@@ -91,13 +91,6 @@ def startTool( toolInfo ):
 
 ##----------------------------------------------------------------##
 def printGII():
-	ansPath = _getModulePath( 'gii.ans' )
-	fp = file( ansPath, 'r' )
-	txt = fp.read()
-	fp.close()
-	print txt
-
-def printGII2():
 	output = Fore.YELLOW + Style.BRIGHT +"""
  &b--&y     ,_______    &b------------------------------------------------------ 
    &y    /        \\  &r     _______  ___   ___                               
@@ -119,10 +112,7 @@ def printGII2():
 
 
 def printHeader():
-	printGII2()
-	# print '---------------------------'
-	# print Fore.CYAN + Style.BRIGHT + 'GII development environment' + Fore.RESET + Style.RESET_ALL
-	# print '---------------------------'
+	printGII()
 
 def printProjectInfo( info ):
 	if not info: return
@@ -178,6 +168,7 @@ def startupTool( info ):
 	for toolInfo in _prjTools + _libTools:
 		if toolInfo.get('name') == cmd:
 			return startTool( toolInfo )
+	#show help
 	printHeader()
 	printProjectInfo( info )
 	printMissingCommand( cmd )

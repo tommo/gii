@@ -58,7 +58,7 @@ function Preview:onMouseMove( x, y )
 	end
 end
 
-function Preview:onScroll( x, y )
+function Preview:onMouseScroll( x, y )
 	if y > 0 then
 		self:setZoom( self.zoom * 2 )
 	else

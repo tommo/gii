@@ -128,7 +128,7 @@ class MOAIEditCanvasLuaDelegate(MOAILuaDelegate):
 		self._onMouseMove  = None
 		self._onMouseEnter = None
 		self._onMouseLeave = None
-		self._onScroll     = None
+		self._onMouseScroll= None
 		self._onKeyDown    = None
 		self._onKeyUp      = None
 
@@ -152,7 +152,7 @@ class MOAIEditCanvasLuaDelegate(MOAILuaDelegate):
 		self._onMouseLeave = env.onMouseLeave
 		self._onMouseEnter = env.onMouseEnter
 
-		self._onScroll     = env.onScroll
+		self._onMouseScroll     = env.onMouseScroll
 		self._onKeyDown    = env.onKeyDown
 		self._onKeyUp      = env.onKeyUp
 
@@ -175,8 +175,8 @@ class MOAIEditCanvasLuaDelegate(MOAILuaDelegate):
 	def onMouseLeave(self):
 		if self._onMouseLeave: self._onMouseLeave()
 
-	def onScroll(self, dx, dy, x, y):
-		if self._onScroll: self._onScroll(dx,dy,x,y)
+	def onMouseScroll(self, dx, dy, x, y):
+		if self._onMouseScroll: self._onMouseScroll(dx,dy,x,y)
 
 	def onKeyDown(self, key):
 		if self._onKeyDown: self._onKeyDown(key)
@@ -426,7 +426,7 @@ class MOAIEditCanvas( MOAIEditCanvasBase ):
 			dy = steps
 		x,y=event.x(), event.y()
 		self.makeCurrent()
-		self.delegate.onScroll( dx, dy, x, y )
+		self.delegate.onMouseScroll( dx, dy, x, y )
 
 	def enterEvent(self, event):
 		self.makeCurrent()
