@@ -20,11 +20,27 @@ class TBSkinAssetManager(AssetManager):
 		return True
 
 	def importAsset( self, node, reload = False ):
-		if not node.assetType in [ 'folder', 'spine' ] : return True
+		if not node.assetType in [ 'folder' ] : return True
 		node.assetType = 'tb_skin'
 		node.setBundle()
 		output = node.getCacheFile( 'export', is_dir = True )
 		node.setObjectFile( 'export', output )
+		return True
+
+	
+##----------------------------------------------------------------##
+class TBSchemeAssetManager(AssetManager):
+	def getName(self):
+		return 'asset_manager.tb_scheme'
+
+	def acceptAssetFile( self, filePath ):
+		if not os.path.isfile(filePath): return False		
+		if not filePath.endswith( '.tb_scheme' ): return False
+		return True
+
+	def importAsset( self, node, reload = False ):
+		node.assetType = 'tb_scheme'
+		node.setObjectFile( 'data', node.getFilePath() )
 		return True
 	
 # ##----------------------------------------------------------------##
@@ -60,5 +76,7 @@ class TBSkinAssetManager(AssetManager):
 # TBSkinCreator().register()
 
 TBSkinAssetManager().register()
+TBSchemeAssetManager().register()
+
 AssetLibrary.get().setAssetIcon( 'tb_skin', 'guistyle' )
 AssetLibrary.get().setAssetIcon( 'tb_scheme', 'guischeme' )

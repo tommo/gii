@@ -78,7 +78,7 @@ end
 --------------------------------------------------------------------
 CLASS: EditorCanvasScene ( mock.Scene )
 function EditorCanvasScene:__init()
-	self.__editor_scene = true
+	self.FLAG_EDITOR_SCENE = true
 end
 
 function EditorCanvasScene:setEnv( env )
@@ -107,7 +107,7 @@ function EditorCanvasScene:onLoad()
 end
 
 
-function EditorCanvasScene:getActionRoot()
+function EditorCanvasScene:getParentActionRoot()
 	local ctx = gii.getCurrentRenderContext()
 	return ctx.actionRoot
 end

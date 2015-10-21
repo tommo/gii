@@ -229,7 +229,7 @@ function createSceneView( scene, env )
 	for i, factory in pairs( factoryList ) do
 		local view = factory:createSceneView( scene, env )
 		if view then
-			view:setName( '__EDITOR_SCENE_VIEW')
+			view:setName( 'FLAG_EDITOR_SCENE_VIEW')
 			return view
 		end
 	end
