@@ -18,7 +18,7 @@ _QT_SETTING_FILE = 'qt.ini'
 class QtSupportEventFilter(QObject):
 	def eventFilter(self, obj, event):
 		e=event.type()
-		if   e == QEvent.ApplicationActivate:			
+		if   e == QEvent.ApplicationActivate:
 			signals.emitNow('app.activate')
 		elif e == QEvent.ApplicationDeactivate:
 			signals.emitNow('app.deactivate')		
@@ -118,16 +118,11 @@ class QtSupport( QtEditorModule ):
 		self.qtApp.setActiveWindow(window)
 
 	def onLoad( self ):
-
-		self.qtApp   = QtGui.QApplication(sys.argv)
+		self.qtApp   = QtGui.QApplication( [ '-graphicssystem', 'opengl' ] )
 		self.qtSetting = QtCore.QSettings(
 					self.getProject().getConfigPath( _QT_SETTING_FILE ),
 					QtCore.QSettings.IniFormat
 				)
-		eventFilter = QtSupportEventFilter( self.qtApp )
-		eventFilter.app = self
-		# QtGui.QColorDialog().setVisible( False )
-		self.qtApp.installEventFilter(eventFilter)
 		self.setupStyle()
 		
 		self.setupMainWindow()		
@@ -135,6 +130,11 @@ class QtSupport( QtEditorModule ):
 		self.initialized = True
 		self.running     = False
 		return True
+
+	def onStart( self ):
+		eventFilter = QtSupportEventFilter( self.qtApp )
+		eventFilter.app = self
+		self.qtApp.installEventFilter(eventFilter)
 
 	def needUpdate( self ):
 		return True

@@ -1,7 +1,9 @@
 {
   "asset_library": "env/config/asset_table.json",
   "global_managers": {
+    "JoystickManager": {},
     "StoryManager": {},
+    "TBManager": {},
     "WaypointPathFinderManager": {},
     "scene_reference": {}
   },

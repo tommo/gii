@@ -3,6 +3,7 @@ import logging
 import inspect
 import sys
 import os.path
+import time
 
 from res     import *
 
@@ -231,7 +232,9 @@ class EditorModuleManager(object):
 				self.loadModule( m1 )
 			m1.dependent.append( m )
 
+		t0 = time.clock()
 		m.load()
+		# print 'loading module', m.getName(), ( time.clock() - t0 ) * 1000
 		m.loading=False
 		signals.emit('module.load',m)
 		return True

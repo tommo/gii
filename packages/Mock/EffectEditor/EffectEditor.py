@@ -86,7 +86,7 @@ class EffectEditor( SceneEditorModule ):
 		self.addTool( 'effect_editor/move_down',   icon = 'arrow-down' )
 		self.addTool( 'effect_editor/----' )
 		self.addTool( 'effect_editor/toggle_preview', icon = 'play', type = 'check' )
-
+		
 		self.window = window = self.container.addWidgetFromFile(
 			_getModulePath('EffectEditor.ui')
 		)
@@ -115,6 +115,7 @@ class EffectEditor( SceneEditorModule ):
 		self.codebox = codebox = addWidgetWithLayout(
 			CodeEditor( window.containerScript )
 		)
+		
 		settingData = jsonHelper.tryLoadJSON(
 				self.getApp().findDataFile( 'script_settings.json' )
 			)
