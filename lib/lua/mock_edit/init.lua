@@ -43,9 +43,7 @@ require 'mock_edit.common.resloader'
 
 
 --------------------------------------------------------------------
-require 'mock_edit.AssetHelper.DeckReloader'
-require 'mock_edit.AssetHelper.ShaderReloader'
-require 'mock_edit.AssetHelper.FMODReloader'
+require 'mock_edit.AssetHelper'
 
 --------------------------------------------------------------------
 --COMMANDS

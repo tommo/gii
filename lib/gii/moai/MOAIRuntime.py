@@ -222,7 +222,7 @@ class MOAIRuntime( EditorModule ):
 		
 	def updateAKU(self):
 		if not self.AKUReady: return False
-		if self.paused: return False		
+		if self.paused: return False	
 		try:
 			getAKU().update()
 		except MOAIException as e:

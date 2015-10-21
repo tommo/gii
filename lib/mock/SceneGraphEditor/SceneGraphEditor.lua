@@ -21,6 +21,7 @@ function SceneGraphEditor:getScene()
 end
 
 function SceneGraphEditor:openScene( path )
+	_stat( 'open mock scene', path )
 	local scene = mock.game:openSceneByPath(
 		path, 
 		false,
@@ -42,6 +43,7 @@ function SceneGraphEditor:openScene( path )
 end
 
 function SceneGraphEditor:postOpenScene()
+	_stat( 'post open mock scene' )
 	mock.setAssetCacheWeak()
 	GIIHelper.forceGC()
 	mock.setAssetCacheStrong()
@@ -50,6 +52,7 @@ end
 
 function SceneGraphEditor:closeScene()
 	if not self.scene then return end
+	_stat( 'close mock scene' )
 	self:clearScene()
 	self.scene = false
 	self.retainedSceneData = false
@@ -126,10 +129,13 @@ end
 function SceneGraphEditor:startScenePreview()
 	_collectgarbage( 'collect' )
 	-- GIIHelper.forceGC()
+	_stat( 'starting scene preview' )
 	mock.game:start()
+	_stat( 'scene preview started' )
 end
 
 function SceneGraphEditor:stopScenePreview()
+	_stat( 'stopping scene preview' )
 	_collectgarbage( 'collect' )
 	-- GIIHelper.forceGC()
 	mock.game:stop()
@@ -137,7 +143,7 @@ function SceneGraphEditor:stopScenePreview()
 	for i, l in pairs( mock.game:getLayers() ) do 
 		l:setVisible( true )
 	end
-
+	_stat( 'scene preview stopped' )
 end
 
 function SceneGraphEditor:retainScene()

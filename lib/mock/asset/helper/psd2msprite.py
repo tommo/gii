@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os.path
 import StringIO
 from psd_tools import PSDImage, Group, Layer
@@ -246,7 +247,6 @@ class MSpriteProject(object):
 		oy = 0
 		bx0 ,	by0 ,	bx1 ,	by1 = image.bbox
 		mani = get_mani( image )
-		# print(mani)
 		layers   = extract_leaf_layers ( image )
 		docFeatures = get_psd_features( image )
 		if docFeatures:
@@ -270,7 +270,7 @@ class MSpriteProject(object):
 				ox = x0
 			elif name == '@output': 
 				bx0 ,	by0 ,	bx1 ,	by1 = l.bbox
-			elif not ( name and name[0] == '@' ):
+			elif not ( name and ( name[0] == '@' or name=='背景' ) ):
 				outputLayers.append( l )
 		#2. foreach frame: 
 		#      find valid layer (visible & inside output bbox)
@@ -279,23 +279,30 @@ class MSpriteProject(object):
 		# for l in layers:
 		# print 'layer count:', len( outputLayers )
 		anim = Anim()
-		# print(mani)
 		frameDelays = {}
 		for data in mani['FrIn']:
 			# frameDelays[ data['FrID'] ] = data[ 'FrDl' ]
 			frameDelays[ data['FrID'] ] = 0.1
 
 		frameList = mani['FSts'][0]['FsFr']
+		activeFrame = mani['FSts'][0]['AFrm']
+		# print frameList
+		# print activeFrame
+
 		index = 0
 		layerStates = {}
 		outputLayers.reverse()
 		for l in outputLayers:
+			# print 'L:', l.name.encode('utf-8'), l.visible
 			x0 = 0
 			y0 = 0
-			visible = l.visible
+			visible = True
 			states = {}
 			modData = layerModifyDict[l]
 			if modData:
+				#find initial visiblity
+
+				#calculate visiblity for each frame
 				for mod in modData['LaSt']:
 					fid =  mod['FrLs'][0]
 					ofst = mod.get('Ofst', None)
@@ -303,6 +310,7 @@ class MSpriteProject(object):
 						x0 = ofst['Hrzn']
 						y0 = ofst['Vrtc']
 					visible = mod.get('enab', visible)
+					# print mod, visible
 					states[ fid ] = ( visible, x0, y0 )
 			layerStates[ l ] = states
 			l._featureId = 0
@@ -331,14 +339,15 @@ class MSpriteProject(object):
 				defaultState = ( l.visible, 0, 0 ) 
 				fstate = states.get( fid, defaultState )
 				visible, offx, offy = fstate
+				name = l.name
 				if not visible: continue
 				#check inside bbox				
 					
 				x0, y0 ,x1 ,y1 = l.bbox
-				if x0 + offx < bx0: continue
-				if y0 + offy < by0: continue
-				if x1 + offx > bx1: continue
-				if y1 + offy > by1: continue
+				if x0 + offx < bx0:	continue
+				if y0 + offy < by0:	continue
+				if x1 + offx > bx1:	continue
+				if y1 + offy > by1:	continue
 				m = self.getModule( l )
 				x = x0 - ox + offx 
 				y = y0 - oy + offy
@@ -351,8 +360,8 @@ class MSpriteProject(object):
 
 if __name__ == '__main__':
 	proj = MSpriteProject()
-	proj.loadFolder( 'test/waitress.msprite' )
-	proj.save( 'test/waitress_data.png', 'test/waitress_data.json' )
+	proj.loadFolder( 'test/InsectCrow.msprite' )
+	proj.save( 'test/InsectCrow_data.png', 'test/InsectCrow_data.json' )
 
 
 
