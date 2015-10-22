@@ -418,6 +418,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.treeClips      = AnimatorClipListTree( parent = self )
 		self.propertyEditor = PropertyEditor( self )
 		self.propertyEditor.propertyChanged.connect( self.onPropertyChanged )
+		self.propertyEditor.objectChanged.connect( self.onPropertyTargetChanged )
 		# self.treeTracks.setRowHeight( _TRACK_SIZE )
 
 		self.treeTracks.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -611,11 +612,19 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		return self.owner.onKeyRemoving( key )
 
 	def onPropertyChanged( self, obj, fid, value ):
+		pass
+		# if isMockInstance( obj, 'AnimatorKey' ):
+		# 	if fid == 'pos' or fid == 'length':
+		# 		self.timeline.refreshKey( obj )
+		# elif isMockInstance( obj, 'AnimatorClipMarker' ):
+		# 	if fid == 'name' or fid =='pos':
+		# 		self.timeline.refreshMarker( obj )
+		# self.owner.onObjectEdited( obj )
+
+	def onPropertyTargetChanged( self, obj ):
 		if isMockInstance( obj, 'AnimatorKey' ):
-			if fid == 'pos' or fid == 'length':
 				self.timeline.refreshKey( obj )
 		elif isMockInstance( obj, 'AnimatorClipMarker' ):
-			if fid == 'name' or fid =='pos':
 				self.timeline.refreshMarker( obj )
 		self.owner.onObjectEdited( obj )
 

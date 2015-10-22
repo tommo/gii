@@ -78,6 +78,7 @@ def buildFieldEditor( parentEditor, field ):
 ##----------------------------------------------------------------##
 class PropertyEditor( QtGui.QFrame ):
 	propertyChanged = QtCore.pyqtSignal( object, str, object )
+	objectChanged   = QtCore.pyqtSignal( object )
 	contextMenuRequested = QtCore.pyqtSignal( object, str )
 	
 	_fieldEditorCacheWidget = None
@@ -155,11 +156,17 @@ class PropertyEditor( QtGui.QFrame ):
 	def setContext( self, context ):
 		self.context = context
 
+	def onObjectChanged( self ):
+		if self.refreshing: return
+		self.objectChanged.emit( self.target )
+		return self.refreshAll()
+
 	def onPropertyChanged( self, field, value ):
 		if self.refreshing : return
 		self.model.setFieldValue( self.target, field.id, value )
 		self.propertyChanged.emit( self.target, field.id, value )
-
+		self.objectChanged.emit( self.target )
+		
 	def onContextMenuRequested( self, field ):
 		self.contextMenuRequested.emit( self.target, field.id )
 
@@ -269,8 +276,8 @@ class FieldEditor( object ):
 		return self.parent.onContextMenuRequested( self.field )
 
 	def notifyObjectChanged( self ):
-		return self.parent.refreshAll()
-
+		return self.parent.onObjectChanged()
+		
 	def get( self ):
 		pass
 
