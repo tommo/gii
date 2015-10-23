@@ -233,6 +233,10 @@ class AssetBrowserIconListWidget( GenericListWidget ):
 
 ##----------------------------------------------------------------##
 class AssetBrowserDetailListWidget( GenericTreeWidget ):
+	def __init__( self, *args, **option ):
+		option[ 'drag_mode' ] = 'all'
+		super( AssetBrowserDetailListWidget, self ).__init__( *args, **option )
+
 	def getHeaderInfo( self ):
 		return [ ('Name',150), ('Type', 60), ( 'Desc', 50 ) ]
 
@@ -259,6 +263,16 @@ class AssetBrowserDetailListWidget( GenericTreeWidget ):
 		iconName = app.getAssetLibrary().getAssetIcon( assetType )
 		item.setIcon(0, getIcon(iconName,'normal'))
 		item.setText( 1, assetType )
+
+	def mimeData( self, items ):
+		data = QtCore.QMimeData()
+		output = []
+		for item in items:
+			asset = item.node
+			output.append( asset.getPath() )
+		assetListData = json.dumps( output ).encode('utf-8')
+		data.setData( GII_MIME_ASSET_LIST, assetListData )
+		return data
 
 	def onItemSelectionChanged(self):
 		self.parentModule.onListSelectionChanged()

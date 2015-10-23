@@ -430,6 +430,9 @@ def doCommand( cmdId, argTable ):
 	pyArgTable = luaTableToDict( argTable )
 	return app.doCommand( cmdId, **pyArgTable )
 
+def undoCommand( popOnly = False ):
+	return app.undoCommand( popOnly )
+
 ####
 #EXTRA
 ####

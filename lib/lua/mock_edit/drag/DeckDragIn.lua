@@ -27,6 +27,11 @@ function DeckDragIn:onMove( view, x, y )
 end
 
 function DeckDragIn:onStop( view )
+	if self.createdEntity then 
+		self.createdEntity:destroyWithChildrenNow() --FIXME: use undo
+		-- gii.undoCommand()
+		view:updateCanvas()
+	end
 end
 
 function DeckDragIn:updateInstanceLoc( view, x, y )

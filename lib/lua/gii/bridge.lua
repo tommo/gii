@@ -224,6 +224,7 @@ end
 --------------------------------------------------------------------
 registerLuaEditorCommand = bridge.registerLuaEditorCommand
 doCommand = bridge.doCommand
+undoCommand = bridge.undoCommand
 
 --------------------------------------------------------------------
 -- MODEL

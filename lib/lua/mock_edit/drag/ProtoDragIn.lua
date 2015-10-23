@@ -25,6 +25,9 @@ function ProtoDragIn:onMove( view, x, y )
 end
 
 function ProtoDragIn:onStop( view )
+	self.protoInstance:destroyWithChildrenNow()--FIXME: use undo
+	-- gii.undoCommand()
+	view:updateCanvas()
 end
 
 function ProtoDragIn:updateInstanceLoc( view, x, y )

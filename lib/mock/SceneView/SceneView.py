@@ -71,6 +71,8 @@ class SceneView( SceneEditorModule ):
 	dependency = [ 'mock', 'scene_editor', 'scenegraph_editor' ]
 
 	def onLoad( self ):
+		self.previousDragData = None
+
 		self.window = self.requestDocumentWindow(
 				title = 'Scene'
 			)
@@ -312,17 +314,25 @@ class SceneView( SceneEditorModule ):
 		return self
 
 	def onDragStart( self, mimeType, data, x, y ):
-		return self.canvas.callMethod( 'view', 'startDrag', mimeType, data, x, y )
+		if self.previousDragData == data: return True
+		accepted = self.canvas.callMethod( 'view', 'startDrag', mimeType, data, x, y )
+		if accepted:
+			self.previousDragData = data
+			return True
+		else:
+			self.previousDragData = None
+			return False
 
 	def onDragMove( self, x, y ):
 		self.canvas.callMethod( 'view', 'moveDrag', x, y )
 
 	def onDragDrop( self, x, y ):
 		self.canvas.callMethod( 'view', 'finishDrag', x, y )
+		self.previousDragData = None
 
 	def onDragLeave( self ):
 		self.canvas.callMethod( 'view', 'stopDrag' )
-
+		self.previousDragData = None
 
 	def onGridWidthChange( self, v ):
 		self.canvas.safeCallMethod( 'view', 'setGridWidth', v )
@@ -368,6 +378,9 @@ class SceneViewCanvas( MOAIEditCanvas ):
 		pos = ev.pos()
 		self.parentView.onDragMove( pos.x(), pos.y() )
 		ev.acceptProposedAction()
+
+	def dragLeaveEvent( self, ev ):
+		self.parentView.onDragLeave()
 
 	def dropEvent( self, ev ):
 		pos = ev.pos()

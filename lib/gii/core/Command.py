@@ -86,17 +86,18 @@ class EditorCommandStack( object ):
 
 		return True
 
-	def undoCommand( self ):
+	def undoCommand( self, popCommandOnly = False ):
 		count = len( self.undoStack )
 		if count>0:
 			cmd = self.undoStack[ count-1 ]
-			if cmd.undo() == False:
-				return False
+			if not popCommandOnly:
+				if cmd.undo() == False:
+					return False
 			self.undoStack.pop()
 			self.redoStack.append( cmd )
 			signals.emit( 'command.undo', cmd, self )
 			if cmd.merged:
-				return self.undoCommand()
+				return self.undoCommand( popCommandOnly )
 			else:				
 				return True
 		return False

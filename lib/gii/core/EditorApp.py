@@ -229,6 +229,9 @@ class EditorApp(object):
 	def doCommand( self, fullname, *args, **kwargs ):
 		return self.commandRegistry.doCommand( fullname, *args, **kwargs )
 
+	def undoCommand( self, popOnly = False ):
+		return self.commandRegistry.undoCommand( popOnly )
+
 	def getPath( self, path = None ):
 		if path:
 			return self.basePath + '/' + path
