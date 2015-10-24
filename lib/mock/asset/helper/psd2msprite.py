@@ -280,14 +280,17 @@ class MSpriteProject(object):
 		# print 'layer count:', len( outputLayers )
 		anim = Anim()
 		frameDelays = {}
-		for data in mani['FrIn']:
-			# frameDelays[ data['FrID'] ] = data[ 'FrDl' ]
-			frameDelays[ data['FrID'] ] = 0.1
+		if mani: #single frame
+			frameList = mani['FSts'][0]['FsFr']
+			activeFrame = mani['FSts'][0]['AFrm']
+			for data in mani['FrIn']:
+				frameDelays[ data['FrID'] ] = 0.1
+				# frameDelays[ data['FrID'] ] = data[ 'FrDl' ]
+		else:
+			frameList = [0]
+			frameDelays[0] = 0.1
+			activeFrame = 0
 
-		frameList = mani['FSts'][0]['FsFr']
-		activeFrame = mani['FSts'][0]['AFrm']
-		# print frameList
-		# print activeFrame
 
 		index = 0
 		layerStates = {}
@@ -310,8 +313,10 @@ class MSpriteProject(object):
 						x0 = ofst['Hrzn']
 						y0 = ofst['Vrtc']
 					visible = mod.get('enab', visible)
-					# print mod, visible
 					states[ fid ] = ( visible, x0, y0 )
+			else:
+				states[0] = ( l.visible, 0, 0 )
+
 			layerStates[ l ] = states
 			l._featureId = 0
 			if docFeatures:
