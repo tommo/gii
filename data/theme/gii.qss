@@ -85,23 +85,23 @@ QDockWidget
 {
 	background-color:#464646;
 	color:#a5a5a5;
-	padding: 2px;
+	padding: 1px;
 }
 
 QDockWidget::title
 {
-	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
+	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #333, stop:1 #222);
 	padding-top: 5px;
 	padding-left: 45px;
-	border: 1px solid #222;
-	height: 10px;
+	border: 1px solid #111;
+	height: 7px;
 }
 
 
 QHeaderView::section
 {
 	color:#b9b9b9;
-	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
+	background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #373737, stop:1 #333);
 	border-top:0 solid #000;
 	border-right:1 solid #000;
 	border-bottom:1px solid #222;

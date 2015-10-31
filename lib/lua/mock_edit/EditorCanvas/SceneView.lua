@@ -17,19 +17,19 @@ CLASS: SceneViewDrag ()
 	:MODEL{}
 
 function SceneViewDrag:onStart( view, x, y )
-	print( 'start drag', x, y )
+	-- print( 'start drag', x, y )
 end
 
 function SceneViewDrag:onMove( view, x, y )
-	print( 'moving drag', x, y )
+	-- print( 'moving drag', x, y )
 end
 
 function SceneViewDrag:onFinish( view, x, y )
-	print( 'finishing drag', x, y )
+	-- print( 'finishing drag', x, y )
 end
 
 function SceneViewDrag:onStop( view )
-	print( 'stop drag' )
+	-- print( 'stop drag' )
 end
 
 --------------------------------------------------------------------

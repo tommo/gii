@@ -17,6 +17,9 @@ def getArray( l, idx, default = None ):
 	if v is None: return default
 	return v
 
+def getArrayI( l, idx, default = None ):
+	return int( getArray( l, idx, default ) )
+
 def alphaPasted( im, mark, position ):
 	if im.mode != 'RGBA':
 		im = im.convert('RGBA')
@@ -42,17 +45,24 @@ class MQuadDeckPart( DeckPart ):
 			tags = {}
 
 		self.foldMode = 'auto'
+		self.altOffset = 0
 
 		if tags.has_key( 'FOLD' ):
 			self.foldMode = 'fold'
 			args = tags[ 'FOLD' ]
-			self.foldPos  = int( getArray( args, 0, 0 ) )
+			self.foldPos  = getArrayI( args, 0, 0 )
 		
 		elif tags.has_key( 'FLOOR' ):
 			self.foldMode = 'floor'
 
 		elif tags.has_key( 'WALL' ):
 			self.foldMode = 'wall'
+
+		if tags.has_key( 'OFF' ):
+			args = tags[ 'OFF' ]
+			self.rectOffset = ( getArrayI( args, 0, 0 ), getArrayI( args, 1, 0 ), getArrayI( args, 2, 0 ) )
+		else:
+			self.rectOffset = ( 0,0,0 )
 
 	def getImage( self, imgSet ):
 		if imgSet == 'normal':
@@ -62,7 +72,13 @@ class MQuadDeckPart( DeckPart ):
 	
 	def getTextureMap( self ):
 		if self.img: return self.img
-		self.img = self._layer.as_PIL()
+		try:
+			self.img = self._layer.as_PIL()
+		except Exception, e:
+			#FIXME: ignore empty layer?
+			print self._layer.name.encode( 'utf-8' )
+			print e
+			return None
 		return self.img
 
 	def getNormalMap( self ):
@@ -77,6 +93,7 @@ class MQuadDeckPart( DeckPart ):
 		
 		( w, h ) = self.getSize()
 		( x, y ) = self.getOffset()
+		(rectOffX, rectOffY, rectOffZ) = self.rectOffset
 
 		localGuideTopFace = h
 		if foldMode == 'auto':
@@ -125,12 +142,12 @@ class MQuadDeckPart( DeckPart ):
 		#format: x,y,z/ u,v /color
 		if concave:
 			if localGuideTopFace < h: #TOP
-				x0 = 0
-				y0 = 0
-				z0 = 0
-				x1 = w
-				y1 = h - localGuideTopFace
-				z1 = -( y1 - y0 )
+				x0 = 0 + rectOffX
+				y0 = 0 + rectOffY
+				z0 = 0 + rectOffZ
+				x1 = w + rectOffX
+				y1 = h - localGuideTopFace + rectOffY
+				z1 = -( y1 - y0 ) + rectOffZ
 				u0 = float(x0) / w
 				v0 = float(y0) / h
 				u1 = float(x1) / w
@@ -152,12 +169,12 @@ class MQuadDeckPart( DeckPart ):
 				self.meshes.append( quadWall )
 
 			if localGuideTopFace > 0: #WALL
-				x0 = 0
-				y0 = h - localGuideTopFace
-				z0 = -y0
-				x1 = w
-				y1 = h
-				z1 = -y0
+				x0 = 0 + rectOffX
+				y0 = h - localGuideTopFace + rectOffY
+				z0 = -y0 + rectOffZ
+				x1 = w + rectOffX
+				y1 = h + rectOffY
+				z1 = -y0 + rectOffZ
 				u0 = float(x0) / w
 				v0 = float(y0) / h
 				u1 = float(x1) / w
@@ -180,12 +197,12 @@ class MQuadDeckPart( DeckPart ):
 
 		else:
 			if localGuideTopFace < h: #WALL
-				x0 = 0
-				y0 = 0
-				z0 = 0
-				x1 = w
-				y1 = h - localGuideTopFace
-				z1 = 0
+				x0 = 0 + rectOffX
+				y0 = 0 + rectOffY
+				z0 = 0 + rectOffZ
+				x1 = w + rectOffX
+				y1 = h - localGuideTopFace + rectOffY
+				z1 = 0 + rectOffZ
 				u0 = float(x0) / w
 				v0 = float(y0) / h
 				u1 = float(x1) / w
@@ -207,12 +224,12 @@ class MQuadDeckPart( DeckPart ):
 				self.meshes.append( quadWall )
 
 			if localGuideTopFace > 0: #TOP
-				x0 = 0
-				y0 = h - localGuideTopFace
-				z0 = 0
-				x1 = w
-				y1 = h
-				z1 = -( y1 - y0 )
+				x0 = 0 + rectOffX
+				y0 = h - localGuideTopFace + rectOffY
+				z0 = 0 + rectOffZ
+				x1 = w + rectOffX
+				y1 = h + rectOffY
+				z1 = -( y1 - y0 ) + rectOffZ
 				u0 = float(x0) / w
 				v0 = float(y0) / h
 				u1 = float(x1) / w

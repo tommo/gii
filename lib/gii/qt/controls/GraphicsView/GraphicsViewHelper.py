@@ -143,6 +143,27 @@ class StyledItemMixin:
 		pass
 
 
+##----------------------------------------------------------------##
+class GLGraphicsScene( QtGui.QGraphicsScene ):
+	def __init__( self, *arg, **kwargs ):
+		super( GLGraphicsScene, self ).__init__( *arg, **kwargs )
+		self.pressedButtons = 0
+
+	def mousePressEvent( self, ev ):
+		self.pressedButtons = int( ev.buttons() )
+		return super( GLGraphicsScene, self ).mousePressEvent( ev )
+
+	def mouseReleaseEvent( self, ev ):
+		self.pressedButtons = int( ev.buttons() )
+		super( GLGraphicsScene, self ).mouseReleaseEvent( ev )
+
+	def mouseMoveEvent( self, ev ):
+		if int( ev.buttons() ) != self.pressedButtons:
+			#WORKAROUND: ev.buttons() might become 0 before release event, force sync.
+			return
+		return super( GLGraphicsScene, self ).mouseMoveEvent( ev )
+		
+
 _USE_GL = False
 _USE_GL = True
 
@@ -158,7 +179,8 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		self.usingGL = _USE_GL and option.get( 'use_gl', True )
 		
 		if self.usingGL:
-			self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
+			self.setViewportUpdateMode( QtGui.QGraphicsView.SmartViewportUpdate )		
+			# self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
 			viewport = option.get( 'gl_viewport', makeGLWidget() )
 			self.glViewport = viewport
 			self.setViewport( viewport )

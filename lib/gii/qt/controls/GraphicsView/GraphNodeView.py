@@ -18,7 +18,7 @@ class GraphNodeViewRoot( QtGui.QGraphicsItemGroup ):
 
 
 ##----------------------------------------------------------------##
-class GraphNodeViewScene( QtGui.QGraphicsScene ):
+class GraphNodeViewScene( GLGraphicsScene ):
 	def __init__( self, parent ):
 		super( GraphNodeViewScene, self ).__init__( parent = parent )
 		dummyPort = GraphNodePortItem()
@@ -85,10 +85,53 @@ class GraphNodeViewScene( QtGui.QGraphicsScene ):
 		super( GraphNodeViewScene, self ).mouseReleaseEvent( event )
 
 ##----------------------------------------------------------------##
+class GraphicsViewDelegate():
+	def mousePressEvent( self, view, ev ):
+		return None
+
+	def mouseReleaseEvent( self, view, ev ):
+		return None
+
+	def mouseMoveEvent( self, view, ev ):
+		return None
+		
+##----------------------------------------------------------------##
+class GraphicsItemMoveTool( GraphicsViewDelegate ):
+	def mousePressEvent( self, view, ev ):
+		item = view.itemAt( ev.pos() )
+		return True
+
+	def mouseReleaseEvent( self, view, ev ):
+		return True
+
+	def mouseMoveEvent( self, view, ev ):
+		return True
+
+
+##----------------------------------------------------------------##
 class GraphNodeView( GLGraphicsView ):
 	def __init__( self, *args, **kwargs ):
 		super( GraphNodeView, self ).__init__( *args, **kwargs )
+		self._delegate = GraphicsItemMoveTool()
 
+	# def mousePressEvent( self, ev ):
+	# 	print ev.pos()
+	# # 	if self._delegate:
+	# # 		result = self._delegate.mousePressEvent( self, ev )
+	# # 		if result: return
+	# 	return super( GraphNodeView, self ).mousePressEvent( ev )
+
+	def mouseReleaseEvent( self, ev ):
+	# 	if self._delegate:
+	# 		result = self._delegate.mouseReleaseEvent( self, ev )
+	# 		if result: return
+		return super( GraphNodeView, self ).mouseReleaseEvent( ev )
+
+	def mouseMoveEvent( self, ev ):
+	# 	if self._delegate:
+	# 		result = self._delegate.mouseMoveEvent( self, ev )
+	# 		if result: return
+		return super( GraphNodeView, self ).mouseMoveEvent( ev )
 
 ##----------------------------------------------------------------##
 class GraphNodeViewWidget( QtGui.QWidget ):

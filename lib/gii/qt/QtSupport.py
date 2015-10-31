@@ -188,10 +188,7 @@ class QtSupport( QtEditorModule ):
 			stack.redoCommand()
 			
 
-
 QtSupport().register()
-
-
 
 ##----------------------------------------------------------------##
 class QtMainWindow( MainWindow ):

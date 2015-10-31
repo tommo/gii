@@ -128,6 +128,35 @@ class GamePreview( SceneEditorModule ):
 		self.addTool( 'game_preview/switch_screen_profile', label = 'Screen Profile' )
 		self.onMoaiReset()
 
+		##----------------------------------------------------------------##
+		self.previewToolBar = self.addToolBar( 'game_preview_tools', 
+			self.getMainWindow().requestToolBar( 'view_tools' )
+			)
+
+		# self.addTool(	'game_preview_tools/play',
+		# 	widget = SceneToolButton( 'scene_view_selection',
+		# 		icon = 'tools/selection',
+		# 		label = 'Selection'
+		# 		)
+		# 	)
+
+		# self.addTool(	'game_preview_tools/stop',
+		# 	widget = SceneToolButton( 'scene_view_translation',
+		# 		icon = 'tools/translation',
+		# 		label = 'Translation'
+		# 		)
+		# 	)
+
+		self.addTool(	'game_preview_tools/run_external',
+			label = 'Play External',
+			icon = 'tools/run_external',
+			)
+
+		self.addTool(	'game_preview_tools/run_game_external',
+			label = 'Play Game External',
+			icon = 'tools/run_game_external',
+			)
+
 		self.enableMenu( 'main/preview/pause_game',  False )
 		self.enableMenu( 'main/preview/stop_game',   False )
 
@@ -352,6 +381,11 @@ class GamePreview( SceneEditorModule ):
 		if name == 'switch_screen_profile':
 			pass
 			
+		elif name == 'run_external':
+			self.runSceneExternal()
+
+		elif name == 'run_game_external':
+			self.runGameExternal()
 
 ##----------------------------------------------------------------##
 class GamePreviewCanvas(MOAICanvasBase):

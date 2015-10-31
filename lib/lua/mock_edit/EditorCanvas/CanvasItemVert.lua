@@ -60,7 +60,7 @@ function CanvasItemVert:onDrag( btn, x, y )
 end
 
 function CanvasItemVert:onMouseUp( btn, x, y )
-	print( 'mouse up')
+	-- print( 'mouse up')
 end
 
 function CanvasItemVert:onPress()

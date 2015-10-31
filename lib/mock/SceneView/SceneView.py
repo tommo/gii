@@ -147,6 +147,83 @@ class SceneView( SceneEditorModule ):
 				)
 			)
 
+		##----------------------------------------------------------------##
+		self.alignToolBar = self.addToolBar( 'scene_view_tools_align', 
+			self.getMainWindow().requestToolBar( 'view_tools_align' )
+			)
+
+		self.addTool(	'scene_view_tools_align/align_bottom',
+			label = 'Align Bottom',
+			icon  = 'tools/align-bottom-edges',
+			command   = 'align_entities',
+			command_args = dict( mode = 'align_bottom' ),
+		)
+
+		self.addTool(	'scene_view_tools_align/align_top',
+			label = 'Align Top',
+			icon  = 'tools/align-top-edges',
+			command   = 'align_entities',
+			command_args = dict( mode = 'align_top' ),
+		)
+
+		self.addTool(	'scene_view_tools_align/align_vcenter',
+			label = 'Align V Center',
+			icon  = 'tools/align-vertical-centers',
+			command   = 'align_entities',
+			command_args = dict( mode = 'align_vcenter' ),
+		)
+
+		self.addTool(	'scene_view_tools_align/align_left',
+			label = 'Align Left',
+			icon  = 'tools/align-left-edges',
+			command   = 'align_entities',
+			command_args = dict( mode = 'align_left' ),
+		)
+
+		self.addTool(	'scene_view_tools_align/align_right',
+			label = 'Align Right',
+			icon  = 'tools/align-right-edges',
+			command   = 'align_entities',
+			command_args = dict( mode = 'align_right' ),
+		)
+
+		self.addTool(	'scene_view_tools_align/align_hcenter',
+			label = 'Align H Center',
+			icon  = 'tools/align-horizontal-centers',
+			command   = 'align_entities',
+			command_args = dict( mode = 'align_hcenter' ),
+		)
+
+		self.addTool(	'scene_view_tools_align/----' )
+
+		self.addTool(	'scene_view_tools_align/push_together_left',
+			label = 'Push Left',
+			icon  = 'tools/push-together-left',
+			command   = 'align_entities',
+			command_args = dict( mode = 'push_together_left' ),
+		)
+
+		self.addTool(	'scene_view_tools_align/push_together_right',
+			label = 'Push right',
+			icon  = 'tools/push-together-right',
+			command   = 'align_entities',
+			command_args = dict( mode = 'push_together_right' ),
+		)
+
+		self.addTool(	'scene_view_tools_align/push_together_top',
+			label = 'Push top',
+			icon  = 'tools/push-together-top',
+			command   = 'align_entities',
+			command_args = dict( mode = 'push_together_top' ),
+		)
+
+		self.addTool(	'scene_view_tools_align/push_together_bottom',
+			label = 'Push bottom',
+			icon  = 'tools/push-together-bottom',
+			command   = 'align_entities',
+			command_args = dict( mode = 'push_together_bottom' ),
+		)
+
 		#config tool
 		self.addTool(	'scene_view_config/toggle_gizmo_visible', 
 			label = 'toggle gizmo',

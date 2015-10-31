@@ -554,7 +554,7 @@ class CurveView( GLGraphicsView ):
 	def __init__(self, *args, **kwargs ):
 		super(CurveView, self).__init__( *args, **kwargs )
 		self.updating = False
-		self.setScene( QtGui.QGraphicsScene() )
+		self.setScene( GLGraphicsScene() )
 		self.setBackgroundBrush( _DEFAULT_BG )
 		self.gridBackground = AxisGridBackground()
 		self.scene().addItem( self.gridBackground )
