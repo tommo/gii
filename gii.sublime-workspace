@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"getFram",
+				"getFrameBuffer"
+			],
+			[
+				"renderta",
+				"renderTable"
+			],
+			[
 				"AKUSetInpudev",
 				"AKUSetInputDeviceButton"
 			],
@@ -169,10 +177,6 @@
 			],
 			[
 				"rent",
-				"renderTableMap"
-			],
-			[
-				"renderta",
 				"renderTableMap"
 			],
 			[
@@ -510,137 +514,13 @@
 			[
 				"spri",
 				"sprite"
-			],
-			[
-				"conta",
-				"container"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "test/game/asset/script/TestJoystick.lua",
-			"settings":
-			{
-				"buffer_size": 535,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/freejoy/wscript",
-			"settings":
-			{
-				"buffer_size": 1705,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/python/GIIHelper.h",
-			"settings":
-			{
-				"buffer_size": 1447,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/python/GIIHelper.cpp",
-			"settings":
-			{
-				"buffer_size": 4346,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/extension/EWProp.cpp",
-			"settings":
-			{
-				"buffer_size": 1168,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/extension/MOAIJoystickManagerSDL.h",
-			"settings":
-			{
-				"buffer_size": 949,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/extension/MOAIJoystickFFBSensorSDL.h",
-			"settings":
-			{
-				"buffer_size": 338,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/extension/MOAIJoystickManagerSDL.cpp",
-			"settings":
-			{
-				"buffer_size": 37,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/gii/moai/MOAIRuntime.py",
-			"settings":
-			{
-				"buffer_size": 11189,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/extension/MOAISpineAnimation.cpp",
-			"settings":
-			{
-				"buffer_size": 14999,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/extension/MOAISpineAtlas.cpp",
-			"settings":
-			{
-				"buffer_size": 2577,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/extension/MOAISpineSkeletonData.cpp",
-			"settings":
-			{
-				"buffer_size": 7475,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/extension/MOAISpineSkeleton.cpp",
-			"settings":
-			{
-				"buffer_size": 34498,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/extension/MOAISpineSkeleton.h",
-			"settings":
-			{
-				"buffer_size": 6996,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/extension/MOAISpineAnimationMixTable.cpp",
-			"settings":
-			{
-				"buffer_size": 2890,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/host/extension/MOAIImageLoadTask.cpp",
+			"file": "test/game/lib/mock/story/StoryManager.lua",
 			"settings":
 			{
 				"buffer_size": 2127,
@@ -648,26 +528,58 @@
 			}
 		},
 		{
-			"file": "/Users/tommo/Downloads/host-stirfirestudios-sdl-master/sledge/SledgeInputManager.h",
+			"file": "test/game/lib/mock/ui/TBWidget.lua",
 			"settings":
 			{
-				"buffer_size": 3231,
+				"buffer_size": 6713,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test/host/extension/TMPathGrid.cpp",
+			"file": "data/theme/gii.qss",
 			"settings":
 			{
-				"buffer_size": 24894,
+				"buffer_size": 23547,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test/host/extension/MOAISpineSkeletonData.h",
+			"file": "lib/gii/qt/QtSupport.py",
 			"settings":
 			{
-				"buffer_size": 1819,
+				"buffer_size": 6030,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test/game/lib/mock/component/CameraManager.lua",
+			"settings":
+			{
+				"buffer_size": 7526,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/SearchView/SearchView.py",
+			"settings":
+			{
+				"buffer_size": 15356,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "packages/Mock/EffectEditor/EffectEditor.py",
+			"settings":
+			{
+				"buffer_size": 11881,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test/game/lib/mock/core/Game.lua",
+			"settings":
+			{
+				"buffer_size": 25096,
 				"line_ending": "Unix"
 			}
 		},
@@ -680,24 +592,15 @@
 			}
 		},
 		{
-			"contents": "Waf: Entering directory `/Users/tommo/Projects/gii/test/bin/_build/osx-debug'\n[ 1/77] cxx: host-modules/aku_modules_custom.cpp -> ../bin/_build/osx-debug/host-modules/aku_modules_custom.cpp.2.o\n[ 2/77] cxx: host-modules/aku_modules.cpp -> ../bin/_build/osx-debug/host-modules/aku_modules.cpp.2.o\n[ 3/77] cxx: host-modules/aku_modules_util.cpp -> ../bin/_build/osx-debug/host-modules/aku_modules_util.cpp.2.o\n[38/77] cxx: extension/EWProp.cpp -> ../bin/_build/osx-debug/extension/EWProp.cpp.2.o\n[39/77] cxx: extension/MDDHelper.cpp -> ../bin/_build/osx-debug/extension/MDDHelper.cpp.2.o\n[40/77] cxx: extension/MDDMap.cpp -> ../bin/_build/osx-debug/extension/MDDMap.cpp.2.o\n[41/77] cxx: extension/MDDMapObject.cpp -> ../bin/_build/osx-debug/extension/MDDMapObject.cpp.2.o\n[42/77] cxx: extension/MOAIGfxMaskedQuadListDeck2D.cpp -> ../bin/_build/osx-debug/extension/MOAIGfxMaskedQuadListDeck2D.cpp.2.o\n../../../host/host-modules/aku_modules.cpp:5:10: fatal error: 'host-modules/aku_modules.h' file not found\n#include <host-modules/aku_modules.h>\n         ^\n1 error generated.\nIn file included from ../../../host/extension/EWProp.cpp:1:\n/Users/tommo/Projects/gii/test/host/extension/EWProp.h:4:10: fatal error: 'moai-sim/headers.h' file not found\n#include \"moai-sim/headers.h\"\n         ^\n1 error generated.\nIn file included from ../../../host/extension/MDDHelper.cpp:2:\n/Users/tommo/Projects/gii/test/host/extension/MDDHelper.h:3:10: fatal error: 'moai-sim/headers.h' file not found\n#include <moai-sim/headers.h>\n         ^\n1 error generated.\n../../../host/host-modules/aku_modules_util.cpp:5:10: fatal error: 'host-modules/aku_modules.h' file not found\n#include <host-modules/aku_modules.h>\n         ^\n1 error generated.\n../../../host/extension/MOAIGfxMaskedQuadListDeck2D.cpp:4:10: fatal error: 'moai-sim/pch.h' file not found\n#include <moai-sim/pch.h>\n         ^\n1 error generated.\nIn file included from ../../../host/extension/MDDMap.cpp:2:\n/Users/tommo/Projects/gii/test/host/extension/MDDMap.h:4:10: fatal error: 'moai-sim/headers.h' file not found\n#include <moai-sim/headers.h>\n         ^\n1 error generated.\nIn file included from ../../../host/extension/MDDMapObject.cpp:2:\nIn file included from /Users/tommo/Projects/gii/test/host/extension/MDDMapObject.h:4:\n/Users/tommo/Projects/gii/test/host/extension/TMPathGrid.h:5:10: fatal error: 'moai-sim/headers.h' file not found\n#include <moai-sim/headers.h>\n         ^\n1 error generated.\nWaf: Leaving directory `/Users/tommo/Projects/gii/test/bin/_build/osx-debug'\nBuild failed\n -> task in 'modules' failed (exit status 1): \n	{task 4326954896: cxx aku_modules.cpp -> aku_modules.cpp.2.o}\n['/usr/bin/g++', '-arch', 'x86_64', '-fno-rtti', '-fvisibility-inlines-hidden', '-fvisibility=hidden', '-g', '-DMOAI_WITH_LUAEXT', '-DMOAI_WITH_BOX2D', '-DMOAI_WITH_FMOD_DESIGNER', '-DMOAI_WITH_HTTP_CLIENT', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/host-modules', '-I/Users/tommo/Projects/gii/test/host/host-modules', '-I/Users/feng_ye/Projects/moai-dev/src', '-I/Users/feng_ye/Projects/moai-dev/src/moaicore', '-I/Users/feng_ye/Projects/moai-dev/src/config-default', '-I/Users/feng_ye/Projects/moai-dev/3rdparty', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/chipmunk-5.3.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/box2d-2.3.0', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/freetype-2.4.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/tinyxml', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/lua-5.1.3/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/jansson-2.1/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sfmt-1.4', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/expat-2.0.1/lib', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sdl2-2.0.0/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/zlib-1.2.3', '../../../host/host-modules/aku_modules.cpp', '-c', '-o', 'host-modules/aku_modules.cpp.2.o']\n -> task in 'extension' failed (exit status 1): \n	{task 4327211920: cxx EWProp.cpp -> EWProp.cpp.2.o}\n['/usr/bin/g++', '-arch', 'x86_64', '-fno-rtti', '-fvisibility-inlines-hidden', '-fvisibility=hidden', '-g', '-DSPINE_SHORT_NAMES', '-mmacosx-version-min=10.5', '-DMOAI_WITH_LUAEXT', '-DMOAI_WITH_BOX2D', '-DMOAI_WITH_FMOD_DESIGNER', '-DMOAI_WITH_HTTP_CLIENT', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension/spine/include', '-I/Users/tommo/Projects/gii/test/host/extension/spine/include', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension/enet/include', '-I/Users/tommo/Projects/gii/test/host/extension/enet/include', '-I/Users/feng_ye/DevLibrary/fmodex/osx/api/inc', '-I/Users/feng_ye/DevLibrary/fmodex/osx/fmoddesignerapi/api/inc', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension', '-I/Users/tommo/Projects/gii/test/host/extension', '-I/Users/feng_ye/Projects/moai-dev/src', '-I/Users/feng_ye/Projects/moai-dev/src/moaicore', '-I/Users/feng_ye/Projects/moai-dev/src/config-default', '-I/Users/feng_ye/Projects/moai-dev/3rdparty', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/chipmunk-5.3.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/box2d-2.3.0', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/freetype-2.4.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/tinyxml', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/lua-5.1.3/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/jansson-2.1/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sfmt-1.4', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/expat-2.0.1/lib', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sdl2-2.0.0/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/zlib-1.2.3', '../../../host/extension/EWProp.cpp', '-c', '-o', 'extension/EWProp.cpp.2.o']\n -> task in 'extension' failed (exit status 1): \n	{task 4327212048: cxx MDDHelper.cpp -> MDDHelper.cpp.2.o}\n['/usr/bin/g++', '-arch', 'x86_64', '-fno-rtti', '-fvisibility-inlines-hidden', '-fvisibility=hidden', '-g', '-DSPINE_SHORT_NAMES', '-mmacosx-version-min=10.5', '-DMOAI_WITH_LUAEXT', '-DMOAI_WITH_BOX2D', '-DMOAI_WITH_FMOD_DESIGNER', '-DMOAI_WITH_HTTP_CLIENT', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension/spine/include', '-I/Users/tommo/Projects/gii/test/host/extension/spine/include', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension/enet/include', '-I/Users/tommo/Projects/gii/test/host/extension/enet/include', '-I/Users/feng_ye/DevLibrary/fmodex/osx/api/inc', '-I/Users/feng_ye/DevLibrary/fmodex/osx/fmoddesignerapi/api/inc', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension', '-I/Users/tommo/Projects/gii/test/host/extension', '-I/Users/feng_ye/Projects/moai-dev/src', '-I/Users/feng_ye/Projects/moai-dev/src/moaicore', '-I/Users/feng_ye/Projects/moai-dev/src/config-default', '-I/Users/feng_ye/Projects/moai-dev/3rdparty', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/chipmunk-5.3.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/box2d-2.3.0', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/freetype-2.4.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/tinyxml', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/lua-5.1.3/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/jansson-2.1/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sfmt-1.4', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/expat-2.0.1/lib', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sdl2-2.0.0/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/zlib-1.2.3', '../../../host/extension/MDDHelper.cpp', '-c', '-o', 'extension/MDDHelper.cpp.2.o']\n -> task in 'modules' failed (exit status 1): \n	{task 4326955088: cxx aku_modules_util.cpp -> aku_modules_util.cpp.2.o}\n['/usr/bin/g++', '-arch', 'x86_64', '-fno-rtti', '-fvisibility-inlines-hidden', '-fvisibility=hidden', '-g', '-DMOAI_WITH_LUAEXT', '-DMOAI_WITH_BOX2D', '-DMOAI_WITH_FMOD_DESIGNER', '-DMOAI_WITH_HTTP_CLIENT', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/host-modules', '-I/Users/tommo/Projects/gii/test/host/host-modules', '-I/Users/feng_ye/Projects/moai-dev/src', '-I/Users/feng_ye/Projects/moai-dev/src/moaicore', '-I/Users/feng_ye/Projects/moai-dev/src/config-default', '-I/Users/feng_ye/Projects/moai-dev/3rdparty', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/chipmunk-5.3.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/box2d-2.3.0', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/freetype-2.4.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/tinyxml', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/lua-5.1.3/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/jansson-2.1/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sfmt-1.4', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/expat-2.0.1/lib', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sdl2-2.0.0/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/zlib-1.2.3', '../../../host/host-modules/aku_modules_util.cpp', '-c', '-o', 'host-modules/aku_modules_util.cpp.2.o']\n -> task in 'extension' failed (exit status 1): \n	{task 4327212432: cxx MOAIGfxMaskedQuadListDeck2D.cpp -> MOAIGfxMaskedQuadListDeck2D.cpp.2.o}\n['/usr/bin/g++', '-arch', 'x86_64', '-fno-rtti', '-fvisibility-inlines-hidden', '-fvisibility=hidden', '-g', '-DSPINE_SHORT_NAMES', '-mmacosx-version-min=10.5', '-DMOAI_WITH_LUAEXT', '-DMOAI_WITH_BOX2D', '-DMOAI_WITH_FMOD_DESIGNER', '-DMOAI_WITH_HTTP_CLIENT', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension/spine/include', '-I/Users/tommo/Projects/gii/test/host/extension/spine/include', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension/enet/include', '-I/Users/tommo/Projects/gii/test/host/extension/enet/include', '-I/Users/feng_ye/DevLibrary/fmodex/osx/api/inc', '-I/Users/feng_ye/DevLibrary/fmodex/osx/fmoddesignerapi/api/inc', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension', '-I/Users/tommo/Projects/gii/test/host/extension', '-I/Users/feng_ye/Projects/moai-dev/src', '-I/Users/feng_ye/Projects/moai-dev/src/moaicore', '-I/Users/feng_ye/Projects/moai-dev/src/config-default', '-I/Users/feng_ye/Projects/moai-dev/3rdparty', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/chipmunk-5.3.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/box2d-2.3.0', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/freetype-2.4.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/tinyxml', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/lua-5.1.3/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/jansson-2.1/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sfmt-1.4', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/expat-2.0.1/lib', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sdl2-2.0.0/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/zlib-1.2.3', '../../../host/extension/MOAIGfxMaskedQuadListDeck2D.cpp', '-c', '-o', 'extension/MOAIGfxMaskedQuadListDeck2D.cpp.2.o']\n -> task in 'extension' failed (exit status 1): \n	{task 4327212176: cxx MDDMap.cpp -> MDDMap.cpp.2.o}\n['/usr/bin/g++', '-arch', 'x86_64', '-fno-rtti', '-fvisibility-inlines-hidden', '-fvisibility=hidden', '-g', '-DSPINE_SHORT_NAMES', '-mmacosx-version-min=10.5', '-DMOAI_WITH_LUAEXT', '-DMOAI_WITH_BOX2D', '-DMOAI_WITH_FMOD_DESIGNER', '-DMOAI_WITH_HTTP_CLIENT', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension/spine/include', '-I/Users/tommo/Projects/gii/test/host/extension/spine/include', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension/enet/include', '-I/Users/tommo/Projects/gii/test/host/extension/enet/include', '-I/Users/feng_ye/DevLibrary/fmodex/osx/api/inc', '-I/Users/feng_ye/DevLibrary/fmodex/osx/fmoddesignerapi/api/inc', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension', '-I/Users/tommo/Projects/gii/test/host/extension', '-I/Users/feng_ye/Projects/moai-dev/src', '-I/Users/feng_ye/Projects/moai-dev/src/moaicore', '-I/Users/feng_ye/Projects/moai-dev/src/config-default', '-I/Users/feng_ye/Projects/moai-dev/3rdparty', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/chipmunk-5.3.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/box2d-2.3.0', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/freetype-2.4.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/tinyxml', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/lua-5.1.3/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/jansson-2.1/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sfmt-1.4', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/expat-2.0.1/lib', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sdl2-2.0.0/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/zlib-1.2.3', '../../../host/extension/MDDMap.cpp', '-c', '-o', 'extension/MDDMap.cpp.2.o']\n -> task in 'extension' failed (exit status 1): \n	{task 4327212368: cxx MDDMapObject.cpp -> MDDMapObject.cpp.2.o}\n['/usr/bin/g++', '-arch', 'x86_64', '-fno-rtti', '-fvisibility-inlines-hidden', '-fvisibility=hidden', '-g', '-DSPINE_SHORT_NAMES', '-mmacosx-version-min=10.5', '-DMOAI_WITH_LUAEXT', '-DMOAI_WITH_BOX2D', '-DMOAI_WITH_FMOD_DESIGNER', '-DMOAI_WITH_HTTP_CLIENT', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension/spine/include', '-I/Users/tommo/Projects/gii/test/host/extension/spine/include', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension/enet/include', '-I/Users/tommo/Projects/gii/test/host/extension/enet/include', '-I/Users/feng_ye/DevLibrary/fmodex/osx/api/inc', '-I/Users/feng_ye/DevLibrary/fmodex/osx/fmoddesignerapi/api/inc', '-I/Users/tommo/Projects/gii/test/bin/_build/osx-debug/extension', '-I/Users/tommo/Projects/gii/test/host/extension', '-I/Users/feng_ye/Projects/moai-dev/src', '-I/Users/feng_ye/Projects/moai-dev/src/moaicore', '-I/Users/feng_ye/Projects/moai-dev/src/config-default', '-I/Users/feng_ye/Projects/moai-dev/3rdparty', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/chipmunk-5.3.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/box2d-2.3.0', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/freetype-2.4.4/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/tinyxml', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/lua-5.1.3/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/jansson-2.1/src', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sfmt-1.4', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/expat-2.0.1/lib', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/sdl2-2.0.0/include', '-I/Users/feng_ye/Projects/moai-dev/3rdparty/zlib-1.2.3', '../../../host/extension/MDDMapObject.cpp', '-c', '-o', 'extension/MDDMapObject.cpp.2.o']\n[ERROR]	abnormal return code: 1 \n\n[Finished in 0.4s with exit code 1]\n",
+			"contents": "[WARNING]	running instance detected\nstarting gii IDE...\n\n[Finished in 0.3s]\n54    ",
 			"file": "test/BUILD_RESULT",
 			"file_size": -1,
 			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 14354,
+				"buffer_size": 82,
 				"line_ending": "Unix",
 				"scratch": true
-			}
-		},
-		{
-			"contents": "Host:\n	AKUReserveInputDevice( total )\n	AKUSDLReserveJoystickInputDevice( IDStart, count )\n\n	AKUPS4ReserveJoystickInputDevice( IDStart, count )\n	\nSDLModule:\n	JoystickMgr:\n		connection/disconnection\n\nMOCK:\n	determine environment\n		MOAISDLJoystickMgr / MOAIPS4JoystickMgr\n	getJoystick( id ): getFFBSensor(): sendFFBChanelValue()\n",
-			"settings":
-			{
-				"buffer_size": 326,
-				"line_ending": "Unix",
-				"name": "Host:"
 			}
 		},
 		{
@@ -761,10 +664,10 @@
 			}
 		}
 	],
-	"build_system": "Run Project Test",
+	"build_system": "IDE",
 	"command_palette":
 	{
-		"height": 58.0,
+		"height": 82.0,
 		"selected_items":
 		[
 			[
@@ -1204,7 +1107,7 @@
 				"Package Control: List Packages"
 			]
 		],
-		"width": 579.0
+		"width": 588.0
 	},
 	"console":
 	{
@@ -1221,6 +1124,31 @@
 	},
 	"file_history":
 	[
+		"/Users/tommo/Projects/gii/lib/gii/core/EditorModule.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/QtSupport.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/CodeEditor/CodeEditor.py",
+		"/Users/tommo/Projects/gii/lib/3rdparty/common/pyqode/core/api/code_edit.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/PropertyEditor/CodeBoxFieldEditor.py",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAIImageLoadTask.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAISpineAnimationMixTable.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAISpineSkeleton.h",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAISpineSkeleton.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAISpineSkeletonData.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAISpineAtlas.cpp",
+		"/Users/tommo/Projects/gii/lib/gii/moai/MOAIRuntime.py",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAIJoystickManagerSDL.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAIJoystickFFBSensorSDL.h",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAIJoystickManagerSDL.h",
+		"/Users/tommo/Projects/gii/test/host/extension/EWProp.cpp",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/ui/TBManager.lua",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAISpineSkeletonData.h",
+		"/Users/tommo/Projects/gii/test/host/extension/TMPathGrid.cpp",
+		"/Users/tommo/Downloads/host-stirfirestudios-sdl-master/sledge/SledgeInputManager.h",
+		"/Users/tommo/Projects/gii/test/host/python/GIIHelper.cpp",
+		"/Users/tommo/Projects/gii/test/host/python/GIIHelper.h",
+		"/Users/tommo/Projects/gii/test/host/freejoy/wscript",
+		"/Users/tommo/Projects/gii/test/game/asset/script/TestJoystick.lua",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAISpineAnimation.cpp",
 		"/Users/tommo/Projects/gii/test/host/osx/SDLHost.cpp",
 		"/Users/tommo/Projects/gii/packages/Mock/StoryView/StoryView.py",
 		"/Users/tommo/Projects/moai-dev/src/moai-sim/MOAIShader.h",
@@ -1233,7 +1161,6 @@
 		"/Users/tommo/Projects/gii/packages/Mock/Animator/AnimatorWidget.py",
 		"/Users/tommo/Projects/gii/packages/Mock/Animator/AnimatorView.py",
 		"/Users/tommo/Projects/gii/test/host/host-modules/aku_modules.cpp",
-		"/Users/tommo/Projects/gii/test/host/extension/MOAIJoystickManagerSDL.cpp",
 		"/Users/tommo/Projects/gii/lib/gii/moai/MOAIEditCanvas.py",
 		"/Users/tommo/Projects/gii/gii.sublime-project",
 		"/Users/tommo/Projects/gii/test/host/wscript",
@@ -1241,7 +1168,6 @@
 		"/Users/tommo/Projects/gii/test/host/sdl-common/MOAIJoystickManagerSDL.h",
 		"/Users/tommo/Projects/gii/test/host/sdl-common/wscript",
 		"/Users/tommo/Projects/gii/test/host/sdl-common/MOAISDLJoystickManager.h",
-		"/Users/tommo/Projects/gii/test/host/python/GIIHelper.cpp",
 		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/GraphNodeConnectionItem.py",
 		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/GraphNodeItemBase.py",
 		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/GraphNodeItem.py",
@@ -1275,7 +1201,6 @@
 		"/Users/tommo/Projects/mock/mock/story/StoryNodeCustomAction.lua",
 		"/Users/tommo/Projects/mock/mock/anim/EmbedAnimator.lua",
 		"/Users/tommo/Projects/gii/lib/gii/AssetEditor/AssetBrowserWidgets.py",
-		"/Users/tommo/Projects/gii/lib/gii/qt/QtSupport.py",
 		"/Users/tommo/Projects/gii/lib/gii/moai/MOAIJoystickHook.py",
 		"/Users/tommo/Projects/gii/test/host/sdl-common/SDLJoystickManager.h",
 		"/Users/tommo/Projects/gii/lib/lua/mock_edit/EditorCanvas/CanvasView.lua",
@@ -1310,7 +1235,6 @@
 		"/Users/tommo/Projects/gii/test/game/lib/mock/core/utils.lua",
 		"/Users/tommo/Projects/gii/test/game/lib/mock/core/AssetLibrary.lua",
 		"/Users/tommo/Projects/gii/lib/gii/core/EditorApp.py",
-		"/Users/tommo/Projects/gii/lib/gii/core/EditorModule.py",
 		"/Users/tommo/Projects/gii/lib/mock/asset/helper/MetaTag.py",
 		"/Users/tommo/Projects/gii/test/game/main.lua",
 		"/Users/tommo/Projects/gii/lib/gii/core/tools/RunHost.py",
@@ -1327,28 +1251,7 @@
 		"/Users/tommo/Projects/gii/test/project.jsongii",
 		"/Users/tommo/Projects/gii/test/game/lib/mock/component/WaypointPathFinder.lua",
 		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/TimelineWidget.py",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/core/Game.lua",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/asset/Texture.lua",
-		"/Users/tommo/Projects/gii/lib/gii/moai/MOAIRuntime.py",
-		"/Users/tommo/Projects/gii/lib/mock/asset/TextureLibrary.lua",
-		"/Users/tommo/Projects/gii/lib/gii/moai/LuaScriptAsset.py",
-		"/Users/tommo/Projects/gii/lib/gii/qt/dialogs/ProcessDialog.py",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/component/InputListener.lua",
-		"/Users/tommo/Projects/gii/lib/gii/core/asset.py",
-		"/Users/tommo/Projects/gii/lib/gii/core/__init__.py",
-		"/Users/tommo/Projects/gii/lib/gii/core/CoreModule.py",
-		"/Users/tommo/Projects/gii/lib/gii/core/CoreModule.lua",
-		"/Users/tommo/.zshrc",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/env.lua",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/core/init.lua",
-		"/Users/tommo/Projects/gii/lib/gii/core/project.py",
-		"/Users/tommo/Projects/gii/test/host/sdl-common/MOCKJoystickManger.h",
-		"/Users/tommo/.bash_profile",
-		"/Applications/FMOD Studio/examples/Events/Main Menu {a7b81216-fb0b-4b9c-9e7d-b897825d9821}.event",
-		"/Applications/FMOD Studio/examples/Examples.fspro",
-		"/Users/tommo/Projects/gii/test/host/sdl-common/MOCKJoystickManger.cpp",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/component/WaypointGraph.lua",
-		"/Users/tommo/Projects/gii/lib/gii/qt/controls/ColorPickerWidget.py"
+		"/Users/tommo/Projects/gii/test/game/lib/mock/core/Game.lua"
 	],
 	"find":
 	{
@@ -1359,6 +1262,7 @@
 		"height": 0.0,
 		"where_history":
 		[
+			"*.py",
 			"*.cpp",
 			"*.py",
 			"*.lua",
@@ -1440,6 +1344,25 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"deviceRenderTable",
+			"false",
+			"emptyRenderStack",
+			"QtSupportEventFilter",
+			"ApplicationActivate",
+			"QtSupportEventFilter",
+			"eventFilter",
+			"setupStyle",
+			"anonymous",
+			"addApplicationFont",
+			"setTabStopWidth",
+			"_init_settings",
+			"code",
+			"ui",
+			"codeeditor",
+			"CodeEditor",
+			"loadModule",
+			"load",
+			"globalContext",
 			"BindUniforms",
 			"SetProgram",
 			"MOAIShaderProgram",
@@ -1548,26 +1471,7 @@
 			"loadAnimatorDataFromString",
 			"data",
 			"base64",
-			"rawData",
-			"variable",
-			"serialize",
-			"serializeToString",
-			"dataPath",
-			"parentPackage",
-			"getParentPackage",
-			"__root",
-			"group",
-			"false",
-			"rootgroup",
-			"clip",
-			"animator",
-			"_serializeObject",
-			"serialize",
-			"_serializeObject",
-			"serializeObject",
-			"self",
-			"data",
-			"targetAnimatorData"
+			"rawData"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1713,23 +1617,51 @@
 	"groups":
 	[
 		{
-			"selected": 9,
+			"selected": 4,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "test/game/asset/script/TestJoystick.lua",
+					"file": "test/game/lib/mock/story/StoryManager.lua",
 					"settings":
 					{
-						"buffer_size": 535,
+						"buffer_size": 2127,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								535,
-								535
+								1775,
+								1775
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 729.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "test/game/lib/mock/ui/TBWidget.lua",
+					"settings":
+					{
+						"buffer_size": 6713,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								681,
+								681
 							]
 						],
 						"settings":
@@ -1745,19 +1677,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "test/host/freejoy/wscript",
+					"buffer": 2,
+					"file": "data/theme/gii.qss",
 					"settings":
 					{
-						"buffer_size": 1705,
+						"buffer_size": 23547,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1019,
-								1019
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1773,40 +1705,11 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "test/host/python/GIIHelper.h",
-					"settings":
-					{
-						"buffer_size": 1447,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"easy_motion_mode": false,
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
 					"buffer": 3,
-					"file": "test/host/python/GIIHelper.cpp",
+					"file": "lib/gii/qt/QtSupport.py",
 					"settings":
 					{
-						"buffer_size": 4346,
+						"buffer_size": 6030,
 						"regions":
 						{
 						},
@@ -1820,139 +1723,63 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage",
+							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1606.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 4,
-					"file": "test/host/extension/EWProp.cpp",
+					"file": "test/game/lib/mock/component/CameraManager.lua",
 					"settings":
 					{
-						"buffer_size": 1168,
+						"buffer_size": 7526,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								518,
-								518
+								2794,
+								2794
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage",
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1554.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				},
+				}
+			]
+		},
+		{
+			"selected": 2,
+			"sheets":
+			[
 				{
 					"buffer": 5,
-					"file": "test/host/extension/MOAIJoystickManagerSDL.h",
+					"file": "lib/gii/SearchView/SearchView.py",
 					"settings":
 					{
-						"buffer_size": 949,
+						"buffer_size": 15356,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								949,
-								949
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "test/host/extension/MOAIJoystickFFBSensorSDL.h",
-					"settings":
-					{
-						"buffer_size": 338,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								338,
-								338
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "test/host/extension/MOAIJoystickManagerSDL.cpp",
-					"settings":
-					{
-						"buffer_size": 37,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								37,
-								37
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "lib/gii/moai/MOAIRuntime.py",
-					"settings":
-					{
-						"buffer_size": 11189,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6233,
-								6233
+								776,
+								776
 							]
 						],
 						"settings":
@@ -1968,39 +1795,39 @@
 					"type": "text"
 				},
 				{
-					"buffer": 9,
-					"file": "test/host/extension/MOAISpineAnimation.cpp",
+					"buffer": 6,
+					"file": "packages/Mock/EffectEditor/EffectEditor.py",
 					"settings":
 					{
-						"buffer_size": 14999,
+						"buffer_size": 11881,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								559,
-								559
+								3445,
+								3445
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage",
+							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1575.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 10,
-					"file": "test/host/extension/MOAISpineAtlas.cpp",
+					"buffer": 7,
+					"file": "test/game/lib/mock/core/Game.lua",
 					"settings":
 					{
-						"buffer_size": 2577,
+						"buffer_size": 25096,
 						"regions":
 						{
 						},
@@ -2009,246 +1836,16 @@
 							[
 								0,
 								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "test/host/extension/MOAISpineSkeletonData.cpp",
-					"settings":
-					{
-						"buffer_size": 7475,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "test/host/extension/MOAISpineSkeleton.cpp",
-					"settings":
-					{
-						"buffer_size": 34498,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "test/host/extension/MOAISpineSkeleton.h",
-					"settings":
-					{
-						"buffer_size": 6996,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6463,
-								6463
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2905.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 14,
-					"file": "test/host/extension/MOAISpineAnimationMixTable.cpp",
-					"settings":
-					{
-						"buffer_size": 2890,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 15,
-					"file": "test/host/extension/MOAIImageLoadTask.cpp",
-					"settings":
-					{
-						"buffer_size": 2127,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								654,
-								654
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 0,
-			"sheets":
-			[
-				{
-					"buffer": 16,
-					"file": "/Users/tommo/Downloads/host-stirfirestudios-sdl-master/sledge/SledgeInputManager.h",
-					"settings":
-					{
-						"buffer_size": 3231,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								411,
-								411
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 17,
-					"file": "test/host/extension/TMPathGrid.cpp",
-					"settings":
-					{
-						"buffer_size": 24894,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 18,
-					"file": "test/host/extension/MOAISpineSkeletonData.h",
-					"settings":
-					{
-						"buffer_size": 1819,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								618,
-								618
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 295.0,
+						"translation.y": 14893.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -2256,11 +1853,11 @@
 			]
 		},
 		{
-			"selected": 2,
+			"selected": 1,
 			"sheets":
 			[
 				{
-					"buffer": 19,
+					"buffer": 8,
 					"file": "gii_cfg.py",
 					"settings":
 					{
@@ -2287,19 +1884,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 20,
+					"buffer": 9,
 					"file": "test/BUILD_RESULT",
 					"settings":
 					{
-						"buffer_size": 14354,
+						"buffer_size": 82,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								14354
+								82,
+								82
 							]
 						],
 						"settings":
@@ -2312,40 +1909,13 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 843.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 21,
-					"settings":
-					{
-						"buffer_size": 326,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"auto_name": "Host:",
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 22,
+					"buffer": 10,
 					"file": "BUILD_RESULT",
 					"settings":
 					{
@@ -2377,7 +1947,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 23,
+					"buffer": 11,
 					"file": "lib/gii/qt/controls/BUILD_RESULT",
 					"settings":
 					{
@@ -2407,7 +1977,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 24,
+					"buffer": 12,
 					"file": "lib/gii/qt/controls/GraphicsView/BUILD_RESULT",
 					"settings":
 					{
@@ -2437,7 +2007,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 25,
+					"buffer": 13,
 					"file": "lib/mock/asset/helper/BUILD_RESULT",
 					"settings":
 					{
@@ -2467,7 +2037,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 26,
+					"buffer": 14,
 					"file": "lib/gii/qt/controls/ToolWindowManager/BUILD_RESULT",
 					"settings":
 					{
@@ -2582,6 +2152,58 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"game",
+				"test/game/lib/mock/core/Game.lua"
+			],
+			[
+				"cameraman",
+				"test/game/lib/mock/component/CameraManager.lua"
+			],
+			[
+				"qtsu",
+				"lib/gii/qt/QtSupport.py"
+			],
+			[
+				"qt",
+				"lib/gii/qt/QtSupport.py"
+			],
+			[
+				".qss",
+				"data/theme/gii.qss"
+			],
+			[
+				"codeedit",
+				"lib/3rdparty/common/pyqode/core/api/code_edit.py"
+			],
+			[
+				"effecte",
+				"packages/Mock/EffectEditor/EffectEditor.py"
+			],
+			[
+				"searchvi",
+				"lib/gii/SearchView/SearchView.py"
+			],
+			[
+				"editormo",
+				"lib/gii/core/EditorModule.py"
+			],
+			[
+				"tbwidget",
+				"test/game/lib/mock/ui/TBWidget.lua"
+			],
+			[
+				"tbman",
+				"test/game/lib/mock/ui/TBManager.lua"
+			],
+			[
+				"storyman",
+				"test/game/lib/mock/story/StoryManager.lua"
+			],
+			[
+				"tbmanag",
+				"test/game/lib/mock/ui/TBManager.lua"
+			],
 			[
 				"textlibr",
 				"test/env/config/texture_library.json"
@@ -3041,58 +2663,6 @@
 			[
 				"project",
 				"lib/gii/core/project.py"
-			],
-			[
-				"ditorap",
-				"lib/gii/core/EditorApp.py"
-			],
-			[
-				"game",
-				"test/game/lib/mock/core/Game.lua"
-			],
-			[
-				"psdmqu",
-				"lib/mock/asset/helper/PSDDeckMQuad.py"
-			],
-			[
-				"sceneto",
-				"lib/gii/SceneEditor/SceneTool.py"
-			],
-			[
-				"introspe",
-				"lib/gii/SceneEditor/Introspector.py"
-			],
-			[
-				"scenegraph",
-				"lib/mock/SceneGraphEditor/SceneGraphEditor.py"
-			],
-			[
-				"hostm",
-				"test/host/osx/SDLHostMain.cpp"
-			],
-			[
-				"sdlhost",
-				"test/host/osx/SDLHost.cpp"
-			],
-			[
-				"runhost",
-				"lib/gii/core/tools/RunHost.py"
-			],
-			[
-				"gamepre",
-				"lib/gii/SceneEditor/GamePreview.py"
-			],
-			[
-				"colorwi",
-				"lib/gii/qt/controls/ColorPickerWidget.py"
-			],
-			[
-				"procesd",
-				"lib/gii/qt/dialogs/ProcessDialog.py"
-			],
-			[
-				"waygraph",
-				"test/game/lib/mock/component/WaypointGraph.lua"
 			]
 		],
 		"width": 0.0

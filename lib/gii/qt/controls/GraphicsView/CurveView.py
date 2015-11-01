@@ -307,7 +307,20 @@ class CurveVertPointItem( QtGui.QGraphicsRectItem ):
 
 	def itemChange( self, change, value ):
 		if change == self.ItemPositionChange or change == self.ItemPositionHasChanged:
+			vert = self.vertItem
+			nv = vert.getNextVert()
+			pv = vert.getPrevVert()
+			x0 = x = self.x()
+			if pv:
+				x = max( pv.x(), x )
+			else:
+				x = max( 0, x )
+			if nv:
+				x = min( nv.x(), x )
+			self.setFlag( self.ItemSendsGeometryChanges, False)
+			self.setX( x )
 			self.vertItem.setPos( self.pos() )
+			self.setFlag( self.ItemSendsGeometryChanges, True)
 		return super( CurveVertPointItem, self ).itemChange( change, value )
 
 	def paint( self, painter, option, widget ):
@@ -353,15 +366,7 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		self.VP.setTransform( trans )
 		self.preTP.setTransform( trans )
 		self.postTP.setTransform( trans )
-		prev = self.getPrevVert()
-		if prev: #update TP pos
-			(px0, py0) = prev.postTPValue
-			(px1, py1) = self.preTPValue
-			pos0 = prev.pos()
-			pos1 = self.pos()
-			dx = ( pos1.x() - pos0.x() )
-			prev.postTP.setPos(   px0 * dx, py0 )
-			self.preTP .setPos( - px1 * dx, py1 )
+		self.updateTPPos()
 
 	def setValue( self, v ):
 		self.value = v
@@ -372,11 +377,25 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 	def getPreTP( self ):
 		return self.preTP.pos()	
 
+	def updateTPPos( self ):
+		prev = self.getPrevVert()
+		if prev: #update TP pos
+			(px0, py0) = prev.postTPValue
+			(px1, py1) = self.preTPValue
+			pos0 = prev.pos()
+			pos1 = self.pos()
+			dx = ( pos1.x() - pos0.x() )
+			prev.postTP.setPos(   px0 * dx, py0 )
+			self.preTP .setPos( - px1 * dx, py1 )
+
 	def itemChange( self, change, value ):		
 		if change == self.ItemPositionChange or change == self.ItemPositionHasChanged:
 			if not self.updating:
 				self.updating = True
 				self.VP.setPos( self.pos() )
+				self.updateTPPos()
+				if self.getNextVert():
+					self.getNextVert().updateTPPos()
 				self.updateSpan()
 				self.updating = False
 
@@ -389,7 +408,8 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 				pos = tp.pos()
 				dx = nextVert.pos().x() - self.pos().x()
 				if dx == 0:
-					self.postTPValue = ( 0, pos.y() )
+					(px, py) = self.postTPValue
+					self.postTPValue = ( px, pos.y() )
 				else:
 					( tpx, tpy ) = nextVert.preTPValue 
 					v0 = 0.0
@@ -409,7 +429,8 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 				pos = tp.pos()
 				dx = prevVert.pos().x() - self.pos().x()
 				if dx == 0:
-					self.preTPValue = ( 0, pos.y() )
+					(px, py) = self.preTPValue
+					self.preTPValue = ( px, pos.y() )
 				else:
 					( tpx, tpy ) = prevVert.postTPValue 
 					v0 = 0.0
