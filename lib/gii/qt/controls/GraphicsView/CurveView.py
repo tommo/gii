@@ -20,9 +20,11 @@ _HEAD_OFFSET = 15
 
 ##----------------------------------------------------------------##
 _DEFAULT_BG = makeBrush( color = '#222' )
-makeStyle( 'cv',                '#ffffff',    '#acbcff'              )
+makeStyle( 'cv',                '#acbcff',    '#4d9fff'              )
+makeStyle( 'cv:selected',       '#ffffff',    '#000000'              )
 makeStyle( 'tp',                dict( color = '#b940d6', alpha=0.5 ),    '#b940d6'    )
-makeStyle( 'curve',             '#c1ff03',    None             )
+makeStyle( 'tp:selected',       dict( color = '#ffffff', alpha=1.0 ),    '#000000'    )
+makeStyle( 'curve',             '#7f7f7f',    None             )
 
 
 
@@ -216,13 +218,10 @@ class CurveSpanItem( QtGui.QGraphicsPathItem ):
 			self.hide()
 			return
 		self.show()
+		self.setPos( startVert.pos() )
 
 		path = QtGui.QPainterPath()
-		pos0 = startVert.scenePos()
-		pos1 = endVert.scenePos()
-		pos0 = self.mapFromScene( pos0 )
-		self.setPos( pos0 )
-		pos1 = self.mapFromScene( pos1 )
+		pos1 = self.mapFromScene( endVert.scenePos() )
 		path.moveTo( 0, 0 )
 		path.lineTo( pos1 )
 		self.setPath( path )
@@ -234,13 +233,10 @@ class CurveSpanItem( QtGui.QGraphicsPathItem ):
 			self.hide()
 			return
 		self.show()
+		self.setPos( startVert.pos() )
 
 		path = QtGui.QPainterPath()
-		pos0 = startVert.scenePos()
-		pos1 = endVert.scenePos()
-		pos0 = self.mapFromScene( pos0 )
-		self.setPos( pos0 )
-		pos1 = self.mapFromScene( pos1 )
+		pos1 = self.mapFromScene( endVert.scenePos() )
 		path.moveTo( 0, 0 )
 		path.lineTo( pos1.x(), 0 )
 		path.lineTo( pos1 )
@@ -254,20 +250,18 @@ class CurveSpanItem( QtGui.QGraphicsPathItem ):
 			return
 		self.show()
 
+		self.setPos( startVert.pos() )
+
 		path = QtGui.QPainterPath()
-		pos0 = startVert.scenePos()
-		pos1 = endVert.scenePos()
-		pos0 = self.mapFromScene( pos0 )
-		self.setPos( pos0 )
-		pos1 = self.mapFromScene( pos1 )
-		tp0 = startVert.getPostTP() # + (0,0)
+		pos1 = self.mapFromScene( endVert.scenePos() )
+		tp0  = startVert.getPostTP() # + (0,0)
 		preTP = endVert.getPreTP() + pos1
 		path.moveTo( 0, 0 )
 		path.cubicTo( tp0, preTP, pos1 )
 		self.setPath( path )
 
 	def paint( self, painter, option, widget ):
-		# painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
+		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
 		applyStyle( 'curve', painter)
 		path = self.path()
 		painter.drawPath( path )
@@ -282,6 +276,8 @@ class CurveTangentPointItem( QtGui.QGraphicsRectItem ):
 		self.setCursor( Qt.PointingHandCursor )
 		self.setFlag( self.ItemSendsGeometryChanges, True )
 		self.setFlag( self.ItemIsMovable, True )
+		self.setFlag( self.ItemIsSelectable, True )
+
 
 	def itemChange( self, change, value ):
 		if change == self.ItemPositionChange or change == self.ItemPositionHasChanged:
@@ -289,7 +285,10 @@ class CurveTangentPointItem( QtGui.QGraphicsRectItem ):
 		return super( CurveTangentPointItem, self ).itemChange( change, value )
 
 	def paint( self, painter, option, widget ):
-		applyStyle( 'tp', painter )
+		if self.isSelected():
+			applyStyle( 'tp:selected', painter )
+		else:
+			applyStyle( 'tp', painter )
 		painter.drawEllipse( self.innerRect )
 
 ##----------------------------------------------------------------##
@@ -300,9 +299,9 @@ class CurveVertPointItem( QtGui.QGraphicsRectItem ):
 		self.setRect( -CV_SIZE/2, -CV_SIZE/2, CV_SIZE, CV_SIZE )
 		self.innerRect = QRectF( -CV_INNER_SIZE/2, -CV_INNER_SIZE/2, CV_INNER_SIZE, CV_INNER_SIZE )
 		self.setCursor( Qt.PointingHandCursor )
-		applyStyle( 'cv', self )
 		self.setFlag( self.ItemSendsGeometryChanges, True )
 		self.setFlag( self.ItemIsMovable, True )
+		self.setFlag( self.ItemIsSelectable, True )
 		self.vertItem = vertItem
 		self.setParentItem( vertItem.parentItem() )
 
@@ -312,7 +311,10 @@ class CurveVertPointItem( QtGui.QGraphicsRectItem ):
 		return super( CurveVertPointItem, self ).itemChange( change, value )
 
 	def paint( self, painter, option, widget ):
-		applyStyle( 'cv', painter )
+		if self.isSelected():
+			applyStyle( 'cv:selected', painter )
+		else:
+			applyStyle( 'cv', painter )
 		painter.drawRect( self.innerRect )
 
 ##----------------------------------------------------------------##
@@ -338,17 +340,28 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 
 		self.preTP.setParentItem( self )
 		self.postTP.setParentItem( self )
-		self.preTP.setPos( -100,50 )
-		self.postTP.setPos( 50, 0 )
 		self.preTP.hide()
 		self.postTP.hide()
 
+		self.preTPValue  = ( 0.5, 0 )
+		self.postTPValue = ( 0.5, 0 )
 
 	def updateZoom( self, zx, zy ):
 		trans = QTransform()
 		trans.scale( 1.0/zx, 1.0/zy )
-		self.setTransform( trans )
+		# self.setTransform( trans )
 		self.VP.setTransform( trans )
+		self.preTP.setTransform( trans )
+		self.postTP.setTransform( trans )
+		prev = self.getPrevVert()
+		if prev: #update TP pos
+			(px0, py0) = prev.postTPValue
+			(px1, py1) = self.preTPValue
+			pos0 = prev.pos()
+			pos1 = self.pos()
+			dx = ( pos1.x() - pos0.x() )
+			prev.postTP.setPos(   px0 * dx, py0 )
+			self.preTP .setPos( - px1 * dx, py1 )
 
 	def setValue( self, v ):
 		self.value = v
@@ -370,36 +383,45 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		return QtGui.QGraphicsRectItem.itemChange( self, change, value )
 
 	def onTPUpdate( self, tp ):
-		# self.correctTP()
+		if tp == self.postTP:
+			nextVert = self.getNextVert()
+			if nextVert:
+				pos = tp.pos()
+				dx = nextVert.pos().x() - self.pos().x()
+				if dx == 0:
+					self.postTPValue = ( 0, pos.y() )
+				else:
+					( tpx, tpy ) = nextVert.preTPValue 
+					v0 = 0.0
+					v1 = (1.0 - tpx)
+					v = tp.pos().x() / dx
+					corrected = max( 0.0, min( v1, v  ) )
+					self.postTPValue = ( corrected , pos.y() )
+					if v != corrected:
+						tp.setFlag( self.ItemSendsGeometryChanges, False )
+						tp.setX( dx*corrected )
+						tp.setFlag( self.ItemSendsGeometryChanges, True )
+
+
+		elif tp == self.preTP:
+			prevVert = self.getPrevVert()
+			if prevVert:
+				pos = tp.pos()
+				dx = prevVert.pos().x() - self.pos().x()
+				if dx == 0:
+					self.preTPValue = ( 0, pos.y() )
+				else:
+					( tpx, tpy ) = prevVert.postTPValue 
+					v0 = 0.0
+					v1 = (1.0 - tpx)
+					v = tp.pos().x() / dx
+					corrected = max( 0.0, min( v1, v ) )
+					self.preTPValue = ( corrected , pos.y() )
+					if v != corrected:
+						tp.setFlag( self.ItemSendsGeometryChanges, False )
+						tp.setX( dx * corrected )
+						tp.setFlag( self.ItemSendsGeometryChanges, True )
 		self.updateSpan()
-
-	def correctTP( self ):
-		self.correctPreTP()
-		self.correctPostTP()
-
-	def correctPreTP( self ):
-		tp = self.preTP
-		x0 = -100.0
-		x1 = 0.0
-		prevVert = self.getPrevVert()
-		if prevVert:
-			x0 = - ( ( self.x() - prevVert.x() ) - prevVert.postTP.x()  )
-		tp.setFlag( self.ItemSendsGeometryChanges, False )
-		x = max( x0, min( x1, tp.x() ) )
-		tp.setX( x )
-		tp.setFlag( self.ItemSendsGeometryChanges, True )
-
-	def correctPostTP( self ):
-		tp = self.postTP
-		x0 = 0.0
-		x1 = 100.0
-		nextVert = self.getNextVert()
-		if nextVert:
-			x1 = ( nextVert.x() - self.x() ) + nextVert.preTP.x()
-		tp.setFlag( self.ItemSendsGeometryChanges, False )
-		x = max( x0, min( x1, tp.x() ) )
-		tp.setX( x )
-		tp.setFlag( self.ItemSendsGeometryChanges, True )
 
 	def getIndex( self ):
 		return self.index
@@ -411,13 +433,11 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		return self.parentItem().getNextVert( self )
 
 	def updateSpan( self, updateNeighbor = True ):
-		self.span.updateShape()
-
 		if updateNeighbor:
 			prevVert = self.getPrevVert()
 			if prevVert:
 				prevVert.updateSpan( False )
-
+		self.span.updateShape()
 		bx = ( self.preTP.x(), self.postTP.x(), 0.0 )
 		by = ( self.preTP.y(), self.postTP.y(), 0.0 )
 		x0 = min( bx )
@@ -428,10 +448,11 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 
 	def paint( self, painter, option, widget ):
 		applyStyle( 'tp', painter)
+		p0 = QPointF( 0.0, 0.0 )
 		if self.preTP.isVisible():
-			painter.drawLine( 0,0, self.preTP.x(), self.preTP.y() )
+			painter.drawLine( p0, self.preTP.pos() )
 		if self.postTP.isVisible():
-			painter.drawLine( 0,0, self.postTP.x(), self.postTP.y() )
+			painter.drawLine( p0, self.postTP.pos() )
 
 	def setSpanMode( self, mode ):
 		self.spanMode = mode
@@ -747,7 +768,6 @@ class CurveView( GLGraphicsView ):
 		curve = CurveItem( curveNode )
 		self.scene().addItem( curve )
 		self.curveItems.append( curve )
-		curve.setZoom( self.zoomX, self.zoomY )
 		self.nodeToCurve[ curveNode ] = curve
 
 		vertNodes = self.getVertNodes( curveNode )
@@ -755,6 +775,7 @@ class CurveView( GLGraphicsView ):
 			for vertNode in vertNodes:
 				self.addVert( vertNode )
 
+		curve.setZoom( self.zoomX, self.zoomY )
 		self.refreshCurve( curveNode, **option )
 		self.updateCurveLayout()
 		return curve
@@ -884,9 +905,9 @@ if __name__ == '__main__':
 			return self.verts
 
 		def randomFill( self, off ):
-			for i in range( 0, 50 ):
+			for i in range( 0, 4 ):
 				vert = TestCurveVert( self )
-				vert.x = i * 50 + random()*5
+				vert.x = i * 100 + random()*5
 				vert.y = (random()-0.5)*100 + off
 				self.verts.append( vert )
 
@@ -908,7 +929,7 @@ if __name__ == '__main__':
 		def __init__(self, *args):
 			super(TestCurveView, self).__init__( *args )
 			self.testCurves = []
-			for i in range( 0, 3 ):
+			for i in range( 0, 1 ):
 				curve = TestCurve()
 				curve.randomFill( i * 100 )
 				self.testCurves.append( curve )

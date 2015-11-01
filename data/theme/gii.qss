@@ -5,6 +5,8 @@ QWidget
 	font-size:11px;
 	color:#ccc;
 	background-color:#333;
+	/*selection-background-color: rgba(100, 100, 255, 128);*/
+	
 	font-family: Anonymous Pro;
 	/*	Arial,
 		Anonymous Pro,
@@ -1300,3 +1302,7 @@ QTreeView#AnimatorTrackTree::item:selected:active
 	border: 1px solid #ff3100;
 	background: #ba3336;
 }
+
+/*QGraphicsView {
+	selection-background-color: rgba(100, 100, 255, 128);
+}*/

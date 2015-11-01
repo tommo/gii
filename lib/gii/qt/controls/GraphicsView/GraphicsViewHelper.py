@@ -179,8 +179,8 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 		self.usingGL = _USE_GL and option.get( 'use_gl', True )
 		
 		if self.usingGL:
-			self.setViewportUpdateMode( QtGui.QGraphicsView.SmartViewportUpdate )		
-			# self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
+			# self.setViewportUpdateMode( QtGui.QGraphicsView.SmartViewportUpdate )		
+			self.setViewportUpdateMode( QtGui.QGraphicsView.FullViewportUpdate )		
 			viewport = option.get( 'gl_viewport', makeGLWidget() )
 			self.glViewport = viewport
 			self.setViewport( viewport )
