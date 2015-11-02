@@ -8,6 +8,13 @@ import time
 
 from GraphicsViewHelper import *
 from CurveView import CurveView
+from CurveView import \
+	SPAN_MODE_CONSTANT,\
+	SPAN_MODE_LINEAR,\
+	SPAN_MODE_BEZIER,\
+	TANGENT_MODE_AUTO,\
+	TANGENT_MODE_SPLIT,\
+	TANGENT_MODE_SMOOTH
 
 import sys
 import math
@@ -1133,8 +1140,18 @@ class TimelineTrackView( TimelineSubView ):
 
 ##----------------------------------------------------------------##
 class TimelineCurveView( CurveView ):
+	def __init__( self, *args, **kwargs ):
+		super( TimelineCurveView, self ).__init__( *args, **kwargs )
+		self.timelineView = None
+		self.vertChanged.connect( self.onVertChanged )
+		self.vertCurvateChanged.connect( self.onVertCurvateChanged )
+		self.vertModeChanged.connect( self.onVertModeChanged )
+
 	def getTimelineView( self ):
 		return self.timelineView
+
+	def getParentCurveNode( self, vertNode ):
+		return self.timelineView.getParentTrackNode( vertNode )
 
 	def getCurveNodes( self ):
 		return self.timelineView.getActiveCurveNodes()
@@ -1145,6 +1162,17 @@ class TimelineCurveView( CurveView ):
 	def getVertParam( self, curveNode ):
 		return self.timelineView.getCurveVertParam( curveNode )
 
+	def onVertChanged( self, vertNode, x, y ):
+		self.timelineView.notifyKeyChanged( vertNode, x, None )
+		self.timelineView.notifyKeyCurveValueChanged( vertNode, y )
+		self.timelineView.refreshKey( vertNode )
+
+	def onVertModeChanged( self, vertNode, mode ):
+		self.timelineView.notifyKeyModeChanged( vertNode, mode )
+
+	def onVertCurvateChanged( self, vertNode, tpx0, tpy0, tpx1, tpy1 ):
+		self.timelineView.notifyKeyCurvateChanged( vertNode, tpx0, tpy0, tpx1, tpy1 )
+
 ##----------------------------------------------------------------##	
 class TimelineView( QtGui.QWidget ):
 	keySelectionChanged    = pyqtSignal()
@@ -1152,7 +1180,8 @@ class TimelineView( QtGui.QWidget ):
 	markerSelectionChanged = pyqtSignal()
 	markerChanged          = pyqtSignal( object, float )
 	keyChanged             = pyqtSignal( object, float, float )
-	keyModeChanged         = pyqtSignal( object )
+	keyCurveValueChanged   = pyqtSignal( object, float )
+	keyModeChanged         = pyqtSignal( object, int )
 	keyCurvateChanged      = pyqtSignal( object, float, float, float, float )
 	cursorPosChanged       = pyqtSignal( float )
 	zoomChanged            = pyqtSignal( float )
@@ -1227,7 +1256,7 @@ class TimelineView( QtGui.QWidget ):
 		self.trackView.cursorPosChanged.connect( self.onCursorPosChanged )
 		self.rulerView.cursorPosChanged.connect( self.onCursorPosChanged )
 
-		self.tabViewSwitch = QtGui.QTabBar()		
+		self.tabViewSwitch = QtGui.QTabBar()
 		bottomLayout = QtGui.QHBoxLayout( self.ui.containerBottom )
 		bottomLayout.addWidget( self.tabViewSwitch )
 		bottomLayout.setSpacing( 10 )
@@ -1293,6 +1322,8 @@ class TimelineView( QtGui.QWidget ):
 
 	def onTabChanged( self, idx ):
 		self.ui.containerContents.setCurrentIndex( idx )
+		if idx == 1:
+			self.curveView.rebuild()
 
 	def getCurrentEditMode( self ):
 		if self.ui.containerContents.currentIndex() == 0:
@@ -1539,7 +1570,18 @@ class TimelineView( QtGui.QWidget ):
 		if track:
 			self.updateTrackContent( track, trackNode, **option )
 
-	def notifyKeyChanged( self, keyNode, pos, length ):
+	def notifyKeyCurvateChanged( self, keyNode, tpx0, tpy0, tpx1, tpy1):
+		self.keyCurvateChanged.emit( keyNode, tpx0, tpy0, tpx1, tpy1 )
+
+	def notifyKeyModeChanged( self, keyNode, mode ):
+		self.keyModeChanged.emit( keyNode, mode )
+
+	def notifyKeyCurveValueChanged( self, keyNode, value ):
+		self.keyCurveValueChanged.emit( keyNode, value )
+
+	def notifyKeyChanged( self, keyNode, pos, length = None ):
+		if not length:
+			_pos, length, resizable = self.getKeyParam( keyNode )
 		self.keyChanged.emit( keyNode, pos, length )
 
 	def notifyMarkerChanged( self, markerNode, pos ):
@@ -1640,13 +1682,15 @@ class TimelineView( QtGui.QWidget ):
 		return result
 
 	def getCurveVertNodes( self, curveNode ):
-		return self.getKeyNodes( curveNode )
+		nodes = self.getKeyNodes( curveNode )
+		return nodes
 
 	def getCurveVertParam( self, vertNode ):
 		mode = self.getKeyMode( vertNode )
-		( x, y, resizable ) = self.getKeyParam( vertNode )
+		( pos, length, resizable ) = self.getKeyParam( vertNode )
+		value = self.getKeyCurveValue( vertNode )
 		( preTPX, preTPY, postTPX, postTPY ) = self.getKeyCurvate( vertNode )
-		return ( mode, x, y, preTPX, preTPY, postTPX, postTPY )
+		return ( pos, value, mode, preTPX, preTPY, postTPX, postTPY )
 
 	#####
 	#VIRUTAL data model functions
@@ -1687,6 +1731,9 @@ class TimelineView( QtGui.QWidget ):
 	def getKeyParam( self, keyNode ):
 		return ( 0, 10, True )
 
+	def getKeyCurveValue( self, keyNode ):
+		return 0
+
 	def getKeyCurvate( self, keyNode ):
 		return ( 0.5, 0.0, 0.5, 0.0 )
 
@@ -1704,6 +1751,9 @@ class TimelineView( QtGui.QWidget ):
 
 	def isTrackVisible( self, trackNode ):
 		return 0
+
+	def isCurveTrack( self, trackNode ):
+		return False
 
 	def onSelectionChanged( self, selection ):
 		pass

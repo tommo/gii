@@ -1190,13 +1190,13 @@ QTreeView#AnimatorTrackTree::item{
 
 QTreeView#AnimatorTrackTree::item:selected:!active
 {
-	background-color:#383b51;
+	background-color:#334a6e;
 	color: #fff;
 }
 
 QTreeView#AnimatorTrackTree::item:selected:active
 {
-	background-color:#383b51;
+	background-color:#334a6e;
 	color: #fff;
 }
 

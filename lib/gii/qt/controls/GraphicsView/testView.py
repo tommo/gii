@@ -13,6 +13,10 @@ class TestKey():
 		self.length = 1
 		self.pos    = ( random()*1000 + 50 ) /1000.0
 		self.track  = track
+		self.value = 100
+		self.mode = SPAN_MODE_BEZIER
+		self.preTPValue = (0.5, 0 )
+		self.postTPValue = (0.5, 0 )
 
 	def isResizable( self ):
 		return False
@@ -47,9 +51,15 @@ class TestTrack():
 	def isResizable( self ):
 		return False
 
+	def isCurve( self ):
+		return True
+
 class TestEventTrack( TestTrack ):
 	def isResizable( self ):
 		return True
+
+	def isCurve( self ):
+		return False
 
 class TestEvent():
 	def __init__( self ):
@@ -82,6 +92,17 @@ class TestTimeline( TimelineView ):
 	def getKeyParam( self, keyNode ): #pos, length, resizable
 		return keyNode.pos, keyNode.length, keyNode.isResizable()
 
+	def getKeyCurvate( self, keyNode ):
+		( tpx0, tpy0 ) = keyNode.preTPValue  
+		( tpx1, tpy1 ) = keyNode.postTPValue 
+		return tpx0, tpy0, tpx1, tpy1
+
+	def getKeyCurveValue( self, keyNode ):
+		return keyNode.value
+
+	def getKeyMode( self, keyNode ):
+		return keyNode.mode
+
 	def getParentTrackNode( self, keyNode ):
 		return keyNode.track
 
@@ -94,6 +115,9 @@ class TestTimeline( TimelineView ):
 
 	def isTrackVisible( self, track ):
 		return True
+
+	def isCurveTrack( self, track ):
+		return track.isCurve()
 
 	def getTrackPos( self, track ):
 		return track.pos
@@ -116,6 +140,7 @@ class TestFrame( QtGui.QFrame ):
 		timeline = TestTimeline()
 		layout.addWidget( timeline )
 		timeline.rebuild()
+		timeline.setTrackSelection( [ dataset[0] ] )
 		self.testMarker = TestMarker()
 		timeline.addMarker( self.testMarker )
 
@@ -125,6 +150,8 @@ class TestFrame( QtGui.QFrame ):
 		mitem.setTimePos( 2.3 )
 
 		timeline.keyChanged.connect( self.onKeyChanged )
+		timeline.keyCurvateChanged.connect( self.onKeyCurvateChanged )
+		timeline.keyCurveValueChanged.connect( self.onKeyCurveValueChanged )
 		timeline.markerChanged.connect( self.onMarkerChanged )
 		self.timer = QtCore.QTimer( self )
 		self.timer.timeout.connect( self.onTimer )
@@ -133,7 +160,15 @@ class TestFrame( QtGui.QFrame ):
 		self.t0 = time()
 
 	def onKeyChanged( self, key, pos, length ):
-		print 'key changed', key, pos
+		key.pos = pos
+		key.length = length
+
+	def onKeyCurveValueChanged( self, key, value ):
+		key.value = value
+
+	def onKeyCurvateChanged( self, key, tpx0, tpy0, tpx1, tpy1 ):
+		key.preTPValue  = ( tpx0, tpy0 )
+		key.postTPValue = ( tpx1, tpy1 )
 
 	def onMarkerChanged( self, marker, pos ):
 		print 'marker changed', marker, pos
@@ -143,7 +178,6 @@ class TestFrame( QtGui.QFrame ):
 		# print '%.2f' % (t1- self.t0)
 		self.t0 = t1
 		
-
 
 app = QtGui.QApplication( sys.argv )
 styleSheetName = 'gii.qss'

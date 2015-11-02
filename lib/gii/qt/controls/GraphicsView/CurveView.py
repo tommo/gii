@@ -31,7 +31,6 @@ makeStyle( 'curve',             '#7f7f7f',    None             )
 SPAN_MODE_CONSTANT = 0
 SPAN_MODE_LINEAR   = 1
 SPAN_MODE_BEZIER   = 2
-
 TANGENT_MODE_AUTO    = 0
 TANGENT_MODE_SPLIT   = 1
 TANGENT_MODE_SMOOTH  = 2
@@ -422,8 +421,6 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 						tp.setFlag( self.ItemSendsGeometryChanges, False )
 						tp.setX( dx*corrected )
 						tp.setFlag( self.ItemSendsGeometryChanges, True )
-
-
 		elif tp == self.preTP:
 			prevVert = self.getPrevVert()
 			if prevVert:
@@ -444,6 +441,7 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 						tp.setX( dx * corrected )
 						tp.setFlag( self.ItemSendsGeometryChanges, True )
 		self.updateSpan()
+		self.getCurveView().notifyVertChanged( self, False, True )
 
 	def getIndex( self ):
 		return self.index
@@ -481,7 +479,7 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		self.updateSpan()
 
 	def setParam( self, x,y, curveMode, preTPX, preTPY, postTPX, postTPY ):
-		self.setPos( x, -y )
+		self.setPos( x * _PIXEL_PER_UNIT, -y )
 		self.spanMode = curveMode
 		#Todo tangent
 		self.preTPValue  = ( preTPX,  preTPY  )
@@ -509,8 +507,16 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		if next:
 			next.preTP.hide()
 
-
-
+	def delete( self ):
+		self.setParentItem( None )
+		self.preTP.setParentItem( None )
+		self.postTP.setParentItem( None )
+		self.VP.setParentItem( None )
+		scn = self.scene()
+		scn.removeItem( self.preTP )
+		scn.removeItem( self.postTP )
+		scn.removeItem( self.VP )
+		scn.removeItem( self )
 
 ##----------------------------------------------------------------##
 class CurveItem( QtGui.QGraphicsRectItem ):
@@ -562,9 +568,9 @@ class CurveItem( QtGui.QGraphicsRectItem ):
 
 	def clear( self ):
 		for vert in self.vertItems:
-			vert.setParentItem( None )
-			del self.nodeToVert[ vert.node ]
+			vert.delete()
 			vert.node = None
+		self.nodeToVert = []
 		self.vertItems = []
 		self.updateSpan()
 
@@ -778,9 +784,10 @@ class CurveView( GLGraphicsView ):
 		self.rebuilding = False
 
 	def clear( self ):
+		scn = self.scene()
 		for curve in self.curveItems:
 			curve.clear()
-			self.scene().removeItem( curve )
+			scn.removeItem( curve )
 		self.curveItems = []
 
 	def removeCurve( self, curveNode ):
@@ -799,7 +806,7 @@ class CurveView( GLGraphicsView ):
 		self.curveItems.append( curve )
 		self.nodeToCurve[ curveNode ] = curve
 
-		vertNodes = self.getVertNodes( curveNode )
+		vertNodes = self.getSortedVertNodes( curveNode )
 		if vertNodes:
 			for vertNode in vertNodes:
 				self.addVert( vertNode )
@@ -863,11 +870,15 @@ class CurveView( GLGraphicsView ):
 		pass
 	
 	#====notify====
-	def notifyVertChanged( self, vert ):
-		( preTPX,  preTPY  ) = vert.preTPValue
-		( postTPX, postTPY ) = vert.postTPValue
-		self.vertChanged.emit( vert.node, vert.x(), -vert.y() )
-		self.vertCurvateChanged.emit( vert.node, preTPX, preTPY,	postTPX, postTPY )
+	def notifyVertChanged( self, vert, posChanged = True, curvateChanged = True ):
+		if self.rebuilding: return
+		if posChanged:
+			self.vertChanged.emit( vert.node, vert.x()/_PIXEL_PER_UNIT, -vert.y() )
+			
+		if curvateChanged:
+			( preTPX,  preTPY  ) = vert.preTPValue
+			( postTPX, postTPY ) = vert.postTPValue
+			self.vertCurvateChanged.emit( vert.node, preTPX, preTPY,	postTPX, postTPY )
 
 	#====Selection====
 	def deselectVert( self, vertNode ):
@@ -939,6 +950,26 @@ class CurveView( GLGraphicsView ):
 		pass
 		# self.timelineView.updateSelection( selection )
 
+	def getSortedVertNodes( self, curveNode ):
+		def _sortVertEntry( m1, m2 ):
+			v1, x1 = m1
+			v2, x2 = m2
+			diff = x1 - x2
+			if diff > 0: return 1
+			if diff < 0: return -1
+			return 0
+
+		verts = self.getVertNodes( curveNode )
+		tosort = []
+		for vert in verts:
+			( x, y, mode, tpx0, tpy0, tpx1, tpy1 ) = self.getVertParam( vert )
+			tosort.append( (vert,x) )
+		result = []
+		for entry in sorted( tosort, cmp = _sortVertEntry ):
+			( vert, x ) = entry
+			result.append( vert )
+		return result
+
 	#====VIRTUAL FUNCTIONS ========
 	def getParentCurveNode( self, vertNode ):
 		return None
@@ -949,7 +980,7 @@ class CurveView( GLGraphicsView ):
 	def getVertNodes( self, curveNode ):
 		return []
 
-	def getVertParam( self, curveNode ):
+	def getVertPara_sort( self, curveNode ):
 		#x, y, curveMode, pre-tangent, post-tangeng
 		return ( 0, 0, SPAN_MODE_BEZIER, 0, 0, 0, 0 )
 
@@ -975,7 +1006,7 @@ if __name__ == '__main__':
 		def randomFill( self, off ):
 			for i in range( 0, 4 ):
 				vert = TestCurveVert( self )
-				vert.x = i * 100 + random()*5
+				vert.x = i+ random()*0.1
 				vert.y = (random()-0.5)*100 + off
 				self.verts.append( vert )
 

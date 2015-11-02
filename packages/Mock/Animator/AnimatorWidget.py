@@ -518,6 +518,8 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.treeTracks.rebuild()
 		self.treeClips.rebuild()
 		self.timeline.rebuild()
+		self.setTrackViewScrollRange( 0 )
+
 
 	def rebuildTimeline( self ):
 		self.timeline.rebuild()
