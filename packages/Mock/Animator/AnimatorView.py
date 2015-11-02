@@ -119,7 +119,6 @@ class AnimatorView( SceneEditorModule ):
 
 		self.previewTimer.timeout.connect( self.onPreviewTimer )
 
-
 	def onStart( self ):
 		pass
 
@@ -163,7 +162,6 @@ class AnimatorView( SceneEditorModule ):
 		else:
 			self.widget.treeClips.selectFirstItem()
 		self.applyTime( 0, True )
-
 
 	def setTargetClip( self, clip ):
 		wasPreviewing = self.previewing

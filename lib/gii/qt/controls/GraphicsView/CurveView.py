@@ -27,7 +27,6 @@ makeStyle( 'tp:selected',       dict( color = '#ffffff', alpha=1.0 ),    '#00000
 makeStyle( 'curve',             '#7f7f7f',    None             )
 
 
-
 ##----------------------------------------------------------------##
 SPAN_MODE_CONSTANT = 0
 SPAN_MODE_LINEAR   = 1
@@ -278,7 +277,6 @@ class CurveTangentPointItem( QtGui.QGraphicsRectItem ):
 		self.setFlag( self.ItemIsMovable, True )
 		self.setFlag( self.ItemIsSelectable, True )
 
-
 	def itemChange( self, change, value ):
 		if change == self.ItemPositionChange or change == self.ItemPositionHasChanged:
 			self.parentItem().onTPUpdate( self )
@@ -334,14 +332,14 @@ class CurveVertPointItem( QtGui.QGraphicsRectItem ):
 class CurveVertItem( QtGui.QGraphicsRectItem ):
 	def __init__( self, parent ):
 		super( CurveVertItem, self ).__init__()
+		self.node = None
+		#
 		self.index = 0 #update by curve verts sorting
 		self.setParentItem( parent )
 		self.setZValue( 10 )
 		self.setRect( -CV_SIZE/2, -CV_SIZE/2, CV_SIZE, CV_SIZE )
 		self.setFlag( self.ItemSendsGeometryChanges, True )
 		self.updating = False
-
-		self.value    = 0.0
 
 		self.spanMode = SPAN_MODE_LINEAR
 
@@ -353,11 +351,15 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 
 		self.preTP.setParentItem( self )
 		self.postTP.setParentItem( self )
+
 		self.preTP.hide()
 		self.postTP.hide()
 
 		self.preTPValue  = ( 0.5, 0 )
 		self.postTPValue = ( 0.5, 0 )
+
+	def getCurveView( self ):
+		return self.parentItem().getCurveView()
 
 	def updateZoom( self, zx, zy ):
 		trans = QTransform()
@@ -367,9 +369,6 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		self.preTP.setTransform( trans )
 		self.postTP.setTransform( trans )
 		self.updateTPPos()
-
-	def setValue( self, v ):
-		self.value = v
 
 	def getPostTP( self ):
 		return self.postTP.pos()
@@ -385,11 +384,13 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 			pos0 = prev.pos()
 			pos1 = self.pos()
 			dx = ( pos1.x() - pos0.x() )
-			prev.postTP.setPos(   px0 * dx, py0 )
-			self.preTP .setPos( - px1 * dx, py1 )
+			prev.postTP.setPos(   px0 * dx, - py0 )
+			self.preTP .setPos( - px1 * dx, - py1 )
 
 	def itemChange( self, change, value ):		
-		if change == self.ItemPositionChange or change == self.ItemPositionHasChanged:
+		if change == self.ItemPositionChange:
+			pass
+		elif change == self.ItemPositionHasChanged:
 			if not self.updating:
 				self.updating = True
 				self.VP.setPos( self.pos() )
@@ -397,8 +398,8 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 				if self.getNextVert():
 					self.getNextVert().updateTPPos()
 				self.updateSpan()
+				self.getCurveView().notifyVertChanged( self )
 				self.updating = False
-
 		return QtGui.QGraphicsRectItem.itemChange( self, change, value )
 
 	def onTPUpdate( self, tp ):
@@ -409,14 +410,14 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 				dx = nextVert.pos().x() - self.pos().x()
 				if dx == 0:
 					(px, py) = self.postTPValue
-					self.postTPValue = ( px, pos.y() )
+					self.postTPValue = ( px, -pos.y() )
 				else:
 					( tpx, tpy ) = nextVert.preTPValue 
 					v0 = 0.0
 					v1 = (1.0 - tpx)
 					v = tp.pos().x() / dx
 					corrected = max( 0.0, min( v1, v  ) )
-					self.postTPValue = ( corrected , pos.y() )
+					self.postTPValue = ( corrected , -pos.y() )
 					if v != corrected:
 						tp.setFlag( self.ItemSendsGeometryChanges, False )
 						tp.setX( dx*corrected )
@@ -430,14 +431,14 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 				dx = prevVert.pos().x() - self.pos().x()
 				if dx == 0:
 					(px, py) = self.preTPValue
-					self.preTPValue = ( px, pos.y() )
+					self.preTPValue = ( px, -pos.y() )
 				else:
 					( tpx, tpy ) = prevVert.postTPValue 
 					v0 = 0.0
 					v1 = (1.0 - tpx)
 					v = tp.pos().x() / dx
 					corrected = max( 0.0, min( v1, v ) )
-					self.preTPValue = ( corrected , pos.y() )
+					self.preTPValue = ( corrected , -pos.y() )
 					if v != corrected:
 						tp.setFlag( self.ItemSendsGeometryChanges, False )
 						tp.setX( dx * corrected )
@@ -479,10 +480,12 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		self.spanMode = mode
 		self.updateSpan()
 
-	def setParam( self, x,y, curveMode, tanPre, tanPost ):
-		self.setPos( x,y )
+	def setParam( self, x,y, curveMode, preTPX, preTPY, postTPX, postTPY ):
+		self.setPos( x, -y )
 		self.spanMode = curveMode
 		#Todo tangent
+		self.preTPValue  = ( preTPX,  preTPY  )
+		self.postTPValue = ( postTPX, postTPY )
 		self.updateSpan()
 		self.showTP()
 
@@ -514,6 +517,7 @@ class CurveItem( QtGui.QGraphicsRectItem ):
 	def __init__( self, curveNode ):
 		super(CurveItem, self).__init__()
 		self.node = curveNode
+		self.view = None
 
 		self.zx = 1
 		self.zy = 1
@@ -531,7 +535,6 @@ class CurveItem( QtGui.QGraphicsRectItem ):
 		self.nodeToVert[ node ] = vert
 		self.sortVerts()
 		self.updateSpan()
-
 		vert.updateZoom( self.zx, self.zy )
 		return vert
 
@@ -580,19 +583,23 @@ class CurveItem( QtGui.QGraphicsRectItem ):
 	def updateSpan( self ):
 		pass
 
+	def getCurveView( self ):
+		return self.view
 
 ##----------------------------------------------------------------##
 class CurveView( GLGraphicsView ):
-	scrollXChanged = pyqtSignal( float )
-	scrollYChanged = pyqtSignal( float )
-	zoomXChanged   = pyqtSignal( float )
-	zoomYChanged   = pyqtSignal( float )
-	cursorPosXChanged = pyqtSignal( float )
-	cursorPosYChanged = pyqtSignal( float )
+	scrollXChanged     = pyqtSignal( float )
+	scrollYChanged     = pyqtSignal( float )
+	zoomXChanged       = pyqtSignal( float )
+	zoomYChanged       = pyqtSignal( float )
+	cursorPosXChanged  = pyqtSignal( float )
+	cursorPosYChanged  = pyqtSignal( float )
 
-	vertChanged        = pyqtSignal( object, float, float )
-	vertTangentChanged = pyqtSignal( object, float, float )
-	
+	vertChanged        = pyqtSignal( object, float, float ) #vertNode, x, y
+	vertCurvateChanged = pyqtSignal( object, float, float, float, float )
+	vertModeChanged    = pyqtSignal( object, int )
+	selectionChanged   = pyqtSignal()
+
 	def __init__(self, *args, **kwargs ):
 		super(CurveView, self).__init__( *args, **kwargs )
 		self.updating = False
@@ -787,6 +794,7 @@ class CurveView( GLGraphicsView ):
 
 	def addCurve( self, curveNode, **option ):
 		curve = CurveItem( curveNode )
+		curve.view = self
 		self.scene().addItem( curve )
 		self.curveItems.append( curve )
 		self.nodeToCurve[ curveNode ] = curve
@@ -819,8 +827,8 @@ class CurveView( GLGraphicsView ):
 	def refreshVert( self, vertNode, **option ):
 		vert = self.getVertByNode( vertNode )
 		if vert:
-			x, y, curveMode, tanPre, tanPost = self.getVertParam( vertNode )
-			vert.setParam( x,y, curveMode, tanPre,tanPost )
+			x, y, curveMode, preTPX, preTPY, postTPX, postTPY = self.getVertParam( vertNode )
+			vert.setParam( x,y, curveMode, preTPX, preTPY, postTPX, postTPY )
 			self.updateVertContent( vert, vertNode, **option )
 
 	def refreshCurve( self, curveNode, **option ):
@@ -853,8 +861,45 @@ class CurveView( GLGraphicsView ):
 	def updateCurveLayout( self ):
 		#TODO: zoom to fit curve value range
 		pass
+	
+	#====notify====
+	def notifyVertChanged( self, vert ):
+		( preTPX,  preTPY  ) = vert.preTPValue
+		( postTPX, postTPY ) = vert.postTPValue
+		self.vertChanged.emit( vert.node, vert.x(), -vert.y() )
+		self.vertCurvateChanged.emit( vert.node, preTPX, preTPY,	postTPX, postTPY )
 
 	#====Selection====
+	def deselectVert( self, vertNode ):
+		if not vertNode in self.selection:
+			return
+		self.selection.remove( vertNode )
+		vertItem = self.getVertByNode(vertNode)
+		vertItem.setSelected( False, False )
+
+	def selectVert( self, vertNode, additive = False ):
+		if not vertNode and not self.selection: return
+		if additive:
+			if not vertNode in self.selection:
+				self.selection.append( vertNode )
+			vertItem = self.getVertByNode(vertNode)
+			vertItem.setSelected( True, False )
+
+		else:
+			for prevKey in self.selection:				
+				vertItem = self.getVertByNode( prevKey )
+				if vertItem:
+					vertItem.setSelected( False, False )
+
+			self.selection = []
+			if vertNode:
+				self.selection.append( vertNode )
+				vertItem = self.getVertByNode( vertNode )
+				vertItem.setSelected( True, False )
+		self.keySelectionChanged.emit()
+		self.update()
+		self.onSelectionChanged( self.selection )
+
 	def initSelectionRegion( self ):
 		self.selecting = False
 		self.selectionRegion = SelectionRegionItem()
@@ -906,7 +951,7 @@ class CurveView( GLGraphicsView ):
 
 	def getVertParam( self, curveNode ):
 		#x, y, curveMode, pre-tangent, post-tangeng
-		return ( 0,0, SPAN_MODE_BEZIER, 0, 0 )
+		return ( 0, 0, SPAN_MODE_BEZIER, 0, 0, 0, 0 )
 
 	def updateCurveContent( self, curve, node, **option ):
 		pass
@@ -916,6 +961,8 @@ class CurveView( GLGraphicsView ):
 
 if __name__ == '__main__':
 	from random import random
+
+
 	# import testView
 	##----------------------------------------------------------------##
 	class TestCurve(object):
@@ -932,18 +979,19 @@ if __name__ == '__main__':
 				vert.y = (random()-0.5)*100 + off
 				self.verts.append( vert )
 
-
 	class TestCurveVert(object):
 		def __init__( self, parent ):
 			self.parentCurve = parent
 			self.x = 0
 			self.y = 1
 			self.curveMode = SPAN_MODE_BEZIER
-			self.tangentPre = 90
-			self.tangentPost = 90
+			self.preTPValue = ( 0.5, -25.0 )
+			self.postTPValue = ( 0.5, 55.0 )
 
 		def getParam( self ):
-			return ( self.x, self.y, self.curveMode, self.tangentPre, self.tangentPost )
+			( tpx0, tpy0 ) = self.preTPValue
+			( tpx1, tpy1 ) = self.postTPValue
+			return ( self.x, self.y, self.curveMode, tpx0, tpy0, tpx1, tpy1 )
 	
 	class TestCurveView( CurveView ):
 		"""docstring for TestCurveView"""
@@ -954,6 +1002,8 @@ if __name__ == '__main__':
 				curve = TestCurve()
 				curve.randomFill( i * 100 )
 				self.testCurves.append( curve )
+			
+			self.vertChanged.connect( self.onVertChanged )
 
 		def getParentCurveNode( self, vertNode ):
 			return vertNode.parentCurve
@@ -966,6 +1016,10 @@ if __name__ == '__main__':
 
 		def getVertParam( self, vertNode ):
 			return vertNode.getParam()
+
+		def onVertChanged( self, vert, x, y ):
+			print 'vert changed', vert, x, y
+
 
 	class CurveWidget( QtGui.QWidget ):
 		def __init__( self, *args, **kwargs ):

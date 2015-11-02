@@ -1,7 +1,6 @@
 from TimelineView import *
 from random import random
 from PyQt4 import QtOpenGL
-
 from time import time
 
 _keyid = 1
