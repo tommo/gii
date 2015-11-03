@@ -216,11 +216,6 @@ function AnimatorView:updateTimelineKey( key, pos, length )
 	self:markTrackDirty()
 end
 
-function AnimatorView:updateTimelineKeyMode( key, mode )
-	key:setTweenMode( mode )
-	self:markTrackDirty()
-end
-
 function AnimatorView:updateTimelineKeyCurveValue( key, value )
 	key:setCurveValue( value )
 	self:markTrackDirty()
@@ -236,7 +231,7 @@ function AnimatorView:updateTimelineMarker( marker, pos )
 	self:markTrackDirty()
 end
 
-function AnimatorView:updateKeyTweenMode( key, mode )
+function AnimatorView:updateTimelineKeyTweenMode( key, mode )
 	key:setTweenMode( mode )
 	self:markTrackDirty()
 end

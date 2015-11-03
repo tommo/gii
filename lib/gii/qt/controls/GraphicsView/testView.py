@@ -14,7 +14,7 @@ class TestKey():
 		self.pos    = ( random()*1000 + 50 ) /1000.0
 		self.track  = track
 		self.value = 100
-		self.mode = SPAN_MODE_BEZIER
+		self.mode = TWEEN_MODE_BEZIER
 		self.preTPValue = (0.5, 0 )
 		self.postTPValue = (0.5, 0 )
 
@@ -92,7 +92,7 @@ class TestTimeline( TimelineView ):
 	def getKeyParam( self, keyNode ): #pos, length, resizable
 		return keyNode.pos, keyNode.length, keyNode.isResizable()
 
-	def getKeyBezierPoint( self, keyNode ):
+	def getKeyBezierPoints( self, keyNode ):
 		( tpx0, tpy0 ) = keyNode.preTPValue  
 		( tpx1, tpy1 ) = keyNode.postTPValue 
 		return tpx0, tpy0, tpx1, tpy1

@@ -32,9 +32,9 @@ makeStyle( 'curve',             '#7f7f7f',    None             )
 
 
 ##----------------------------------------------------------------##
-SPAN_MODE_CONSTANT = 0
-SPAN_MODE_LINEAR   = 1
-SPAN_MODE_BEZIER   = 2
+TWEEN_MODE_CONSTANT = 0
+TWEEN_MODE_LINEAR   = 1
+TWEEN_MODE_BEZIER   = 2
 TANGENT_MODE_AUTO    = 0
 TANGENT_MODE_SPLIT   = 1
 TANGENT_MODE_SMOOTH  = 2
@@ -205,12 +205,12 @@ class CurveSpanItem( QtGui.QGraphicsPathItem ):
 		applyStyle( 'curve', self )
 
 	def updateShape( self ):
-		mode = self.startVert.spanMode
-		if mode == SPAN_MODE_CONSTANT:
+		mode = self.startVert.tweenMode
+		if mode == TWEEN_MODE_CONSTANT:
 			self.updateConstantCurve()
-		if mode == SPAN_MODE_LINEAR:
+		if mode == TWEEN_MODE_LINEAR:
 			self.updateLinearCurve()
-		if mode == SPAN_MODE_BEZIER:
+		if mode == TWEEN_MODE_BEZIER:
 			self.updateBezierCurve()
 
 	def updateLinearCurve( self ):
@@ -343,7 +343,7 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		self.setFlag( self.ItemSendsGeometryChanges, True )
 		self.updating = False
 
-		self.spanMode = SPAN_MODE_LINEAR
+		self.tweenMode = TWEEN_MODE_LINEAR
 
 		#components
 		self.VP     = CurveVertPointItem( self )
@@ -353,6 +353,7 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 
 		self.preBP.parentVert  = self
 		self.postBP.parentVert = self
+		self.VP.parentVert     = self
 
 		self.preBP.hide()
 		self.postBP.hide()
@@ -480,13 +481,19 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		if self.postBP.isVisible():
 			painter.drawLine( p0, self.postBP.pos() )
 
-	def setSpanMode( self, mode ):
-		self.spanMode = mode
-		self.updateSpan()
+	def setTweenMode( self, mode ):
+		if not self.updating:
+			self.updating = True
+			if mode < 0 or mode > TWEEN_MODE_BEZIER:
+				mode = 0
+			self.tweenMode = mode
+			self.updateSpan()
+			self.getCurveView().notifyVertTweenModeChanged( self, mode )
+			self.updating = False
 
-	def setParam( self, x,y, curveMode, preBPX, preBPY, postBPX, postBPY ):
+	def setParam( self, x,y, tweenMode, preBPX, preBPY, postBPX, postBPY ):
 		self.setPos( x * _PIXEL_PER_UNIT, -y )
-		self.spanMode = curveMode
+		self.tweenMode = tweenMode
 		#Todo tangent
 		self.preBezierPoint  = ( preBPX,  preBPY  )
 		self.postBezierPoint = ( postBPX, postBPY )
@@ -611,17 +618,22 @@ class CurveView( GLGraphicsView ):
 
 	vertChanged        = pyqtSignal( object, float, float ) #vertNode, x, y
 	vertBezierPointChanged = pyqtSignal( object, float, float, float, float )
-	vertModeChanged    = pyqtSignal( object, int )
+	vertTweenModeChanged = pyqtSignal( object, int )
 	selectionChanged   = pyqtSignal()
 
 	def __init__(self, *args, **kwargs ):
 		super(CurveView, self).__init__( *args, **kwargs )
 		self.updating = False
-		self.setScene( GLGraphicsScene() )
+		self.updatingSelection = False
+		scene = GLGraphicsScene()
+		self.setScene( scene )
+		
 		self.setBackgroundBrush( _DEFAULT_BG )
 		self.gridBackground = AxisGridBackground()
-		self.scene().addItem( self.gridBackground )
-		self.scene().sceneRectChanged.connect( self.onRectChanged )
+		scene.addItem( self.gridBackground )
+		scene.sceneRectChanged.connect( self.onRectChanged )
+
+		scene.selectionChanged.connect( self.notifySceneItemSelectionChanged )
 		
 		self.curveItems = []
 		self.nodeToCurve = {}
@@ -839,11 +851,16 @@ class CurveView( GLGraphicsView ):
 		if vertNode in self.selection:
 			self.selection.remove( vertNode )
 
+	def setVertTweenMode( self, vertNode, mode ):
+		vertItem = self.getVertByNode( vertNode )
+		if not vertItem: return
+		vertItem.setTweenMode( mode )		
+
 	def refreshVert( self, vertNode, **option ):
 		vert = self.getVertByNode( vertNode )
 		if vert:
-			x, y, curveMode, preBPX, preBPY, postBPX, postBPY = self.getVertParam( vertNode )
-			vert.setParam( x,y, curveMode, preBPX, preBPY, postBPX, postBPY )
+			x, y, tweenMode, preBPX, preBPY, postBPX, postBPY = self.getVertParam( vertNode )
+			vert.setParam( x,y, tweenMode, preBPX, preBPY, postBPX, postBPY )
 			self.updateVertContent( vert, vertNode, **option )
 
 	def refreshCurve( self, curveNode, **option ):
@@ -888,75 +905,30 @@ class CurveView( GLGraphicsView ):
 			( postBPX, postBPY ) = vert.postBezierPoint
 			self.vertBezierPointChanged.emit( vert.node, preBPX, preBPY,	postBPX, postBPY )
 
-	#====Selection====
-	def deselectVert( self, vertNode ):
-		if not vertNode in self.selection:
-			return
-		self.selection.remove( vertNode )
-		vertItem = self.getVertByNode(vertNode)
-		vertItem.setSelected( False, False )
+	def notifyVertTweenModeChanged( self, vert, newMode ):
+		if self.rebuilding: return
+		self.vertTweenModeChanged.emit( vert.node, newMode )
 
-	def selectVert( self, vertNode, additive = False ):
-		if not vertNode and not self.selection: return
-		if additive:
-			if not vertNode in self.selection:
-				self.selection.append( vertNode )
-			vertItem = self.getVertByNode(vertNode)
-			vertItem.setSelected( True, False )
-
-		else:
-			for prevKey in self.selection:				
-				vertItem = self.getVertByNode( prevKey )
-				if vertItem:
-					vertItem.setSelected( False, False )
-
-			self.selection = []
-			if vertNode:
-				self.selection.append( vertNode )
-				vertItem = self.getVertByNode( vertNode )
-				vertItem.setSelected( True, False )
-		self.keySelectionChanged.emit()
-		self.update()
-		self.onSelectionChanged( self.selection )
-
-	def initSelectionRegion( self ):
-		self.selecting = False
-		self.selectionRegion = SelectionRegionItem()
-		self.selectionRegion.setZValue( 9999 )
-		self.selectionRegion.setVisible( False )
-		self.scene().addItem( self.selectionRegion )
-
-	def startSelectionRegion( self, pos ):
-		self.selecting = True
-		self.selectionRegion.setPos( pos )
-		self.selectionRegion.setRect( 0,0,0,0 )
-		self.selectionRegion.setVisible( True )
-		self.resizeSelectionRegion( pos )
-
-	def resizeSelectionRegion( self, pos1 ):
-		pos = self.selectionRegion.pos()
-		w, h = pos1.x()-pos.x(), pos1.y()-pos.y()
-		self.selectionRegion.setRect( 0,0, w, h )
-		itemsInRegion = self.scene().items( pos.x(), pos.y(), w, h )
-		for item in self.selectingItems:
-			item.setSelected( False, False )
-
-		self.selectingItems = []
-		for item in itemsInRegion:
-			if isinstance( item, TimelineVertItem ):
-				self.selectingItems.append( item )
-				item.setSelected( True, False )
-
-	def stopSelectionRegion( self ):
-		self.selectionRegion.setRect( 0,0,0,0 )
-		self.selectionRegion.setVisible( False )
+	# #====Selection====
+	def getSelection( self ):
 		selection = []
-		for key in self.selectingItems:
-			selection.append( key.node )
+		for item in self.scene().selectedItems():
+			if isinstance( item, CurveVertPointItem ):
+				selection.append( item.parentVert.node )
+		return selection
 
-	def applySelection( self, selection ):
-		pass
-		# self.timelineView.updateSelection( selection )
+	def setSelection( self, selection ):
+		self.updatingSelection = True
+		for node in selection:
+			item = self.getVertByNode( node )
+			if item:
+				item.setSelected( True )
+		self.updatingSelection = False
+		self.notifySceneItemSelectionChanged()
+
+	def notifySceneItemSelectionChanged( self ):
+		if self.updatingSelection: return
+		self.selectionChanged.emit()
 
 	def getSortedVertNodes( self, curveNode ):
 		def _sortVertEntry( m1, m2 ):
@@ -989,8 +961,8 @@ class CurveView( GLGraphicsView ):
 		return []
 
 	def getVertPara_sort( self, curveNode ):
-		#x, y, curveMode, pre-tangent, post-tangeng
-		return ( 0, 0, SPAN_MODE_BEZIER, 0, 0, 0, 0 )
+		#x, y, tweenMode, pre-tangent, post-tangeng
+		return ( 0, 0, TWEEN_MODE_BEZIER, 0, 0, 0, 0 )
 
 	def updateCurveContent( self, curve, node, **option ):
 		pass
@@ -1023,14 +995,14 @@ if __name__ == '__main__':
 			self.parentCurve = parent
 			self.x = 0
 			self.y = 1
-			self.curveMode = SPAN_MODE_BEZIER
+			self.tweenMode = TWEEN_MODE_BEZIER
 			self.preBezierPoint = ( 0.5, -25.0 )
 			self.postBezierPoint = ( 0.5, 55.0 )
 
 		def getParam( self ):
 			( bpx0, bpy0 ) = self.preBezierPoint
 			( bpx1, bpy1 ) = self.postBezierPoint
-			return ( self.x, self.y, self.curveMode, bpx0, bpy0, bpx1, bpy1 )
+			return ( self.x, self.y, self.tweenMode, bpx0, bpy0, bpx1, bpy1 )
 	
 	class TestCurveView( CurveView ):
 		"""docstring for TestCurveView"""
@@ -1042,6 +1014,7 @@ if __name__ == '__main__':
 				curve.randomFill( i * 100 )
 				self.testCurves.append( curve )
 			self.vertChanged.connect( self.onVertChanged )
+			self.selectionChanged.connect( self.noSelectionChanged )
 
 		def getParentCurveNode( self, vertNode ):
 			return vertNode.parentCurve
@@ -1057,6 +1030,9 @@ if __name__ == '__main__':
 
 		def onVertChanged( self, vert, x, y ):
 			print 'vert changed', vert, x, y
+
+		def noSelectionChanged( self ):
+			print self.getSelection()
 
 
 	class CurveWidget( QtGui.QWidget ):

@@ -413,32 +413,7 @@ class AnimatorView( SceneEditorModule ):
 			self.stopPreview( True )
 		elif name == 'toggle_repeat':
 			self.delegate.callMethod( 'view', 'togglePreviewRepeat', tool.getValue() )
-
-	def onTimelineEditTool( self, toolName ):
-		if toolName == 'add_key':
-			self.addKeyForSelectedTracks()
-
-		elif toolName == 'remove_key':
-			self.removeSelectedKeys()
-
-		elif toolName == 'clone_key':
-			self.cloneSelectedKeys()
-
-		elif toolName == 'add_marker':
-			self.addMarker()
-
-		elif toolName == 'curve_mode_linear':
-			pass
-
-		elif toolName == 'curve_mode_constant':
-			pass
-
-		elif toolName == 'curve_mode_bezier':
-			pass
-
-		elif toolName == 'curve_mode_bezier_s':
-			pass
-
+			
 
 	def getActiveSceneView( self ):
 		return self.getModule( 'scene_view' )

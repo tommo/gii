@@ -374,23 +374,24 @@ class AnimatorTimelineWidget( TimelineView ):
 		value = keyNode.getCurveValue( keyNode )
 		return value
 
-	def getKeyCurveMode( self, keyNode ):
-		mode = keyNode.getCurveMode( keyNode )
+	def getKeyTweenMode( self, keyNode ):
+		mode = keyNode.getTweenMode( keyNode )
 		if mode == 0:
-			return SPAN_MODE_LINEAR
+			return TWEEN_MODE_LINEAR
 		elif mode == 1:
-			return SPAN_MODE_CONSTANT
+			return TWEEN_MODE_CONSTANT
 		elif mode == 2:
-			return SPAN_MODE_BEZIER
+			return TWEEN_MODE_BEZIER
 		else:
-			return SPAN_MODE_LINEAR
+			return TWEEN_MODE_LINEAR
 
 	def isCurveTrack( self, trackNode ):
 		return trackNode.isCurveTrack( trackNode )
 
 	def getKeyBezierPoints( self, keyNode ):
-		return keyNode.getBezierPoints( keyNode )
-
+		( bpx0, bpy0, bpx1, bpy1 ) = keyNode.getBezierPoints( keyNode )
+		return ( bpx0, bpy0, bpx1, bpy1 )
+		
 	def onSelectionChanged( self, selection ):
 		if selection:
 			self.parentView.setPropertyTarget( selection[0] )
@@ -418,7 +419,19 @@ class AnimatorTimelineWidget( TimelineView ):
 			return TimelineTrackItem()
 
 	def onEditTool( self, toolName ):
-		self.owner.onTimelineEditTool( toolName )	
+		if toolName == 'add_key':
+			self.owner.addKeyForSelectedTracks()
+
+		elif toolName == 'remove_key':
+			self.owner.removeSelectedKeys()
+
+		elif toolName == 'clone_key':
+			self.owner.cloneSelectedKeys()
+
+		elif toolName == 'add_marker':
+			self.owner.addMarker()
+			
+		super( AnimatorTimelineWidget, self ).onEditTool( toolName )
 
 	def onTrackClicked( self, track, pos ):
 		trackNode = track.node
@@ -641,12 +654,12 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 	def onKeyBezierPointChanged( self, key, bpx0, bpy0, bpx1, bpy1 ):
 		self.owner.onTimelineKeyBezierPointChanged( key, bpx0, bpy0, bpx1, bpy1 )
 
-	def onKeyTweenModeChanged( self, mode ):
-		if mode == SPAN_MODE_LINEAR:
+	def onKeyTweenModeChanged( self, key, mode ):
+		if mode == TWEEN_MODE_LINEAR:
 			mode = 0
-		elif mode == SPAN_MODE_CONSTANT:
+		elif mode == TWEEN_MODE_CONSTANT:
 			mode = 1
-		elif mode == SPAN_MODE_BEZIER:
+		elif mode == TWEEN_MODE_BEZIER:
 			mode = 2
 		else:
 			mode = 0

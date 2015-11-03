@@ -13,9 +13,9 @@ import time
 from GraphicsViewHelper import *
 from CurveView import CurveView
 from CurveView import \
-	SPAN_MODE_CONSTANT,\
-	SPAN_MODE_LINEAR,\
-	SPAN_MODE_BEZIER,\
+	TWEEN_MODE_CONSTANT,\
+	TWEEN_MODE_LINEAR,\
+	TWEEN_MODE_BEZIER,\
 	TANGENT_MODE_AUTO,\
 	TANGENT_MODE_SPLIT,\
 	TANGENT_MODE_SMOOTH
@@ -1149,7 +1149,7 @@ class TimelineCurveView( CurveView ):
 		self.timelineView = None
 		self.vertChanged.connect( self.onVertChanged )
 		self.vertBezierPointChanged.connect( self.onVertBezierPointChanged )
-		self.vertModeChanged.connect( self.onVertModeChanged )
+		self.vertTweenModeChanged.connect( self.onVertTweenModeChanged )
 
 	def getTimelineView( self ):
 		return self.timelineView
@@ -1171,8 +1171,8 @@ class TimelineCurveView( CurveView ):
 		self.timelineView.notifyKeyCurveValueChanged( vertNode, y )
 		self.timelineView.refreshKey( vertNode )
 
-	def onVertModeChanged( self, vertNode, mode ):
-		self.timelineView.notifyKeyModeChanged( vertNode, mode )
+	def onVertTweenModeChanged( self, vertNode, mode ):
+		self.timelineView.notifyKeyTweenModeChanged( vertNode, mode )
 
 	def onVertBezierPointChanged( self, vertNode, bpx0, bpy0, bpx1, bpy1 ):
 		self.timelineView.notifyKeyBezierPointChanged( vertNode, bpx0, bpy0, bpx1, bpy1 )
@@ -1309,7 +1309,7 @@ class TimelineView( QtGui.QWidget ):
 		self.toolbuttonCurveModeBezierS  = self.addEditToolButton(
 			'curve_mode_bezier_s', 'b', 'Splitted Besizer Interpolation Mode'
 			)
-	
+		
 		#init
 		self.setScrollPos( 0 )
 		self.setCursorPos( 0 )
@@ -1329,9 +1329,18 @@ class TimelineView( QtGui.QWidget ):
 		self.ui.containerContents.setCurrentIndex( idx )
 		if idx == 1:
 			self.activeView = 'curve'
+			self.toolbuttonCurveModeLinear.setEnabled( True )
+			self.toolbuttonCurveModeConstant.setEnabled( True )
+			self.toolbuttonCurveModeBezier.setEnabled( True )
+			self.toolbuttonCurveModeBezierS.setEnabled( True )
 			self.curveView.rebuild()
 		else:
 			self.activeView = 'dopesheet'
+			self.toolbuttonCurveModeLinear.setEnabled( False )
+			self.toolbuttonCurveModeConstant.setEnabled( False )
+			self.toolbuttonCurveModeBezier.setEnabled( False )
+			self.toolbuttonCurveModeBezierS.setEnabled( False )
+
 
 	def getCurrentEditMode( self ):
 		if self.ui.containerContents.currentIndex() == 0:
@@ -1583,7 +1592,7 @@ class TimelineView( QtGui.QWidget ):
 	def notifyKeyBezierPointChanged( self, keyNode, bpx0, bpy0, bpx1, bpy1):
 		self.keyBezierPointChanged.emit( keyNode, bpx0, bpy0, bpx1, bpy1 )
 
-	def notifyKeyModeChanged( self, keyNode, mode ):
+	def notifyKeyTweenModeChanged( self, keyNode, mode ):
 		self.keyTweenModeChanged.emit( keyNode, mode )
 
 	def notifyKeyCurveValueChanged( self, keyNode, value ):
@@ -1696,10 +1705,10 @@ class TimelineView( QtGui.QWidget ):
 		return nodes
 
 	def getCurveVertParam( self, vertNode ):
-		mode = self.getKeyMode( vertNode )
+		mode = self.getKeyTweenMode( vertNode )
 		( pos, length, resizable ) = self.getKeyParam( vertNode )
 		value = self.getKeyCurveValue( vertNode )
-		( preBPX, preBPY, postBPX, postBPY ) = self.getKeyBezierPoint( vertNode )
+		( preBPX, preBPY, postBPX, postBPY ) = self.getKeyBezierPoints( vertNode )
 		return ( pos, value, mode, preBPX, preBPY, postBPX, postBPY )
 
 	#####
@@ -1744,11 +1753,11 @@ class TimelineView( QtGui.QWidget ):
 	def getKeyCurveValue( self, keyNode ):
 		return 0
 
-	def getKeyBezierPoint( self, keyNode ):
+	def getKeyBezierPoints( self, keyNode ):
 		return ( 0.5, 0.0, 0.5, 0.0 )
 
-	def getKeyMode( self, keyNode ):
-		return SPAN_MODE_LINEAR
+	def getKeyTweenMode( self, keyNode ):
+		return TWEEN_MODE_LINEAR
 
 	def getMarkerParam( self, markerNode ):
 		return 0
@@ -1798,8 +1807,25 @@ class TimelineView( QtGui.QWidget ):
 		self.rulerView.setCursorVisible( enabled )
 		self.curveView.setCursorVisible( enabled )
 
+	def changeSelectionTweenMode( self, mode ):
+		if self.activeView != 'curve' : return
+		for key in self.curveView.getSelection():
+			self.curveView.setVertTweenMode( key, mode )
+
 	def onEditTool( self, toolName ):
-		pass
+		if toolName == 'curve_mode_linear':
+			self.changeSelectionTweenMode( TWEEN_MODE_LINEAR )
+
+		elif toolName == 'curve_mode_constant':
+			self.changeSelectionTweenMode( TWEEN_MODE_CONSTANT )
+
+		elif toolName == 'curve_mode_bezier':
+			self.changeSelectionTweenMode( TWEEN_MODE_BEZIER )
+			#TODO
+
+		elif toolName == 'curve_mode_bezier_s':
+			self.changeSelectionTweenMode( TWEEN_MODE_BEZIER )
+			#TODO
 
 	# def closeEvent( self, ev ):
 	# 	self.trackView.deleteLater()
