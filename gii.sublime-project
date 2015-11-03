@@ -5,7 +5,8 @@
 			"cmd":
 			[
 				"gii",
-				"ide"
+				"ide",
+				"--stop-other-instance"
 			],
 			"name": "IDE",
 			"target": "exec_in_window",

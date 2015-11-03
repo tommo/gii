@@ -370,6 +370,27 @@ class AnimatorTimelineWidget( TimelineView ):
 		length    = resizable and keyNode.length or 0
 		return keyNode.getPos( keyNode ), length, resizable
 
+	def getKeyCurveValue( self, keyNode ):
+		value = keyNode.getCurveValue( keyNode )
+		return value
+
+	def getKeyCurveMode( self, keyNode ):
+		mode = keyNode.getCurveMode( keyNode )
+		if mode == 0:
+			return SPAN_MODE_LINEAR
+		elif mode == 1:
+			return SPAN_MODE_CONSTANT
+		elif mode == 2:
+			return SPAN_MODE_BEZIER
+		else:
+			return SPAN_MODE_LINEAR
+
+	def isCurveTrack( self, trackNode ):
+		return trackNode.isCurveTrack( trackNode )
+
+	def getKeyBezierPoints( self, keyNode ):
+		return keyNode.getBezierPoints( keyNode )
+
 	def onSelectionChanged( self, selection ):
 		if selection:
 			self.parentView.setPropertyTarget( selection[0] )
@@ -511,8 +532,12 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.timeline.owner = owner
 
 		#signals
-		self.timeline.keyChanged.connect( self.onKeyChanged )
 		self.timeline.markerChanged.connect( self.onMarkerChanged )
+		self.timeline.keyChanged.connect( self.onKeyChanged )
+		self.timeline.keyCurveValueChanged.connect( self.onKeyCurveValueChanged )
+		self.timeline.keyBezierPointChanged.connect( self.onKeyBezierPointChanged )
+		self.timeline.keyTweenModeChanged.connect( self.onKeyTweenModeChanged )
+
 
 	def rebuild( self ):
 		self.treeTracks.rebuild()
@@ -609,6 +634,23 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 	def onKeyChanged( self, key, pos, length ):
 		self.propertyEditor.refreshFor( key )
 		self.owner.onTimelineKeyChanged( key, pos, length )
+
+	def onKeyCurveValueChanged( self, key, value ):
+		self.owner.onTimelineKeyCurveValueChanged( key, value )
+
+	def onKeyBezierPointChanged( self, key, bpx0, bpy0, bpx1, bpy1 ):
+		self.owner.onTimelineKeyBezierPointChanged( key, bpx0, bpy0, bpx1, bpy1 )
+
+	def onKeyTweenModeChanged( self, mode ):
+		if mode == SPAN_MODE_LINEAR:
+			mode = 0
+		elif mode == SPAN_MODE_CONSTANT:
+			mode = 1
+		elif mode == SPAN_MODE_BEZIER:
+			mode = 2
+		else:
+			mode = 0
+		self.owner.onTimelineKeyTweenModeChanged( key, mode )
 
 	def onKeyRemoving( self, key ):
 		return self.owner.onKeyRemoving( key )

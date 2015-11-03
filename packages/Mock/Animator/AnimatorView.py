@@ -345,6 +345,15 @@ class AnimatorView( SceneEditorModule ):
 	def onTimelineKeyChanged( self, key, pos, length ):
 		self.delegate.callMethod( 'view', 'updateTimelineKey', key, pos, length )
 
+	def onTimelineKeyCurveValueChanged( self, key, value ):
+		self.delegate.callMethod( 'view', 'updateTimelineKeyCurveValue', key, value )
+
+	def onTimelineKeyTweenModeChanged( self, key, mode ):
+		self.delegate.callMethod( 'view', 'updateTimelineKeyTweenMode', key, mode )
+
+	def onTimelineKeyBezierPointChanged( self, key, bpx0, bpy0, bpx1, bpy1 ):
+		self.delegate.callMethod( 'view', 'updateTimelineKeyBezierPoint', key, bpx0, bpy0, bpx1, bpy1 )
+
 	def onTimelineMarkerChanged( self, marker, pos ):
 		self.delegate.callMethod( 'view', 'updateTimelineMarker', marker, pos )
 
@@ -353,9 +362,6 @@ class AnimatorView( SceneEditorModule ):
 
 	def renameClip( self, clip, name ):
 		self.delegate.callMethod( 'view', 'renameClip', clip, name )
-
-	def onCurveKeyChanged( self, key ):
-		pass
 
 	def onTool( self, tool ):
 		name = tool.name

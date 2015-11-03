@@ -1,3 +1,7 @@
+import sip
+sip.setapi("QString", 2)
+sip.setapi('QVariant', 2)
+
 from PyQt4 import QtGui, QtCore, QtOpenGL, uic
 from PyQt4.QtCore import Qt, QObject, QEvent, pyqtSignal
 from PyQt4.QtCore import QPoint, QRect, QSize
@@ -1144,7 +1148,7 @@ class TimelineCurveView( CurveView ):
 		super( TimelineCurveView, self ).__init__( *args, **kwargs )
 		self.timelineView = None
 		self.vertChanged.connect( self.onVertChanged )
-		self.vertCurvateChanged.connect( self.onVertCurvateChanged )
+		self.vertBezierPointChanged.connect( self.onVertBezierPointChanged )
 		self.vertModeChanged.connect( self.onVertModeChanged )
 
 	def getTimelineView( self ):
@@ -1170,8 +1174,8 @@ class TimelineCurveView( CurveView ):
 	def onVertModeChanged( self, vertNode, mode ):
 		self.timelineView.notifyKeyModeChanged( vertNode, mode )
 
-	def onVertCurvateChanged( self, vertNode, tpx0, tpy0, tpx1, tpy1 ):
-		self.timelineView.notifyKeyCurvateChanged( vertNode, tpx0, tpy0, tpx1, tpy1 )
+	def onVertBezierPointChanged( self, vertNode, bpx0, bpy0, bpx1, bpy1 ):
+		self.timelineView.notifyKeyBezierPointChanged( vertNode, bpx0, bpy0, bpx1, bpy1 )
 
 ##----------------------------------------------------------------##	
 class TimelineView( QtGui.QWidget ):
@@ -1181,8 +1185,8 @@ class TimelineView( QtGui.QWidget ):
 	markerChanged          = pyqtSignal( object, float )
 	keyChanged             = pyqtSignal( object, float, float )
 	keyCurveValueChanged   = pyqtSignal( object, float )
-	keyModeChanged         = pyqtSignal( object, int )
-	keyCurvateChanged      = pyqtSignal( object, float, float, float, float )
+	keyTweenModeChanged    = pyqtSignal( object, int )
+	keyBezierPointChanged  = pyqtSignal( object, float, float, float, float )
 	cursorPosChanged       = pyqtSignal( float )
 	zoomChanged            = pyqtSignal( float )
 
@@ -1192,6 +1196,7 @@ class TimelineView( QtGui.QWidget ):
 		self.rebuilding   = False
 		self.updating     = False
 		self.shiftMode    = False
+		self.activeView = 'dopesheet'
 
 		self.selection       = []
 		self.trackSelection  = []
@@ -1323,7 +1328,10 @@ class TimelineView( QtGui.QWidget ):
 	def onTabChanged( self, idx ):
 		self.ui.containerContents.setCurrentIndex( idx )
 		if idx == 1:
+			self.activeView = 'curve'
 			self.curveView.rebuild()
+		else:
+			self.activeView = 'dopesheet'
 
 	def getCurrentEditMode( self ):
 		if self.ui.containerContents.currentIndex() == 0:
@@ -1510,6 +1518,8 @@ class TimelineView( QtGui.QWidget ):
 				trackItem = self.getTrackByNode( trackNode )
 				trackItem.setSelected( True )
 		self.trackSelection = tracks
+		if self.activeView == 'curve':
+			self.curveView.rebuild()
 
 	def getTrackSelection( self ):
 		return self.trackSelection
@@ -1570,11 +1580,11 @@ class TimelineView( QtGui.QWidget ):
 		if track:
 			self.updateTrackContent( track, trackNode, **option )
 
-	def notifyKeyCurvateChanged( self, keyNode, tpx0, tpy0, tpx1, tpy1):
-		self.keyCurvateChanged.emit( keyNode, tpx0, tpy0, tpx1, tpy1 )
+	def notifyKeyBezierPointChanged( self, keyNode, bpx0, bpy0, bpx1, bpy1):
+		self.keyBezierPointChanged.emit( keyNode, bpx0, bpy0, bpx1, bpy1 )
 
 	def notifyKeyModeChanged( self, keyNode, mode ):
-		self.keyModeChanged.emit( keyNode, mode )
+		self.keyTweenModeChanged.emit( keyNode, mode )
 
 	def notifyKeyCurveValueChanged( self, keyNode, value ):
 		self.keyCurveValueChanged.emit( keyNode, value )
@@ -1689,8 +1699,8 @@ class TimelineView( QtGui.QWidget ):
 		mode = self.getKeyMode( vertNode )
 		( pos, length, resizable ) = self.getKeyParam( vertNode )
 		value = self.getKeyCurveValue( vertNode )
-		( preTPX, preTPY, postTPX, postTPY ) = self.getKeyCurvate( vertNode )
-		return ( pos, value, mode, preTPX, preTPY, postTPX, postTPY )
+		( preBPX, preBPY, postBPX, postBPY ) = self.getKeyBezierPoint( vertNode )
+		return ( pos, value, mode, preBPX, preBPY, postBPX, postBPY )
 
 	#####
 	#VIRUTAL data model functions
@@ -1734,7 +1744,7 @@ class TimelineView( QtGui.QWidget ):
 	def getKeyCurveValue( self, keyNode ):
 		return 0
 
-	def getKeyCurvate( self, keyNode ):
+	def getKeyBezierPoint( self, keyNode ):
 		return ( 0.5, 0.0, 0.5, 0.0 )
 
 	def getKeyMode( self, keyNode ):

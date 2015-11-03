@@ -216,15 +216,29 @@ function AnimatorView:updateTimelineKey( key, pos, length )
 	self:markTrackDirty()
 end
 
+function AnimatorView:updateTimelineKeyMode( key, mode )
+	key:setTweenMode( mode )
+	self:markTrackDirty()
+end
+
+function AnimatorView:updateTimelineKeyCurveValue( key, value )
+	key:setCurveValue( value )
+	self:markTrackDirty()
+end
+
+function AnimatorView:updateTimelineKeyBezierPoint( key, bpx0, bpy0, bpx1, bpy1 )
+	key:setBezierPoints( bpx0, bpy0, bpx1, bpy1 )
+	self:markTrackDirty()
+end
+
 function AnimatorView:updateTimelineMarker( marker, pos )
 	marker:setPos( pos )
 	self:markTrackDirty()
 end
 
-function AnimatorView:updateKeyCurveMode( key, mode )
-end
-
-function AnimatorView:updateKeyCurvate( key, c1, c2 )
+function AnimatorView:updateKeyTweenMode( key, mode )
+	key:setTweenMode( mode )
+	self:markTrackDirty()
 end
 
 function AnimatorView:startPreview( t )

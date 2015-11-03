@@ -92,7 +92,7 @@ class TestTimeline( TimelineView ):
 	def getKeyParam( self, keyNode ): #pos, length, resizable
 		return keyNode.pos, keyNode.length, keyNode.isResizable()
 
-	def getKeyCurvate( self, keyNode ):
+	def getKeyBezierPoint( self, keyNode ):
 		( tpx0, tpy0 ) = keyNode.preTPValue  
 		( tpx1, tpy1 ) = keyNode.postTPValue 
 		return tpx0, tpy0, tpx1, tpy1
@@ -150,7 +150,7 @@ class TestFrame( QtGui.QFrame ):
 		mitem.setTimePos( 2.3 )
 
 		timeline.keyChanged.connect( self.onKeyChanged )
-		timeline.keyCurvateChanged.connect( self.onKeyCurvateChanged )
+		timeline.keyBezierPointChanged.connect( self.onKeyBezierPointChanged )
 		timeline.keyCurveValueChanged.connect( self.onKeyCurveValueChanged )
 		timeline.markerChanged.connect( self.onMarkerChanged )
 		self.timer = QtCore.QTimer( self )
@@ -166,7 +166,7 @@ class TestFrame( QtGui.QFrame ):
 	def onKeyCurveValueChanged( self, key, value ):
 		key.value = value
 
-	def onKeyCurvateChanged( self, key, tpx0, tpy0, tpx1, tpy1 ):
+	def onKeyBezierPointChanged( self, key, tpx0, tpy0, tpx1, tpy1 ):
 		key.preTPValue  = ( tpx0, tpy0 )
 		key.postTPValue = ( tpx1, tpy1 )
 
