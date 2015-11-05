@@ -24,10 +24,10 @@ _HEAD_OFFSET = 15
 
 ##----------------------------------------------------------------##
 _DEFAULT_BG = makeBrush( color = '#222' )
-makeStyle( 'cv',                '#acbcff',    '#4d9fff'              )
-makeStyle( 'cv:selected',       '#ffffff',    '#000000'              )
-makeStyle( 'bp',                dict( color = '#b940d6', alpha=0.5 ),    '#b940d6'    )
-makeStyle( 'bp:selected',       dict( color = '#ffffff', alpha=1.0 ),    '#000000'    )
+makeStyle( 'cv',                '#acbcff',    '#000000'              )
+makeStyle( 'cv:selected',       '#ffffff',    '#4d9fff'              )
+makeStyle( 'bp',                dict( color = '#b940d6', alpha=0.5 ),    '#000000'    )
+makeStyle( 'bp:selected',       dict( color = '#ffffff', alpha=1.0 ),    '#b940d6'    )
 makeStyle( 'curve',             '#7f7f7f',    None             )
 
 
@@ -460,6 +460,16 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		return self.parentCurve.getNextVert( self )
 
 	def updateSpan( self, updateNeighbor = True ):
+		nextVert = self.getNextVert()
+		if self.tweenMode == TWEEN_MODE_BEZIER:
+			self.postBP.show()
+			if nextVert:
+				nextVert.preBP.show()
+		else:
+			self.postBP.hide()
+			if nextVert:
+				nextVert.preBP.hide()
+
 		if updateNeighbor:
 			prevVert = self.getPrevVert()
 			if prevVert:
@@ -498,9 +508,8 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 		self.preBezierPoint  = ( preBPX,  preBPY  )
 		self.postBezierPoint = ( postBPX, postBPY )
 		self.updateSpan()
-		self.showTP()
 
-	def showTP( self ):
+	def showBP( self ):
 		self.preBP.show()
 		self.postBP.show()
 		prev = self.getPrevVert()
