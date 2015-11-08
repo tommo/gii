@@ -45,7 +45,7 @@ class GraphNodeViewScene( GLGraphicsScene ):
 
 	def tryStartConnection( self, port ):
 		targetPort = self.dummyPort
-		conn = GraphNodeLineConnectionItem( port, targetPort )
+		conn = GraphNodeCurveConnectionItem( port, targetPort )
 		if port.dir == -1:
 			targetPort.dir = 1
 		else:

@@ -89,7 +89,8 @@ class EditorApp(object):
 		excludePackages = self.getProject().getConfig( 'excluded_packages' )
 		self.packageManager.addExcludedPackage( excludePackages )
 
-		self.packageManager.scanPackages( self.getPath( _GII_BUILTIN_PACKAGES_PATH ) )
+		if not self.packageManager.scanPackages( self.getPath( _GII_BUILTIN_PACKAGES_PATH ) ):
+			return False
 
 		if self.getProject().isLoaded():
 			self.packageManager.scanPackages( self.getProject().envPackagePath )

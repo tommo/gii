@@ -136,7 +136,7 @@ class GraphNodeHeaderItem( QtGui.QGraphicsRectItem, GraphNodeItemBase ):
 	_brush = makeBrush( color = '#444' )
 	def __init__( self ):
 		super( GraphNodeHeaderItem, self ).__init__()
-		self.headerText = u'Dialogue'
+		self.headerText = u':: Dialogue'
 		self.headerHeight = 20
 		self.setCursor( Qt.PointingHandCursor )
 
@@ -167,7 +167,7 @@ class GraphNodeHeaderItem( QtGui.QGraphicsRectItem, GraphNodeItemBase ):
 _GraphNodeZValue = 10
 class GraphNodeItem( QtGui.QGraphicsRectItem ):
 	_pen = QtGui.QPen( QColor( '#a4a4a4' ) )
-	_brush = makeBrush( color = '#676767', alpha = 0.98 )
+	_brush = makeBrush( color = '#676767', alpha = 0.8 )
 	def __init__( self ):
 		super( GraphNodeItem, self ).__init__()
 		self.inPortDict = {}
@@ -226,7 +226,7 @@ class GraphNodeItem( QtGui.QGraphicsRectItem ):
 			port = GraphNodePortItem()
 			self.addInPort( 'p%d'%i, port )
 		#output
-		for i in range( 1 ):
+		for i in range( 3 ):
 			port = GraphNodePortItem()
 			self.addOutPort( 'p%d'%i, port )
 
@@ -236,10 +236,10 @@ class GraphNodeItem( QtGui.QGraphicsRectItem ):
 		rowSize = 20
 		headerSize = 20
 		headerMargin = 5
-		contentSize = 50
+		contentSize = 18
 		footerMargin = 5
 		minHeight = 20
-		nodeWidth = 300
+		nodeWidth = 180
 		totalHeight = max( row * rowSize, minHeight ) + headerMargin + contentSize + headerSize + footerMargin
 		y0 = headerMargin + contentSize + headerSize
 		self.setRect( 0,0, nodeWidth, totalHeight )

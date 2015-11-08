@@ -238,8 +238,8 @@ class GLGraphicsView( QtGui.QGraphicsView ):
 
 ##----------------------------------------------------------------##
 class GridBackground( QtGui.QGraphicsRectItem ):
-	_gridPenV  = makePen( color = '#333', width = 1 )
-	_gridPenH  = makePen( color = '#333', width = 1 )
+	_gridPenV  = makePen( color = '#222', width = 1 )
+	_gridPenH  = makePen( color = '#222', width = 1 )
 	_cursorPen  = makePen( color = '#a3ff00', width = 1 )
 	def __init__( self ):
 		super( GridBackground, self ).__init__()
