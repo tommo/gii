@@ -106,6 +106,7 @@ class PropertyEditor( QtGui.QFrame ):
 		self.refreshing = False
 		self.context    = None
 		self.model      = False
+		self.readonly   = False
 		self.clear()
 		
 	def addFieldEditor( self, field ):
@@ -115,7 +116,6 @@ class PropertyEditor( QtGui.QFrame ):
 		editorWidget = editor.initEditor( self )
 		editorWidget.setObjectName( 'FieldEditor' )
 		labelWidget.setObjectName( 'FieldLabel' )
-		editor.initState()
 		if labelWidget in (None, False):
 			self.layout.addRow ( editorWidget )
 		else:
@@ -169,6 +169,13 @@ class PropertyEditor( QtGui.QFrame ):
 		
 	def onContextMenuRequested( self, field ):
 		self.contextMenuRequested.emit( self.target, field.id )
+
+	def setReadonly( self, readonly = True ):
+		self.readonly = readonly
+		self.refreshAll()
+
+	def isReadonly( self ):
+		return self.readonly
 
 	def getTarget( self ):
 		return self.target
@@ -232,6 +239,7 @@ class PropertyEditor( QtGui.QFrame ):
 			v = self.model.getFieldValue( target, field.id )
 			self.refreshing = True #avoid duplicated update
 			editor.refreshing = True
+			editor.refreshState()
 			editor.set( v )
 			editor.refreshing = False
 			self.refreshing = False
@@ -306,8 +314,9 @@ class FieldEditor( object ):
 	def initEditor( self, container ):
 		return QtGui.QWidget( container )
 
-	def initState( self ):
-		self.setReadonly( self.getOption( 'readonly', False ) )
+	def refreshState( self ):
+		readonly = self.getOption( 'readonly', False ) or self.parent.isReadonly()
+		self.setReadonly( readonly )
 		
 	def clear( self ):
 		pass

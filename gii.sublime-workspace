@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"TWEN_",
+				"TWEEN_MODE_LINEAR"
+			],
+			[
+				"Tweem",
+				"TWEEN_MODE_BEZIER"
+			],
+			[
 				"getFram",
 				"getFrameBuffer"
 			],
@@ -506,43 +514,11 @@
 			[
 				"scrol",
 				"scrollArea"
-			],
-			[
-				"Fa",
-				"False"
-			],
-			[
-				"spri",
-				"sprite"
 			]
 		]
 	},
 	"buffers":
 	[
-		{
-			"file": "test/game/lib/mock/story/StoryManager.lua",
-			"settings":
-			{
-				"buffer_size": 2127,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/game/lib/mock/ui/TBWidget.lua",
-			"settings":
-			{
-				"buffer_size": 6713,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "data/theme/gii.qss",
-			"settings":
-			{
-				"buffer_size": 23547,
-				"line_ending": "Unix"
-			}
-		},
 		{
 			"file": "lib/gii/qt/QtSupport.py",
 			"settings":
@@ -552,10 +528,10 @@
 			}
 		},
 		{
-			"file": "test/game/lib/mock/component/CameraManager.lua",
+			"file": "lib/gii/qt/controls/GraphicsView/testView.py",
 			"settings":
 			{
-				"buffer_size": 7526,
+				"buffer_size": 4454,
 				"line_ending": "Unix"
 			}
 		},
@@ -579,7 +555,47 @@
 			"file": "test/game/lib/mock/core/Game.lua",
 			"settings":
 			{
+				"buffer_size": 24191,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test/game/lib/mock/anim/AnimatorClip.lua",
+			"settings":
+			{
 				"buffer_size": 25096,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/qt/controls/GraphicsView/TimelineView.py",
+			"settings":
+			{
+				"buffer_size": 53072,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "packages/Mock/Animator/AnimatorWidget.py",
+			"settings":
+			{
+				"buffer_size": 22518,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/qt/controls/GraphicsView/CurveView.py",
+			"settings":
+			{
+				"buffer_size": 29611,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "packages/Mock/Animator/AnimatorView.lua",
+			"settings":
+			{
+				"buffer_size": 9310,
 				"line_ending": "Unix"
 			}
 		},
@@ -587,18 +603,18 @@
 			"file": "gii_cfg.py",
 			"settings":
 			{
-				"buffer_size": 394,
+				"buffer_size": 392,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "[WARNING]	running instance detected\nstarting gii IDE...\n\n[Finished in 0.3s]\n54    ",
+			"contents": "2015-11-04 11:20:36.270 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:36.270 Python[12671:507] CoreText performance note: Set a breakpoint on CTFontLogSuboptimalRequest to debug.\n2015-11-04 11:20:36.273 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\nstarting gii IDE...\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\nInitiating Turbo Badger - version 0.1.1\n[WARN:Lua]	no asset found	font/zipex.fnt	\n2\nstack traceback:\n	...mes/prj/gii/test/game/lib/mock/core/AssetLibrary.lua:387: in function 'loadAsset'\n	/Volumes/prj/gii/test/game/lib/mock/ui/TBManager.lua:21: in function 'onInit'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:281: in function 'initSubSystems'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:190: in function </Volumes/prj/gii/test/game/lib/mock/core/Game.lua:171>\n	(tail call): ?\n	/Volumes/prj/gii/test/game/lib/mock/env.lua:117: in function </Volumes/prj/gii/test/game/lib/mock/env.lua:116>\n2015-11-04 11:20:37.797 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:37.798 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:37.842 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:38.586 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:38.587 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:39.389 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:39.390 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\ntexture libray start\n2015-11-04 11:20:39.612 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:39.636 Python[12671:507] invalid drawable\n2015-11-04 11:20:39.638 Python[12671:507] invalid drawable\n2015-11-04 11:20:39.638 Python[12671:507] invalid drawable\n2015-11-04 11:20:39.865 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:39.897 Python[12671:507] invalid drawable\n2015-11-04 11:20:39.898 Python[12671:507] invalid drawable\n2015-11-04 11:20:39.899 Python[12671:507] invalid drawable\n2015-11-04 11:20:45.482 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\nCould not parse application stylesheet\n2015-11-04 11:29:21.883 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:29:21.885 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:29:21.887 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:29:22.061 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:29:22.102 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\nCould not parse application stylesheet\n2015-11-04 11:30:00.854 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:00.856 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:00.858 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:01.027 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:01.067 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:09.209 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:09.210 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:09.212 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:09.350 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:09.389 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\nfound joy: 0\nInitiating Turbo Badger - version 0.1.1\n[WARN:Lua]	no asset found	font/zipex.fnt	\n2\nstack traceback:\n	game/lib/mock/core/AssetLibrary.lua:387: in function 'loadAsset'\n	game/lib/mock/ui/TBManager.lua:21: in function 'onInit'\n	game/lib/mock/core/Game.lua:281: in function 'initSubSystems'\n	game/lib/mock/core/Game.lua:190: in function <game/lib/mock/core/Game.lua:171>\n	(tail call): ?\n	game/lib/mock/env.lua:117: in function 'init'\n	game/main_preview_scene.lua:22: in main chunk\n2015-11-04 13:47:28.566 Python[12671:507] invalid drawable\n\n[Finished in 9975.1s]\n",
 			"file": "test/BUILD_RESULT",
 			"file_size": -1,
 			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 82,
+				"buffer_size": 8800,
 				"line_ending": "Unix",
 				"scratch": true
 			}
@@ -628,13 +644,13 @@
 			}
 		},
 		{
-			"contents": "\n[Finished in 54.6s]\n",
+			"contents": "2015-11-03 18:12:04.491 Python[99589:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-03 18:12:04.492 Python[99589:507] CoreText performance note: Set a breakpoint on CTFontLogSuboptimalRequest to debug.\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\n\n[Finished in 58.9s]\n",
 			"file": "lib/gii/qt/controls/GraphicsView/BUILD_RESULT",
-			"file_size": -1,
-			"file_write_time": -1,
+			"file_size": 15620,
+			"file_write_time": 1446441905000000,
 			"settings":
 			{
-				"buffer_size": 21,
+				"buffer_size": 1255,
 				"line_ending": "Unix",
 				"scratch": true
 			}
@@ -667,16 +683,16 @@
 	"build_system": "IDE",
 	"command_palette":
 	{
-		"height": 82.0,
+		"height": 375.0,
 		"selected_items":
 		[
 			[
-				"checkou",
-				"Git: Checkout Current File"
-			],
-			[
 				"css",
 				"Set Syntax: CSS"
+			],
+			[
+				"checkou",
+				"Git: Checkout Current File"
 			],
 			[
 				"diff",
@@ -1107,7 +1123,7 @@
 				"Package Control: List Packages"
 			]
 		],
-		"width": 588.0
+		"width": 553.0
 	},
 	"console":
 	{
@@ -1124,6 +1140,32 @@
 	},
 	"file_history":
 	[
+		"/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView/TimelineView.py",
+		"/Volumes/prj/gii/packages/Mock/Animator/AnimatorView.lua",
+		"/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView/CurveView.py",
+		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorClip.lua",
+		"/Volumes/prj/gii/test/game/lib/mock/anim/Animator.lua",
+		"/Volumes/prj/gii/data/theme/gii.qss",
+		"/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView/GraphicsViewHelper.py",
+		"/Volumes/prj/gii/lib/lua/mock_edit/EditorCanvas/CanvasNavigate.lua",
+		"/Volumes/prj/gii/packages/Mock/Animator/AnimatorView.py",
+		"/Volumes/prj/gii/packages/Mock/Animator/AnimatorWidget.py",
+		"/Volumes/prj/gii/packages/Mock/Animator/BUILD_RESULT",
+		"/Volumes/prj/gii/test/game/lib/mock/ui/TBWidget.lua",
+		"/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView/testView.py",
+		"/Volumes/prj/gii/test/game/lib/mock/story/StoryManager.lua",
+		"/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView/test.py",
+		"/Volumes/prj/gii/test/game/lib/mock/core/enums.lua",
+		"/Volumes/prj/gii/test/game/lib/mock/anim/init.lua",
+		"/Volumes/prj/gii/lib/gii/qt/__init__.py",
+		"/Volumes/prj/gii/test/game/lib/mock/component/CameraManager.lua",
+		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorTrackFieldVec.lua",
+		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorTrackFieldNumber.lua",
+		"/Volumes/prj/gii/gii.sublime-project",
+		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorValueTrack.lua",
+		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorTrackFieldColor.lua",
+		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorTrackFieldInt.lua",
+		"/Volumes/prj/gii/test/host/python/_lupa.pyx",
 		"/Users/tommo/Projects/gii/lib/gii/core/EditorModule.py",
 		"/Users/tommo/Projects/gii/lib/gii/qt/QtSupport.py",
 		"/Users/tommo/Projects/gii/lib/gii/qt/controls/CodeEditor/CodeEditor.py",
@@ -1225,33 +1267,7 @@
 		"/Users/tommo/Projects/gii/lib/gii/qt/QtEditorModule.py",
 		"/Users/tommo/Projects/gii/lib/gii/core/tool.py",
 		"/Users/tommo/Projects/gii/lib/mock/MockRuntime.py",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/component/DeckComponent.lua",
-		"/Users/tommo/Projects/gii/packages/Mock/DeployManager/DeployManager.py",
-		"/Users/tommo/Projects/gii/lib/gii/AssetEditor/AssetEditor.py",
-		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/GraphNode.py",
-		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/testView.py",
-		"/Users/tommo/Projects/gii/lib/mock/SceneView/SceneView.lua",
-		"/Users/tommo/Projects/gii/test/BUILD_RESULT",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/core/utils.lua",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/core/AssetLibrary.lua",
-		"/Users/tommo/Projects/gii/lib/gii/core/EditorApp.py",
-		"/Users/tommo/Projects/gii/lib/mock/asset/helper/MetaTag.py",
-		"/Users/tommo/Projects/gii/test/game/main.lua",
-		"/Users/tommo/Projects/gii/lib/gii/core/tools/RunHost.py",
-		"/Users/tommo/Projects/gii/lib/gii/SceneEditor/Introspector.py",
-		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/GraphView.py",
-		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/BUILD_RESULT",
-		"/Users/tommo/Projects/gii/lib/mock/SceneGraphEditor/EntityEditor.py",
-		"/Users/tommo/Projects/gii/data/theme/gii.qss",
-		"/Users/tommo/Projects/gii/lib/mock/asset/helper/PSDDeckPackProject.py",
-		"/Users/tommo/Projects/gii/lib/mock/asset/helper/PSDDeckMQuad.py",
-		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/CurveView.py",
-		"/Users/tommo/Projects/gii/lib/gii/SceneEditor/GamePreview.py",
-		"/Users/tommo/Projects/gii/test/project.json",
-		"/Users/tommo/Projects/gii/test/project.jsongii",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/component/WaypointPathFinder.lua",
-		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/TimelineWidget.py",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/core/Game.lua"
+		"/Users/tommo/Projects/gii/test/game/lib/mock/component/DeckComponent.lua"
 	],
 	"find":
 	{
@@ -1262,6 +1278,9 @@
 		"height": 0.0,
 		"where_history":
 		[
+			"*.lua",
+			"*.py",
+			"*.lua",
 			"*.py",
 			"*.cpp",
 			"*.py",
@@ -1344,134 +1363,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"deviceRenderTable",
-			"false",
-			"emptyRenderStack",
-			"QtSupportEventFilter",
-			"ApplicationActivate",
-			"QtSupportEventFilter",
-			"eventFilter",
-			"setupStyle",
-			"anonymous",
-			"addApplicationFont",
-			"setTabStopWidth",
-			"_init_settings",
-			"code",
-			"ui",
-			"codeeditor",
-			"CodeEditor",
-			"loadModule",
-			"load",
-			"globalContext",
-			"BindUniforms",
-			"SetProgram",
-			"MOAIShaderProgram",
-			"shader",
-			"EVENT_SPINE_ANIMATION_EVENT",
-			"EVENT_SPINE_ANIMATION_START",
-			"using",
-			"xxx",
-			"offset",
-			"xxx",
-			"u32",
-			"inputDeviceId",
-			"updateFmod",
-			"fmod",
-			"MDDHelper",
-			"MOAIJoystickManagerSDL",
-			"cpp",
-			"test",
-			"connectjoystick",
+			":hover",
+			"6e6d6a",
+			":hover",
+			"6e6d6a",
+			"443",
+			"334a6e",
+			"getBezierPoints",
+			"curveEx",
+			".emit",
+			"updateTimelineMarker",
+			"setTweenMode",
+			"settweenmode",
+			"setTweenMode",
+			"True",
+			"updating",
+			"updateKeyTweenMode",
+			"keyTweenModeChanged",
+			"notifyKeyModeChanged",
+			"onVertTweenModeChanged",
+			"onVertModeChanged",
+			"vertModeChanged",
 			"connect",
-			"\n{",
-			"MOAISDLJOYSTICKMANAGER_H",
-			"MOAISDLJoystickManager",
-			"GIIHELPER_H",
-			"GIIHelper",
-			"MOAISDLJoystickManager",
-			"_stepSim",
-			"registerGIIHelper",
-			"GIIHelper",
+			"notifyvert",
+			"notifyVertTweenModeChanged",
+			"vertTweenModeChanged",
+			"vertModeChanged",
+			"vertTweenModeChanged",
+			"onKeyTweenModeChanged",
+			"updateKeyTweenMode",
+			"getCurveVertParam",
+			"getVertParam",
+			"tweenmode",
+			"getTweenMode",
+			"getKeyMode",
+			"getKeyTweenMode",
+			"CurveMode",
+			"tweenmode",
 			"self",
+			"changeKeyTweenMode",
+			"setTweenMode",
+			"True",
+			"toolbuttonCurveModeBezierS",
+			"toolbuttonCurve",
+			"ToolButton",
+			"toolbutton",
+			"edittool",
+			"vert",
+			"parentItem",
+			"parentVert",
+			"addVert",
+			"selectedItems",
+			"noSelectionChanged",
+			"onSceneItemSelectionChanged",
+			"True",
+			"pass",
+			"applySelection",
+			"()",
+			"vert",
+			"isInstance",
+			"item",
+			"selecteditems",
+			"selection",
+			"onSceneItemSelectionChanged",
 			"scene",
-			"container",
-			"StoryGraphView",
-			"window",
-			"view",
-			"GraphNodeViewWidget",
-			"AnimatorWidgetUI",
-			"animator",
-			"StoryGraphView",
-			"treeResult",
-			"addWidgetWithLayout",
-			"containerGraph",
-			"addWidgetWithLayout",
-			"GraphNodeViewRoot",
-			"gridBackground",
-			"GridBackground",
-			"gridBackground",
-			"grid",
+			"glgraphics",
+			"scene =",
+			"self.scene =",
+			"scene",
+			"selectVert",
+			"keySelectionChanged",
+			"selectionChanged",
+			"keySelectionChanged",
+			"changeKeyTweenMode",
+			"TWEEN_MODE_BEZIER",
+			"constant",
+			"TWEEN_MODE_LINEAR",
+			"changeKeyTweenMode",
 			"pass",
-			"GraphNodeViewWidget",
-			"TestGraphNodeViewWidget",
-			"testData",
-			"buildTestData",
-			"testData",
-			"arg",
-			"TestGraphNodeViewWidget",
-			"testdata",
-			"120",
-			"10",
-			"buildports",
+			"addEditToolButton",
+			"setTweenMode",
+			"updateSpan",
+			"setTweenMode",
+			"SPAN_MODE",
+			"SpanMode",
+			"spanMode",
+			"tweenMode",
+			"TweenMode",
+			"tweenMode",
+			"TweenMode",
+			"SpanMode",
+			"setSpanMode",
 			"pass",
-			"GraphNodeItem",
-			"Graphnodeit",
-			"Graphino",
-			"abs",
-			"GraphNodePolyLineConnectionItem",
-			"dx",
-			"GraphNodeConnectionItem",
-			"connect",
-			"GraphNodeLineConnectionItem",
-			"object",
-			"BTDecoratorRepeatForever",
-			"BTDecoratorRepeatUntil",
-			"super",
-			"componentNameSearchEnumerator",
-			"super",
-			"freturn",
-			" )",
-			"opar",
-			"hcild",
-			"dox",
-			"self",
-			":\n",
-			"end",
-			"subActions",
-			"CmdToggleEntityVisibility",
-			"Class",
-			"Convers",
-			"registerStoryNodeType",
-			"storyNodeTypeRegistry",
-			"storynodegroup",
-			"scopedGroup",
-			"scope",
-			"scoped",
-			"StoryScopedGroup",
-			"buildForEntity",
-			"attach",
-			"sceneeventlistener",
-			"gizmo",
-			"onEntityEvent",
-			"setEntityListener",
-			"entitylistener",
-			"scenelistener",
-			"connect",
-			"decodeJSON",
-			"loadAnimatorDataFromString",
-			"data",
-			"base64",
-			"rawData"
+			"CurveMode",
+			"curveMode",
+			"CurveMode",
+			"curveMode",
+			"changeKeyTweenMode",
+			"pass",
+			"constant",
+			"pass",
+			"linear",
+			"pass",
+			"ontool",
+			"onTimelineEditTool",
+			"pass",
+			"seticon",
+			"getKeyBezierPoint",
+			"getCurveVertParam",
+			"getVertParam",
+			"getCurveVertParam",
+			"getKeyBezierPoint",
+			"getKeyBezierPoints",
+			"return",
+			"getKeyBezierPoints",
+			"setPreBezierPoint",
+			"setBezierPoints",
+			"onKeyBezierPointChanged",
+			"bezierpoint",
+			"updateTimelineKeyBezierPoint",
+			"getPreBezierPoint",
+			"getKeyBezierPoints",
+			"setBezierPoints",
+			"onTimelineKeyBezierPointChanged",
+			"onTimelineKeyBeizerPointChanged",
+			"markcurvedirty",
+			"vertitem",
+			"CurveVertItem",
+			"setzvalue"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1479,6 +1498,32 @@
 		"regex": false,
 		"replace_history":
 		[
+			"TWEEN_MODE",
+			"TweenMode",
+			"tweenMode",
+			"TweenMode",
+			"tweenMode",
+			"TweenMode",
+			"tweenMode",
+			"PreBP",
+			"PostBP",
+			"BPY",
+			"BPX",
+			"bpy",
+			"bpx",
+			"postBP",
+			"preBP",
+			"bpy",
+			"bpx",
+			"postBezierPoint",
+			"preBezierPoint",
+			"BezierPoint",
+			"bezierPoint",
+			"BezierPoint",
+			"bezierPoint",
+			"CurveMode",
+			"curveMode",
+			"isCurveTrack",
 			"iconList",
 			"IconList",
 			"MOCKJoystickMgr",
@@ -1580,33 +1625,7 @@
 			"TaskFacility",
 			"type",
 			"connectCheckSeq",
-			"mSectionGrid->",
-			"block",
-			"Block",
-			"block",
-			"blockFlag",
-			"TILE(\\1,\\2)",
-			"u32",
-			"fullTasks",
-			"res.tex",
-			"windowMap",
-			"UIWindowMap",
-			"TestManualGrid",
-			"map",
-			"mainGame",
-			"yield()",
-			"digTasks",
-			"Observer",
-			"AttrObject",
-			"setTile(\\1,",
-			"getTile(\\1,",
-			"getCellAddr",
-			"coordToCellAddr",
-			"$(SRCROOT)/../../../lib/",
-			"../../../lib/",
-			"~/moai-dev/3rdparty",
-			"TMOFFSETGRIDDECK_H",
-			"OBJC_SRC"
+			"mSectionGrid->"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -1617,95 +1636,11 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "test/game/lib/mock/story/StoryManager.lua",
-					"settings":
-					{
-						"buffer_size": 2127,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1775,
-								1775
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 729.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "test/game/lib/mock/ui/TBWidget.lua",
-					"settings":
-					{
-						"buffer_size": 6713,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								681,
-								681
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "data/theme/gii.qss",
-					"settings":
-					{
-						"buffer_size": 23547,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
 					"file": "lib/gii/qt/QtSupport.py",
 					"settings":
 					{
@@ -1716,8 +1651,8 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								690,
+								690
 							]
 						],
 						"settings":
@@ -1727,35 +1662,35 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1606.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "test/game/lib/mock/component/CameraManager.lua",
+					"buffer": 1,
+					"file": "lib/gii/qt/controls/GraphicsView/testView.py",
 					"settings":
 					{
-						"buffer_size": 7526,
+						"buffer_size": 4454,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2794,
-								2794
+								1473,
+								1473
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1554.0,
+						"translation.y": 1069.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1763,11 +1698,11 @@
 			]
 		},
 		{
-			"selected": 2,
+			"selected": 7,
 			"sheets":
 			[
 				{
-					"buffer": 5,
+					"buffer": 2,
 					"file": "lib/gii/SearchView/SearchView.py",
 					"settings":
 					{
@@ -1795,7 +1730,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 3,
 					"file": "packages/Mock/EffectEditor/EffectEditor.py",
 					"settings":
 					{
@@ -1823,11 +1758,123 @@
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 4,
 					"file": "test/game/lib/mock/core/Game.lua",
 					"settings":
 					{
+						"buffer_size": 24191,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								23401,
+								23401
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 14893.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "test/game/lib/mock/anim/AnimatorClip.lua",
+					"settings":
+					{
 						"buffer_size": 25096,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7963,
+								7963
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 5738.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "lib/gii/qt/controls/GraphicsView/TimelineView.py",
+					"settings":
+					{
+						"buffer_size": 53072,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								46943,
+								46943
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 26869.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "packages/Mock/Animator/AnimatorWidget.py",
+					"settings":
+					{
+						"buffer_size": 22518,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								21121,
+								21121
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 11530.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "lib/gii/qt/controls/GraphicsView/CurveView.py",
+					"settings":
+					{
+						"buffer_size": 29611,
 						"regions":
 						{
 						},
@@ -1840,12 +1887,42 @@
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"easy_motion_mode": false,
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 7982.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "packages/Mock/Animator/AnimatorView.lua",
+					"settings":
+					{
+						"buffer_size": 9310,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5863,
+								5863
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"easy_motion_mode": false,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 14893.0,
+						"translation.y": 3650.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1857,11 +1934,11 @@
 			"sheets":
 			[
 				{
-					"buffer": 8,
+					"buffer": 10,
 					"file": "gii_cfg.py",
 					"settings":
 					{
-						"buffer_size": 394,
+						"buffer_size": 392,
 						"regions":
 						{
 						},
@@ -1884,38 +1961,38 @@
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 11,
 					"file": "test/BUILD_RESULT",
 					"settings":
 					{
-						"buffer_size": 82,
+						"buffer_size": 8800,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								82,
-								82
+								8800,
+								8800
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"result_base_dir": "/Users/tommo/Projects/gii/test",
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"result_base_dir": "/Volumes/prj/gii/test",
 							"result_file_regex": "",
 							"result_line_regex": "",
 							"syntax": "Packages/Text/Plain text.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 870.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 12,
 					"file": "BUILD_RESULT",
 					"settings":
 					{
@@ -1947,7 +2024,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 11,
+					"buffer": 13,
 					"file": "lib/gii/qt/controls/BUILD_RESULT",
 					"settings":
 					{
@@ -1977,37 +2054,37 @@
 					"type": "text"
 				},
 				{
-					"buffer": 12,
+					"buffer": 14,
 					"file": "lib/gii/qt/controls/GraphicsView/BUILD_RESULT",
 					"settings":
 					{
-						"buffer_size": 21,
+						"buffer_size": 1255,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								21,
-								21
+								1255,
+								1255
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView",
+							"result_base_dir": "/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView",
 							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
 							"result_line_regex": "",
 							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 53.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 13,
+					"buffer": 15,
 					"file": "lib/mock/asset/helper/BUILD_RESULT",
 					"settings":
 					{
@@ -2037,7 +2114,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 14,
+					"buffer": 16,
 					"file": "lib/gii/qt/controls/ToolWindowManager/BUILD_RESULT",
 					"settings":
 					{
@@ -2152,6 +2229,142 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"qss",
+				"data/theme/gii.qss"
+			],
+			[
+				"animator",
+				"test/game/lib/mock/anim/Animator.lua"
+			],
+			[
+				"aniv",
+				"packages/Mock/Animator/AnimatorView.lua"
+			],
+			[
+				"curv",
+				"lib/gii/qt/controls/GraphicsView/CurveView.py"
+			],
+			[
+				"animtclip",
+				"test/game/lib/mock/anim/AnimatorClip.lua"
+			],
+			[
+				"animaorwidget",
+				"packages/Mock/Animator/AnimatorWidget.py"
+			],
+			[
+				"timelinv",
+				"lib/gii/qt/controls/GraphicsView/TimelineView.py"
+			],
+			[
+				"animatorwi",
+				"packages/Mock/Animator/AnimatorWidget.py"
+			],
+			[
+				"graphvehe",
+				"lib/gii/qt/controls/GraphicsView/GraphicsViewHelper.py"
+			],
+			[
+				"navigat",
+				"lib/lua/mock_edit/EditorCanvas/CanvasNavigate.lua"
+			],
+			[
+				"anvi",
+				"packages/Mock/Animator/AnimatorView.lua"
+			],
+			[
+				"animwid",
+				"packages/Mock/Animator/AnimatorWidget.py"
+			],
+			[
+				"testview",
+				"lib/gii/qt/controls/GraphicsView/testView.py"
+			],
+			[
+				"timelinve",
+				"lib/gii/qt/controls/GraphicsView/TimelineView.py"
+			],
+			[
+				"animtorclip",
+				"test/game/lib/mock/anim/AnimatorClip.lua"
+			],
+			[
+				"animatorvi",
+				"packages/Mock/Animator/AnimatorView.lua"
+			],
+			[
+				"animatoview.",
+				"packages/Mock/Animator/AnimatorView.lua"
+			],
+			[
+				"anclip",
+				"test/game/lib/mock/anim/AnimatorClip.lua"
+			],
+			[
+				"animatorview",
+				"packages/Mock/Animator/AnimatorView.lua"
+			],
+			[
+				"timelinev",
+				"lib/gii/qt/controls/GraphicsView/TimelineView.py"
+			],
+			[
+				"aniclip",
+				"test/game/lib/mock/anim/AnimatorClip.lua"
+			],
+			[
+				"enum",
+				"test/game/lib/mock/core/enums.lua"
+			],
+			[
+				"animawid",
+				"packages/Mock/Animator/AnimatorWidget.py"
+			],
+			[
+				"animclip",
+				"test/game/lib/mock/anim/AnimatorClip.lua"
+			],
+			[
+				"anivi",
+				"packages/Mock/Animator/AnimatorView.py"
+			],
+			[
+				"anlua",
+				"packages/Mock/Animator/AnimatorView.lua"
+			],
+			[
+				"timeliv",
+				"lib/gii/qt/controls/GraphicsView/TimelineView.py"
+			],
+			[
+				"curvv",
+				"lib/gii/qt/controls/GraphicsView/CurveView.py"
+			],
+			[
+				"curvi",
+				"lib/gii/qt/controls/GraphicsView/CurveView.py"
+			],
+			[
+				"animaclip",
+				"test/game/lib/mock/anim/AnimatorClip.lua"
+			],
+			[
+				"project",
+				"gii.sublime-project"
+			],
+			[
+				"lupapyx",
+				"test/host/python/_lupa.pyx"
+			],
+			[
+				"animatorclip",
+				"test/game/lib/mock/anim/AnimatorClip.lua"
+			],
+			[
+				"animatowid",
+				"packages/Mock/Animator/AnimatorWidget.py"
+			],
 			[
 				"game",
 				"test/game/lib/mock/core/Game.lua"
@@ -2353,10 +2566,6 @@
 				"test/game/lib/mock/asset/Common.lua"
 			],
 			[
-				"anivi",
-				"packages/Mock/Animator/AnimatorView.py"
-			],
-			[
 				"animator.",
 				"test/game/lib/mock/anim/Animator.lua"
 			],
@@ -2375,10 +2584,6 @@
 			[
 				"aniwid",
 				"packages/Mock/Animator/AnimatorWidget.py"
-			],
-			[
-				"animator",
-				"test/game/lib/mock/anim/Animator.lua"
 			],
 			[
 				"animator.lu",
@@ -2513,10 +2718,6 @@
 				"lib/mock/SceneGraphEditor/SceneGraphEditor.py"
 			],
 			[
-				"qss",
-				"data/theme/gii.qss"
-			],
-			[
 				"intro",
 				"lib/gii/SceneEditor/Introspector.py"
 			],
@@ -2537,132 +2738,8 @@
 				"lib/gii/SceneEditor/GamePreview.py"
 			],
 			[
-				"animclip",
-				"test/game/lib/mock/anim/AnimatorClip.lua"
-			],
-			[
 				"wsc",
 				"test/host/wscript"
-			],
-			[
-				"host",
-				"test/host/osx/SDLHost.cpp"
-			],
-			[
-				"tool.py",
-				"lib/gii/core/tool.py"
-			],
-			[
-				"curve",
-				"lib/gii/qt/controls/GraphicsView/CurveView.py"
-			],
-			[
-				"mockrunt",
-				"lib/mock/MockRuntime.py"
-			],
-			[
-				"gameprevi",
-				"lib/gii/SceneEditor/GamePreview.py"
-			],
-			[
-				"giibin",
-				"gii_bin.py"
-			],
-			[
-				"meta",
-				"lib/mock/asset/helper/MetaTag.py"
-			],
-			[
-				"psddeck",
-				"lib/mock/asset/helper/PSDDeckMQuad.py"
-			],
-			[
-				"edia",
-				"lib/gii/core/EditorApp.py"
-			],
-			[
-				"editor",
-				"lib/gii/core/EditorModule.py"
-			],
-			[
-				"glob",
-				"packages/Mock/GlobalObjectManager/GlobalObjectManager.py"
-			],
-			[
-				"editorm",
-				"lib/gii/core/EditorModule.py"
-			],
-			[
-				"edita",
-				"lib/gii/core/EditorApp.py"
-			],
-			[
-				"globobjm",
-				"packages/Mock/GlobalObjectManager/GlobalObjectManager.py"
-			],
-			[
-				"moairunt",
-				"lib/gii/moai/MOAIRuntime.py"
-			],
-			[
-				"texture.lu",
-				"test/game/lib/mock/asset/Texture.lua"
-			],
-			[
-				"textlibra",
-				"lib/mock/asset/TextureLibrary.lua"
-			],
-			[
-				"asset",
-				"lib/gii/AssetEditor/AssetBrowser.py"
-			],
-			[
-				"textureas",
-				"lib/mock/asset/TextureAsset.py"
-			],
-			[
-				"editora",
-				"lib/gii/core/EditorApp.py"
-			],
-			[
-				"mockrun",
-				"lib/mock/MockRuntime.py"
-			],
-			[
-				"luascrip",
-				"lib/gii/moai/LuaScriptAsset.py"
-			],
-			[
-				"moairu",
-				"lib/gii/moai/MOAIRuntime.py"
-			],
-			[
-				"coremo",
-				"lib/gii/core/CoreModule.py"
-			],
-			[
-				"edimo",
-				"lib/gii/core/EditorModule.py"
-			],
-			[
-				"moairun",
-				"lib/gii/moai/MOAIRuntime.py"
-			],
-			[
-				"globalobj",
-				"packages/Mock/GlobalObjectManager/GlobalObjectManager.py"
-			],
-			[
-				"game.lua",
-				"test/game/lib/mock/core/Game.lua"
-			],
-			[
-				"mockruntim",
-				"lib/mock/MockRuntime.py"
-			],
-			[
-				"project",
-				"lib/gii/core/project.py"
 			]
 		],
 		"width": 0.0

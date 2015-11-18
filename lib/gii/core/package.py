@@ -156,13 +156,9 @@ class Package(object):
 	def load( self ):
 		if not self.isDependencyReady(): return False
 		logging.info( 'loading package:' + self.name )
-		try:
-			self.loadedModule = imp.load_module( self.moduleName, None, self.path, ('', '', 5) )
-			self.loaded = True
-			return True
-		except Exception, e:
-			logging.error( 'failed loading package: %s' % self.path )
-			return False
+		self.loadedModule = imp.load_module( self.moduleName, None, self.path, ('', '', 5) )
+		self.loaded = True
+		return True
 
 	def unload( self ):
 		if self.loadedModule:

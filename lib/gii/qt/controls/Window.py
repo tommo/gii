@@ -196,6 +196,7 @@ class MainWindow(QtGui.QMainWindow):
 		if w: w.setFocus()
 	
 
+
 ##----------------------------------------------------------------##
 class SubWindowMixin:	
 	def setDocumentName( self, name ):
@@ -205,10 +206,15 @@ class SubWindowMixin:
 			self.setWindowTitle( title )
 		else:
 			self.setWindowTitle( self.titleBase )
+	
+	def setCallbackOnClose( self, callback ):
+		self.callbackOnClose = callback
 		
 	def setupUi(self):
+		self.callbackOnClose = None
+
 		self.container = self.createContainer()
-		
+
 		self.mainLayout = QtGui.QVBoxLayout(self.container)
 		self.mainLayout.setSpacing(0)
 		self.mainLayout.setMargin(0)
@@ -218,7 +224,6 @@ class SubWindowMixin:
 		container = QtGui.QWidget(self)
 		self.setWidget(container)
 		return container
-
 
 	def addWidget(self, widget, **layoutOption):
 		# widget.setParent(self)		
@@ -245,8 +250,13 @@ class SubWindowMixin:
 	def ensureVisible(self):
 		restrainWidgetToScreen(self)
 
+	def onClose( self ):
+		if self.callbackOnClose:
+			return self.callbackOnClose()
+		return True
+
+
 ##----------------------------------------------------------------##
-				
 class SubWindow(QtGui.QMainWindow, SubWindowMixin):
 	def __init__(self, parent):
 		super(SubWindow, self).__init__(parent)
@@ -280,6 +290,12 @@ class SubWindow(QtGui.QMainWindow, SubWindowMixin):
 	def focusInEvent(self, event):
 		pass
 
+	def closeEvent( self, event ):
+		if self.onClose():
+			return super( SubWindow, self ).closeEvent( event )
+		else:
+			event.ignore()
+
 ##----------------------------------------------------------------##
 class DocumentWindow( SubWindow ):
 	def show( self, *args ):
@@ -298,7 +314,8 @@ class DocumentWindow( SubWindow ):
 		
 	def addToolBar(self):
 		return self.addWidget( QtGui.QToolBar(), expanding = False ) 
-		
+
+	
 ##----------------------------------------------------------------##
 class DockWindowTitleBar( QtGui.QWidget ):
 	"""docstring for DockWindowTitleBar"""
@@ -367,4 +384,10 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 
 	def addToolBar(self):
 		return self.addWidget( QtGui.QToolBar(), expanding = False ) 
+
+	def closeEvent( self, event ):
+		if self.onClose():
+			return super( SubWindow, self ).closeEvent( event )
+		else:
+			event.ignore()
 

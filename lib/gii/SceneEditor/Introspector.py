@@ -8,7 +8,7 @@ from PyQt4        import QtCore, QtGui, uic
 from PyQt4.QtCore import Qt, QEventLoop, QEvent, QObject, pyqtSignal, pyqtSlot
 
 from SceneEditor  import SceneEditorModule
-from IDPool       import IDPool
+from util.IDPool  import IDPool
 
 from gii.qt.controls.GLWidget import CommonGLWidget
 from gii.qt.helpers           import addWidgetWithLayout, repolishWidget

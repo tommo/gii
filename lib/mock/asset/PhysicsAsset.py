@@ -33,6 +33,13 @@ class PhysicsMaterialAssetManager( AssetManager ):
 		node.setObjectFile( 'def', node.getFilePath() )
 		return True
 
+	def editAsset(self, node):	
+		editor = app.getModule( 'serializable_editor' )
+		if not editor: 
+			return alertMessage( 'Editor not load', 'Asset Editor not found!' )
+		else:
+			editor.openAsset( node )
+
 ##----------------------------------------------------------------##
 class PhysicsMaterialAssetCreator(AssetCreator):
 	def getAssetType( self ):
@@ -52,7 +59,6 @@ class PhysicsMaterialAssetCreator(AssetCreator):
 		
 		_MOCK.createEmptySerialization( fullpath, 'mock.PhysicsMaterial' )
 		return nodepath
-
 
 
 ##----------------------------------------------------------------##
@@ -75,6 +81,13 @@ class PhysicsBodyDefAssetManager( AssetManager ):
 		node.setObjectFile( 'def', node.getFilePath() )
 		return True
 
+	def editAsset(self, node):	
+		editor = app.getModule( 'serializable_editor' )
+		if not editor: 
+			return alertMessage( 'Editor not load', 'Asset Editor not found!' )
+		else:
+			editor.openAsset( node )
+			
 ##----------------------------------------------------------------##
 class PhysicsBodyDefAssetCreator(AssetCreator):
 	def getAssetType( self ):

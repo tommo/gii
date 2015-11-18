@@ -7,3 +7,5 @@ require 'mock_edit.commands.PhysicsCommands'
 require 'mock_edit.commands.AnimatorCommands'
 
 require 'mock_edit.commands.UICommands'
+
+require 'mock_edit.commands.RenderMaterialCommands'

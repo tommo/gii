@@ -53,6 +53,7 @@ class SelectionFieldEditor( EnumFieldEditor ):
 				entries.append( entry )			
 		return entries
 
+
 ##----------------------------------------------------------------##
 class SelectionFieldEditorFactory( FieldEditorFactory ):
 	def getPriority( self ):

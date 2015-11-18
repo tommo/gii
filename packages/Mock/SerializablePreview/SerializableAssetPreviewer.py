@@ -14,6 +14,7 @@ if app.getModule('asset_browser'):
 			scroll.verticalScrollBar().setStyleSheet('width:4px')
 			scroll.setWidgetResizable( True )
 			self.editor = PropertyEditor( scroll )
+			self.editor.setReadonly()
 			scroll.setWidget( self.editor )
 			return self.scroll
 

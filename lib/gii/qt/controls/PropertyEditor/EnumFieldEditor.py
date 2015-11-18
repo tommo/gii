@@ -77,4 +77,7 @@ class EnumFieldEditor( FieldEditor ):
 	def setFocus( self ):
 		self.button.setFocus()
 
+	def setReadonly( self, readonly ):
+		self.button.setEnabled( not readonly )
+
 registerSimpleFieldEditorFactory( EnumType, EnumFieldEditor )

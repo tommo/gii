@@ -4,6 +4,8 @@ import PrefabAsset
 import TextureAsset
 import TextureProcessor
 
+import RenderMaterialAsset
+
 import Deck2DAsset
 import FontAsset
 import StyleSheetAsset
