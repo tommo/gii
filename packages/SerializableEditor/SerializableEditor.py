@@ -52,6 +52,7 @@ class SerializableEditor( SceneEditorModule ):
 				minSize = (200,100)
 		)
 		instance = SerializableEditorInstance(id)
+		instance.parentModule = self
 		instance.createWidget( container )
 		instance.setTarget( target )
 		self.instances.append( instance )
@@ -63,6 +64,9 @@ class SerializableEditor( SceneEditorModule ):
 			if ins.targetNode == targetNode:
 				return ins
 		return None
+
+	def removeInstance( self, instance ):
+		self.instances.remove( instance )
 
 	def refresh( self, targetNode = None, context = None ):
 		for ins in self.instances:
@@ -154,15 +158,13 @@ class SerializableEditorInstance( object ):
 	def onClose( self ):
 		if self.dataDirty:
 			res = requestConfirm( 'data modified!', 'save scene before close?' )
-			if res == True:   #save
-				self.onActionSave()
-				return True
-
-			elif res == None: #cancel
+			if res == None: #cancel
 				return False
+
+			elif res == True:   #save
+				self.onActionSave()
 
 			elif res == False: #no save
 				self.resetData()
-				return True
-
+		self.parentModule.removeInstance( self )
 		return True
