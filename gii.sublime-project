@@ -43,8 +43,7 @@
 			"cmd":
 			[
 				"gii",
-				"run",
-				"-b",
+				"run",				
 				"test"
 			],
 			"name": "Run Project Test",

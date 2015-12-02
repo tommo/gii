@@ -268,6 +268,7 @@ class GamePreview( SceneEditorModule ):
 		self.paused = False
 		runtime.resume()
 		self.setFocus()
+		logging.info('game preview started')
 
 	def stopPreview( self ):
 		if self.paused is None: return
@@ -291,6 +292,7 @@ class GamePreview( SceneEditorModule ):
 		self.paused = None
 		self.updateTimer = None
 		self.canvas.startRefreshTimer( self.nonActiveFPS )
+		logging.info('game preview stopped')
 
 	
 	def runGameExternal( self ):

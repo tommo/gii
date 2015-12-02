@@ -37,14 +37,14 @@ def calcNormal( pix, x, y, w, h, heightPix = None, heightOffset = None, heightOp
 			h1 = calcPixHeight( pix, xx, yy, heightPix, heightOffset, heightOpacity )
 			# r1,g1,b1,a1 = pix[ xx, yy ]
 			# h1 = calcHeight( r1, g1, b1, a1 )
-			fx = fx + ( h1 - h0 ) * 1.0/r
+			fx = fx + ( h1 - h0 ) * 0.5/r
 
 		if x < w - r:
 			xx, yy = x + r, y
 			h1 = calcPixHeight( pix, xx, yy, heightPix, heightOffset, heightOpacity )
 			# r1,g1,b1,a1 = pix[ xx, yy ]
 			# h1 = calcHeight( r1, g1, b1, a1 )
-			fx = fx + ( h1 - h0 ) * -1.0/r
+			fx = fx + ( h1 - h0 ) * -0.5/r
 
 		if y > r:
 			xx, yy = x, y  - r
@@ -61,7 +61,7 @@ def calcNormal( pix, x, y, w, h, heightPix = None, heightOffset = None, heightOp
 			# h1 = calcHeight( r1, g1, b1, a1 )
 			fy = fy + ( h1 - h0 ) * ( 1 - r/3 ) * 0.5
 
-	return fx * 0.5, ( fy + h0 * 0.5 ), 1
+	return fx , fy, 1
 
 PI4 = -math.pi/4
 PI2 = -math.pi/2

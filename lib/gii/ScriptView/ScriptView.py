@@ -12,6 +12,7 @@ from gii.core               import *
 from gii.qt.controls.Window import MainWindow
 from gii.DebugView          import DebugViewModule
 from gii.qt.controls.CodeEditor import CodeEditor
+from gii.qt.IconCache         import getIcon
 
 ##----------------------------------------------------------------##
 from DebuggerHandler import DebuggerHandler
@@ -83,7 +84,7 @@ class ScriptView( DebugViewModule ):
 			self.getMainWindow().setWindowModality(Qt.ApplicationModal)
 		else: 
 			self.getMainWindow().setWindowModality(Qt.NonModal)
-		# self.panelDebug.toggleDebug(toggle)
+		self.panelDebug.toggleDebug(toggle)
 		self.enableMenu('script/debug/step_in',toggle)
 		self.enableMenu('script/debug/step_over',toggle)
 		self.enableMenu('script/debug/step_out',toggle)
@@ -203,6 +204,7 @@ class PanelDebug(QtGui.QWidget):
 
 		self.toolbar = QtGui.QToolBar(self)
 		self.toolbar.setSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
+		self.toolbar.setIconSize( QtCore.QSize( 16, 16 ) )
 		layout.addWidget(self.toolbar)
 
 		splitter=QtGui.QSplitter(QtCore.Qt.Horizontal)
@@ -228,16 +230,20 @@ class PanelDebug(QtGui.QWidget):
 		splitter.addWidget(listStack)
 		splitter.addWidget(treeScope)
 
+		self.actionStepOver = self.toolbar.addAction( getIcon( 'debugger/stepover' ), 'Step Over' )
+		self.actionStepIn   = self.toolbar.addAction( getIcon( 'debugger/stepin' ),   'Step In' )
+		self.actionStepOut  = self.toolbar.addAction( getIcon( 'debugger/stepout' ), 'Step Out' )
+
+		self.actionStepOver.triggered.connect( self.onStepOver )
+		self.actionStepIn.triggered.connect( self.onStepIn )
+		self.actionStepOut.triggered.connect( self.onStepOut )
+
 		# self.toolbar.addAction('hello').triggered.connect(self.onStepIn)
 
 	def toggleDebug(self, toggle):
-		pass
-		# self.toolbarStack.EnableTool(forms.TOOLID_CONTINUE,toggle)
-		# self.toolbarStack.EnableTool(forms.TOOLID_STEPIN, toggle)
-		# self.toolbarStack.EnableTool(forms.TOOLID_STEPOUT, toggle)
-		# self.toolbarStack.EnableTool(forms.TOOLID_STEPOVER, toggle)
-		# self.toolbarStack.EnableTool(forms.TOOLID_STOP, toggle)
-		# self.toolbarStack.Enable(toggle)
+		self.actionStepOver.setEnabled( toggle )
+		self.actionStepIn.setEnabled( toggle )
+		self.actionStepOut.setEnabled( toggle )
 
 	def loadVarData(self,data,parentName):
 		self.treeScope.loadVarData(data, parentName)
@@ -245,20 +251,18 @@ class PanelDebug(QtGui.QWidget):
 	def loadStackData(self, data ):
 		self.listStack.loadStackData(data or [])		
 
-	def onStepIn( self, event ):
+	def onStepIn( self ):
 		self.module.debuggerHandler.doStepIn()
 	
-	def onStepOver( self, event ):
+	def onStepOver( self ):
 		self.module.debuggerHandler.doStepOver()
 	
-	def onStepOut( self, event ):
+	def onStepOut( self ):
 		self.module.debuggerHandler.doStepOut()
 	
-	def onStop( self, event ):
+	def onStop( self ):
 		self.module.debuggerHandler.doStop()
 	
-	def onContinue( self, event ):
+	def onContinue( self ):
 		self.module.debuggerHandler.doContinue()
-
-
 

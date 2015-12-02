@@ -12,6 +12,7 @@ CLASS:  SceneGraphEditor()
 
 function SceneGraphEditor:__init()
 	self.failedRefreshData = false
+	self.previewState = false
 	connectSignalMethod( 'mainscene.open',  self, 'onMainSceneOpen' )
 	connectSignalMethod( 'mainscene.close', self, 'onMainSceneClose' )
 end
@@ -39,6 +40,7 @@ function SceneGraphEditor:openScene( path )
 		firstRun = false
 		MOAIGfxResourceMgr.renewResources()
 	end
+	self.previewState = false
 	return scene
 end
 
@@ -127,6 +129,7 @@ end
 
 
 function SceneGraphEditor:startScenePreview()
+	self.previewState = true
 	_collectgarbage( 'collect' )
 	-- GIIHelper.forceGC()
 	_stat( 'starting scene preview' )
@@ -135,6 +138,7 @@ function SceneGraphEditor:startScenePreview()
 end
 
 function SceneGraphEditor:stopScenePreview()
+	self.previewState = false
 	_stat( 'stopping scene preview' )
 	_collectgarbage( 'collect' )
 	-- GIIHelper.forceGC()
@@ -290,6 +294,8 @@ end
 
 
 function SceneGraphEditor:onEntityEvent( action, entity, com )
+	if self.previewState then return end --ignore entity event on previewing
+	
 	emitSignal( 'scene.entity_event', action, entity, com )
 	
 	if action == 'clear' then

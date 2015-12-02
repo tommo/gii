@@ -119,7 +119,7 @@ class TilePart( DeckPart ):
 		if not node:
 			print( 'no atlas node for deck', self.name )
 		uvrect = node.getUVRect()
-		u0, v0, u1 ,v1 = uvrect
+		u0, v0, u1 ,v1 = uvrecsdt
 		du = u1 - u0
 		dv = v1 - v0
 		for mesh in self.meshes:
