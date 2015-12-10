@@ -28,6 +28,9 @@ function TextureDragIn:onMove( view, x, y )
 end
 
 function TextureDragIn:onStop( view )
+	self.createdEntity:destroyWithChildrenNow()--FIXME: use undo
+	-- gii.undoCommand()
+	view:updateCanvas()
 end
 
 function TextureDragIn:updateInstanceLoc( view, x, y )
