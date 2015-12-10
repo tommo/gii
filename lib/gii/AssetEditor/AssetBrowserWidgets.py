@@ -301,14 +301,20 @@ class AssetBrowserNavigator( QtGui.QWidget ):
 		layout = QtGui.QHBoxLayout( self )
 		layout.setSpacing( 1 )
 		layout.setMargin( 0 )
+		self.buttonUpper    = QtGui.QToolButton()
 		self.buttonForward  = QtGui.QToolButton()
 		self.buttonBackward = QtGui.QToolButton()
+		self.buttonUpper.setIconSize( QSize( 16, 16 )  )
 		self.buttonForward.setIconSize( QSize( 16, 16 )  )
 		self.buttonBackward.setIconSize( QSize( 16, 16 )  )
+		self.buttonUpper.setIcon( getIcon( 'upper_folder' ) )
 		self.buttonForward.setIcon( getIcon( 'history_forward' ) )
 		self.buttonBackward.setIcon( getIcon( 'history_backward' ) )
+		layout.addWidget( self.buttonUpper )
+		layout.addSpacing( 10 )
 		layout.addWidget( self.buttonBackward )
 		layout.addWidget( self.buttonForward )
+		self.buttonUpper.clicked.connect( self.onGoUpperLevel )
 		self.buttonForward.clicked.connect( self.onHistoryForward )
 		self.buttonBackward.clicked.connect( self.onHistoryBackward )
 
@@ -319,6 +325,9 @@ class AssetBrowserNavigator( QtGui.QWidget ):
 
 	def onHistoryForward( self ):
 		self.parentModule.forwardHistory()
+
+	def onGoUpperLevel( self ):
+		self.parentModule.goUpperLevel()
 
 	def onHistoryBackward( self ):
 		self.parentModule.backwardHistory()

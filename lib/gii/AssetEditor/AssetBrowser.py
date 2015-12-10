@@ -547,6 +547,13 @@ class AssetBrowser( SceneEditorModule ):
 			self.selectAsset( asset, update_history = False, goto = True )
 		self.updatingHistory = False
 
+	def goUpperLevel( self ):
+		for folder in self.currentFolders:
+			parentNode = folder.getParent()
+			if parentNode:
+				self.selectAsset( parentNode, goto = True )
+			return
+
 	def selectAsset( self, asset, **options ):
 		if not asset: return
 		#find parent package/folder

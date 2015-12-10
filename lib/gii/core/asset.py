@@ -36,6 +36,7 @@ class AssetNode(object):
 		self.parentNode = None
 
 		self.metadata   = None
+		self.tags       = None
 
 		self.name = os.path.basename( nodePath )
 		self.shortName = self.name
