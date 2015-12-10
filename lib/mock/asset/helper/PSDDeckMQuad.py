@@ -98,7 +98,7 @@ class MQuadDeckPart( DeckPart ):
 		localGuideTopFace = h
 		if foldMode == 'auto':
 			concave = False
-			guideTopFace = project.getOption( 'guide-top-face', 0 )
+			guideTopFace = project.getOption( 'global-guide-top-face', 0 )
 			localGuideTopFace = clamp( guideTopFace - y, 0, h )
 
 		elif foldMode == 'fold':

@@ -520,58 +520,18 @@
 	"buffers":
 	[
 		{
-			"file": "lib/gii/qt/QtSupport.py",
+			"file": "lib/mock/SceneGraphEditor/SceneGraphEditor.lua",
 			"settings":
 			{
-				"buffer_size": 6030,
+				"buffer_size": 36307,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "lib/gii/qt/controls/GraphicsView/testView.py",
+			"file": "test/game/lib/mock/component/BehaviourScript.lua",
 			"settings":
 			{
-				"buffer_size": 4454,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/gii/SearchView/SearchView.py",
-			"settings":
-			{
-				"buffer_size": 15356,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "packages/Mock/EffectEditor/EffectEditor.py",
-			"settings":
-			{
-				"buffer_size": 11881,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/game/lib/mock/core/Game.lua",
-			"settings":
-			{
-				"buffer_size": 24191,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/game/lib/mock/anim/AnimatorClip.lua",
-			"settings":
-			{
-				"buffer_size": 25096,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/gii/qt/controls/GraphicsView/TimelineView.py",
-			"settings":
-			{
-				"buffer_size": 53072,
+				"buffer_size": 2257,
 				"line_ending": "Unix"
 			}
 		},
@@ -584,18 +544,52 @@
 			}
 		},
 		{
-			"file": "lib/gii/qt/controls/GraphicsView/CurveView.py",
+			"file": "lib/gii/core/EditorApp.py",
 			"settings":
 			{
-				"buffer_size": 29611,
+				"buffer_size": 7565,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "packages/Mock/Animator/AnimatorView.lua",
+			"file": "test/game/lib/mock/core/Game.lua",
 			"settings":
 			{
-				"buffer_size": 9310,
+				"buffer_size": 25250,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "test/game/lib/mock/core/Scene.lua",
+			"settings":
+			{
+				"buffer_size": 15790,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "Searching 440 files for \"addaction\"\n\n/Volumes/prj/gii/test/game/lib/character/Character.lua:\n  204  end\n  205  \n  206: function Character:addActionEventCallback( cb )\n  207  	local callbacks = self.actionEventCallbacks\n  208  	if not callbacks then\n\n/Volumes/prj/gii/test/game/lib/character/CharacterConfig.lua:\n  395  	--clone track\n  396  	for i, act in ipairs( baseConfig.actions ) do\n  397: 		local newAct = self:addAction()\n  398  		mock.clone( act, newAct )\n  399  		newAct.inherited = true\n  ...\n  401  end\n  402  \n  403: function CharacterConfig:addAction( name )\n  404  	if not self.actions then self.actions = {} end\n  405  	local action = CharacterAction()\n\n/Volumes/prj/gii/test/game/lib/mock/tools/UserAction.lua:\n   68  end\n   69  \n   70: function UserActionMgr:addAction(a,addFirst)\n   71  	local actions=self.actions\n   72  	if addFirst then \n   ..\n   80  function UserActionMgr:chainLast(a)\n   81  	local last=self.actions[1]\n   82: 	if not last then return self:addAction(a) end\n   83  	return last:addNext(a)\n   84  end\n   ..\n   98  			if nextActions then\n   99  				for n, na in ipairs(nextActions) do\n  100: 					self:addAction(na)\n  101  				end\n  102  			end\n\n6 matches across 3 files\n\n\nSearching 996 files for \"addaction\"\n\n/Volumes/prj/gii/lib/3rdparty/common/pygments/lexers/_cocoa_builtins.py:\n   17  COCOA_INTERFACES = set(['UITableViewCell', 'HKCorrelationQuery', 'NSURLSessionDataTask', 'PHFetchOptions', 'NSLinguisticTagger', 'NSStream', 'AVAudioUnitDelay', 'GCMotion', 'SKPhysicsWorld', 'NSString', 'CMAttitude', 'AVAudioEnvironmentDistanceAttenuationParameters', 'HKStatisticsCollection', 'SCNPlane', 'CBPeer', 'JSContext', 'SCNTransaction', 'SCNTorus', 'AVAudioUnitEffect', 'UICollectionReusableView', 'MTLSamplerDescriptor', 'AVAssetReaderSampleReferenceOutput', 'AVMutableCompositionTrack', 'GKLeaderboard', 'NSFetchedResultsController', 'SKRange', 'MKTileOverlayRenderer', 'MIDINetworkSession', 'UIVisualEffectView', 'CIWarpKernel', 'PKObject', 'MKRoute', 'MPVolumeView', 'UIPrintInfo', 'SCNText', 'ADClient', 'UIKeyCommand', 'AVMutableAudioMix', 'GLKEffectPropertyLight', 'WKScriptMessage', 'AVMIDIPlayer', 'PHCollectionListChangeRequest', 'UICollectionViewLayout', 'NSMutableCharacterSet', 'SKPaymentTransaction', 'NEOnDemandRuleConnect', 'NSShadow', 'SCNView', 'NSURLSessionConfiguration', 'MTLVertexAttributeDescriptor', 'CBCharacteristic', 'HKQuantityType', 'CKLocationSortDescriptor', 'NEVPNIKEv2SecurityAssociationParameters', 'CMStepCounter', 'NSNetService', 'AVAssetWriterInputMetadataAdaptor', 'UICollectionView', 'UIViewPrintFormatter', 'SCNLevelOfDetail', 'CAShapeLayer', 'MCPeerID', 'MPRatingCommand', 'WKNavigation', 'NSDictionary', 'NSFileVersion', 'CMGyroData', 'AVAudioUnitDistortion', 'CKFetchRecordsOperation', 'SKPhysicsJointSpring', 'SCNHitTestResult', 'AVAudioTime', 'CIFilter', 'UIView', 'SCNConstraint', 'CAPropertyAnimation', 'MKMapItem', 'MPRemoteCommandCenter', 'UICollectionViewFlowLayoutInvalidationContext', 'UIInputViewController', 'PKPass', 'SCNPhysicsBehavior', 'MTLRenderPassColorAttachmentDescriptor', 'MKPolygonRenderer', 'CKNotification', 'JSValue', 'PHCollectionList', 'CLGeocoder', 'NSByteCountFormatter', 'AVCaptureScreenInput', 'MPFeedbackCommand', 'CAAnimation', 'MKOverlayPathView', 'UIActionSheet', 'UIMotionEffectGroup', 'NSLengthFormatter', 'UIBarItem', 'SKProduct', 'AVAssetExportSession', 'NSKeyedUnarchiver', 'NSMutableSet', 'SCNPyramid', 'PHAssetCollection', 'MKMapView', 'HMHomeManager', 'CATransition', 'MTLCompileOptions', 'UIVibrancyEffect', 'CLCircularRegion', 'MKTileOverlay', 'SCNShape', 'ACAccountCredential', 'SKPhysicsJointLimit', 'MKMapSnapshotter', 'AVMediaSelectionGroup', 'NSIndexSet', 'CBPeripheralManager', 'CKRecordZone', 'AVAudioRecorder', 'NSURL', 'CBCentral', 'NSNumber', 'AVAudioOutputNode', 'MTLVertexAttributeDescriptorArray', 'MKETAResponse', 'SKTransition', 'SSReadingList', 'HKSourceQuery', 'UITableViewRowAction', 'UITableView', 'SCNParticlePropertyController', 'AVCaptureStillImageOutput', 'GCController', 'AVAudioPlayerNode', 'AVAudioSessionPortDescription', 'NSHTTPURLResponse', 'NEOnDemandRuleEvaluateConnection', 'SKEffectNode', 'HKQuantity', 'GCControllerElement', 'AVPlayerItemAccessLogEvent', 'SCNBox', 'NSExtensionContext', 'MKOverlayRenderer', 'SCNPhysicsVehicle', 'NSDecimalNumber', 'EKReminder', 'MKPolylineView', 'CKQuery', 'AVAudioMixerNode', 'GKAchievementDescription', 'EKParticipant', 'NSBlockOperation', 'UIActivityItemProvider', 'CLLocation', 'NSBatchUpdateRequest', 'PHContentEditingOutput', 'PHObjectChangeDetails', 'MPMoviePlayerController', 'AVAudioFormat', 'HMTrigger', 'MTLRenderPassDepthAttachmentDescriptor', 'SCNRenderer', 'GKScore', 'UISplitViewController', 'HKSource', 'NSURLConnection', 'ABUnknownPersonViewController', 'SCNTechnique', 'UIMenuController', 'NSEvent', 'SKTextureAtlas', 'NSKeyedArchiver', 'GKLeaderboardSet', 'NSSimpleCString', 'AVAudioPCMBuffer', 'CBATTRequest', 'GKMatchRequest', 'AVMetadataObject', 'SKProductsRequest', 'UIAlertView', 'NSIncrementalStore', 'MFMailComposeViewController', 'SCNFloor', 'NSSortDescriptor', 'CKFetchNotificationChangesOperation', 'MPMovieAccessLog', 'NSManagedObjectContext', 'AVAudioUnitGenerator', 'WKBackForwardList', 'SKMutableTexture', 'AVCaptureAudioDataOutput', 'ACAccount', 'AVMetadataItem', 'MPRatingCommandEvent', 'AVCaptureDeviceInputSource', 'CLLocationManager', 'MPRemoteCommand', 'AVCaptureSession', 'UIStepper', 'UIRefreshControl', 'NEEvaluateConnectionRule', 'CKModifyRecordsOperation', 'UICollectionViewTransitionLayout', 'CBCentralManager', 'NSPurgeableData', 'SLComposeViewController', 'NSHashTable', 'MKUserTrackingBarButtonItem', 'UILexiconEntry', 'CMMotionActivity', 'SKAction', 'SKShader', 'AVPlayerItemOutput', 'MTLRenderPassAttachmentDescriptor', 'UIDocumentInteractionController', 'UIDynamicItemBehavior', 'NSMutableDictionary', 'UILabel', 'AVCaptureInputPort', 'NSExpression', 'CAInterAppAudioTransportView', 'SKMutablePayment', 'UIImage', 'PHCachingImageManager', 'SCNTransformConstraint', 'UIColor', 'SCNGeometrySource', 'AVCaptureAutoExposureBracketedStillImageSettings', 'UIPopoverBackgroundView', 'UIToolbar', 'NSNotificationCenter', 'AVAssetReaderOutputMetadataAdaptor', 'NSEntityMigrationPolicy', 'NSLocale', 'NSURLSession', 'SCNCamera', 'NSTimeZone', 'UIManagedDocument', 'AVMutableVideoCompositionLayerInstruction', 'AVAssetTrackGroup', 'NSInvocationOperation', 'ALAssetRepresentation', 'AVQueuePlayer', 'HMServiceGroup', 'UIPasteboard', 'PHContentEditingInput', 'NSLayoutManager', 'EKCalendarChooser', 'EKObject', 'CATiledLayer', 'GLKReflectionMapEffect', 'NSManagedObjectID', 'NSEnergyFormatter', 'SLRequest', 'HMCharacteristic', 'AVPlayerLayer', 'MTLRenderPassDescriptor', 'SKPayment', 'NSPointerArray', 'AVAudioMix', 'SCNLight', 'MCAdvertiserAssistant', 'MKMapSnapshotOptions', 'HKCategorySample', 'AVAudioEnvironmentReverbParameters', 'SCNMorpher', 'AVTimedMetadataGroup', 'CBMutableCharacteristic', 'NSFetchRequest', 'UIDevice', 'NSManagedObject', 'NKAssetDownload', 'AVOutputSettingsAssistant', 'SKPhysicsJointPin', 'UITabBar', 'UITextInputMode', 'NSFetchRequestExpression', 'HMActionSet', 'CTSubscriber', 'PHAssetChangeRequest', 'NSPersistentStoreRequest', 'UITabBarController', 'HKQuantitySample', 'AVPlayerItem', 'AVSynchronizedLayer', 'MKDirectionsRequest', 'NSMetadataItem', 'UIPresentationController', 'UINavigationItem', 'PHFetchResultChangeDetails', 'PHImageManager', 'AVCaptureManualExposureBracketedStillImageSettings', 'UIStoryboardPopoverSegue', 'SCNLookAtConstraint', 'UIGravityBehavior', 'UIWindow', 'CBMutableDescriptor', 'NEOnDemandRuleDisconnect', 'UIBezierPath', 'UINavigationController', 'ABPeoplePickerNavigationController', 'EKSource', 'AVAssetWriterInput', 'AVPlayerItemTrack', 'GLKEffectPropertyTexture', 'NSURLResponse', 'SKPaymentQueue', 'NSAssertionHandler', 'MKReverseGeocoder', 'GCControllerAxisInput', 'NSArray', 'NSOrthography', 'NSURLSessionUploadTask', 'NSCharacterSet', 'AVMutableVideoCompositionInstruction', 'AVAssetReaderOutput', 'EAGLContext', 'WKFrameInfo', 'CMPedometer', 'MyClass', 'CKModifyBadgeOperation', 'AVCaptureAudioFileOutput', 'SKEmitterNode', 'NSMachPort', 'AVVideoCompositionCoreAnimationTool', 'PHCollection', 'SCNPhysicsWorld', 'NSURLRequest', 'CMAccelerometerData', 'NSNetServiceBrowser', 'CLFloor', 'AVAsynchronousVideoCompositionRequest', 'SCNGeometry', 'SCNIKConstraint', 'CIKernel', 'CAGradientLayer', 'HKCharacteristicType', 'NSFormatter', 'SCNAction', 'CATransaction', 'CBUUID', 'UIStoryboard', 'MPMediaLibrary', 'UITapGestureRecognizer', 'MPMediaItemArtwork', 'NSURLSessionTask', 'AVAudioUnit', 'MCBrowserViewController', 'NSRelationshipDescription', 'HKSample', 'WKWebView', 'NSMutableAttributedString', 'NSPersistentStoreAsynchronousResult', 'MPNowPlayingInfoCenter', 'MKLocalSearch', 'EAAccessory', 'HKCorrelation', 'CATextLayer', 'NSNotificationQueue', 'UINib', 'GLKTextureLoader', 'HKObjectType', 'NSValue', 'NSMutableIndexSet', 'SKPhysicsContact', 'NSProgress', 'AVPlayerViewController', 'CAScrollLayer', 'GKSavedGame', 'NSTextCheckingResult', 'PHObjectPlaceholder', 'SKConstraint', 'EKEventEditViewController', 'NSEntityDescription', 'NSURLCredentialStorage', 'UIApplication', 'SKDownload', 'SCNNode', 'MKLocalSearchRequest', 'SKScene', 'UISearchDisplayController', 'NEOnDemandRule', 'MTLRenderPassStencilAttachmentDescriptor', 'CAReplicatorLayer', 'UIPrintPageRenderer', 'EKCalendarItem', 'NSUUID', 'EAAccessoryManager', 'NEOnDemandRuleIgnore', 'SKRegion', 'AVAssetResourceLoader', 'EAWiFiUnconfiguredAccessoryBrowser', 'NSUserActivity', 'CTCall', 'UIPrinterPickerController', 'CIVector', 'UINavigationBar', 'UIPanGestureRecognizer', 'MPMediaQuery', 'ABNewPersonViewController', 'CKRecordZoneID', 'HKAnchoredObjectQuery', 'CKFetchRecordZonesOperation', 'UIStoryboardSegue', 'ACAccountType', 'GKSession', 'SKVideoNode', 'PHChange', 'SKReceiptRefreshRequest', 'GCExtendedGamepadSnapshot', 'MPSeekCommandEvent', 'GCExtendedGamepad', 'CAValueFunction', 'SCNCylinder', 'NSNotification', 'NSBatchUpdateResult', 'PKPushCredentials', 'SCNPhysicsSliderJoint', 'AVCaptureDeviceFormat', 'AVPlayerItemErrorLog', 'NSMapTable', 'NSSet', 'CMMotionManager', 'GKVoiceChatService', 'UIPageControl', 'UILexicon', 'MTLArrayType', 'AVAudioUnitReverb', 'MKGeodesicPolyline', 'AVMutableComposition', 'NSLayoutConstraint', 'UIPrinter', 'NSOrderedSet', 'CBAttribute', 'PKPushPayload', 'NSIncrementalStoreNode', 'EKEventStore', 'MPRemoteCommandEvent', 'UISlider', 'UIBlurEffect', 'CKAsset', 'AVCaptureInput', 'AVAudioEngine', 'MTLVertexDescriptor', 'SKPhysicsBody', 'NSOperation', 'UIImageAsset', 'MKMapCamera', 'SKProductsResponse', 'GLKEffectPropertyMaterial', 'AVCaptureDevice', 'CTCallCenter', 'CABTMIDILocalPeripheralViewController', 'NEVPNManager', 'HKQuery', 'SCNPhysicsContact', 'CBMutableService', 'AVSampleBufferDisplayLayer', 'SCNSceneSource', 'SKLightNode', 'CKDiscoveredUserInfo', 'NSMutableArray', 'MTLDepthStencilDescriptor', 'MTLArgument', 'NSMassFormatter', 'CIRectangleFeature', 'PKPushRegistry', 'NEVPNConnection', 'MCNearbyServiceBrowser', 'NSOperationQueue', 'MKPolylineRenderer', 'UICollectionViewLayoutAttributes', 'NSValueTransformer', 'UICollectionViewFlowLayout', 'CIBarcodeFeature', 'MPChangePlaybackRateCommandEvent', 'NSEntityMapping', 'SKTexture', 'NSMergePolicy', 'UITextInputStringTokenizer', 'NSRecursiveLock', 'AVAsset', 'NSUndoManager', 'AVAudioUnitSampler', 'NSItemProvider', 'SKUniform', 'MPMediaPickerController', 'CKOperation', 'MTLRenderPipelineDescriptor', 'EAWiFiUnconfiguredAccessory', 'NSFileCoordinator', 'SKRequest', 'NSFileHandle', 'NSConditionLock', 'UISegmentedControl', 'NSManagedObjectModel', 'UITabBarItem', 'SCNCone', 'MPMediaItem', 'SCNMaterial', 'EKRecurrenceRule', 'UIEvent', 'UITouch', 'UIPrintInteractionController', 'CMDeviceMotion', 'NEVPNProtocol', 'NSCompoundPredicate', 'HKHealthStore', 'MKMultiPoint', 'HKSampleType', 'UIPrintFormatter', 'AVAudioUnitEQFilterParameters', 'SKView', 'NSConstantString', 'UIPopoverController', 'CKDatabase', 'AVMetadataFaceObject', 'UIAccelerometer', 'EKEventViewController', 'CMAltitudeData', 'MTLStencilDescriptor', 'UISwipeGestureRecognizer', 'NSPort', 'MKCircleRenderer', 'AVCompositionTrack', 'NSAsynchronousFetchRequest', 'NSUbiquitousKeyValueStore', 'NSMetadataQueryResultGroup', 'AVAssetResourceLoadingDataRequest', 'UITableViewHeaderFooterView', 'CKNotificationID', 'AVAudioSession', 'HKUnit', 'NSNull', 'NSPersistentStoreResult', 'MKCircleView', 'AVAudioChannelLayout', 'NEVPNProtocolIKEv2', 'WKProcessPool', 'UIAttachmentBehavior', 'CLBeacon', 'NSInputStream', 'NSURLCache', 'GKPlayer', 'NSMappingModel', 'NSHTTPCookie', 'AVMutableVideoComposition', 'PHFetchResult', 'NSAttributeDescription', 'AVPlayer', 'MKAnnotationView', 'UIFontDescriptor', 'NSTimer', 'CBDescriptor', 'MKOverlayView', 'AVAudioUnitTimePitch', 'NSSaveChangesRequest', 'UIReferenceLibraryViewController', 'SKPhysicsJointFixed', 'UILocalizedIndexedCollation', 'UIInterpolatingMotionEffect', 'UIDocumentPickerViewController', 'AVAssetWriter', 'NSBundle', 'SKStoreProductViewController', 'GLKViewController', 'NSMetadataQueryAttributeValueTuple', 'GKTurnBasedMatch', 'AVAudioFile', 'UIActivity', 'NSPipe', 'MKShape', 'NSMergeConflict', 'CIImage', 'HKObject', 'UIRotationGestureRecognizer', 'AVPlayerItemLegibleOutput', 'AVAssetImageGenerator', 'GCControllerButtonInput', 'CKMarkNotificationsReadOperation', 'CKSubscription', 'MPTimedMetadata', 'NKIssue', 'UIScreenMode', 'HMAccessoryBrowser', 'GKTurnBasedEventHandler', 'UIWebView', 'MKPolyline', 'JSVirtualMachine', 'AVAssetReader', 'NSAttributedString', 'GKMatchmakerViewController', 'NSCountedSet', 'UIButton', 'WKNavigationResponse', 'GKLocalPlayer', 'MPMovieErrorLog', 'AVSpeechUtterance', 'HKStatistics', 'UILocalNotification', 'HKBiologicalSexObject', 'AVURLAsset', 'CBPeripheral', 'NSDateComponentsFormatter', 'SKSpriteNode', 'UIAccessibilityElement', 'AVAssetWriterInputGroup', 'HMZone', 'AVAssetReaderAudioMixOutput', 'NSEnumerator', 'UIDocument', 'MKLocalSearchResponse', 'UISimpleTextPrintFormatter', 'PHPhotoLibrary', 'CBService', 'UIDocumentMenuViewController', 'MCSession', 'QLPreviewController', 'CAMediaTimingFunction', 'UITextPosition', 'ASIdentifierManager', 'AVAssetResourceLoadingRequest', 'SLComposeServiceViewController', 'UIPinchGestureRecognizer', 'PHObject', 'NSExtensionItem', 'HKSampleQuery', 'MTLRenderPipelineColorAttachmentDescriptorArray', 'MKRouteStep', 'SCNCapsule', 'NSMetadataQuery', 'AVAssetResourceLoadingContentInformationRequest', 'UITraitCollection', 'CTCarrier', 'NSFileSecurity', 'UIAcceleration', 'UIMotionEffect', 'MTLRenderPipelineReflection', 'CLHeading', 'CLVisit', 'MKDirectionsResponse', 'HMAccessory', 'MTLStructType', 'UITextView', 'CMMagnetometerData', 'UICollisionBehavior', 'UIProgressView', 'CKServerChangeToken', 'UISearchBar', 'MKPlacemark', 'AVCaptureConnection', 'NSPropertyMapping', 'ALAssetsFilter', 'SK3DNode', 'AVPlayerItemErrorLogEvent', 'NSJSONSerialization', 'AVAssetReaderVideoCompositionOutput', 'ABPersonViewController', 'CIDetector', 'GKTurnBasedMatchmakerViewController', 'MPMediaItemCollection', 'SCNSphere', 'NSCondition', 'NSURLCredential', 'MIDINetworkConnection', 'NSFileProviderExtension', 'NSDecimalNumberHandler', 'NSAtomicStoreCacheNode', 'NSAtomicStore', 'EKAlarm', 'CKNotificationInfo', 'AVAudioUnitEQ', 'UIPercentDrivenInteractiveTransition', 'MKPolygon', 'AVAssetTrackSegment', 'MTLVertexAttribute', 'NSExpressionDescription', 'HKStatisticsCollectionQuery', 'NSURLAuthenticationChallenge', 'NSDirectoryEnumerator', 'MKDistanceFormatter', 'UIAlertAction', 'NSPropertyListSerialization', 'GKPeerPickerController', 'UIUserNotificationSettings', 'UITableViewController', 'GKNotificationBanner', 'MKPointAnnotation', 'MTLRenderPassColorAttachmentDescriptorArray', 'NSCache', 'SKPhysicsJoint', 'NSXMLParser', 'UIViewController', 'MFMessageComposeViewController', 'AVAudioInputNode', 'NSDataDetector', 'CABTMIDICentralViewController', 'AVAudioUnitMIDIInstrument', 'AVCaptureVideoPreviewLayer', 'AVAssetWriterInputPassDescription', 'MPChangePlaybackRateCommand', 'NSURLComponents', 'CAMetalLayer', 'UISnapBehavior', 'AVMetadataMachineReadableCodeObject', 'CKDiscoverUserInfosOperation', 'NSTextAttachment', 'NSException', 'UIMenuItem', 'CMMotionActivityManager', 'SCNGeometryElement', 'NCWidgetController', 'CAEmitterLayer', 'MKUserLocation', 'UIImagePickerController', 'CIFeature', 'AVCaptureDeviceInput', 'ALAsset', 'NSURLSessionDownloadTask', 'SCNPhysicsHingeJoint', 'MPMoviePlayerViewController', 'NSMutableOrderedSet', 'SCNMaterialProperty', 'UIFont', 'AVCaptureVideoDataOutput', 'NSCachedURLResponse', 'ALAssetsLibrary', 'NSInvocation', 'UILongPressGestureRecognizer', 'NSTextStorage', 'WKWebViewConfiguration', 'CIFaceFeature', 'MKMapSnapshot', 'GLKEffectPropertyFog', 'AVComposition', 'CKDiscoverAllContactsOperation', 'AVAudioMixInputParameters', 'CAEmitterBehavior', 'PKPassLibrary', 'UIMutableUserNotificationCategory', 'NSLock', 'NEVPNProtocolIPSec', 'ADBannerView', 'UIDocumentPickerExtensionViewController', 'UIActivityIndicatorView', 'AVPlayerMediaSelectionCriteria', 'CALayer', 'UIAccessibilityCustomAction', 'UIBarButtonItem', 'AVAudioSessionRouteDescription', 'CLBeaconRegion', 'HKBloodTypeObject', 'MTLVertexBufferLayoutDescriptorArray', 'CABasicAnimation', 'AVVideoCompositionInstruction', 'AVMutableTimedMetadataGroup', 'EKRecurrenceEnd', 'NSTextContainer', 'TWTweetComposeViewController', 'UIScrollView', 'WKNavigationAction', 'AVPlayerItemMetadataOutput', 'EKRecurrenceDayOfWeek', 'NSNumberFormatter', 'MTLComputePipelineReflection', 'UIScreen', 'CLRegion', 'NSProcessInfo', 'GLKTextureInfo', 'SCNSkinner', 'AVCaptureMetadataOutput', 'SCNAnimationEvent', 'NSTextTab', 'JSManagedValue', 'NSDate', 'UITextChecker', 'WKBackForwardListItem', 'NSData', 'NSParagraphStyle', 'AVMutableMetadataItem', 'EKCalendar', 'NSMutableURLRequest', 'UIVideoEditorController', 'HMTimerTrigger', 'AVAudioUnitVarispeed', 'UIDynamicAnimator', 'AVCompositionTrackSegment', 'GCGamepadSnapshot', 'MPMediaEntity', 'GLKSkyboxEffect', 'UISwitch', 'EKStructuredLocation', 'UIGestureRecognizer', 'NSProxy', 'GLKBaseEffect', 'UIPushBehavior', 'GKScoreChallenge', 'NSCoder', 'MPMediaPlaylist', 'NSDateComponents', 'WKUserScript', 'EKEvent', 'NSDateFormatter', 'NSAsynchronousFetchResult', 'AVAssetWriterInputPixelBufferAdaptor', 'UIVisualEffect', 'UICollectionViewCell', 'UITextField', 'CLPlacemark', 'MPPlayableContentManager', 'AVCaptureOutput', 'HMCharacteristicWriteAction', 'CKModifySubscriptionsOperation', 'NSPropertyDescription', 'GCGamepad', 'UIMarkupTextPrintFormatter', 'SCNTube', 'NSPersistentStoreCoordinator', 'AVAudioEnvironmentNode', 'GKMatchmaker', 'CIContext', 'NSThread', 'SLComposeSheetConfigurationItem', 'SKPhysicsJointSliding', 'NSPredicate', 'GKVoiceChat', 'SKCropNode', 'AVCaptureAudioPreviewOutput', 'NSStringDrawingContext', 'GKGameCenterViewController', 'UIPrintPaper', 'SCNPhysicsBallSocketJoint', 'UICollectionViewLayoutInvalidationContext', 'GLKEffectPropertyTransform', 'AVAudioIONode', 'UIDatePicker', 'MKDirections', 'ALAssetsGroup', 'CKRecordZoneNotification', 'SCNScene', 'MPMovieAccessLogEvent', 'CKFetchSubscriptionsOperation', 'CAEmitterCell', 'AVAudioUnitTimeEffect', 'HMCharacteristicMetadata', 'MKPinAnnotationView', 'UIPickerView', 'UIImageView', 'UIUserNotificationCategory', 'SCNPhysicsVehicleWheel', 'HKCategoryType', 'MPMediaQuerySection', 'GKFriendRequestComposeViewController', 'NSError', 'MTLRenderPipelineColorAttachmentDescriptor', 'SCNPhysicsShape', 'UISearchController', 'SCNPhysicsBody', 'CTSubscriberInfo', 'AVPlayerItemAccessLog', 'MPMediaPropertyPredicate', 'CMLogItem', 'NSAutoreleasePool', 'NSSocketPort', 'AVAssetReaderTrackOutput', 'SKNode', 'UIMutableUserNotificationAction', 'SCNProgram', 'AVSpeechSynthesisVoice', 'CMAltimeter', 'AVCaptureAudioChannel', 'GKTurnBasedExchangeReply', 'AVVideoCompositionLayerInstruction', 'AVSpeechSynthesizer', 'GKChallengeEventHandler', 'AVCaptureFileOutput', 'UIControl', 'SCNPhysicsField', 'CKReference', 'LAContext', 'CKRecordID', 'ADInterstitialAd', 'AVAudioSessionDataSourceDescription', 'AVAudioBuffer', 'CIColorKernel', 'GCControllerDirectionPad', 'NSFileManager', 'AVMutableAudioMixInputParameters', 'UIScreenEdgePanGestureRecognizer', 'CAKeyframeAnimation', 'CKQueryNotification', 'PHAdjustmentData', 'EASession', 'AVAssetResourceRenewalRequest', 'UIInputView', 'NSFileWrapper', 'UIResponder', 'NSPointerFunctions', 'NSHTTPCookieStorage', 'AVMediaSelectionOption', 'NSRunLoop', 'NSFileAccessIntent', 'CAAnimationGroup', 'MKCircle', 'UIAlertController', 'NSMigrationManager', 'NSDateIntervalFormatter', 'UICollectionViewUpdateItem', 'CKDatabaseOperation', 'PHImageRequestOptions', 'SKReachConstraints', 'CKRecord', 'CAInterAppAudioSwitcherView', 'WKWindowFeatures', 'GKInvite', 'NSMutableData', 'PHAssetCollectionChangeRequest', 'NSMutableParagraphStyle', 'UIDynamicBehavior', 'GLKEffectProperty', 'CKFetchRecordChangesOperation', 'SKShapeNode', 'MPMovieErrorLogEvent', 'MKPolygonView', 'MPContentItem', 'HMAction', 'NSScanner', 'GKAchievementChallenge', 'AVAudioPlayer', 'CKContainer', 'AVVideoComposition', 'NKLibrary', 'NSPersistentStore', 'AVCaptureMovieFileOutput', 'HMRoom', 'GKChallenge', 'UITextRange', 'NSURLProtectionSpace', 'ACAccountStore', 'MPSkipIntervalCommand', 'NSComparisonPredicate', 'HMHome', 'PHVideoRequestOptions', 'NSOutputStream', 'MPSkipIntervalCommandEvent', 'PKAddPassesViewController', 'UITextSelectionRect', 'CTTelephonyNetworkInfo', 'AVTextStyleRule', 'NSFetchedPropertyDescription', 'UIPageViewController', 'CATransformLayer', 'UICollectionViewController', 'AVAudioNode', 'MCNearbyServiceAdvertiser', 'NSObject', 'PHAsset', 'GKLeaderboardViewController', 'CKQueryCursor', 'MPMusicPlayerController', 'MKOverlayPathRenderer', 'CMPedometerData', 'HMService', 'SKFieldNode', 'GKAchievement', 'WKUserContentController', 'AVAssetTrack', 'TWRequest', 'SKLabelNode', 'AVCaptureBracketedStillImageSettings', 'MIDINetworkHost', 'MPMediaPredicate', 'AVFrameRateRange', 'MTLTextureDescriptor', 'MTLVertexBufferLayoutDescriptor', 'MPFeedbackCommandEvent', 'UIUserNotificationAction', 'HKStatisticsQuery', 'SCNParticleSystem', 'NSIndexPath', 'AVVideoCompositionRenderContext', 'CADisplayLink', 'HKObserverQuery', 'UIPopoverPresentationController', 'CKQueryOperation', 'CAEAGLLayer', 'NSMutableString', 'NSMessagePort', 'NSURLQueryItem', 'MTLStructMember', 'AVAudioSessionChannelDescription', 'GLKView', 'UIActivityViewController', 'GKAchievementViewController', 'GKTurnBasedParticipant', 'NSURLProtocol', 'NSUserDefaults', 'NSCalendar', 'SKKeyframeSequence', 'AVMetadataItemFilter', 'CKModifyRecordZonesOperation', 'WKPreferences', 'NSMethodSignature', 'NSRegularExpression', 'EAGLSharegroup', 'AVPlayerItemVideoOutput', 'PHContentEditingInputRequestOptions', 'GKMatch', 'CIColor', 'UIDictationPhrase'])\n   18  COCOA_PROTOCOLS = set(['SKStoreProductViewControllerDelegate', 'AVVideoCompositionInstruction', 'AVAudioSessionDelegate', 'GKMatchDelegate', 'NSFileManagerDelegate', 'UILayoutSupport', 'NSCopying', 'UIPrintInteractionControllerDelegate', 'QLPreviewControllerDataSource', 'SKProductsRequestDelegate', 'NSTextStorageDelegate', 'MCBrowserViewControllerDelegate', 'MTLComputeCommandEncoder', 'SCNSceneExportDelegate', 'UISearchResultsUpdating', 'MFMailComposeViewControllerDelegate', 'MTLBlitCommandEncoder', 'NSDecimalNumberBehaviors', 'PHContentEditingController', 'NSMutableCopying', 'UIActionSheetDelegate', 'UIViewControllerTransitioningDelegate', 'UIAlertViewDelegate', 'AVAudioPlayerDelegate', 'MKReverseGeocoderDelegate', 'NSCoding', 'UITextInputTokenizer', 'GKFriendRequestComposeViewControllerDelegate', 'UIActivityItemSource', 'NSCacheDelegate', 'UIAdaptivePresentationControllerDelegate', 'GKAchievementViewControllerDelegate', 'UIViewControllerTransitionCoordinator', 'EKEventEditViewDelegate', 'NSURLConnectionDelegate', 'UITableViewDelegate', 'GKPeerPickerControllerDelegate', 'UIGuidedAccessRestrictionDelegate', 'AVSpeechSynthesizerDelegate', 'AVAudio3DMixing', 'AVPlayerItemLegibleOutputPushDelegate', 'ADInterstitialAdDelegate', 'HMAccessoryBrowserDelegate', 'AVAssetResourceLoaderDelegate', 'UITabBarControllerDelegate', 'CKRecordValue', 'SKPaymentTransactionObserver', 'AVCaptureAudioDataOutputSampleBufferDelegate', 'UIInputViewAudioFeedback', 'GKChallengeListener', 'SKSceneDelegate', 'UIPickerViewDelegate', 'UIWebViewDelegate', 'UIApplicationDelegate', 'GKInviteEventListener', 'MPMediaPlayback', 'MyClassJavaScriptMethods', 'AVAsynchronousKeyValueLoading', 'QLPreviewItem', 'SCNBoundingVolume', 'NSPortDelegate', 'UIContentContainer', 'SCNNodeRendererDelegate', 'SKRequestDelegate', 'SKPhysicsContactDelegate', 'HMAccessoryDelegate', 'UIPageViewControllerDataSource', 'SCNSceneRendererDelegate', 'SCNPhysicsContactDelegate', 'MKMapViewDelegate', 'AVPlayerItemOutputPushDelegate', 'UICollectionViewDelegate', 'UIImagePickerControllerDelegate', 'MTLRenderCommandEncoder', 'UIToolbarDelegate', 'WKUIDelegate', 'SCNActionable', 'NSURLConnectionDataDelegate', 'MKOverlay', 'CBCentralManagerDelegate', 'JSExport', 'NSTextLayoutOrientationProvider', 'UIPickerViewDataSource', 'PKPushRegistryDelegate', 'UIViewControllerTransitionCoordinatorContext', 'NSLayoutManagerDelegate', 'MTLLibrary', 'NSFetchedResultsControllerDelegate', 'ABPeoplePickerNavigationControllerDelegate', 'MTLResource', 'NSDiscardableContent', 'UITextFieldDelegate', 'MTLBuffer', 'MTLSamplerState', 'GKGameCenterControllerDelegate', 'MPMediaPickerControllerDelegate', 'UISplitViewControllerDelegate', 'UIAppearance', 'UIPickerViewAccessibilityDelegate', 'UITraitEnvironment', 'UIScrollViewAccessibilityDelegate', 'ADBannerViewDelegate', 'MPPlayableContentDataSource', 'MTLComputePipelineState', 'NSURLSessionDelegate', 'MTLCommandBuffer', 'NSXMLParserDelegate', 'UIViewControllerRestoration', 'UISearchBarDelegate', 'UIBarPositioning', 'CBPeripheralDelegate', 'UISearchDisplayDelegate', 'CAAction', 'PKAddPassesViewControllerDelegate', 'MCNearbyServiceAdvertiserDelegate', 'MTLDepthStencilState', 'GKTurnBasedMatchmakerViewControllerDelegate', 'MPPlayableContentDelegate', 'AVCaptureVideoDataOutputSampleBufferDelegate', 'UIAppearanceContainer', 'UIStateRestoring', 'UITextDocumentProxy', 'MTLDrawable', 'NSURLSessionTaskDelegate', 'NSFilePresenter', 'AVAudioStereoMixing', 'UIViewControllerContextTransitioning', 'UITextInput', 'CBPeripheralManagerDelegate', 'UITextInputDelegate', 'NSFastEnumeration', 'NSURLAuthenticationChallengeSender', 'SCNProgramDelegate', 'AVVideoCompositing', 'SCNAnimatable', 'NSSecureCoding', 'MCAdvertiserAssistantDelegate', 'GKLocalPlayerListener', 'GLKNamedEffect', 'UIPopoverControllerDelegate', 'AVCaptureMetadataOutputObjectsDelegate', 'NSExtensionRequestHandling', 'UITextSelecting', 'UIPrinterPickerControllerDelegate', 'NCWidgetProviding', 'MTLCommandEncoder', 'NSURLProtocolClient', 'MFMessageComposeViewControllerDelegate', 'UIVideoEditorControllerDelegate', 'WKNavigationDelegate', 'GKSavedGameListener', 'UITableViewDataSource', 'MTLFunction', 'EKCalendarChooserDelegate', 'NSUserActivityDelegate', 'UICollisionBehaviorDelegate', 'NSStreamDelegate', 'MCNearbyServiceBrowserDelegate', 'HMHomeDelegate', 'UINavigationControllerDelegate', 'MCSessionDelegate', 'UIDocumentPickerDelegate', 'UIViewControllerInteractiveTransitioning', 'GKTurnBasedEventListener', 'SCNSceneRenderer', 'MTLTexture', 'GLKViewDelegate', 'EAAccessoryDelegate', 'WKScriptMessageHandler', 'PHPhotoLibraryChangeObserver', 'NSKeyedUnarchiverDelegate', 'AVPlayerItemMetadataOutputPushDelegate', 'NSMachPortDelegate', 'SCNShadable', 'UIPopoverBackgroundViewMethods', 'UIDocumentMenuDelegate', 'UIBarPositioningDelegate', 'ABPersonViewControllerDelegate', 'NSNetServiceBrowserDelegate', 'EKEventViewDelegate', 'UIScrollViewDelegate', 'NSURLConnectionDownloadDelegate', 'UIGestureRecognizerDelegate', 'UINavigationBarDelegate', 'AVAudioMixing', 'NSFetchedResultsSectionInfo', 'UIDocumentInteractionControllerDelegate', 'MTLParallelRenderCommandEncoder', 'QLPreviewControllerDelegate', 'UIAccessibilityReadingContent', 'ABUnknownPersonViewControllerDelegate', 'GLKViewControllerDelegate', 'UICollectionViewDelegateFlowLayout', 'UIPopoverPresentationControllerDelegate', 'UIDynamicAnimatorDelegate', 'NSTextAttachmentContainer', 'MKAnnotation', 'UIAccessibilityIdentification', 'UICoordinateSpace', 'ABNewPersonViewControllerDelegate', 'MTLDevice', 'CAMediaTiming', 'AVCaptureFileOutputRecordingDelegate', 'HMHomeManagerDelegate', 'UITextViewDelegate', 'UITabBarDelegate', 'GKLeaderboardViewControllerDelegate', 'UISearchControllerDelegate', 'EAWiFiUnconfiguredAccessoryBrowserDelegate', 'UITextInputTraits', 'MTLRenderPipelineState', 'GKVoiceChatClient', 'UIKeyInput', 'UICollectionViewDataSource', 'SCNTechniqueSupport', 'NSLocking', 'AVCaptureFileOutputDelegate', 'GKChallengeEventHandlerDelegate', 'UIObjectRestoration', 'CIFilterConstructor', 'AVPlayerItemOutputPullDelegate', 'EAGLDrawable', 'AVVideoCompositionValidationHandling', 'UIViewControllerAnimatedTransitioning', 'NSURLSessionDownloadDelegate', 'UIAccelerometerDelegate', 'UIPageViewControllerDelegate', 'MTLCommandQueue', 'UIDataSourceModelAssociation', 'AVAudioRecorderDelegate', 'GKSessionDelegate', 'NSKeyedArchiverDelegate', 'CAMetalDrawable', 'UIDynamicItem', 'CLLocationManagerDelegate', 'NSMetadataQueryDelegate', 'NSNetServiceDelegate', 'GKMatchmakerViewControllerDelegate', 'NSURLSessionDataDelegate'])\n   19: COCOA_PRIMITIVES = set(['ROTAHeader', '__CFBundle', 'MortSubtable', 'AudioFilePacketTableInfo', 'CGPDFOperatorTable', 'KerxStateEntry', 'ExtendedTempoEvent', 'CTParagraphStyleSetting', 'OpaqueMIDIPort', '_GLKMatrix3', '_GLKMatrix2', '_GLKMatrix4', 'ExtendedControlEvent', 'CAFAudioDescription', 'OpaqueCMBlockBuffer', 'CGTextDrawingMode', 'EKErrorCode', 'GCAcceleration', 'AudioUnitParameterInfo', '__SCPreferences', '__CTFrame', '__CTLine', 'AudioFile_SMPTE_Time', 'gss_krb5_lucid_context_v1', 'OpaqueJSValue', 'TrakTableEntry', 'AudioFramePacketTranslation', 'CGImageSource', 'OpaqueJSPropertyNameAccumulator', 'JustPCGlyphRepeatAddAction', '__CFBinaryHeap', 'OpaqueMIDIThruConnection', 'opaqueCMBufferQueue', 'OpaqueMusicSequence', 'MortRearrangementSubtable', 'MixerDistanceParams', 'MorxSubtable', 'MIDIObjectPropertyChangeNotification', 'SFNTLookupSegment', 'CGImageMetadataErrors', 'CGPath', 'OpaqueMIDIEndpoint', 'AudioComponentPlugInInterface', 'gss_ctx_id_t_desc_struct', 'sfntFontFeatureSetting', 'OpaqueJSContextGroup', '__SCNetworkConnection', 'AudioUnitParameterValueTranslation', 'CGImageMetadataType', 'CGPattern', 'AudioFileTypeAndFormatID', 'CGContext', 'AUNodeInteraction', 'SFNTLookupTable', 'JustPCDecompositionAction', 'KerxControlPointHeader', 'AudioStreamPacketDescription', 'KernSubtableHeader', '__SecCertificate', 'AUMIDIOutputCallbackStruct', 'MIDIMetaEvent', 'AudioQueueChannelAssignment', 'AnchorPoint', 'JustTable', '__CFNetService', 'CF_BRIDGED_TYPE', 'gss_krb5_lucid_key', 'CGPDFDictionary', 'KerxSubtableHeader', 'CAF_UUID_ChunkHeader', 'gss_krb5_cfx_keydata', 'OpaqueJSClass', 'CGGradient', 'OpaqueMIDISetup', 'JustPostcompTable', '__CTParagraphStyle', 'AudioUnitParameterHistoryInfo', 'OpaqueJSContext', 'CGShading', 'MIDIThruConnectionParams', 'BslnFormat0Part', 'SFNTLookupSingle', '__CFHost', '__SecRandom', '__CTFontDescriptor', '_NSRange', 'sfntDirectory', 'AudioQueueLevelMeterState', 'CAFPositionPeak', 'PropLookupSegment', '__CVOpenGLESTextureCache', 'sfntInstance', '_GLKQuaternion', 'AnkrTable', '__SCNetworkProtocol', 'gss_buffer_desc_struct', 'CAFFileHeader', 'KerxOrderedListHeader', 'CGBlendMode', 'STXEntryOne', 'CAFRegion', 'SFNTLookupTrimmedArrayHeader', 'SCNMatrix4', 'KerxControlPointEntry', 'OpaqueMusicTrack', '_GLKVector4', 'gss_OID_set_desc_struct', 'OpaqueMusicPlayer', '_CFHTTPAuthentication', 'CGAffineTransform', 'CAFMarkerChunk', 'AUHostIdentifier', 'ROTAGlyphEntry', 'BslnTable', 'gss_krb5_lucid_context_version', '_GLKMatrixStack', 'CGImage', 'KernStateEntry', 'SFNTLookupSingleHeader', 'MortLigatureSubtable', 'CAFUMIDChunk', 'SMPTETime', 'CAFDataChunk', 'CGPDFStream', 'AudioFileRegionList', 'STEntryTwo', 'SFNTLookupBinarySearchHeader', 'OpbdTable', '__CTGlyphInfo', 'BslnFormat2Part', 'KerxIndexArrayHeader', 'TrakTable', 'KerxKerningPair', '__CFBitVector', 'KernVersion0SubtableHeader', 'OpaqueAudioComponentInstance', 'AudioChannelLayout', '__CFUUID', 'MIDISysexSendRequest', '__CFNumberFormatter', 'CGImageSourceStatus', 'AudioFileMarkerList', 'AUSamplerBankPresetData', 'CGDataProvider', 'AudioFormatInfo', '__SecIdentity', 'sfntCMapExtendedSubHeader', 'MIDIChannelMessage', 'KernOffsetTable', 'CGColorSpaceModel', 'MFMailComposeErrorCode', 'CGFunction', '__SecTrust', 'AVAudio3DAngularOrientation', 'CGFontPostScriptFormat', 'KernStateHeader', 'AudioUnitCocoaViewInfo', 'CGDataConsumer', 'OpaqueMIDIDevice', 'KernVersion0Header', 'AnchorPointTable', 'CGImageDestination', 'CAFInstrumentChunk', 'AudioUnitMeterClipping', 'MorxChain', '__CTFontCollection', 'STEntryOne', 'STXEntryTwo', 'ExtendedNoteOnEvent', 'CGColorRenderingIntent', 'KerxSimpleArrayHeader', 'MorxTable', '_GLKVector3', '_GLKVector2', 'MortTable', 'CGPDFBox', 'AudioUnitParameterValueFromString', '__CFSocket', 'ALCdevice_struct', 'MIDINoteMessage', 'sfntFeatureHeader', 'CGRect', '__SCNetworkInterface', '__CFTree', 'MusicEventUserData', 'TrakTableData', 'GCQuaternion', 'MortContextualSubtable', '__CTRun', 'AudioUnitFrequencyResponseBin', 'MortChain', 'MorxInsertionSubtable', 'CGImageMetadata', 'gss_auth_identity', 'AudioUnitMIDIControlMapping', 'CAFChunkHeader', 'CGImagePropertyOrientation', 'CGPDFScanner', 'OpaqueMusicEventIterator', 'sfntDescriptorHeader', 'AudioUnitNodeConnection', 'OpaqueMIDIDeviceList', 'ExtendedAudioFormatInfo', 'BslnFormat1Part', 'sfntFontDescriptor', 'KernSimpleArrayHeader', '__CFRunLoopObserver', 'CGPatternTiling', 'MIDINotification', 'MorxLigatureSubtable', 'MessageComposeResult', 'MIDIThruConnectionEndpoint', 'MusicDeviceStdNoteParams', 'opaqueCMSimpleQueue', 'ALCcontext_struct', 'OpaqueAudioQueue', 'PropLookupSingle', 'CGInterpolationQuality', 'CGColor', 'AudioOutputUnitStartAtTimeParams', 'gss_name_t_desc_struct', 'CGFunctionCallbacks', 'CAFPacketTableHeader', 'AudioChannelDescription', 'sfntFeatureName', 'MorxContextualSubtable', 'CVSMPTETime', 'AudioValueRange', 'CGTextEncoding', 'AudioStreamBasicDescription', 'AUNodeRenderCallback', 'AudioPanningInfo', 'KerxOrderedListEntry', '__CFAllocator', 'OpaqueJSPropertyNameArray', '__SCDynamicStore', 'OpaqueMIDIEntity', '__CTRubyAnnotation', 'SCNVector4', 'CFHostClientContext', 'CFNetServiceClientContext', 'AudioUnitPresetMAS_SettingData', 'opaqueCMBufferQueueTriggerToken', 'AudioUnitProperty', 'CAFRegionChunk', 'CGPDFString', '__GLsync', '__CFStringTokenizer', 'JustWidthDeltaEntry', 'sfntVariationAxis', '__CFNetDiagnostic', 'CAFOverviewSample', 'sfntCMapEncoding', 'CGVector', '__SCNetworkService', 'opaqueCMSampleBuffer', 'AUHostVersionIdentifier', 'AudioBalanceFade', 'sfntFontRunFeature', 'KerxCoordinateAction', 'sfntCMapSubHeader', 'CVPlanarPixelBufferInfo', 'AUNumVersion', 'AUSamplerInstrumentData', 'AUPreset', '__CTRunDelegate', 'OpaqueAudioQueueProcessingTap', 'KerxTableHeader', '_NSZone', 'OpaqueExtAudioFile', '__CFRunLoopSource', '__CVMetalTextureCache', 'KerxAnchorPointAction', 'OpaqueJSString', 'AudioQueueParameterEvent', '__CFHTTPMessage', 'OpaqueCMClock', 'ScheduledAudioFileRegion', 'STEntryZero', 'AVAudio3DPoint', 'gss_channel_bindings_struct', 'sfntVariationHeader', 'AUChannelInfo', 'UIOffset', 'GLKEffectPropertyPrv', 'KerxStateHeader', 'CGLineJoin', 'CGPDFDocument', '__CFBag', 'KernOrderedListHeader', '__SCNetworkSet', '__SecKey', 'MIDIObjectAddRemoveNotification', 'AudioUnitParameter', 'JustPCActionSubrecord', 'AudioComponentDescription', 'AudioUnitParameterValueName', 'AudioUnitParameterEvent', 'KerxControlPointAction', 'AudioTimeStamp', 'KernKerningPair', 'gss_buffer_set_desc_struct', 'MortFeatureEntry', 'FontVariation', 'CAFStringID', 'LcarCaretClassEntry', 'AudioUnitParameterStringFromValue', 'ACErrorCode', 'ALMXGlyphEntry', 'LtagTable', '__CTTypesetter', 'AuthorizationOpaqueRef', 'UIEdgeInsets', 'CGPathElement', 'CAFMarker', 'KernTableHeader', 'NoteParamsControlValue', 'SSLContext', 'gss_cred_id_t_desc_struct', 'AudioUnitParameterNameInfo', 'CGDataConsumerCallbacks', 'ALMXHeader', 'CGLineCap', 'MIDIControlTransform', 'CGPDFArray', '__SecPolicy', 'AudioConverterPrimeInfo', '__CTTextTab', '__CFNetServiceMonitor', 'AUInputSamplesInOutputCallbackStruct', '__CTFramesetter', 'CGPDFDataFormat', 'STHeader', 'CVPlanarPixelBufferInfo_YCbCrPlanar', 'MIDIValueMap', 'JustDirectionTable', '__SCBondStatus', 'SFNTLookupSegmentHeader', 'OpaqueCMMemoryPool', 'CGPathDrawingMode', 'CGFont', '__SCNetworkReachability', 'AudioClassDescription', 'CGPoint', 'AVAudio3DVectorOrientation', 'CAFStrings', '__CFNetServiceBrowser', 'opaqueMTAudioProcessingTap', 'sfntNameRecord', 'CGPDFPage', 'CGLayer', 'ComponentInstanceRecord', 'CAFInfoStrings', 'HostCallbackInfo', 'MusicDeviceNoteParams', 'OpaqueVTCompressionSession', 'KernIndexArrayHeader', 'CVPlanarPixelBufferInfo_YCbCrBiPlanar', 'MusicTrackLoopInfo', 'opaqueCMFormatDescription', 'STClassTable', 'sfntDirectoryEntry', 'OpaqueCMTimebase', 'CGDataProviderDirectCallbacks', 'MIDIPacketList', 'CAFOverviewChunk', 'MIDIPacket', 'ScheduledAudioSlice', 'CGDataProviderSequentialCallbacks', 'AudioBuffer', 'MorxRearrangementSubtable', 'CGPatternCallbacks', 'AUDistanceAttenuationData', 'MIDIIOErrorNotification', 'CGPDFContentStream', 'IUnknownVTbl', 'MIDITransform', 'MortInsertionSubtable', 'CABarBeatTime', 'AudioBufferList', '__CVBuffer', 'AURenderCallbackStruct', 'STXEntryZero', 'JustPCDuctilityAction', 'OpaqueAudioQueueTimeline', 'VTDecompressionOutputCallbackRecord', 'OpaqueMIDIClient', '__CFPlugInInstance', 'AudioQueueBuffer', '__CFFileDescriptor', 'AudioUnitConnection', '_GKTurnBasedExchangeStatus', 'LcarCaretTable', 'CVPlanarComponentInfo', 'JustWidthDeltaGroup', 'OpaqueAudioComponent', 'ParameterEvent', '__CVPixelBufferPool', '__CTFont', 'CGColorSpace', 'CGSize', 'AUDependentParameter', 'MIDIDriverInterface', 'gss_krb5_rfc1964_keydata', '__CFDateFormatter', 'LtagStringRange', 'OpaqueVTDecompressionSession', 'gss_iov_buffer_desc_struct', 'AUPresetEvent', 'PropTable', 'KernOrderedListEntry', 'CF_BRIDGED_MUTABLE_TYPE', 'gss_OID_desc_struct', 'AudioUnitPresetMAS_Settings', 'AudioFileMarker', 'JustPCConditionalAddAction', 'BslnFormat3Part', '__CFNotificationCenter', 'MortSwashSubtable', 'AUParameterMIDIMapping', 'SCNVector3', 'OpaqueAudioConverter', 'MIDIRawData', 'sfntNameHeader', '__CFRunLoop', 'MFMailComposeResult', 'CATransform3D', 'OpbdSideValues', 'CAF_SMPTE_Time', '__SecAccessControl', 'JustPCAction', 'OpaqueVTFrameSilo', 'OpaqueVTMultiPassStorage', 'CGPathElementType', 'AudioFormatListItem', 'AudioUnitExternalBuffer', 'AudioFileRegion', 'AudioValueTranslation', 'CGImageMetadataTag', 'CAFPeakChunk', 'AudioBytePacketTranslation', 'sfntCMapHeader', '__CFURLEnumerator', 'STXHeader', 'CGPDFObjectType', 'SFNTLookupArrayHeader'])\n   20  \n   21  \n\n/Volumes/prj/gii/lib/3rdparty/common/pyqode/core/api/code_edit.py:\n  624          self._actions.append(action)\n  625          action.setShortcutContext(QtCore.Qt.WidgetShortcut)\n  626:         super(CodeEdit, self).addAction(action)\n  627  \n  628      def insert_action(self, action, prev_action):\n  ...\n  658          action.setSeparator(True)\n  659          self._actions.append(action)\n  660:         self.addAction(action)\n  661          return action\n  662  \n  ...\n  687          for action in menu.actions():\n  688              action.setShortcutContext(QtCore.Qt.WidgetShortcut)\n  689:         self.addActions(menu.actions())\n  690  \n  691      def remove_menu(self, menu):\n  ...\n 1025          \"\"\"\n 1026          mnu = QtWidgets.QMenu()\n 1027:         mnu.addActions(self._actions)\n 1028          mnu.addSeparator()\n 1029          for menu in self._menus:\n ....\n 1110          action.triggered.connect(self.selectAll)\n 1111          self.action_select_all = action\n 1112:         self.addAction(self.action_select_all)\n 1113          if create_standard_actions:\n 1114              # delete\n\n/Volumes/prj/gii/lib/3rdparty/common/pyqode/core/modes/case_converter.py:\n   48          self.action_to_upper.setShortcut('Ctrl+Shift+U')\n   49          self.menu = QtWidgets.QMenu('Case', self.editor)\n   50:         self.menu.addAction(self.action_to_lower)\n   51:         self.menu.addAction(self.action_to_upper)\n   52          self._actions_created = True\n   53  \n\n/Volumes/prj/gii/lib/3rdparty/common/pyqode/core/modes/extended_selection.py:\n   79          menu.menuAction().setIcon(self.editor.action_select_all.icon())\n   80          # setup actions\n   81:         menu.addAction(self.action_select_word)\n   82:         menu.addAction(self.action_select_extended_word)\n   83:         menu.addAction(self.action_select_matched)\n   84:         menu.addAction(self.action_select_line)\n   85          menu.addSeparator()\n   86:         menu.addAction(self.editor.action_select_all)\n   87          return menu\n   88  \n   ..\n   94              pass\n   95          self.editor.add_action(self.create_menu().menuAction())\n   96:         self.editor.addActions([\n   97              self.action_select_extended_word, self.action_select_line,\n   98              self.action_select_matched, self.action_select_word])\n\n/Volumes/prj/gii/lib/3rdparty/common/pyqode/core/panels/folding.py:\n  190          action.setShortcut('Shift+-')\n  191          action.triggered.connect(self._on_action_toggle)\n  192:         self.context_menu.addAction(action)\n  193          action = self.action_expand = QtWidgets.QAction('Expand',\n  194                                                          self.context_menu)\n  195          action.setShortcut('Shift++')\n  196          action.triggered.connect(self._on_action_toggle)\n  197:         self.context_menu.addAction(action)\n  198          self.context_menu.addSeparator()\n  199          action = self.action_collapse_all = QtWidgets.QAction(\n  ...\n  201          action.setShortcut('Ctrl+Shift+-')\n  202          action.triggered.connect(self._on_action_collapse_all_triggered)\n  203:         self.context_menu.addAction(action)\n  204          action = self.action_expand_all = QtWidgets.QAction(\n  205              'Expand all', self.context_menu)\n  206          action.setShortcut('Ctrl+Shift++')\n  207          action.triggered.connect(self._on_action_expand_all_triggered)\n  208:         self.context_menu.addAction(action)\n  209          self.editor.add_menu(self.context_menu)\n  210  \n\n/Volumes/prj/gii/lib/3rdparty/common/pyqode/core/panels/search_and_replace.py:\n  180          self.menu.setTitle('Search')\n  181          self.menu.menuAction().setIcon(self.actionSearch.icon())\n  182:         self.menu.addAction(self.actionSearch)\n  183          self.actionSearch.setShortcutContext(QtCore.Qt.WidgetShortcut)\n  184:         self.menu.addAction(self.actionActionSearchAndReplace)\n  185          self.actionActionSearchAndReplace.setShortcutContext(\n  186              QtCore.Qt.WidgetShortcut)\n  187:         self.menu.addAction(self.actionFindNext)\n  188          self.actionFindNext.setShortcutContext(\n  189              QtCore.Qt.WidgetShortcut)\n  190:         self.menu.addAction(self.actionFindPrevious)\n  191          self.actionFindPrevious.setShortcutContext(\n  192              QtCore.Qt.WidgetShortcut)\n\n/Volumes/prj/gii/lib/3rdparty/common/pyqode/core/widgets/encodings.py:\n  128                          convert_to_codec_key(alias) == self._current_encoding:\n  129                      action.setChecked(True)\n  130:                 self.addAction(action)\n  131:                 self._group.addAction(action)\n  132          self._group.triggered.connect(self._on_encoding_triggered)\n  133          self.addSeparator()\n  134          self._edit_action = QtWidgets.QAction('Add or remove', self)\n  135          self._edit_action.triggered.connect(self._on_edit_requested)\n  136:         self.addAction(self._edit_action)\n  137  \n  138      def _on_edit_requested(self):\n\n/Volumes/prj/gii/lib/3rdparty/common/pyqode/core/widgets/errors_table.py:\n   62          self.action_copy = QtWidgets.QAction('Copy error', self)\n   63          self.action_copy.triggered.connect(self._copy_cell_text)\n   64:         self.context_mnu.addAction(self.action_details)\n   65:         self.context_mnu.addAction(self.action_copy)\n   66          self.clear()\n   67  \n\n/Volumes/prj/gii/lib/3rdparty/common/pyqode/core/widgets/filesystem_treeview.py:\n  167          self.context_menu.init_actions()\n  168          for action in self.context_menu.actions():\n  169:             self.addAction(action)\n  170  \n  171      def set_root_path(self, path, hide_extra_columns=True):\n  ...\n  516          self.tree_view = None\n  517  \n  518:     def addAction(self, *args):\n  519:         action = super(FileSystemContextMenu, self).addAction(*args)\n  520          if action is None:\n  521              action = args[0]\n  522          action.setShortcutContext(QtCore.Qt.WidgetShortcut)\n  523:         self.tree_view.addAction(action)\n  524          return action\n  525  \n  ...\n  534              self.menu_new.addSeparator()\n  535              for user_new_action in new_user_actions:\n  536:                 self.menu_new.addAction(user_new_action)\n  537          # New file\n  538          self.action_create_file = QtWidgets.QAction('&File', self)\n  ...\n  542          self.action_create_file.setIcon(icon_provider.icon(\n  543              icon_provider.File))\n  544:         self.menu_new.addAction(self.action_create_file)\n  545          # New directory\n  546          self.action_create_directory = QtWidgets.QAction('&Directory', self)\n  ...\n  549          self.action_create_directory.setIcon(icon_provider.icon(\n  550              icon_provider.Folder))\n  551:         self.menu_new.addAction(self.action_create_directory)\n  552          self.addSeparator()\n  553  \n  ...\n  557          self.action_cut.setIcon(icons.icon(\n  558              'edit-cut', ':/pyqode-icons/rc/edit-cut.png', 'fa.cut'))\n  559:         self.addAction(self.action_cut)\n  560          self.action_cut.triggered.connect(self._on_cut_triggered)\n  561          # copy\n  ...\n  564          self.action_copy.setIcon(icons.icon(\n  565              'edit-copy', ':/pyqode-icons/rc/edit-copy.png', 'fa.copy'))\n  566:         self.addAction(self.action_copy)\n  567          self.action_copy.triggered.connect(self._on_copy_triggered)\n  568          # copy path\n  569          self.action_copy_path = QtWidgets.QAction('&Copy path', self)\n  570          self.action_copy_path.setShortcut('Ctrl+Shift+C')\n  571:         self.addAction(self.action_copy_path)\n  572          self.action_copy_path.triggered.connect(self._on_copy_path_triggered)\n  573          # Paste\n  ...\n  577              'edit-paste', ':/pyqode-icons/rc/edit-paste.png', 'fa.paste'))\n  578          self.action_paste.triggered.connect(self._on_paste_triggered)\n  579:         self.addAction(self.action_paste)\n  580          self.addSeparator()\n  581          # Rename\n  ...\n  583          self.action_rename.setShortcut('F2')\n  584          self.action_rename.triggered.connect(self._on_rename_triggered)\n  585:         self.addAction(self.action_rename)\n  586          # Delete\n  587          self.action_delete = QtWidgets.QAction('&Delete', self)\n  ...\n  590              'edit-delete', ':/pyqode-icons/rc/edit-delete.png', 'fa.remove'))\n  591          self.action_delete.triggered.connect(self._on_delete_triggered)\n  592:         self.addAction(self.action_delete)\n  593          self.addSeparator()\n  594  \n  ...\n  600          else:\n  601              text = 'Show in %s' % self.get_linux_file_explorer().capitalize()\n  602:         action = self.action_show_in_explorer = self.addAction(text)\n  603          action.triggered.connect(self._on_show_in_explorer_triggered)\n  604  \n\n/Volumes/prj/gii/lib/3rdparty/common/pyqode/core/widgets/menu_recents.py:\n  174              action.setIcon(self.icon_provider.icon(QtCore.QFileInfo(file)))\n  175              action.triggered.connect(self._on_action_triggered)\n  176:             self.addAction(action)\n  177              self.recent_files_actions.append(action)\n  178          self.addSeparator()\n  ...\n  188                  path = self.clear_icon\n  189              icons.icon(theme, path, 'fa.times-circle')\n  190:         self.addAction(action_clear)\n  191  \n  192      def clear_recent_files(self):\n\n/Volumes/prj/gii/lib/3rdparty/common/pyqode/core/widgets/splittable_tab_widget.py:\n  190          context_mnu = QtWidgets.QMenu()\n  191          for action in self.context_actions:\n  192:             context_mnu.addAction(action)\n  193          if self.context_actions:\n  194              context_mnu.addSeparator()\n  195          menu = QtWidgets.QMenu('Split', context_mnu)\n  196:         menu.addAction('Split horizontally').triggered.connect(\n  197              self._on_split_requested)\n  198:         menu.addAction('Split vertically').triggered.connect(\n  199              self._on_split_requested)\n  200          context_mnu.addMenu(menu)\n  ...\n  205              qaction = QtWidgets.QAction(name, self)\n  206              qaction.triggered.connect(slot)\n  207:             context_mnu.addAction(qaction)\n  208:             self.addAction(qaction)\n  209          self._context_mnu = context_mnu\n  210          return context_mnu\n  ...\n  526              self._action_popup.setShortcut(self._shortcut)\n  527              self._action_popup.triggered.connect(self._show_popup)\n  528:             self.addAction(self._action_popup)\n  529              self.popup = OpenFilesPopup()\n  530              self.popup.setWindowFlags(\n\n/Volumes/prj/gii/lib/3rdparty/common/pyqode/core/widgets/tabs.py:\n   31      a dirty tab widget is being closed. It also adds a convenience QTabBar\n   32      with a \"close\", \"close others\" and \"close all\" menu. (You can add custom\n   33:     actions by using the addAction and addSeparator methods).\n   34  \n   35      It exposes a variety of signal and slots for a better integration with\n   ..\n   75              qaction = QtWidgets.QAction(name, self)\n   76              qaction.triggered.connect(slot)\n   77:             self._context_mnu.addAction(qaction)\n   78:             self.addAction(qaction)\n   79          # keep a list of widgets (to avoid PyQt bug where\n   80          # the C++ class loose the wrapped obj type).\n   ..\n  178          self.setCurrentIndex(initial_index)\n  179  \n  180:     def addAction(self, action):\n  181          \"\"\"\n  182          Adds an action to the TabBar context menu\n  ...\n  184          :param action: QAction to append\n  185          \"\"\"\n  186:         self._context_mnu.addAction(action)\n  187  \n  188      def add_separator(self):\n\n/Volumes/prj/gii/lib/gii/AssetEditor/AssetBrowser.py:\n  111  		self.actionGroupView = QtGui.QActionGroup( self.contentToolbar )\n  112  		tool = self.addTool( 'asset_browser_content/detail_view', label = 'L', type = 'check', icon = 'list' )\n  113: 		self.actionGroupView.addAction( tool.getAction() )\n  114  		tool = self.addTool( 'asset_browser_content/icon_view', label = 'I', type = 'check', icon = 'grid-2' )\n  115: 		self.actionGroupView.addAction( tool.getAction() )\n  116  \n  117  \n\n/Volumes/prj/gii/lib/gii/qt/QtEditorModule.py:\n   55  		action.setShortcut( QtGui.QKeySequence( keySeq ) )\n   56  		action.setShortcutContext( shortcutContext )\n   57: 		contextWindow.addAction( action )\n   58  \n   59  		if isinstance( target, str ): #command\n\n/Volumes/prj/gii/lib/gii/qt/controls/Menu.py:\n  127  					)\n  128  				\n  129: 				self.qtmenu.addAction(action)\n  130  				child.qtaction=action\n  131  \n\n/Volumes/prj/gii/lib/gii/qt/controls/ToolBar.py:\n  107  		item = ToolBarItem( name, **option )\n  108  		self.items[ name ] = item\n  109: 		self.qtToolbar.addAction( item.qtaction )\n  110  		return item\n  111  \n\n/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView/TimelineView.py:\n 1321  	def addEditToolButton( self, id, label, tooltip = None ):\n 1322  		tooltip = tooltip or label\n 1323: 		action = self.toolbarEdit.addAction( label )\n 1324  		action.triggered.connect( lambda x: self.onEditTool( id ) )\n 1325  		action.setToolTip( tooltip )\n\n/Volumes/prj/gii/lib/gii/ScriptView/ScriptView.py:\n  229  		splitter.addWidget(treeScope)\n  230  \n  231: 		# self.toolbar.addAction('hello').triggered.connect(self.onStepIn)\n  232  \n  233  	def toggleDebug(self, toggle):\n\n/Volumes/prj/gii/lib/mock/SceneGraphEditor/EntityEditor.py:\n   87  	def onFieldContextMenuRequested( self, target, fieldId ):\n   88  		menu = QMenu(\"Field Context\")\n   89: 		itemTitle = menu.addAction( '[ %s ]' % fieldId )\n   90  		itemTitle.setEnabled( False )\n   91  		menu.addSeparator()\n   ..\n   93  		animator = app.getModule( 'animator' )\n   94  		if animator:\n   95: 			itemAddKey = menu.addAction( 'Add key' )\n   96  			itemAddKey.setIcon( getIcon('key') )\n   97  			itemAddKey.triggered.connect( self.onFieldAddKey )\n   98  			menu.addSeparator()\n   99  \n  100: 		# itemDefault = menu.addAction( 'Set Default' )\n  101  		# itemDefault.triggered.connect( self.onFieldResetDefault )\n  102  \n  103  		if _MOCK.isProtoInstanceOverrided( target, fieldId ):\n  104  			menu.addSeparator()\n  105: 			itemProtoReset = menu.addAction( 'Reset To Proto Value' )\n  106  			itemProtoReset.triggered.connect( self.onFieldResetProto )\n  107  			itemProtoReset.setIcon( getIcon('reset') )\n  ...\n  141  	def onCustomTrackMenuRequested( self ):\n  142  		menu = QMenu(\"Animator Track Context\")\n  143: 		itemTitle = menu.addAction( 'Create Custom Animator Track' )\n  144  		itemTitle.setEnabled( False )\n  145  		menu.addSeparator()\n  ...\n  147  		if not trackTypes: return\n  148  		for id, clas in trackTypes.items():\n  149: 			action = menu.addAction( id )\n  150  			def _makeTrackCreator( trackId ):\n  151  				return lambda x: self.addCustomAnimatorTrack( trackId )\n\n/Volumes/prj/gii/packages/SerializableEditor/SerializableEditor.py:\n   90  		self.toolbar = self.container.addToolBar()\n   91  		self.toolbar.setIconSize( QtCore.QSize( 16, 16 ) )\n   92: 		self.actionSave   = self.toolbar.addAction( getIcon( 'save' ), 'Save' )\n   93: 		self.actionLocate = self.toolbar.addAction( getIcon( 'search-2' ), 'Locate' )\n   94  		self.actionSave.setEnabled( False )\n   95  \n\n70 matches across 20 files\n\n\nSearching 996 files for \"MOAICOroutine\"\n\n0 matches across 0 files\n\n\nSearching 440 files for \"MOAICOroutine\"\n\n/Volumes/prj/gii/test/game/lib/mock/component/AuroraSprite.lua:\n  213  \n  214  function AuroraSprite:wait()\n  215: 	return MOAICoroutine.blockOnAction( self.driver )\n  216  end\n  217  \n\n/Volumes/prj/gii/test/game/lib/mock/core/Actor.lua:\n   28  local yield  = coroutine.yield\n   29  local select = select\n   30: local block  = MOAICoroutine.blockOnAction\n   31  \n   32  local signalDisconnect  = signalDisconnect\n   ..\n  274  \n  275  --------------------------------------------------------------------\n  276: local newCoroutine = MOAICoroutine.new\n  277  function Actor:_createCoroutine( defaultParent, func, obj, ... )\n  278  	--TODO: use pool\n  ...\n  314  \n  315  function Actor:getCurrentCoroutine()\n  316: 	return MOAICoroutine.currentThread()\n  317  end\n  318  \n  ...\n  333  \n  334  function Actor:addDaemonCoroutineFor( obj, f, ... )\n  335: 	local daemon = MOAICoroutine.new()\n  336  	daemon:setDefaultParent( true )\n  337  	daemon:run( _coroDaemon, self, obj, f, ... )\n  ...\n  493  end\n  494  \n  495: local currentThread=MOAICoroutine.currentThread\n  496  function Actor:pauseThisThread( noyield )\n  497  	local th = currentThread()\n\n/Volumes/prj/gii/test/game/lib/mock/core/AssetLibrary.lua:\n   49  --------------------------------------------------------------------\n   50  function collectAssetGarbage()\n   51: 	local collectThread = MOAICoroutine.new()\n   52  	collectThread:run( function()\n   53  			coroutine.yield()\n\n/Volumes/prj/gii/test/game/lib/mock/core/async.lua:\n   24  function startIOCoroutine()\n   25  	if _IOCoroutine then return end\n   26: 	_IOCoroutine = MOAICoroutine.new()\n   27  	_IOCoroutine:run( \n   28  	function()\n\n/Volumes/prj/gii/test/game/lib/mock/core/AudioUntz.lua:\n  277  -- 		threadAction(\n  278  -- 			function()\n  279: -- 				MOAICoroutine.blockOnAction(\n  280  -- 					m:seekVolume(0,fadeTime)\n  281  -- 				)\n\n/Volumes/prj/gii/test/game/lib/mock/core/Component.lua:\n  243  \n  244  function Component:getCurrentCoroutine()\n  245: 	return MOAICoroutine.currentThread()\n  246  end\n  247  \n\n/Volumes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:\n  112  	if not self.coroWrapped then\n  113  		self.coroWrapped = true\n  114: 		local MOAICoroutineIT = MOAICoroutine.getInterfaceTable()\n  115: 		local _run = MOAICoroutineIT.run\n  116: 		MOAICoroutineIT.run = function(self, func,...)\n  117  			return _run(self, \n  118  				function(...)\n  ...\n  171  end\n  172  \n  173: local oldNew = MOAICoroutine.new\n  174: MOAICoroutine.new = function( ... )\n  175  	local coro = oldNew( ... )\n  176  	tracingCoroutines[ coro ] = debug.traceback( 3 )\n  ...\n  205  	end\n  206  \n  207: 	local MOAICoroutineIT = MOAICoroutine.getInterfaceTable()\n  208: 	local _run = MOAICoroutineIT.run\n  209: 	MOAICoroutineIT.run = function(self, func,...)\n  210  		return _run(self, \n  211  			function(...)\n\n/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:\n  208  \n  209  \n  210: 	self.rootUpdateCoroutine=MOAICoroutine.new()\n  211  	self.rootUpdateCoroutine:run( function()\n  212  			while true do\n\n/Volumes/prj/gii/test/game/lib/mock/core/MOAIActionHelpers.lua:\n   22  \n   23  -- function laterCall(t,f,...)\n   24: -- 	local thread=MOAICoroutine.new()\n   25  \n   26  -- 	thread:run(function(...)\n   ..\n   48  \n   49  function actionChain(list)\n   50: 	local thread=MOAICoroutine.new()\n   51  	thread:run(function()\n   52  		for i , action in ipairs(list) do\n   ..\n   77  \n   78  function actionGroup(list)\n   79: 	local thread=MOAICoroutine.new()\n   80  	thread:run(function()\n   81  		\n   ..\n   95  end\n   96  \n   97: -- local block       = MOAICoroutine.blockOnAction\n   98  -- local timerCache  = {}\n   99  -- function blockTime( t )\n  ...\n  117  \n  118  function threadAction(func,parentAction)\n  119: 	local thread=MOAICoroutine.new()\n  120  	thread:run(func)\n  121  	if parentAction then\n  ...\n  127  function timedAction(func,time)\n  128  	if not time or time <=0 then return end\n  129: 	local thread=MOAICoroutine.new()\n  130  	thread:run(function()\n  131  			local baseTime=game:getTime()\n\n/Volumes/prj/gii/test/game/lib/mock/core/MOAIInterfaces.lua:\n  517  MOAIHashWriter		= MOAIHashWriterCrypto or MOAIHashWriter\n  518  MOAITextBox			= MOAITextLabel\n  519: MOAIThread			= MOAICoroutine\n  520  \n  521  MOAIProp			= MOAIGraphicsProp\n\n/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:\n  346  	_stat( 'scene action root reset' )\n  347  \n  348: 	self.actionRoot = MOAICoroutine.new()\n  349  	self.actionRoot:setDefaultParent( true )\n  350  	self.actionRoot:run(\n  ...\n  475  	if not self.initialized then self:init() end\n  476  	self.running = true\n  477: 	self.mainThread = MOAICoroutine.new()\n  478  	self.mainThread:setDefaultParent( true )\n  479  	self.mainThread:run( function()\n\n/Volumes/prj/gii/test/game/lib/mock/core/ThreadTask.lua:\n   80  	self.totalTaskCount = 0\n   81  	self.thread = false\n   82: 	self.coro = MOAICoroutine.new()\n   83  \n   84  end\n\n/Volumes/prj/gii/test/game/lib/mock/prefabs/FullscreenMask.lua:\n   69  \n   70  \n   71: local block=MOAICoroutine.blockOnAction\n   72  function FullscreenMask:slash(r,g,b,t)\n   73  	t=t or 0.7\n   ..\n   75  		self.slashMaskThread:stop()\n   76  	end\n   77: 	local thread=MOAICoroutine.new()\n   78  	thread:run(function()\n   79  		self:show()\n\n/Volumes/prj/gii/test/game/lib/mock/tools/InputRecorder.lua:\n  114  	speed=speed or 1\n  115  	self.playPos=1\n  116: 	local thread=MOAICoroutine.new()\n  117  	self.thread=thread\n  118  	self.entryTime=clock()*1000\n\n/Volumes/prj/gii/test/game/lib/mock/tools/RemoteInput.lua:\n   67  	addTouchListener('remoteInputSender',inputCallback)\n   68  	local state\n   69: 	local thread=MOAICoroutine.new()\n   70  	thread:run(function()\n   71  \n   ..\n  128  	print(socket._VERSION)\n  129  	tcp:settimeout(1)\n  130: 	local thread=MOAICoroutine.new()\n  131  	local function timeout(t)\n  132  		local tt=os.clock()+t\n\n36 matches across 15 files\n\n\nSearching 440 files for \"debughelper\"\n\n/Volumes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:\n   26  local os=MOAIEnvironment.osBrand\n   27  \n   28: DebugHelper = {}\n   29  \n   30: function DebugHelper:startCrittercism( k1, k2, k3 )\n   31  	--TODO: support android\n   32  	if os=='iOS' then\n   ..\n   38  end\n   39  \n   40: function DebugHelper:setCodeMark( s, ... )\n   41  	if self.crittercism then\n   42  		MOAICrittercism.leaveBreadcrumb( string.format( s, ... ) )\n   ..\n   44  end\n   45  \n   46: function DebugHelper:reportUsage()\n   47  	print'---------'\n   48  	print('FPS:',MOAISim.getPerformance())\n   ..\n   65  \n   66  \n   67: function DebugHelper:showDebugLines(show)\n   68  	show=show~=false\n   69  	for i, l in pairs(moailayers)	 do\n   ..\n   72  end\n   73  \n   74: function DebugHelper:setDebugEnabled(d)\n   75  	self.debugEnabled=d or false\n   76  	if not self.debugger then\n   ..\n   83  end\n   84  \n   85: function DebugHelper:pause(msg)\n   86  	if self.debugger then\n   87  		return self.debugger.pause(msg)\n   ..\n   89  end\n   90  \n   91: function DebugHelper:exitOnError( enabled )\n   92  	enabled = enabled~=false\n   93  	if enabled then\n\n/Volumes/prj/gii/test/game/lib/mock/core/init.lua:\n   20  \n   21  require 'mock.core.ThreadTask'\n   22: require 'mock.core.DebugHelper'\n   23  require 'mock.core.LogHelper'\n   24  \n\n/Volumes/prj/gii/test/game/lib/mock/core/LogHelper.lua:\n   26  \n   27  --------------------------------------------------------------------\n   28: local DebugHelper = mock.DebugHelper\n   29: _codemark = function(s,...) return DebugHelper:setCodeMark(s,...) end\n   30  --------------------------------------------------------------------\n   31  \n\n12 matches across 3 files\n",
+			"settings":
+			{
+				"buffer_size": 61956,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "test/game/lib/mock/core/DebugHelper.lua",
+			"settings":
+			{
+				"buffer_size": 5740,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "packages/SerializableEditor/SerializableEditor.py",
+			"settings":
+			{
+				"buffer_size": 4909,
 				"line_ending": "Unix"
 			}
 		},
@@ -603,18 +597,18 @@
 			"file": "gii_cfg.py",
 			"settings":
 			{
-				"buffer_size": 392,
+				"buffer_size": 394,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "2015-11-04 11:20:36.270 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:36.270 Python[12671:507] CoreText performance note: Set a breakpoint on CTFontLogSuboptimalRequest to debug.\n2015-11-04 11:20:36.273 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\nstarting gii IDE...\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\nInitiating Turbo Badger - version 0.1.1\n[WARN:Lua]	no asset found	font/zipex.fnt	\n2\nstack traceback:\n	...mes/prj/gii/test/game/lib/mock/core/AssetLibrary.lua:387: in function 'loadAsset'\n	/Volumes/prj/gii/test/game/lib/mock/ui/TBManager.lua:21: in function 'onInit'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:281: in function 'initSubSystems'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:190: in function </Volumes/prj/gii/test/game/lib/mock/core/Game.lua:171>\n	(tail call): ?\n	/Volumes/prj/gii/test/game/lib/mock/env.lua:117: in function </Volumes/prj/gii/test/game/lib/mock/env.lua:116>\n2015-11-04 11:20:37.797 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:37.798 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:37.842 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:38.586 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:38.587 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:39.389 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:39.390 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\ntexture libray start\n2015-11-04 11:20:39.612 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:39.636 Python[12671:507] invalid drawable\n2015-11-04 11:20:39.638 Python[12671:507] invalid drawable\n2015-11-04 11:20:39.638 Python[12671:507] invalid drawable\n2015-11-04 11:20:39.865 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:20:39.897 Python[12671:507] invalid drawable\n2015-11-04 11:20:39.898 Python[12671:507] invalid drawable\n2015-11-04 11:20:39.899 Python[12671:507] invalid drawable\n2015-11-04 11:20:45.482 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\nCould not parse application stylesheet\n2015-11-04 11:29:21.883 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:29:21.885 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:29:21.887 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:29:22.061 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:29:22.102 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\nCould not parse application stylesheet\n2015-11-04 11:30:00.854 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:00.856 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:00.858 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:01.027 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:01.067 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:09.209 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:09.210 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:09.212 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:09.350 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-04 11:30:09.389 Python[12671:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\nfound joy: 0\nInitiating Turbo Badger - version 0.1.1\n[WARN:Lua]	no asset found	font/zipex.fnt	\n2\nstack traceback:\n	game/lib/mock/core/AssetLibrary.lua:387: in function 'loadAsset'\n	game/lib/mock/ui/TBManager.lua:21: in function 'onInit'\n	game/lib/mock/core/Game.lua:281: in function 'initSubSystems'\n	game/lib/mock/core/Game.lua:190: in function <game/lib/mock/core/Game.lua:171>\n	(tail call): ?\n	game/lib/mock/env.lua:117: in function 'init'\n	game/main_preview_scene.lua:22: in main chunk\n2015-11-04 13:47:28.566 Python[12671:507] invalid drawable\n\n[Finished in 9975.1s]\n",
+			"contents": "[STATUS]	registering asset manager:asset_manager.text\n[STATUS]	start tool: ide </Volumes/prj/gii/tools/ide>\n[STATUS]	project loaded: /Volumes/prj/gii/test\n[STATUS]	using pyqt\n[STATUS]	registering asset manager:asset_manager.script\n[STATUS]	scanning package in:/Volumes/prj/gii/packages\n[STATUS]	loading package:CommonAssetPreview\n[STATUS]	loading package:SimpleConsole\n[STATUS]	loading package:RemoteInput\n[STATUS]	loading package:Mock\n[STATUS]	registering asset manager:asset_manager.scene\n[STATUS]	registering asset manager:asset_manager.prefab\n[STATUS]	registering asset manager:asset_manager.texture_processor\n[STATUS]	registering asset manager:asset_manager.texture\n[STATUS]	registering asset manager:asset_manager.prebuilt_atlas\n[STATUS]	registering asset manager:asset_manager.material\n[STATUS]	registering asset manager:asset_manager.deck2d\n[STATUS]	registering asset manager:asset_manager.font\n[STATUS]	registering asset manager:asset_manager.stylesheet\n[STATUS]	registering asset manager:asset_manager.aurora_sprite\n[STATUS]	registering asset manager:asset_manager.msprite\n[STATUS]	registering asset manager:asset_manager.deckpack_psd\n[STATUS]	registering asset manager:asset_manager.spine\n[STATUS]	registering asset manager:asset_manager.particle\n[STATUS]	registering asset manager:asset_manager.pex\n[STATUS]	registering asset manager:asset_manager.fmod\n[STATUS]	registering asset manager:asset_manager.fsm_scheme\n[STATUS]	registering asset manager:asset_manager.bt_script\n[STATUS]	registering asset manager:asset_manager.render_target\n[STATUS]	registering asset manager:asset_manager.shader\n[STATUS]	registering asset manager:asset_manager.shader_script\n[STATUS]	registering asset manager:asset_manager.data_xls\n[STATUS]	registering asset manager:asset_manager.data_json\n[STATUS]	registering asset manager:asset_manager.data_yaml\n[STATUS]	registering asset manager:asset_manager.effect\n[STATUS]	registering asset manager:asset_manager.physics_material\n[STATUS]	registering asset manager:asset_manager.physics_body_def\n[STATUS]	registering asset manager:asset_manager.named_tileset\n[STATUS]	registering asset manager:asset_manager.code_tileset\n[STATUS]	registering asset manager:asset_manager.animator_data\n[STATUS]	registering asset manager:asset_manager.story_graph\n[STATUS]	registering asset manager:asset_manager.tb_skin\n[STATUS]	registering asset manager:asset_manager.tb_scheme\n[STATUS]	loading package:SerializableEditor\n[STATUS]	packages loaded!\n[STATUS]	scanning package in:/Volumes/prj/gii/test/env/packages\n[STATUS]	loading package:SerializableEditor\n[STATUS]	loading package:CommonAssetPreview\n[STATUS]	loading package:SimpleConsole\n[STATUS]	loading package:RemoteInput\n[STATUS]	loading package:Mock\n[STATUS]	packages loaded!\n[STATUS]	loading module:gii\n[STATUS]	loading module:qt\n[STATUS]	loading module:search_view\n2015-12-02 14:33:11.038 Python[36136:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-02 14:33:11.038 Python[36136:507] CoreText performance note: Set a breakpoint on CTFontLogSuboptimalRequest to debug.\n2015-12-02 14:33:11.040 Python[36136:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n[STATUS]	loading module:moai\nstarting gii IDE...\n[STATUS]	loading gii lua runtime\n[STATUS]	change moai working path:/Volumes/prj/gii/test\n[STATUS]	init GL context\n[STATUS]	loading module:scene_editor\n[STATUS]	loading module:filewatcher\n[STATUS]	loading module:asset_editor\n[STATUS]	loading module:device_manager\n[STATUS]	loading module:debug_view\n[STATUS]	loading module:script_view\n[STATUS]	loading module:remote_input_server\n[STATUS]	loading module:script_library\n[STATUS]	loading module:joystick_hook\n[STATUS]	found joysticks: 0\n[STATUS]	loading module:introspector\n[STATUS]	loading module:game_preview\n[STATUS]	add input device: device\n[STATUS]	loading module:command_history_view\n[STATUS]	loading module:asset_browser\n[STATUS]	loading module:device_browser\n[STATUS]	loading module:ios_device_monitor\n[STATUS]	loading module:console\n[STATUS]	loading module:debug_info\n[STATUS]	loading module:lua_profiler\n[STATUS]	loading module:asset_previewer\n[STATUS]	loading module:mock\n[STATUS:Lua]	register Lua Editor Command	scene_editor/focus_selection	\n[STATUS]	register command: scene_editor / focus_selection\n[STATUS:Lua]	register Lua Editor Command	scene_editor/create_global_object	\n[STATUS]	register command: scene_editor / create_global_object\n[STATUS:Lua]	register Lua Editor Command	scene_editor/remove_global_object	\n[STATUS]	register command: scene_editor / remove_global_object\n[STATUS:Lua]	register Lua Editor Command	scene_editor/clone_global_object	\n[STATUS]	register command: scene_editor / clone_global_object\n[STATUS:Lua]	register Lua Editor Command	scene_editor/animator_reparent_track	\n[STATUS]	register command: scene_editor / animator_reparent_track\n[STATUS:Lua]	register Lua Editor Command	scene_editor/animator_add_clip	\n[STATUS]	register command: scene_editor / animator_add_clip\n[STATUS:Lua]	register Lua Editor Command	scene_editor/animator_add_clip_group	\n[STATUS]	register command: scene_editor / animator_add_clip_group\n[STATUS:Lua]	register Lua Editor Command	scene_editor/animator_remove_clip_node	\n[STATUS]	register command: scene_editor / animator_remove_clip_node\n[STATUS:Lua]	register Lua Editor Command	scene_editor/animator_clone_clip_node	\n[STATUS]	register command: scene_editor / animator_clone_clip_node\n[STATUS:Lua]	register Lua Editor Command	scene_editor/animator_reparent_clip	\n[STATUS]	register command: scene_editor / animator_reparent_clip\n[STATUS:Lua]	register Lua Editor Command	scene_editor/animator_add_track	\n[STATUS]	register command: scene_editor / animator_add_track\n[STATUS:Lua]	register Lua Editor Command	scene_editor/animator_add_marker	\n[STATUS]	register command: scene_editor / animator_add_marker\n[STATUS:Lua]	register Lua Editor Command	scene_editor/toggle_debug_draw	\n[STATUS]	register command: scene_editor / toggle_debug_draw\n[STATUS:Lua]	register Lua Editor Command	scene_editor/fill_render_material	\n[STATUS]	register command: scene_editor / fill_render_material\n[STATUS:Lua]	loading game config from :	/Volumes/prj/gii/test/env/config/game_config.json	\n[STATUS:Lua]	...init game	\n[STATUS:Lua]	opening window	GAME	800	600	\n[STATUS:Lua]	...init systems	\n[STATUS:Lua]	...setting up action root	\nCREATE COROUTINE	0x1192f8760 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:210: in function 'initSystem'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:187: in function </Volumes/prj/gii/test/game/lib/mock/core/Game.lua:172>\n	(tail call): ?\n	/Volumes/prj/gii/test/game/lib/mock/env.lua:117: in function </Volumes/prj/gii/test/game/lib/mock/env.lua:116>\n[STATUS:Lua]	...setting up session callbacks	\n[STATUS:Lua]	...extra init	\n[STATUS:Lua]	...loading asset library	\n[STATUS:Lua]	loading library from	env/config/asset_table.json	\n[STATUS:Lua]	init texture library	\n[STATUS:Lua]	loading textureLibrary	env/config/texture_library.json	\n[STATUS:Lua]	...loading game modules	\n[STATUS:Lua]	loading module from	/Volumes/prj/gii/test/game/asset/script/PlaceHolder.lua	\n[STATUS:Lua]	loading module from	/Volumes/prj/gii/test/game/asset/script/TestAction.lua	\n[STATUS:Lua]	init input handlers	\n[STATUS:Lua]	using input configuration:	GII	\n[STATUS:Lua]	pointer sensor callback ready	\n[STATUS:Lua]	mouse button sensor callback ready	\n[STATUS:Lua]	mouse button sensor callback ready	\n[STATUS:Lua]	mouse button sensor callback ready	\n[STATUS:Lua]	no input sensor found:	device	mouseWheel	\n[STATUS:Lua]	no input sensor found:	device	joystick-1	\n[WARN:Lua]	no joystick sensor registered	\n[STATUS:Lua]	no input sensor found:	device	joystick-2	\n[WARN:Lua]	no joystick sensor registered	\n[STATUS:Lua]	no input sensor found:	device	joystick-3	\n[WARN:Lua]	no joystick sensor registered	\n[STATUS:Lua]	no input sensor found:	device	joystick-4	\n[WARN:Lua]	no joystick sensor registered	\n[STATUS:Lua]	no input sensor found:	device	gyroscope	\n[STATUS:Lua]	init audio	\n[STATUS:Lua]	Fmod ready...	\nInitiating Turbo Badger - version 0.1.1\n[WARN:Lua]	no asset found	font/zipex.fnt	\n2\nstack traceback:\n	...mes/prj/gii/test/game/lib/mock/core/AssetLibrary.lua:387: in function 'loadAsset'\n	/Volumes/prj/gii/test/game/lib/mock/ui/TBManager.lua:21: in function 'onInit'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:282: in function 'initSubSystems'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:191: in function </Volumes/prj/gii/test/game/lib/mock/core/Game.lua:172>\n	(tail call): ?\n	/Volumes/prj/gii/test/game/lib/mock/env.lua:117: in function </Volumes/prj/gii/test/game/lib/mock/env.lua:116>\n[STATUS]	loading module:scene_tool_manager\n[STATUS]	loading module:texture_library\n[STATUS]	loading module:scenegraph_editor\n[STATUS:Lua]	register Lua Editor Command	scene_editor/add_entity	\n[STATUS]	register command: scene_editor / add_entity\n[STATUS:Lua]	register Lua Editor Command	scene_editor/create_entity	\n[STATUS]	register command: scene_editor / create_entity\n[STATUS:Lua]	register Lua Editor Command	scene_editor/remove_entity	\n[STATUS]	register command: scene_editor / remove_entity\n[STATUS:Lua]	register Lua Editor Command	scene_editor/create_component	\n[STATUS]	register command: scene_editor / create_component\n[STATUS:Lua]	register Lua Editor Command	scene_editor/remove_component	\n[STATUS]	register command: scene_editor / remove_component\n[STATUS:Lua]	register Lua Editor Command	scene_editor/clone_entity	\n[STATUS]	register command: scene_editor / clone_entity\n[STATUS:Lua]	register Lua Editor Command	scene_editor/paste_entity	\n[STATUS]	register command: scene_editor / paste_entity\n[STATUS:Lua]	register Lua Editor Command	scene_editor/reparent_entity	\n[STATUS]	register command: scene_editor / reparent_entity\n[STATUS:Lua]	register Lua Editor Command	scene_editor/create_prefab	\n[STATUS]	register command: scene_editor / create_prefab\n[STATUS:Lua]	register Lua Editor Command	scene_editor/create_prefab_entity	\n[STATUS]	register command: scene_editor / create_prefab_entity\n[STATUS:Lua]	register Lua Editor Command	scene_editor/unlink_prefab	\n[STATUS]	register command: scene_editor / unlink_prefab\n[STATUS:Lua]	register Lua Editor Command	scene_editor/push_prefab	\n[STATUS]	register command: scene_editor / push_prefab\n[STATUS:Lua]	register Lua Editor Command	scene_editor/pull_prefab	\n[STATUS]	register command: scene_editor / pull_prefab\n[STATUS:Lua]	register Lua Editor Command	scene_editor/create_prefab_container	\n[STATUS]	register command: scene_editor / create_prefab_container\n[STATUS:Lua]	register Lua Editor Command	scene_editor/make_proto	\n[STATUS]	register command: scene_editor / make_proto\n[STATUS:Lua]	register Lua Editor Command	scene_editor/create_proto_instance	\n[STATUS]	register command: scene_editor / create_proto_instance\n[STATUS:Lua]	register Lua Editor Command	scene_editor/create_proto_container	\n[STATUS]	register command: scene_editor / create_proto_container\n[STATUS:Lua]	register Lua Editor Command	scene_editor/unlink_proto	\n[STATUS]	register command: scene_editor / unlink_proto\n[STATUS:Lua]	register Lua Editor Command	scene_editor/assign_layer	\n[STATUS]	register command: scene_editor / assign_layer\n[STATUS:Lua]	register Lua Editor Command	scene_editor/toggle_entity_visibility	\n[STATUS]	register command: scene_editor / toggle_entity_visibility\n[STATUS:Lua]	register Lua Editor Command	scene_editor/toggle_entity_lock	\n[STATUS]	register command: scene_editor / toggle_entity_lock\n[STATUS:Lua]	register Lua Editor Command	scene_editor/unify_children_layer	\n[STATUS]	register command: scene_editor / unify_children_layer\n[STATUS:Lua]	register Lua Editor Command	scene_editor/freeze_entity_pivot	\n[STATUS]	register command: scene_editor / freeze_entity_pivot\n[STATUS:Lua]	register Lua Editor Command	scene_editor/entity_group_create	\n[STATUS]	register command: scene_editor / entity_group_create\n[STATUS:Lua]	register Lua Editor Command	scene_editor/group_entities	\n[STATUS]	register command: scene_editor / group_entities\n[STATUS:Lua]	register Lua Editor Command	scene_editor/select_scene	\n[STATUS]	register command: scene_editor / select_scene\n[STATUS]	loading module:deck2d_editor\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x1023c28a0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...es/prj/gii/packages/Mock/DeckEditor/Deck2DEditor.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x1023de3b0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...es/prj/gii/packages/Mock/DeckEditor/Deck2DEditor.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x1023cfd90	\nCREATE COROUTINE	0x1023e4c70 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	...es/prj/gii/packages/Mock/DeckEditor/Deck2DEditor.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x1023c28a0 <MOAICoroutine>\npost updating COROUTINE	0x1023c28a0 <MOAICoroutine>\nupdating COROUTINE	0x1023de3b0 <MOAICoroutine>\npost updating COROUTINE	0x1023de3b0 <MOAICoroutine>\nupdating COROUTINE	0x1023e4c70 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x1023cfd90	\n[STATUS:Lua]	entering scene main loop	table: 0x1023cfd90	\npost updating COROUTINE	0x1023e4c70 <MOAICoroutine>\n[STATUS]	loading module:particle_editor\n[STATUS]	loading module:simple_particle_editor\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x1125fa0a0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...s/Mock/SimpleParticleEditor/SimpleParticleEditor.lua:3: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x119695050 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...s/Mock/SimpleParticleEditor/SimpleParticleEditor.lua:3: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x119494160	\nCREATE COROUTINE	0x1196c8000 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	...s/Mock/SimpleParticleEditor/SimpleParticleEditor.lua:3: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x1125fa0a0 <MOAICoroutine>\npost updating COROUTINE	0x1125fa0a0 <MOAICoroutine>\nupdating COROUTINE	0x119695050 <MOAICoroutine>\npost updating COROUTINE	0x119695050 <MOAICoroutine>\nupdating COROUTINE	0x1196c8000 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x119494160	\n[STATUS:Lua]	entering scene main loop	table: 0x119494160	\npost updating COROUTINE	0x1196c8000 <MOAICoroutine>\n[STATUS]	loading module:mock.stylesheet_editor\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x118f37580 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...packages/Mock/StyleSheetEditor/StyleSheetPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x118f48370 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...packages/Mock/StyleSheetEditor/StyleSheetPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x118f35a50	\nCREATE COROUTINE	0x118f4e590 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	...packages/Mock/StyleSheetEditor/StyleSheetPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x118f37580 <MOAICoroutine>\npost updating COROUTINE	0x118f37580 <MOAICoroutine>\nupdating COROUTINE	0x118f48370 <MOAICoroutine>\npost updating COROUTINE	0x118f48370 <MOAICoroutine>\nupdating COROUTINE	0x118f4e590 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x118f35a50	\n[STATUS:Lua]	entering scene main loop	table: 0x118f35a50	\npost updating COROUTINE	0x118f4e590 <MOAICoroutine>\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x118b71470 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...ackages/Mock/StyleSheetEditor/SingleStylePreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x118b846f0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...ackages/Mock/StyleSheetEditor/SingleStylePreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x118b6fd40	\nCREATE COROUTINE	0x118b8a690 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	...ackages/Mock/StyleSheetEditor/SingleStylePreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x118b71470 <MOAICoroutine>\npost updating COROUTINE	0x118b71470 <MOAICoroutine>\nupdating COROUTINE	0x118b846f0 <MOAICoroutine>\npost updating COROUTINE	0x118b846f0 <MOAICoroutine>\nupdating COROUTINE	0x118b8a690 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x118b6fd40	\n[STATUS:Lua]	entering scene main loop	table: 0x118b6fd40	\npost updating COROUTINE	0x118b8a690 <MOAICoroutine>\n[STATUS]	loading module:layer_manager\n[STATUS]	loading module:global_object_manager\n[STATUS]	loading module:deploy_manager\n[STATUS]	loading module:animator\n[STATUS]	loading module:effect_editor\n2015-12-02 14:33:12.277 Python[36136:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-02 14:33:12.278 Python[36136:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n[STATUS]	loading module:screen_profile_manager\n2015-12-02 14:33:12.318 Python[36136:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n[STATUS]	loading module:story_view\n[STATUS]	loading module:tilemap_editor\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x12498a8e0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...rj/gii/packages/Mock/TileMapEditor/TileMapEditor.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x1249a0160 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...rj/gii/packages/Mock/TileMapEditor/TileMapEditor.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x124987c70	\nCREATE COROUTINE	0x1249a6110 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	...rj/gii/packages/Mock/TileMapEditor/TileMapEditor.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x12498a8e0 <MOAICoroutine>\npost updating COROUTINE	0x12498a8e0 <MOAICoroutine>\nupdating COROUTINE	0x1249a0160 <MOAICoroutine>\npost updating COROUTINE	0x1249a0160 <MOAICoroutine>\nupdating COROUTINE	0x1249a6110 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x124987c70	\n[STATUS:Lua]	entering scene main loop	table: 0x124987c70	\npost updating COROUTINE	0x1249a6110 <MOAICoroutine>\n[STATUS]	loading module:serializable_editor\n[STATUS]	loading module:scene_view\n[STATUS]	loading module:mock.texture_manager\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x1195a45f0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	.../gii/packages/Mock/TextureManager/TextureManager.lua:15: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x1196a2190 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	.../gii/packages/Mock/TextureManager/TextureManager.lua:15: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x11961d320	\nCREATE COROUTINE	0x11966b010 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	.../gii/packages/Mock/TextureManager/TextureManager.lua:15: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x1195a45f0 <MOAICoroutine>\npost updating COROUTINE	0x1195a45f0 <MOAICoroutine>\nupdating COROUTINE	0x1196a2190 <MOAICoroutine>\npost updating COROUTINE	0x1196a2190 <MOAICoroutine>\nupdating COROUTINE	0x11966b010 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x11961d320	\n[STATUS:Lua]	entering scene main loop	table: 0x11961d320	\npost updating COROUTINE	0x11966b010 <MOAICoroutine>\n[STATUS]	loading module:path_editor\n[STATUS]	loading module:physics_tools\n[STATUS]	loading module:waypoint_graph_tools\n[STATUS]	loading asset table from:/Volumes/prj/gii/test/env/config/asset_table.json\n[STATUS]	asset library loaded\n2015-12-02 14:33:13.007 Python[36136:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-02 14:33:13.007 Python[36136:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n[STATUS]	start all modules\n[STATUS]	starting module:gii\n[STATUS]	starting module:qt\n[STATUS]	starting module:search_view\n[STATUS]	starting module:moai\n[STATUS]	starting module:scene_editor\n[STATUS]	starting module:filewatcher\n[STATUS]	start watching: /Volumes/prj/gii/test/game/asset\n[STATUS]	starting module:asset_editor\n[STATUS]	starting module:device_manager\n[STATUS]	starting module:debug_view\n[STATUS]	starting module:script_view\n2015-12-02 14:33:13.780 Python[36136:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-02 14:33:13.781 Python[36136:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n[STATUS]	starting module:remote_input_server\n[STATUS]	starting module:script_library\n[STATUS]	starting module:joystick_hook\n[STATUS]	starting module:introspector\n[STATUS]	starting module:game_preview\n[STATUS]	starting module:command_history_view\n[STATUS]	starting module:asset_browser\n[STATUS]	starting module:device_browser\n[STATUS]	start remote input listener at port: 8030\n[STATUS]	start remote input socket listener at port: 8037\n[STATUS]	starting module:ios_device_monitor\n[STATUS]	starting module:console\n[STATUS]	starting module:debug_info\n[STATUS]	starting module:lua_profiler\n[STATUS]	starting module:asset_previewer\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x118bae470 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...rj/gii/packages/Mock/EffectPreview/EffectPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x123f61570 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...rj/gii/packages/Mock/EffectPreview/EffectPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x124831df0	\nCREATE COROUTINE	0x123fae230 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	...rj/gii/packages/Mock/EffectPreview/EffectPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x118bae470 <MOAICoroutine>\npost updating COROUTINE	0x118bae470 <MOAICoroutine>\nupdating COROUTINE	0x123f61570 <MOAICoroutine>\npost updating COROUTINE	0x123f61570 <MOAICoroutine>\nupdating COROUTINE	0x123fae230 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x124831df0	\n[STATUS:Lua]	entering scene main loop	table: 0x124831df0	\npost updating COROUTINE	0x123fae230 <MOAICoroutine>\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x126283b00 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...es/prj/gii/packages/Mock/FModPreview/FModPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x123fef770 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...es/prj/gii/packages/Mock/FModPreview/FModPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x123fe65d0	\nCREATE COROUTINE	0x126285cd0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	...es/prj/gii/packages/Mock/FModPreview/FModPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x126283b00 <MOAICoroutine>\npost updating COROUTINE	0x126283b00 <MOAICoroutine>\nupdating COROUTINE	0x123fef770 <MOAICoroutine>\npost updating COROUTINE	0x123fef770 <MOAICoroutine>\nupdating COROUTINE	0x126285cd0 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x123fe65d0	\n[STATUS:Lua]	entering scene main loop	table: 0x123fe65d0	\npost updating COROUTINE	0x126285cd0 <MOAICoroutine>\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x126243620 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...es/prj/gii/packages/Mock/AnimPreview/AnimPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x123f55760 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...es/prj/gii/packages/Mock/AnimPreview/AnimPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x123fe1a50	\nCREATE COROUTINE	0x123f4c250 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	...es/prj/gii/packages/Mock/AnimPreview/AnimPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x126243620 <MOAICoroutine>\npost updating COROUTINE	0x126243620 <MOAICoroutine>\nupdating COROUTINE	0x123f55760 <MOAICoroutine>\npost updating COROUTINE	0x123f55760 <MOAICoroutine>\nupdating COROUTINE	0x123f4c250 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x123fe1a50	\n[STATUS:Lua]	entering scene main loop	table: 0x123fe1a50	\npost updating COROUTINE	0x123f4c250 <MOAICoroutine>\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x1262e5530 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...es/prj/gii/packages/Mock/FontPreview/FontPreview.lua:1: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x12a30a8b0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...es/prj/gii/packages/Mock/FontPreview/FontPreview.lua:1: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x1262e3f40	\nCREATE COROUTINE	0x12a310890 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	...es/prj/gii/packages/Mock/FontPreview/FontPreview.lua:1: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x1262e5530 <MOAICoroutine>\npost updating COROUTINE	0x1262e5530 <MOAICoroutine>\nupdating COROUTINE	0x12a30a8b0 <MOAICoroutine>\npost updating COROUTINE	0x12a30a8b0 <MOAICoroutine>\nupdating COROUTINE	0x12a310890 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x1262e3f40	\n[STATUS:Lua]	entering scene main loop	table: 0x1262e3f40	\npost updating COROUTINE	0x12a310890 <MOAICoroutine>\nTEXTURE: '+'      16384k =   0.02MB < \n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x1127c37f0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...ii/packages/Mock/ParticlePreview/ParticlePreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x1127e75c0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...ii/packages/Mock/ParticlePreview/ParticlePreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x1127c1aa0	\nCREATE COROUTINE	0x1127ed5c0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	...ii/packages/Mock/ParticlePreview/ParticlePreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x1127c37f0 <MOAICoroutine>\npost updating COROUTINE	0x1127c37f0 <MOAICoroutine>\nupdating COROUTINE	0x1127e75c0 <MOAICoroutine>\npost updating COROUTINE	0x1127e75c0 <MOAICoroutine>\nupdating COROUTINE	0x1127ed5c0 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x1127c1aa0	\n[STATUS:Lua]	entering scene main loop	table: 0x1127c1aa0	\npost updating COROUTINE	0x1127ed5c0 <MOAICoroutine>\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x12a355eb0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...s/prj/gii/packages/Mock/DeckEditor/Deck2DPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x12a37bce0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...s/prj/gii/packages/Mock/DeckEditor/Deck2DPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x12a3548c0	\nCREATE COROUTINE	0x12a381cc0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	...s/prj/gii/packages/Mock/DeckEditor/Deck2DPreview.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x12a355eb0 <MOAICoroutine>\npost updating COROUTINE	0x12a355eb0 <MOAICoroutine>\nupdating COROUTINE	0x12a37bce0 <MOAICoroutine>\npost updating COROUTINE	0x12a37bce0 <MOAICoroutine>\nupdating COROUTINE	0x12a381cc0 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x12a3548c0	\n[STATUS:Lua]	entering scene main loop	table: 0x12a3548c0	\npost updating COROUTINE	0x12a381cc0 <MOAICoroutine>\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x108983b50 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...gii/packages/Mock/TexturePreview/TexturePreview2.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x1089ac180 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	...gii/packages/Mock/TexturePreview/TexturePreview2.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x1089805e0	\nCREATE COROUTINE	0x1089b2160 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	...gii/packages/Mock/TexturePreview/TexturePreview2.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x108983b50 <MOAICoroutine>\npost updating COROUTINE	0x108983b50 <MOAICoroutine>\nupdating COROUTINE	0x1089ac180 <MOAICoroutine>\npost updating COROUTINE	0x1089ac180 <MOAICoroutine>\nupdating COROUTINE	0x1089b2160 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x1089805e0	\n[STATUS:Lua]	entering scene main loop	table: 0x1089805e0	\npost updating COROUTINE	0x1089b2160 <MOAICoroutine>\n[STATUS]	starting module:mock\n[STATUS]	starting module:scene_tool_manager\ntexture libray start\n[STATUS]	starting module:texture_library\n[STATUS]	starting module:scenegraph_editor\n[STATUS]	starting module:deck2d_editor\n[STATUS]	starting module:particle_editor\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x116e6a6b0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	.../gii/packages/Mock/ParticleEditor/ParticleEditor.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x120ecd620 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	.../gii/packages/Mock/ParticleEditor/ParticleEditor.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x116e687f0	\nCREATE COROUTINE	0x120ed35d0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	.../gii/packages/Mock/ParticleEditor/ParticleEditor.lua:2: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x116e6a6b0 <MOAICoroutine>\npost updating COROUTINE	0x116e6a6b0 <MOAICoroutine>\nupdating COROUTINE	0x120ecd620 <MOAICoroutine>\npost updating COROUTINE	0x120ecd620 <MOAICoroutine>\nupdating COROUTINE	0x120ed35d0 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x116e687f0	\n[STATUS:Lua]	entering scene main loop	table: 0x116e687f0	\npost updating COROUTINE	0x120ed35d0 <MOAICoroutine>\n[STATUS]	starting module:simple_particle_editor\n[STATUS]	starting module:mock.stylesheet_editor\n[STATUS]	starting module:layer_manager\n[STATUS]	starting module:global_object_manager\n[STATUS]	starting module:deploy_manager\n[STATUS]	starting module:animator\n[STATUS]	starting module:effect_editor\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x116e76eb0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	.../prj/gii/packages/Mock/EffectEditor/EffectEditor.lua:1: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x116ea3ae0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:223: in function 'createEditorCanvasScene'\n	.../prj/gii/packages/Mock/EffectEditor/EffectEditor.lua:1: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	scene start	table: 0x116e72770	\nCREATE COROUTINE	0x116ea9a90 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	...lib/lua/mock_edit/EditorCanvas/EditorCanvasScene.lua:225: in function 'createEditorCanvasScene'\n	.../prj/gii/packages/Mock/EffectEditor/EffectEditor.lua:1: in main chunk\n	(tail call): ?\n	[C]: in function 'xpcall'\n	/Volumes/prj/gii/lib/lua/gii/bridge.lua:178: in function </Volumes/prj/gii/lib/lua/gii/bridge.lua:150>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\nupdating COROUTINE	0x116e76eb0 <MOAICoroutine>\npost updating COROUTINE	0x116e76eb0 <MOAICoroutine>\nupdating COROUTINE	0x116ea3ae0 <MOAICoroutine>\npost updating COROUTINE	0x116ea3ae0 <MOAICoroutine>\nupdating COROUTINE	0x116ea9a90 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x116e72770	\n[STATUS:Lua]	entering scene main loop	table: 0x116e72770	\npost updating COROUTINE	0x116ea9a90 <MOAICoroutine>\n[STATUS]	starting module:screen_profile_manager\n[STATUS]	starting module:story_view\n[STATUS]	starting module:tilemap_editor\n[STATUS]	starting module:serializable_editor\n[STATUS]	starting module:scene_view\n[STATUS]	starting module:mock.texture_manager\n[STATUS]	starting module:path_editor\n[STATUS]	starting module:physics_tools\n[STATUS]	starting module:waypoint_graph_tools\n[STATUS]	scan project in:/Volumes/prj/gii/test/game/asset\n[STATUS]	asset modified: script\n[STATUS]	saving texture library index\n[STATUS:Lua]	saving texture library	/Volumes/prj/gii/test/env/config/texture_library.json	\n[STATUS]	modified assets imported\n[STATUS]	asset table saved\n[STATUS:Lua]	device.resize	107	50	\n2015-12-02 14:33:13.980 Python[36136:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-02 14:33:14.018 Python[36136:507] invalid drawable\n2015-12-02 14:33:14.019 Python[36136:507] invalid drawable\n2015-12-02 14:33:14.020 Python[36136:507] invalid drawable\n2015-12-02 14:33:14.147 Python[36136:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n[STATUS]	post start all modules\n[STATUS]	app ready for module:gii\n[STATUS]	app ready for module:qt\n[STATUS]	app ready for module:search_view\n[STATUS]	app ready for module:moai\n[STATUS]	app ready for module:scene_editor\n[STATUS]	app ready for module:filewatcher\n[STATUS]	app ready for module:asset_editor\n[STATUS]	app ready for module:device_manager\n[STATUS]	app ready for module:debug_view\n[STATUS]	app ready for module:script_view\n[STATUS]	app ready for module:remote_input_server\n[STATUS]	app ready for module:script_library\n[STATUS]	app ready for module:joystick_hook\n[STATUS]	app ready for module:introspector\n[STATUS]	app ready for module:game_preview\n[STATUS]	app ready for module:command_history_view\n[STATUS]	app ready for module:asset_browser\n[STATUS]	app ready for module:device_browser\n[STATUS]	app ready for module:ios_device_monitor\n[STATUS]	app ready for module:console\n[STATUS]	app ready for module:debug_info\n[STATUS]	app ready for module:lua_profiler\n[STATUS]	app ready for module:asset_previewer\n[STATUS]	app ready for module:mock\n[STATUS:Lua]	...setting up layers	\n[STATUS:Lua]	...loading setting data	\n[STATUS:Lua]	...reading setting data from:	setting	\n[STATUS:Lua]	...loading global game objects	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x130925a00 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:75: in function 'init'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:374: in function </Volumes/prj/gii/test/game/lib/mock/core/Game.lua:345>\n	(tail call): ?\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	Initialize Scene	\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x13092d0f0 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:89: in function 'init'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:374: in function </Volumes/prj/gii/test/game/lib/mock/core/Game.lua:345>\n	(tail call): ?\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	...init game done!	\n[STATUS]	app ready for module:scene_tool_manager\n[STATUS]	app ready for module:texture_library\n[STATUS]	app ready for module:scenegraph_editor\n[STATUS]	app ready for module:deck2d_editor\n[STATUS]	app ready for module:particle_editor\n[STATUS]	app ready for module:simple_particle_editor\n[STATUS]	app ready for module:mock.stylesheet_editor\n[STATUS]	app ready for module:layer_manager\n[STATUS]	app ready for module:global_object_manager\n[STATUS]	app ready for module:deploy_manager\n[STATUS]	app ready for module:animator\n[STATUS]	app ready for module:effect_editor\n[STATUS]	app ready for module:screen_profile_manager\n[STATUS]	app ready for module:story_view\n[STATUS]	app ready for module:tilemap_editor\n[STATUS]	app ready for module:serializable_editor\n[STATUS]	app ready for module:scene_view\n[STATUS]	app ready for module:mock.texture_manager\n[STATUS]	app ready for module:path_editor\n[STATUS]	app ready for module:physics_tools\n[STATUS]	app ready for module:waypoint_graph_tools\n2015-12-02 14:33:14.228 Python[36136:507] invalid drawable\n2015-12-02 14:33:14.247 Python[36136:507] invalid drawable\n2015-12-02 14:33:14.247 Python[36136:507] invalid drawable\n[STATUS:Lua]	open mock scene	test.scene	\n[STATUS:Lua]	openning scene:	test.scene	\n[STATUS:Lua]	clearing scene	\n[STATUS:Lua]	pre clear	0	\n[STATUS:Lua]	post clear	0	\nCREATE COROUTINE	0x13093ac60 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	...mes/prj/gii/test/game/lib/mock/core/AssetLibrary.lua:51: in function 'collectAssetGarbage'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:579: in function 'openSceneByPath'\n	...j/gii/lib/mock/SceneGraphEditor/SceneGraphEditor.lua:25: in function <...j/gii/lib/mock/SceneGraphEditor/SceneGraphEditor.lua:23>\n[STATUS:Lua]	scene action root reset	\nCREATE COROUTINE	0x13093c000 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:348: in function 'resetActionRoot'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:139: in function 'reset'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:580: in function 'openSceneByPath'\n	...j/gii/lib/mock/SceneGraphEditor/SceneGraphEditor.lua:25: in function <...j/gii/lib/mock/SceneGraphEditor/SceneGraphEditor.lua:23>\n[STATUS:Lua]	scene timer reset 	\n[STATUS:Lua]	global action group reset	\n[STATUS:Lua]	scene action priority group reset	\n[STATUS:Lua]	loading asset from:	test.scene	\nTEXTURE: '+'      16384k =   0.03MB < /Volumes/prj/moai/spell/tools/arialuni.ttf\nTEXTURE: '-'      16384k =   0.02MB < /Volumes/prj/gii/data/default_font.ttf\nTEXTURE: '+'      16384k =   0.03MB < /Volumes/prj/gii/data/default_font.ttf\nTEXTURE: '-'      16384k =   0.02MB < /Volumes/prj/moai/spell/tools/arialuni.ttf\nTEXTURE: '+'      16384k =   0.03MB < /Volumes/prj/moai/spell/tools/arialuni.ttf\nTEXTURE: '+'       4096k =   0.04MB < /Volumes/prj/gii/data/gizmo/camera.png\n[STATUS:Lua]	device.resize	107	50	\n[STATUS:Lua]	post open mock scene	\n[STATUS:Lua]	device.resize	107	50	\n[STATUS]	found joysticks: 0\n[STATUS]	start game preview\n[STATUS:Lua]	starting scene preview	\n[STATUS:Lua]	game start	\n[STATUS:Lua]	scene start	table: 0x1191714d0	\nCREATE COROUTINE	0x118f39430 <MOAICoroutine>\nstack traceback:\n	...umes/prj/gii/test/game/lib/mock/core/DebugHelper.lua:177: in function 'new'\n	/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua:477: in function 'start'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:733: in function 'start'\n	...j/gii/lib/mock/SceneGraphEditor/SceneGraphEditor.lua:133: in function <...j/gii/lib/mock/SceneGraphEditor/SceneGraphEditor.lua:129>\n[STATUS:Lua]	mainthread scene start	\n[STATUS:Lua]	box2d scene start	\n[STATUS:Lua]	scene start ... done	\n[STATUS:Lua]	game started	\n[STATUS:Lua]	scene preview started	\n2015-12-02 14:33:40.011 Python[36136:507] invalid drawable\n[STATUS:Lua]	device.resize	546	410	\n[STATUS]	game preview started\n[STATUS:Lua]	device.resize	546	410	\nupdating COROUTINE	0x1192f8760 <MOAICoroutine>\npost updating COROUTINE	0x1192f8760 <MOAICoroutine>\nupdating COROUTINE	0x130925a00 <MOAICoroutine>\npost updating COROUTINE	0x130925a00 <MOAICoroutine>\nupdating COROUTINE	0x13092d0f0 <MOAICoroutine>\npost updating COROUTINE	0x13092d0f0 <MOAICoroutine>\nupdating COROUTINE	0x13093ac60 <MOAICoroutine>\npost updating COROUTINE	0x13093ac60 <MOAICoroutine>\nupdating COROUTINE	0x13093c000 <MOAICoroutine>\npost updating COROUTINE	0x13093c000 <MOAICoroutine>\nupdating COROUTINE	0x118f39430 <MOAICoroutine>\n[STATUS:Lua]	entering scene main thread	table: 0x1191714d0	\n[STATUS:Lua]	entering scene main loop	table: 0x1191714d0	\npost updating COROUTINE	0x118f39430 <MOAICoroutine>\n/Users/tommo/prj/gii/gii: line 4: 36136 Terminated: 15          ${d}/Gii.app/Contents/MacOS/Python ${d}/gii_bin.py $@\n\n[Finished in 41.0s with exit code 143]\n",
 			"file": "test/BUILD_RESULT",
 			"file_size": -1,
 			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 8800,
+				"buffer_size": 67326,
 				"line_ending": "Unix",
 				"scratch": true
 			}
@@ -683,7 +677,7 @@
 	"build_system": "IDE",
 	"command_palette":
 	{
-		"height": 375.0,
+		"height": 154.0,
 		"selected_items":
 		[
 			[
@@ -1140,10 +1134,28 @@
 	},
 	"file_history":
 	[
-		"/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView/TimelineView.py",
-		"/Volumes/prj/gii/packages/Mock/Animator/AnimatorView.lua",
+		"/Volumes/prj/gii/test/host/ios-release/gii.xcodeproj/project.xcworkspace/contents.xcworkspacedata",
+		"/Volumes/prj/gii/lib/gii/SceneEditor/GamePreview.py",
+		"/Volumes/prj/gii/lib/gii/moai/MOAIRuntime.py",
+		"/Volumes/prj/gii/lib/gii/qt/QtSupport.py",
+		"/Volumes/prj/gii/test/game/lib/mock/core/Game.lua",
+		"/Volumes/prj/gii/test/game/lib/mock/core/init.lua",
+		"/Volumes/prj/gii/test/game/lib/mock/core/Actor.lua",
+		"/Volumes/prj/gii/lib/gii/ScriptView/ScriptView.py",
+		"/Volumes/prj/gii/lib/lua/mock_edit/EditorCanvas/SceneView.lua",
+		"/Volumes/prj/gii/test/game/main.lua",
+		"/Volumes/prj/gii/gii_cfg.py",
+		"/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView/testView.py",
+		"/Volumes/prj/gii/lib/lua/mock_edit/init.lua",
+		"/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua",
+		"/Volumes/prj/gii/gii.sublime-project",
+		"/Volumes/prj/gii/lib/lua/gii/debugger.lua",
 		"/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView/CurveView.py",
+		"/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView/TimelineView.py",
 		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorClip.lua",
+		"/Volumes/prj/gii/packages/Mock/EffectEditor/EffectEditor.py",
+		"/Volumes/prj/gii/lib/gii/SearchView/SearchView.py",
+		"/Volumes/prj/gii/packages/Mock/Animator/AnimatorView.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/anim/Animator.lua",
 		"/Volumes/prj/gii/data/theme/gii.qss",
 		"/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView/GraphicsViewHelper.py",
@@ -1152,7 +1164,6 @@
 		"/Volumes/prj/gii/packages/Mock/Animator/AnimatorWidget.py",
 		"/Volumes/prj/gii/packages/Mock/Animator/BUILD_RESULT",
 		"/Volumes/prj/gii/test/game/lib/mock/ui/TBWidget.lua",
-		"/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView/testView.py",
 		"/Volumes/prj/gii/test/game/lib/mock/story/StoryManager.lua",
 		"/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView/test.py",
 		"/Volumes/prj/gii/test/game/lib/mock/core/enums.lua",
@@ -1161,7 +1172,6 @@
 		"/Volumes/prj/gii/test/game/lib/mock/component/CameraManager.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorTrackFieldVec.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorTrackFieldNumber.lua",
-		"/Volumes/prj/gii/gii.sublime-project",
 		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorValueTrack.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorTrackFieldColor.lua",
 		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorTrackFieldInt.lua",
@@ -1251,23 +1261,7 @@
 		"/Users/tommo/Projects/gii/test/game/lib/mock/asset/Common.lua",
 		"/Users/tommo/Projects/gii/test/game/lib/mock/core/MOAIHelpers.lua",
 		"/Users/tommo/Projects/gii/test/game/lib/mock/anim/AnimatorClip.lua",
-		"/Users/tommo/Projects/gii/lib/3rdparty/common/yaml/serializer.py",
-		"/Users/tommo/Projects/gii/test/game/asset/test.scene",
-		"/Users/tommo/Projects/gii/lib/mock/asset/AnimatorAsset.py",
-		"/Users/tommo/Projects/gii/lib/gii/qt/controls/ToolBar.py",
-		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GenericTreeWidget.py",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/anim/AnimatorState.lua",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/anim/init.lua",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/component/TileMap.lua",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/component/TexturePlane.lua",
-		"/Users/tommo/Projects/gii/lib/lua/mock_edit/drag/init.lua",
-		"/Users/tommo/Projects/gii/lib/lua/mock_edit/drag/DeckDragIn.lua",
-		"/Users/tommo/Projects/gii/lib/lua/mock_edit/drag/TextureDragIn.lua",
-		"/Users/tommo/Projects/gii/lib/lua/mock_edit/drag/ProtoDragIn.lua",
-		"/Users/tommo/Projects/gii/lib/gii/qt/QtEditorModule.py",
-		"/Users/tommo/Projects/gii/lib/gii/core/tool.py",
-		"/Users/tommo/Projects/gii/lib/mock/MockRuntime.py",
-		"/Users/tommo/Projects/gii/test/game/lib/mock/component/DeckComponent.lua"
+		"/Users/tommo/Projects/gii/lib/3rdparty/common/yaml/serializer.py"
 	],
 	"find":
 	{
@@ -1278,6 +1272,10 @@
 		"height": 0.0,
 		"where_history":
 		[
+			"*.lua",
+			"*.py",
+			"*.lua",
+			"*.py",
 			"*.lua",
 			"*.py",
 			"*.lua",
@@ -1363,6 +1361,44 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"0x117b1a490",
+			"0x12b47a820",
+			"debughelper",
+			".new",
+			"MOAICoroutine",
+			"MOAICOroutine",
+			"actionStepOut",
+			"toggleDebug",
+			"toolbar",
+			"onStepOver",
+			"actionStepOver",
+			"actionStepOut",
+			"event",
+			"onstepIn",
+			"event",
+			"stepout",
+			"Locate",
+			"Save",
+			"addaction",
+			"toolbar",
+			"mainScene",
+			"mainscene",
+			"mainScene",
+			"mainscene",
+			"mainScene",
+			"local",
+			"rootUpdateCoroutine",
+			"onrootupdate",
+			"rootUpdateCoroutine",
+			"update",
+			"debugstop",
+			"enter",
+			"updateAKU",
+			"stop",
+			"update",
+			"stop",
+			"start game preview",
+			"entering scene main loop",
 			":hover",
 			"6e6d6a",
 			":hover",
@@ -1452,45 +1488,7 @@
 			"TweenMode",
 			"tweenMode",
 			"TweenMode",
-			"SpanMode",
-			"setSpanMode",
-			"pass",
-			"CurveMode",
-			"curveMode",
-			"CurveMode",
-			"curveMode",
-			"changeKeyTweenMode",
-			"pass",
-			"constant",
-			"pass",
-			"linear",
-			"pass",
-			"ontool",
-			"onTimelineEditTool",
-			"pass",
-			"seticon",
-			"getKeyBezierPoint",
-			"getCurveVertParam",
-			"getVertParam",
-			"getCurveVertParam",
-			"getKeyBezierPoint",
-			"getKeyBezierPoints",
-			"return",
-			"getKeyBezierPoints",
-			"setPreBezierPoint",
-			"setBezierPoints",
-			"onKeyBezierPointChanged",
-			"bezierpoint",
-			"updateTimelineKeyBezierPoint",
-			"getPreBezierPoint",
-			"getKeyBezierPoints",
-			"setBezierPoints",
-			"onTimelineKeyBezierPointChanged",
-			"onTimelineKeyBeizerPointChanged",
-			"markcurvedirty",
-			"vertitem",
-			"CurveVertItem",
-			"setzvalue"
+			"SpanMode"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1636,29 +1634,29 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "lib/gii/qt/QtSupport.py",
+					"file": "lib/mock/SceneGraphEditor/SceneGraphEditor.lua",
 					"settings":
 					{
-						"buffer_size": 6030,
+						"buffer_size": 36307,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								690,
-								690
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
@@ -1669,28 +1667,28 @@
 				},
 				{
 					"buffer": 1,
-					"file": "lib/gii/qt/controls/GraphicsView/testView.py",
+					"file": "test/game/lib/mock/component/BehaviourScript.lua",
 					"settings":
 					{
-						"buffer_size": 4454,
+						"buffer_size": 2257,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1473,
-								1473
+								1323,
+								1323
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1069.0,
+						"translation.y": 432.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1698,151 +1696,11 @@
 			]
 		},
 		{
-			"selected": 7,
+			"selected": 5,
 			"sheets":
 			[
 				{
 					"buffer": 2,
-					"file": "lib/gii/SearchView/SearchView.py",
-					"settings":
-					{
-						"buffer_size": 15356,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								776,
-								776
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "packages/Mock/EffectEditor/EffectEditor.py",
-					"settings":
-					{
-						"buffer_size": 11881,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3445,
-								3445
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1575.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "test/game/lib/mock/core/Game.lua",
-					"settings":
-					{
-						"buffer_size": 24191,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								23401,
-								23401
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 14893.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "test/game/lib/mock/anim/AnimatorClip.lua",
-					"settings":
-					{
-						"buffer_size": 25096,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7963,
-								7963
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 5738.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/gii/qt/controls/GraphicsView/TimelineView.py",
-					"settings":
-					{
-						"buffer_size": 53072,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								46943,
-								46943
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 26869.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
 					"file": "packages/Mock/Animator/AnimatorWidget.py",
 					"settings":
 					{
@@ -1853,28 +1711,56 @@
 						"selection":
 						[
 							[
-								21121,
-								21121
+								740,
+								740
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
 							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 11530.0,
+						"translation.y": 1.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 8,
-					"file": "lib/gii/qt/controls/GraphicsView/CurveView.py",
+					"buffer": 3,
+					"file": "lib/gii/core/EditorApp.py",
 					"settings":
 					{
-						"buffer_size": 29611,
+						"buffer_size": 7565,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4391,
+								4391
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2697.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "test/game/lib/mock/core/Game.lua",
+					"settings":
+					{
+						"buffer_size": 25250,
 						"regions":
 						{
 						},
@@ -1888,57 +1774,641 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"easy_motion_mode": false,
-							"syntax": "Packages/Python/Python.tmLanguage",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 7982.0,
+						"translation.y": 13876.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 9,
-					"file": "packages/Mock/Animator/AnimatorView.lua",
+					"buffer": 5,
+					"file": "test/game/lib/mock/core/Scene.lua",
 					"settings":
 					{
-						"buffer_size": 9310,
+						"buffer_size": 15790,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5863,
-								5863
+								15712,
+								15712
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"easy_motion_mode": false,
 							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3650.0,
+						"translation.y": 11529.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				}
-			]
-		},
-		{
-			"selected": 1,
-			"sheets":
-			[
+				},
 				{
-					"buffer": 10,
+					"buffer": 6,
+					"settings":
+					{
+						"buffer_size": 61956,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										138,
+										147
+									],
+									[
+										417,
+										426
+									],
+									[
+										554,
+										563
+									],
+									[
+										776,
+										785
+									],
+									[
+										980,
+										989
+									],
+									[
+										1139,
+										1148
+									],
+									[
+										30004,
+										30013
+									],
+									[
+										38330,
+										38339
+									],
+									[
+										39195,
+										39204
+									],
+									[
+										39389,
+										39398
+									],
+									[
+										39586,
+										39595
+									],
+									[
+										39744,
+										39753
+									],
+									[
+										39973,
+										39982
+									],
+									[
+										40306,
+										40315
+									],
+									[
+										40363,
+										40372
+									],
+									[
+										40656,
+										40665
+									],
+									[
+										40711,
+										40720
+									],
+									[
+										40775,
+										40784
+									],
+									[
+										40833,
+										40842
+									],
+									[
+										40923,
+										40932
+									],
+									[
+										41127,
+										41136
+									],
+									[
+										41502,
+										41511
+									],
+									[
+										41817,
+										41826
+									],
+									[
+										42122,
+										42131
+									],
+									[
+										42421,
+										42430
+									],
+									[
+										42723,
+										42732
+									],
+									[
+										42855,
+										42864
+									],
+									[
+										43039,
+										43048
+									],
+									[
+										43195,
+										43204
+									],
+									[
+										43571,
+										43580
+									],
+									[
+										43624,
+										43633
+									],
+									[
+										43923,
+										43932
+									],
+									[
+										44252,
+										44261
+									],
+									[
+										44315,
+										44324
+									],
+									[
+										44591,
+										44600
+									],
+									[
+										44750,
+										44759
+									],
+									[
+										44833,
+										44842
+									],
+									[
+										45017,
+										45026
+									],
+									[
+										45223,
+										45232
+									],
+									[
+										45492,
+										45501
+									],
+									[
+										45791,
+										45800
+									],
+									[
+										46027,
+										46036
+									],
+									[
+										46306,
+										46315
+									],
+									[
+										46598,
+										46607
+									],
+									[
+										46924,
+										46933
+									],
+									[
+										47169,
+										47178
+									],
+									[
+										47484,
+										47493
+									],
+									[
+										47729,
+										47738
+									],
+									[
+										48083,
+										48092
+									],
+									[
+										48330,
+										48339
+									],
+									[
+										48616,
+										48625
+									],
+									[
+										48800,
+										48809
+									],
+									[
+										48916,
+										48925
+									],
+									[
+										49198,
+										49207
+									],
+									[
+										49241,
+										49250
+									],
+									[
+										49511,
+										49520
+									],
+									[
+										49901,
+										49910
+									],
+									[
+										50181,
+										50190
+									],
+									[
+										50224,
+										50233
+									],
+									[
+										50448,
+										50457
+									],
+									[
+										50655,
+										50664
+									],
+									[
+										50988,
+										50997
+									],
+									[
+										51160,
+										51169
+									],
+									[
+										51391,
+										51400
+									],
+									[
+										51563,
+										51572
+									],
+									[
+										51777,
+										51786
+									],
+									[
+										52038,
+										52047
+									],
+									[
+										52287,
+										52296
+									],
+									[
+										52578,
+										52587
+									],
+									[
+										52782,
+										52791
+									],
+									[
+										52981,
+										52990
+									],
+									[
+										53210,
+										53219
+									],
+									[
+										53496,
+										53505
+									],
+									[
+										53718,
+										53727
+									],
+									[
+										54068,
+										54077
+									],
+									[
+										54149,
+										54158
+									],
+									[
+										54509,
+										54522
+									],
+									[
+										54713,
+										54726
+									],
+									[
+										54917,
+										54930
+									],
+									[
+										55105,
+										55118
+									],
+									[
+										55250,
+										55263
+									],
+									[
+										55415,
+										55428
+									],
+									[
+										55731,
+										55744
+									],
+									[
+										55968,
+										55981
+									],
+									[
+										56155,
+										56168
+									],
+									[
+										56368,
+										56381
+									],
+									[
+										56561,
+										56574
+									],
+									[
+										56579,
+										56592
+									],
+									[
+										56635,
+										56648
+									],
+									[
+										56664,
+										56677
+									],
+									[
+										56812,
+										56825
+									],
+									[
+										56837,
+										56850
+									],
+									[
+										57005,
+										57018
+									],
+									[
+										57023,
+										57036
+									],
+									[
+										57078,
+										57091
+									],
+									[
+										57106,
+										57119
+									],
+									[
+										57306,
+										57319
+									],
+									[
+										57534,
+										57547
+									],
+									[
+										57667,
+										57680
+									],
+									[
+										57829,
+										57842
+									],
+									[
+										57944,
+										57957
+									],
+									[
+										58122,
+										58135
+									],
+									[
+										58310,
+										58323
+									],
+									[
+										58585,
+										58598
+									],
+									[
+										58774,
+										58787
+									],
+									[
+										58985,
+										58998
+									],
+									[
+										59232,
+										59245
+									],
+									[
+										59371,
+										59384
+									],
+									[
+										59540,
+										59553
+									],
+									[
+										59742,
+										59755
+									],
+									[
+										59986,
+										59999
+									],
+									[
+										60128,
+										60141
+									],
+									[
+										60395,
+										60406
+									],
+									[
+										60436,
+										60447
+									],
+									[
+										60578,
+										60589
+									],
+									[
+										60754,
+										60765
+									],
+									[
+										60890,
+										60901
+									],
+									[
+										61031,
+										61042
+									],
+									[
+										61174,
+										61185
+									],
+									[
+										61309,
+										61320
+									],
+									[
+										61525,
+										61536
+									],
+									[
+										61737,
+										61748
+									],
+									[
+										61756,
+										61767
+									],
+									[
+										61810,
+										61821
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								61537,
+								61537
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"detect_indentation": false,
+							"output_tag": 5,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 10910.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "test/game/lib/mock/core/DebugHelper.lua",
+					"settings":
+					{
+						"buffer_size": 5740,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4621,
+								4621
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2836.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "packages/SerializableEditor/SerializableEditor.py",
+					"settings":
+					{
+						"buffer_size": 4909,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								543,
+								543
+							]
+						],
+						"settings":
+						{
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
 					"file": "gii_cfg.py",
 					"settings":
 					{
-						"buffer_size": 392,
+						"buffer_size": 394,
 						"regions":
 						{
 						},
@@ -1959,21 +2429,27 @@
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				},
+				}
+			]
+		},
+		{
+			"selected": 0,
+			"sheets":
+			[
 				{
-					"buffer": 11,
+					"buffer": 10,
 					"file": "test/BUILD_RESULT",
 					"settings":
 					{
-						"buffer_size": 8800,
+						"buffer_size": 67326,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8800,
-								8800
+								67326,
+								67326
 							]
 						],
 						"settings":
@@ -1986,13 +2462,13 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 870.0,
+						"translation.y": 20367.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 12,
+					"buffer": 11,
 					"file": "BUILD_RESULT",
 					"settings":
 					{
@@ -2024,7 +2500,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 13,
+					"buffer": 12,
 					"file": "lib/gii/qt/controls/BUILD_RESULT",
 					"settings":
 					{
@@ -2054,7 +2530,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 14,
+					"buffer": 13,
 					"file": "lib/gii/qt/controls/GraphicsView/BUILD_RESULT",
 					"settings":
 					{
@@ -2078,13 +2554,13 @@
 							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 53.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 15,
+					"buffer": 14,
 					"file": "lib/mock/asset/helper/BUILD_RESULT",
 					"settings":
 					{
@@ -2114,7 +2590,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 16,
+					"buffer": 15,
 					"file": "lib/gii/qt/controls/ToolWindowManager/BUILD_RESULT",
 					"settings":
 					{
@@ -2131,7 +2607,7 @@
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
 							"result_base_dir": "/Users/tommo/Projects/gii/lib/gii/qt/controls/ToolWindowManager",
 							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
 							"result_line_regex": "",
@@ -2186,7 +2662,7 @@
 		"rows":
 		[
 			0.0,
-			0.624423206783,
+			0.5,
 			1.0
 		]
 	},
@@ -2229,6 +2705,62 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"herocontr",
+				"test/host/ios-release/gii.xcodeproj/project.xcworkspace/contents.xcworkspacedata"
+			],
+			[
+				"game.lua",
+				"test/game/lib/mock/core/Game.lua"
+			],
+			[
+				"behaviours",
+				"test/game/lib/mock/component/BehaviourScript.lua"
+			],
+			[
+				"scripview",
+				"lib/gii/ScriptView/ScriptView.py"
+			],
+			[
+				"game",
+				"test/game/lib/mock/core/Game.lua"
+			],
+			[
+				"scene.lua",
+				"test/game/lib/mock/core/Scene.lua"
+			],
+			[
+				"scene",
+				"lib/lua/mock_edit/EditorCanvas/SceneView.lua"
+			],
+			[
+				"scengrae",
+				"lib/mock/SceneGraphEditor/SceneGraphEditor.lua"
+			],
+			[
+				".project",
+				"gii.sublime-project"
+			],
+			[
+				"preview",
+				"lib/gii/SceneEditor/GamePreview.py"
+			],
+			[
+				"editapp",
+				"lib/gii/core/EditorApp.py"
+			],
+			[
+				"mockeditini",
+				"lib/lua/mock_edit/init.lua"
+			],
+			[
+				"gii",
+				"gii_cfg.py"
+			],
+			[
+				"main.",
+				"test/game/main.lua"
+			],
 			[
 				"qss",
 				"data/theme/gii.qss"
@@ -2364,10 +2896,6 @@
 			[
 				"animatowid",
 				"packages/Mock/Animator/AnimatorWidget.py"
-			],
-			[
-				"game",
-				"test/game/lib/mock/core/Game.lua"
 			],
 			[
 				"cameraman",
@@ -2512,10 +3040,6 @@
 			[
 				"assetbor",
 				"lib/gii/AssetEditor/AssetBrowser.py"
-			],
-			[
-				"gii",
-				"gii_bin.py"
 			],
 			[
 				"storygraph",
@@ -2692,54 +3216,6 @@
 			[
 				"protodrag",
 				"lib/lua/mock_edit/drag/ProtoDragIn.lua"
-			],
-			[
-				"main.lu",
-				"test/game/main.lua"
-			],
-			[
-				"grhel",
-				"lib/gii/qt/controls/GraphicsView/GraphicsViewHelper.py"
-			],
-			[
-				"graphnod",
-				"lib/gii/qt/controls/GraphicsView/GraphNode.py"
-			],
-			[
-				"graphvi",
-				"lib/gii/qt/controls/GraphicsView/GraphView.py"
-			],
-			[
-				"editap",
-				"lib/gii/core/EditorApp.py"
-			],
-			[
-				"scenegra",
-				"lib/mock/SceneGraphEditor/SceneGraphEditor.py"
-			],
-			[
-				"intro",
-				"lib/gii/SceneEditor/Introspector.py"
-			],
-			[
-				"entited",
-				"lib/mock/SceneGraphEditor/EntityEditor.py"
-			],
-			[
-				"introspect",
-				"lib/gii/SceneEditor/Introspector.py"
-			],
-			[
-				"moaiedc",
-				"lib/gii/moai/MOAIEditCanvas.py"
-			],
-			[
-				"gameprev",
-				"lib/gii/SceneEditor/GamePreview.py"
-			],
-			[
-				"wsc",
-				"test/host/wscript"
 			]
 		],
 		"width": 0.0

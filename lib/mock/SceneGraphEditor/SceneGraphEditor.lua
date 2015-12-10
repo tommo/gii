@@ -86,6 +86,31 @@ end
 local function collectFoldState( ent )
 end
 
+function SceneGraphEditor:saveEntityLockState()
+	local output = {}
+	for ent in pairs( self.scene.entities ) do
+		if ent.__guid and ent._editLocked then output[ent.__guid] = true end
+	end
+	for group in pairs( self.scene:collectEntityGroups() ) do
+		if group.__guid and group._editLocked then output[group.__guid] = true end
+	end
+	return gii.tableToDict( output )
+end
+
+function SceneGraphEditor:loadEntityLockState( data )
+	local lockStates = gii.dictToTable( data )
+	for ent in pairs( self.scene.entities ) do
+		if ent.__guid and lockStates[ent.__guid] then
+			ent:setEditLocked( true )
+		end
+	end
+	for group in pairs( self.scene:collectEntityGroups() ) do
+		if group.__guid and lockStates[group.__guid] then
+			group:setEditLocked( true )
+		end
+	end
+end
+
 function SceneGraphEditor:saveIntrospectorFoldState()
 	local output = {}
 	for ent in pairs( self.scene.entities ) do

@@ -292,15 +292,19 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.retainWorkspaceState()
 		treeFoldState      = self.workspaceState['tree_state']
 		containerFoldState = self.workspaceState['container_state']
+		entityLockState    = self.workspaceState['entity_lock_state']
 		self.activeSceneNode.setMetaData( 'tree_state', treeFoldState )
 		self.activeSceneNode.setMetaData( 'container_state', containerFoldState )
+		self.activeSceneNode.setMetaData( 'entity_lock_state', entityLockState )
 
 	def loadWorkspaceState( self, restoreState = True ):
-		treeFoldState = self.activeSceneNode.getMetaData( 'tree_state', None )		
+		treeFoldState      = self.activeSceneNode.getMetaData( 'tree_state', None )		
 		containerFoldState = self.activeSceneNode.getMetaData( 'container_state', None )		
+		entityLockState    = self.activeSceneNode.getMetaData( 'entity_lock_state', None )	
 		self.workspaceState = {
-			'tree_state' : treeFoldState,
-			'container_state' : containerFoldState
+			'tree_state'        : treeFoldState,
+			'container_state'   : containerFoldState,
+			'entity_lock_state' : entityLockState
 		}		
 		if restoreState: self.restoreWorkspaceState()
 
@@ -309,9 +313,12 @@ class SceneGraphEditor( SceneEditorModule ):
 		treeFoldState =  self.tree.saveFoldState()
 		#save introspector foldstate
 		introspectorFoldState = self.delegate.safeCallMethod( 'editor', 'saveIntrospectorFoldState' )
+		entityLockState = self.delegate.safeCallMethod( 'editor', 'saveEntityLockState' )
+
 		self.workspaceState = {
-			'tree_state': treeFoldState,
-			'container_state' : introspectorFoldState
+			'tree_state'        : treeFoldState,
+			'container_state'   : introspectorFoldState,
+			'entity_lock_state' : entityLockState
 		}
 
 	def restoreWorkspaceState( self ):
@@ -319,15 +326,23 @@ class SceneGraphEditor( SceneEditorModule ):
 		treeState = self.workspaceState.get( 'tree_state', None )
 		if treeState:
 			self.tree.loadFoldState( treeState )	
+		
 		containerState = self.workspaceState.get( 'container_state', None )
 		if containerState:
 			self.delegate.safeCallMethod( 'editor', 'loadIntrospectorFoldState', containerState )
+		
+		lockState = self.workspaceState.get( 'entity_lock_state', None )
+		if lockState:
+			self.delegate.safeCallMethod( 'editor', 'loadEntityLockState', lockState )
 
 
 	def onSceneChange( self ):
+		self.tree.hide()
 		self.tree.rebuild()
 		self.restoreWorkspaceState()
+		self.tree.refreshAllContent()
 		self.tree.verticalScrollBar().setValue( 0 )
+		self.tree.show()
 		if self.editingProtoNode:
 			self.delegate.safeCallMethod( 'editor', 'locateProto', self.editingProtoNode.getPath() )
 			self.editingProtoNode = None
