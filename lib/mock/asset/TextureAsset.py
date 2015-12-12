@@ -123,6 +123,7 @@ class TextureAssetManager( AssetManager ):
 			# if context.isNewFile( mappedPath ):
 				# print( node.getNodePath(), mappedPath )
 				# ImageHelpers.convertToWebP( mappedPath )
+				
 	def requestAssetThumbnail( self, assetNode, size ):
 		return self.buildAssetThumbnail( assetNode, size )
 

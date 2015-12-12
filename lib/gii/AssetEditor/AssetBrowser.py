@@ -351,10 +351,14 @@ class AssetBrowser( SceneEditorModule ):
 					n.setDeployState(newstate)
 					
 		elif name == 'reimport':
-			s = getAssetSelectionManager().getSelection()
-			for n in s:
-				if isinstance( n, AssetNode ):
-					n.markModified()
+			targetNode = self.currentContextTargetNode
+			if targetNode:
+				targets = [ targetNode ]	
+			else:
+				targets = getAssetSelectionManager().getSelection()
+			for targetNode in targets:
+				if isinstance( targetNode, AssetNode ):
+					targetNode.markModified()
 			app.getAssetLibrary().importModifiedAssets()
 
 		elif name == 'clone':
@@ -613,3 +617,11 @@ def assetCreatorSearchEnumerator( typeId, context, option ):
 		result.append( entry )
 	return result
 
+
+##----------------------------------------------------------------##
+class AssetBrowserInstance( object ):
+	"""docstring for AssetBrowserInstance"""
+	def __init__(self, arg):
+		super(AssetBrowserInstance, self).__init__()
+		self.arg = arg
+		

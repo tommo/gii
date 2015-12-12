@@ -108,13 +108,30 @@ class SceneGraphEditor( SceneEditorModule ):
 			)
 
 		self.addMenu( 'main/scene/----' )
+		
 		self.addMenu( 'component_context', dict( label = 'Selected Component' ) )
 		self.addMenuItem( 'component_context/remove_component', 
 			dict( label = 'Remove' )
 			)
+
+		self.addMenuItem( 'component_context/----' )
+		
 		self.addMenuItem( 'component_context/copy_component', 
 			dict( label = 'Copy' )
 			)
+		self.addMenuItem( 'component_context/paste_component', 
+			dict( label = 'Paste Component Here' )
+			)
+		self.addMenuItem( 'component_context/----' )
+		
+		self.addMenuItem( 'component_context/move_component_up', 
+			dict( label = 'Move Up' )
+			)
+
+		self.addMenuItem( 'component_context/move_component_down', 
+			dict( label = 'Move Down' )
+			)
+		
 
 		self.addMenu( 'main/entity', dict( label = 'Entity' ) )
 		self.addMenuItem( 'main/entity/add_empty_entity',    dict( label = 'Create Empty', shortcut = 'ctrl+alt+N' ) )
