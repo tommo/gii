@@ -47,6 +47,18 @@ class BracketTreeNode( object ):
 	def getParent( self ):
 		return self.parent
 
+	def getChild( self, idx ):
+		if not self.children: return None
+		return self.children[ idx ]
+
+	def addChild( self, node ):
+		self.children.append( node )
+		node.parent = self
+		return node
+
+	def getChildValue( self, idx ):
+		return self.getChild( idx ).getValue()
+
 	def toData( self ):
 		if self.isValue():
 			return self.getValue()
@@ -57,41 +69,73 @@ class BracketTreeNode( object ):
 			}
 
 ##----------------------------------------------------------------##
-ROBracket = re.compile( '\s*(\w+)\s*\(\s*(.*)\s*\)\s*' )
-def _parseBracketNode( src, parentNode ):
-		mo = ROBracket.match( src )
-		if mo:
-			tag = mo.group( 1 )
-			content = mo.group( 2 )
-			node = BracketTreeNode( parentNode )
-			children = _parseList( content, node )
-			node.initObject( tag, children )
-			return node
+_BracketRO = re.compile( '[,()]' )
+class BracketTreeParser(object):
+	def __init__( self ):
+		self.nodeStack = []
+		self.pointer = 0
+		self.rootNode = BracketTreeNode( None )
+		self.rootNode.initObject( '__root__', [] )
+		self.currentNode = self.rootNode
 
-		else:
-			node = BracketTreeNode( parentNode )
-			node.initValue( src )
-			return node
+	def pushTagNode( self, tag, pos ):
+		node = BracketTreeNode( self.currentNode )
+		node.initObject( tag, [] )
+		self.currentNode.addChild( node )
+		self.nodeStack.append( node )
+		self.currentNode = node
 
-def _parseList( src, parentNode ):
-	output = []
-	datas = src.split( ',' )
-	for data in datas:
-		data = data.strip()
-		node = _parseBracketNode( data, parentNode )
-		output.append( node )
-	return output
+	def popTagNode( self, pos ):
+		if self.rootNode == self.currentNode:
+			raise Exception( 'unexpected bracket at %d' % pos )
+		node = self.nodeStack.pop()
+		self.currentNode = node.parent
+
+	def pushValueNode( self, content, pos ):
+		node = BracketTreeNode( self.currentNode )
+		node.initValue( content )
+		self.currentNode.addChild( node )
+
+	def parse( self, src ):
+		p = 0
+		while True:
+			mo = _BracketRO.search( src, p )
+			if not mo: break
+			ch = mo.group(0)
+			pos = mo.start()
+			span = src[ p:pos ]
+			span = span.strip()
+
+			if ch == '(':
+				self.pushTagNode( span, pos )
+
+			elif ch == ')':
+				if len(span) > 0:
+					self.pushValueNode( span, pos )
+				self.popTagNode( pos )
+
+			elif ch == ',':
+				if len(span) > 0:
+					self.pushValueNode( span, pos )
+
+			p = mo.end()
+
+		return self.rootNode
+
 
 ##----------------------------------------------------------------##
 def parseBracketTree( src ):
-	node = _parseBracketNode( src, None )
+	parser = BracketTreeParser()
+	node = parser.parse( src )
 	return node
-
-
 
 ##----------------------------------------------------------------##
 ##TEST
 ##----------------------------------------------------------------##	
 if __name__ == '__main__':
-	tree = parseBracketTree( 'and( tag( damhill ), tag( common ) )' )
-	print tree.toData()
+	# print parseBracketTree( 'and( tag( damhill ), tag( common ) )' ).toData()
+	# print parseBracketTree( 'or( tag(damhill), tag(common) )' ).toData()
+	# print parseBracketTree( 'and( or( tag(damhill), tag(common) ), tag(furniture) )' ).toData()
+	x = 'and( or( tag(damhill+1), tag(common) ), tag(furniture) )'
+	result = parseBracketTree( x )
+	print result.toData()
