@@ -59,7 +59,7 @@ class AssetBrowser( SceneEditorModule ):
 			folder_only = True
 		)
 		self.treeFilter.setTargetTree( self.treeView )
-		self.treeView.parentModule = self
+		self.treeView.owner = self
 		self.treeView.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
 		self.treeView.customContextMenuRequested.connect( self.onTreeViewContextMenu)
 		#
@@ -81,11 +81,11 @@ class AssetBrowser( SceneEditorModule ):
 
 		self.contentToolbar = QtGui.QToolBar()
 
-		self.detailList .parentModule = self
-		self.iconList   .parentModule = self
-		self.tagFilter  .parentModule = self
-		self.statusBar  .parentModule = self
-		self.navigator  .parentModule = self
+		self.detailList .owner = self
+		self.iconList   .owner = self
+		self.tagFilter  .owner = self
+		self.statusBar  .owner = self
+		self.navigator  .owner = self
 
 		self.iconList.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
 		self.iconList.customContextMenuRequested.connect( self.onItemContextMenu )
@@ -678,5 +678,44 @@ def assetCreatorSearchEnumerator( typeId, context, option ):
 class AssetBrowserInstance( object ):
 	def __init__( self ):
 		super(AssetBrowserInstance, self).__init__()
+		self.container = None
+
+	def buildWindow( self, container ):
+		self.container = container
 				
+	def onActivateNode( self ):
+		return self.parentModule.onActivateNode( )
+
+	def onTreeSelectionChanged( self ):
+		return self.parentModule.onTreeSelectionChanged( )
+
+	def onTreeRequestDelete( self ):
+		return self.parentModule.onTreeRequestDelete( )
+
+	def getAssetsInList( self ):
+		return self.parentModule.getAssetsInList( )
+
+	def getAssetThumbnailIcon( self ):
+		return self.parentModule.getAssetThumbnailIcon( )
+
+	def onListSelectionChanged( self ):
+		return self.parentModule.onListSelectionChanged( )
+
+	def onListRequestDelete( self ):
+		return self.parentModule.onListRequestDelete( )
+	
+	def getAssetsInList( self ):
+		return self.parentModule.getAssetsInList( )
+	
+	def editAssetTags( self ):
+		return self.parentModule.editAssetTags( )
+
+	def forwardHistory( self ):
+		return self.parentModule.forwardHistory( )
+
+	def backwardHistory( self ):
+		return self.parentModule.backwardHistory( )
+
+	def goUpperLevel( self ):
+		return self.parentModule.goUpperLevel( )
 

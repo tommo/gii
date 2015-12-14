@@ -564,17 +564,23 @@ class GenericTreeFilter( QtGui.QWidget ):
 		layout = QtGui.QHBoxLayout( self )
 		layout.setMargin( 0 )
 		layout.setSpacing( 0 )
-
+		self.buttonClear = QtGui.QToolButton( self )
+		self.buttonClear.setText( 'Clear' )
+		# self.buttonClear.setIconSize( QtCore.QSize( 12, 12 ) )
+		# self.buttonClear.setIcon( getIcon('remove') )
+		self.buttonClear.clicked.connect( self.clearFilter )
 		self.lineEdit = QtGui.QLineEdit( self )
 		self.lineEdit.textChanged.connect( self.onTextChanged )
 		self.lineEdit.setPlaceholderText( 'Filters' )
 		self.targetTree = None
 
 		layout.addWidget( self.lineEdit )
+		layout.addWidget( self.buttonClear )
 		self.lineEdit.setMinimumSize( 100, 20 )
 		self.lineEdit.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
 
 		self.lineEdit.installEventFilter( self )
+		self.buttonClear.hide()
 
 	def eventFilter( self, object, event ):
 		e=event.type()
@@ -604,8 +610,10 @@ class GenericTreeFilter( QtGui.QWidget ):
 			ro = None
 		if ro:
 			self.targetTree.setProperty( 'filtered', True )
+			self.buttonClear.show()
 		else:
 			self.targetTree.setProperty( 'filtered', False )
+			self.buttonClear.hide()
 		self.targetTree.hide()
 		self.applyFilterToItem( self.targetTree.invisibleRootItem(), ro )
 		repolishWidget( self.targetTree )

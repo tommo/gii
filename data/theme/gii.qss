@@ -362,7 +362,7 @@ QTreeView::indicator
 }
 
 QAbstractItemView[filtered="true"]{
-	background: #433;
+	background: #333a33;
 }
 
 QMenuBar::item

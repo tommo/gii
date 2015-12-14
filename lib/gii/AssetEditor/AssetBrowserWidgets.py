@@ -118,10 +118,10 @@ class AssetFolderTreeView( GenericTreeWidget ):
 
 	def onItemActivated(self, item, col):
 		node=item.node
-		self.parentModule.onActivateNode( node, 'tree' )
+		self.owner.onActivateNode( node, 'tree' )
 
 	def onItemSelectionChanged(self):
-		self.parentModule.onTreeSelectionChanged()
+		self.owner.onTreeSelectionChanged()
 		# if self.refreshingSelection: return
 		# items = self.selectedItems()
 		# if items:
@@ -131,7 +131,7 @@ class AssetFolderTreeView( GenericTreeWidget ):
 		# 	getAssetSelectionManager().changeSelection(None)
 
 	def onDeletePressed( self ):
-		self.parentModule.onTreeRequestDelete()
+		self.owner.onTreeRequestDelete()
 		
 
 ##----------------------------------------------------------------##
@@ -178,7 +178,7 @@ class AssetBrowserIconListWidget( GenericListWidget ):
 		return None
 
 	def getNodes( self ):
-		return self.parentModule.getAssetsInList()
+		return self.owner.getAssetsInList()
 
 	def updateItemContent( self, item, node, **option ):
 		rawName = node.getName()
@@ -189,7 +189,7 @@ class AssetBrowserIconListWidget( GenericListWidget ):
 			item.setText( name + '\n' + ext )
 		else:
 			item.setText( rawName )
-		thumbnailIcon = self.parentModule.getAssetThumbnailIcon( node, self.thumbnailIconSize )
+		thumbnailIcon = self.owner.getAssetThumbnailIcon( node, self.thumbnailIconSize )
 		if not thumbnailIcon:
 			thumbnailIcon = getIcon( 'thumbnail/%s' % node.getType(), 'thumbnail/default' )
 
@@ -200,11 +200,11 @@ class AssetBrowserIconListWidget( GenericListWidget ):
 		item.setToolTip( node.getPath() )
 
 	def onItemSelectionChanged(self):
-		self.parentModule.onListSelectionChanged()
+		self.owner.onListSelectionChanged()
 
 	def onItemActivated( self, item ):
 		node = item.node
-		self.parentModule.onActivateNode( node, 'list' )
+		self.owner.onActivateNode( node, 'list' )
 
 	def mimeData( self, items):
 		data = QtCore.QMimeData()
@@ -217,7 +217,7 @@ class AssetBrowserIconListWidget( GenericListWidget ):
 		return data
 
 	def onDeletePressed( self ):
-		self.parentModule.onListRequestDelete()
+		self.owner.onListRequestDelete()
 
 	def onClipboardCopy( self ):
 		clip = QtGui.QApplication.clipboard()
@@ -242,15 +242,15 @@ class AssetBrowserDetailListWidget( GenericTreeWidget ):
 		return [ ('Name',150), ('Type', 80), ( 'Desc', 50 ) ]
 
 	def getRootNode( self ):
-		return self.parentModule
+		return self.owner
 
 	def getNodeParent( self, node ): # reimplemnt for target node	
-		if node == self.parentModule: return None
-		return self.parentModule
+		if node == self.owner: return None
+		return self.owner
 
 	def getNodeChildren( self, node ):
-		if node == self.parentModule:
-			return self.parentModule.getAssetsInList()
+		if node == self.owner:
+			return self.owner.getAssetsInList()
 		else:
 			return []
 
@@ -258,7 +258,7 @@ class AssetBrowserDetailListWidget( GenericTreeWidget ):
 		return AssetTreeItem()
 		
 	def updateItemContent( self, item, node, **option ):
-		if node == self.parentModule: return 
+		if node == self.owner: return 
 		assetType = node.getType()
 		item.setText( 0, node.getName() )
 		iconName = app.getAssetLibrary().getAssetIcon( assetType )
@@ -276,11 +276,11 @@ class AssetBrowserDetailListWidget( GenericTreeWidget ):
 		return data
 
 	def onItemSelectionChanged(self):
-		self.parentModule.onListSelectionChanged()
+		self.owner.onListSelectionChanged()
 
 	def onItemActivated( self, item ):
 		node = item.node
-		self.parentModule.onActivateNode( node, 'list' )
+		self.owner.onActivateNode( node, 'list' )
 
 ##----------------------------------------------------------------##
 class AssetBrowserTagFilterWidget( QtGui.QFrame ):
@@ -303,7 +303,7 @@ class AssetBrowserStatusBar( QtGui.QFrame ):
 		self.tagsBar.buttonEdit.clicked.connect( self.onButtonEditTags )
 
 	def onButtonEditTags( self ):
-		self.parentModule.editAssetTags()
+		self.owner.editAssetTags()
 
 	def setText( self, text ):
 		self.textStatus.setText( text )
@@ -364,10 +364,10 @@ class AssetBrowserNavigator( QtGui.QWidget ):
 		self.setFixedHeight( 20 )
 
 	def onHistoryForward( self ):
-		self.parentModule.forwardHistory()
+		self.owner.forwardHistory()
 
 	def onGoUpperLevel( self ):
-		self.parentModule.goUpperLevel()
+		self.owner.goUpperLevel()
 
 	def onHistoryBackward( self ):
-		self.parentModule.backwardHistory()
+		self.owner.backwardHistory()
