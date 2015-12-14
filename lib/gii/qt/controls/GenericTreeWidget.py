@@ -24,22 +24,13 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		self.refreshing = False
 		self.rebuilding = False
+		self.firstSetup = True
 		
 		self.option = option
 		headerInfo = self.getHeaderInfo()
 		headerItem = QtGui.QTreeWidgetItem()
 		self.setHeaderItem(headerItem)
 		self.setItemDelegate( self.defaultItemDelegate )
-		for i in range( 0, len(headerInfo) ):			
-			if i > 0:
-				self.setItemDelegateForColumn( i, self.readonlyItemDelegate )			
-			info =  headerInfo[i]
-			title = info[ 0 ]
-			width = info[ 1 ]
-			headerItem.setText ( i, title )
-			if width > 0:
-				self.setColumnWidth ( i, width )
-			self.updateHeaderItem( headerItem, i, info )
 			
 		self.setSortingEnabled( self.getOption('sorting', True) )
 		if self.getOption( 'multiple_selection', False ):
@@ -70,8 +61,9 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.itemChanged          .connect( self._onItemChanged )
 		self.setIndentation( 12 )
 
-		self.initRootItem()		
-
+		self.initRootItem()
+		self.resetHeader()
+		
 	def getReadonlyItemDelegate( self ):
 		return ReadonlyItemDelegate( self )
 
@@ -107,7 +99,9 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.rootItem.node = None
 		self.setUpdatesEnabled( True )
 
-	def rebuild( self ):
+	def rebuild( self, **option ):
+		# columnCount = len( self.getHeaderInfo() )
+		# columnSizes = [ self.columnWidth( idx ) for idx in range( columnCount ) ]
 		self.rebuilding = True
 		self.hide()
 		self.setUpdatesEnabled( False )
@@ -119,6 +113,13 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.setUpdatesEnabled( True )
 		self.show()
 		self.rebuilding = False
+		
+		#workaround: avoid unexpected column resizing
+		if self.firstSetup:
+			self.resetHeader()
+			self.firstSetup = False
+		# for idx, size in enumerate( columnSizes ): 
+		# 	self.setColumnWidth( idx, size )
 
 	def addNode( self, node, addChildren = True, **option ):
 		assert not node is None, 'attempt to insert null node '
@@ -220,6 +221,20 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 	def updateHeaderItem( self, item, col, info ):
 		pass
+
+	def resetHeader( self ):
+		headerInfo = self.getHeaderInfo()
+		headerItem = self.headerItem()
+		for i in range( 0, len(headerInfo) ):			
+			if i > 0:
+				self.setItemDelegateForColumn( i, self.readonlyItemDelegate )			
+			info =  headerInfo[i]
+			title = info[ 0 ]
+			width = info[ 1 ]
+			headerItem.setText ( i, title )
+			if width > 0:
+				self.setColumnWidth ( i, width )
+			self.updateHeaderItem( headerItem, i, info )
 
 	def setFocusedItem(self, item ):
 		idx = self.indexFromItem( item )
