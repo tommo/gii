@@ -394,6 +394,9 @@ class AssetNode(object):
 	def getTagString( self ):
 		return ', '.join( self.getTags() )
 
+	def getTagCacheString( self ):
+		return ', '.join( self.getTagCache() )
+
 	def setTagString( self, src ):
 		self.tags = []
 		self.clearTagCache()

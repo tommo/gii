@@ -31,8 +31,10 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		headerItem = QtGui.QTreeWidgetItem()
 		self.setHeaderItem(headerItem)
 		self.setItemDelegate( self.defaultItemDelegate )
-			
+		self.resetHeader()
+	
 		self.setSortingEnabled( self.getOption('sorting', True) )
+	
 		if self.getOption( 'multiple_selection', False ):
 			self.setSelectionMode( QtGui.QAbstractItemView.ExtendedSelection )
 		else:
@@ -62,7 +64,6 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.setIndentation( 12 )
 
 		self.initRootItem()
-		self.resetHeader()
 		
 	def getReadonlyItemDelegate( self ):
 		return ReadonlyItemDelegate( self )

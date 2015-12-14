@@ -569,7 +569,7 @@ class AssetBrowser( SceneEditorModule ):
 
 		else:
 			if node.isGroupType( 'folder', 'package' ):
-				self.selectAsset( node )
+				self.selectAsset( node, enter_folder = True )
 			else:
 				self.openAsset( node )
 
@@ -608,15 +608,16 @@ class AssetBrowser( SceneEditorModule ):
 
 	def goUpperLevel( self ):
 		for folder in self.currentFolders:
-			parentNode = folder.getParent()
-			if parentNode:
-				self.selectAsset( parentNode, goto = True )
+			self.selectAsset( folder, goto = True )
 			return
 
 	def selectAsset( self, asset, **options ):
 		if not asset: return
 		#find parent package/folder
-		folder = asset
+		if options.get( 'enter_folder', False ):
+			folder = asset
+		else:
+			folder = asset.getParent()
 		while folder:
 			if folder.getGroupType() in [ 'folder', 'package' ]: break
 			folder = folder.getParent()
@@ -675,8 +676,7 @@ def assetCreatorSearchEnumerator( typeId, context, option ):
 
 ##----------------------------------------------------------------##
 class AssetBrowserInstance( object ):
-	"""docstring for AssetBrowserInstance"""
-	def __init__(self, arg):
+	def __init__( self ):
 		super(AssetBrowserInstance, self).__init__()
-		self.arg = arg
+				
 

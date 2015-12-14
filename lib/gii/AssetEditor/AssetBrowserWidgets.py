@@ -22,7 +22,7 @@ from AssetEditor      import AssetEditorModule, getAssetSelectionManager
 
 ##----------------------------------------------------------------##
 #TODO: allow sort by other column
-class AssetFolderTreeItem(QtGui.QTreeWidgetItem):
+class AssetTreeItem(QtGui.QTreeWidgetItem):
 	def __lt__(self, other):
 		node0 = self.node
 		node1 = hasattr(other, 'node') and other.node or None
@@ -43,7 +43,7 @@ class AssetFolderTreeItem(QtGui.QTreeWidgetItem):
 			else:
 				if t0 == 'folder': return False
 				if t1 == 'folder': return True
-		return super( AssetFolderTreeItem, self ).__lt__( other )
+		return super( AssetTreeItem, self ).__lt__( other )
 		# return node0.getName().lower()<node1.getName().lower()
 
 ##----------------------------------------------------------------##
@@ -83,7 +83,7 @@ class AssetFolderTreeView( GenericTreeWidget ):
 		return result
 
 	def createItem( self, node ):
-		return AssetFolderTreeItem()
+		return AssetTreeItem()
 
 	def updateItemContent( self, item, node, **option ):
 		assetType = node.getType()
@@ -255,7 +255,7 @@ class AssetBrowserDetailListWidget( GenericTreeWidget ):
 			return []
 
 	def createItem( self, node ):
-		return AssetFolderTreeItem()
+		return AssetTreeItem()
 		
 	def updateItemContent( self, item, node, **option ):
 		if node == self.parentModule: return 

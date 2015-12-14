@@ -130,111 +130,6 @@ class ObjectContainer( QtGui.QWidget ):
 			self.contextMenu.popUp( context = self.contextObject )
 
 ##----------------------------------------------------------------##
-class SceneIntrospector( SceneEditorModule ):
-	"""docstring for SceneIntrospector"""
-	def __init__(self):
-		super(SceneIntrospector, self).__init__()
-		self.instances      = []
-		self.instanceCache  = []
-		self.idPool         = IDPool()
-		self.activeInstance = None
-		self.objectEditorRegistry = {}
-
-	def getName(self):
-		return 'introspector'
-
-	def getDependency(self):
-		return ['qt', 'scene_editor']
-	
-	def onLoad(self):		
-		self.requestInstance()
-		signals.connect( 'selection.changed', self.onSelectionChanged )
-		signals.connect( 'component.added',   self.onComponentAdded )
-		signals.connect( 'component.removed', self.onComponentRemoved )
-		signals.connect( 'entity.modified',   self.onEntityModified ) 
-		self.widgetCacheHolder = QtGui.QWidget()
-		
-	def onStart( self ):
-		pass
-
-	def updateProp(self):
-		if app.isDebugging():
-			return
-
-		if self.activeInstance:
-			self.activeInstance.refresh()
-
-	def requestInstance(self):
-		#todo: pool
-		id   = self.idPool.request()
-		container = self.requestDockWindow('SceneIntrospector-%d'%id,
-				title   = 'Introspector',
-				dock    = 'right',
-				minSize = (200,100)
-		)
-		instance = IntrospectorInstance(id)
-		instance.createWidget( container )
-		self.instances.append( instance )
-		if not self.activeInstance: self.activeInstance=instance
-		return instance
-
-	def findInstances(self, target):
-		res=[]
-		for ins in self.instances:
-			if ins.target==target:
-				res.append(ins)
-		return res
-
-	def getInstances(self):
-		return self.instances
-
-	def registerObjectEditor( self, typeId, editorClas ):
-		assert typeId, 'null typeid'
-		self.objectEditorRegistry[ typeId ] = editorClas
-
-	def getObjectEditorByTypeId( self, typeId, defaultClass = None ):
-		while True:
-			clas = self.objectEditorRegistry.get( typeId, None )
-			if clas: return clas
-			typeId = getSuperType( typeId )
-			if not typeId: break
-		if defaultClass: return defaultClass
-		return CommonObjectEditor
-
-	def onSelectionChanged( self, selection, key ):
-		if key != 'scene': return
-		if not self.activeInstance: return
-		target = None
-		if isinstance( selection, list ):
-			target = selection
-		elif isinstance( selection, tuple ):
-			(target) = selection
-		else:
-			target=selection
-		#first selection only?
-		self.activeInstance.setTarget(target)
-
-	def onComponentAdded( self, com, entity ):
-		if not self.activeInstance: return
-		if self.activeInstance.target == entity:
-			self.activeInstance.setTarget( [entity], True )
-			self.activeInstance.focusTarget( com )
-
-	def onComponentRemoved( self, com, entity ):
-		if not self.activeInstance: return
-		if self.activeInstance.target == entity:
-			self.activeInstance.setTarget( [entity], True )
-
-	def onEntityModified( self, entity, context=None ):
-		if context != 'introspector' :
-			self.refresh( entity, context )
-
-	def refresh( self, target = None, context = None ):
-		for ins in self.instances:
-			if not target or ins.hasTarget( target ):
-				ins.scheduleUpdate()
-
-##----------------------------------------------------------------##
 _OBJECT_EDITOR_CACHE = {} 
 
 def pushObjectEditorToCache( typeId, editor ):
@@ -257,6 +152,69 @@ def popObjectEditorFromCache( typeId ):
 def clearObjectEditorCache( typeId ):
 	if _OBJECT_EDITOR_CACHE.has_key( typeId ):
 		del _OBJECT_EDITOR_CACHE[ typeId ]
+
+##----------------------------------------------------------------##
+class ObjectEditor( object ):	
+	def __init__( self ):
+		self.parentIntrospector = None
+
+	def getContainer( self ):
+		return self.container
+
+	def getInnerContainer( self ):
+		return self.container.ObjectInnerContainer()
+
+	def getIntrospector( self ):
+		return self.parentIntrospector
+		
+	def initWidget( self, container, objectContainer ):
+		pass
+
+	def getContextMenu( self ):
+		pass
+
+	def setTarget( self, target ):
+		self.target = target
+
+	def getTarget( self ):
+		return self.target
+
+	def unload( self ):
+		pass
+
+	def needCache( self ):
+		return True
+
+	def setFocus( self ):
+		pass
+
+		
+##----------------------------------------------------------------##
+class CommonObjectEditor( ObjectEditor ): #a generic property grid 
+	def initWidget( self, container, objectContainer ):
+		self.grid = PropertyEditor(container)
+		self.grid.propertyChanged.connect( self.onPropertyChanged )
+		return self.grid
+
+	def setTarget( self, target ):
+		self.target = target
+		self.grid.setTarget( target )
+
+	def refresh( self ):
+		self.grid.refreshAll()
+
+	def unload( self ):
+		self.grid.clear()
+		self.target = None
+
+	def onPropertyChanged( self, obj, id, value ):
+		pass
+
+##----------------------------------------------------------------##
+def registerObjectEditor( typeId, editorClas ):
+	app.getModule('introspector').registerObjectEditor( typeId, editorClas )
+
+
 
 ##----------------------------------------------------------------##
 class IntrospectorInstance(object):
@@ -439,68 +397,114 @@ class IntrospectorInstance(object):
 	def scheduleUpdate( self ):
 		self.updatePending = True
 
+
 ##----------------------------------------------------------------##
-class ObjectEditor( object ):	
-	def __init__( self ):
-		self.parentIntrospector = None
+class SceneIntrospector( SceneEditorModule ):
+	"""docstring for SceneIntrospector"""
+	def __init__(self):
+		super(SceneIntrospector, self).__init__()
+		self.instances      = []
+		self.instanceCache  = []
+		self.idPool         = IDPool()
+		self.activeInstance = None
+		self.objectEditorRegistry = {}
 
-	def getContainer( self ):
-		return self.container
+	def getName(self):
+		return 'introspector'
 
-	def getInnerContainer( self ):
-		return self.container.ObjectInnerContainer()
-
-	def getIntrospector( self ):
-		return self.parentIntrospector
+	def getDependency(self):
+		return ['qt', 'scene_editor']
+	
+	def onLoad(self):		
+		self.requestInstance()
+		signals.connect( 'selection.changed', self.onSelectionChanged )
+		signals.connect( 'component.added',   self.onComponentAdded )
+		signals.connect( 'component.removed', self.onComponentRemoved )
+		signals.connect( 'entity.modified',   self.onEntityModified ) 
+		self.widgetCacheHolder = QtGui.QWidget()
 		
-	def initWidget( self, container, objectContainer ):
+	def onStart( self ):
 		pass
 
-	def getContextMenu( self ):
-		pass
+	def updateProp(self):
+		if app.isDebugging():
+			return
 
-	def setTarget( self, target ):
-		self.target = target
+		if self.activeInstance:
+			self.activeInstance.refresh()
 
-	def getTarget( self ):
-		return self.target
+	def requestInstance(self):
+		#todo: pool
+		id   = self.idPool.request()
+		container = self.requestDockWindow('SceneIntrospector-%d'%id,
+				title   = 'Introspector',
+				dock    = 'right',
+				minSize = (200,100)
+		)
+		instance = IntrospectorInstance(id)
+		instance.createWidget( container )
+		self.instances.append( instance )
+		if not self.activeInstance: self.activeInstance=instance
+		return instance
 
-	def unload( self ):
-		pass
+	def findInstances(self, target):
+		res=[]
+		for ins in self.instances:
+			if ins.target==target:
+				res.append(ins)
+		return res
 
-	def needCache( self ):
-		return True
+	def getInstances(self):
+		return self.instances
 
-	def setFocus( self ):
-		pass
+	def registerObjectEditor( self, typeId, editorClas ):
+		assert typeId, 'null typeid'
+		self.objectEditorRegistry[ typeId ] = editorClas
 
-		
+	def getObjectEditorByTypeId( self, typeId, defaultClass = None ):
+		while True:
+			clas = self.objectEditorRegistry.get( typeId, None )
+			if clas: return clas
+			typeId = getSuperType( typeId )
+			if not typeId: break
+		if defaultClass: return defaultClass
+		return CommonObjectEditor
+
+	def onSelectionChanged( self, selection, key ):
+		if key != 'scene': return
+		if not self.activeInstance: return
+		target = None
+		if isinstance( selection, list ):
+			target = selection
+		elif isinstance( selection, tuple ):
+			(target) = selection
+		else:
+			target=selection
+		#first selection only?
+		self.activeInstance.setTarget(target)
+
+	def onComponentAdded( self, com, entity ):
+		if not self.activeInstance: return
+		if self.activeInstance.target == entity:
+			self.activeInstance.setTarget( [entity], True )
+			self.activeInstance.focusTarget( com )
+
+	def onComponentRemoved( self, com, entity ):
+		if not self.activeInstance: return
+		if self.activeInstance.target == entity:
+			self.activeInstance.setTarget( [entity], True )
+
+	def onEntityModified( self, entity, context=None ):
+		if context != 'introspector' :
+			self.refresh( entity, context )
+
+	def refresh( self, target = None, context = None ):
+		for ins in self.instances:
+			if not target or ins.hasTarget( target ):
+				ins.scheduleUpdate()
+
+
 ##----------------------------------------------------------------##
-class CommonObjectEditor( ObjectEditor ): #a generic property grid 
-	def initWidget( self, container, objectContainer ):
-		self.grid = PropertyEditor(container)
-		self.grid.propertyChanged.connect( self.onPropertyChanged )
-		return self.grid
 
-	def setTarget( self, target ):
-		self.target = target
-		self.grid.setTarget( target )
-
-	def refresh( self ):
-		self.grid.refreshAll()
-
-	def unload( self ):
-		self.grid.clear()
-		self.target = None
-
-	def onPropertyChanged( self, obj, id, value ):
-		pass
-
-##----------------------------------------------------------------##
-def registerObjectEditor( typeId, editorClas ):
-	app.getModule('introspector').registerObjectEditor( typeId, editorClas )
-
-
-##----------------------------------------------------------------##
 SceneIntrospector().register()
 
