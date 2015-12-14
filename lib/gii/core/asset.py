@@ -36,7 +36,8 @@ class AssetNode(object):
 		self.parentNode = None
 
 		self.metadata   = None
-		self.tags       = None
+		self.tags       = []
+		self.tagCache   = None
 
 		self.name = os.path.basename( nodePath )
 		self.shortName = self.name
@@ -363,6 +364,57 @@ class AssetNode(object):
 		option[ 'no_overwrite' ] = True
 		return self.setMetaData( key, value, **option )
 
+	def addTag( self, tag ):
+		if tag in self.tags: return
+		self.tags.append( tag )
+		self.clearTagCache()
+
+	def getTags( self ):
+		return self.tags
+
+	def hasTag( self, tag ):
+		return tag in self.tags
+
+	def removeTag( self, tag ):
+		try:
+			self.tags.remove( tag )
+		except Exception, e:
+			return False
+		self.clearTagCache()
+		return True
+
+	def getTagString( self ):
+		return ', '.join( self.getTags() )
+
+	def setTagString( self, src ):
+		self.tags = []
+		self.clearTagCache()
+		for part in [ x.strip() for x in src.split(',') ]:
+			if len( part ) > 0:
+				self.addTag( part )
+
+	def clearTagCache( self ):
+		if self.tagCache:
+			self.tagCache = None
+			for child in self.children:
+				child.clearTagCache()
+
+	def getTagCache( self ):
+		if not self.tagCache:
+			self.updateTagCache()
+		return self.tagCache
+
+	def updateTagCache( self ): #collect tag from parent nodes
+		collected = {}
+		if self.parentNode:
+			parentCache = self.parentNode.getTagCache()
+			for tag in parentCache:
+				collected[ tag ] = True
+		for tag in self.tags:
+			collected[ tag ] = True
+		cache = collected.keys()
+		self.tagCache = cache
+
 	def getCacheFile( self, name, **option ):
 		cacheFile = self.cacheFiles.get( name, None )
 		if cacheFile: return cacheFile
@@ -553,6 +605,13 @@ class AssetManager(object):
 
 	def onBuildAssetThumbnail( self, assetNode, targetPath, size ):
 		return False
+
+	def buildAssetSearchInfo( self, assetNode ):
+		info = {}
+		info[ 'tag'  ] = assetNode.getTagCache()
+		info[ 'type' ] = assetNode.getType()
+		info[ 'name' ] = assetNode.getName()
+		return info
 
 ##----------------------------------------------------------------##
 class RawAssetManager(AssetManager):	
@@ -1002,6 +1061,8 @@ class AssetLibrary(object):
 			
 			assetTable[path]  = node
 			node.managerName  = data.get('manager')
+			node.tags         = data.get('tags',[])
+			node.tagCache     = None
 			if node.groupType == None:
 				if node.isType( 'folder' ):
 					node.groupType = 'folder'
@@ -1041,6 +1102,7 @@ class AssetLibrary(object):
 			item['type']        = node.getType()
 			item['groupType']   = node.getGroupType()
 			item['filePath']    = node.getFilePath() or False
+			item['tags']        = node.getTags()
 			#oebjectfiles
 			if mapping:
 				mapped = {}

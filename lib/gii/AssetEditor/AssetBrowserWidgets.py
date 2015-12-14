@@ -238,7 +238,7 @@ class AssetBrowserDetailListWidget( GenericTreeWidget ):
 		super( AssetBrowserDetailListWidget, self ).__init__( *args, **option )
 
 	def getHeaderInfo( self ):
-		return [ ('Name',150), ('Type', 60), ( 'Desc', 50 ) ]
+		return [ ('Name',150), ('Type', 80), ( 'Desc', 50 ) ]
 
 	def getRootNode( self ):
 		return self.parentModule
@@ -286,9 +286,47 @@ class AssetBrowserTagFilterWidget( QtGui.QFrame ):
 	pass
 
 ##----------------------------------------------------------------##
-class AssetBrowserStatusBar( QtGui.QWidget ):
-	pass
+class AssetBrowserStatusBar( QtGui.QFrame ):
+	def __init__( self, *args, **kwargs ):
+		super( AssetBrowserStatusBar, self ).__init__( *args, **kwargs )
+		self.setObjectName( 'AssetBrowserStatusBar' )
+		layout = QtGui.QVBoxLayout( self )
+		layout.setSpacing( 1 )
+		layout.setMargin( 0 )
 
+		self.textStatus = QtGui.QLabel( self )
+		self.tagsBar = AssetBrowserStatusBarTag( self )
+		layout.addWidget( self.textStatus )
+		layout.addWidget( self.tagsBar )
+		self.tagsBar.buttonEdit.clicked.connect( self.onButtonEditTags )
+
+	def onButtonEditTags( self ):
+		self.parentModule.editAssetTags()
+
+	def setText( self, text ):
+		self.textStatus.setText( text )
+
+	def setTags( self, text ):
+		self.tagsBar.setText( text )
+
+##----------------------------------------------------------------##
+class AssetBrowserStatusBarTag( QtGui.QFrame ):
+	def __init__( self, *args, **kwargs ):
+		super( AssetBrowserStatusBarTag, self ).__init__( *args, **kwargs )
+		self.setObjectName( 'AssetBrowserStatusTagBar' )
+		layout = QtGui.QHBoxLayout( self )
+		layout.setSpacing( 2 )
+		layout.setMargin( 0 )
+		self.textTags = QtGui.QLabel( self )
+		self.textTags.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
+		self.buttonEdit = QtGui.QToolButton( self )
+		self.buttonEdit.setIconSize( QSize( 12,12 ) )
+		self.buttonEdit.setIcon( getIcon( 'tag-2' ) )
+		layout.addWidget( self.textTags )
+		layout.addWidget( self.buttonEdit )
+
+	def setText( self, text ):
+		self.textTags.setText( text )
 
 ##----------------------------------------------------------------##
 class AssetBrowserNavigatorCrumbBar( QtGui.QWidget ):

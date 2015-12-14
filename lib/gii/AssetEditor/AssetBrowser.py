@@ -109,9 +109,9 @@ class AssetBrowser( SceneEditorModule ):
 		self.addTool( 'asset_browser_content/----' )
 
 		self.actionGroupView = QtGui.QActionGroup( self.contentToolbar )
-		tool = self.addTool( 'asset_browser_content/detail_view', label = 'L', type = 'check', icon = 'list' )
+		tool = self.addTool( 'asset_browser_content/detail_view', label = 'List View', type = 'check', icon = 'list' )
 		self.actionGroupView.addAction( tool.getAction() )
-		tool = self.addTool( 'asset_browser_content/icon_view', label = 'I', type = 'check', icon = 'grid-2' )
+		tool = self.addTool( 'asset_browser_content/icon_view', label = 'Icon View', type = 'check', icon = 'grid-2' )
 		self.actionGroupView.addAction( tool.getAction() )
 
 
@@ -473,6 +473,7 @@ class AssetBrowser( SceneEditorModule ):
 		self.pushHistory()
 		self.currentFolders = folders
 		self.rebuildItemView()
+		self.updateStatusBar()
 
 	def onTreeRequestDelete( self ):
 		if requestConfirm( 'delete asset package/folder', 'Confirm to delete asset(s)?' ):
@@ -483,6 +484,57 @@ class AssetBrowser( SceneEditorModule ):
 		if requestConfirm( 'delete asset package/folder', 'Confirm to delete asset(s)?' ):
 			for node in self.getItemSelection():
 				node.deleteFile()
+
+	def editAssetTags( self ):
+		target = None
+		itemSelection = self.getItemSelection()
+		if itemSelection:
+			target = itemSelection[0]
+		else:
+			folders = self.getCurrentFolders()
+			if folders:
+				target = folders[0]
+		if not target: return
+		text = requestString( 
+			'Tags', 
+			'Enter Tags:',
+			target.getTagString()
+		)
+		if text != None:
+			target.setTagString( text )
+			self.updateStatusBar()
+
+	def updateStatusBarForAsset( self, asset, forFolder = False ):
+		if forFolder:
+			self.statusBar.setText( '[' + asset.getNodePath() + ']' )
+		else:
+			self.statusBar.setText( asset.getNodePath() )
+		self.statusBar.setTags( asset.getTagString() )
+
+	def updateStatusBar( self ):
+		self.statusBar.show()
+		selection = self.getItemSelection()
+		count = len( selection )
+		if count == 1:
+			node = selection[0]
+			self.updateStatusBarForAsset( node )
+			return
+		elif count > 1:
+			self.statusBar.setText( '%d asset selected' % count )
+			return
+		else:
+			folders = self.getCurrentFolders()
+			countFolder = len( folders )
+			if countFolder == 1:
+				folder = folders[0]
+				self.updateStatusBarForAsset( folder, True )
+				return
+			elif countFolder > 1:
+				self.statusBar.setText( '%d folders/packages selected' % countFolder )
+				return
+		self.statusBar.setText( 'no selection' )
+		self.statusBar.hide()
+
 				
 	def onListSelectionChanged( self ):
 		self.updatingSelection = True
@@ -492,15 +544,18 @@ class AssetBrowser( SceneEditorModule ):
 
 	def onSelectionChanged( self, selection, context ):
 		if context == 'asset':
-			if self.updatingSelection: return
-			#TODO
-			self.setFocus()
-			firstObj = None
-			for obj in selection:
-				firstObj = obj
-				self.treeView.selectNode( obj, add = True )
-			if firstObj: self.treeView.scrollToNode( firstObj )
-			self.rebuildItemView()
+			if not self.updatingSelection:
+				#TODO
+				self.setFocus()
+				firstSelection = None
+				for obj in selection:
+					firstSelection = obj
+					self.treeView.selectNode( obj, add = True )
+				if firstSelection: self.treeView.scrollToNode( firstSelection )
+				self.rebuildItemView()
+			
+			self.updateStatusBar()
+
 
 	def onActivateNode( self, node, src ):
 		if src == 'tree':

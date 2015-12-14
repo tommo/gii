@@ -60,8 +60,8 @@ def alertMessage(title, msg, level='warning'):
 		f = QMessageBox.information
 	res = f( None, title, msg	)
 
-def requestString(title, prompt):
-	text, ok = QtGui.QInputDialog.getText(None, title, prompt)
+def requestString( title, prompt, defaultValue = '' ):
+	text, ok = QtGui.QInputDialog.getText(None, title, prompt, QtGui.QLineEdit.Normal, defaultValue )
 	# dialog=StringDialog(prompt)
 	# dialog.move(QtGui.QCursor.pos())
 	# if dialog.exec_():

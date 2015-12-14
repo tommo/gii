@@ -102,6 +102,7 @@ class GlobalObjectManager( SceneEditorModule ):
 
 	def onAppReady( self ):
 		self.tree.rebuild()
+		self.tree.setColumnWidth( 0, 150 )
 
 	def onMoaiClean( self ):
 		self.tree.clear()
@@ -183,7 +184,7 @@ class GlobalObjectManager( SceneEditorModule ):
 ##----------------------------------------------------------------##
 class GlobalObjectTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		return [ ('Name',150), ('Type', 30) ]
+		return [ ('Name',200), ('Type', 80), ('',-1) ]
 
 	def getRootNode( self ):
 		return _MOCK.game.globalObjectLibrary.root

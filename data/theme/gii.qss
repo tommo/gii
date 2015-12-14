@@ -1291,6 +1291,27 @@ QTreeView#AnimatorTrackTree::item:selected:active
 }
 
 
+#AssetBrowserStatusBar{ 
+	background-color:#252525;
+}
+
+#AssetBrowserStatusBar QLabel{  
+	color:#777;
+	margin: 2px;
+}
+
+#AssetBrowserStatusTagBar {
+	background-color:#222;
+}
+
+#AssetBrowserStatusTagBar QToolButton{
+	border-radius: 4px;
+}
+
+#AssetBrowserStatusTagBar QLabel{
+	color:#98ba56;
+}
+
 #ButtonReferenceField[dragover='ok']
 {
 	border: 1px solid #5f5;
