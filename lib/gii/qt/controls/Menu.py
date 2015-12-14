@@ -21,14 +21,14 @@ class MenuNode(object):
 			if l>2:	_option['help']=blobs[2]
 			option=_option
 
-		self.qtmenubar=menubar
-		self.qtaction=None
-		self.qtmenu=None
+		self.qtmenubar = menubar
+		self.qtaction  = None
+		self.qtmenu    = None
 
 		# self.qtaction=None
-		self.module=None
+		self.module = None
+		self.parent = parent
 
-		self.parent=parent
 		signal=option.get('signal',None)
 		self.setSignal(signal)
 

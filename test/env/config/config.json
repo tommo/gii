@@ -1,8 +1,10 @@
 {
-  "asset_browser/current_selection": [], 
+  "asset_browser/current_selection": [
+    "texture"
+  ], 
   "asset_browser/splitter_sizes": [
     185, 
-    334
+    362
   ], 
-  "scenegraph_editor/previous_scene": "test.scene"
+  "scenegraph_editor/previous_scene": "scene/testUI.scene"
 }
