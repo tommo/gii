@@ -361,6 +361,10 @@ QTreeView::indicator
 	height:16px;
 }
 
+QAbstractItemView[filtered="true"]{
+	background: #433;
+}
+
 QMenuBar::item
 {
 	background-color:transparent;

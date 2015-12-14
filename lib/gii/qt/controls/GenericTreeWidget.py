@@ -1,7 +1,10 @@
+import re, fnmatch
 
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import Qt, QSize
 from PyQt4.QtGui import QApplication, QStyle, QBrush, QColor, QPen, QIcon
+
+from gii.qt.helpers import repolishWidget
 ##----------------------------------------------------------------##
 
 class ReadonlyItemDelegate( QtGui.QStyledItemDelegate ):
@@ -571,14 +574,68 @@ class GenericTreeFilter( QtGui.QWidget ):
 		self.lineEdit.setMinimumSize( 100, 20 )
 		self.lineEdit.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
 
+		self.lineEdit.installEventFilter( self )
+
+	def eventFilter( self, object, event ):
+		e=event.type()
+		if e == QtCore.QEvent.KeyPress:
+			key = event.key()
+			if key == Qt.Key_Escape:
+				self.clearFilter()
+				return True
+			elif key in [ Qt.Key_Down, Qt.Key_PageDown, Qt.Key_PageUp ]:
+				self.targetTree.setFocus()
+				return True
+		return False
 
 	def setTargetTree( self, tree ):
 		self.targetTree = tree
 
 	def onTextChanged( self, text ):
-		pass
+		self.applyFilter( text )
 
-	def applyFilter( self ):
+	def applyFilter( self, pattern ):
 		if not self.targetTree: return
+		pattern = pattern.strip()
+		if pattern:
+			regex = '.*?'.join( map(re.escape, pattern.upper()) )
+			ro = re.compile( regex )
+		else:
+			ro = None
+		if ro:
+			self.targetTree.setProperty( 'filtered', True )
+		else:
+			self.targetTree.setProperty( 'filtered', False )
+		self.targetTree.hide()
+		self.applyFilterToItem( self.targetTree.invisibleRootItem(), ro )
+		repolishWidget( self.targetTree )
+		self.targetTree.show()
 
-		
+	def applyFilterToItem( self, item, ro ):
+		count = item.childCount()
+		childVisible = False
+		for idx in range( count ):
+			childItem = item.child( idx )
+			if self.applyFilterToItem( childItem, ro ):
+				childVisible = True
+		value = item.text( 0 ).upper()
+		if ro:
+			selfVisible = ro.search( value ) and True or False
+		else:
+			selfVisible = True
+
+		if selfVisible:
+			item.setHidden( False )
+			return True
+		elif childVisible:
+			item.setHidden( False )
+			return True
+		else:
+			item.setHidden( True )
+			return False
+
+	def setFilter( self, text ):
+		self.lineEdit.setText( text )
+
+	def clearFilter( self ):
+		self.lineEdit.setText( '' )

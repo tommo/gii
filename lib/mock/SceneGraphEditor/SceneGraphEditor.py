@@ -75,6 +75,7 @@ class SceneGraphEditor( SceneEditorModule ):
 					drag_mode = 'internal'
 				)
 			)
+		self.treeFilter.setTargetTree( self.tree )
 		self.tree.module = self
 		self.tool = self.addToolBar( 'scene_graph', self.container.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )

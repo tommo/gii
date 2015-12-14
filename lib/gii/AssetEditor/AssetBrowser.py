@@ -58,7 +58,7 @@ class AssetBrowser( SceneEditorModule ):
 			drag_mode = 'internal',
 			folder_only = True
 		)
-		
+		self.treeFilter.setTargetTree( self.treeView )
 		self.treeView.parentModule = self
 		self.treeView.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
 		self.treeView.customContextMenuRequested.connect( self.onTreeViewContextMenu)
