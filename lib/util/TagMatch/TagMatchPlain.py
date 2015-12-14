@@ -42,12 +42,12 @@ class TagMatchNode( object ):
 		ro = _wildcard2RO( self.pattern )
 		if self.matchAll:
 			for target in self.getEvaluateTargets( data ):
-				if not isinstance( target, str ): return False
+				if not isinstance( target, (str, unicode) ): return False
 				if not ro.match( target ): return False
 			return True
 		else:
 			for target in self.getEvaluateTargets( data ):
-				if not isinstance( target, str ): continue
+				if not isinstance( target, (str, unicode) ): continue
 				if ro.match( target ): return True
 			return False
 
@@ -83,19 +83,20 @@ class TagMatchRule(object):
 
 	def evaluate( self, data ):
 		self.sortNodes()
-		result = True
+		result = None
 		for node in self.nodes:
 			r = node.evaluate( data )
 			mode = node.getMode()
 			if mode == TagMatchNode.MODE_ADD: #will check before FILTER/FITLER_NOT
-				result = result or r
+				if r:
+					result = True
 			elif mode == TagMatchNode.MODE_FILTER:
 				result = result and r
 			elif mode == TagMatchNode.MODE_FILTERNOT:
 				result = result and ( not r )
 			# print'checking against', node, r, result
-			if not result: return False
-		return True
+			if result == False: return False
+		return result and True or False
 
 
 ##----------------------------------------------------------------##
@@ -118,11 +119,12 @@ def createTagMatchNode( mode, tag, data ):
 
 ##----------------------------------------------------------------##
 _ROSplitPattern = re.compile( '[^\s]+' )
-_ROTermPattern  = re.compile( '(?P<op>[+-]?)((?P<tag>\w*):)?(?P<data>.+)' )
+_ROTermPattern  = re.compile( '(?P<op>[~+-]?)((?P<tag>\w*):)?(?P<data>.+)' )
 _OP2Mode = {
 	""  : TagMatchNode.MODE_ADD,
 	"+" : TagMatchNode.MODE_FILTER,
 	"-" : TagMatchNode.MODE_FILTERNOT,
+	"~" : TagMatchNode.MODE_FILTERNOT,
 }
 
 def parseTagMatch( src ):
@@ -182,7 +184,7 @@ registerTagMatchFactory( CommonTagMatchNodeFactory() )
 ##---------------------------------------utf-------------------------##	
 if __name__ == '__main__':
 	# matchNode = bracketTree2TagMatch( 'or( tag(damhill), tag(common) )' )
-	pattern = 't:dam* t:common +t:furniture -T:proto'
+	pattern = 't:dam* t:common +t:furniture ~T:proto'
 	rule = parseTagMatch( pattern )
 
 	testDataSet = [

@@ -679,4 +679,4 @@ class AssetBrowserInstance( object ):
 	def __init__(self, arg):
 		super(AssetBrowserInstance, self).__init__()
 		self.arg = arg
-		
+

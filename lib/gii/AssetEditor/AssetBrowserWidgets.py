@@ -13,6 +13,7 @@ from gii.qt           import QtEditorModule
 from gii.qt.IconCache                  import getIcon
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
 from gii.qt.controls.GenericListWidget import GenericListWidget
+from gii.qt.controls.ElidedLabel       import ElidedLabel
 from gii.qt.dialogs   import requestString, alertMessage, requestConfirm
 
 from AssetEditor      import AssetEditorModule, getAssetSelectionManager
@@ -285,6 +286,7 @@ class AssetBrowserDetailListWidget( GenericTreeWidget ):
 class AssetBrowserTagFilterWidget( QtGui.QFrame ):
 	pass
 
+
 ##----------------------------------------------------------------##
 class AssetBrowserStatusBar( QtGui.QFrame ):
 	def __init__( self, *args, **kwargs ):
@@ -294,7 +296,7 @@ class AssetBrowserStatusBar( QtGui.QFrame ):
 		layout.setSpacing( 1 )
 		layout.setMargin( 0 )
 
-		self.textStatus = QtGui.QLabel( self )
+		self.textStatus = ElidedLabel( self )
 		self.tagsBar = AssetBrowserStatusBarTag( self )
 		layout.addWidget( self.textStatus )
 		layout.addWidget( self.tagsBar )
@@ -322,8 +324,8 @@ class AssetBrowserStatusBarTag( QtGui.QFrame ):
 		self.buttonEdit = QtGui.QToolButton( self )
 		self.buttonEdit.setIconSize( QSize( 12,12 ) )
 		self.buttonEdit.setIcon( getIcon( 'tag-2' ) )
-		layout.addWidget( self.textTags )
 		layout.addWidget( self.buttonEdit )
+		layout.addWidget( self.textTags )
 
 	def setText( self, text ):
 		self.textTags.setText( text )

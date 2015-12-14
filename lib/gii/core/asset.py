@@ -15,6 +15,8 @@ from cache import CacheManager
 
 from mime import GII_MIME_ASSET_LIST
 
+from util import TagMatch
+
 GII_ASSET_INDEX_PATH = 'asset_table.json'
 GII_ASSET_META_DIR   = '.assetmeta'
 
@@ -79,6 +81,12 @@ class AssetNode(object):
 
 	def getManager(self):
 		return AssetLibrary.get().getAssetManager( self.managerName, True )
+
+	def buildSearchInfo( self ):
+		manager = self.getManager()
+		if manager:
+			return manager.buildAssetSearchInfo( self )
+		return None 
 
 	def requestThumbnail( self, size ):
 		manager = self.getManager()
@@ -631,7 +639,6 @@ class RawAssetManager(AssetManager):
 		elif os.path.isdir( path ):
 			assetNode.assetType = 'folder'
 			assetNode.groupType = 'folder'
-			print( 'setting assetnode', assetNode )
 		return True
 
 	def markNotified(self, assetNode ):
@@ -736,9 +743,6 @@ class AssetLibrary(object):
 		if not nodePath: return self.rootNode
 		return self.assetTable.get(nodePath, None)
 
-	def findAssetNode( self, nodePathPattern ):
-		pass
-
 	def enumerateAsset( self, patterns, **options ):
 		noVirtualNode = options.get( 'no_virtual', False )
 		result = []
@@ -764,6 +768,17 @@ class AssetLibrary(object):
 				if mo.end() < len( node.getType() ) - 1 : continue
 				result.append(node)
 				break
+		return result
+
+	def searchAsset( self, citeria, **options ):
+		rule = TagMatch.parseTagMatch( citeria )
+		if not rule: return []
+		result = []
+		for node in self.assetTable.values():
+			info = node.buildSearchInfo()
+			if not info: continue
+			if rule.evaluate( info ):
+				result.append( node )
 		return result
 
 	#tools

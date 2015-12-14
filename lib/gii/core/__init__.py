@@ -35,6 +35,7 @@ import CoreModule
 
 ##----------------------------------------------------------------##
 import CommonAsset
+import CommonRemoteCommand
 
 def getProjectPath( path = None ):
 	return Project.get().getBasePath( path )
