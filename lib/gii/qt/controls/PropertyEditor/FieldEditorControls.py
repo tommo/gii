@@ -25,17 +25,27 @@ class FieldEditorLabel( QtGui.QLabel ):
 class FieldEditorLineEdit(QtGui.QLineEdit):
 	def __init__(self, *arg):
 		super(FieldEditorLineEdit, self).__init__( *arg )
+		self.acceptPress = False
 
-	def focusInEvent( self, ev ):
-		super(FieldEditorLineEdit, self).focusInEvent( ev )
-		self.selectAll()
+	def focusOutEvent( self, ev ):
+		self.acceptPress = False
+		return super( FieldEditorLineEdit, self ).focusOutEvent( ev )
 
+	def mousePressEvent( self, ev ):
+		if ev.button() == Qt.LeftButton:
+			if not self.acceptPress:
+				self.acceptPress = True
+				self.selectAll()
+				return
+		return super( FieldEditorLineEdit, self ).mousePressEvent( ev )
+	
 ##----------------------------------------------------------------##
 class FieldEditorSpinBox(QtGui.QSpinBox):
 	def __init__(self, *arg):
 		super(FieldEditorSpinBox, self).__init__( *arg )
 		self.setButtonSymbols( QtGui.QAbstractSpinBox.NoButtons )
 		self.setFocusPolicy( Qt.StrongFocus )
+		self.setLineEdit( FieldEditorLineEdit( self ) )
 
 	def focusInEvent( self, ev ):
 		super(FieldEditorSpinBox, self).focusInEvent( ev )
@@ -58,6 +68,7 @@ class FieldEditorDoubleSpinBox(QtGui.QDoubleSpinBox):
 		super(FieldEditorDoubleSpinBox, self).__init__( *arg )
 		self.setButtonSymbols( QtGui.QAbstractSpinBox.NoButtons )
 		self.setFocusPolicy( Qt.StrongFocus )
+		self.setLineEdit( FieldEditorLineEdit( self ) )
 
 	def focusInEvent( self, ev ):
 		super(FieldEditorDoubleSpinBox, self).focusInEvent( ev )
