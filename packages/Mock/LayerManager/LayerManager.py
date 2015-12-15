@@ -4,7 +4,7 @@ from gii.core        import app, signals
 from gii.qt          import QtEditorModule
 
 from gii.qt.IconCache                  import getIcon
-from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
+from gii.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
 from gii.moai.MOAIRuntime import MOAILuaDelegate
 from gii.SceneEditor      import SceneEditorModule, getSceneSelectionManager
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
@@ -55,6 +55,7 @@ class LayerManager( SceneEditorModule ):
 			)
 
 		#Components
+		self.treeFilter = self.window.addWidget( GenericTreeFilter() )
 		self.tree = self.window.addWidget( 
 			LayerTreeWidget(
 				self.window,
@@ -65,6 +66,7 @@ class LayerManager( SceneEditorModule ):
 				)
 			)
 		self.tree.hasSoloLayer = False
+		self.treeFilter.setTargetTree( self.tree )
 
 		self.tool = self.addToolBar( 'layer_manager', self.window.addToolBar() )
 		self.delegate = MOAILuaDelegate( self )

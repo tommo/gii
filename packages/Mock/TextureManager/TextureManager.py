@@ -10,7 +10,7 @@ from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 from gii.qt.dialogs   import *
 from gii.qt.IconCache import getIcon
 
-from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
+from gii.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
 from gii.qt.controls.PropertyEditor      import PropertyEditor
 
 from gii.AssetEditor  import AssetEditorModule
@@ -75,6 +75,10 @@ class TextureManager( AssetEditorModule ):
 			)
 		)
 		self.tree.module = self
+		
+		self.treeFilter = GenericTreeFilter( window.containerTree )
+		window.containerTree.layout().insertWidget( 0, self.treeFilter )
+		self.treeFilter.setTargetTree( self.tree )
 
 		self.propEditor = addWidgetWithLayout(
 			PropertyEditor( window.containerProp)

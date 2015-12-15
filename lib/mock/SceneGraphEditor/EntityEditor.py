@@ -85,7 +85,7 @@ class SceneObjectEditorMixin():
 		animator.addKeyForField( target, fieldId )
 
 	def onFieldContextMenuRequested( self, target, fieldId ):
-		menu = QMenu("Field Context")
+		menu = QMenu( "Field Context" )
 		itemTitle = menu.addAction( '[ %s ]' % fieldId )
 		itemTitle.setEnabled( False )
 		menu.addSeparator()

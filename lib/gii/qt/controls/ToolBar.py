@@ -16,10 +16,12 @@ class ToolBarItem(object):
 		self.shortcut = option.get( 'shortcut', False )
 		self.cmd      = option.get( 'command', None )
 		self.cmdArgs  = option.get( 'command_args', None )
+		self.groupId  = option.get( 'group', None )
 		iconName      = option.get( 'icon', None )
 		self.icon     = iconName and getIcon( iconName ) or None
 
-		self.module   = None
+		self.parent  = None
+		self.owner   = None
 		
 		self.onClick = None
 		self.signal  = None
@@ -29,20 +31,22 @@ class ToolBarItem(object):
 		menuLink = option.get( 'menu_link')
 
 		if widget:
-			self.qtaction   = QtGui.QWidgetAction( None )
-			self.qtaction.setDefaultWidget( widget )
+			self.qtAction   = QtGui.QWidgetAction( None )
+			self.qtAction.setDefaultWidget( widget )
+
 		elif menuLink:
 			m = MenuManager.get().find( menuLink )
-			if m and hasattr( m, 'qtaction' ):
-				self.qtaction = m.qtaction
+			if m and hasattr( m, 'qtAction' ):
+				self.qtAction = m.qtAction
 			else:
 				logging.error( 'not valid menu link:' + self.menuLink )
-				self.qtaction = QtGui.QAction( self.label, None )					
+				self.qtAction = QtGui.QAction( self.label, None )					
+
 		else:
 			self.itemType = option.get( 'type', False )
 			self.onClick  = option.get( 'on_click', None )
 			self.signal   = None
-			self.qtaction   = QtGui.QAction( 
+			self.qtAction   = QtGui.QAction( 
 				self.label, None,
 				checkable = self.itemType == 'check',
 				triggered = self.handleEvent,
@@ -50,27 +54,33 @@ class ToolBarItem(object):
 				)
 
 		if self.icon:
-			self.qtaction.setIcon( self.icon )
+			self.qtAction.setIcon( self.icon )
 
 	def setEnabled( self, enabled = True ):
-		self.qtaction.setEnabled( enabled )
+		self.qtAction.setEnabled( enabled )
 
 	def getAction( self ):
-		return self.qtaction
+		return self.qtAction
 
 	def getValue(self):
 		if self.itemType in ('check','radio'):
-			return self.qtaction.isChecked()
+			return self.qtAction.isChecked()
 		return True
 
 	def setValue( self, value ):
 		if self.itemType in ('check','radio'):
-			self.qtaction.setChecked( value and True or False )
+			self.qtAction.setChecked( value and True or False )
+
+	def getOwner( self ):
+		if self.owner: return self.owner
+		if self.parent: return self.parent.getOwner()
+		return None
 
 	def handleEvent( self ):
 		value = self.getValue()
-		if self.module:
-			self.module.onTool( self )
+		owner = self.getOwner()
+		if owner:
+			owner.onTool( self )
 		if self.signal:
 			self.signal( value )
 		if self.onClick != None:
@@ -78,27 +88,40 @@ class ToolBarItem(object):
 		if self.cmd:
 			args = self.cmdArgs or {}
 			app.doCommand( self.cmd, **args )
-			
-	def getFullName(self):
-		if parent:
-			return parent.getFullName()+'/'+self.name
-		return self.name
-
+	
 	def trigger( self ):
-		if self.qtaction:
-			self.qtaction.trigger()
+		if self.qtAction:
+			self.qtAction.trigger()
 
 		
 class ToolBarNode(object):
 	"""docstring for ToolBar"""
 	def __init__(self, name, qtToolbar, **option):
-		self.name = name
+		self.name = name or ''
 		assert isinstance( qtToolbar, QToolBar )
 		self.qtToolbar = qtToolbar
-		self.items = {}
+		self.items     = {}
+		self.groups    = {}
+		self.owner     = None
 		if not hasattr( qtToolbar, '_icon_size' ):
 			iconSize = option.get( 'icon_size', 16 )
 			qtToolbar.setIconSize( QtCore.QSize( iconSize, iconSize ) )
+
+	def affirmGroup( self, id ):
+		group = self.groups.get( id, None )
+		if not group:
+			group = QtGui.QActionGroup( self.qtToolbar )
+			self.groups[ id ] = group
+		return group
+
+	def addTools( self, dataList ):
+		for data in dataList:
+			if data == '----':
+				self.addTool( data )
+			elif isinstance( data, dict ):
+				name = data.get( 'name', None )
+				if name:
+					self.addTool( **data )
 
 	def addTool( self, name, **option ):
 		if name == '----':
@@ -106,7 +129,13 @@ class ToolBarNode(object):
 			return
 		item = ToolBarItem( name, **option )
 		self.items[ name ] = item
-		self.qtToolbar.addAction( item.qtaction )
+		self.qtToolbar.addAction( item.qtAction )
+		item.parent = self
+		
+		if item.groupId:
+			group = self.affirmGroup( item.groupId )
+			group.addAction( item.qtAction )
+
 		return item
 
 	def addWidget( self, widget ):
@@ -124,7 +153,7 @@ class ToolBarNode(object):
 	def removeTool( self, name ):
 		tool = self.getTool( name )
 		if tool:
-			self.qtToolbar.removeAction( tool.qtaction )
+			self.qtToolbar.removeAction( tool.qtAction )
 			del self.items[ name ]
 
 	def enableTool( self, name, enabled = True ):
@@ -137,6 +166,9 @@ class ToolBarNode(object):
 
 	def setValue( self, value ):
 		pass
+
+	def getOwner( self ):
+		return self.owner
 
 
 
@@ -152,10 +184,11 @@ class ToolBarManager(object):
 		ToolBarManager._singleton = self
 		self.toolbars = {}
 
-	def addToolBar( self, name, toolbar, module, **option ):
+	def addToolBar( self, name, toolbar, owner, **option ):
 		tb = ToolBarNode( name, toolbar, **option )
-		self.toolbars[ name ] = tb
-		tb.module = module
+		tb.owner = owner
+		if name:
+			self.toolbars[ name ] = tb
 		return tb
 
 	def find( self, path ):
@@ -170,7 +203,7 @@ class ToolBarManager(object):
 			return toolbar and toolbar.getTool( blobs[1] ) or None
 		return toolbar 
 
-	def addTool( self, path, option = {}, module = None ):
+	def addTool( self, path, option = {}, owner = None ):
 		blobs = path.split('/')
 		if len(blobs) != 2:
 			logging.error( 'invalid toolbar item path' + path )
@@ -179,7 +212,7 @@ class ToolBarManager(object):
 		toolbar = self.find( blobs[0] )
 		if toolbar:
 			tool = toolbar.addTool( blobs[1], **option )
-			if tool: tool.module = module or toolbar.module
+			if tool: tool.owner = owner
 			return tool
 		logging.error( 'toolbar not found:' + blobs[0] )
 		return None

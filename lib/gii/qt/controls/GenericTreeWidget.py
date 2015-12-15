@@ -565,7 +565,8 @@ class GenericTreeFilter( QtGui.QWidget ):
 		layout.setMargin( 0 )
 		layout.setSpacing( 0 )
 		self.buttonClear = QtGui.QToolButton( self )
-		self.buttonClear.setText( 'Clear' )
+		self.buttonClear.setText( 'X' )
+		self.buttonClear.setObjectName( 'ClearButton' )
 		# self.buttonClear.setIconSize( QtCore.QSize( 12, 12 ) )
 		# self.buttonClear.setIcon( getIcon('remove') )
 		self.buttonClear.clicked.connect( self.clearFilter )
@@ -574,8 +575,8 @@ class GenericTreeFilter( QtGui.QWidget ):
 		self.lineEdit.setPlaceholderText( 'Filters' )
 		self.targetTree = None
 
-		layout.addWidget( self.lineEdit )
 		layout.addWidget( self.buttonClear )
+		layout.addWidget( self.lineEdit )
 		self.lineEdit.setMinimumSize( 100, 20 )
 		self.lineEdit.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
 

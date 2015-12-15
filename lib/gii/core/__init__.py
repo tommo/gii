@@ -11,7 +11,7 @@ import globalSignals
 
 from mime import *
 ##----------------------------------------------------------------##
-
+from guid           import *
 from helpers        import *
 from model          import *
 from res            import ResGuard

@@ -54,7 +54,7 @@
     "velocityIterations": 6,
     "world": "EWBox2DWorld"
   },
-  "previewing_scene": "scene/testUI.scene",
+  "previewing_scene": "test.scene",
   "scenes": {},
   "texture_library": "env/config/texture_library.json",
   "title": "GAME",

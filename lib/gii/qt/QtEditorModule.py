@@ -135,8 +135,8 @@ class QtEditorModule( EditorModule ):
 		self.retain( node )
 		return node
 
-	def addMenu(self, path, opiton = None):
-		node = MenuManager.get().addMenu(path, opiton, self)		
+	def addMenu( self, path, option = None ):
+		node = MenuManager.get().addMenu(path, option, self)		
 		self.retain( node )
 		return node
 
@@ -166,12 +166,16 @@ class QtEditorModule( EditorModule ):
 
 	#TOOLBar control
 	def addToolBar( self, name, toolbar, **option ):
-		node = ToolBarManager.get().addToolBar(name, toolbar, self, **option)	
+		owner = option.get( 'owner', self )
+		if option.get( 'owner', None ): del option[ 'owner' ]
+		node = ToolBarManager.get().addToolBar( name, toolbar, owner, **option )
 		self.retain( node )
 		return node
 
-	def addTool(self, path, **opiton ):
-		node = ToolBarManager.get().addTool( path, opiton, self )
+	def addTool(self, path, **option ):
+		owner = option.get( 'owner', self )
+		if option.get( 'owner', None ): del option[ 'owner' ]
+		node = ToolBarManager.get().addTool( path, option, owner )
 		self.retain( node )
 		return node
 

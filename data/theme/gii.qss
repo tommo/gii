@@ -1252,6 +1252,11 @@ QTreeView#AnimatorTrackTree::item:selected:active
 	color: #8dbfda;
 }
 
+#ItemFilter #ClearButton {
+	background: #910000;
+	color: #fff;
+}
+
 #SceneToolButton:pressed
 {
 	background-color:#4f7a00;

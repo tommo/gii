@@ -284,8 +284,9 @@ class AssetBrowserDetailListWidget( GenericTreeWidget ):
 
 ##----------------------------------------------------------------##
 class AssetBrowserTagFilterWidget( QtGui.QFrame ):
-	pass
-
+	def __init__( self, *args, **kwargs ):
+		super( AssetBrowserTagFilterWidget, self ).__init__( *args, **kwargs )
+		self.setMinimumSize( 50, 20 )
 
 ##----------------------------------------------------------------##
 class AssetBrowserStatusBar( QtGui.QFrame ):

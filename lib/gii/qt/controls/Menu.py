@@ -10,50 +10,50 @@ class MenuNode(object):
 	_currentMenuContext = None
 
 	"""docstring for MenuNode"""
-	def __init__(self, option, parent, menubar=None):
+	def __init__(self, option, parent, menubar = None):
 		if isinstance(option ,(str,unicode)):
-			blobs=option.split('|')
+			blobs = option.split('|')
 			_option={
 				'label':blobs[0]
 			}
-			l=len(blobs)
-			if l>1:	_option['shortcut']=blobs[1]
-			if l>2:	_option['help']=blobs[2]
-			option=_option
+			l = len(blobs)
+			if l>1:	_option['shortcut'] = blobs[1]
+			if l>2:	_option['help'] = blobs[2]
+			option = _option
 
 		self.qtmenubar = menubar
 		self.qtaction  = None
 		self.qtmenu    = None
 
-		# self.qtaction=None
-		self.module = None
+		# self.qtaction = None
+		self.owner  = None
 		self.parent = parent
 
-		signal=option.get('signal',None)
+		signal = option.get( 'signal', None )
 		self.setSignal(signal)
 
-		self.mgr=parent and parent.mgr
-		self.module=parent and parent.module
+		self.mgr = parent and parent.mgr
+		self.owner = parent and parent.owner
 		
-		self.children=[]
+		self.children = []
 		
 		self.label = option.get('label', 'UNNAMED')
 		self.name  = option.get('name',self.label.replace('&','').replace(' ','_'))
 		self.name  = self.name.lower()
 
-		self.shortcut = option.get('shortcut',False)
-		self.help     = option.get('help','')
-		self.priority = option.get('priority',0)
-		self.itemType = option.get('type',False)
-		self.onClick  = option.get('on_click',None)
-		self.cmd      = option.get('command', None)
-		self.cmdArgs  = option.get('command_args', None)
+		self.shortcut = option.get( 'shortcut',     False )
+		self.help     = option.get( 'help',         ''    )
+		self.priority = option.get( 'priority',     0     )
+		self.itemType = option.get( 'type',         False )
+		self.onClick  = option.get( 'on_click',     None  )
+		self.cmd      = option.get( 'command',      None  )
+		self.cmdArgs  = option.get( 'command_args', None  )
 		self.link     = None
 
 		self.menuType = self.qtmenubar and 'menubar' or 'item'
 
-		children = option.get('children',None)
-		link     = option.get('link',None)
+		children = option.get( 'children', None )
+		link     = option.get( 'link', None )
 
 		if children or self.itemType == 'menu':
 			if self.menuType != 'menubar':
@@ -87,21 +87,21 @@ class MenuNode(object):
 			return parent.getFullName()+'/'+self.name
 		return self.name
 		
-	def addChild( self, option, module=None ):
+	def addChild( self, option, owner = None ):
 		if option=='----':
 			if self.qtmenu:
 				self.qtmenu.addSeparator()
 		elif isinstance(option, list):
 			output=[]
 			for data in option:
-				n=self.addChild(data)
+				n = self.addChild(data)
 				if n :
 					output.append(n)
-					if module: n.module=module
+					if owner: n.owner = owner
 			return output
 		else:
-			node=MenuNode(option, self)
-			if module: node.module=module
+			node = MenuNode(option, self)
+			if owner: node.owner = owner
 			self.children.append(node)
 			return node
 
@@ -111,15 +111,15 @@ class MenuNode(object):
 
 		if selfType=='menu':
 			if childType=='menu':
-				child.qtaction=self.qtmenu.addMenu(child.qtmenu)
+				child.qtaction = self.qtmenu.addMenu(child.qtmenu)
 
 			elif child.link:
-				qtmenu=child.link.qtmenu
-				child.qtaction=self.qtmenu.addMenu(qtmenu)
+				qtmenu = child.link.qtmenu
+				child.qtaction = self.qtmenu.addMenu(qtmenu)
 
 			else:
 				
-				action=QtGui.QAction(child.label, None, 
+				action = QtGui.QAction(child.label, None, 
 					shortcut = child.shortcut,
 					statusTip = child.help,
 					checkable = child.itemType=='check',
@@ -127,12 +127,12 @@ class MenuNode(object):
 					)
 				
 				self.qtmenu.addAction(action)
-				child.qtaction=action
+				child.qtaction = action
 
 		elif selfType=='menubar':
 			if childType=='menu':
 				self.qtmenubar.addMenu(child.qtmenu)
-				child.qtaction=child.qtmenu.menuAction()
+				child.qtaction = child.qtmenu.menuAction()
 			else:
 				logging.warning('attempt to add menuitem/link to a menubar')
 				return
@@ -141,8 +141,8 @@ class MenuNode(object):
 
 	def setEnabled(self, enabled):
 		#todo: set state of linked item
-		selfType=self.menuType
-		if selfType=='menubar':
+		selfType = self.menuType
+		if selfType == 'menubar':
 			self.qtmenubar.setEnable(enabled)
 			return
 
@@ -154,7 +154,7 @@ class MenuNode(object):
 	def remove(self):
 		self.clear()
 		self.parent.children.remove(self)
-		selfType=self.menuType
+		selfType = self.menuType
 		
 		if not self.parent: return
 
@@ -191,8 +191,8 @@ class MenuNode(object):
 	
 	def setSignal(self, signal):
 		if isinstance(signal, (str, unicode)):
-			signal=signals.get(signal)
-		self.signal=signal
+			signal = signals.get(signal)
+		self.signal = signal
 
 	def popUp( self, **option ):
 		if self.qtmenu:
@@ -204,17 +204,18 @@ class MenuNode(object):
 		return MenuNode._currentMenuContext
 		
 	def setOnClick(self, onClick):
-		self.onClick=onClick
+		self.onClick = onClick
 
 	def handleEvent(self):
 		itemtype = self.itemType
 		value    = self.getValue()
 		logging.debug( 'menu event:' + self.name )
-		if self.module:
-			self.module.onMenu(self)
+		if self.owner:
+			if hasattr( self.owner, 'onMenu' ):
+				self.owner.onMenu(self)
 		if self.signal:
 			self.signal(value)
-		if self.onClick !=None:			
+		if self.onClick != None:			
 			self.onClick(value)
 		if self.cmd:
 			args = self.cmdArgs or {}
@@ -223,7 +224,7 @@ class MenuNode(object):
 
 class MenuManager(object):
 	"""docstring for MenuManager"""
-	_singleton=None
+	_singleton = None
 
 	@staticmethod
 	def get():
@@ -231,14 +232,14 @@ class MenuManager(object):
 
 	def __init__(self):
 		assert(not MenuManager._singleton)
-		MenuManager._singleton=self
+		MenuManager._singleton = self
 		super(MenuManager, self).__init__()
 		
-		self.rootNode=MenuNode({}, None)
-		self.rootNode.mgr=self		
-		self.rootNode.menuType='root'
+		self.rootNode = MenuNode({}, None)
+		self.rootNode.mgr = self		
+		self.rootNode.menuType ='root'
 
-		self.menuNodes={}
+		self.menuNodes = {}
 
 	# def removeNodeIndex(self, node):
 	# 	id = node.qtaction
@@ -254,10 +255,10 @@ class MenuManager(object):
 	# 	return self.menuNodes.get(id, None)
 	
 	def find(self,path):
-		blobs=path.split('/')
-		result=self.rootNode
+		blobs = path.split('/')
+		result = self.rootNode
 		for b in blobs:
-			result=result.findChild(b)
+			result = result.findChild(b)
 			if not result: return None
 
 		if result!=self.rootNode:
@@ -265,15 +266,15 @@ class MenuManager(object):
 		else:
 			return None
 
-	def addMenuBar(self, name, menubar, module=None):
-		node=MenuNode({
+	def addMenuBar(self, name, menubar, owner = None):
+		node = MenuNode({
 				'name':name
 			}, self.rootNode, menubar)
 		self.rootNode.children.append(node)
-		if module: node.module=module
+		if owner: node.owner = owner
 		return node
 
-	def addMenu(self, path, option=None, module=None): #menu for link or popup
+	def addMenu(self, path, option = None, owner = None): #menu for link or popup
 		blobs     = path.split('/')
 		upperPath = "/".join(blobs[:-1])
 		name      = blobs[-1]
@@ -291,9 +292,9 @@ class MenuManager(object):
 					option['name']  = name
 			option[ 'type' ]='menu'
 			
-		return parent.addChild( option, module )
+		return parent.addChild( option, owner )
 
-	def addMenuItem(self, path, option = None, module=None):
+	def addMenuItem(self, path, option = None, owner = None):
 		blobs     = path.split('/')
 		upperPath = "/".join(blobs[:-1])
 		name      = blobs[-1]
@@ -307,13 +308,13 @@ class MenuManager(object):
 			if not option.get('name'):
 				option['name']  = name
 
-		return parent.addChild( option or name, module)
+		return parent.addChild( option or name, owner)
 
-	def enableMenuItem(self, path, enabled=True):
-		node=self.find(path)
+	def enableMenuItem(self, path, enabled = True):
+		node = self.find(path)
 		if node: node.setEnabled(enabled)
 	
-	def disableMenuItem(self, path, disabled=True):
+	def disableMenuItem(self, path, disabled = True):
 		self.enableMenuItem(path, not disabled)
 
 
