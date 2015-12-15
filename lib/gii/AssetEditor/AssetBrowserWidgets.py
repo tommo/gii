@@ -19,6 +19,9 @@ from gii.qt.dialogs   import requestString, alertMessage, requestConfirm
 from AssetEditor      import AssetEditorModule, getAssetSelectionManager
 
 
+##----------------------------------------------------------------##
+class AssetFolderTreeFilter( GenericTreeFilter ):
+	pass
 
 ##----------------------------------------------------------------##
 #TODO: allow sort by other column
@@ -45,11 +48,6 @@ class AssetTreeItem(QtGui.QTreeWidgetItem):
 				if t1 == 'folder': return True
 		return super( AssetTreeItem, self ).__lt__( other )
 		# return node0.getName().lower()<node1.getName().lower()
-
-##----------------------------------------------------------------##
-
-class AssetFolderTreeFilter( GenericTreeFilter ):
-	pass
 
 ##----------------------------------------------------------------##
 class AssetFolderTreeView( GenericTreeWidget ):
@@ -287,6 +285,24 @@ class AssetBrowserTagFilterWidget( QtGui.QFrame ):
 	def __init__( self, *args, **kwargs ):
 		super( AssetBrowserTagFilterWidget, self ).__init__( *args, **kwargs )
 		self.setMinimumSize( 50, 20 )
+		layout = QtGui.QHBoxLayout( self )
+		layout.setSpacing( 1 )
+		layout.setMargin( 1 )
+		self.textCiteria = QtGui.QLineEdit( self )
+		layout.addWidget( self.textCiteria )
+
+		self.textCiteria.textChanged.connect( self.onCiteriaTextChanged )
+
+	def onCiteriaTextChanged( self, text ):
+		self.owner.setTagCiteria( text )
+
+	def getCiteria( self ):
+		return self.textCiteria.text()
+
+	def setCiteria( self, citeria ):
+		return self.textCiteria.setText( citeria )
+
+
 
 ##----------------------------------------------------------------##
 class AssetBrowserStatusBar( QtGui.QFrame ):
@@ -299,8 +315,8 @@ class AssetBrowserStatusBar( QtGui.QFrame ):
 
 		self.textStatus = ElidedLabel( self )
 		self.tagsBar = AssetBrowserStatusBarTag( self )
-		layout.addWidget( self.textStatus )
 		layout.addWidget( self.tagsBar )
+		layout.addWidget( self.textStatus )
 		self.tagsBar.buttonEdit.clicked.connect( self.onButtonEditTags )
 
 	def onButtonEditTags( self ):

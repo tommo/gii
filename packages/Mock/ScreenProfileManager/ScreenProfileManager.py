@@ -9,7 +9,7 @@ from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.qt.controls.PropertyEditor  import PropertyEditor
 
 from gii.moai.MOAIRuntime import MOAILuaDelegate
-from gii.AssetEditor      import AssetEditorModule
+from gii.SceneEditor      import SceneEditorModule
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 
 from gii.moai.MOAIEditCanvas import  MOAIEditCanvas
@@ -36,7 +36,7 @@ def _getModulePath( path ):
 
 ##----------------------------------------------------------------##
 
-class ScreenProfileManager( AssetEditorModule ):
+class ScreenProfileManager( SceneEditorModule ):
 	def __init__(self):
 		super( ScreenProfileManager, self ).__init__()
 

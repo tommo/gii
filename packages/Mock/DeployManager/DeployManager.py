@@ -9,7 +9,7 @@ from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.qt.controls.PropertyEditor  import PropertyEditor
 
 from gii.moai.MOAIRuntime import MOAILuaDelegate
-from gii.AssetEditor      import AssetEditorModule
+from gii.SceneEditor      import SceneEditorModule
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
 
 from gii.SearchView       import requestSearchView, registerSearchEnumerator
@@ -34,7 +34,7 @@ def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 
 ##----------------------------------------------------------------##
-class DeployManager( AssetEditorModule ):
+class DeployManager( SceneEditorModule ):
 	def __init__(self):
 		super( DeployManager, self ).__init__()
 
@@ -113,6 +113,7 @@ class DeployManager( AssetEditorModule ):
 		)
 
 		#menu
+		self.addMenuItem( 'main/file/----' )
 		self.addMenuItem( 'main/file/deploy_manager', 
 			dict( label = 'Deploy Manager', shortcut = 'F11' )
 			)
@@ -131,12 +132,6 @@ class DeployManager( AssetEditorModule ):
 		signals.connect( 'project.pre_deploy', self.preDeploy )
 		signals.connect( 'project.deploy', self.onDeploy )
 		signals.connect( 'project.post_deploy', self.postDeploy )
-
-		self.addTool( 
-			'asset/show_deploy_manager',
-			label = 'Deploy Manager',			
-			on_click = lambda item: self.setFocus()
-			)
 
 
 	def onStart( self ):

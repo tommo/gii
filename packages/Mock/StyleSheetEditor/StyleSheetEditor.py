@@ -13,7 +13,7 @@ from gii.qt.dialogs                      import requestString, alertMessage, req
 from gii.qt.controls.GraphicsView        import TimelineWidget
 from gii.qt.controls.GenericTreeWidget   import GenericTreeWidget
 from gii.qt.controls.PropertyEditor      import PropertyEditor
-from gii.AssetEditor                     import AssetEditorModule
+from gii.SceneEditor                     import SceneEditorModule
 from gii.moai.MOAIEditCanvas             import MOAIEditCanvas
 
 from PyQt4                               import QtCore, QtGui, QtOpenGL
@@ -41,7 +41,7 @@ def _fixDuplicatedName( names, name, id = None ):
 ##----------------------------------------------------------------##
 _LOREM = '''Lorem ipsum dolor sit amet, consectetur adipisicing elit, '''
 ##----------------------------------------------------------------##
-class MockStyleSheetEditor( AssetEditorModule ):
+class MockStyleSheetEditor( SceneEditorModule ):
 	def __init__(self):
 		super(MockStyleSheetEditor, self).__init__()
 		self.editingNode = None

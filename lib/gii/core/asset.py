@@ -774,7 +774,12 @@ class AssetLibrary(object):
 		return result
 
 	def searchAsset( self, citeria, **options ):
-		rule = TagMatch.parseTagMatch( citeria )
+		if isinstance( citeria, TagMatch.TagMatchRule	):
+			rule = citeria
+		elif isinstance( citeria, ( str, unicode ) ):
+			rule = TagMatch.parseTagMatch( citeria )
+		else:
+			rule = None
 		if not rule: return []
 		result = []
 		for node in self.assetTable.values():
@@ -820,6 +825,12 @@ class AssetLibrary(object):
 			if mgr.getName()==name:
 				return mgr
 		return allowRawManager and self.rawAssetManager or None
+
+	def getAssetCreator( self, assetType ):
+		for creator in self.assetCreators:
+			if creator.getAssetType() == assetType:
+				return creator
+		return None
 
 	def getAssetIcon( self, assetType ):
 		return self.assetIconMap.get( assetType, assetType )

@@ -387,7 +387,7 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 
 	def closeEvent( self, event ):
 		if self.onClose():
-			return super( SubWindow, self ).closeEvent( event )
+			return super( DockWindow, self ).closeEvent( event )
 		else:
 			event.ignore()
 

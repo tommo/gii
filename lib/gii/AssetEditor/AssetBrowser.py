@@ -14,6 +14,9 @@ from PyQt4.QtCore     import Qt
 
 from AssetBrowserWidgets import *
 
+from util import TagMatch
+from gii.qt.helpers import repolishWidget
+
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -38,11 +41,18 @@ class AssetBrowser( SceneEditorModule ):
 		)
 
 		self.findMenu( 'main/asset' ).addChild([
-			dict( name = 'main/asset/asset_create', label = 'Create', shortcut ='Ctrl+N' ),
-			dict( name = 'main/asset/open_asset', label = 'Open Asset', shortcut = 'ctrl+O' ),
-			dict( name = 'main/find/find_asset', label = 'Find Asset', shortcut = 'ctrl+T' ),
-			dict( name = 'main/find/find_asset_folder', label = 'Find Folder', shortcut = 'ctrl+shift+T' ),
-		])
+			'----',
+			dict( name = 'open_asset', label = 'Open Asset', shortcut = 'ctrl+O' ),
+			dict( name = 'create_asset', label = 'Create', shortcut ='Ctrl+N' ),
+			dict( name = 'create_folder', label = 'Create Folder', shortcut ='Ctrl+Shift+N' ),
+			'----',
+			dict( name = 'new_asset_search', label = 'New Asset Search' ),
+		], self )
+
+		self.findMenu( 'main/find' ).addChild([
+			dict( name = 'find_asset', label = 'Find Asset', shortcut = 'ctrl+T' ),
+			dict( name = 'find_asset_folder', label = 'Find Folder', shortcut = 'ctrl+shift+T' ),
+		], self )
 		
 
 		self.assetContextMenu=self.addMenu('asset_context')
@@ -58,8 +68,6 @@ class AssetBrowser( SceneEditorModule ):
 				{'name':'deploy_set', 'label':'Set Deploy'},
 				{'name':'deploy_unset', 'label':'Unset Deploy'},
 				{'name':'deploy_disallow', 'label':'Disallow Deploy'},
-				'----',
-				{'name':'create', 'label':'Create', 'link':self.creatorMenu},
 			])
 
 		#
@@ -67,7 +75,8 @@ class AssetBrowser( SceneEditorModule ):
 		#load configs
 		instanceConfigs = self.getConfig( 'instances', {} )
 		for key, config in instanceConfigs.items():
-			instance = self.requestInstance( key )
+			mode = config.get( 'mode', 'search' )
+			instance = self.requestInstance( key, mode = mode )
 			instance.loadConfig( config )
 
 	def onStart( self ):
@@ -136,6 +145,12 @@ class AssetBrowser( SceneEditorModule ):
 
 		return self.requestInstance( key, **options )
 
+	def removeInstance( self, instance ):
+		key = instance.instanceId
+		assert key != 'main'
+		instance.onStop()
+		del self.instances[ key ]
+
 	#asset operation
 	def locateAsset( self, asset, **options ):
 		if isinstance( asset, ( str, unicode ) ): #path
@@ -145,52 +160,44 @@ class AssetBrowser( SceneEditorModule ):
 
 	def selectAsset( self, asset, **options ):
 		if not asset: return
-		#find parent package/folder
-		if options.get( 'enter_folder', False ):
-			folder = asset
-		else:
-			folder = asset.getParent()
-		while folder:
-			if folder.getGroupType() in [ 'folder', 'package' ]: break
-			folder = folder.getParent()
-		itemView = self.getCurrentView()
-		self.treeView.selectNode( folder )
-		if options.get( 'update_history', True ):
-			self.pushHistory()
-
-		itemView.selectNode( asset )
-		if options.get( 'goto', False ):
-			self.setFocus()
-			self.treeView.scrollToNode( folder )
-			itemView.scrollToNode( asset )
-
+		self.browserInstance.selectAsset( asset, **options )
+		
 	def openAsset( self, asset, **option ):
 		if asset:
 			if option.get('select', True ):
 				self.selectAsset( asset )
 			asset.edit()
 
-	def createAsset( self, creator ):
+	def createAsset( self, creator, instance = None ):
+		if isinstance( creator, str ):
+			creator = self.getAssetLibrary().getAssetCreator( creator )
+
 		label       = creator.getLabel()
 		assetType   = creator.getAssetType()		
 
-		if self.currentFolders:
-			contextNode = self.currentFolders[0]
+		instance = instance or self.browserInstance
+		if instance.currentFolders:
+			contextNode = instance.currentFolders[0]
 		else:
 			contextNode = None
 
-		if not isinstance(contextNode, AssetNode ):
+		if not isinstance( contextNode, AssetNode ):
 			contextNode = app.getAssetLibrary().getRootNode()
 
 		name = requestString('Create Asset <%s>' % assetType, 'Enter asset name: <%s>' % assetType )
 		if not name: return
 
 		try:
-			finalPath = creator.createAsset(name, contextNode, assetType)
+			finalPath = creator.createAsset( name, contextNode, assetType )
 			self.newCreateNodePath=finalPath
 		except Exception,e:
 			logging.exception( e )
 			alertMessage( 'Asset Creation Error', repr(e) )
+
+	#search
+	def createAssetSearch( self, **options ):
+		instance = self.createInstance( mode = 'search' )
+		instance.onStart()
 	
 	#menu
 	def popupAssetContextMenu( self, node ):
@@ -213,6 +220,7 @@ class AssetBrowser( SceneEditorModule ):
 
 	def onMenu(self, menuNode):
 		name = menuNode.name
+
 		if name in ('deploy_set', 'deploy_disallow', 'deploy_unset'):
 			if name   == 'deploy_set':      newstate = True
 			elif name == 'deploy_disallow': newstate = False
@@ -257,13 +265,16 @@ class AssetBrowser( SceneEditorModule ):
 				text += n.getNodePath()
 			setClipboardText( text )
 
-		elif name == 'asset_create':
+		elif name == 'create_asset':
 			requestSearchView( 
 				info    = 'select asset type to create',
 				context = 'asset_creator',
 				type    = 'scene',
 				on_selection = self.createAsset
 			)
+
+		elif name == 'create_folder':
+			self.createAsset( 'folder' )
 
 		elif name == 'find_asset':
 			requestSearchView( 
@@ -288,6 +299,9 @@ class AssetBrowser( SceneEditorModule ):
 				on_test      = self.selectAsset,
 				on_selection = self.openAsset
 				)
+
+		elif name == 'new_asset_search':
+			self.createAssetSearch()
 	
 
 ##----------------------------------------------------------------##
@@ -300,16 +314,22 @@ class AssetBrowserInstance( object ):
 		self.windowId = 'AssetBrowser-%s' % self.instanceId
 		self.mode = ( self.main and 'browse' ) or kwargs.get( 'mode', 'search' )
 		self.windowTitle = ''
+		self.tagCiteria  = ''
+		self.tagFilterRule = None
 
 	def setTitle( self, title ):
 		self.windowTitle = title
+		prefix = self.mode == 'search' and 'Asset Search' or 'Assets'
 		if title:
-			self.window.setWindowTitle( 'Assets< %s >' % title )
+			self.window.setWindowTitle( '%s< %s >' % ( prefix, title ) )
 		else:
-			self.window.setWindowTitle( 'Assets' )
+			self.window.setWindowTitle( '%s' % prefix )
 
 	def isMain( self ):
 		return self.main
+
+	def isSearch( self ):
+		return self.mode == 'search'
 
 	def onLoad( self ):
 		self.viewMode = 'icon'
@@ -324,19 +344,22 @@ class AssetBrowserInstance( object ):
 
 		self.thumbnailSize = ( 80, 80 )
 		self.windowId = 'AssetBrowser-%d'
+		dock = 'bottom'
+		if self.isSearch():
+			dock = 'float'
+
 		self.window = self.module.requestDockWindow(
 				'AssetBrowser',
 				title   = 'Assets',
-				dock    = 'left',
+				dock    = dock,
 				minSize = (200,200)
 			)
-
+		self.window.setCallbackOnClose( self.onClose )
 		ui = self.window.addWidgetFromFile(
 			_getModulePath('AssetBrowser.ui')
 		)
 
 		self.splitter = ui.splitter
-
 		#
 		self.treeFilter = AssetFolderTreeFilter(
 				self.window
@@ -351,15 +374,7 @@ class AssetBrowserInstance( object ):
 		self.treeView.owner = self
 		self.treeView.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
 		self.treeView.customContextMenuRequested.connect( self.onTreeViewContextMenu)
-		#
 
-		treeLayout = QtGui.QVBoxLayout( ui.containerTree )
-		treeLayout.setSpacing( 0 )
-		treeLayout.setMargin( 0 )
-		
-		treeLayout.addWidget( self.treeFilter )
-		treeLayout.addWidget( self.treeView )
-		
 		##
 		self.iconList       = AssetBrowserIconListWidget()
 		self.detailList     = AssetBrowserDetailListWidget()
@@ -367,7 +382,8 @@ class AssetBrowserInstance( object ):
 		self.statusBar      = AssetBrowserStatusBar()
 		self.navigator      = AssetBrowserNavigator()
 
-		self.contentToolbar = QtGui.QToolBar()
+		folderToolbar  = QtGui.QToolBar()
+		contentToolbar = QtGui.QToolBar()
 
 		self.detailList .owner = self
 		self.iconList   .owner = self
@@ -380,25 +396,55 @@ class AssetBrowserInstance( object ):
 		self.detailList.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
 		self.detailList.customContextMenuRequested.connect( self.onItemContextMenu )
 
+
+		layoutLeft = QtGui.QVBoxLayout( ui.containerTree )
+		layoutLeft.setSpacing( 0 )
+		layoutLeft.setMargin( 0 )
+		
+		layoutLeft.addWidget( folderToolbar )
+		layoutLeft.addWidget( self.treeFilter )
+		layoutLeft.addWidget( self.treeView )
+		
 		layoutRight = QtGui.QVBoxLayout( ui.containerRight )
 		layoutRight.setSpacing( 0 )
 		layoutRight.setMargin( 0 )
 
-		layoutRight.addWidget( self.contentToolbar )
+		layoutRight.addWidget( contentToolbar )
 		layoutRight.addWidget( self.tagFilter )
 		layoutRight.addWidget( self.iconList )
 		layoutRight.addWidget( self.detailList )
 		layoutRight.addWidget( self.statusBar )
 
 		##Tool bar
-		self.contentToolBar = self.module.addToolBar( None, self.contentToolbar, owner = self )
+		self.folderToolBar  = self.module.addToolBar( None, folderToolbar, owner = self )
+		self.contentToolBar = self.module.addToolBar( None, contentToolbar, owner = self )
+
+		self.folderToolBar.addTools([
+			dict( name = 'navigator', widget = self.navigator ),
+		])
 
 		self.contentToolBar.addTools([
-			dict( name = 'navigator', widget = self.navigator ),
-			'----',
 			dict( name = 'detail_view', label = 'List View', type = 'check', icon = 'list',   group='view_mode' ),
 			dict( name = 'icon_view',   label = 'Icon View', type = 'check', icon = 'grid-2', group='view_mode' ),
 		])
+
+		if self.isSearch():
+			self.contentToolBar.addTools([
+				'----',
+				dict( name = 'locate_asset', label = 'Locate Asset', icon = 'search-2' ),
+			])
+		else:
+			self.contentToolBar.addTools([
+				'----',
+				dict( name = 'create_folder', label = 'Create Folder', icon = 'add_folder' ),
+				dict( name = 'create_asset', label = 'Create Asset', icon = 'add' ),
+			])
+
+
+		self.setTitle( '' )
+
+		if self.isSearch():
+			ui.containerTree.hide()
 
 
 	def onStart( self ):
@@ -422,6 +468,7 @@ class AssetBrowserInstance( object ):
 	def saveConfig( self ):
 		sizes = self.splitter.sizes()
 		config = {
+			'mode' : self.mode,
 			'current_selection' : [ node.getPath() for node in self.currentFolders ],
 			'splitter_sizes'    : sizes,
 			}
@@ -557,7 +604,7 @@ class AssetBrowserInstance( object ):
 			if node.isGroupType( 'folder', 'package' ):
 				self.selectAsset( node, enter_folder = True )
 			else:
-				self.openAsset( node )
+				self.openAsset( node, select = False )
 
 	#status bar/ tags
 	def editAssetTags( self ):
@@ -632,7 +679,7 @@ class AssetBrowserInstance( object ):
 		self.historyCursor = min( self.historyCursor + 1, count )
 		selection = self.browseHistory[ self.historyCursor - 1 ]
 		for asset in selection:
-			self.selectAsset( asset, update_history = False )
+			self.selectAsset( asset, update_history = False, enter_folder = True )
 		self.updatingHistory = False
 
 	def backwardHistory( self ):
@@ -641,7 +688,7 @@ class AssetBrowserInstance( object ):
 		self.updatingHistory = True
 		selection = self.browseHistory[ self.historyCursor - 1 ]
 		for asset in selection:
-			self.selectAsset( asset, update_history = False, goto = True )
+			self.selectAsset( asset, update_history = False, goto = True, enter_folder = True )
 		self.updatingHistory = False
 
 	def goUpperLevel( self ):
@@ -685,10 +732,18 @@ class AssetBrowserInstance( object ):
 		return self.currentFolders
 
 	def getAssetsInList( self ):
-		assets = []
-		for folder in self.currentFolders:
-			for subNode in folder.getChildren():
-				assets.append( subNode )
+		filterRule = self.tagFilterRule
+		if self.isSearch(): #search for all assets:
+			assets = self.module.getAssetLibrary().searchAsset( filterRule )
+
+		else: #filter current folder
+			assets = []
+			for folder in self.currentFolders:
+				for subNode in folder.getChildren():
+					if filterRule: #check if filtered
+						info = subNode.buildSearchInfo()
+						if not filterRule.evaluate( info ): continue
+					assets.append( subNode )
 
 		def _sortFunc( x, y ):
 			t1 = x.getType()
@@ -706,14 +761,6 @@ class AssetBrowserInstance( object ):
 			return icon
 		else:
 			return None
-
-	#tool
-	def onTool( self, tool ):
-		name = tool.name
-		if name == 'icon_view':
-			self.setViewMode( 'icon', False )
-		elif name == 'detail_view':
-			self.setViewMode( 'detail', False )
 
 	def onAssetRegister( self, node ):
 		pnode = node.getParent()
@@ -749,4 +796,55 @@ class AssetBrowserInstance( object ):
 			)
 		app.getAssetLibrary().saveAssetTable()
 
+	def setTagCiteria( self, citeria ):
+		self.tagCiteria = citeria
+		self.updateTagFilter()
 
+	def updateTagFilter( self ):
+		prevRule = self.tagFilterRule
+		prevFiltered = prevRule and True or False
+		if not self.tagCiteria:
+			self.tagFilterRule = None
+		else:
+			self.tagFilterRule = TagMatch.parseTagMatch( self.tagCiteria )
+		if prevRule == self.tagFilterRule: return
+		
+		filtered = self.tagFilterRule and True or False
+		if filtered != prevFiltered:
+			self.getCurrentView().setProperty( 'filtered', filtered )
+			repolishWidget( self.getCurrentView() )
+			
+		self.rebuildItemView()
+
+	def createAsset( self, creator ):
+		self.module.createAsset( creator, self )
+
+	#tool
+	def onTool( self, tool ):
+		name = tool.name
+		if name == 'icon_view':
+			self.setViewMode( 'icon', False )
+		elif name == 'detail_view':
+			self.setViewMode( 'detail', False )
+
+		#content toolbar
+		elif name == 'create_asset':
+			requestSearchView( 
+				info    = 'select asset type to create',
+				context = 'asset_creator',
+				type    = 'scene',
+				on_selection = self.createAsset
+			)
+
+		elif name == 'create_folder':
+			self.createAsset( 'folder' )
+
+		elif name == 'locate_asset':
+			for node in self.getItemSelection():
+				self.module.locateAsset( node, goto = True )
+				break
+
+	def onClose( self ):
+		if not self.isMain():
+			self.module.removeInstance( self )
+		return True

@@ -212,7 +212,8 @@ class MenuNode(object):
 		logging.debug( 'menu event:' + self.name )
 		if self.owner:
 			if hasattr( self.owner, 'onMenu' ):
-				self.owner.onMenu(self)
+				self.owner.onMenu( self )
+
 		if self.signal:
 			self.signal(value)
 		if self.onClick != None:			

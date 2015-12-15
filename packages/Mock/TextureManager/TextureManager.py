@@ -13,7 +13,7 @@ from gii.qt.IconCache import getIcon
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
 from gii.qt.controls.PropertyEditor      import PropertyEditor
 
-from gii.AssetEditor  import AssetEditorModule
+from gii.SceneEditor  import SceneEditorModule
 
 from gii.moai.MOAIEditCanvas import  MOAIEditCanvas
 
@@ -41,7 +41,7 @@ def _fixDuplicatedName( names, name, id = None ):
 		return testName
 ##----------------------------------------------------------------##
 
-class TextureManager( AssetEditorModule ):
+class TextureManager( SceneEditorModule ):
 	"""docstring for MockStyleSheetEditor"""
 	def __init__(self):
 		super(TextureManager, self).__init__()
