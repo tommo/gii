@@ -20,6 +20,11 @@ from AssetEditor      import AssetEditorModule, getAssetSelectionManager
 
 
 ##----------------------------------------------------------------##
+def _getModulePath( path ):
+	import os.path
+	return os.path.dirname( __file__ ) + '/' + path
+
+##----------------------------------------------------------------##
 class AssetFolderTreeFilter( GenericTreeFilter ):
 	pass
 

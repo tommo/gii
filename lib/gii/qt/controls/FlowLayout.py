@@ -187,6 +187,9 @@ if __name__ == '__main__':
 							for x in range( random.randint(2,9) ) ])  
 								for n in range(random.randint(1,5)) ]).title()
 				widget = QtGui.QPushButton(words)
+				widget.setFixedHeight( 20 )
+				widget.setCursor( QtCore.Qt.PointingHandCursor )
+				widget.setCheckable( True )
 				self.scroller.addWidget(widget)
 			
 			self.setWindowTitle("Scrolling Flow Layout")

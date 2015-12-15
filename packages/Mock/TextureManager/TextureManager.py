@@ -89,6 +89,7 @@ class TextureManager( SceneEditorModule ):
 		)
 		self.canvas.loadScript( _getModulePath('TextureManager.lua') )
 
+		self.addMenuItem( 'main/asset/----' )
 		self.addMenuItem(
 				'main/asset/texture_manager',
 				{

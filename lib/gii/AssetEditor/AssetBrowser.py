@@ -355,6 +355,7 @@ class AssetBrowserInstance( object ):
 				minSize = (200,200)
 			)
 		self.window.setCallbackOnClose( self.onClose )
+		self.window.hide()
 		ui = self.window.addWidgetFromFile(
 			_getModulePath('AssetBrowser.ui')
 		)
@@ -460,6 +461,7 @@ class AssetBrowserInstance( object ):
 		signals.connect( 'asset.deploy.changed', self.onAssetDeployChanged )
 		signals.connect( 'selection.changed',    self.onSelectionChanged )
 
+		self.window.show()
 
 	def onStop( self ):
 		if self.isMain():
@@ -591,14 +593,14 @@ class AssetBrowserInstance( object ):
 			self.updateStatusBar()
 
 	def onActivateNode( self, node, src ):
-		if src == 'tree':
+		if src == 'tree' or self.isSearch(): #direct open
 			if node.isVirtual():
 				node = node.findNonVirtualParent()
-				node.edit()
+				self.openAsset( node, select = False )
 			if node.isType( 'folder' ):
 				node.openInSystem()
 			else:
-				node.edit()
+				self.openAsset( node, select = False )
 
 		else:
 			if node.isGroupType( 'folder', 'package' ):
