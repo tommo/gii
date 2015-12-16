@@ -8,12 +8,20 @@ class AssetFilterItem( object ):
 		self.alias   = ''
 		self.citeria = ''
 		self.rule    = None
+		self.parent  = None
 
 	def setLocked( self, locked ):
 		self.locked = locked
+		self.active = True
 
 	def isLocked( self ):
 		return self.locked
+
+	def setActive( self, active ):
+		self.active = active
+
+	def isActive( self ):
+		return self.active
 
 	def setAlias( self, alias ):
 		self.alias = alias
@@ -39,6 +47,10 @@ class AssetFilterItem( object ):
 	def evaluateAsset( self, assetNode ):
 		info = assetNode.buildSearchInfo( uppercase = True )
 		return self.evaluateInfo( info )
+
+	def markDirty( self ):
+		if self.parent:
+			self.parent.markDirty()
 
 ##----------------------------------------------------------------##
 class AssetFilterNode( object ):
@@ -75,18 +87,39 @@ class AssetFilter( AssetFilterNode ):
 	def __init__( self ):
 		super( AssetFilter, self ).__init__()
 		self.items = []
+		self.compiledRule = None
+		self.dirty = False
 	
 	def evaluate( self, assetNode ):
 		info = assetNode.buildSearchInfo( uppercase = True )
-		result = None
+		if not self.compiledRule:
+			return False
+		else:
+			return self.compiledRule.evaluate( info )
+		# result = None
+		# for item in self.items:
+		# 	if item.active:
+		# 		r = item.evaluateInfo( info )
+		# 		if result == None:
+		# 			result = r
+		# 		else:
+		# 			result = result and r
+		# return result
+
+	def updateRule( self ):
+		if not self.dirty: return
+		self.dirty = False
+		compiledCiteria = ''
 		for item in self.items:
-			if item.active:
-				r = item.evaluateInfo( info )
-				if result == None:
-					result = r
-				else:
-					result = result and r
-		return result
+			if item.isActive():
+				compiledCiteria = compiledCiteria + ' ' + item.citeria
+		if not compiledCiteria.strip():
+			self.compiledRule = None
+		else:
+			self.compiledRule = TagMatch.parseTagMatch( compiledCiteria, uppercase = True )
+
+	def markDirty( self ):
+		self.dirty = True
 
 	def addItem( self, item ):
 		self.items.append( item )
@@ -98,4 +131,12 @@ class AssetFilter( AssetFilterNode ):
 
 	def getItems( self ):
 		return self.items
+
+	def hasItem( self ):
+		return bool( self.items )
+
+	def isFiltering( self ):
+		if self.compiledRule: return True
+		return False
+
 

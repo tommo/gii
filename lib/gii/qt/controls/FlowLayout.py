@@ -27,7 +27,6 @@ class FlowLayout(QtGui.QLayout):
 		while item:
 			item = self.takeAt(0)
 
-
 	def addItem(self, item):
 		self.itemList.append(item)
 

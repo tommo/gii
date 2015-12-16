@@ -3,6 +3,7 @@ import math
 from gii.qt.controls.FlowLayout import FlowLayout
 from gii.qt.controls.ElidedLabel import ElidedLabel
 from gii.qt.IconCache               import getIcon
+from gii.qt.helpers    import addWidgetWithLayout, restrainWidgetToScreen
 
 from PyQt4 import QtGui, QtCore, QtOpenGL, uic
 from PyQt4.QtCore import Qt, QObject, QEvent, pyqtSignal
@@ -17,7 +18,7 @@ def _getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 
-TagMatchCiteriaEdit,BaseClass = uic.loadUiType( _getModulePath('TagMatchCiteriaEdit.ui') )
+AssetFilterEdit,BaseClass = uic.loadUiType( _getModulePath('AssetFilterEdit.ui') )
 
 ##----------------------------------------------------------------##
 class AssetFilterEditWindow( QtGui.QFrame ):
@@ -25,21 +26,28 @@ class AssetFilterEditWindow( QtGui.QFrame ):
 	cancelled = pyqtSignal()
 	def __init__( self, *args ):
 		super( AssetFilterEditWindow, self ).__init__( *args )
-		self.ui = TagMatchCiteriaEdit()
+		self.ui = AssetFilterEdit()
 		self.ui.setupUi( self )
-		self.setWindowFlags( Qt.Dialog )
+		self.setWindowFlags( Qt.Popup )
 		self.installEventFilter( self )
 
 		self.ui.buttonCancel.clicked.connect( self.onButtonCancel )
 		self.ui.buttonOK.clicked.connect( self.onButtonOK )
+		self.ui.lineEditCiteria.installEventFilter( self )
+		self.ui.lineEditAlias.installEventFilter( self )
 
 		self.targetItem = None
 		self.editSubmitted = False
 
 	def eventFilter(self, obj, event):
-		e = event.type()		
+		e = event.type()
 		if e == QEvent.WindowDeactivate:
 			self.close()
+		elif e == QEvent.KeyPress:
+			if event.key() in ( Qt.Key_Enter, Qt.Key_Return ) and ( event.modifiers() & Qt.ControlModifier ):
+				self.onButtonOK()
+				return True
+
 		return False
 
 	def setTargetItem( self, item ):
@@ -84,19 +92,26 @@ class AssetFilterItemWidget( QtGui.QToolButton ):
 		super( AssetFilterItemWidget, self ).__init__( *args, **kwargs )
 		self.setObjectName( 'AssetFilterItemWidget' )
 		self.setCheckable( True )
-		self.setText( 'Damhill')
+		self.setText( '' )
 		self.setFixedHeight( 20 )
 		self.setFocusPolicy( Qt.NoFocus )
 		self.setCursor( Qt.PointingHandCursor )
 		self.setMouseTracking( True )
 		self.locked = False
+		self.targetItem = None
+
 		self.installEventFilter( self )
-		self.filterItem = None
+		self.clicked.connect( self.onClicked )
 
 	def setTargetItem( self, item ):
-		self.filterItem = item
+		self.targetItem = item
+		self.refresh()
+
+	def refresh( self ):
+		item = self.targetItem
 		self.setText( item.toString() )
 		self.setLocked( item.isLocked() )
+		self.setChecked( item.isActive() )
 
 	def setLocked( self, locked ):
 		self.locked = locked
@@ -109,11 +124,17 @@ class AssetFilterItemWidget( QtGui.QToolButton ):
 		e = ev.type()
 		if e == QtCore.QEvent.MouseButtonPress:
 			if ev.button() == Qt.RightButton:
-				self.parent().popItemContextMenu( self )
+				parent = self.parent()
+				if parent: parent.popItemContextMenu( self )
 		return False
+
+	def onClicked( self ):
+		self.targetItem.setActive( self.isChecked() )
+		self.parent().onItemToggled( self )
 
 ##----------------------------------------------------------------##
 class AssetFilterWidget( QtGui.QFrame ):
+	filterChanged = pyqtSignal()
 	def __init__( self, *args, **kwargs ):
 		super( AssetFilterWidget, self ).__init__( *args, **kwargs )
 		self.currentContextItem = None
@@ -136,19 +157,19 @@ class AssetFilterWidget( QtGui.QFrame ):
 		self.buttonAdd.clicked.connect( self.onActionAdd )
 		layout.addWidget( self.buttonAdd )
 
-		self.items = []	
+		self.itemToWidget = {}
 
 		self.itemContextMenu = menu = QtGui.QMenu( 'Filter Item Context' )
 		menu.addAction( 'Filter' ).setEnabled( False )
 		menu.addSeparator()
 
-		actionAdd = menu.addAction( 'Add' )
-		menu.addSeparator()
+		# actionAdd = menu.addAction( 'Add' )
+		# menu.addSeparator()
 		actionLock = menu.addAction( 'Toggle Lock' )
 		actionEdit = menu.addAction( 'Edit' )
 		menu.addSeparator()
 		actionDelete = menu.addAction( 'Delete' )
-		actionAdd    .triggered .connect( self.onActionAdd )
+		# actionAdd    .triggered .connect( self.onActionAdd )
 		actionLock   .triggered .connect( self.onActionLock )
 		actionEdit   .triggered .connect( self.onActionEdit )
 		actionDelete .triggered .connect( self.onActionDelete )
@@ -158,46 +179,75 @@ class AssetFilterWidget( QtGui.QFrame ):
 	def setTargetFilter( self, targetFilter ):
 		self.targetFilter = targetFilter
 		self.rebuild()
+		self.notifyFilterChange()
 
 	def _clear( self ):
 		layout = self.layout()
 		while layout.takeAt( 1 ):
 			pass
-		self.items = []
+		for item, widget in self.itemToWidget.items():
+			widget.setParent( None )
+			widget.deleteLater()
+		self.itemToWidget = {}
 
 	def rebuild( self ):
+		self.hide()
 		self._clear()
 		if not self.targetFilter: return
 		items = self.targetFilter.getItems()
 		#sort
 		for item in items:
-			self._addItem( item )	
+			if item.isLocked():
+				self._addItem( item )	
+
+		for item in items:
+			if not item.isLocked():
+				self._addItem( item )	
+		self.show()
 
 	def _removeItem( self, item ):
-		pass
+		widget = self.itemToWidget.get( item, None )
+		if not widget: return
+		del self.itemToWidget[ item ]
+		widget.targetItem = None
 
 	def _addItem( self, item ):
 		itemWidget = AssetFilterItemWidget( self )
 		itemWidget.setTargetItem( item )
 		self.layout().addWidget( itemWidget )
-		self.items.append( item )
+		self.itemToWidget[ item ] = itemWidget
+
+	def startEditItem( self, item ):
+		self.editWindow.setTargetItem( item )
+		self.editWindow.move( QtGui.QCursor.pos() )
+		restrainWidgetToScreen( self.editWindow )
+		self.editWindow.show()
+		self.editWindow.raise_()
+		self.editWindow.ui.lineEditCiteria.setFocus()
 
 	def onActionAdd( self ):
 		self.currentContextItem = None
 		self.currentNewItem = AssetFilterItem()
-		self.editWindow.setTargetItem( self.currentNewItem )
-		self.editWindow.show()
-		self.editWindow.raise_()
-		print( 'showing edit window' )
+		self.startEditItem( self.currentNewItem )
 
 	def onActionLock( self ):
+		item = self.currentContextItem
+		item.setLocked( not item.isLocked() )
+		self.itemToWidget[ item ].setLocked( item.isLocked() )
+		self.rebuild()
 		self.currentContextItem = None
 
 	def onActionEdit( self ):
+		self.currentNewItem = None
+		self.startEditItem( self.currentContextItem )
 		self.currentContextItem = None
 
 	def onActionDelete( self ):
+		self.targetFilter.removeItem( self.currentContextItem )
+		self.rebuild()
 		self.currentContextItem = None
+		self.targetFilter.markDirty()
+		self.notifyFilterChange()
 
 	def onEditChanged( self ):
 		editItem = self.editWindow.targetItem
@@ -205,19 +255,28 @@ class AssetFilterWidget( QtGui.QFrame ):
 			self.targetFilter.addItem( self.currentNewItem )
 			self.currentNewItem = None
 			self.rebuild()
+		else:
+			self.currentContextItemWidget.refresh()
+		self.targetFilter.markDirty()
+		self.notifyFilterChange()
 
 	def onEditCancelled( self ):
 		self.rebuild()
 
-
+	def onItemToggled( self, itemWidget ):
+		self.targetFilter.markDirty()
+		self.notifyFilterChange()
 
 	def popItemContextMenu( self, itemWidget ):
 		self.currentContextItemWidget = itemWidget
-		self.currentContextItem = itemWidget.filterItem
+		self.currentContextItem = itemWidget.targetItem
 		self.itemContextMenu.exec_( QtGui.QCursor.pos() )
 
 	def getCurrentContextItem( self ):
 		return self.currentContextItem
+
+	def notifyFilterChange( self ):
+		self.filterChanged.emit()
 
 ######TEST
 if __name__ == '__main__':

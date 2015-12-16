@@ -315,8 +315,9 @@ class AssetBrowserInstance( object ):
 		self.windowId = 'AssetBrowser-%s' % self.instanceId
 		self.mode = ( self.main and 'browse' ) or kwargs.get( 'mode', 'search' )
 		self.windowTitle = ''
-		self.tagCiteria  = ''
-		self.tagFilterRule = None
+		
+		self.assetFilter = AssetFilter()
+		self.filtering = False
 
 	def setTitle( self, title ):
 		self.windowTitle = title
@@ -380,7 +381,7 @@ class AssetBrowserInstance( object ):
 		##
 		self.iconList       = AssetBrowserIconListWidget()
 		self.detailList     = AssetBrowserDetailListWidget()
-		self.tagFilter      = AssetBrowserTagFilterWidget()
+		self.assetFilterWidget  = AssetBrowserTagFilterWidget()
 		self.statusBar      = AssetBrowserStatusBar()
 		self.navigator      = AssetBrowserNavigator()
 
@@ -389,7 +390,7 @@ class AssetBrowserInstance( object ):
 
 		self.detailList .owner = self
 		self.iconList   .owner = self
-		self.tagFilter  .owner = self
+		self.assetFilterWidget.owner = self
 		self.statusBar  .owner = self
 		self.navigator  .owner = self
 
@@ -412,7 +413,7 @@ class AssetBrowserInstance( object ):
 		layoutRight.setMargin( 0 )
 
 		layoutRight.addWidget( contentToolbar )
-		layoutRight.addWidget( self.tagFilter )
+		layoutRight.addWidget( self.assetFilterWidget )
 		layoutRight.addWidget( self.iconList )
 		layoutRight.addWidget( self.detailList )
 		layoutRight.addWidget( self.statusBar )
@@ -447,8 +448,8 @@ class AssetBrowserInstance( object ):
 
 		if self.isSearch():
 			ui.containerTree.hide()
-			self.testFilter = AssetFilter()
-			self.tagFilter.setTargetFilter( self.testFilter )
+
+		self.assetFilterWidget.setTargetFilter( self.assetFilter )
 
 	def onStart( self ):
 		assetLib = self.module.getAssetLibrary()
@@ -737,18 +738,25 @@ class AssetBrowserInstance( object ):
 		return self.currentFolders
 
 	def getAssetsInList( self ):
-		filterRule = self.tagFilterRule
+		assetFilter = self.assetFilter
+		assetFilter.updateRule()
 		if self.isSearch(): #search for all assets:
-			assets = self.module.getAssetLibrary().searchAsset( filterRule, uppercase = True )
+			assetLib = self.module.getAssetLibrary()
+			assets = []
+			if not assetFilter.hasItem():
+				pass
+			else:
+				for assetNode in assetLib.getAllAssets():
+					if assetFilter.evaluate( assetNode ):
+						assets.append( assetNode )
 
 		else: #filter current folder
 			assets = []
+			filtering = assetFilter.compiledRule
 			for folder in self.currentFolders:
-				for subNode in folder.getChildren():
-					if filterRule: #check if filtered
-						info = subNode.buildSearchInfo( uppercase = True )
-						if not filterRule.evaluate( info ): continue
-					assets.append( subNode )
+				for assetNode in folder.getChildren():
+					if filtering and ( not assetFilter.evaluate( assetNode ) ): continue
+					assets.append( assetNode )
 
 		def _sortFunc( x, y ):
 			t1 = x.getType()
@@ -800,25 +808,14 @@ class AssetBrowserInstance( object ):
 				updateDependency = True
 			)
 		app.getAssetLibrary().saveAssetTable()
-
-	def setTagCiteria( self, citeria ):
-		self.tagCiteria = citeria
-		self.updateTagFilter()
-
+	
 	def updateTagFilter( self ):
-		prevRule = self.tagFilterRule
-		prevFiltered = prevRule and True or False
-		if not self.tagCiteria:
-			self.tagFilterRule = None
-		else:
-			self.tagFilterRule = TagMatch.parseTagMatch( self.tagCiteria, uppercase = True )
-		if prevRule == self.tagFilterRule: return
-		
-		filtered = self.tagFilterRule and True or False
-		if filtered != prevFiltered:
-			self.getCurrentView().setProperty( 'filtered', filtered )
+		prevFiltering = self.filtering
+		self.assetFilter.updateRule()
+		self.filtering = self.assetFilter.isFiltering()
+		if self.filtering != prevFiltering:
+			self.getCurrentView().setProperty( 'filtered', self.filtering )
 			repolishWidget( self.getCurrentView() )
-			
 		self.rebuildItemView()
 
 	def createAsset( self, creator ):

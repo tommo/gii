@@ -746,6 +746,12 @@ class AssetLibrary(object):
 		return os.path.relpath( path, self.rootAbsPath )
 
 	#access
+	def getAllAssets( self ):
+		return self.assetTable.values()
+
+	def getAssetTable( self ):
+		return self.assetTable
+
 	def hasAssetNode(self, nodePath):
 		if not nodePath: return False
 		return not self.getAssetNode( nodePath ) is None

@@ -290,7 +290,10 @@ class AssetBrowserDetailListWidget( GenericTreeWidget ):
 class AssetBrowserTagFilterWidget( AssetFilterWidget ):
 	def __init__( self, *args, **kwargs ):
 		super( AssetBrowserTagFilterWidget, self ).__init__( *args, **kwargs )
-		
+		self.filterChanged.connect( self.onFilterChanged )
+	
+	def onFilterChanged( self ):
+		self.owner.updateTagFilter()
 
 	# def onActionAdd( self ):
 	# 	pass
