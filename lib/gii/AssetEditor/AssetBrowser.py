@@ -17,6 +17,7 @@ from AssetBrowserWidgets import *
 from util import TagMatch
 from gii.qt.helpers import repolishWidget
 
+from AssetFilter import *
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -446,7 +447,8 @@ class AssetBrowserInstance( object ):
 
 		if self.isSearch():
 			ui.containerTree.hide()
-
+			self.testFilter = AssetFilter()
+			self.tagFilter.setTargetFilter( self.testFilter )
 
 	def onStart( self ):
 		assetLib = self.module.getAssetLibrary()
@@ -578,6 +580,7 @@ class AssetBrowserInstance( object ):
 		self.updatingSelection = False
 
 	def onSelectionChanged( self, selection, context ):
+		#global selection
 		if not self.isMain(): return
 		if context == 'asset':
 			if not self.updatingSelection:
@@ -736,14 +739,14 @@ class AssetBrowserInstance( object ):
 	def getAssetsInList( self ):
 		filterRule = self.tagFilterRule
 		if self.isSearch(): #search for all assets:
-			assets = self.module.getAssetLibrary().searchAsset( filterRule )
+			assets = self.module.getAssetLibrary().searchAsset( filterRule, uppercase = True )
 
 		else: #filter current folder
 			assets = []
 			for folder in self.currentFolders:
 				for subNode in folder.getChildren():
 					if filterRule: #check if filtered
-						info = subNode.buildSearchInfo()
+						info = subNode.buildSearchInfo( uppercase = True )
 						if not filterRule.evaluate( info ): continue
 					assets.append( subNode )
 
@@ -808,7 +811,7 @@ class AssetBrowserInstance( object ):
 		if not self.tagCiteria:
 			self.tagFilterRule = None
 		else:
-			self.tagFilterRule = TagMatch.parseTagMatch( self.tagCiteria )
+			self.tagFilterRule = TagMatch.parseTagMatch( self.tagCiteria, uppercase = True )
 		if prevRule == self.tagFilterRule: return
 		
 		filtered = self.tagFilterRule and True or False

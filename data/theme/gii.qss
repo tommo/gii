@@ -1333,6 +1333,35 @@ QTreeView#AnimatorTrackTree::item:selected:active
 	background: #ba3336;
 }
 
+#AssetFilterItemWidget {
+	margin:1px;
+	padding:1px;
+	border-radius: 8px ;
+	border-color:#555;
+	color:#aaa;
+	background:#444;
+}
+
+#AssetFilterItemWidget:pressed{
+	color:#fff;
+	background:#777;
+}
+
+#AssetFilterItemWidget:checked{
+	border-color:#87acff;
+	color:#fff;
+	background:#3d4aae;
+}
+
+#AssetFilterItemWidget[locked='true']{
+}
+
+#AssetFilterItemWidget[locked='true']:checked{
+	border-color:#ba46ff;
+	color:#fff;
+	background:#8f00f8;
+}
+
 /*QGraphicsView {
 	selection-background-color: rgba(100, 100, 255, 128);
 }*/

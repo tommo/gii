@@ -17,6 +17,7 @@ from gii.qt.controls.ElidedLabel       import ElidedLabel
 from gii.qt.dialogs   import requestString, alertMessage, requestConfirm
 
 from AssetEditor      import AssetEditorModule, getAssetSelectionManager
+from AssetFilterWidget import *
 
 
 ##----------------------------------------------------------------##
@@ -286,28 +287,23 @@ class AssetBrowserDetailListWidget( GenericTreeWidget ):
 		self.owner.onActivateNode( node, 'list' )
 
 ##----------------------------------------------------------------##
-class AssetBrowserTagFilterWidget( QtGui.QFrame ):
+class AssetBrowserTagFilterWidget( AssetFilterWidget ):
 	def __init__( self, *args, **kwargs ):
 		super( AssetBrowserTagFilterWidget, self ).__init__( *args, **kwargs )
-		self.setMinimumSize( 50, 20 )
-		layout = QtGui.QHBoxLayout( self )
-		layout.setSpacing( 1 )
-		layout.setMargin( 1 )
-		self.textCiteria = QtGui.QLineEdit( self )
-		layout.addWidget( self.textCiteria )
+		
 
-		self.textCiteria.textChanged.connect( self.onCiteriaTextChanged )
+	# def onActionAdd( self ):
+	# 	pass
 
-	def onCiteriaTextChanged( self, text ):
-		self.owner.setTagCiteria( text )
-
-	def getCiteria( self ):
-		return self.textCiteria.text()
-
-	def setCiteria( self, citeria ):
-		return self.textCiteria.setText( citeria )
-
-
+	# def onActionLock( self ):
+	# 	pass
+		
+	# def onActionEdit( self ):
+	# 	pass
+		
+	# def onActionDelete( self ):
+	# 	pass
+		
 
 ##----------------------------------------------------------------##
 class AssetBrowserStatusBar( QtGui.QFrame ):

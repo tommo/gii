@@ -3,30 +3,20 @@
     "test.scene"
   ], 
   "asset_browser/instances": {
-    "046a90b0a34611e5810ad8cb8a357b2a": {
-      "current_selection": [], 
-      "mode": "search", 
-      "splitter_sizes": [
-        0, 
-        745
-      ]
-    }, 
     "f9ed8d5ea34211e5a9bcd8cb8a357b2a": {
       "current_selection": [], 
       "mode": "search", 
       "splitter_sizes": [
         0, 
-        569
+        1199
       ]
     }, 
     "main": {
-      "current_selection": [
-        "config"
-      ], 
+      "current_selection": [], 
       "mode": "browse", 
       "splitter_sizes": [
         140, 
-        220
+        353
       ]
     }
   }, 

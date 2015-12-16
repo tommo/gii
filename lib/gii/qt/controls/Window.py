@@ -334,8 +334,8 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 	def __init__(self, parent):
 		super(DockWindow, self).__init__(parent)
 		self.setupUi()
-		self.setupCustomTitleBar()
-		self.topLevelChanged.connect( self.onTopLevelChanged )
+		# self.setupCustomTitleBar()
+		# self.topLevelChanged.connect( self.onTopLevelChanged )
 		font = QtGui.QFont()
 		font.setPointSize(11)
 		self.setFont(font)

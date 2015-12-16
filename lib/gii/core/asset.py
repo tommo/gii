@@ -82,10 +82,10 @@ class AssetNode(object):
 	def getManager(self):
 		return AssetLibrary.get().getAssetManager( self.managerName, True )
 
-	def buildSearchInfo( self ):
+	def buildSearchInfo( self, **options ):
 		manager = self.getManager()
 		if manager:
-			return manager.buildAssetSearchInfo( self )
+			return manager.buildAssetSearchInfo( self, **options )
 		return None 
 
 	def requestThumbnail( self, size ):
@@ -617,11 +617,19 @@ class AssetManager(object):
 	def onBuildAssetThumbnail( self, assetNode, targetPath, size ):
 		return False
 
-	def buildAssetSearchInfo( self, assetNode ):
+	def buildAssetSearchInfo( self, assetNode, **options ):
 		info = {}
-		info[ 'tag'  ] = assetNode.getTagCache()
-		info[ 'type' ] = assetNode.getType()
-		info[ 'name' ] = assetNode.getName()
+		uppercase =  options.get( 'uppercase', False )
+		def _toUpper( v, convert ):
+			if not convert: return v
+			if isinstance( v, list ):
+				return [ item.upper() for item in v ]
+			else:
+				return v.upper()
+		info[ 'tag'  ] = _toUpper( assetNode.getTagCache() , uppercase )
+		info[ 'type' ] = _toUpper( assetNode.getType() , uppercase )
+		info[ 'name' ] = _toUpper( assetNode.getName() , uppercase )
+
 		return info
 
 ##----------------------------------------------------------------##
@@ -777,13 +785,13 @@ class AssetLibrary(object):
 		if isinstance( citeria, TagMatch.TagMatchRule	):
 			rule = citeria
 		elif isinstance( citeria, ( str, unicode ) ):
-			rule = TagMatch.parseTagMatch( citeria )
+			rule = TagMatch.parseTagMatch( citeria, **options )
 		else:
 			rule = None
 		if not rule: return []
 		result = []
 		for node in self.assetTable.values():
-			info = node.buildSearchInfo()
+			info = node.buildSearchInfo( **options )
 			if not info: continue
 			if rule.evaluate( info ):
 				result.append( node )

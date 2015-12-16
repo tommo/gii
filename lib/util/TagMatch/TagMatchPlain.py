@@ -101,7 +101,7 @@ class TagMatchRule(object):
 
 ##----------------------------------------------------------------##
 class TagMatchNodeFactory( object ):
-	def create( self, mode, tag, data ):
+	def create( self, mode, tag, data, **options ):
 		return None
 
 _TagMatchNodeFactories = []
@@ -111,9 +111,11 @@ def registerTagMatchFactory( fac, prepend = True ):
 	else:
 		_TagMatchNodeFactories.append( fac )
 
-def createTagMatchNode( mode, tag, data ):
+def createTagMatchNode( mode, tag, data, **options ):
+	if options.get( 'uppercase', False ):
+		data = data.upper()
 	for fac in _TagMatchNodeFactories:
-		node = fac.create( mode, tag, data )
+		node = fac.create( mode, tag, data, **options )
 		if node: return node
 	return None
 
@@ -127,7 +129,7 @@ _OP2Mode = {
 	"~" : TagMatchNode.MODE_FILTERNOT,
 }
 
-def parseTagMatch( src ):
+def parseTagMatch( src, **options ):
 	rule = TagMatchRule()
 	parts = _ROSplitPattern.findall( src ) #split
 	for part in parts:
@@ -138,7 +140,7 @@ def parseTagMatch( src ):
 		tag  = t.get( 'tag'  )
 		data = t.get( 'data' )
 		mode = _OP2Mode.get( op, TagMatchNode.MODE_ADD )
-		node = createTagMatchNode( mode, tag, data )
+		node = createTagMatchNode( mode, tag, data, **options )
 		if node:
 			rule.addNode( node )
 	return rule
@@ -164,7 +166,7 @@ class TagMatchNodeType( TagMatchNode ):
 		return [ v ]
 
 class CommonTagMatchNodeFactory( TagMatchNodeFactory ):
-	def create( self, mode, tag, data ):
+	def create( self, mode, tag, data, **options ):
 		node = None
 		if tag in ['t', 'tag']:
 			node = TagMatchNodeTag( data )
