@@ -121,6 +121,12 @@ class AssetFilterNode( object ):
 	def getChildren( self ):
 		return self.children
 
+	def getAllChildren( self ):
+		collection = self.children[:]
+		for child in self.children:
+			collection += child.getAllChildren()
+		return collection
+
 	def getParent( self ):
 		return self.parent
 

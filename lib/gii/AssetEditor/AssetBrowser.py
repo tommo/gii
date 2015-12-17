@@ -33,6 +33,7 @@ class AssetBrowser( SceneEditorModule ):
 	def onLoad( self ):
 		self.instances = {}
 
+		self.assetFilterViewModes = {}
 		self.assetFilterRootGroup = AssetFilterGroup()
 		self.assetFilterRootGroup.setName( '__root__' )
 
@@ -90,6 +91,7 @@ class AssetBrowser( SceneEditorModule ):
 		filterData = self.getConfig( 'filters', None )
 		if filterData:
 			self.assetFilterRootGroup.load( filterData )
+		self.assetFilterViewModes = self.getConfig( 'filter_view_modes', {} )
 
 		#load instances
 		instanceConfigs = self.getConfig( 'instances', {} )
@@ -98,9 +100,11 @@ class AssetBrowser( SceneEditorModule ):
 			instance = self.requestInstance( key, mode = mode )
 			instance.loadConfig( config )
 
+
 	def saveFilterConfig( self ):
 		filterData = self.assetFilterRootGroup.save()
 		self.setConfig( 'filters', filterData )
+		self.setConfig( 'filter_view_modes', self.assetFilterViewModes )
 
 	def saveConfig( self ):
 		#save filter
@@ -224,7 +228,10 @@ class AssetBrowser( SceneEditorModule ):
 
 	def getFilterRootGroup( self ):
 		return self.assetFilterRootGroup
-	
+
+	def setFilterViewMode( self, assetFilter, mode ):
+		if assetFilter.getRoot() == self.getFilterRootGroup():
+			self.assetFilterViewModes[ assetFilter.getId() ] = mode
 	#menu
 	def popupAssetContextMenu( self, node ):
 		if node:
@@ -343,6 +350,7 @@ class AssetBrowserInstance( object ):
 		
 		self.assetFilter = AssetFilter()
 		self.filtering = False
+		self.initialSelection = None
 
 	def setTitle( self, title ):
 		self.windowTitle = title
@@ -469,7 +477,7 @@ class AssetBrowserInstance( object ):
 			dict( name = 'detail_view', label = 'List View', type = 'check', icon = 'list',   group='view_mode' ),
 			dict( name = 'icon_view',   label = 'Icon View', type = 'check', icon = 'grid-2', group='view_mode' ),
 		])
-
+		self.setViewMode( 'icon' )
 		if self.isSearch():
 			#search mode
 			self.treeFolder.hide()
@@ -508,7 +516,6 @@ class AssetBrowserInstance( object ):
 
 		self.treeFolder.rebuild()
 		self.treeFilter.rebuild()
-		self.setViewMode( 'icon' )
 
 		signals.connect( 'asset.register',   self.onAssetRegister )
 		signals.connect( 'asset.unregister', self.onAssetUnregister )
@@ -528,6 +535,9 @@ class AssetBrowserInstance( object ):
 			#browse mode
 			self.treeFilter.hide()
 			self.treeFilterFilter.hide()
+			if self.initialSelection:
+				nodes = [ assetLib.getAssetNode( path ) for path in self.initialSelection ]
+				self.treeFolder.selectNode( nodes )
 
 		self.window.show()
 		self.assetFilterWidget.rebuild()
@@ -552,10 +562,8 @@ class AssetBrowserInstance( object ):
 
 	def loadConfig( self, config ):
 		assetLib = self.module.getAssetLibrary()
-		initialSelection = config.get( 'current_selection', None )
-		if initialSelection:
-			nodes = [ assetLib.getAssetNode( path ) for path in initialSelection ]
-			self.treeFolder.selectNode( nodes )
+		if not self.isSearch():
+			self.initialSelection = config.get( 'current_selection', None )
 
 		splitterSizes    = config.get( 'splitter_sizes', None )
 		if splitterSizes:
@@ -570,24 +578,34 @@ class AssetBrowserInstance( object ):
 				self.assetFilter.load( filterData )
 
 	#View control
-	def setViewMode( self, mode, changeToolState = True ):
+	def setViewMode( self, mode, changeToolState = True, rebuildView = True ):
 		prevSelection = self.getItemSelection()
 		self.viewMode = mode
 		if mode == 'icon':
 			self.iconList.show()
 			self.detailList.hide()
 			if changeToolState: self.contentToolBar.getTool( 'icon_view' ).setValue( True )
-			self.rebuildItemView( True )
+			if rebuildView:
+				self.rebuildItemView( True )
 		else: #if mode == 'detail'
 			self.iconList.hide()
 			self.detailList.show()
 			if changeToolState: self.contentToolBar.getTool( 'detail_view' ).setValue( True )
-			self.rebuildItemView( True )
+			if rebuildView:
+				self.rebuildItemView( True )
 
 		if prevSelection:
 			for node in prevSelection:
 				self.getCurrentView().selectNode( node, add = True, goto = False )
 			self.getCurrentView().gotoNode( prevSelection[0] )
+
+		if self.isSearch():
+			self.module.setFilterViewMode( self.assetFilter, self.viewMode )
+
+		else:
+			for folder in self.getCurrentFolders():
+				folder.setMetaData( 'browser_view_mode', self.viewMode, save = True )
+				break
 
 	def getCurrentView( self ):
 		if self.viewMode == 'icon':
@@ -638,6 +656,10 @@ class AssetBrowserInstance( object ):
 			folders.append( anode )
 		self.pushHistory()
 		self.currentFolders = folders
+		if folders:
+			folderNode = folders[0]
+			viewMode = folderNode.getMetaData( 'browser_view_mode', 'icon' )
+			self.setViewMode( viewMode, True, False )
 		self.rebuildItemView()
 		self.updateStatusBar()
 
@@ -962,6 +984,8 @@ class AssetBrowserInstance( object ):
 			self.assetFilter = f
 			self.assetFilterWidget.setTargetFilter( self.assetFilter )
 			self.module.saveFilterConfig()
+			viewMode = self.module.assetFilterViewModes.get( self.assetFilter.getId(), 'icon' )
+			self.setViewMode( viewMode )
 
 		else:
 			self.assetFilter = AssetFilter()

@@ -2,6 +2,11 @@
   "asset_browser/current_selection": [
     "test.scene"
   ], 
+  "asset_browser/filter_view_modes": {
+    "5059ffb5a47a11e599d73c15c2be22ce": "detail", 
+    "7a17b394a47a11e5b8f13c15c2be22ce": "icon", 
+    "8842d7c0a47a11e598dd3c15c2be22ce": "detail"
+  }, 
   "asset_browser/filters": {
     "children": [
       {
