@@ -1278,6 +1278,13 @@ QTreeView#AnimatorTrackTree::item:selected:active
 	/*font-size:11px;*/
 }
 
+#AssetBrowserList[filtered="true"]
+{
+	background-color:#2a2f2b;
+	color:#ccc;
+	/*font-size:11px;*/
+}
+
 #AssetBrowserList::item
 {
 	font-family: Arial;

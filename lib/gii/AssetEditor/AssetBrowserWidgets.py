@@ -392,3 +392,88 @@ class AssetBrowserNavigator( QtGui.QWidget ):
 
 	def onHistoryBackward( self ):
 		self.owner.backwardHistory()
+
+
+##----------------------------------------------------------------##
+class AssetFilterTreeFilter( GenericTreeFilter ):
+	pass
+
+##----------------------------------------------------------------##
+#TODO: allow sort by other column
+class AssetFilterTreeItem(QtGui.QTreeWidgetItem):
+	def __lt__(self, other):
+		node0 = self.node
+		node1 = hasattr(other, 'node') and other.node or None
+		if not node1:
+			return True
+		tree = self.treeWidget()
+
+		t0 = node0.getType()
+		t1 = node1.getType()
+		if t1!=t0:			
+			if tree.sortOrder() == 0:
+				if t0 == 'group': return True
+				if t1 == 'group': return False
+			else:
+				if t0 == 'group': return False
+				if t1 == 'group': return True
+		return super( AssetFilterTreeItem, self ).__lt__( other )
+		# return node0.getName().lower()<node1.getName().lower()
+
+##----------------------------------------------------------------##
+class AssetFilterTreeView( GenericTreeWidget ):
+	def __init__( self, *args, **option ):
+		option[ 'show_root' ] = False
+		option[ 'editable'  ] = True
+
+		super( AssetFilterTreeView, self ).__init__( *args, **option )
+		self.setHeaderHidden( True )
+
+	def saveTreeStates( self ):
+		pass
+
+	def loadTreeStates( self ):
+		pass
+		
+	def getRootNode( self ):
+		return self.owner.getFilterRootGroup()
+
+	def getNodeParent( self, node ): # reimplemnt for target node
+		return node.getParent()
+
+	def getNodeChildren( self, node ):
+		result = []
+		for node in node.getChildren():
+			result.append( node )
+		return result
+
+	def createItem( self, node ):
+		return AssetFilterTreeItem()
+
+	def updateItemContent( self, item, node, **option ):
+		t = node.getType()
+		item.setText( 0, node.getName() )
+		if t == 'group':
+			item.setIcon(0, getIcon( 'folder-tag' ) )
+		else:
+			item.setIcon(0, getIcon( 'asset-filter' ) )
+
+	def getHeaderInfo( self ):
+		return [ ('Name',120) ]
+
+	def onClicked(self, item, col):
+		pass
+
+	def onItemSelectionChanged(self):
+		for f in self.getSelection():
+			self.owner.setAssetFilter( f )
+
+	def onItemChanged( self, item, col ):
+		node = self.getNodeByItem( item )
+		self.owner.renameFilter( node, item.text( 0 ) )
+		
+	def onDeletePressed( self ):
+		for f in self.getSelection():
+			self.owner.onAsseotFilterRequestDelete( f )
+		
+		

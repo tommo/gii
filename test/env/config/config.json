@@ -2,31 +2,102 @@
   "asset_browser/current_selection": [
     "test.scene"
   ], 
+  "asset_browser/filters": {
+    "children": [
+      {
+        "comment": "", 
+        "id": "5059ffb5a47a11e599d73c15c2be22ce", 
+        "items": [
+          {
+            "active": true, 
+            "alias": "", 
+            "citeria": "T:scene", 
+            "locked": false
+          }
+        ], 
+        "name": "All scene", 
+        "type": "filter"
+      }, 
+      {
+        "comment": "", 
+        "id": "7a17b394a47a11e5b8f13c15c2be22ce", 
+        "items": [
+          {
+            "active": true, 
+            "alias": "", 
+            "citeria": "T:texture", 
+            "locked": false
+          }
+        ], 
+        "name": "All Texture", 
+        "type": "filter"
+      }, 
+      {
+        "children": [
+          {
+            "comment": "", 
+            "id": "8842d7c0a47a11e598dd3c15c2be22ce", 
+            "items": [
+              {
+                "active": true, 
+                "alias": "", 
+                "citeria": "T:lua", 
+                "locked": false
+              }, 
+              {
+                "active": true, 
+                "alias": "", 
+                "citeria": "+t:test", 
+                "locked": true
+              }
+            ], 
+            "name": "script", 
+            "type": "filter"
+          }
+        ], 
+        "comment": "", 
+        "id": "877f5563a47a11e59da23c15c2be22ce", 
+        "name": "test", 
+        "type": "group"
+      }
+    ], 
+    "comment": "", 
+    "id": "32d9bed7a47611e587cd3c15c2be22ce", 
+    "name": "__root__", 
+    "type": "group"
+  }, 
   "asset_browser/instances": {
-    "ce43f7d7a41111e5ba30d8cb8a357b2a": {
+    "9e0c175ea47711e5a5223c15c2be22ce": {
+      "current_filter": "8842d7c0a47a11e598dd3c15c2be22ce", 
       "current_selection": [], 
       "mode": "search", 
       "splitter_sizes": [
-        0, 
-        661
-      ]
-    }, 
-    "f9ed8d5ea34211e5a9bcd8cb8a357b2a": {
-      "current_selection": [], 
-      "mode": "search", 
-      "splitter_sizes": [
-        0, 
-        785
+        148, 
+        1048
       ]
     }, 
     "main": {
+      "current_filter": {
+        "comment": "", 
+        "id": "30a251b3a47811e593933c15c2be22ce", 
+        "items": [
+          {
+            "active": false, 
+            "alias": "scene", 
+            "citeria": "T:scene", 
+            "locked": false
+          }
+        ], 
+        "name": "node", 
+        "type": "filter"
+      }, 
       "current_selection": [
-        "texture"
+        ""
       ], 
       "mode": "browse", 
       "splitter_sizes": [
-        151, 
-        353
+        159, 
+        334
       ]
     }
   }, 

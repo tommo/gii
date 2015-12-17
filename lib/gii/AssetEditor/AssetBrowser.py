@@ -32,7 +32,10 @@ class AssetBrowser( SceneEditorModule ):
 
 	def onLoad( self ):
 		self.instances = {}
-		self.nextInstanceId = 0
+
+		self.assetFilterRootGroup = AssetFilterGroup()
+		self.assetFilterRootGroup.setName( '__root__' )
+
 		#create menu
 		signals.connect( 'module.loaded',        self.onModuleLoaded )		
 
@@ -73,18 +76,37 @@ class AssetBrowser( SceneEditorModule ):
 
 		#
 		self.browserInstance = self.createInstance( 'main' )
-		#load configs
-		instanceConfigs = self.getConfig( 'instances', {} )
-		for key, config in instanceConfigs.items():
-			mode = config.get( 'mode', 'search' )
-			instance = self.requestInstance( key, mode = mode )
-			instance.loadConfig( config )
+		self.loadConfig()
 
 	def onStart( self ):
 		for instance in self.instances.values():
 			instance.onStart()
 
 	def onStop( self ):
+		self.saveConfig()
+
+	def loadConfig( self ):
+		#load filter
+		filterData = self.getConfig( 'filters', None )
+		if filterData:
+			self.assetFilterRootGroup.load( filterData )
+
+		#load instances
+		instanceConfigs = self.getConfig( 'instances', {} )
+		for key, config in instanceConfigs.items():
+			mode = config.get( 'mode', 'search' )
+			instance = self.requestInstance( key, mode = mode )
+			instance.loadConfig( config )
+
+	def saveFilterConfig( self ):
+		filterData = self.assetFilterRootGroup.save()
+		self.setConfig( 'filters', filterData )
+
+	def saveConfig( self ):
+		#save filter
+		self.saveFilterConfig()
+
+		#save instances
 		instanceConfigs = {}
 		for key, instance in self.instances.items():
 			config = instance.saveConfig()
@@ -100,7 +122,7 @@ class AssetBrowser( SceneEditorModule ):
 
 	def onUnload( self ):
 		#persist expand state
-		# self.treeView.saveTreeStates()
+		# self.treeFolder.saveTreeStates()
 		pass
 
 	def onModuleLoaded( self ):				
@@ -199,6 +221,9 @@ class AssetBrowser( SceneEditorModule ):
 	def createAssetSearch( self, **options ):
 		instance = self.createInstance( mode = 'search' )
 		instance.onStart()
+
+	def getFilterRootGroup( self ):
+		return self.assetFilterRootGroup
 	
 	#menu
 	def popupAssetContextMenu( self, node ):
@@ -363,20 +388,35 @@ class AssetBrowserInstance( object ):
 		)
 
 		self.splitter = ui.splitter
-		#
-		self.treeFilter = AssetFolderTreeFilter(
+		
+		#Tree folder
+		self.treeFolderFilter = AssetFolderTreeFilter(
 				self.window
 			)
-		self.treeView  = 	AssetFolderTreeView(
+		self.treeFolder  = 	AssetFolderTreeView(
 			sorting   = True,
 			multiple_selection = True,
 			drag_mode = 'internal',
 			folder_only = True
 		)
-		self.treeFilter.setTargetTree( self.treeView )
-		self.treeView.owner = self
-		self.treeView.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
-		self.treeView.customContextMenuRequested.connect( self.onTreeViewContextMenu)
+
+		self.treeFolderFilter.setTargetTree( self.treeFolder )
+		self.treeFolder.owner = self
+		self.treeFolder.setContextMenuPolicy( QtCore.Qt.CustomContextMenu)
+		self.treeFolder.customContextMenuRequested.connect( self.onTreeViewContextMenu)
+
+		#Tree filter
+		self.treeFilterFilter = AssetFolderTreeFilter(
+				self.window
+			)
+		self.treeFilter  = 	AssetFilterTreeView(
+			sorting   = True,
+			multiple_selection = False
+			# drag_mode = 'internal',
+		)
+		
+		self.treeFilterFilter.setTargetTree( self.treeFilter )
+		self.treeFilter.owner = self
 
 		##
 		self.iconList       = AssetBrowserIconListWidget()
@@ -405,8 +445,11 @@ class AssetBrowserInstance( object ):
 		layoutLeft.setMargin( 0 )
 		
 		layoutLeft.addWidget( folderToolbar )
+		layoutLeft.addWidget( self.treeFolderFilter )
+		layoutLeft.addWidget( self.treeFolder )
+
+		layoutLeft.addWidget( self.treeFilterFilter )
 		layoutLeft.addWidget( self.treeFilter )
-		layoutLeft.addWidget( self.treeView )
 		
 		layoutRight = QtGui.QVBoxLayout( ui.containerRight )
 		layoutRight.setSpacing( 0 )
@@ -422,39 +465,49 @@ class AssetBrowserInstance( object ):
 		self.folderToolBar  = self.module.addToolBar( None, folderToolbar, owner = self )
 		self.contentToolBar = self.module.addToolBar( None, contentToolbar, owner = self )
 
-		self.folderToolBar.addTools([
-			dict( name = 'navigator', widget = self.navigator ),
-		])
-
 		self.contentToolBar.addTools([
 			dict( name = 'detail_view', label = 'List View', type = 'check', icon = 'list',   group='view_mode' ),
 			dict( name = 'icon_view',   label = 'Icon View', type = 'check', icon = 'grid-2', group='view_mode' ),
 		])
 
 		if self.isSearch():
+			#search mode
+			self.treeFolder.hide()
+			self.treeFolderFilter.hide()
+
+			self.folderToolBar.addTools([
+				dict( name = 'create_filter', label = 'Add Filter', icon = 'add' ),
+				dict( name = 'create_filter_group', label = 'Add Filter Group', icon = 'add_folder' ),
+			])
+
 			self.contentToolBar.addTools([
 				'----',
 				dict( name = 'locate_asset', label = 'Locate Asset', icon = 'search-2' ),
 			])
+
 		else:
+			#browse mode
+			self.treeFilter.hide()
+			self.treeFilterFilter.hide()
+
+			self.folderToolBar.addTools([
+				dict( name = 'navigator', widget = self.navigator ),
+			])
 			self.contentToolBar.addTools([
 				'----',
 				dict( name = 'create_folder', label = 'Create Folder', icon = 'add_folder' ),
 				dict( name = 'create_asset', label = 'Create Asset', icon = 'add' ),
 			])
 
-
 		self.setTitle( '' )
-
-		if self.isSearch():
-			ui.containerTree.hide()
-
-		self.assetFilterWidget.setTargetFilter( self.assetFilter )
+		self.setAssetFilter( None )
+		
 
 	def onStart( self ):
 		assetLib = self.module.getAssetLibrary()
 
-		self.treeView.rebuild()
+		self.treeFolder.rebuild()
+		self.treeFilter.rebuild()
 		self.setViewMode( 'icon' )
 
 		signals.connect( 'asset.register',   self.onAssetRegister )
@@ -464,19 +517,37 @@ class AssetBrowserInstance( object ):
 		signals.connect( 'asset.deploy.changed', self.onAssetDeployChanged )
 		signals.connect( 'selection.changed',    self.onSelectionChanged )
 
+
+		if self.isSearch():
+			#search mode
+			self.treeFolder.hide()
+			self.treeFolderFilter.hide()
+			self.treeFilter.selectNode( self.assetFilter )
+
+		else:
+			#browse mode
+			self.treeFilter.hide()
+			self.treeFilterFilter.hide()
+
 		self.window.show()
+		self.assetFilterWidget.rebuild()
 
 	def onStop( self ):
 		if self.isMain():
-			self.treeView.saveTreeStates()
+			self.treeFolder.saveTreeStates()
 
 	def saveConfig( self ):
 		sizes = self.splitter.sizes()
+		if self.assetFilter.getRoot() == self.getFilterRootGroup():
+			filterData = self.assetFilter.getId()
+		else:
+			filterData = self.assetFilter.save()
 		config = {
 			'mode' : self.mode,
 			'current_selection' : [ node.getPath() for node in self.currentFolders ],
 			'splitter_sizes'    : sizes,
-			}
+			'current_filter'    : filterData
+		}
 		return config
 
 	def loadConfig( self, config ):
@@ -484,12 +555,19 @@ class AssetBrowserInstance( object ):
 		initialSelection = config.get( 'current_selection', None )
 		if initialSelection:
 			nodes = [ assetLib.getAssetNode( path ) for path in initialSelection ]
-			self.treeView.selectNode( nodes )
+			self.treeFolder.selectNode( nodes )
 
 		splitterSizes    = config.get( 'splitter_sizes', None )
 		if splitterSizes:
 			self.splitter.setSizes( splitterSizes )
 
+		filterData = config.get( 'current_filter', None )
+		if filterData:
+			if isinstance( filterData, (str, unicode) ): #ref
+				node = self.getFilterRootGroup().findChild( filterData )
+				self.assetFilter = node
+			else:
+				self.assetFilter.load( filterData )
 
 	#View control
 	def setViewMode( self, mode, changeToolState = True ):
@@ -531,7 +609,7 @@ class AssetBrowserInstance( object ):
 		self.module.popupAssetContextMenu( node )
 
 	def onTreeViewContextMenu( self, point ):
-		item = self.treeView.itemAt(point)
+		item = self.treeFolder.itemAt(point)
 		if item:
 			node = item.node
 		else:
@@ -545,7 +623,7 @@ class AssetBrowserInstance( object ):
 		return self.getCurrentView().getSelection()
 
 	def getFolderSelection( self ):
-		return self.treeView.getSelection()
+		return self.treeFolder.getSelection()
 
 	def rebuildItemView( self, retainSelection = False ):
 		if self.viewMode == 'icon':
@@ -590,8 +668,8 @@ class AssetBrowserInstance( object ):
 				firstSelection = None
 				for obj in selection:
 					firstSelection = obj
-					self.treeView.selectNode( obj, add = True )
-				if firstSelection: self.treeView.scrollToNode( firstSelection )
+					self.treeFolder.selectNode( obj, add = True )
+				if firstSelection: self.treeFolder.scrollToNode( firstSelection )
 				self.rebuildItemView()
 			
 			self.updateStatusBar()
@@ -721,14 +799,14 @@ class AssetBrowserInstance( object ):
 			if folder.getGroupType() in [ 'folder', 'package' ]: break
 			folder = folder.getParent()
 		itemView = self.getCurrentView()
-		self.treeView.selectNode( folder )
+		self.treeFolder.selectNode( folder )
 		if options.get( 'update_history', True ):
 			self.pushHistory()
 
 		itemView.selectNode( asset )
 		if options.get( 'goto', False ):
 			self.setFocus()
-			self.treeView.scrollToNode( folder )
+			self.treeFolder.scrollToNode( folder )
 			itemView.scrollToNode( asset )
 
 	def openAsset( self, asset, **option ):
@@ -779,7 +857,7 @@ class AssetBrowserInstance( object ):
 		pnode = node.getParent()
 		if node.isGroupType( 'folder', 'package' ):
 			if pnode:
-				self.treeView.addNode( node )
+				self.treeFolder.addNode( node )
 
 		if pnode in self.currentFolders:
 			self.rebuildItemView()
@@ -790,7 +868,7 @@ class AssetBrowserInstance( object ):
 	def onAssetUnregister( self, node ):
 		pnode=node.getParent()
 		if pnode:
-			self.treeView.removeNode(node)
+			self.treeFolder.removeNode(node)
 		if pnode in self.currentFolders:
 			self.removeItemFromView( node )
 
@@ -798,10 +876,10 @@ class AssetBrowserInstance( object ):
 		pass
 
 	def onAssetModified( self, node ):
-		self.treeView.refreshNodeContent( node )
+		self.treeFolder.refreshNodeContent( node )
 
 	def onAssetDeployChanged( self, node ):
-		self.treeView.updateItem( node, 
+		self.treeFolder.updateItem( node, 
 				basic            = False,
 				deploy           = True, 
 				updateChildren   = True,
@@ -846,7 +924,55 @@ class AssetBrowserInstance( object ):
 				self.module.locateAsset( node, goto = True )
 				break
 
+		elif name in ( 'create_filter', 'create_filter_group' ):
+			node = self.treeFilter.getFirstSelection()
+			if not node:
+				contextGroup = self.getFilterRootGroup()
+			elif isinstance( node, AssetFilterGroup ):
+				contextGroup = node
+			else:
+				contextGroup = node.getParent()
+			if name == 'create_filter':
+				node = AssetFilter()
+				node.setName ( 'filter' )
+			else:
+				node = AssetFilterGroup()
+				node.setName ( 'group' )
+
+			contextGroup.addChild( node )
+
+			self.treeFilter.addNode( node )
+			self.treeFilter.editNode( node )
+			self.treeFilter.selectNode( node )
+
 	def onClose( self ):
 		if not self.isMain():
 			self.module.removeInstance( self )
 		return True
+
+	#asset fitler
+	def getFilterRootGroup( self ):
+		return self.module.getFilterRootGroup()
+
+	def	setAssetFilter( self, f ):
+		if isinstance( f, AssetFilterGroup ):
+			return
+
+		elif isinstance( f, AssetFilter ):
+			self.assetFilter = f
+			self.assetFilterWidget.setTargetFilter( self.assetFilter )
+			self.module.saveFilterConfig()
+
+		else:
+			self.assetFilter = AssetFilter()
+			self.assetFilterWidget.setTargetFilter( self.assetFilter )
+
+	def renameFilter( self, node, name ):
+		node.setName( name )
+		self.module.saveFilterConfig()
+
+	def onAsseotFilterRequestDelete( self, node ):
+		if requestConfirm( 'Confirm Deletion', 'Delete this filter (group)?' ):
+			node.remove()
+		self.module.saveFilterConfig()
+		self.assetFilterWidget.rebuild()

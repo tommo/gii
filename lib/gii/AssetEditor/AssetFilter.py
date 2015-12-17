@@ -1,3 +1,4 @@
+from gii.core import generateGUID
 from util import TagMatch
 
 ##----------------------------------------------------------------##
@@ -52,12 +53,62 @@ class AssetFilterItem( object ):
 		if self.parent:
 			self.parent.markDirty()
 
+	def save( self ):
+		return {
+			'locked'  : self.locked,
+			'active'  : self.active,
+			'alias'   : self.alias,
+			'citeria' : self.citeria,
+		}
+
+	def load( self, data ):
+		self.locked  = data.get( 'locked',  self.locked  )
+		self.active  = data.get( 'active',  self.active  )
+		self.alias   = data.get( 'alias',   self.alias   )
+		self.citeria = data.get( 'citeria', self.citeria )
+
 ##----------------------------------------------------------------##
 class AssetFilterNode( object ):
 	def __init__( self ):
+		self.parent   = None
 		self.children = []
-		self.parent = None
+		self.id = None
+
+		self.name     = 'node'
+		self.comment  = ''
+
+	def getType( self ):
+		return 'filterNode'
+
+	def getName( self ):
+		return self.name
+
+	def setName( self, name ):
+		self.name = name
+
+	def getComment( self ):
+		return self.comment
+
+	def setComment( self, comment ):
+		self.comment = comment 
+
+	def getId( self ):
+		if not self.id:
+			self.id = generateGUID()
+		return self.id
 	
+	def getRoot( self ):
+		if not self.parent: return self
+		return self.parent.getRoot()
+
+	def findChild( self, id ):
+		for node in self.children:
+			if node.id == id:
+				return node
+			found = node.findChild( id )
+			if found: return found
+		return None
+
 	def getParent( self ):
 		return self.parent
 
@@ -68,7 +119,10 @@ class AssetFilterNode( object ):
 		node.parent = self
 
 	def getChildren( self ):
-		return children
+		return self.children
+
+	def getParent( self ):
+		return self.parent
 
 	def removeChild( self, node ):
 		self.children.remove( node )
@@ -78,9 +132,42 @@ class AssetFilterNode( object ):
 		if self.parent:
 			return self.parent.removeChild( self )
 
+	def save( self ):
+		return {}
+
 ##----------------------------------------------------------------##
-def AssetFilterGroup( AssetFilterNode ):
-		pass
+class AssetFilterGroup( AssetFilterNode ):
+	def getType( self ):
+		return 'group'
+
+	def save( self ):
+		return {
+			'type'     : 'group',
+			'id'       : self.getId(),
+			'name'     : self.name,
+			'comment'  : self.comment,
+			'children' : [ child.save() for child in self.children ],
+		}
+
+	def load( self, data ):
+		self.id      = data.get( 'id', None )
+		self.name    = data.get( 'name', '' )
+		self.comment = data.get( 'comment', '' )
+		for childData in data.get( 'children', [] ):
+			t = childData['type']
+			if t == 'group':
+				node = AssetFilterGroup()
+				self.addChild( node )
+				node.load( childData )
+			
+			elif t == 'filter':
+				node = AssetFilter()
+				self.addChild( node )
+				node.load( childData )
+
+			else:
+				raise Exception( 'unkown filter node type %s' % t )
+
 
 ##----------------------------------------------------------------##
 class AssetFilter( AssetFilterNode ):
@@ -89,7 +176,10 @@ class AssetFilter( AssetFilterNode ):
 		self.items = []
 		self.compiledRule = None
 		self.dirty = False
-	
+
+	def getType( self ):
+		return 'filter'
+
 	def evaluate( self, assetNode ):
 		info = assetNode.buildSearchInfo( uppercase = True )
 		if not self.compiledRule:
@@ -139,4 +229,34 @@ class AssetFilter( AssetFilterNode ):
 		if self.compiledRule: return True
 		return False
 
+	def save( self ):
+		return {
+			'type'   : 'filter',
+			'id'     : self.getId(),
+			'name'   : self.name,
+			'comment': self.comment,
+			'items'  : [ item.save() for item in self.items ],
+		}
 
+	def load( self, data ):
+		self.id      = data.get( 'id', None )
+		self.name    = data.get( 'name', '' )
+		self.comment = data.get( 'comment', '' )
+		self.items   = []
+		for itemData in data.get( 'items', [] ):
+			item = AssetFilterItem()
+			item.load( itemData )
+			self.addItem( item )
+		self.dirty = True 
+
+
+if __name__ == '__main__':
+	rootGroup = AssetFilterGroup()
+	rootGroup.setName( '__root__')
+	f = AssetFilter()
+	item = AssetFilterItem()
+	item.setAlias( 'alias' )
+	item.setCiteria( 'good' )
+	f.addItem( item )
+	rootGroup.addChild( f )
+	print rootGroup.save()
