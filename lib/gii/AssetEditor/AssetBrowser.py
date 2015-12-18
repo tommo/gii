@@ -567,6 +567,8 @@ class AssetBrowserInstance( object ):
 
 		splitterSizes    = config.get( 'splitter_sizes', None )
 		if splitterSizes:
+			if splitterSizes[0] == 0:
+				splitterSizes[0] = 80
 			self.splitter.setSizes( splitterSizes )
 
 		filterData = config.get( 'current_filter', None )
@@ -679,6 +681,7 @@ class AssetBrowserInstance( object ):
 		if self.isMain():
 			getAssetSelectionManager().changeSelection( selection )
 		self.updatingSelection = False
+		self.updateStatusBar()
 
 	def onSelectionChanged( self, selection, context ):
 		#global selection
@@ -697,20 +700,23 @@ class AssetBrowserInstance( object ):
 			self.updateStatusBar()
 
 	def onActivateNode( self, node, src ):
-		if src == 'tree' or self.isSearch(): #direct open
-			if node.isVirtual():
-				node = node.findNonVirtualParent()
-				self.openAsset( node, select = False )
-			if node.isType( 'folder' ):
-				node.openInSystem()
-			else:
-				self.openAsset( node, select = False )
-
+		if self.isSearch():
+			self.module.locateAsset( node, goto = True, enter_folder = True )
 		else:
-			if node.isGroupType( 'folder', 'package' ):
-				self.selectAsset( node, enter_folder = True )
+			if src == 'tree': #direct open
+				if node.isVirtual():
+					node = node.findNonVirtualParent()
+					self.openAsset( node, select = False )
+				if node.isType( 'folder' ):
+					node.openInSystem()
+				else:
+					self.openAsset( node, select = False )
+
 			else:
-				self.openAsset( node, select = False )
+				if node.isGroupType( 'folder', 'package' ):
+					self.selectAsset( node, enter_folder = True )
+				else:
+					self.openAsset( node, select = False )
 
 	#status bar/ tags
 	def editAssetTags( self ):
@@ -1000,3 +1006,4 @@ class AssetBrowserInstance( object ):
 			node.remove()
 		self.module.saveFilterConfig()
 		self.assetFilterWidget.rebuild()
+		self.treeFilter.rebuild()

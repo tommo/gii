@@ -241,6 +241,7 @@ class AssetBrowserDetailListWidget( GenericTreeWidget ):
 	def __init__( self, *args, **option ):
 		option[ 'drag_mode' ] = 'all'
 		super( AssetBrowserDetailListWidget, self ).__init__( *args, **option )
+		self.setObjectName( 'AssetBrowserDetailList' )
 
 	def getHeaderInfo( self ):
 		return [ ('Name',150), ('Type', 80), ( 'Desc', 50 ) ]
@@ -315,9 +316,10 @@ class AssetBrowserStatusBar( QtGui.QFrame ):
 		self.setObjectName( 'AssetBrowserStatusBar' )
 		layout = QtGui.QVBoxLayout( self )
 		layout.setSpacing( 1 )
-		layout.setMargin( 0 )
+		layout.setMargin( 1 )
 
 		self.textStatus = ElidedLabel( self )
+		self.textStatus.setMinimumHeight( 15 )
 		self.tagsBar = AssetBrowserStatusBarTag( self )
 		layout.addWidget( self.tagsBar )
 		layout.addWidget( self.textStatus )
@@ -338,12 +340,12 @@ class AssetBrowserStatusBarTag( QtGui.QFrame ):
 		super( AssetBrowserStatusBarTag, self ).__init__( *args, **kwargs )
 		self.setObjectName( 'AssetBrowserStatusTagBar' )
 		layout = QtGui.QHBoxLayout( self )
-		layout.setSpacing( 2 )
+		layout.setSpacing( 1 )
 		layout.setMargin( 0 )
 		self.textTags = QtGui.QLabel( self )
 		self.textTags.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
 		self.buttonEdit = QtGui.QToolButton( self )
-		self.buttonEdit.setIconSize( QSize( 12,12 ) )
+		self.buttonEdit.setIconSize( QSize( 16,10 ) )
 		self.buttonEdit.setIcon( getIcon( 'tag-2' ) )
 		layout.addWidget( self.buttonEdit )
 		layout.addWidget( self.textTags )

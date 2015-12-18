@@ -153,7 +153,7 @@ class MainWindow(QtGui.QMainWindow):
 			window.hideTitleBar()
 		else:
 			window.setFloating(True)
-			# window.setupCustomTitleBar()
+			window.setupCustomTitleBar()
 
 		minSize=dockOptions.get('minSize',None)
 		if minSize:
@@ -321,6 +321,7 @@ class DockWindowTitleBar( QtGui.QWidget ):
 	"""docstring for DockWindowTitleBar"""
 	def __init__(self, *args):
 		super(DockWindowTitleBar, self).__init__(*args)
+		self.setWindowFlags( Qt.Dialog )
 
 	def sizeHint(self):
 		return QtCore.QSize(20,15)
@@ -334,8 +335,10 @@ class DockWindow(QtGui.QDockWidget, SubWindowMixin):
 	def __init__(self, parent):
 		super(DockWindow, self).__init__(parent)
 		self.setupUi()
-		# self.setupCustomTitleBar()
-		# self.topLevelChanged.connect( self.onTopLevelChanged )
+
+		self.setupCustomTitleBar()
+		self.topLevelChanged.connect( self.onTopLevelChanged )
+
 		font = QtGui.QFont()
 		font.setPointSize(11)
 		self.setFont(font)

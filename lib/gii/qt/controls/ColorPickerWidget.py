@@ -356,6 +356,8 @@ class ColorPickerWidget( QtGui.QWidget ):
 		self.ui.numV.valueChanged.connect( self.onTextHSVChanged )
 
 		self.ui.textHex.textChanged.connect( self.onTextHexChanged )
+		self.ui.textHex.returnPressed.connect( self.onTextHexEntered )
+		# self.ui.textHex.installEventFilter( self )
 
 		self.ui.numA.valueChanged.connect( self.onAlphaSliderChanged )
 
@@ -370,6 +372,16 @@ class ColorPickerWidget( QtGui.QWidget ):
 		self.updateColorPlane()
 
 		# self.screenPicker.grabMouse()
+
+	def eventFilter( self, obj, event ):
+		if obj == self.ui.textHex:
+			if event.type() == QEvent.MouseButtonPress:
+				if event.button() == Qt.LeftButton:
+					if obj.hasFocus(): return False
+					obj.selectAll()
+					obj.setFocus( Qt.TabFocusReason )
+				return True
+		return False
 
 	def setColor( self, color ):
 		self.currentColor = color
@@ -445,13 +457,21 @@ class ColorPickerWidget( QtGui.QWidget ):
 		pass
 
 	def onButtonCopyHEX( self ):
-		print 'copy hex'
+		clip = QtGui.QApplication.clipboard()
+		clip.setText( self.ui.textHex.text() )
 
 	def onButtonCopyRGBA( self ):
-		print 'copy rgba'
+		color = self.currentColor
+		output = '%.1f, %.1f, %.1f, %.1f'%( color.redF(), color.greenF(), color.blueF(), color.alphaF() )
+		QtGui.QApplication.clipboard().setText( output )
 
 	def onButtonCopyHSV( self ):
-		print 'copy hsv'
+		color = self.currentColor
+		h = float( self.ui.numH.value() ) / 360.0
+		s = self.ui.numS.value()
+		v = self.ui.numV.value()
+		output = '%.1f, %.1f, %.1f'%( h, s, v )
+		QtGui.QApplication.clipboard().setText( output )
 
 	def onButtonScreenPick( self ):
 		self.screenPicker = ScreenColorPicker( None )
@@ -500,6 +520,9 @@ class ColorPickerWidget( QtGui.QWidget ):
 		color.setAlphaF( self.currentColor.alphaF() )
 		self.setColor( color )
 		self.updateColorPlane()
+
+	def onTextHexEntered( self ):
+		self.onButtonOK()
 
 
 ######TEST
