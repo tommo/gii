@@ -1373,6 +1373,7 @@ QTreeView#AnimatorTrackTree::item:selected:active
 	selection-background-color: rgba(100, 100, 255, 128);
 }*/
 
-#RoutineTreeWidget:branch{
+/*#RoutineNodeTreeWidget:branch{
 	border-image:none;
 }
+*/

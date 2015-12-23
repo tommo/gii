@@ -68,6 +68,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		self.initRootItem()
 		
+		
 	def getReadonlyItemDelegate( self ):
 		return ReadonlyItemDelegate( self )
 

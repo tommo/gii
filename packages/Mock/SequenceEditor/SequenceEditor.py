@@ -15,6 +15,8 @@ from gii.SceneEditor  import SceneEditorModule
 
 from gii.moai.MOAIRuntime import MOAILuaDelegate
 
+from util.IDPool  import IDPool
+
 from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
 
@@ -26,31 +28,66 @@ def _getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 
+##----------------------------------------------------------------##
+class SequenceEditor( SceneEditorModule ):
+	"""docstring for SequenceEditor"""
 
-class SequenceView( SceneEditorModule ):
-	name       = 'sequence_editor'
-	dependency = [ 'mock' ]
+	name = 'sequence_editor'
+	dependency = [ 'mock', 'qt' ]
 
-	def onLoad( self ):
-		self.container = self.requestDockWindow(
-				title = 'Sequence',
-				dock = 'bottom'
-			)
-		self.window = window = self.container.addWidget( SequenceEditorWidget() )
+	def __init__(self):
+		self.instances      = []
+	
+	def onLoad(self):		
+		self.idPool = IDPool()
 		
-		# self.canvas = addWidgetWithLayout(
-		# 	MOAIEditCanvas( window.containerGraph )
-		# )
-		# self.delegate = MOAILuaDelegate( self )
-		# self.delegate.load( _getModulePath( 'SequenceView.lua' ) )
-		
-		# self.updateTimer        = self.container.startTimer( 60, self.onUpdateTimer )
-		self.updatePending      = False
-		self.previewing         = False
-		self.previewUpdateTimer = False		
-
 	def onStart( self ):
-		self.container.show()
+		pass
+
+	def openAsset( self, target ):
+		instance = self.findInstances( target )
+		if not instance:
+			instance = self.createInstance( target )
+		else:
+			instance.refresh()
+
+	def createInstance( self, target ):
+		#todo: pool
+		id = self.idPool.request()
+		title = target.getNodePath()
+		container = self.requestDocumentWindow( 'SequenceEditor-%d'%id,
+				title   = title,
+				minSize = (200,100)
+		)
+		instance = SequenceEditorInstance(id)
+		instance.parentModule = self
+		instance.createWidget( container )
+		instance.setTarget( target )
+		self.instances.append( instance )
+		container.show()
+		return instance
+
+	def findInstances(self, targetNode):
+		for ins in self.instances:
+			if ins.targetNode == targetNode:
+				return ins
+		return None
+
+	def removeInstance( self, instance ):
+		self.instances.remove( instance )
+
+	def refresh( self, targetNode = None, context = None ):
+		for ins in self.instances:
+			if not targetNode or ins.hasTarget( targetNode ):
+				ins.refresh()
+
+##----------------------------------------------------------------##
+class SequenceEditorInstance( object ):
+	def __init__( self, id ):
+		self.id = id
+
+	def createWidget( self, container ):
+		self.container = container
 		class TestRoutineNode(object):
 			def __init__( self, parent ):
 				self.parent = parent
@@ -118,16 +155,8 @@ class SequenceView( SceneEditorModule ):
 					node.addChild(
 						TestRoutineNode( None )
 					)
-
+		self.window = container.addWidget( SequenceEditorWidget( container ) )
 		self.window.addRoutine( testRoutine )
 
-	def onSetFocus( self ):
-		self.getModule( 'scene_editor' ).setFocus()
-		self.container.show()
-		self.container.setFocus()
-
-	def onUpdateTimer( self ):
-		if self.updatePending == True:
-			self.updatePending = False
-			#TODO
-	
+	def setTarget( self, node ):
+		pass

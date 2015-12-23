@@ -37,6 +37,19 @@
       ],
       "sort": "priority_ascending",
       "visible": true
+    },
+    {
+      "default": false,
+      "editor_visible": true,
+      "locked": false,
+      "name": "output",
+      "parallax": [
+        1,
+        1,
+        1
+      ],
+      "sort": "z_ascending",
+      "visible": true
     }
   ],
   "name": "GAME",
@@ -54,7 +67,7 @@
     "velocityIterations": 6,
     "world": "EWBox2DWorld"
   },
-  "previewing_scene": "test.scene",
+  "previewing_scene": "scene/testUI.scene",
   "scenes": {},
   "texture_library": "env/config/texture_library.json",
   "title": "GAME",

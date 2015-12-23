@@ -40,5 +40,6 @@ import CodeTilesetAsset
 import AnimatorAsset
 
 import StoryAsset
+import SequenceAsset
 
 import TBAsset

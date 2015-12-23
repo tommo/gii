@@ -72,29 +72,32 @@ class HTMLItemDelegate(QtGui.QStyledItemDelegate):
 
 		self.initStyleOption(option,index)
 
-		style = QApplication.style() if option.widget is None else option.widget.style()
+		style = option.widget.style() or QApplication.style()
 
 		#draw icon
 		option.text = ""
-		style.drawControl( QStyle.CE_ItemViewItem, option, painter)
+		style.drawControl( QStyle.CE_ItemViewItem, option, painter,option.widget)
 
 		ctx = QAbstractTextDocumentLayout.PaintContext()
 		textRect = style.subElementRect( QStyle.SE_ItemViewItemText, option )
 
+		# painter.setBrush( option.backgroundBrush )
+		# painter.setPen( Qt.NoPen )
+		# painter.drawRect( textRect )
+
 		# Highlighting text if item is selected
-		if option.state & QStyle.State_Selected :
-			painter.setBrush( QColor( 0,180,0,30 ) )
-			painter.setPen( Qt.NoPen )
-			painter.drawRect( textRect )
+		# if option.state & QStyle.State_Selected :
+		# 	painter.setBrush( QColor( 0,180,0,30 ) )
+		# 	painter.setPen( Qt.NoPen )
+		# 	painter.drawRect( textRect )
 
-		elif option.state & QStyle.State_MouseOver :
-			painter.setBrush( QColor( 0,255,0,10 ) )
-			painter.setPen( Qt.NoPen )
-			painter.drawRect( textRect )
+		# elif option.state & QStyle.State_MouseOver :
+		# 	painter.setBrush( QColor( 0,255,0,10 ) )
+		# 	painter.setPen( Qt.NoPen )
+		# 	painter.drawRect( textRect )
 
-		else:
-			painter.setPen( QColor( 0,0,0,10 ) )
-			painter.drawLine( textRect.bottomLeft(), textRect.bottomRight() )
+		# painter.setPen( QColor( 0,0,0,10 ) )
+		# painter.drawLine( textRect.bottomLeft(), textRect.bottomRight() )
 
 		painter.save()
 		painter.translate(textRect.topLeft())
@@ -136,8 +139,16 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		super( RoutineNodeTreeWidget, self ).__init__( *args, **option )
 		self.setObjectName( 'RoutineNodeTreeWidget' )
 		self.setHeaderHidden( True )
-		self.setIndentation( 18 )
-		self.setStyleSheet( 'background:#ffffef' )
+		self.setIndentation( 12 )
+		
+		self.setStyleSheet( '''
+			QWidget{ background:#ffffef; }
+			:branch{ border-image:none; }
+			:item{ border-bottom: 1px solid #eec }
+			:item:hover{ background:#f6ffc8 }
+			:item:selected{ background:#fff095 }
+		''' )
+
 		self.itemStyleSheet = '''
 		body{
 			font-size:12px;
