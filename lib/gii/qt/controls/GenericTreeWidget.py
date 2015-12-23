@@ -5,8 +5,8 @@ from PyQt4.QtCore import Qt, QSize
 from PyQt4.QtGui import QApplication, QStyle, QBrush, QColor, QPen, QIcon
 
 from gii.qt.helpers import repolishWidget
-##----------------------------------------------------------------##
 
+##----------------------------------------------------------------##
 class ReadonlyItemDelegate( QtGui.QStyledItemDelegate ):
 	def createEditor( *args ):
 		return None
@@ -210,7 +210,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def refreshNodeContent( self, node, **option ):
 		prevRefreshing = self.refreshing
 		self.refreshing = True
-		item=self.getItemByNode( node )
+		item = self.getItemByNode( node )
 		if item:
 			self.updateItemContent( item, node, **option )
 			if option.get('updateChildren', False):

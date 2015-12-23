@@ -1,5 +1,6 @@
 from gii.core import signals
 from gii.qt.helpers import restrainWidgetToScreen
+from gii.qt.IconCache               import getIcon
 
 from PyQt4 import QtCore, QtGui, uic
 from PyQt4.QtCore import Qt
@@ -90,6 +91,7 @@ class MainWindow(QtGui.QMainWindow):
 		title  = windowOption.get('title',id)
 		
 		window = DocumentWindow( self.centerTabWidget )
+		window.setWindowOptions( windowOption )
 		# window = DocumentWindow( self.toolWindowMgr )
 		# self.toolWindowMgr.addToolWindow( window, ToolWindowManager.EmptySpace )
 		window.parentWindow = self
@@ -199,6 +201,15 @@ class MainWindow(QtGui.QMainWindow):
 
 ##----------------------------------------------------------------##
 class SubWindowMixin:	
+	def setWindowOptions( self, options ):
+		self.windowOptions = options
+
+	def getWindowOption( self, key, default = None ):
+		if hasattr( self, 'windowOptions' ):
+			return self.windowOptions.get( key, default )
+		else:
+			return None
+
 	def setDocumentName( self, name ):
 		self.documentName = name
 		if name:
@@ -303,6 +314,9 @@ class DocumentWindow( SubWindow ):
 		idx = tab.indexOf( self )
 		if idx < 0:
 			idx = tab.addTab( self, self.windowTitle() )
+			iconPath = self.getWindowOption( 'icon' )
+			if iconPath:
+				tab.tabBar().setTabIcon( idx, getIcon( iconPath ) )
 		super( DocumentWindow, self ).show( *args )
 		tab.setCurrentIndex( idx )
 

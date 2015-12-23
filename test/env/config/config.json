@@ -77,8 +77,8 @@
       "current_selection": [], 
       "mode": "search", 
       "splitter_sizes": [
-        148, 
-        1048
+        97, 
+        100
       ]
     }, 
     "main": {
@@ -97,12 +97,12 @@
         "type": "filter"
       }, 
       "current_selection": [
-        ""
+        "config"
       ], 
       "mode": "browse", 
       "splitter_sizes": [
         159, 
-        334
+        256
       ]
     }
   }, 

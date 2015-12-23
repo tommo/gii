@@ -32,6 +32,7 @@ import EffectPreview
 
 import ScreenProfileManager
 
+import SequenceEditor
 import StoryView
 
 import TileMapEditor

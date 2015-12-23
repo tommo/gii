@@ -74,7 +74,8 @@ class SceneView( SceneEditorModule ):
 		self.previousDragData = None
 
 		self.window = self.requestDocumentWindow(
-				title = 'Scene'
+				title = 'Scene',
+				icon  = 'scene'
 			)
 
 		self.toolbar = self.window.addToolBar()
