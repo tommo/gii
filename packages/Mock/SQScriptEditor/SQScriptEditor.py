@@ -20,8 +20,9 @@ from util.IDPool  import IDPool
 from PyQt4  import QtCore, QtGui, QtOpenGL
 from PyQt4.QtCore import Qt
 
-from SequenceEditorWidget import SequenceEditorWidget
+from SQScriptEditorWidget import SQScriptEditorWidget
 
+from mock import _MOCK, isMockInstance
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -29,10 +30,10 @@ def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 
 ##----------------------------------------------------------------##
-class SequenceEditor( SceneEditorModule ):
-	"""docstring for SequenceEditor"""
+class SQScriptEditor( SceneEditorModule ):
+	"""docstring for SQScriptEditor"""
 
-	name = 'sequence_editor'
+	name = 'sq_script_editor'
 	dependency = [ 'mock', 'qt' ]
 
 	def __init__(self):
@@ -55,11 +56,11 @@ class SequenceEditor( SceneEditorModule ):
 		#todo: pool
 		id = self.idPool.request()
 		title = target.getNodePath()
-		container = self.requestDocumentWindow( 'SequenceEditor-%d'%id,
+		container = self.requestDocumentWindow( 'SQScriptEditor-%d'%id,
 				title   = title,
 				minSize = (200,100)
 		)
-		instance = SequenceEditorInstance(id)
+		instance = SQScriptEditorInstance(id)
 		instance.parentModule = self
 		instance.createWidget( container )
 		instance.setTarget( target )
@@ -82,9 +83,11 @@ class SequenceEditor( SceneEditorModule ):
 				ins.refresh()
 
 ##----------------------------------------------------------------##
-class SequenceEditorInstance( object ):
+class SQScriptEditorInstance( object ):
 	def __init__( self, id ):
 		self.id = id
+		self.targetScript = None
+		self.targetNode = None
 
 	def createWidget( self, container ):
 		self.container = container
@@ -155,8 +158,19 @@ class SequenceEditorInstance( object ):
 					node.addChild(
 						TestRoutineNode( None )
 					)
-		self.window = container.addWidget( SequenceEditorWidget( container ) )
-		self.window.addRoutine( testRoutine )
+		self.window = container.addWidget( SQScriptEditorWidget( container ) )
+		self.window.owner = self
 
 	def setTarget( self, node ):
-		pass
+		self.targetNode = node
+		data = _MOCK.loadAsset( node.getPath() )
+		if data:
+			( script, luaAssetNode ) = data
+			self.targetScript = script
+			self.window.rebuild()
+		else:
+			self.targetScript = None
+			self.window.rebuild()
+
+	def getTargetScript( self ):
+		return self.targetScript

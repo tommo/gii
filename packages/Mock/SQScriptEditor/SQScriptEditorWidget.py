@@ -14,14 +14,14 @@ from PyQt4.QtCore import QSize
 from PyQt4.QtGui import QColor, QTransform
 
 ##----------------------------------------------------------------##
-# from mock import _MOCK, isMockInstance
+from mock import _MOCK, isMockInstance
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 
-SequenceEditorForm,BaseClass = uic.loadUiType( _getModulePath('SequenceEditorWidget.ui') )
+SQScriptEditorForm,BaseClass = uic.loadUiType( _getModulePath('SQScriptEditorWidget.ui') )
 
 
 
@@ -116,11 +116,24 @@ class HTMLItemDelegate(QtGui.QStyledItemDelegate):
 
 ##----------------------------------------------------------------##
 class RoutineListWidget( GenericListWidget ):
+	def getDefaultOptions( self ):
+		return {
+			'editable' : True
+		}
+
 	def getNodes( self ):
-		return self.parent().getRoutines()
+		return self.owner.getRoutines()
 
 	def updateItemContent( self, item, node, **option ):
-		item.setText( self.parent().getRoutineName( node ) )
+		name = node.getName( node )
+		item.setText( name )
+		item.setIcon( getIcon( 'sq_routine' ) )
+
+	def onItemSelectionChanged( self ):
+		self.owner.onRoutineSelectionChanged()
+
+	def onItemChanged( self, item ):
+		self.owner.renameRoutine( item.node, item.text() )
 
 
 ##----------------------------------------------------------------##
@@ -153,7 +166,7 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		body{
 			font-size:12px;
 		}
-		command{
+		cmd{
 			color: #900;
 		}
 		data{
@@ -168,21 +181,24 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		return [ ('Event',-1) ]
 	
 	def getRootNode( self ):
-		return self.parent().getRootNode()
+		routine = self.owner.getTargetRoutine()
+		return routine.getRootNode( routine )
 
 	def getNodeParent( self, node ):
-		return node.getParent()
+		return node.getParent( node )
 
 	def getNodeChildren( self, node ):
-		return node.getChildren()
+		return [ child for child in node.getChildren( node ).values() ]
 
 	def updateItemContent( self, item, node, **option ):
 		if item == self.invisibleRootItem(): return
+		iconName = node.getIcon( node )
+		richText = node.getRichText( node )
 		#mark
 		# item.setText( 0, node.getMarkText() )
-		item.setIcon( 0, getIcon( 'sq_node_normal' ) )
+		item.setIcon( 0, getIcon( iconName, 'sq_node_normal' ) )
 		#event
-		item.setHtml( 0, '<body><command>%s</command> <data>%s</data></body>' % ( node.getTag(), node.getDesc() ) )
+		item.setHtml( 0, richText )
 		# item.setText( 0, node.getTag() + node.getDesc() )
 	
 	def getDefaultItemDelegate( self ):
@@ -194,35 +210,12 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		return item
 
 
-
 ##----------------------------------------------------------------##
-class RoutineEditor( QtGui.QWidget ):
-	def __init__( self, *args ):
-		super( RoutineEditor, self ).__init__( *args )
-		layout = QtGui.QVBoxLayout( self )
-		layout.setSpacing( 0 )
-		layout.setMargin( 0 )
-		
-		self.tree = RoutineNodeTreeWidget( self )
-		self.targetRoutine = None
-
-		layout.addWidget( self.tree )
-
-	def setTargetRoutine( self, routine ):
-		self.targetRoutine = routine
-		self.tree.rebuild()
-
-	def getTargetRoutine( self ):
-		return self.targetRoutine
-
-	def getRootNode( self ):
-		return self.targetRoutine.getRootNode()
-
-
-##----------------------------------------------------------------##
-class SequenceEditorWidget( QtGui.QWidget ):
+class SQScriptEditorWidget( QtGui.QWidget ):
 	def __init__( self, *args, **kwargs ):
-		super( SequenceEditorWidget, self ).__init__( *args, **kwargs )
+		super( SQScriptEditorWidget, self ).__init__( *args, **kwargs )
+		self.owner = None
+		self.targetRoutine = None
 		self.initData()		
 		self.initUI()
 
@@ -230,129 +223,69 @@ class SequenceEditorWidget( QtGui.QWidget ):
 		self.routineEditors = {}
 
 	def initUI( self ):
-		self.setObjectName( 'SequenceEditorWidget' )
-		self.ui = SequenceEditorForm()
+		self.setObjectName( 'SQScriptEditorWidget' )
+		self.ui = SQScriptEditorForm()
 		self.ui.setupUi( self )
 		self.listRoutine = addWidgetWithLayout( RoutineListWidget( self.ui.containerRoutine ) )
-		self.toolbar = addWidgetWithLayout( QtGui.QToolBar( self.ui.containerToolbar ) )
+		self.listRoutine.owner = self
 
-	def addRoutine( self, routine ):
-		editor = RoutineEditor( self )
-		self.routineEditors[ routine ] = editor
-		editor.setTargetRoutine( routine )
-		self.ui.tabRoutine.addTab( editor, 'Routine #1' )
+		self.toolbarMain = addWidgetWithLayout( QtGui.QToolBar( self.ui.containerToolbar ) )
+		self.toolbarRoutine = addWidgetWithLayout( QtGui.QToolBar( self.ui.containerToolbarRoutine ) )
+		self.toolbarRoutine.setIconSize( QtCore.QSize( 12, 12 ) )
+		actionAddRoutine = QtGui.QAction( getIcon('add'),    'New', self )
+		actionDelRoutine = QtGui.QAction( getIcon('remove'), 'Del', self )
+		actionAddRoutine.triggered.connect( self.addRoutine )
+		actionDelRoutine.triggered.connect( self.delRoutine )
+		self.toolbarRoutine.addAction( actionAddRoutine )
+		self.toolbarRoutine.addAction( actionDelRoutine )
+		self.treeRoutineNode = addWidgetWithLayout( RoutineNodeTreeWidget( self.ui.tabPageRoutine ) )
+		self.treeRoutineNode.owner = self
+
+	def setTargetRoutine( self, routine ):
+		self.targetRoutine = routine
+		self.treeRoutineNode.rebuild()
+
+	def getTargetRoutine( self ):
+		return self.targetRoutine
+
+	def rebuild( self ):
+		pass
 
 	def getRoutineEditor( self, routine ):
 		return self.routineEditors.get( routine, None )
 
+	def getTargetScript( self ):
+		return self.owner.getTargetScript()
+
 	def getRoutines( self ):
-		return [] #TODO
+		targetScript = self.getTargetScript()
+		if not targetScript:
+			return []
+		else:
+			routines = targetScript.routines
+			return [ routine for routine in routines.values() ]
 
 	def getRoutineName( self, routine ):
 		return routine.getName() #TODO
 
-##----------------------------------------------------------------##
-if __name__ == '__main__':
-	# class TestFrame( QtGui.QFrame ):
-	# 	def __init__(self, *args):
-	# 		super(TestFrame, self).__init__( *args )
-	# 		self.
-	import gii.core
-	import sys
-	app = QtGui.QApplication( sys.argv )
-	gii.core.app.registerDataPath( '/Users/tommo/prj/gii/data' )
-	
-	QtCore.QDir.setSearchPaths( 'theme', [ '/Users/tommo/prj/gii/data/theme' ] )
-	QtGui.QFontDatabase.addApplicationFont( '/Users/tommo/prj/gii/data/default_font.ttf' )
+	def addRoutine( self ):
+		script = self.getTargetScript()
+		newRoutine = script.addRoutine( script ) #lua
+		self.listRoutine.addNode( newRoutine )
+		self.listRoutine.editNode( newRoutine )
+		self.listRoutine.selectNode( newRoutine )
 
-	styleSheetName = 'gii.qss'
-	app.setStyleSheet(
-			open( '/Users/tommo/prj/gii/data/theme/' + styleSheetName ).read() 
-		)
+	def delRoutine( self ):
+		script = self.getTargetScript()
+		for routine in self.listRoutine.getSelection():
+			script.removeRoutine( script, routine ) #lua
+			self.listRoutine.removeNode( routine)
 
-	widget = SequenceEditorWidget()
-	widget.show()
-	widget.raise_()
+	def renameRoutine( self, routine, name ):
+		routine.setName( routine, name )
 
-	class TestRoutineNode(object):
-		def __init__( self, parent ):
-			self.parent = parent
-			self.children = []
-			self.mark = None
-			self.index = 0
-
-		def getParent( self ):
-			return self.parent
-
-		def getChildren( self ):
-			return self.children
-
-		def getTag( self ):
-			testTag = [
-				'SAY',
-				'ANIM',
-				'SPAWN'
-			]
-			return testTag[ self.index % len( testTag ) ]
-
-		def getDesc( self ):
-			testDesc = [
-				u'这是一条测试用的消息',
-				u'胡子可以变形的大叔，除了标志性的<value>胡子</value>，他还穿着一身紫色披风',
-				u'在吧台后配酒手法娴熟',
-				u'为兄弟会提供强力火力支援。本身是优秀的狙击手，但负伤后转为武器研究。',
-				u'Good job!',
-				u'コレハナントモイエマセンネー！',
-			]
-			testDesc1 = [
-				"The <b>Dock Widgets</b> example demonstrates how to use ",
-				"Qt's dock widgets. You can enter your own text, click a ",
-				"customer to add a customer name and address, and click ",
-				"standard paragraphs to add them.",
-				"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS",
-				"* Neither the name of Nokia Corporation and its Subsidiary(-ies) nor"
-			]
-
-			return testDesc[ self.index % 6 ]
-
-		def getMark( self ):
-			return self.mark
-
-		def getIndex( self ):
-			return self.index
-
-		def getMarkText( self ):
-			if self.mark: return '<%s>' % self.mark
-			return '%d' % self.index
-
-		def addChild( self, node ):
-			self.children.append( node )
-			node.parent = self
-			node.index = len( self.children )
-			return node
-
-	class TestRoutine(object):
-		def __init__( self ):
-			self.rootNode = TestRoutineNode( None )
-
-		def getRootNode( self ):
-			return self.rootNode
-
-
-
-	testRoutine = TestRoutine()
-	root = testRoutine.rootNode
-	for k in range( 20 ):
-		node = root.addChild(
-			TestRoutineNode( None )
-		)
-		if k == 5:
-			for j in range( 5 ):
-				node.addChild(
-					TestRoutineNode( None )
-				)
-
-	widget.addRoutine( testRoutine )
-
-	app.exec_()
-
+	def onRoutineSelectionChanged( self ):
+		for routine in self.listRoutine.getSelection():
+			self.setTargetRoutine( routine )
+			break
+			# self.listRoutine.removeNode( routine)		
