@@ -448,11 +448,13 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			pos = 'viewport'
 
 		targetItem = self.itemAt( ev.pos() )
-		if self.onDropEvent( targetItem.node, pos, ev ) != False:
+		if self.onDropEvent( targetItem and targetItem.node, pos, ev ) != False:
 			super( GenericTreeWidget, self ).dropEvent( ev )
+		else:
+			ev.setDropAction( Qt.IgnoreAction )
 
 	def onDropEvent( self, targetNode, pos, ev ):
-		pass
+		return False
 		
 	##----------------------------------------------------------------##
 	# Event Callback

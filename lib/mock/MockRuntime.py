@@ -12,6 +12,7 @@ from gii.moai.MOAIRuntime \
 signals.register ( 'mock.init' )
 ##----------------------------------------------------------------##
 _MOCK = LuaTableProxy( None )
+_MOCK_EDIT = LuaTableProxy( None )
 
 _MOCK_GAME_CONFIG_NAME = 'game_config.json'
 
@@ -95,6 +96,7 @@ class MockRuntime( EditorModule ):
 	def setupLuaModule( self ):
 		self.runtime.requireModule( 'mock_edit' )
 		_MOCK._setTarget( _G['mock'] )
+		_MOCK_EDIT._setTarget( _G['mock_edit'] )
 		_MOCK.setBasePaths( self.getProject().getPath(), self.getProject().getAssetPath() )
 
 	def syncAssetLibrary(self): #TODO:
@@ -130,6 +132,9 @@ class MockRuntime( EditorModule ):
 
 	def getMockEnv( self ):
 		return _MOCK
+
+	def getMockEditEnv( self ):
+		return _MOCK_EDIT
 
 	def getLuaEnv( self ):
 		return _G

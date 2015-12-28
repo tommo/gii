@@ -296,7 +296,7 @@ class SearchViewTree(GenericTreeWidget):
 		item.setText( 1, node.name )
 		item.setText( 2, node.typeName )
 		if node.iconName:
-			item.setIcon( 1, getIcon( node.iconName ) )
+			item.setIcon( 1, getIcon( node.iconName, 'default_item' ) )
 
 	# def onItemSelectionChanged(self):
 	# 	for node in self.getSelection():
@@ -430,7 +430,6 @@ class SearchView( EditorModule ):
 		pos        = option.get( 'pos', QtGui.QCursor.pos() )
 		typeId     = option.get( 'type', None )
 		context    = option.get( 'context', None )
-		action     = option.get( 'action', 'select' )
 		info       = option.get( 'info', None )
 		initial    = option.get( 'initial', None )
 		multiple   = option.get( 'multiple_selection', False )

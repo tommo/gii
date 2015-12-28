@@ -9,6 +9,7 @@ from gii.qt.IconCache                      import getIcon
 from gii.qt.helpers                        import addWidgetWithLayout, QColorF, unpackQColor
 
 from gii.qt.controls.ToolBar               import wrapToolBar
+from gii.SearchView import requestSearchView
 
 from PyQt4 import QtGui, QtCore, QtOpenGL, uic
 from PyQt4.QtCore import Qt, QObject, QEvent, pyqtSignal
@@ -16,7 +17,7 @@ from PyQt4.QtCore import QSize
 from PyQt4.QtGui import QColor, QTransform
 
 ##----------------------------------------------------------------##
-from mock import _MOCK, isMockInstance
+from mock import _MOCK, _MOCK_EDIT, isMockInstance
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -151,6 +152,7 @@ class RoutineNodeTreeItemDelegate( HTMLItemDelegate ):
 class RoutineNodeTreeWidget( GenericTreeWidget ):
 	def __init__( self, *args, **option ):
 		option['sorting'] = False
+		option['drag_mode'] = 'internal'
 		super( RoutineNodeTreeWidget, self ).__init__( *args, **option )
 		self.setObjectName( 'RoutineNodeTreeWidget' )
 		self.setHeaderHidden( True )
@@ -159,7 +161,7 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		self.setStyleSheet( '''
 			QWidget{ background:#ffffef; }
 			:branch{ border-image:none; }
-			:item{ border-bottom: 1px solid #eec }
+			:item{ border-bottom: 1px dotted #eec }
 			:item:hover{ background:#f6ffc8 }
 			:item:selected{ background:#fff095 }
 		''' )
@@ -169,12 +171,21 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 			font-size:12px;
 		}
 		cmd{
+			font-size:11px;
+			font-weight:bold;
 			color: #900;
+		}
+		comment{
+			color: #b2b09d;
+			font-style: italic;
 		}
 		data{
 			color: #555;
 		}
-		value{
+		number{
+			color: #2f3cff;
+		}
+		string{
 			color: #090;
 		}
 		'''
@@ -198,7 +209,7 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		richText = node.getRichText( node )
 		#mark
 		# item.setText( 0, node.getMarkText() )
-		item.setIcon( 0, getIcon( iconName, 'sq_node_normal' ) )
+		item.setIcon( 0, getIcon( iconName or 'sq_node_normal', 'sq_node_normal' ) )
 		#event
 		item.setHtml( 0, richText )
 		# item.setText( 0, node.getTag() + node.getDesc() )
@@ -211,6 +222,9 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		item.setDefaultStyleSheet( -1, self.itemStyleSheet )
 		return item
 
+	def onItemSelectionChanged( self ):
+		self.owner.onNodeSelectionChanged()
+
 
 ##----------------------------------------------------------------##
 class SQScriptEditorWidget( QtGui.QWidget ):
@@ -218,6 +232,7 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 		super( SQScriptEditorWidget, self ).__init__( *args, **kwargs )
 		self.owner = None
 		self.targetRoutine = None
+		self.targetNode    = None
 		self.initData()		
 		self.initUI()
 
@@ -240,28 +255,59 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 		self.toolbarMain.addTools([
 			dict( name = 'save',   label = 'Save',   icon = 'save' ),
 			dict( name = 'locate', label = 'Locate', icon = 'search-2' ),
-		])
-		
-		self.toolbarRoutine = wrapToolBar(
-			'routine',
-			addWidgetWithLayout( QtGui.QToolBar( self.ui.containerToolbarRoutine ) ),
-			icon_size = 12,
-			owner = self
-		)
-		self.toolbarRoutine.addTools([
+			'----',
 			dict( name = 'add_routine', label = 'Add', icon = 'add' ),
 			dict( name = 'del_routine', label = 'Del', icon = 'remove' ),
 		])
 		
-		self.treeRoutineNode = addWidgetWithLayout( RoutineNodeTreeWidget( self.ui.tabPageRoutine ) )
+		self.treeRoutineNode = addWidgetWithLayout( RoutineNodeTreeWidget( self.ui.containerContent ) )
 		self.treeRoutineNode.owner = self
+
+		self.scrollProperty = scroll = addWidgetWithLayout( QtGui.QScrollArea( self.ui.containerProperty ) )
+		scroll.verticalScrollBar().setStyleSheet('width:4px')
+		scroll.setWidgetResizable( True )
+		self.propertyEditor = PropertyEditor( scroll )
+		scroll.setWidget( self.propertyEditor )
+
+		self.propertyEditor.propertyChanged.connect( self.onPropertyChanged )
+
+		#setup shortcuts
+		self.addShortcut( self.treeRoutineNode, 'Tab', self.promptAddNode )
+
+	def addShortcut( self, contextWindow, keySeq, target, *args, **option ):
+		contextWindow = contextWindow or self
+		shortcutContext = Qt.WidgetWithChildrenShortcut
+
+		action = QtGui.QAction( contextWindow )
+		action.setShortcut( QtGui.QKeySequence( keySeq ) )
+		action.setShortcutContext( shortcutContext )
+		contextWindow.addAction( action )
+
+		if isinstance( target, str ): #command
+			def onAction():
+				self.doCommand( target, **option )
+			action.triggered.connect( onAction )
+		else: #callable
+			def onAction():
+				target( *args, **option )
+			action.triggered.connect( onAction )
+
+		return action
 
 	def setTargetRoutine( self, routine ):
 		self.targetRoutine = routine
+		self.propertyEditor.setTarget( self.targetRoutine )
 		self.treeRoutineNode.rebuild()
 
 	def getTargetRoutine( self ):
 		return self.targetRoutine
+
+	def setTargetNode( self, node ):
+		self.targetNode = node
+		self.propertyEditor.setTarget( node )
+
+	def getTargetNode( self ):
+		return self.targetNode
 
 	def rebuild( self ):
 		self.listRoutine.rebuild()
@@ -300,11 +346,51 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 	def renameRoutine( self, routine, name ):
 		routine.setName( routine, name )
 
+	def promptAddNode( self ):
+		requestSearchView( 
+			context      = 'sq_script_editor',
+			type         = None,
+			multiple_selection = False,
+			on_selection = self.createNode,
+			on_search    = self.listNodeTypes				
+		)
+
+	def cloneNode( self ):
+		pass
+
+	def createNode( self, nodeTypeName ):
+		contextNode = self.treeRoutineNode.getFirstSelection()
+		node = _MOCK_EDIT.createSQNode( nodeTypeName, contextNode, self.targetRoutine )
+		if node:
+			self.treeRoutineNode.rebuild()
+			self.treeRoutineNode.selectNode( node )
+
+	def listNodeTypes( self, typeId, context, option ):
+		res = _MOCK_EDIT.requestAvailSQNodeTypes( self.treeRoutineNode.getFirstSelection() )
+		entries = []
+		for n in res.values():
+			entry = ( n, n, 'SQ Node', 'sq_script/'+n )
+			entries.append( entry )
+		return entries
+
+
 	def onRoutineSelectionChanged( self ):
 		for routine in self.listRoutine.getSelection():
 			self.setTargetRoutine( routine )
 			break
 			# self.listRoutine.removeNode( routine)		
+
+	def onNodeSelectionChanged( self ):
+		for node in self.treeRoutineNode.getSelection():
+			self.setTargetNode( node )
+			break
+			# self.listRoutine.removeNode( routine)		
+
+	def onPropertyChanged( self, obj, fid, value ):
+		if isMockInstance( obj, 'SQNode' ):
+			self.treeRoutineNode.refreshNodeContent( obj )
+		elif isMockInstance( obj, 'SQRoutine' ):
+			pass
 	
 	def onTool( self, tool ):
 		name = tool.getName()

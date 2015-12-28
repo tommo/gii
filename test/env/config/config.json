@@ -3,6 +3,7 @@
     "test.scene"
   ], 
   "asset_browser/filter_view_modes": {
+    "3e4efa51ad3c11e5bdc63c15c2be22ce": "detail", 
     "5059ffb5a47a11e599d73c15c2be22ce": "detail", 
     "7a17b394a47a11e5b8f13c15c2be22ce": "icon", 
     "8842d7c0a47a11e598dd3c15c2be22ce": "detail"
@@ -58,6 +59,20 @@
             ], 
             "name": "script", 
             "type": "filter"
+          }, 
+          {
+            "comment": "", 
+            "id": "3e4efa51ad3c11e5bdc63c15c2be22ce", 
+            "items": [
+              {
+                "active": true, 
+                "alias": "", 
+                "citeria": "T:sq_script", 
+                "locked": true
+              }
+            ], 
+            "name": "All SQ", 
+            "type": "filter"
           }
         ], 
         "comment": "", 
@@ -77,8 +92,8 @@
       "current_selection": [], 
       "mode": "search", 
       "splitter_sizes": [
-        175, 
-        1029
+        80, 
+        1124
       ]
     }, 
     "main": {
@@ -101,8 +116,8 @@
       ], 
       "mode": "browse", 
       "splitter_sizes": [
-        143, 
-        272
+        160, 
+        255
       ]
     }
   }, 

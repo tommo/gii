@@ -45,6 +45,8 @@ require 'mock_edit.common.resloader'
 --------------------------------------------------------------------
 require 'mock_edit.AssetHelper'
 
+
+
 --------------------------------------------------------------------
 --COMMANDS
 --------------------------------------------------------------------
@@ -55,6 +57,8 @@ require 'mock_edit.tools'
 require 'mock_edit.defaults'
 
 require 'mock_edit.drag'
+
+require 'mock_edit.sqscript'
 
 
 mock._allowAssetCacheWeakMode( false )

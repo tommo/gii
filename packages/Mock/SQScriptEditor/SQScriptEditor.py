@@ -43,6 +43,8 @@ class SQScriptEditor( SceneEditorModule ):
 		self.idPool = IDPool()
 		
 	def onStart( self ):
+		# self.delegate = MOAILuaDelegate( self )
+		# self.delegate.load( _getModulePath( 'SQScriptEditor.lua' ) )
 		pass
 
 	def openAsset( self, target ):
@@ -186,3 +188,8 @@ class SQScriptEditorInstance( object ):
 			browser = app.getModule( 'asset_browser' )
 			if browser:
 				browser.locateAsset( self.targetNode )
+
+
+##----------------------------------------------------------------##
+class SQScriptEditor( object ):
+	pass

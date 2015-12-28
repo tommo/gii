@@ -1,4 +1,4 @@
-from MockRuntime import _MOCK, isMockInstance, getMockClassName
+from MockRuntime import _MOCK, _MOCK_EDIT, isMockInstance, getMockClassName
 
 ##----------------------------------------------------------------##
 import asset
