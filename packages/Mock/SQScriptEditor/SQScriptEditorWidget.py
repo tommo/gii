@@ -161,7 +161,7 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		self.setStyleSheet( '''
 			QWidget{ background:#ffffef; }
 			:branch{ border-image:none; }
-			:item{ border-bottom: 1px dotted #eec }
+			:item{ border-bottom: 1px dotted #ddc }
 			:item:hover{ background:#f6ffc8 }
 			:item:selected{ background:#fff095 }
 		''' )
@@ -171,13 +171,12 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 			font-size:12px;
 		}
 		cmd{
-			font-size:11px;
+			font-size:9px;
 			font-weight:bold;
-			color: #900;
+			color: #6c4e90;
 		}
 		comment{
 			color: #b2b09d;
-			font-style: italic;
 		}
 		data{
 			color: #555;
@@ -224,6 +223,9 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 
 	def onItemSelectionChanged( self ):
 		self.owner.onNodeSelectionChanged()
+
+	def onDeletePressed( self ):
+		self.owner.onNodeTreeDeletePressed()
 
 
 ##----------------------------------------------------------------##
@@ -273,6 +275,7 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 
 		#setup shortcuts
 		self.addShortcut( self.treeRoutineNode, 'Tab', self.promptAddNode )
+
 
 	def addShortcut( self, contextWindow, keySeq, target, *args, **option ):
 		contextWindow = contextWindow or self
@@ -341,7 +344,7 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 		script = self.getTargetScript()
 		for routine in self.listRoutine.getSelection():
 			script.removeRoutine( script, routine ) #lua
-			self.listRoutine.removeNode( routine)
+			self.listRoutine.removeNode( routine )
 
 	def renameRoutine( self, routine, name ):
 		routine.setName( routine, name )
@@ -385,6 +388,14 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 			self.setTargetNode( node )
 			break
 			# self.listRoutine.removeNode( routine)		
+
+	def onNodeTreeDeletePressed( self ):
+		selection = self.treeRoutineNode.getSelection()
+		for node in selection:
+			parent = node.getParent( node )
+			if parent:
+				parent.removeChild( parent, node ) #lua
+				self.treeRoutineNode.removeNode( node )
 
 	def onPropertyChanged( self, obj, fid, value ):
 		if isMockInstance( obj, 'SQNode' ):
