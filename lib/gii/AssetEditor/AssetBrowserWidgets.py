@@ -287,6 +287,9 @@ class AssetBrowserDetailListWidget( GenericTreeWidget ):
 		node = item.node
 		self.owner.onActivateNode( node, 'list' )
 
+	def onDeletePressed( self ):
+		self.owner.onListRequestDelete()
+
 ##----------------------------------------------------------------##
 class AssetBrowserTagFilterWidget( AssetFilterWidget ):
 	def __init__( self, *args, **kwargs ):

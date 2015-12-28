@@ -8,6 +8,8 @@ from gii.qt.controls.PropertyEditor        import PropertyEditor
 from gii.qt.IconCache                      import getIcon
 from gii.qt.helpers                        import addWidgetWithLayout, QColorF, unpackQColor
 
+from gii.qt.controls.ToolBar               import wrapToolBar
+
 from PyQt4 import QtGui, QtCore, QtOpenGL, uic
 from PyQt4.QtCore import Qt, QObject, QEvent, pyqtSignal
 from PyQt4.QtCore import QSize
@@ -182,7 +184,7 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 	
 	def getRootNode( self ):
 		routine = self.owner.getTargetRoutine()
-		return routine.getRootNode( routine )
+		return routine and routine.getRootNode( routine )
 
 	def getNodeParent( self, node ):
 		return node.getParent( node )
@@ -229,15 +231,28 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 		self.listRoutine = addWidgetWithLayout( RoutineListWidget( self.ui.containerRoutine ) )
 		self.listRoutine.owner = self
 
-		self.toolbarMain = addWidgetWithLayout( QtGui.QToolBar( self.ui.containerToolbar ) )
-		self.toolbarRoutine = addWidgetWithLayout( QtGui.QToolBar( self.ui.containerToolbarRoutine ) )
-		self.toolbarRoutine.setIconSize( QtCore.QSize( 12, 12 ) )
-		actionAddRoutine = QtGui.QAction( getIcon('add'),    'New', self )
-		actionDelRoutine = QtGui.QAction( getIcon('remove'), 'Del', self )
-		actionAddRoutine.triggered.connect( self.addRoutine )
-		actionDelRoutine.triggered.connect( self.delRoutine )
-		self.toolbarRoutine.addAction( actionAddRoutine )
-		self.toolbarRoutine.addAction( actionDelRoutine )
+		self.toolbarMain = wrapToolBar(
+			'main',
+			addWidgetWithLayout( QtGui.QToolBar( self.ui.containerToolbar ) ),
+			owner = self
+		)
+
+		self.toolbarMain.addTools([
+			dict( name = 'save',   label = 'Save',   icon = 'save' ),
+			dict( name = 'locate', label = 'Locate', icon = 'search-2' ),
+		])
+		
+		self.toolbarRoutine = wrapToolBar(
+			'routine',
+			addWidgetWithLayout( QtGui.QToolBar( self.ui.containerToolbarRoutine ) ),
+			icon_size = 12,
+			owner = self
+		)
+		self.toolbarRoutine.addTools([
+			dict( name = 'add_routine', label = 'Add', icon = 'add' ),
+			dict( name = 'del_routine', label = 'Del', icon = 'remove' ),
+		])
+		
 		self.treeRoutineNode = addWidgetWithLayout( RoutineNodeTreeWidget( self.ui.tabPageRoutine ) )
 		self.treeRoutineNode.owner = self
 
@@ -249,7 +264,8 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 		return self.targetRoutine
 
 	def rebuild( self ):
-		pass
+		self.listRoutine.rebuild()
+		self.treeRoutineNode.rebuild()
 
 	def getRoutineEditor( self, routine ):
 		return self.routineEditors.get( routine, None )
@@ -289,3 +305,17 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 			self.setTargetRoutine( routine )
 			break
 			# self.listRoutine.removeNode( routine)		
+	
+	def onTool( self, tool ):
+		name = tool.getName()
+		if name == 'add_routine':
+			self.addRoutine()
+
+		elif name == 'del_routine':
+			self.delRoutine()
+
+		elif name == 'save':
+			self.owner.saveAsset()
+
+		elif name == 'locate':
+			self.owner.locateAsset()

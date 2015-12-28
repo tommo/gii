@@ -59,6 +59,9 @@ class ToolBarItem(object):
 	def setEnabled( self, enabled = True ):
 		self.qtAction.setEnabled( enabled )
 
+	def getName( self ):
+		return self.name
+
 	def getAction( self ):
 		return self.qtAction
 
@@ -79,7 +82,7 @@ class ToolBarItem(object):
 	def handleEvent( self ):
 		value = self.getValue()
 		owner = self.getOwner()
-		if owner:
+		if owner and hasattr( owner, 'onTool' ):
 			owner.onTool( self )
 		if self.signal:
 			self.signal( value )
@@ -102,10 +105,13 @@ class ToolBarNode(object):
 		self.qtToolbar = qtToolbar
 		self.items     = {}
 		self.groups    = {}
-		self.owner     = None
+		self.owner     = option.get( 'owner', None )
 		if not hasattr( qtToolbar, '_icon_size' ):
 			iconSize = option.get( 'icon_size', 16 )
 			qtToolbar.setIconSize( QtCore.QSize( iconSize, iconSize ) )
+
+	def getQtToolbar( self ):
+		return self.qtToolbar
 
 	def affirmGroup( self, id ):
 		group = self.groups.get( id, None )
@@ -224,5 +230,9 @@ class ToolBarManager(object):
 		else:
 			logging.error( 'toolbar/tool not found:' + path )
 
+
+def wrapToolBar( name, qtToolbar, **kwargs ):
+	barnode = ToolBarNode( name, qtToolbar, **kwargs )
+	return barnode
 
 ToolBarManager()

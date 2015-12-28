@@ -174,3 +174,15 @@ class SQScriptEditorInstance( object ):
 
 	def getTargetScript( self ):
 		return self.targetScript
+
+	def saveAsset( self ):
+		if self.targetScript:
+			path = self.targetNode.getAbsFilePath()
+			_MOCK.serializeToFile( self.targetScript, path )
+		return True
+
+	def locateAsset( self ):
+		if self.targetNode:
+			browser = app.getModule( 'asset_browser' )
+			if browser:
+				browser.locateAsset( self.targetNode )

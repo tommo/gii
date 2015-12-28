@@ -77,8 +77,8 @@
       "current_selection": [], 
       "mode": "search", 
       "splitter_sizes": [
-        97, 
-        100
+        175, 
+        1029
       ]
     }, 
     "main": {
@@ -102,7 +102,7 @@
       "mode": "browse", 
       "splitter_sizes": [
         143, 
-        279
+        272
       ]
     }
   }, 
