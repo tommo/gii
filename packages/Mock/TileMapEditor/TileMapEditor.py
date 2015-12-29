@@ -280,6 +280,7 @@ class TileMapEditor( SceneEditorModule ):
 			if not self.targetTileMap: return
 			supportedTilesetTypes = self.targetTileMap.getSupportedTilesetType( self.targetTileMap )
 			requestSearchView( 
+				info         = 'select tileset for new layer',
 				context      = 'asset',
 				type         = supportedTilesetTypes,
 				multiple_selection = False,

@@ -377,11 +377,12 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 
 	def promptAddNode( self ):
 		requestSearchView( 
+			info         = 'adding SQScript node...',
 			context      = 'sq_script_editor',
 			type         = None,
 			multiple_selection = False,
 			on_selection = self.createNode,
-			on_search    = self.listNodeTypes				
+			on_search    = self.listNodeTypes
 		)
 
 	def cloneNode( self ):
