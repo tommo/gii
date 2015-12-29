@@ -27,6 +27,7 @@ class SearchFieldWidget( QtGui.QWidget ):
 		layout.setMargin( 0 )
 		self.buttonRef   = buttonRef   = SearchFieldButton( self )
 		self.buttonGoto  = buttonGoto  = SearchFieldButton( self )
+		self.buttonOpen  = buttonOpen  = SearchFieldButton( self )
 		self.buttonClear = buttonClear = SearchFieldButton( self )
 		buttonRef.setObjectName( 'ButtonReferenceField' )
 		self.buttonRef.setToolButtonStyle( Qt.ToolButtonTextBesideIcon )
@@ -38,6 +39,10 @@ class SearchFieldWidget( QtGui.QWidget ):
 			QtGui.QSizePolicy.Fixed,
 			QtGui.QSizePolicy.Fixed
 			)
+		buttonOpen.setSizePolicy(
+			QtGui.QSizePolicy.Fixed,
+			QtGui.QSizePolicy.Fixed
+			)
 		buttonClear.setSizePolicy(
 			QtGui.QSizePolicy.Fixed,
 			QtGui.QSizePolicy.Fixed
@@ -45,13 +50,16 @@ class SearchFieldWidget( QtGui.QWidget ):
 		buttonRef.setText( '<None>' )
 		buttonRef.setStyleSheet ("text-align: left;"); 
 		buttonGoto.setIcon( getIcon('search-2') )
+		buttonOpen.setIcon( getIcon('pencil') )
 		buttonClear.setIcon( getIcon('remove') )
-		layout.addWidget( buttonGoto )
-		layout.addWidget( buttonRef )
+		layout.addWidget( buttonGoto  )
+		layout.addWidget( buttonOpen  )
+		layout.addWidget( buttonRef   )
 		layout.addWidget( buttonClear )
 		self.targetRef = None 
 		self.setRef( None )
 		self.setAcceptDrops( False )
+		buttonOpen.hide()
 
 	def setRef( self, target ):
 		self.targetRef = target
@@ -125,9 +133,11 @@ class SearchFieldEditorBase( FieldEditor ):
 		widget.buttonRef   .clicked .connect( self.openBrowser )
 		widget.buttonClear .clicked .connect( self.clearObject )
 		widget.buttonGoto  .clicked .connect( self.gotoObject  )
+		widget.buttonOpen  .clicked .connect( self.openObject  )
 		self.refWidget = widget
 		if self.isDropAllowed():
 			widget.setAcceptDrops( True )
+		self.onInitEditor()
 		return self.refWidget
 
 	def openBrowser( self ):
@@ -155,6 +165,18 @@ class SearchFieldEditorBase( FieldEditor ):
 
 	def getRefButton( self ):
 		return self.refWidget.buttonRef
+
+	def getOpenButton( self ):
+		return self.refWidget.buttonOpen
+
+	def getGotoButton( self ):
+		return self.refWidget.buttonGoto
+
+	def getClearButton( self ):
+		return self.refWidget.buttonClear
+
+	def onInitEditor( self ):
+		pass
 
 	def onSearchSelection( self, target ):
 		self.setValue( target )
@@ -191,6 +213,9 @@ class SearchFieldEditorBase( FieldEditor ):
 
 	def gotoObject( self ): #virtual
 		pass		
+
+	def openObject( self ): #virtual
+		pass
 
 	def clearObject( self ): #virtual
 		self.setValue( None )

@@ -78,8 +78,9 @@ class CacheManager(object):
 		# assert node
 		if not node: 
 			logging.warn( 'no cache found:' + cacheFile )
-			return
+			return False
 		node['touched'] = True
+		return True
 
 	def buildCacheFilePath( self, srcPath, name = None, **option ):
 		#make a name for cachefile { hash of srcPath }	

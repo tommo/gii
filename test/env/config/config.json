@@ -93,7 +93,7 @@
       "mode": "search", 
       "splitter_sizes": [
         80, 
-        117
+        1124
       ]
     }, 
     "main": {
@@ -117,7 +117,7 @@
       "mode": "browse", 
       "splitter_sizes": [
         97, 
-        325
+        318
       ]
     }
   }, 
@@ -125,5 +125,5 @@
     185, 
     334
   ], 
-  "scenegraph_editor/previous_scene": "scene/testSQ.scene"
+  "scenegraph_editor/previous_scene": "test.scene"
 }

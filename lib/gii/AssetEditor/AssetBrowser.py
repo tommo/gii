@@ -190,10 +190,12 @@ class AssetBrowser( SceneEditorModule ):
 		self.browserInstance.selectAsset( asset, **options )
 		
 	def openAsset( self, asset, **option ):
-		if asset:
-			if option.get('select', True ):
-				self.selectAsset( asset )
-			asset.edit()
+		if isinstance( asset, ( str, unicode ) ): #path
+			asset = self.getAssetLibrary().getAssetNode( asset )
+		if not asset: return
+		if option.get('select', True ):
+			self.selectAsset( asset )
+		asset.edit()
 
 	def createAsset( self, creator, instance = None ):
 		if isinstance( creator, str ):

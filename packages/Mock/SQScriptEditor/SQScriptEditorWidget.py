@@ -159,7 +159,7 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		self.setIndentation( 12 )
 		
 		self.setStyleSheet( '''
-			QWidget{ background:#ffffef; }
+			QWidget{ background:#fffff3; }
 			:branch{ border-image:none; }
 			:item{ border-bottom: 1px dotted #ddc }
 			:item:hover{ background:#f6ffc8 }
@@ -168,12 +168,13 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 
 		self.itemStyleSheet = '''
 		body{
-			font-size:12px;
+			font-size:13px;
+			color: #bb9;
 		}
 		cmd{
-			font-size:9px;
+			font-size:10px;
 			font-weight:bold;
-			color: #6c4e90;
+			color: #747474;
 		}
 		comment{
 			color: #b2b09d;
@@ -182,10 +183,19 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 			color: #555;
 		}
 		number{
+			font-size:12px;
 			color: #2f3cff;
 		}
 		string{
-			color: #090;
+			color: #3c9100;
+		}
+		signal{
+			color: #f933ff;
+		}
+		flag{
+			font-size:10px;
+			font-weight:bold;
+			color: #cc7500;
 		}
 		'''
 
@@ -210,7 +220,7 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		# item.setText( 0, node.getMarkText() )
 		item.setIcon( 0, getIcon( iconName or 'sq_node_normal', 'sq_node_normal' ) )
 		#event
-		item.setHtml( 0, richText )
+		item.setHtml( 0, '<body>%s</body>' % richText )
 		# item.setText( 0, node.getTag() + node.getDesc() )
 	
 	def getDefaultItemDelegate( self ):
@@ -275,6 +285,7 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 
 		#setup shortcuts
 		self.addShortcut( self.treeRoutineNode, 'Tab', self.promptAddNode )
+		self.addShortcut( self, 'Ctrl+1', self.focusContentTree )
 
 
 	def addShortcut( self, contextWindow, keySeq, target, *args, **option ):
@@ -315,6 +326,10 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 	def rebuild( self ):
 		self.listRoutine.rebuild()
 		self.treeRoutineNode.rebuild()
+		script = self.getTargetScript()
+		firstRoutine = script.getRoutines( script )[ 1 ] #lua
+		if firstRoutine:
+			self.listRoutine.selectNode( firstRoutine )
 
 	def getRoutineEditor( self, routine ):
 		return self.routineEditors.get( routine, None )
@@ -402,6 +417,9 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 			self.treeRoutineNode.refreshNodeContent( obj )
 		elif isMockInstance( obj, 'SQRoutine' ):
 			pass
+
+	def focusContentTree( self ):
+		self.treeRoutineNode.setFocus()
 	
 	def onTool( self, tool ):
 		name = tool.getName()

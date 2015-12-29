@@ -11,7 +11,10 @@ from SearchFieldEditor import SearchFieldEditorBase
 import os.path
 
 ##----------------------------------------------------------------##
-class AssetRefFieldEditor( SearchFieldEditorBase ):	
+class AssetRefFieldEditor( SearchFieldEditorBase ):
+	def onInitEditor( self ):
+		self.getOpenButton().show()
+
 	def getValueRepr( self, value ): #virtual
 		lib = AssetLibrary.get()
 		if value:
@@ -42,6 +45,11 @@ class AssetRefFieldEditor( SearchFieldEditorBase ):
 		assetBrowser = app.getModule( 'asset_browser' )
 		if assetBrowser:
 			assetBrowser.locateAsset( self.target )
+
+	def openObject( self ):
+		assetBrowser = app.getModule( 'asset_browser' )
+		if assetBrowser:
+			assetBrowser.openAsset( self.target )
 	
 	def formatRefName( self, name )	:
 		if isinstance( name, ( str, unicode ) ):

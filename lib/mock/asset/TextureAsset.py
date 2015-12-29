@@ -125,11 +125,13 @@ class TextureAssetManager( AssetManager ):
 				# ImageHelpers.convertToWebP( mappedPath )
 				
 	def requestAssetThumbnail( self, assetNode, size ):
+		if assetNode.isVirtual(): return None
 		return self.buildAssetThumbnail( assetNode, size )
 
 	def onBuildAssetThumbnail( self, assetNode, targetPath, size ):
 		srcPath = assetNode.getAbsFilePath()
-		ImageHelpers.buildThumbnail( srcPath, targetPath, size )
+		if not ImageHelpers.buildThumbnail( srcPath, targetPath, size ):
+			return False
 		return True
 
 ##----------------------------------------------------------------##

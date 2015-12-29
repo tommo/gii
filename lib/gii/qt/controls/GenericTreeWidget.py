@@ -562,7 +562,9 @@ class GenericTreeFilter( QtGui.QWidget ):
 	def __init__(self, *args ):
 		super(GenericTreeFilter, self).__init__( *args )
 		self.setObjectName( 'ItemFilter' )
-		self.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
+		self.setSizePolicy( 
+			QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed
+		)
 		self.setMinimumSize( 100, 20 )
 		layout = QtGui.QHBoxLayout( self )
 		layout.setMargin( 0 )

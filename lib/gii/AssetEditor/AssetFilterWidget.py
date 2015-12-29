@@ -165,7 +165,7 @@ class AssetFilterWidget( QtGui.QFrame ):
 
 		# actionAdd = menu.addAction( 'Add' )
 		# menu.addSeparator()
-		actionLock = menu.addAction( 'Toggle Lock' )
+		actionLock = menu.addAction( 'Lock/Unlock' )
 		actionEdit = menu.addAction( 'Edit' )
 		menu.addSeparator()
 		actionDelete = menu.addAction( 'Delete' )

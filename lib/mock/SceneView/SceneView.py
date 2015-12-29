@@ -291,7 +291,8 @@ class SceneView( SceneEditorModule ):
 		self.scheduleUpdate()
 
 	def onSceneOpen( self, node, scene ):
-		self.window.setDocumentName( node.getPath() )
+		self.window.setWindowTitle( node.getPath() )
+		# self.window.setDocumentName( node.getPath() )
 		self.canvas.show()
 		self.toolbar.show()
 		self.canvas.safeCall( 'onSceneOpen', scene )		
