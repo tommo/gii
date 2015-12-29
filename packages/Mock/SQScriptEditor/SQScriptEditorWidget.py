@@ -156,12 +156,12 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		super( RoutineNodeTreeWidget, self ).__init__( *args, **option )
 		self.setObjectName( 'RoutineNodeTreeWidget' )
 		self.setHeaderHidden( True )
-		self.setIndentation( 12 )
+		self.setIndentation( 18 )
 		
 		self.setStyleSheet( '''
 			QWidget{ background:#fffff3; }
 			:branch{ border-image:none; }
-			:item{ border-bottom: 1px dotted #ddc }
+			:item{ border-bottom: 1px solid #eee }
 			:item:hover{ background:#f6ffc8 }
 			:item:selected{ background:#fff095 }
 		''' )
@@ -184,10 +184,10 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		}
 		number{
 			font-size:12px;
-			color: #2f3cff;
+			color: #c89948;
 		}
 		string{
-			color: #3c9100;
+			color: #2f3cff;
 		}
 		signal{
 			color: #f933ff;
@@ -195,8 +195,19 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		flag{
 			font-size:10px;
 			font-weight:bold;
-			color: #cc7500;
+			color: #3c9100;
 		}
+		label{
+			font-size:12px;
+			color: #a00;
+			font-weight:bold;
+		}
+
+		group{
+			font-size:12px;
+			color:#444444;
+		}
+
 		'''
 
 	def getHeaderInfo( self ):
