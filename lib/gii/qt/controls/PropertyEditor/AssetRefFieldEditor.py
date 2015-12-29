@@ -13,7 +13,7 @@ import os.path
 ##----------------------------------------------------------------##
 class AssetRefFieldEditor( SearchFieldEditorBase ):
 	def onInitEditor( self ):
-		self.getOpenButton().show()
+		self.getEditorWidget().setButtonFlags( open = True )
 
 	def getValueRepr( self, value ): #virtual
 		lib = AssetLibrary.get()

@@ -31,6 +31,12 @@ class SearchFieldWidget( QtGui.QWidget ):
 		self.buttonClear = buttonClear = SearchFieldButton( self )
 		buttonRef.setObjectName( 'ButtonReferenceField' )
 		self.buttonRef.setToolButtonStyle( Qt.ToolButtonTextBesideIcon )
+		self.buttonFlags = dict(
+			goto = True,
+			clear = True,
+			open = False,
+		)
+
 		buttonRef.setSizePolicy(
 			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Fixed
@@ -61,16 +67,25 @@ class SearchFieldWidget( QtGui.QWidget ):
 		self.setAcceptDrops( False )
 		buttonOpen.hide()
 
+	def setButtonFlags( self, **flags ):
+		self.buttonFlags = dict(
+			open  = flags.get( 'open', False ),
+			goto  = flags.get( 'goto', True  ),
+			clear = flags.get( 'clear', True )
+		)
+
 	def setRef( self, target ):
 		self.targetRef = target
 		if not target:
 			self.buttonRef.setText( '<None>' )
 			self.buttonGoto.hide()
 			self.buttonClear.hide()
+			self.buttonOpen.hide()
 		else:
 			self.buttonRef.setText( 'Object' ) 
-			self.buttonGoto.show()
-			self.buttonClear.show()
+			if self.buttonFlags.get( 'goto', False ): self.buttonGoto.show()
+			if self.buttonFlags.get( 'clear', False ): self.buttonClear.show()
+			if self.buttonFlags.get( 'open', False ): self.buttonOpen.show()
 
 	def setRefName( self, name, formatted ):
 		if isinstance( formatted, (unicode, str) ):
@@ -159,6 +174,9 @@ class SearchFieldEditorBase( FieldEditor ):
 		w, h = size.width(), size.height()
 		p = self.refWidget.mapToGlobal( QtCore.QPoint( 0, h ) )
 		return p
+
+	def getEditorWidget( self ):
+		return self.refWidget
 
 	def setFocus( self ):
 		self.refWidget.setFocus()
