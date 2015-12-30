@@ -43,7 +43,7 @@ class FieldEditorLineEdit(QtGui.QLineEdit):
 class FieldEditorSpinBox(QtGui.QSpinBox):
 	def __init__(self, *arg):
 		super(FieldEditorSpinBox, self).__init__( *arg )
-		self.setButtonSymbols( QtGui.QAbstractSpinBox.NoButtons )
+		# self.setButtonSymbols( QtGui.QAbstractSpinBox.NoButtons )
 		self.setFocusPolicy( Qt.StrongFocus )
 		self.setLineEdit( FieldEditorLineEdit( self ) )
 
@@ -66,7 +66,7 @@ class FieldEditorSpinBox(QtGui.QSpinBox):
 class FieldEditorDoubleSpinBox(QtGui.QDoubleSpinBox):
 	def __init__(self, *arg):
 		super(FieldEditorDoubleSpinBox, self).__init__( *arg )
-		self.setButtonSymbols( QtGui.QAbstractSpinBox.NoButtons )
+		# self.setButtonSymbols( QtGui.QAbstractSpinBox.NoButtons )
 		self.setFocusPolicy( Qt.StrongFocus )
 		self.setLineEdit( FieldEditorLineEdit( self ) )
 

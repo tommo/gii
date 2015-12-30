@@ -83,6 +83,10 @@ class AnimatorTrackTree( GenericTreeWidget ):
 	def getHeaderInfo( self ):
 		return [ ('Name',80), ('Key', 20) ]
 
+	def resetHeader( self ):
+		super( AnimatorTrackTree, self ).resetHeader()
+		self.fitColumnSize()
+
 	def getRootNode( self ):
 		return self.owner.getClipRoot()
 
@@ -133,6 +137,9 @@ class AnimatorTrackTree( GenericTreeWidget ):
 
 	def resizeEvent( self, event ):
 		super( AnimatorTrackTree, self ).resizeEvent( event )
+		self.fitColumnSize()
+
+	def fitColumnSize( self ):
 		width = self.width() - 4
 		self.setColumnWidth ( 0, width - 25 )
 		self.setColumnWidth ( 1, 25 )

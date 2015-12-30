@@ -597,6 +597,7 @@ QSpinBox,QDoubleSpinBox
 	/*selection-background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#787878,stop:1#5a5a5a);*/
 	/*selection-color:#191919;*/
 	padding:0;
+	border-radius:3px;
 }
 
 QSpinBox::up-button,QSpinBox::down-button,QDoubleSpinBox::up-button,QDoubleSpinBox::down-button

@@ -199,13 +199,19 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 		}
 		label{
 			font-size:12px;
-			color: #a00;
+			color: #0080f8;
 			font-weight:bold;
 		}
 
 		group{
 			font-size:12px;
 			color:#444444;
+		}
+
+		end{
+			font-size:12px;
+			color: #c50000;
+			font-weight:bold;
 		}
 
 		'''

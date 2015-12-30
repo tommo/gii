@@ -93,7 +93,7 @@
       "mode": "search", 
       "splitter_sizes": [
         80, 
-        117
+        1124
       ]
     }, 
     "main": {
@@ -112,12 +112,12 @@
         "type": "filter"
       }, 
       "current_selection": [
-        "scene/testUI.scene"
+        "config"
       ], 
       "mode": "browse", 
       "splitter_sizes": [
         146, 
-        276
+        269
       ]
     }
   }, 
@@ -125,5 +125,5 @@
     185, 
     334
   ], 
-  "scenegraph_editor/previous_scene": "scene/testUI.scene"
+  "scenegraph_editor/previous_scene": "test.scene"
 }
