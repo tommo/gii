@@ -52,10 +52,10 @@ class MQuadDeckPart( DeckPart ):
 			args = tags[ 'FOLD' ]
 			self.foldPos  = getArrayI( args, 0, 0 )
 		
-		elif tags.has_key( 'FLOOR' ):
+		elif tags.has_key( 'FLOOR' ) or tags.has_key( 'F' ):
 			self.foldMode = 'floor'
 
-		elif tags.has_key( 'WALL' ):
+		elif tags.has_key( 'WALL' ) or tags.has_key( 'W' ):
 			self.foldMode = 'wall'
 
 		if tags.has_key( 'OFF' ):
