@@ -331,6 +331,13 @@ class AssetNode(object):
 		fp.close()
 		return True
 
+	def restoreMetaData( self ):
+		t = self.getMetaDataTable( False )
+		if not t: return
+		#restore tags
+		self.tags = t.get( 'tags', [] )
+		self.clearTagCache()
+
 	def findNonVirtualParent( self ):
 		node = self.getParent()
 		while node:
@@ -372,9 +379,10 @@ class AssetNode(object):
 		option[ 'no_overwrite' ] = True
 		return self.setMetaData( key, value, **option )
 
-	def addTag( self, tag ):
+	def addTag( self, tag, **option ):
 		if tag in self.tags: return
 		self.tags.append( tag )
+		self.setMetaData( 'tags', self.tags, save = option.get( 'save', False ) )
 		self.clearTagCache()
 
 	def getTags( self ):
@@ -403,6 +411,7 @@ class AssetNode(object):
 		for part in [ x.strip() for x in src.split(',') ]:
 			if len( part ) > 0:
 				self.addTag( part )
+		self.saveMetaDataTable()
 
 	def clearTagCache( self ):
 		if self.tagCache:
@@ -857,13 +866,13 @@ class AssetLibrary(object):
 		logging.info( 'register: %s' % repr(node) )
 		if self.assetTable.has_key(path):
 			raise Exception( 'unclean path: %s', path)
-		self.assetTable[path]=node
+		self.assetTable[path] = node
 
 		signals.emit( 'asset.register', node )
 
 		for child in node.getChildren():
 			self.registerAssetNode(child)
-
+		node.restoreMetaData()
 		return node
 
 	def unregisterAssetNode(self, oldnode):
