@@ -49,6 +49,7 @@ class TopEditorModule( QtEditorModule ):
 
 	def onStart( self ):
 		self.restoreWindowState( self.mainWindow )
+		self.mainWindow.resetCorners()
 		
 	def onStop( self ):
 		self.saveWindowState( self.mainWindow )

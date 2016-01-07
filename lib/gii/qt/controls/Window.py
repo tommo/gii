@@ -26,6 +26,7 @@ class MainWindow(QtGui.QMainWindow):
 		# self.setDocumentMode(True)
 		self.defaultToolBarIconSize = 16
 		self.setUnifiedTitleAndToolBarOnMac( False )
+
 		self.setDockOptions(
 			QtGui.QMainWindow.AllowNestedDocks | QtGui.QMainWindow.AllowTabbedDocks  )
 		# self.setTabPosition( Qt.AllDockWidgetAreas, QtGui.QTabWidget.North)
@@ -47,6 +48,13 @@ class MainWindow(QtGui.QMainWindow):
 
 		# self.toolWindowMgr = ToolWindowManager( self )
 		# self.setCentralWidget( self.toolWindowMgr )
+		self.resetCorners()
+
+	def resetCorners( self ):
+		self.setCorner( Qt.TopLeftCorner, Qt.LeftDockWidgetArea )
+		self.setCorner( Qt.BottomLeftCorner, Qt.BottomDockWidgetArea )
+		self.setCorner( Qt.TopRightCorner, Qt.RightDockWidgetArea )
+		self.setCorner( Qt.BottomRightCorner, Qt.RightDockWidgetArea )
 
 	def moveToCenter(self):
 		moveWindowToCenter(self)
