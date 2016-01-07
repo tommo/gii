@@ -43,6 +43,9 @@ import PhysicsTools
 import WaypointGraphEditor
 
 ##----------------------------------------------------------------##
+import ControlVariable
+
+##----------------------------------------------------------------##
 import DebugInfo
 import LuaProfiler
 

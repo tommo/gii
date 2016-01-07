@@ -55,7 +55,7 @@ class LayerManager( SceneEditorModule ):
 			)
 
 		#Components
-		self.treeFilter = self.window.addWidget( GenericTreeFilter() )
+		self.treeFilter = self.window.addWidget( GenericTreeFilter(), expanding = False )
 		self.tree = self.window.addWidget( 
 			LayerTreeWidget(
 				self.window,

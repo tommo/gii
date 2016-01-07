@@ -231,14 +231,19 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		headerInfo = self.getHeaderInfo()
 		headerItem = self.headerItem()
 		for i in range( 0, len(headerInfo) ):			
-			if i > 0:
-				self.setItemDelegateForColumn( i, self.readonlyItemDelegate )			
 			info =  headerInfo[i]
+			l = len( info )
 			title = info[ 0 ]
-			width = info[ 1 ]
+			width = l > 1 and info[ 1 ] or -1
+			if l > 2:
+				editable = info[ 2 ] and True or False
+			else:
+				editable = i == 0
 			headerItem.setText ( i, title )
 			if width > 0:
 				self.setColumnWidth ( i, width )
+			if not editable:
+				self.setItemDelegateForColumn( i, self.readonlyItemDelegate )
 			self.updateHeaderItem( headerItem, i, info )
 
 	def setFocusedItem(self, item ):

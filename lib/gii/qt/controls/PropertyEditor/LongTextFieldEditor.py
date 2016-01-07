@@ -7,6 +7,7 @@ from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
 
+from gii.qt.helpers    import addWidgetWithLayout, restrainWidgetToScreen
 from gii.qt.IconCache  import getIcon
 
 ##----------------------------------------------------------------##
@@ -144,6 +145,7 @@ class LongTextFieldEditor( FieldEditor ):
 		editor = getLongTextEditorWidget()
 		pos        = QtGui.QCursor.pos()
 		editor.move( pos )
+		restrainWidgetToScreen( editor )
 		editor.show()
 		editor.raise_()
 		editor.setFocus()

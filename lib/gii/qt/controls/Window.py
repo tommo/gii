@@ -255,7 +255,7 @@ class SubWindowMixin:
 			widget.setSizePolicy(
 				QtGui.QSizePolicy.Expanding,
 				QtGui.QSizePolicy.Expanding
-				)		
+				)
 		self.mainLayout.addWidget(widget)
 		return widget
 
