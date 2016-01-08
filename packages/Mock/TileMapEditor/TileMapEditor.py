@@ -57,6 +57,8 @@ class TileMapEditor( SceneEditorModule ):
 	dependency = [ 'mock' ]
 
 	def onLoad( self ):
+		self.viewSelectedOnly = True
+
 		self.container = self.requestDockWindow(
 				title = 'Tilemap'
 			)
@@ -132,7 +134,8 @@ class TileMapEditor( SceneEditorModule ):
 		self.addTool( 'tilemap_layers/----' )
 		self.addTool( 'tilemap_layers/inc_subdiv',   label = 'subD +' )
 		self.addTool( 'tilemap_layers/dec_subdiv',   label = 'subD -' )
-
+		self.addTool( 'tilemap_layers/----' )
+		self.addTool( 'tilemap_layers/view_selected_only', label = 'View Selected Only', type='check' )
 
 		self.addTool( 'tilemap_main/tool_pen', 
 			widget = SceneToolButton( 'tilemap_pen',
@@ -171,6 +174,15 @@ class TileMapEditor( SceneEditorModule ):
 	def onStart( self ):
 		self.container.show()
 		self.container.setEnabled( False )
+		
+		viewSelectedOnly = self.getConfig( 'view_selected_only', True )
+		self.findTool( 'tilemap_layers/view_selected_only' ).setValue(
+			viewSelectedOnly
+		)
+		self.setViewSelectedOnly( viewSelectedOnly )
+
+	def onStop( self ):
+		self.setConfig( 'view_selected_only', self.viewSelectedOnly )
 
 	def onSetFocus( self ):
 		self.getModule( 'scene_editor' ).setFocus()
@@ -198,6 +210,10 @@ class TileMapEditor( SceneEditorModule ):
 	def onCodeTileSelectionChanged( self, selection ):
 		if selection:
 			self.canvas.callMethod( 'editor', 'selectCodeTile', selection[0] )
+
+	def setViewSelectedOnly( self, toggle ):
+		self.viewSelectedOnly = toggle
+		self.canvas.callMethod( 'editor', 'setViewSelectedOnly', self.viewSelectedOnly )
 
 	def clearTerrainSelection( self ):
 		self.listTerrain.selectNode( None )
@@ -316,6 +332,8 @@ class TileMapEditor( SceneEditorModule ):
 				self.canvas.callMethod( 'editor', 'decSubDivision' )
 				self.treeLayers.refreshNodeContent( self.targetTileMapLayer )
 
+		elif name == 'view_selected_only':
+			self.setViewSelectedOnly( tool.getValue() )
 
 ##----------------------------------------------------------------##
 class TileMapLayerTreeWidget( GenericTreeWidget ):

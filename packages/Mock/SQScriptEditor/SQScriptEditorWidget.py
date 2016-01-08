@@ -15,9 +15,13 @@ from PyQt4 import QtGui, QtCore, QtOpenGL, uic
 from PyQt4.QtCore import Qt, QObject, QEvent, pyqtSignal
 from PyQt4.QtCore import QSize
 from PyQt4.QtGui import QColor, QTransform
+from PyQt4.QtGui import \
+	QStyle, QStyleOptionViewItemV4, QApplication, QTextDocument, QAbstractTextDocumentLayout, QPalette, \
+	QColor
 
-##----------------------------------------------------------------##
 from mock import _MOCK, _MOCK_EDIT, isMockInstance
+
+
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -27,13 +31,73 @@ def _getModulePath( path ):
 SQScriptEditorForm,BaseClass = uic.loadUiType( _getModulePath('SQScriptEditorWidget.ui') )
 
 
-
 ##----------------------------------------------------------------##
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import \
-	QStyle, QStyleOptionViewItemV4, QApplication, QTextDocument, QAbstractTextDocumentLayout, QPalette, \
-	QColor
+SQITEM_STYLE_SHEET = '''
+	body{
+		font-size:13px;
+		color: #bb9;
+	}
+	cmd{
+		font-size:10px;
+		font-weight:bold;
+		color: #747474;
+	}
+	comment{
+		color: #b2b09d;
+	}
+	data{
+		color: #555;
+	}
+	number{
+		font-size:12px;
+		color: #c89948;
+	}
+	string{
+		color: #2f3cff;
+	}
+	signal{
+		color: #f933ff;
+	}
+	flag{
+		font-size:10px;
+		font-weight:bold;
+		color: #3c9100;
+	}
+	label{
+		font-size:12px;
+		color: #0080f8;
+		font-weight:bold;
+	}
+
+	group{
+		font-size:12px;
+		color:#444444;
+	}
+
+	end{
+		font-size:12px;
+		color: #c50000;
+		font-weight:bold;
+	}
+
+	condition{
+		color: #c926ff;
+		font-weight:bold;
+	}
+
+	branch{
+		font-style:italic;
+	}
+
+	.yes{
+		color: #5fb23e;
+	}
+
+	.no{
+		color: #6c2419;
+	}
+
+'''
 
 ##----------------------------------------------------------------##
 _htmlRole = Qt.UserRole + 1
@@ -166,55 +230,7 @@ class RoutineNodeTreeWidget( GenericTreeWidget ):
 			:item:selected{ background:#fff095 }
 		''' )
 
-		self.itemStyleSheet = '''
-		body{
-			font-size:13px;
-			color: #bb9;
-		}
-		cmd{
-			font-size:10px;
-			font-weight:bold;
-			color: #747474;
-		}
-		comment{
-			color: #b2b09d;
-		}
-		data{
-			color: #555;
-		}
-		number{
-			font-size:12px;
-			color: #c89948;
-		}
-		string{
-			color: #2f3cff;
-		}
-		signal{
-			color: #f933ff;
-		}
-		flag{
-			font-size:10px;
-			font-weight:bold;
-			color: #3c9100;
-		}
-		label{
-			font-size:12px;
-			color: #0080f8;
-			font-weight:bold;
-		}
-
-		group{
-			font-size:12px;
-			color:#444444;
-		}
-
-		end{
-			font-size:12px;
-			color: #c50000;
-			font-weight:bold;
-		}
-
-		'''
+		self.itemStyleSheet = SQITEM_STYLE_SHEET
 
 	def getHeaderInfo( self ):
 		return [ ('Event',-1) ]
@@ -425,6 +441,7 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 	def onNodeTreeDeletePressed( self ):
 		selection = self.treeRoutineNode.getSelection()
 		for node in selection:
+			if node.isBuiltin( node ): continue
 			parent = node.getParent( node )
 			if parent:
 				parent.removeChild( parent, node ) #lua

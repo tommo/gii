@@ -17,10 +17,11 @@ function createSQNode( name, contextNode, contextRoutine )
 	end
 	local clas = entry.clas
 	local node = clas()
+	node:initFromEditor()
 	if not contextNode then --root node
 		contextRoutine:addNode( node )
 	else
-		if contextNode:isGroup() then
+		if contextNode:isGroup() and contextNode:canInsert() then
 			contextNode:addChild( node )
 		else
 			local parentNode = contextNode:getParent()
