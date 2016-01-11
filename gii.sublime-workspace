@@ -4,188 +4,84 @@
 		"selected_items":
 		[
 			[
-				"SQROu",
-				"SQRoutineContext"
+				"routin",
+				"routines"
 			],
 			[
-				"SQROU",
-				"SQRoutineContext"
+				"labelno",
+				"labelNodes"
 			],
 			[
-				"SQNOdelo",
-				"SQNodeLoopBase"
+				"getRoutin",
+				"getRoutine"
 			],
 			[
-				"routinecontex",
-				"routineContext"
+				"CLA",
+				"CLASS"
 			],
 			[
-				"routineCOnte",
-				"routineContexts"
+				"SQnode",
+				"SQNodeMsg"
 			],
 			[
-				"ind",
-				"index"
+				"setIcon",
+				"setIconSize"
 			],
 			[
-				"currentno",
-				"currentNode"
+				"filte",
+				"targetFilter  (variable)"
 			],
 			[
-				"getNo",
-				"getNodeParent"
+				"curei",
+				"currentContextItemWidget"
 			],
 			[
-				"frae",
-				"frameCount"
+				"currenti",
+				"currentContextItem  (variable)"
 			],
 			[
-				"updateitem",
-				"updateItemContent"
+				"currecont",
+				"currentContextItem"
 			],
 			[
-				"register",
-				"registerSQNode"
+				"lineedit",
+				"lineEditCiteria"
 			],
 			[
-				"_MOC",
-				"_MOCK_EDIT"
+				"modifi",
+				"modifiers"
 			],
 			[
-				"tree",
-				"treeRoutineNode"
+				"moure",
+				"mousePressEvent"
 			],
 			[
-				"addw",
-				"addWidgetWithLayout"
+				"getChil",
+				"getChildren  (function)"
 			],
 			[
-				"SQNOwi",
-				"SQNodeWaitSignal"
+				"Tagmatchno",
+				"TagMatchNodeOR"
 			],
 			[
-				"serili",
-				"serialize"
+				"tagmano",
+				"TagMatchNodeName"
 			],
 			[
-				"corot",
-				"coroutine"
+				"parse",
+				"parseBracketTree"
 			],
 			[
-				"seri",
-				"serialization"
+				"T",
+				"BracketTree  (module)"
 			],
 			[
-				"pare",
-				"parentRoutine"
+				"brackno",
+				"BracketTreeNode"
 			],
 			[
-				"root",
-				"getFilterRootGroup  (function)"
-			],
-			[
-				"getcure",
-				"getCurrentFolders"
-			],
-			[
-				"AssetFilter",
-				"AssetFilterGroup"
-			],
-			[
-				"rootg",
-				"assetFilterRootGroup  (variable)"
-			],
-			[
-				"Assetfi",
-				"AssetFilter"
-			],
-			[
-				"change",
-				"changed"
-			],
-			[
-				"Tagm",
-				"TagMatchCiteriaEdit.ui"
-			],
-			[
-				"_getmo",
-				"_getModulePath"
-			],
-			[
-				"setFocu",
-				"setFocusPolicy"
-			],
-			[
-				"isin",
-				"isinstance"
-			],
-			[
-				"creasse",
-				"createAsset"
-			],
-			[
-				"assetT",
-				"assetType"
-			],
-			[
-				"enter",
-				"enter_folder"
-			],
-			[
-				"warn",
-				"warning  (function)"
-			],
-			[
-				"Gentre",
-				"GenericTreeFilter"
-			],
-			[
-				"option",
-				"options"
-			],
-			[
-				"afi",
-				"affirmGroup"
-			],
-			[
-				"has",
-				"hasattr"
-			],
-			[
-				"buildas",
-				"buildAssetSearchInfo"
-			],
-			[
-				"build",
-				"buildAssetSearchInfo"
-			],
-			[
-				"folde",
-				"folders"
-			],
-			[
-				"getPath",
-				"getNodePath"
-			],
-			[
-				"addW",
-				"addWidget"
-			],
-			[
-				"tagmfactor",
-				"_TagMatchNodeFactories"
-			],
-			[
-				"MODE_FIL",
-				"MODE_FILTER"
-			],
-			[
-				"TWEN_",
-				"TWEEN_MODE_LINEAR"
-			],
-			[
-				"Tweem",
-				"TWEEN_MODE_BEZIER"
+				"init",
+				"initValue  (function)"
 			],
 			[
 				"getFram",
@@ -514,16 +410,136 @@
 			[
 				"getca",
 				"getCacheFile"
+			],
+			[
+				"remo",
+				"remove"
+			],
+			[
+				"exce",
+				"exception"
+			],
+			[
+				"wra",
+				"wrapmode"
+			],
+			[
+				"allow",
+				"atlas_allowed"
+			],
+			[
+				"pendingimpo",
+				"pendingImportGroups"
+			],
+			[
+				"spli",
+				"splitext  (function)"
+			],
+			[
+				"getabs",
+				"getAbsFilePath"
+			],
+			[
+				"register",
+				"registerAssetNode  (function)"
+			],
+			[
+				"getassetno",
+				"_getAssetNodeFromFile"
+			],
+			[
+				"import",
+				"importAsset"
+			],
+			[
+				"modi",
+				"modified"
+			],
+			[
+				"modif",
+				"modifiedAssets"
+			],
+			[
+				"has",
+				"has_key"
+			],
+			[
+				"assetta",
+				"assetTable"
+			],
+			[
+				"Tego",
+				"TextureGroupModel"
+			],
+			[
+				"group",
+				"groups"
+			],
+			[
+				"getA",
+				"getAbsPath"
+			],
+			[
+				"exclud",
+				"excluded_packages"
+			],
+			[
+				"exclu",
+				"excluded"
+			],
+			[
+				"excluded",
+				"excludedPackages"
+			],
+			[
+				"WARNI",
+				"LOG_WARNING"
+			],
+			[
+				"getPro",
+				"getProject"
+			],
+			[
+				"getProj",
+				"getProjectPath"
+			],
+			[
+				"currentColo",
+				"currentColorChanged"
+			],
+			[
+				"defa",
+				"defaultValue"
+			],
+			[
+				"ipo",
+				"import"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "test/game/lib/mock/sqscript/SQNodeLoop.lua",
+			"file": "lib/mock/asset/SQScriptAsset.py",
 			"settings":
 			{
-				"buffer_size": 1837,
+				"buffer_size": 1770,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lib/gii/AssetEditor/AssetBrowser.py",
+			"settings":
+			{
+				"buffer_size": 29377,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "gii_cfg.py",
+			"settings":
+			{
+				"buffer_size": 394,
 				"line_ending": "Unix"
 			}
 		},
@@ -531,222 +547,26 @@
 			"file": "test/game/lib/mock/sqscript/SQScript.lua",
 			"settings":
 			{
-				"buffer_size": 15151,
+				"buffer_size": 14294,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test/game/lib/mock/sqscript/SQNodeMsg.lua",
+			"file": "test/game/lib/mock/sqscript/SQNodeWait.lua",
 			"settings":
 			{
-				"buffer_size": 1589,
+				"buffer_size": 2537,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "test/game/lib/mock/sqscript/SQActor.lua",
-			"settings":
-			{
-				"buffer_size": 1429,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/game/lib/mock/sqscript/SQNodeSignal.lua",
-			"settings":
-			{
-				"buffer_size": 1216,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/gii/qt/controls/ToolBar.py",
-			"settings":
-			{
-				"buffer_size": 5917,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/gii/qt/controls/Window.py",
-			"settings":
-			{
-				"buffer_size": 11024,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Volumes/prj/moai/mock/mock/sqscript/SQNodeMsg.lua",
-			"settings":
-			{
-				"buffer_size": 1602,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/game/lib/mock/sqscript/SQNodeGoto.lua",
-			"settings":
-			{
-				"buffer_size": 0,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/gii/qt/controls/GenericTreeWidget.py",
-			"settings":
-			{
-				"buffer_size": 18193,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/game/lib/mock/sqscript/SQNodeLog.lua",
-			"settings":
-			{
-				"buffer_size": 490,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "lib/gii/qt/IconCache.py",
-			"settings":
-			{
-				"buffer_size": 596,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/game/test/sqtest.lua",
-			"settings":
-			{
-				"buffer_size": 1868,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "test/game/test.lua",
-			"settings":
-			{
-				"buffer_size": 2069,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "2015-12-30 16:30:19.635 Python[49744:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-30 16:30:19.635 Python[49744:507] CoreText performance note: Set a breakpoint on CTFontLogSuboptimalRequest to debug.\n2015-12-30 16:30:19.636 Python[49744:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\nstarting gii IDE...\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\nInitiating Turbo Badger - version 0.1.1\n[WARN:Lua]	no asset found	font/zipex.fnt	\n2\nstack traceback:\n	...mes/prj/gii/test/game/lib/mock/core/AssetLibrary.lua:387: in function 'loadAsset'\n	/Volumes/prj/gii/test/game/lib/mock/ui/TBManager.lua:21: in function 'onInit'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:287: in function 'initSubSystems'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:191: in function </Volumes/prj/gii/test/game/lib/mock/core/Game.lua:172>\n	(tail call): ?\n	/Volumes/prj/gii/test/game/lib/mock/env.lua:120: in function </Volumes/prj/gii/test/game/lib/mock/env.lua:119>\n2015-12-30 16:30:20.995 Python[49744:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-30 16:30:20.995 Python[49744:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-30 16:30:21.034 Python[49744:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-30 16:30:21.808 Python[49744:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-30 16:30:21.809 Python[49744:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-30 16:30:22.671 Python[49744:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-30 16:30:22.672 Python[49744:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\ntexture libray start\n2015-12-30 16:30:22.871 Python[49744:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-30 16:30:22.915 Python[49744:507] invalid drawable\n2015-12-30 16:30:22.915 Python[49744:507] invalid drawable\n2015-12-30 16:30:22.915 Python[49744:507] invalid drawable\n2015-12-30 16:30:22.915 Python[49744:507] invalid drawable\n2015-12-30 16:30:23.015 Python[49744:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-30 16:30:23.089 Python[49744:507] invalid drawable\n2015-12-30 16:30:23.089 Python[49744:507] invalid drawable\n2015-12-30 16:30:23.089 Python[49744:507] invalid drawable\n2015-12-30 16:30:23.089 Python[49744:507] invalid drawable\nTEXTURE: '/Volumes/prj/gii/test/env/config/cache/gii_f4f727f74b4a052e708783859e793987' is not a power of two (w:120, h:120)\nTEXTURE: '/Volumes/prj/gii/test/env/config/cache/gii_f4f727f74b4a052e708783859e793987' is not a power of two (w:120, h:120)\nfound joy: 0\nInitiating Turbo Badger - version 0.1.1\n[WARN:Lua]	no asset found	font/zipex.fnt	\n2\nstack traceback:\n	game/lib/mock/core/AssetLibrary.lua:387: in function 'loadAsset'\n	game/lib/mock/ui/TBManager.lua:21: in function 'onInit'\n	game/lib/mock/core/Game.lua:287: in function 'initSubSystems'\n	game/lib/mock/core/Game.lua:191: in function <game/lib/mock/core/Game.lua:172>\n	(tail call): ?\n	game/lib/mock/env.lua:120: in function 'init'\n	game/main_preview_scene.lua:22: in main chunk\nTEXTURE: '' is not a power of two (w:120, h:120)\nstart\nprogress\nprogress\nprogress\nprogress\nprogress\nprogress\nfound joy: 0\nInitiating Turbo Badger - version 0.1.1\n[WARN:Lua]	no asset found	font/zipex.fnt	\n2\nstack traceback:\n	game/lib/mock/core/AssetLibrary.lua:387: in function 'loadAsset'\n	game/lib/mock/ui/TBManager.lua:21: in function 'onInit'\n	game/lib/mock/core/Game.lua:287: in function 'initSubSystems'\n	game/lib/mock/core/Game.lua:191: in function <game/lib/mock/core/Game.lua:172>\n	(tail call): ?\n	game/lib/mock/env.lua:120: in function 'init'\n	game/main_preview_scene.lua:22: in main chunk\nTEXTURE: '' is not a power of two (w:120, h:120)\nstart\nSTART\nprogress\nSTART\nprogress\nSTART\nprogress\nSTART\nprogress\n\n[Finished in 77.0s]\n",
+			"contents": "starting gii IDE...\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\n[WARN:Lua]	no joystick sensor registered	\nInitiating Turbo Badger - version 0.1.1\nSkin loaded using 3 bitmaps.\ntexture libray start\nTEXTURE: '/Users/tommo/Projects/gii/test/env/config/cache/cat_2941de3a042233f1db2059fad23fefda' is not a power of two (w:348, h:379)\nTEXTURE: '/Users/tommo/Projects/gii/test/env/config/cache/cat_2941de3a042233f1db2059fad23fefda' is not a power of two (w:348, h:379)\n\n[Finished in 29.9s]\n",
 			"file": "test/BUILD_RESULT",
 			"file_size": -1,
 			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 5677,
-				"line_ending": "Unix",
-				"scratch": true
-			}
-		},
-		{
-			"contents": "2015-12-23 19:22:49.250 Python[67479:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-23 19:22:49.251 Python[67479:507] CoreText performance note: Set a breakpoint on CTFontLogSuboptimalRequest to debug.\n2015-12-23 19:22:49.283 Python[67479:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-23 19:22:49.362 Python[67479:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n\n[Finished in 24.3s]\n",
-			"file": "packages/Mock/SequenceEditor/BUILD_RESULT",
-			"file_size": -1,
-			"file_write_time": -1,
-			"settings":
-			{
-				"buffer_size": 909,
-				"line_ending": "Unix",
-				"scratch": true
-			}
-		},
-		{
-			"contents": "Traceback (most recent call last):\n  File \"/Volumes/prj/gii/lib/gii/AssetEditor/AssetBrowser.py\", line 10, in <module>\n    from gii.SceneEditor  import SceneEditorModule\n  File \"/Volumes/prj/gii/lib/gii/SceneEditor/__init__.py\", line 2, in <module>\n    from SceneEditor import SceneEditor, SceneEditorModule, getSceneSelectionManager\n  File \"/Volumes/prj/gii/lib/gii/SceneEditor/SceneEditor.py\", line 19, in <module>\n    from gii.moai.MOAIRuntime import MOAILuaDelegate\n  File \"/Volumes/prj/gii/lib/gii/moai/__init__.py\", line 1, in <module>\n    from MOAIRuntime     import  MOAIRuntime, MOAILuaDelegate, _G, LuaTableProxy, _LuaTable, _LuaThread, _LuaObject, _LuaFunction\n  File \"/Volumes/prj/gii/lib/gii/moai/MOAIRuntime.py\", line 7, in <module>\n    from AKU import getAKU, _LuaTable, _LuaThread, _LuaObject, _LuaFunction\nImportError: dlopen(/Volumes/prj/gii/lib/AKU.so, 2): Library not loaded: ./libfmodex.dylib\n  Referenced from: /Volumes/prj/gii/lib/AKU.so\n  Reason: image not found\n\n[Finished in 0.5s]\n",
-			"file": "lib/gii/AssetEditor/BUILD_RESULT",
-			"file_size": -1,
-			"file_write_time": -1,
-			"settings":
-			{
-				"buffer_size": 1007,
-				"line_ending": "Unix",
-				"scratch": true
-			}
-		},
-		{
-			"contents": "Traceback (most recent call last):\n  File \"/Users/tommo/Projects/gii/gii\", line 5, in <module>\n    gii_bin.main()\n  File \"/Users/tommo/Projects/gii/gii_bin.py\", line 73, in main\n    gii.startup()\n  File \"/Users/tommo/Projects/gii/lib/gii/__init__.py\", line 6, in startup\n    startupTool( info )\n  File \"/Users/tommo/Projects/gii/lib/gii/core/tool.py\", line 180, in startupTool\n    return startTool( toolInfo )\n  File \"/Users/tommo/Projects/gii/lib/gii/core/tool.py\", line 90, in startTool\n    m.main( sys.argv[ 1: ] )\n  File \"/Users/tommo/Projects/gii/tools/run/__init__.py\", line 26, in main\n    app.openProject()\n  File \"/Users/tommo/Projects/gii/lib/gii/core/EditorApp.py\", line 231, in openProject\n    raise Exception( 'no valid gii project found' )\nException: no valid gii project found\n\n[Finished in 0.1s with exit code 1]\n",
-			"file": "BUILD_RESULT",
-			"file_size": -1,
-			"file_write_time": -1,
-			"settings":
-			{
-				"buffer_size": 829,
-				"line_ending": "Unix",
-				"scratch": true
-			}
-		},
-		{
-			"contents": "2015-12-14 13:49:06.309 Python[56502:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-12-14 13:49:06.309 Python[56502:507] CoreText performance note: Set a breakpoint on CTFontLogSuboptimalRequest to debug.\n\n[Finished in 25.8s]\n",
-			"file": "lib/gii/qt/controls/BUILD_RESULT",
-			"file_size": -1,
-			"file_write_time": -1,
-			"settings":
-			{
-				"buffer_size": 401,
-				"line_ending": "Unix",
-				"scratch": true
-			}
-		},
-		{
-			"contents": "{'tag': '__root__', 'children': [{'tag': 'and', 'children': [{'tag': 'or', 'children': [{'tag': 'tag', 'children': ['damhill+1']}, {'tag': 'tag', 'children': ['common']}]}, {'tag': 'tag', 'children': ['furniture']}]}]}\n\n[Finished in 0.3s]\n",
-			"file": "lib/util/BracketTree/BUILD_RESULT",
-			"file_size": -1,
-			"file_write_time": -1,
-			"settings":
-			{
-				"buffer_size": 239,
-				"line_ending": "Unix",
-				"scratch": true
-			}
-		},
-		{
-			"contents": "[<*>dam*, <*>common, <+>furniture, <->proto]\nmatching pattern: t:dam* t:common +t:furniture -T:proto\n{'tag': ['damhill', 'furniture'], 'type': 'texture'} True\n{'tag': ['common', 'furniture'], 'type': 'proto'} False\n{'tag': ['common', 'tool'], 'type': 'texture'} False\n{'tag': ['damhill', 'NPC'], 'type': 'texture'} False\n\n[Finished in 0.2s]\n",
-			"file": "lib/util/TagMatch/BUILD_RESULT",
-			"file_size": -1,
-			"file_write_time": -1,
-			"settings":
-			{
-				"buffer_size": 341,
-				"line_ending": "Unix",
-				"scratch": true
-			}
-		},
-		{
-			"contents": "2015-11-03 18:12:04.491 Python[99589:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2015-11-03 18:12:04.492 Python[99589:507] CoreText performance note: Set a breakpoint on CTFontLogSuboptimalRequest to debug.\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\nQGLContext::makeCurrent: Cannot make invalid context current\n\n[Finished in 58.9s]\n",
-			"file": "lib/gii/qt/controls/GraphicsView/BUILD_RESULT",
-			"file_size": 15620,
-			"file_write_time": 1446441905000000,
-			"settings":
-			{
-				"buffer_size": 1255,
-				"line_ending": "Unix",
-				"scratch": true
-			}
-		},
-		{
-			"contents": "        saved atlas image file 'test/testpack.png' in 0.043 seconds\n        saved atlas image file 'test/testpack_n.png' in 0.037 seconds\n\n[Finished in 1.1s]\n",
-			"file": "lib/mock/asset/helper/BUILD_RESULT",
-			"file_size": -1,
-			"file_write_time": -1,
-			"settings":
-			{
-				"buffer_size": 158,
-				"line_ending": "Unix",
-				"scratch": true
-			}
-		},
-		{
-			"contents": "\n[Finished in 30.6s]\n",
-			"file": "lib/gii/qt/controls/ToolWindowManager/BUILD_RESULT",
-			"file_size": -1,
-			"file_write_time": -1,
-			"settings":
-			{
-				"buffer_size": 21,
+				"buffer_size": 565,
 				"line_ending": "Unix",
 				"scratch": true
 			}
@@ -755,15 +575,15 @@
 	"build_system": "IDE",
 	"command_palette":
 	{
-		"height": 58.0,
+		"height": 375.0,
 		"selected_items":
 		[
 			[
-				"checkou",
+				"check",
 				"Git: Checkout Current File"
 			],
 			[
-				"checkout",
+				"checkou",
 				"Git: Checkout Current File"
 			],
 			[
@@ -771,12 +591,12 @@
 				"Set Syntax: CSS"
 			],
 			[
-				"source",
-				"SourceTree: Open SourceTree"
-			],
-			[
 				"tab",
 				"Indentation: Convert to Tabs"
+			],
+			[
+				"browse",
+				"Preferences: Browse Packages"
 			],
 			[
 				"diff",
@@ -805,6 +625,10 @@
 			[
 				"diff cu",
 				"Git: Diff Current File"
+			],
+			[
+				"checkout",
+				"Git: Checkout Current File"
 			],
 			[
 				"git add",
@@ -1091,10 +915,6 @@
 				"Preferences: Browse Packages"
 			],
 			[
-				"browse",
-				"Preferences: Browse Packages"
-			],
-			[
 				"clang",
 				"Preferences: SublimeClang Settings – Default"
 			],
@@ -1199,7 +1019,7 @@
 				"Package Control: List Packages"
 			]
 		],
-		"width": 554.0
+		"width": 588.0
 	},
 	"console":
 	{
@@ -1216,134 +1036,134 @@
 	},
 	"file_history":
 	[
-		"/Volumes/prj/gii/test/game/asset/config/test.sq_script",
-		"/Volumes/prj/gii/lib/gii/SearchView/SearchView.py",
-		"/Volumes/prj/gii/lib/lua/mock_edit/common/EditorCommand.lua",
-		"/Volumes/prj/gii/packages/Mock/SQScriptEditor/SQScriptEditorWidget.py",
-		"/Volumes/prj/gii/test/game/lib/mock/sqscript/SQScript.lua",
-		"/Volumes/prj/gii/packages/Mock/SQScriptEditor/SQScriptEditor.py",
-		"/Volumes/prj/gii/test/game/lib/mock/sqscript/SQNodeSignal.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/sqscript/init.lua",
-		"/Volumes/prj/gii/lib/lua/mock_edit/sqscript/SQScriptEditor.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/sqscript/SQActor.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/sqscript/SQNodeWait.lua",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/component/Behaviour.lua",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/core/Actor.lua",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/sqscript/SQActor.lua",
+		"/Users/tommo/Projects/gii/lib/mock/SceneGraphEditor/SceneGraphEditor.py",
+		"/Users/tommo/Projects/gii/packages/Mock/Animator/AnimatorView.py",
+		"/Users/tommo/Projects/gii/packages/SerializableEditor/SerializableEditor.py",
+		"/Users/tommo/Projects/gii/packages/Mock/Animator/AnimatorWidget.py",
+		"/Users/tommo/Projects/gii/lib/gii/SceneEditor/GamePreview.py",
+		"/Users/tommo/Projects/gii/packages/Mock/SQScriptEditor/SQScriptEditorWidget.py",
+		"/Users/tommo/Projects/gii/packages/Mock/SQScriptEditor/SQScriptEditor.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/sqscript/SQScript.lua",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/sqscript/SQNodeMsg.lua",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/sqscript/SQNodeSignal.lua",
+		"/Users/tommo/Projects/gii/packages/Mock/TileMapEditor/TileMapEditor.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/sqscript/SQNodeLoop.lua",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/Window.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/sqscript/SQNodeGoto.lua",
+		"/Users/tommo/Projects/gii/lib/gii/SearchView/SearchView.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/sqscript/SQNodeScript.lua",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/sqscript/init.lua",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GenericTreeWidget.py",
+		"/Users/tommo/Projects/gii/gii_cfg.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/component/BTController.lua",
+		"/Users/tommo/Projects/gii/lib/gii/core/asset.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/Menu.py",
+		"/Users/tommo/Projects/gii/gii.sublime-project",
+		"/Users/tommo/Projects/gii/packages/Mock/EffectEditor/EffectEditor.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/sqscript/SQNodeLog.lua",
+		"/Users/tommo/Projects/gii/packages/Mock/ShaderEditor/ShaderEditor.lua",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GenericListWidget.py",
+		"/Users/tommo/Projects/gii/test/game/asset/config/test.sequence",
+		"/Users/tommo/Projects/gii/lib/mock/asset/AnimatorAsset.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/anim/AnimatorData.lua",
+		"/Users/tommo/Projects/gii/test/env/config/asset_table.json",
+		"/Users/tommo/Projects/gii/lib/gii/qt/IconCache.py",
+		"/Users/tommo/Projects/gii/test/BUILD_RESULT",
+		"/Users/tommo/Projects/gii/packages/Mock/SequenceEditor/BUILD_RESULT",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/ToolWindowManager/BUILD_RESULT",
+		"/Users/tommo/Projects/gii/lib/mock/asset/helper/BUILD_RESULT",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/BUILD_RESULT",
+		"/Users/tommo/Projects/gii/lib/mock/asset/BUILD_RESULT",
+		"/Users/tommo/Projects/gii/lib/util/TagMatch/BUILD_RESULT",
+		"/Users/tommo/Projects/gii/lib/util/BracketTree/BUILD_RESULT",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/BUILD_RESULT",
+		"/Users/tommo/Projects/gii/BUILD_RESULT",
+		"/Users/tommo/Projects/gii/lib/gii/AssetEditor/BUILD_RESULT",
+		"/Users/tommo/Projects/gii/packages/Mock/SQScriptEditor/SQScriptEditorWidget.ui",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/ToolWindowManager/ToolWindowManager.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/ToolWindowManager/ToolWindowManagerWrapper.py",
+		"/Users/tommo/Projects/gii/lib/mock/asset/StoryAsset.py",
+		"/Users/tommo/Projects/gii/lib/mock/asset/SQScriptAsset.py",
+		"/Users/tommo/Projects/gii/packages/Mock/SQScriptEditor/__init__.py",
+		"/Users/tommo/Projects/gii/lib/mock/asset/__init__.py",
+		"/Users/tommo/Projects/gii/packages/Mock/__init__.py",
+		"/Users/tommo/Projects/gii/packages/Mock/SequenceEditor/SequenceEditorWidget.py",
+		"/Users/tommo/Projects/gii/packages/Mock/SequenceEditor/SequenceEditor.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/env.lua",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/sequence/SQScript.lua",
+		"/Users/tommo/Projects/gii/lib/mock/asset/SequenceAsset.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/sequence/SQActor.lua",
+		"/Users/tommo/Projects/gii/lib/gii/AssetEditor/AssetBrowser.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/FlowLayout.py",
+		"/Users/tommo/Projects/gii/lib/gii/SceneEditor/Introspector.py",
+		"/Users/tommo/Projects/gii/test/game/asset/config/additive.material",
+		"/Users/tommo/Projects/gii/lib/mock/asset/PhysicsAsset.py",
 		"/Users/tommo/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
-		"/Volumes/prj/gii/lib/gii/qt/controls/PropertyEditor/AssetRefFieldEditor.py",
-		"/Volumes/prj/gii/lib/mock/SceneGraphEditor/SceneGraphEditor.py",
-		"/Volumes/prj/gii/test/game/lib/mock/sqscript/SQNodeLoop.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/sqscript/SQNodeLog.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/asset/EffectNode.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/asset/AuroraSprite.lua",
-		"/Volumes/prj/gii/packages/Mock/EffectEditor/EffectEditor.py",
-		"/Volumes/prj/gii/test/game/lib/mock/sqscript/SQNodeScript.lua",
-		"/Volumes/prj/gii/packages/Mock/SQScriptEditor/SQScriptEditor.lua",
-		"/Volumes/prj/gii/packages/Mock/SerializablePreview/SerializableAssetPreviewer.py",
-		"/Volumes/prj/gii/lib/mock/SceneView/SceneView.py",
-		"/Volumes/prj/gii/lib/lua/mock_edit/init.lua",
-		"/Volumes/prj/gii/lib/lua/mock_edit/sqscript/init.lua",
-		"/Volumes/prj/gii/lib/lua/mock_edit/defaults.lua",
-		"/Volumes/prj/gii/packages/Mock/Animator/AnimatorView.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/PropertyEditor/PropertyEditor.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/GenericTreeWidget.py",
-		"/Volumes/prj/gii/lib/gii/qt/QtEditorModule.py",
-		"/Volumes/prj/gii/lib/gii/core/EditorModule.py",
-		"/Volumes/prj/gii/packages/Mock/EffectEditor/EffectEditor.lua",
-		"/Volumes/prj/gii/packages/Mock/SQScriptEditor/SQNodeTextEditor.py",
-		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorClip.lua",
-		"/Volumes/prj/gii/lib/gii/AssetEditor/AssetFilter.py",
-		"/Volumes/prj/gii/lib/mock/MockRuntime.py",
-		"/Volumes/prj/gii/lib/mock/__init__.py",
-		"/Volumes/prj/gii/test/game/lib/mock/anim/Animator.lua",
-		"/Volumes/prj/gii/lib/gii/AssetEditor/AssetBrowser.py",
-		"/Volumes/prj/gii/packages/RemoteInput/RemoteInput.py",
-		"/Volumes/prj/gii/lib/mock/asset/AuroraAsset.py",
-		"/Volumes/prj/gii/packages/SerializableEditor/SerializableEditor.py",
-		"/Volumes/prj/gii/test/game/lib/mock/camerafx/CameraFXNode.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/camerafx/CameraFXCompositor.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/sqscript/SQNodeGoto.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/component/Behaviour.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/camerafx/CameraFXColorGrading.lua",
-		"/Volumes/prj/gii/lib/mock/SceneGraphEditor/SceneGraphEditor.lua",
-		"/Volumes/prj/gii/lib/gii/AssetEditor/AssetBrowserWidgets.py",
-		"/Volumes/prj/gii/test/game/lib/mock/core/Serializer.lua",
-		"/Volumes/prj/gii/test/game/test/sqtest.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/anim/AnimatorData.lua",
-		"/Volumes/prj/gii/lib/3rdparty/common/pyps/pyps.py",
-		"/Volumes/prj/gii/lib/mock/SceneGraphEditor/EntityEditor.py",
-		"/Volumes/prj/gii/test/game/lib/mock/sequence/SQScript.lua",
-		"/Volumes/prj/moai/mock/mock/sequence/SQNodeSemaphore.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/sequence/SQNodeWait.lua",
-		"/Volumes/prj/moai/mock/mock/sequence/SQNodeSignal.lua",
-		"/Volumes/prj/moai/mock/mock/sequence/init.lua",
-		"/Volumes/prj/moai/mock/mock/sequence/SQNodeGoto.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/core/utils.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/asset/PhysicsMaterial.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/component/PhysicsShape.lua",
-		"/Volumes/prj/gii/lib/gii/core/asset.py",
-		"/Volumes/prj/gii/test/game/lib/mock/sequence/SQActor.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/sequence/SQNodeLoop.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/sequence/SQNodeScript.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/sequence/init.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/sequence/SQNodeLog.lua",
-		"/Volumes/prj/gii/test/game/test.lua",
-		"/Volumes/prj/gii/packages/Mock/Animator/AnimatorView.lua",
-		"/Volumes/prj/gii/lib/lua/mock_edit/EditorCanvas/SceneView.lua",
-		"/Volumes/prj/gii/packages/Mock/LayerManager/LayerManager.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/Window.py",
-		"/Volumes/prj/gii/lib/gii/SceneEditor/CommandHistoryView.py",
-		"/Volumes/prj/gii/test/game/lib/mock/component/PhysicsBody.lua",
-		"/Volumes/prj/gii/packages/Mock/SequenceEditor/SequenceEditorWidget.py",
-		"/Volumes/prj/gii/packages/Mock/SequenceEditor/SequenceEditor.py",
-		"/Volumes/prj/gii/lib/mock/asset/SequenceAsset.py",
-		"/Volumes/prj/gii/packages/Mock/StoryView/StoryView.py",
-		"/Volumes/prj/gii/packages/Mock/__init__.py",
-		"/Volumes/prj/gii/test/game/lib/mock/asset/PhysicsBodyDef.lua",
-		"/Volumes/prj/gii/test/game/main.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/core/Game.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/core/Scene.lua",
-		"/Volumes/prj/gii/test/game/lib/mock/core/defaults.lua",
-		"/Volumes/prj/gii/test/game/asset/config/test.sequence",
-		"/Volumes/prj/gii/test/env/config/config.json",
-		"/Volumes/prj/gii/data/theme/gii.qss",
-		"/Volumes/prj/gii/lib/gii/qt/QtSupport.py",
-		"/Volumes/prj/gii/test/game/asset/.assetmeta/script.meta",
-		"/Volumes/prj/gii/test/game/asset/.assetmeta/test.meta",
-		"/Volumes/prj/gii/lib/gii/qt/controls/ColorPickerWidget.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/CategoryList.py",
-		"/Volumes/prj/gii/lib/gii/AssetEditor/AssetFilterWidget.py",
-		"/Volumes/prj/gii/lib/gii/moai/bridge.py",
-		"/Volumes/prj/gii/packages/Mock/DeployManager/DeployManager.py",
-		"/Volumes/prj/gii/lib/gii/core/__init__.py",
-		"/Volumes/prj/gii/lib/util/TagMatch/TagMatchPlain.py",
-		"/Volumes/prj/gii/support/waf/waflib/ConfigSet.py",
-		"/Volumes/prj/gii/lib/gii/DeviceManager/DeviceManager.py",
-		"/Volumes/prj/gii/packages/Mock/TextureManager/TextureManager.py",
-		"/Volumes/prj/gii/packages/Mock/StyleSheetEditor/StyleSheetEditor.py",
-		"/Volumes/prj/gii/packages/Mock/ScreenProfileManager/ScreenProfileManager.py",
-		"/Volumes/prj/gii/lib/gii/DeviceManager/DeviceBrowser.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/Menu.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/ToolBar.py",
-		"/Volumes/prj/gii/lib/gii/core/GUID.py",
-		"/Volumes/prj/gii/lib/gii/core/helpers.py",
-		"/Volumes/prj/gii/lib/3rdparty/common/click/core.py",
-		"/Volumes/prj/gii/lib/gii/core/res.py",
-		"/Volumes/prj/gii/lib/util/TagMatch/TagMatch.py",
-		"/Volumes/prj/gii/lib/gii/core/CommonRemoteCommands.py",
-		"/Volumes/prj/gii/lib/gii/core/CommonRemoteCommand/__init__.py",
-		"/Volumes/prj/gii/lib/gii/core/CommonRemoteCommand/RemoteCommandAsset.py",
-		"/Volumes/prj/gii/lib/gii/core/RemoteCommand.py",
-		"/Volumes/prj/gii/support/SublimeGii/RemoteCommands.py",
-		"/Volumes/prj/gii/lib/gii/moai/MOAIRuntime.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/TagEdit.py",
-		"/Volumes/prj/gii/lib/gii/qt/dialogs/Dialogs.py",
-		"/Volumes/prj/gii/lib/gii/AssetEditor/BUILD_RESULT",
-		"/Volumes/prj/gii/gii_cfg.py",
-		"/Volumes/prj/gii/packages/Mock/GlobalObjectManager/GlobalObjectManager.py",
-		"/Volumes/prj/gii/test/game/lib/mock/component/BehaviourScript.lua",
-		"/Volumes/prj/gii/lib/util/BracketTree/BracketTree.py",
-		"/Volumes/prj/gii/lib/util/TagMatch/__init__.py",
-		"/Volumes/prj/gii/lib/gii/qt/controls/FlowLayout.py",
-		"/Volumes/prj/gii/lib/util/TagMatch/TagMatch2.py"
+		"/Users/tommo/Projects/gii/lib/gii/AssetEditor/AssetFilter.py",
+		"/Users/tommo/Projects/gii/lib/mock/asset/DataJSONAsset.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/sequence/Sequence.lua",
+		"/Users/tommo/Projects/gii/lib/gii/AssetEditor/AssetFilterWidget.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/core/Game.lua",
+		"/Users/tommo/Projects/gii/data/theme/gii.qss",
+		"/Users/tommo/Projects/gii/lib/mock/asset/SQAsset.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/ElidedLabel.py",
+		"/Users/tommo/Projects/gii/lib/gii/AssetEditor/AssetBrowserWidgets.py",
+		"/Users/tommo/Projects/gii/test/env/config/config.json",
+		"/Users/tommo/Projects/gii/packages/Mock/LayerManager/LayerManager.lua",
+		"/Users/tommo/Projects/gii/packages/Mock/TextureManager/TextureManager.py",
+		"/Users/tommo/Projects/gii/lib/mock/asset/PexAsset.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/core/AssetLibrary.lua",
+		"/Users/tommo/Projects/gii/lib/3rdparty/common/pyqode/core/modes/wordclick.py",
+		"/Users/tommo/Projects/gii/lib/gii/SceneEditor/ObjectContainer.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/component/CameraManager.lua",
+		"/Users/tommo/Projects/gii/lib/util/BracketTree/__init__.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/GraphNodeView.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/PropertyEditor/CommonFieldEditors.py",
+		"/Users/tommo/Projects/gii/lib/gii/AssetEditor/__init__.py",
+		"/Users/tommo/Projects/gii/lib/gii/AssetEditor/AssetSearchEnumerator.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/PropertyEditor/FieldEditorControls.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/ui/TBTextField.lua",
+		"/Users/tommo/Projects/gii/packages/Mock/DeckEditor/Triangulator.py",
+		"/Users/tommo/Projects/gii/lib/util/TagMatch/TagMatch.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/TagEdit.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/GraphNodeItem.py",
+		"/Users/tommo/Projects/gii/lib/util/BracketTree/BracketTree.py",
+		"/Users/tommo/Projects/gii/lib/util/TagMatch/__init__.py",
+		"/Users/tommo/Projects/gii/lib/util/IDPool/IDPool.py",
+		"/Users/tommo/Projects/gii/lib/util/__init__.py",
+		"/Users/tommo/Projects/gii/lib/util/IDPool/__init__.py",
+		"/Users/tommo/Projects/gii/packages/Mock/PhysicsTools/PhysicsTools.py",
+		"/Users/tommo/Projects/gii/test/env/config/game_config.json",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/init.lua",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/component/BUILD_RESULT",
+		"/Users/tommo/Projects/gii/lib/gii/qt/QtSupport.py",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/ui/TBWidget.lua",
+		"/Users/tommo/Projects/gii/test/game/lib/mock/story/StoryManager.lua",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/GraphicsView/GraphNodeItemBase.py",
+		"/Users/tommo/Library/Application Support/Sublime Text 2/Packages/FuzzyFileNav/fuzzy_file_nav.sublime-settings",
+		"/Users/tommo/Library/Application Support/Sublime Text 2/Packages/FuzzyFileNav/fuzzy_file_nav.py",
+		"/Users/tommo/Library/Application Support/Sublime Text 2/Packages/FuzzyFileNav/Default (OSX).sublime-keymap",
+		"/Users/tommo/Library/Application Support/Sublime Text 2/Packages/FuzzyFileNav/Context.sublime-menu",
+		"/Users/tommo/Library/Application Support/Sublime Text 2/Packages/User/Default (OSX).sublime-keymap",
+		"/Users/tommo/Library/Application Support/Sublime Text 2/Packages/FuzzyFileNav/Side Bar.sublime-menu",
+		"/Users/tommo/Projects/gii/lib/gii/core/EditorModule.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/CodeEditor/CodeEditor.py",
+		"/Users/tommo/Projects/gii/lib/3rdparty/common/pyqode/core/api/code_edit.py",
+		"/Users/tommo/Projects/gii/lib/gii/qt/controls/PropertyEditor/CodeBoxFieldEditor.py",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAIImageLoadTask.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAISpineAnimationMixTable.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAISpineSkeleton.h",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAISpineSkeleton.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAISpineSkeletonData.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAISpineAtlas.cpp",
+		"/Users/tommo/Projects/gii/lib/gii/moai/MOAIRuntime.py",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAIJoystickManagerSDL.cpp",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAIJoystickFFBSensorSDL.h",
+		"/Users/tommo/Projects/gii/test/host/extension/MOAIJoystickManagerSDL.h",
+		"/Users/tommo/Projects/gii/test/host/extension/EWProp.cpp"
 	],
 	"find":
 	{
@@ -1351,18 +1171,9 @@
 	},
 	"find_in_files":
 	{
-		"height": 97.0,
+		"height": 0.0,
 		"where_history":
 		[
-			"*.lua",
-			"*.py",
-			"*.lua",
-			"*.py",
-			"*.lua",
-			"*.py",
-			"*.lua",
-			"*.py",
-			"*.lua",
 			"*.py",
 			"*.lua",
 			"*.py",
@@ -1447,134 +1258,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"getEntity():",
-			"actor",
-			"setJumpTarget",
-			" =",
+			"info",
+			"requestSearchView",
+			"FIX",
+			"local",
+			"entryNode",
 			"_jumpTargetNode",
-			"setJumpTarget",
-			"doJump",
-			"parentNode",
-			"nextNode",
-			"jump",
-			"jumpTarget",
-			"if",
-			"SQNode",
-			"SQNodeRoot",
-			"10004",
-			"SQScript",
-			"root",
 			"build",
-			"true",
-			"startScript",
-			"stopScript",
-			"SQRoutineContext",
-			"SQContext",
-			"SQRoutineContext",
-			"self.context",
-			"context",
-			"incSignalCounter",
-			"SQContext",
-			"SQRoutineContext",
-			":",
-			"Signal",
-			"context",
-			"execute( context",
-			"executeChildNodes",
-			"print",
-			".index =",
-			"looping",
-			"checkLoopDone",
-			"node",
-			"queue",
-			"node",
-			"entry",
-			"self",
-			"node",
-			"exitNode",
-			"checkLoopDone",
-			"isLoopDone",
-			"exitgroup",
-			"if",
-			"running",
-			"false",
-			"yield",
-			"index",
-			"currentQueue",
-			"node0",
-			"tryEnterGroup",
-			"node",
-			"tryEnterGroup",
-			"nextNode",
-			"index",
-			"routine",
-			"routineContext",
-			"not",
-			"end",
-			"pushNodeGroupStack",
-			"index",
-			"pushNodeGroupStack",
-			"index",
-			"routinecohnt",
-			"contex",
-			"routineContexts",
-			"roluti",
-			"routine",
-			"Routine",
-			"context",
 			"executeRoutine",
-			"currentNode",
-			"self",
-			"currentNode",
-			"node1",
-			"currentNodeEnv",
-			"pushNodeGroupStack",
-			"curretin",
-			"group",
-			" =",
-			"return",
-			"index",
-			"parentNode",
-			"env",
-			"return",
-			"currentNodeEnv",
-			"self",
-			"udpaten",
+			"loadScript",
+			"script",
+			"_postLoad",
+			"load",
+			"buil",
+			"d",
+			"build",
+			":load",
+			"add",
+			"labelNodes",
+			"labelNode",
+			"labelNodes",
+			"findLabelNode",
 			"end",
-			"node",
+			"targetNode",
+			"findlabel",
+			"_jumpTargetNode",
+			"executeChildNodes",
+			":enter",
+			"goto",
+			"getRichText",
+			"jump",
+			"load",
+			"self",
+			"index",
+			"insert",
+			"nodes",
+			"labelNodes",
+			"Inserting",
+			"searching",
+			"title",
+			"GOTO",
+			"label",
+			"entryNode",
+			"jumpTargetNode",
+			"targetj",
+			"stop",
+			"end",
+			"aflse",
+			"enter",
+			"endAll",
+			"enter",
+			"id",
+			"SQNodeLabel",
+			"SQNodeGoto",
+			"enter",
+			"jump",
+			"resultStep",
+			"resultEnter",
+			"jump",
+			"resultEnter",
+			"findLabel",
+			"getParentrou",
+			"getParerou",
+			"onUnload",
+			"onLoad",
+			"onRemove",
+			"addchild",
+			"label",
+			"labels",
 			"routine",
-			"index",
-			"group",
-			"enter",
-			"table",
-			"contex",
-			"context",
-			"mainLoop",
-			"execNode",
+			"getRoutin",
+			"getroot",
+			"entryNode",
 			"node",
-			"nmode",
-			"groupStack",
-			"STEP",
-			"popNodeGroupStack",
-			"pushExecutionStack",
-			"nodeGroupStack",
-			"executionStack",
-			"ExecutionStack",
-			"executionStack",
-			"ExecutionStack",
-			"popExecutionStack",
-			"pushExecutionStack",
-			"end",
-			"index",
-			"nextNode",
-			"node",
-			"coroutines",
-			"execNode",
-			"enter",
-			"update",
-			"currentParentNode",
+			"__jump",
+			"getJumpTarget",
+			"executeroutine",
+			"executeChildNodes",
+			"env",
+			"SQN",
+			"SQNodeRoot",
+			"rootnode",
+			"_SQConexteCoroutineFunc",
+			"executeroutine",
+			"jump",
+			"jumpingNode",
+			"executeChildNodes",
+			"actor",
+			"getENtity",
+			"actor",
+			"isg",
+			"frame",
+			"msg",
+			"MSG",
+			"wait_random",
+			"wait_frame",
 			"self",
-			"stack"
+			"data",
+			"frameCount",
+			"WAIT",
+			"actor",
+			"containe",
+			"get",
+			"true",
+			"msgRec",
+			"listNodeType",
+			"ned",
+			"getActor",
+			"return",
+			"MsgId",
+			"signal",
+			"Signal",
+			"signal",
+			"Signal",
+			"signal",
+			"Signal",
+			"signal",
+			"Signal",
+			"signal",
+			"Signal",
+			"signal",
+			"Signal",
+			"signal",
+			"Signal",
+			"ffffef",
+			"color",
+			"local",
+			"parent",
+			"children"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1582,35 +1393,8 @@
 		"regex": false,
 		"replace_history":
 		[
-			"insert",
-			"\\1 = \\2",
-			"\\1 ):",
-			"TWEEN_MODE",
-			"TweenMode",
-			"tweenMode",
-			"TweenMode",
-			"tweenMode",
-			"TweenMode",
-			"tweenMode",
-			"PreBP",
-			"PostBP",
-			"BPY",
-			"BPX",
-			"bpy",
-			"bpx",
-			"postBP",
-			"preBP",
-			"bpy",
-			"bpx",
-			"postBezierPoint",
-			"preBezierPoint",
-			"BezierPoint",
-			"bezierPoint",
-			"BezierPoint",
-			"bezierPoint",
-			"CurveMode",
-			"curveMode",
-			"isCurveTrack",
+			"SQScript",
+			"assetFilter",
 			"iconList",
 			"IconList",
 			"MOCKJoystickMgr",
@@ -1709,7 +1493,34 @@
 			"bitVisited",
 			"return",
 			"MOAICoroutine",
-			"TaskFacility"
+			"TaskFacility",
+			"type",
+			"connectCheckSeq",
+			"mSectionGrid->",
+			"block",
+			"Block",
+			"block",
+			"blockFlag",
+			"TILE(\\1,\\2)",
+			"u32",
+			"fullTasks",
+			"res.tex",
+			"windowMap",
+			"UIWindowMap",
+			"TestManualGrid",
+			"map",
+			"mainGame",
+			"yield()",
+			"digTasks",
+			"Observer",
+			"AttrObject",
+			"setTile(\\1,",
+			"getTile(\\1,",
+			"getCellAddr",
+			"coordToCellAddr",
+			"$(SRCROOT)/../../../lib/",
+			"../../../lib/",
+			"~/moai-dev/3rdparty"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -1725,24 +1536,25 @@
 			[
 				{
 					"buffer": 0,
-					"file": "test/game/lib/mock/sqscript/SQNodeLoop.lua",
+					"file": "lib/mock/asset/SQScriptAsset.py",
 					"settings":
 					{
-						"buffer_size": 1837,
+						"buffer_size": 1770,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								536,
-								536
+								1282,
+								1282
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"easy_motion_mode": false,
+							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
@@ -1753,57 +1565,24 @@
 				},
 				{
 					"buffer": 1,
-					"file": "test/game/lib/mock/sqscript/SQScript.lua",
+					"file": "lib/gii/AssetEditor/AssetBrowser.py",
 					"settings":
 					{
-						"buffer_size": 15151,
+						"buffer_size": 29377,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4387,
-								4400
-							],
-							[
-								4426,
-								4439
+								9667,
+								9684
 							]
 						],
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"easy_motion_mode": false,
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 3313.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "test/game/lib/mock/sqscript/SQNodeMsg.lua",
-					"settings":
-					{
-						"buffer_size": 1589,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								236,
-								236
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage",
+							"syntax": "Packages/Python/Python.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
@@ -1813,54 +1592,25 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "test/game/lib/mock/sqscript/SQActor.lua",
+					"buffer": 2,
+					"file": "gii_cfg.py",
 					"settings":
 					{
-						"buffer_size": 1429,
+						"buffer_size": 394,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1310,
-								1310
+								394,
+								394
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 217.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "test/game/lib/mock/sqscript/SQNodeSignal.lua",
-					"settings":
-					{
-						"buffer_size": 1216,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								713,
-								713
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"syntax": "Packages/Python/Python.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1871,43 +1621,15 @@
 			]
 		},
 		{
-			"selected": 9,
+			"selected": 1,
 			"sheets":
 			[
 				{
-					"buffer": 5,
-					"file": "lib/gii/qt/controls/ToolBar.py",
+					"buffer": 3,
+					"file": "test/game/lib/mock/sqscript/SQScript.lua",
 					"settings":
 					{
-						"buffer_size": 5917,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								298,
-								298
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "lib/gii/qt/controls/Window.py",
-					"settings":
-					{
-						"buffer_size": 11024,
+						"buffer_size": 14294,
 						"regions":
 						{
 						},
@@ -1916,34 +1638,6 @@
 							[
 								0,
 								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "test/game/lib/mock/sqscript/SQScript.lua",
-					"settings":
-					{
-						"buffer_size": 15151,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2881,
-								2881
 							]
 						],
 						"settings":
@@ -1954,72 +1648,17 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2244.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "/Volumes/prj/moai/mock/mock/sqscript/SQNodeMsg.lua",
-					"settings":
-					{
-						"buffer_size": 1602,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 8,
-					"file": "test/game/lib/mock/sqscript/SQNodeGoto.lua",
+					"buffer": 4,
+					"file": "test/game/lib/mock/sqscript/SQNodeWait.lua",
 					"settings":
 					{
-						"buffer_size": 0,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "lib/gii/qt/controls/GenericTreeWidget.py",
-					"settings":
-					{
-						"buffer_size": 18193,
+						"buffer_size": 2537,
 						"regions":
 						{
 						},
@@ -2033,145 +1672,8 @@
 						"settings":
 						{
 							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 7468.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "test/game/lib/mock/sqscript/SQNodeLog.lua",
-					"settings":
-					{
-						"buffer_size": 490,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								301,
-								301
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "lib/gii/qt/IconCache.py",
-					"settings":
-					{
-						"buffer_size": 596,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								383,
-								383
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
-							"syntax": "Packages/Python/Python.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 72.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "test/game/lib/mock/sqscript/SQNodeLog.lua",
-					"settings":
-					{
-						"buffer_size": 490,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								293,
-								293
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "test/game/test/sqtest.lua",
-					"settings":
-					{
-						"buffer_size": 1868,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1818,
-								1818
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
 							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1313.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "test/game/test.lua",
-					"settings":
-					{
-						"buffer_size": 2069,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								518,
-								518
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"syntax": "Packages/Lua/Lua.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -2186,301 +1688,26 @@
 			"sheets":
 			[
 				{
-					"buffer": 14,
+					"buffer": 5,
 					"file": "test/BUILD_RESULT",
 					"settings":
 					{
-						"buffer_size": 5677,
+						"buffer_size": 565,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5677,
-								5677
+								565,
+								565
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Volumes/prj/gii/test",
+							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"result_base_dir": "/Users/tommo/Projects/gii/test",
 							"result_file_regex": "",
-							"result_line_regex": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1038.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 15,
-					"file": "packages/Mock/SequenceEditor/BUILD_RESULT",
-					"settings":
-					{
-						"buffer_size": 909,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								909,
-								909
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Volumes/prj/gii/packages/Mock/SequenceEditor",
-							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
-							"result_line_regex": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 16,
-					"file": "lib/gii/AssetEditor/BUILD_RESULT",
-					"settings":
-					{
-						"buffer_size": 1007,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1007,
-								1007
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Volumes/prj/gii/lib/gii/AssetEditor",
-							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
-							"result_line_regex": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 17,
-					"file": "BUILD_RESULT",
-					"settings":
-					{
-						"buffer_size": 829,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								829,
-								829
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Users/tommo/Projects/gii",
-							"result_file_regex": "",
-							"result_line_regex": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 18,
-					"file": "lib/gii/qt/controls/BUILD_RESULT",
-					"settings":
-					{
-						"buffer_size": 401,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								401,
-								401
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Volumes/prj/gii/lib/gii/qt/controls",
-							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
-							"result_line_regex": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 19,
-					"file": "lib/util/BracketTree/BUILD_RESULT",
-					"settings":
-					{
-						"buffer_size": 239,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								239,
-								239
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Volumes/prj/gii/lib/util/BracketTree",
-							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
-							"result_line_regex": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 20,
-					"file": "lib/util/TagMatch/BUILD_RESULT",
-					"settings":
-					{
-						"buffer_size": 341,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								341,
-								341
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Volumes/prj/gii/lib/util/TagMatch",
-							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
-							"result_line_regex": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 21,
-					"file": "lib/gii/qt/controls/GraphicsView/BUILD_RESULT",
-					"settings":
-					{
-						"buffer_size": 1255,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1255,
-								1255
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Volumes/prj/gii/lib/gii/qt/controls/GraphicsView",
-							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
-							"result_line_regex": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 22,
-					"file": "lib/mock/asset/helper/BUILD_RESULT",
-					"settings":
-					{
-						"buffer_size": 158,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								158,
-								158
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Users/tommo/Projects/gii/lib/mock/asset/helper",
-							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
-							"result_line_regex": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 23,
-					"file": "lib/gii/qt/controls/ToolWindowManager/BUILD_RESULT",
-					"settings":
-					{
-						"buffer_size": 21,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								21,
-								21
-							]
-						],
-						"settings":
-						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
-							"result_base_dir": "/Users/tommo/Projects/gii/lib/gii/qt/controls/ToolWindowManager",
-							"result_file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
 							"result_line_regex": "",
 							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
@@ -2577,516 +1804,516 @@
 		"selected_items":
 		[
 			[
-				"sq_scr",
-				"test/game/asset/config/test.sq_script"
+				"gamepre",
+				"lib/gii/SceneEditor/GamePreview.py"
 			],
 			[
-				"test.lu",
-				"test/game/test.lua"
+				"giicf",
+				"gii_cfg.py"
 			],
 			[
-				"loop",
-				"test/game/lib/mock/sqscript/SQNodeLoop.lua"
+				"sqedit",
+				"packages/Mock/SQScriptEditor/SQScriptEditor.py"
 			],
 			[
-				"sqtest",
-				"test/game/test/sqtest.lua"
+				"assbro",
+				"lib/gii/AssetEditor/AssetBrowser.py"
 			],
 			[
-				"sqscript",
+				"sqedito",
+				"packages/Mock/SQScriptEditor/SQScriptEditor.py"
+			],
+			[
+				"sqscrip",
 				"test/game/lib/mock/sqscript/SQScript.lua"
 			],
 			[
-				"sqsignal",
-				"test/game/lib/mock/sqscript/SQNodeSignal.lua"
+				"sqscript.l",
+				"test/game/lib/mock/sqscript/SQScript.lua"
 			],
 			[
-				"sqactor",
-				"test/game/lib/mock/sqscript/SQActor.lua"
-			],
-			[
-				"sqnodewi",
-				"test/game/lib/mock/sqscript/SQNodeWait.lua"
-			],
-			[
-				"mockedit",
-				"lib/lua/mock_edit/common/EditorCommand.lua"
+				"sqediwi",
+				"packages/Mock/SQScriptEditor/SQScriptEditorWidget.py"
 			],
 			[
 				"searview",
 				"lib/gii/SearchView/SearchView.py"
 			],
 			[
-				"nodelog",
-				"test/game/lib/mock/sqscript/SQNodeLog.lua"
-			],
-			[
-				"iconcache",
-				"lib/gii/qt/IconCache.py"
-			],
-			[
-				"scenegraph",
-				"lib/mock/SceneGraphEditor/SceneGraphEditor.py"
-			],
-			[
-				"gentrewi",
-				"lib/gii/qt/controls/GenericTreeWidget.py"
-			],
-			[
-				"effenode",
-				"test/game/lib/mock/asset/EffectNode.lua"
-			],
-			[
-				"sqsc",
-				"test/game/lib/mock/sqscript/SQScript.lua"
-			],
-			[
 				"sqnode",
-				"test/game/lib/mock/sqscript/SQNodeScript.lua"
+				"test/game/lib/mock/sqscript/SQNodeGoto.lua"
 			],
 			[
-				"efedito",
-				"packages/Mock/EffectEditor/EffectEditor.py"
+				"behavi",
+				"test/game/lib/mock/component/Behaviour.lua"
 			],
 			[
-				"sqscedwi",
-				"packages/Mock/SQScriptEditor/SQScriptEditorWidget.py"
+				"sqac",
+				"test/game/lib/mock/sqscript/SQActor.lua"
+			],
+			[
+				"actor",
+				"test/game/lib/mock/core/Actor.lua"
+			],
+			[
+				"sqmsg",
+				"test/game/lib/mock/sqscript/SQNodeMsg.lua"
+			],
+			[
+				"sqactor",
+				"test/game/lib/mock/sqscript/SQActor.lua"
 			],
 			[
 				"sq",
 				"test/game/lib/mock/sqscript/SQScript.lua"
 			],
 			[
-				"sqscedit",
-				"lib/lua/mock_edit/sqscript/SQScriptEditor.lua"
-			],
-			[
-				"sqeditor",
-				"packages/Mock/SQScriptEditor/SQScriptEditor.py"
-			],
-			[
-				"effedi",
-				"packages/Mock/EffectEditor/EffectEditor.py"
-			],
-			[
-				"animatov",
-				"packages/Mock/Animator/AnimatorView.py"
-			],
-			[
-				"qteditorm",
-				"lib/gii/qt/QtEditorModule.py"
-			],
-			[
-				"editormodul",
-				"lib/gii/core/EditorModule.py"
-			],
-			[
-				"effeeditor",
-				"packages/Mock/EffectEditor/EffectEditor.py"
-			],
-			[
-				"generic",
-				"lib/gii/qt/controls/GenericTreeWidget.py"
-			],
-			[
-				"sqscripeditor",
-				"packages/Mock/SQScriptEditor/SQScriptEditor.py"
-			],
-			[
-				"sqscript.lua",
+				"sqs",
 				"test/game/lib/mock/sqscript/SQScript.lua"
 			],
 			[
-				"sqscrip",
-				"packages/Mock/SQScriptEditor/SQScriptEditorWidget.py"
+				"getrewi",
+				"lib/gii/qt/controls/GenericTreeWidget.py"
 			],
 			[
-				"sqlog",
-				"test/game/lib/mock/sqscript/SQNodeLog.lua"
+				"scegraphedito",
+				"lib/mock/SceneGraphEditor/SceneGraphEditor.py"
 			],
 			[
-				"propertyed",
-				"lib/gii/qt/controls/PropertyEditor/PropertyEditor.py"
-			],
-			[
-				"sqedito",
-				"packages/Mock/SQScriptEditor/SQScriptEditor.lua"
-			],
-			[
-				"effectnode",
-				"test/game/lib/mock/asset/EffectNode.lua"
-			],
-			[
-				"edffece",
-				"packages/Mock/EffectEditor/EffectEditor.py"
-			],
-			[
-				"scripteditor",
-				"packages/Mock/SQScriptEditor/SQScriptEditor.py"
-			],
-			[
-				"mock.py",
-				"lib/mock/__init__.py"
-			],
-			[
-				"editormo",
-				"lib/gii/core/EditorModule.py"
+				"animatorwid",
+				"packages/Mock/Animator/AnimatorWidget.py"
 			],
 			[
 				"ser",
 				"packages/SerializableEditor/SerializableEditor.py"
 			],
 			[
-				"animator",
-				"test/game/lib/mock/anim/Animator.lua"
+				"sered",
+				"packages/Mock/ShaderEditor/ShaderEditor.lua"
 			],
 			[
-				"searvi",
-				"lib/gii/SearchView/SearchView.py"
-			],
-			[
-				"editorcom",
-				"lib/lua/mock_edit/common/EditorCommand.lua"
-			],
-			[
-				"effectedito",
-				"packages/Mock/EffectEditor/EffectEditor.py"
-			],
-			[
-				"sqeditorwi",
-				"packages/Mock/SQScriptEditor/SQScriptEditorWidget.py"
-			],
-			[
-				"animtor.lu",
-				"test/game/lib/mock/anim/Animator.lua"
-			],
-			[
-				"behvio",
-				"test/game/lib/mock/component/Behaviour.lua"
-			],
-			[
-				"test.sq",
-				"test/game/asset/config/test.sq_script"
-			],
-			[
-				"sereditor",
-				"packages/SerializableEditor/SerializableEditor.py"
-			],
-			[
-				"seredito",
-				"packages/SerializableEditor/SerializableEditor.py"
-			],
-			[
-				"window",
-				"lib/gii/qt/controls/Window.py"
-			],
-			[
-				"toolbar",
-				"lib/gii/qt/controls/ToolBar.py"
-			],
-			[
-				"entityeditor",
-				"lib/mock/SceneGraphEditor/EntityEditor.py"
-			],
-			[
-				"sqeditr",
-				"packages/Mock/SQScriptEditor/SQScriptEditorWidget.py"
-			],
-			[
-				"scegraph",
-				"lib/mock/SceneGraphEditor/SceneGraphEditor.lua"
-			],
-			[
-				"assetbroww",
-				"lib/gii/AssetEditor/AssetBrowserWidgets.py"
-			],
-			[
-				"caemrafx",
-				"test/game/lib/mock/camerafx/CameraFXCompositor.lua"
-			],
-			[
-				"py",
-				"lib/3rdparty/common/pyps/pyps.py"
-			],
-			[
-				"serilizer",
-				"test/game/lib/mock/core/Serializer.lua"
-			],
-			[
-				"test.lua",
-				"test/game/test.lua"
-			],
-			[
-				"animatorvie",
+				"animatorview",
 				"packages/Mock/Animator/AnimatorView.py"
 			],
 			[
-				"scene",
-				"lib/lua/mock_edit/EditorCanvas/SceneView.lua"
+				"listwid",
+				"lib/gii/qt/controls/GenericListWidget.py"
 			],
 			[
-				"phmat",
-				"test/game/lib/mock/asset/PhysicsMaterial.lua"
+				"sqscri",
+				"test/game/lib/mock/sqscript/SQScript.lua"
 			],
 			[
-				"physh",
-				"test/game/lib/mock/component/PhysicsShape.lua"
+				"generl",
+				"lib/gii/qt/controls/GenericListWidget.py"
 			],
 			[
-				"animatordata",
+				"asset.jso",
+				"test/env/config/asset_table.json"
+			],
+			[
+				"animatordat",
 				"test/game/lib/mock/anim/AnimatorData.lua"
 			],
 			[
-				"scene.",
-				"test/game/lib/mock/core/Scene.lua"
+				"sqscriptas",
+				"lib/mock/asset/SQScriptAsset.py"
 			],
 			[
-				"game",
-				"test/game/lib/mock/core/Game.lua"
+				"asset.json",
+				"test/env/config/asset_table.json"
 			],
 			[
-				"physbody",
-				"test/game/lib/mock/component/PhysicsBody.lua"
+				"sqscript.lu",
+				"test/game/lib/mock/sqscript/SQScript.lua"
 			],
 			[
-				"phymater",
-				"test/game/lib/mock/asset/PhysicsMaterial.lua"
+				"iconcah",
+				"lib/gii/qt/IconCache.py"
 			],
 			[
-				"storyview",
-				"packages/Mock/StoryView/StoryView.py"
+				"sqscr",
+				"test/game/lib/mock/sqscript/SQScript.lua"
 			],
 			[
-				"game/",
-				"test/game/main.lua"
+				"sere",
+				"packages/SerializableEditor/SerializableEditor.py"
 			],
 			[
-				"seqass",
+				"animview",
+				"packages/Mock/Animator/AnimatorView.py"
+			],
+			[
+				"sqscriptei",
+				"packages/Mock/SQScriptEditor/SQScriptEditor.py"
+			],
+			[
+				"qscripteid",
+				"packages/Mock/SQScriptEditor/SQScriptEditorWidget.py"
+			],
+			[
+				"sqscras",
+				"lib/mock/asset/SQScriptAsset.py"
+			],
+			[
+				"sequenc",
+				"packages/Mock/SequenceEditor/SequenceEditor.py"
+			],
+			[
+				"animatoras",
+				"lib/mock/asset/AnimatorAsset.py"
+			],
+			[
+				"seque",
 				"lib/mock/asset/SequenceAsset.py"
 			],
 			[
-				"sequence.lua",
-				"test/game/lib/mock/sequence/SQActor.lua"
+				"sqscript",
+				"test/game/lib/mock/sequence/SQScript.lua"
 			],
 			[
-				"genertr",
-				"lib/gii/qt/controls/GenericTreeWidget.py"
+				"window.py",
+				"lib/gii/qt/controls/Window.py"
 			],
 			[
-				"qtsupo",
-				"lib/gii/qt/QtSupport.py"
+				"toolwindow",
+				"lib/gii/qt/controls/ToolWindowManager/ToolWindowManagerWrapper.py"
 			],
 			[
-				"gii.qss",
-				"data/theme/gii.qss"
+				"seria",
+				"packages/SerializableEditor/SerializableEditor.py"
 			],
 			[
-				"sequeedit",
-				"packages/Mock/SequenceEditor/SequenceEditorWidget.py"
+				"sequedi",
+				"packages/Mock/SequenceEditor/SequenceEditor.py"
 			],
 			[
-				"configjs",
-				"test/env/config/config.json"
+				"physi",
+				"lib/mock/asset/PhysicsAsset.py"
 			],
 			[
-				"asset",
-				"lib/gii/core/asset.py"
+				"data",
+				"lib/mock/asset/DataJSONAsset.py"
 			],
 			[
-				"scriptmeta",
-				"test/game/asset/.assetmeta/script.meta"
-			],
-			[
-				"test/script",
-				"test/game/asset/.assetmeta/script.meta"
-			],
-			[
-				"config.",
-				"test/env/config/config.json"
-			],
-			[
-				"getrei",
-				"lib/gii/qt/controls/GenericTreeWidget.py"
-			],
-			[
-				"assfilt",
-				"lib/gii/AssetEditor/AssetFilter.py"
-			],
-			[
-				"layer",
-				"packages/Mock/LayerManager/LayerManager.py"
-			],
-			[
-				"genrtre",
-				"lib/gii/qt/controls/GenericTreeWidget.py"
-			],
-			[
-				"asfil",
-				"lib/gii/AssetEditor/AssetFilter.py"
-			],
-			[
-				"assetbrowser",
-				"lib/gii/AssetEditor/AssetBrowser.py"
-			],
-			[
-				"assetfilter",
-				"lib/gii/AssetEditor/AssetFilter.py"
-			],
-			[
-				"filter",
-				"lib/gii/AssetEditor/AssetFilter.py"
-			],
-			[
-				"sset.py",
-				"support/waf/waflib/ConfigSet.py"
-			],
-			[
-				"tagmat",
-				"lib/util/TagMatch/TagMatchPlain.py"
-			],
-			[
-				"tagmapl",
-				"lib/util/TagMatch/TagMatchPlain.py"
-			],
-			[
-				"config",
-				"test/env/config/config.json"
-			],
-			[
-				"config.j",
-				"test/env/config/config.json"
-			],
-			[
-				"assetbrow",
-				"lib/gii/AssetEditor/AssetBrowser.py"
-			],
-			[
-				"texturemanger",
-				"packages/Mock/TextureManager/TextureManager.py"
-			],
-			[
-				"device",
-				"lib/gii/DeviceManager/DeviceManager.py"
-			],
-			[
-				"deployman",
-				"packages/Mock/DeployManager/DeployManager.py"
-			],
-			[
-				"textumanger",
-				"packages/Mock/TextureManager/TextureManager.py"
+				"storyass",
+				"lib/mock/asset/StoryAsset.py"
 			],
 			[
 				"gentrew",
 				"lib/gii/qt/controls/GenericTreeWidget.py"
 			],
 			[
-				"layerman",
-				"packages/Mock/LayerManager/LayerManager.py"
-			],
-			[
-				"assetwi",
-				"lib/gii/AssetEditor/AssetBrowserWidgets.py"
-			],
-			[
-				"qss",
+				"gii.q",
 				"data/theme/gii.qss"
 			],
 			[
-				"genertrew",
-				"lib/gii/qt/controls/GenericTreeWidget.py"
+				"seqeditow",
+				"packages/Mock/SequenceEditor/SequenceEditorWidget.py"
 			],
 			[
-				"configj",
+				"btcontro",
+				"test/game/lib/mock/component/BTController.lua"
+			],
+			[
+				"squ",
+				"test/game/lib/mock/sequence/Sequence.lua"
+			],
+			[
+				"mock/lu",
+				"packages/Mock/LayerManager/LayerManager.lua"
+			],
+			[
+				"config.",
 				"test/env/config/config.json"
 			],
 			[
-				"giicoreinit",
-				"lib/gii/core/__init__.py"
+				"assetfil",
+				"lib/gii/AssetEditor/AssetFilter.py"
 			],
 			[
-				"core",
-				"lib/3rdparty/common/click/core.py"
+				"asset.py",
+				"lib/gii/core/asset.py"
 			],
 			[
-				"editmo",
-				"lib/gii/core/EditorModule.py"
+				"assetli",
+				"test/game/lib/mock/core/AssetLibrary.lua"
 			],
 			[
-				"qtedi",
-				"lib/gii/qt/QtEditorModule.py"
+				"searvi",
+				"lib/gii/SearchView/SearchView.py"
 			],
 			[
-				"res.py",
-				"lib/gii/core/res.py"
+				"asssetfilter",
+				"lib/gii/AssetEditor/AssetFilterWidget.py"
 			],
 			[
-				"qteditr",
-				"lib/gii/qt/QtEditorModule.py"
+				"flow",
+				"lib/gii/qt/controls/FlowLayout.py"
 			],
 			[
-				"qtedito",
-				"lib/gii/qt/QtEditorModule.py"
+				"assetbo",
+				"lib/gii/AssetEditor/AssetBrowser.py"
+			],
+			[
+				"intro",
+				"lib/gii/SceneEditor/Introspector.py"
+			],
+			[
+				"object",
+				"lib/gii/SceneEditor/ObjectContainer.py"
+			],
+			[
+				"elided",
+				"lib/gii/qt/controls/ElidedLabel.py"
+			],
+			[
+				"textureman",
+				"packages/Mock/TextureManager/TextureManager.py"
+			],
+			[
+				"asset",
+				"lib/gii/core/asset.py"
 			],
 			[
 				"menu",
 				"lib/gii/qt/controls/Menu.py"
 			],
 			[
-				"entityedit",
-				"lib/mock/SceneGraphEditor/EntityEditor.py"
-			],
-			[
-				"tagma",
-				"lib/util/TagMatch/TagMatchPlain.py"
-			],
-			[
-				"genet",
-				"lib/gii/qt/controls/GenericTreeWidget.py"
-			],
-			[
-				"tagmatch",
-				"lib/util/TagMatch/TagMatch.py"
-			],
-			[
-				"tagmath",
-				"lib/util/TagMatch/TagMatch.py"
-			],
-			[
-				"remote",
-				"support/SublimeGii/RemoteCommands.py"
-			],
-			[
-				"remo",
-				"lib/gii/core/RemoteCommand.py"
-			],
-			[
-				"assebro",
+				"assetbr",
 				"lib/gii/AssetEditor/AssetBrowser.py"
 			],
 			[
-				"ssetbor",
-				"lib/gii/AssetEditor/AssetBrowser.py"
+				"comfie",
+				"lib/gii/qt/controls/PropertyEditor/CommonFieldEditors.py"
 			],
 			[
-				"dialogs",
-				"lib/gii/qt/dialogs/Dialogs.py"
+				"textfield",
+				"test/game/lib/mock/ui/TBTextField.lua"
 			],
 			[
-				"tagedit",
+				"t",
+				"packages/Mock/DeckEditor/Triangulator.py"
+			],
+			[
+				"bra",
+				"lib/util/BracketTree/BracketTree.py"
+			],
+			[
+				"tagedi",
 				"lib/gii/qt/controls/TagEdit.py"
 			],
 			[
-				"assetwidget",
-				"lib/gii/AssetEditor/AssetBrowserWidgets.py"
+				"gameconf",
+				"test/env/config/game_config.json"
 			],
 			[
-				"asetbro",
+				"test/bin",
+				"test/game/lib/mock/init.lua"
+			],
+			[
+				"project",
+				"gii.sublime-project"
+			],
+			[
+				"nodevi",
+				"lib/gii/qt/controls/GraphicsView/GraphNodeView.py"
+			],
+			[
+				"game",
+				"test/game/lib/mock/core/Game.lua"
+			],
+			[
+				"cameraman",
+				"test/game/lib/mock/component/CameraManager.lua"
+			],
+			[
+				"qtsu",
+				"lib/gii/qt/QtSupport.py"
+			],
+			[
+				"qt",
+				"lib/gii/qt/QtSupport.py"
+			],
+			[
+				".qss",
+				"data/theme/gii.qss"
+			],
+			[
+				"codeedit",
+				"lib/3rdparty/common/pyqode/core/api/code_edit.py"
+			],
+			[
+				"effecte",
+				"packages/Mock/EffectEditor/EffectEditor.py"
+			],
+			[
+				"searchvi",
+				"lib/gii/SearchView/SearchView.py"
+			],
+			[
+				"editormo",
+				"lib/gii/core/EditorModule.py"
+			],
+			[
+				"tbwidget",
+				"test/game/lib/mock/ui/TBWidget.lua"
+			],
+			[
+				"tbman",
+				"test/game/lib/mock/ui/TBManager.lua"
+			],
+			[
+				"storyman",
+				"test/game/lib/mock/story/StoryManager.lua"
+			],
+			[
+				"tbmanag",
+				"test/game/lib/mock/ui/TBManager.lua"
+			],
+			[
+				"textlibr",
+				"test/env/config/texture_library.json"
+			],
+			[
+				"textreasset",
+				"lib/mock/asset/TextureAsset.py"
+			],
+			[
+				"moaiimage",
+				"test/host/extension/MOAIImageLoadTask.cpp"
+			],
+			[
+				"moaispine",
+				"test/host/extension/MOAISpineAnimation.cpp"
+			],
+			[
+				"akumodule",
+				"test/host/host-modules/aku_modules.cpp"
+			],
+			[
+				"giiruntime",
+				"lib/gii/moai/MOAIRuntime.py"
+			],
+			[
+				"ewprop",
+				"test/host/extension/EWProp.cpp"
+			],
+			[
+				"subli",
+				"gii.sublime-project"
+			],
+			[
+				"sublipro",
+				"gii.sublime-project"
+			],
+			[
+				".cpp",
+				"test/host/extension/TMPathGrid.cpp"
+			],
+			[
+				"giihelp",
+				"test/host/python/GIIHelper.h"
+			],
+			[
+				"sdlcommon",
+				"test/host/sdl-common/MOAISDLJoystickManager.h"
+			],
+			[
+				"sdlho",
+				"test/host/osx/SDLHost.cpp"
+			],
+			[
+				"testjoy",
+				"test/game/asset/script/TestJoystick.lua"
+			],
+			[
+				"sdl",
+				"test/host/osx/SDLHost.cpp"
+			],
+			[
+				"tesgraph",
+				"lib/gii/qt/controls/GraphicsView/TestGraphView.py"
+			],
+			[
+				"animawi",
+				"packages/Mock/Animator/AnimatorWidget.py"
+			],
+			[
+				"storyview",
+				"packages/Mock/StoryView/StoryView.py"
+			],
+			[
+				"graphviewhl",
+				"lib/gii/qt/controls/GraphicsView/GraphicsViewHelper.py"
+			],
+			[
+				"direct",
+				"lib/gii/qt/controls/GraphicsView/DirectGraphNodeView.py"
+			],
+			[
+				"storyvie",
+				"packages/Mock/StoryView/StoryView.py"
+			],
+			[
+				"btconto",
+				"test/game/lib/mock/component/BTController.lua"
+			],
+			[
+				"graphview",
+				"lib/gii/qt/controls/GraphicsView/TestGraphView.py"
+			],
+			[
+				"assetbor",
 				"lib/gii/AssetEditor/AssetBrowser.py"
 			],
 			[
-				"scegra",
-				"lib/mock/SceneGraphEditor/SceneGraphEditor.py"
+				"gii",
+				"gii_bin.py"
+			],
+			[
+				"storygraph",
+				"test/game/lib/mock/story/StoryGraph.lua"
+			],
+			[
+				"qtsup",
+				"lib/gii/qt/QtSupport.py"
+			],
+			[
+				"storycon",
+				"test/game/lib/mock/story/StoryContext.lua"
+			],
+			[
+				"freejoywra",
+				"test/host/freejoy/freejoyWrapper.cpp"
+			],
+			[
+				"joystick",
+				"test/game/lib/mock/core/Joystick.lua"
+			],
+			[
+				"moaisdl",
+				"test/host/sdl-common/MOAISDLJoystickManager.h"
+			],
+			[
+				"moaijoy",
+				"lib/gii/moai/MOAIJoystickHook.py"
+			],
+			[
+				"scenevie",
+				"lib/lua/mock_edit/EditorCanvas/SceneView.lua"
+			],
+			[
+				"scengralu",
+				"lib/mock/SceneGraphEditor/SceneGraphEditor.lua"
+			],
+			[
+				"scenevi",
+				"lib/lua/mock_edit/EditorCanvas/SceneView.lua"
+			],
+			[
+				"gizmo",
+				"lib/lua/mock_edit/EditorCanvas/Gizmo.lua"
 			]
 		],
 		"width": 0.0

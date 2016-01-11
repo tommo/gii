@@ -3,6 +3,8 @@ from psd_tools_helper import extract_leaf_layers
 
 from PIL import Image
 
+from PyAffineTransform import AffineTransform
+
 from PSDDeckPackProject import *
 from NormalMapHelper import makeNormalMap
 from MetaTag import parseMetaTag
@@ -251,6 +253,9 @@ class MQuadDeckPart( DeckPart ):
 				self.meshes.append( quadTop )
 
 
+	def postBuild( self ):
+		self.buildAtlasUV()
+
 	def getBottom( self ):
 		return self.y + self.h
 
@@ -274,6 +279,13 @@ class MQuadDeckPart( DeckPart ):
 				vert[ 1 ] += offy
 			self.globalMeshes.append( gmesh )
 
+	def updateLocalMeshOffset( self, dx, dy, dz ):
+		for mesh in self.meshes:
+			for vert in gmesh['verts']:
+				vert[ 0 ] -= dx
+				vert[ 1 ] += dy
+				vert[ 2 ] += dz
+
 	def buildAtlasUV( self ):
 		node = self.getAtlasNode()
 		if not node:
@@ -289,6 +301,7 @@ class MQuadDeckPart( DeckPart ):
 
 	def getGlobalMeshes( self ):
 		return self.globalMeshes
+
 
 ##----------------------------------------------------------------##
 class MQuadDeckItem(DeckItem):
@@ -319,7 +332,7 @@ class MQuadDeckItem(DeckItem):
 			'type'  : 'deck2d.mquad'
 		}
 
-	def onBuild( self, project ):
+	def buildAABB( self ):
 		bottom = 0
 		right  = 0
 		top    = 0xffffffff #huge number
@@ -329,8 +342,11 @@ class MQuadDeckItem(DeckItem):
 			left   = min( left,   part.getLeft()   )
 			right  = max( right,  part.getRight()  )
 			top    = min( top,    part.getTop()    )
-
 		self.aabb = ( left, top, right, bottom )
+
+	def onBuild( self, project ):
+		self.buildAABB()
+		left, top, right, bottom = self.aabb		
 		self.buildHeightGuide( left, top, right, bottom )
 		
 		for part in self.parts:
@@ -360,7 +376,7 @@ class MQuadDeckItem(DeckItem):
 
 	def postBuild( self, project ):
 		for part in self.parts:
-			part.buildAtlasUV()
+			part.postBuild()
 
 	def getAtlasImgInfos( self ):
 		infos = []
@@ -380,9 +396,9 @@ class MQuadDeckProcessor( DeckProcessor ):
 					self.project.setOption ( 'global-guide-top-face', y1 )
 					return
 
-	def acceptLayer( self, psdLayer, metaInfo ):
+	def acceptLayer( self, psdLayer, metaInfo, fallback ):
 		tags = metaInfo[ 'tags' ]
-		if self.isDefaultProcessor:
+		if fallback:
 			return True
 		else:
 			return tags.has_key( 'MQ' )

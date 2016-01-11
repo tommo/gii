@@ -93,7 +93,7 @@
       "mode": "search", 
       "splitter_sizes": [
         80, 
-        1124
+        117
       ]
     }, 
     "main": {
@@ -117,7 +117,7 @@
       "mode": "browse", 
       "splitter_sizes": [
         146, 
-        269
+        276
       ]
     }
   }, 
