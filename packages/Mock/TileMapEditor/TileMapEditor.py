@@ -87,6 +87,7 @@ class TileMapEditor( SceneEditorModule ):
 			editable = True
 		 )
 		self.treeLayers.parentModule = self
+		self.treeLayers.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding )
 
 		self.listTerrain = TileMapTerrainList(
 			window.containerLayers,
