@@ -268,21 +268,26 @@ class MQuadDeckPart( DeckPart ):
 	def getTop( self ):
 		return self.y
 
-	def updateGlobalMeshOffset( self, globalLeft, globalBottom ):
+	def updateGlobalMesh( self, globalLeft, globalBottom ):
 		offy = globalBottom - self.getBottom()
 		offx = globalLeft   - self.getLeft()
 		self.globalMeshes = []
 		for mesh in self.meshes:
 			gmesh = copy.deepcopy( mesh )
-			for vert in gmesh['verts']:
-				vert[ 0 ] -= offx
-				vert[ 1 ] += offy
 			self.globalMeshes.append( gmesh )
-
-	def updateLocalMeshOffset( self, dx, dy, dz ):
-		for mesh in self.meshes:
+		self.applyGlobalMeshOffset( -offx, offy, 0 )
+		
+	def applyGlobalMeshOffset( self, dx, dy, dz ):
+		for gmesh in self.globalMeshes:
 			for vert in gmesh['verts']:
-				vert[ 0 ] -= dx
+				vert[ 0 ] += dx
+				vert[ 1 ] += dy
+				vert[ 2 ] += dz
+
+	def applyLocalMeshOffset( self, dx, dy, dz ):
+		for mesh in self.meshes:
+			for vert in mesh['verts']:
+				vert[ 0 ] += dx
 				vert[ 1 ] += dy
 				vert[ 2 ] += dz
 
@@ -354,7 +359,7 @@ class MQuadDeckItem(DeckItem):
 
 		#move mesh
 		for part in self.parts:
-			part.updateGlobalMeshOffset( left, bottom )
+			part.updateGlobalMesh( left, bottom )
 
 
 	def buildHeightGuide( self, x0, y0, x1, y1 ):
@@ -383,6 +388,10 @@ class MQuadDeckItem(DeckItem):
 		for part in self.parts:
 			infos.append( part.getAtlasImgInfo() )
 		return infos
+
+	def applyGlobalMeshOffset( self, dx, dy, dz ):
+		for part in self.parts:
+			part.applyGlobalMeshOffset( dx, dy, dz )
 
 ##----------------------------------------------------------------##
 class MQuadDeckProcessor( DeckProcessor ):
