@@ -292,12 +292,36 @@ function TileMapEditor:__init()
 	self.currentTileBrush    = false
 	self.randomEnabled       = false
 	self.tileBrush           = false
+
+	self.targetTileMap = false
+	self.targetTileMapLayer = false
+	self.viewSelectedOnly = false
 end
 
 function TileMapEditor:onLoad()
 	self.tilesetViewer = self:addSibling( TilesetViewer() )
 	self.tilesetViewer.parentEditor = self
 	self.gridLine = false
+end
+
+function TileMapEditor:setViewSelectedOnly( toggle )
+	self.viewSelectedOnly = toggle
+	return self:refreshLayerVisibility()
+end
+
+function TileMapEditor:refreshLayerVisibility()
+	if not self.targetTileMap then return end
+	if self.viewSelectedOnly and self.targetTileMapLayer then
+		for i, layer in ipairs( self.targetTileMap:getLayers() ) do
+			local selected = self.targetTileMapLayer == layer
+			layer:setVisible( selected )
+		end
+	else
+		for i, layer in ipairs( self.targetTileMap:getLayers() ) do
+			layer:setVisible( true )
+		end
+	end
+	mock_edit.getCurrentSceneView():updateCanvas()
 end
 
 function TileMapEditor:findTargetTileMap()
@@ -322,7 +346,14 @@ function TileMapEditor:findTargetTileMap()
 end
 
 function TileMapEditor:setTargetTileMap( m )
+	local prevMap = self.targetTileMap
 	self.targetTileMap = m
+	if prevMap then
+		for i, layer in ipairs( prevMap:getLayers() ) do
+			layer:setVisible( true )
+		end	
+	end
+	self:refreshLayerVisibility()
 end
 
 function TileMapEditor:setTargetTileMapLayer( l )
@@ -342,6 +373,7 @@ function TileMapEditor:setTargetTileMapLayer( l )
 	else
 		self.tilesetViewer:setTargetTileset( false )
 	end
+	self:refreshLayerVisibility()
 end
 
 function TileMapEditor:getTargetTileMapLayer()

@@ -33,7 +33,7 @@ import EffectPreview
 import ScreenProfileManager
 
 import SQScriptEditor
-import StoryView
+# import StoryView
 
 import TileMapEditor
 
