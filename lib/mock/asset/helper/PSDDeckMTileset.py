@@ -2,134 +2,122 @@ from psd_tools import PSDImage, Group, Layer
 from psd_tools_helper import extract_leaf_layers
 
 from PSDDeckPackProject import *
+from PSDDeckMQuad import MQuadDeckPart, MQuadDeckItem
 from NormalMapHelper import makeNormalMap
 from MetaTag import parseMetaTag
 
 ##----------------------------------------------------------------##
-class TilePart( DeckPart ):
-	def __init__( self, psdLayer ):
-		super( TilePart, self ).__init__( psdLayer )
+class TileItemPart( MQuadDeckPart ):
+	def __init__( self, parentItem, psdLayer ):
+		super( TileItemPart, self ).__init__( parentItem, psdLayer )
 		self.imgNormal = None
 		self.alt = 0
 		self.deckOffset = ( 0,0,0 )
 		self.meshes = []
-
-	def getImage( self, imageSet ):
-		if imageSet == 'normal':
-			return self.imgNormal
-		else:
-			if self.img: return self.img
-			self.img = self._layer.as_PIL()
-			return self.img
-
-	def getImage( self, imgSet ):
-		if imgSet == 'normal':
-			return self.getNormalMap()
-		else:
-			return self.getTextureMap()
-	
-	def getTextureMap( self ):
-		if self.img: return self.img
-		self.img = self._layer.as_PIL()
-		return self.img
-
-	def getNormalMap( self ):
-		if self.imgNormal:
-			return self.imgNormal
-		else:
-			return self.getTextureMap()
+		if self.foldMode == 'auto':
+			self.foldMode = 'floor'
 
 	def onBuild( self, project ):
-		( dx0, dy0, dx1,dy1 ) = self.getDeckRect()
-		# w = dx1 - dx0
-		# h = dy1 - dy0
-		w = self.w
-		h = self.h
+		return super( TileItemPart, self ).onBuild( project )
+
+class TileItem( MQuadDeckItem ):
+	def createPart( self, layer ):
+		return TileItemPart( self, layer )
+
+	def onBuild( self, project ):
+		super( TileItem, self ).onBuild( project )
+		group = self.parentGroup
+		self.itemName = '%s.%s' % ( group.name, self.name )
+		self.fullName = '%s.%s' % ( group.fullname, self.name )
+		if group.tileType == 'C':
+			self.onBuildForCommon()
+		elif group.tileType == 'T':
+			self.onBuildForTerrain()
+
+	def onBuildForCommon( self ):
+		group = self.parentGroup
+		tw, td, alt = group.getDim()
+		self.alt = alt
+		self.applyGlobalMeshOffset( 0, alt, 0 )
+		self.deckOffset = [ 0, alt, 0 ]
+
+	def onBuildForTerrain( self ):
+		group = self.parentGroup
+		tw, td, alt = group.getDim()
+		self.alt = alt
+		k = self.name
+		x0,y0,z0, x1,y1,z1 = self.getMeshAABB()
+		ox, oy, oz = 0, 0, 0
+		w, h = self.getSize()
+		# w, h = self.w, self.h
+		if k in [ 'n', 'c', 'ne', 'e', '-sw', 'we', 'ew' ] : #bottom left
+			ox = 0
+			oy = alt
+			oz = 0
+		elif k in ['s', 'se', '-nw' ]: #top left
+			ox = 0
+			oy = alt
+			oz = 0
+		elif k in [ 'w', 'nw', '-se' ] : #bottom right
+			ox = 0
+			oy = alt
+			oz = 0
+		elif k in [ 'sw', 'ne' ] : #top right
+			ox = 0
+			oy = alt
+			oz = 0
+		# elif k == 'ne':
+		# 	ox = 0
+		# 	oy = alt
+		# elif k == 'se':
+		# 	ox = 0
+		# 	oy = 0
+		# 	oz = alt + th - h
+		# elif k == 'nw':
+		# 	ox = tw - w
+		# 	oy = alt
+		# elif k == 'sw':
+		# 	ox = tw - w
+		# 	oy = 0
+		# 	oz = alt + th - h
+		# elif k == '-ne':
+		# 	ox = 0
+		# 	oy = 0
+		# 	oz = alt + th - h
+		# elif k == '-se':
+		# 	ox = 0
+		# 	oy = alt
+		# elif k == '-nw':
+		# 	ox = 0
+		# 	oy = 0
+		# 	oz = alt + th - h
+		# elif k == '-sw':
+		# 	ox = 0
+		# 	oy = alt
+		# elif k == 'we':
+		# 	ox = 0
+		# 	oy = 0
+		# 	oz = alt + th - h
+		# elif k == 'ew':
+		# 	ox = 0
+		# 	oy = 0
+		# 	oz = alt + th - h
+		self.applyGlobalMeshOffset( ox, oy, oz )
+		self.deckOffset = [ ox, oy, oz ]
+
+	def getData( self ):
+		data = super( TileItem, self ).getData()
+		data[ 'name' ] = self.itemName
+		data[ 'basename' ] = self.name
+		data[ 'fullname' ] = self.fullName
+		data[ 'deck_offset' ] = self.deckOffset
+		data[ 'raw_rect'    ] = self.aabb
+		if self.parts:
+			data[ 'raw_index' ] = self.parts[0].getRawIndex()
+		else:
+			data[ 'raw_index' ] = 0
+		return data
 		
-		ox, oy, oz = self.getDeckOffset()
-		localGuideTopFace = self.h - ( self.alt - oy )
-		oy = oy + oz
-		oz = - oz
-		# print self.fullName, w, h, '|', ox, oy, oz, '|', localGuideTopFace
-		#build mesh
-		#format: x,y,z/ u,v /color
-		if localGuideTopFace < h:
-			x0 = 0
-			y0 = 0
-			z0 = 0
-			x1 = w
-			y1 = h - localGuideTopFace
-			z1 = 0
-			u0 = float(x0) / w
-			v0 = float(y0) / h
-			u1 = float(x1) / w
-			v1 = float(y1) / h
-			quadFront = {
-				'verts' : [
-					[ x0 + ox, y0 +oy, z0 + oz ], 
-					[ x1 + ox, y0 +oy, z0 + oz ], 
-					[ x1 + ox, y1 +oy, z1 + oz ], 
-					[ x0 + ox, y1 +oy, z1 + oz ]
-				],
-				'uv' : [
-					[ u0,v0 ],
-					[ u1,v0 ],
-					[ u1,v1 ],
-					[ u0,v1 ],
-				]
-			}
-			self.meshes.append( quadFront )
-
-		if localGuideTopFace > 0:
-			x0 = 0
-			y0 = h - localGuideTopFace
-			z0 = 0
-			x1 = w
-			y1 = h
-			z1 = -( y1 - y0 )
-			u0 = float(x0) / w
-			v0 = float(y0) / h
-			u1 = float(x1) / w
-			v1 = float(y1) / h
-			quadTop = {
-				'verts' : [
-					[ x0 + ox, y0 + oy, z0 + oz ], 
-					[ x1 + ox, y0 + oy, z0 + oz ], 
-					[ x1 + ox, y1 + oy, z1 + oz ], 
-					[ x0 + ox, y1 + oy, z1 + oz ]
-				],
-				'uv' : [
-					[ u0,v0 ],
-					[ u1,v0 ],
-					[ u1,v1 ],
-					[ u0,v1 ],
-				]
-			}
-			self.meshes.append( quadTop )
-		normalOption = {
-			'guide-top-face' : localGuideTopFace
-		}
-		self.imgNormal = makeNormalMap( self.getTextureMap(), normalOption )
-
-	def postBuild( self, project ):
-		self.buildAtlasUV()
-
-	def buildAtlasUV( self ):
-		node = self.getAtlasNode()
-		if not node:
-			print( 'no atlas node for deck', self.name )
-		uvrect = node.getUVRect()
-		u0, v0, u1 ,v1 = uvrect
-		du = u1 - u0
-		dv = v1 - v0
-		for mesh in self.meshes:
-			for uv in mesh['uv']:
-				uv[0] = uv[0] * du + u0
-				uv[1] = uv[1] * dv + v0
-
-	def getMeshes( self ):
-		return self.meshes
-
 ##----------------------------------------------------------------##
 class TileGroup(object):
 	def __init__( self ):
@@ -144,6 +132,7 @@ class TileGroup(object):
 
 	def addTile( self, tile ):
 		self.tiles.append( tile )
+		tile.parentGroup = self
 
 	def getDim( self ):
 		return self.tileset.tileWidth, self.tileset.tileHeight, self.tileAlt
@@ -158,94 +147,14 @@ class TileGroup(object):
 		else:
 			raise Exception( 'invalid tileset name format: %s' % self.rawName )
 		self.fullname = self.tileset.name + ':' + self.name
-		if self.tileType == 'C':
-			self.buildCommonTiles( project )
-		elif self.tileType == 'T':
-			self.buildTerrainTiles( project )
+
+		for tile in self.tiles:
+			tile.onBuild( project )
 
 	def postBuild( self, project ):
 		for tile in self.tiles:
 			tile.postBuild( project )
 
-	def buildCommonTiles( self, project ):
-		tw, td, alt = self.getDim()
-		for tile in self.tiles:
-			k = tile.name
-			w, h = tile.w, tile.h
-			ox, oy = 0, alt
-			tile.itemName = '%s.%s' % ( self.name, k )
-			tile.fullName = '%s.%s' % ( self.fullname, k )
-			tile.deckRect = ( ox, oy, ox + w, oy + h )
-			tile.alt = alt
-			tile.deckOffset = ( 0,alt,0 )
-			tile.onBuild( project )
-
-	def buildTerrainTiles( self, project ):
-		tw, th, alt = self.getDim()
-		for tile in self.tiles:
-			tile.alt = alt
-			k = tile.name
-			w, h = tile.w, tile.h
-			ox, oy = 0, 0
-			oz = 0
-			tile.itemName = '%s.%s' % ( self.name, k )
-			tile.fullName = '%s.%s' % ( self.fullname, k )
-			if k == 'n':
-				ox = 0
-				oy = alt
-			elif k == 's':
-				ox = 0
-				oy = 0
-				oz = alt + th - h
-			elif k == 'w':
-				ox = tw - w
-				oy = alt
-			elif k == 'e':
-				ox = 0
-				oy = alt
-			elif k == 'ne':
-				ox = 0
-				oy = alt
-			elif k == 'se':
-				ox = 0
-				oy = 0
-				oz = alt + th - h
-			elif k == 'nw':
-				ox = tw - w
-				oy = alt
-			elif k == 'sw':
-				ox = tw - w
-				oy = 0
-				oz = alt + th - h
-			elif k == '-ne':
-				ox = 0
-				oy = 0
-				oz = alt + th - h
-			elif k == '-se':
-				ox = 0
-				oy = alt
-			elif k == '-nw':
-				ox = 0
-				oy = 0
-				oz = alt + th - h
-			elif k == '-sw':
-				ox = 0
-				oy = alt
-			elif k == 'we':
-				ox = 0
-				oy = 0
-				oz = alt + th - h
-			elif k == 'ew':
-				ox = 0
-				oy = 0
-				oz = alt + th - h
-			elif k == 'c':
-				ox = 0
-				oy = alt
-			tile.deckRect   = ( ox, oy, ox+w, oy+oz+h )
-			tile.deckOffset = ( ox, oy, oz )
-			tile.onBuild( project )
-	
 	def __repr__( self ):
 		return '%s: %s( %d, %d, %d )' % ( self.name, self.tileType, self.tileWidth, self.tileDepth, self.tileHeight )
 
@@ -253,20 +162,7 @@ class TileGroup(object):
 		data = {}
 		tileDatas = []
 		for t in self.tiles:
-			node = t.getAtlasNode()
-			assert node
-			tileData = {
-				'name'       : t.itemName,
-				'basename'   : t.name,
-				'fullname'   : t.fullName,
-				'atlas'      : str( node.root.id ),
-				'rect'       : node.getRect(),
-				'deck_rect'  : t.getDeckRect(),
-				'deck_offset': t.getDeckOffset(),
-				'raw_rect'   : t.getRawRect(),
-				'raw_index'  : t.getRawIndex(),
-				'meshes'     : t.getMeshes()
-			}
+			tileData = t.getData()
 			tileDatas.append( tileData )
 		data[ 'name'     ] = self.name
 		data[ 'raw_name' ] = self.rawName
@@ -293,6 +189,10 @@ class MTilesetDeckItem( DeckItem ):
 			if isinstance( subLayer, Group ):
 				self.collectGroup( subLayer )
 
+	def processItemLayer( self, psdLayer, metaInfo ):
+		project = self.project
+		tags = metaInfo[ 'tags' ]
+		
 	def collectGroup( self, group ):
 		tileGroup = TileGroup()
 		tileGroup.rawName = group.name.encode( 'utf-8' )
@@ -301,18 +201,29 @@ class MTilesetDeckItem( DeckItem ):
 			for layer in l.layers:
 				layerName = layer.name.encode( 'utf-8' )
 				if layerName.startswith( '//' ): continue
-				if parentName:
-					fullName = parentName + '/' + layerName
-				else:
-					fullName = layerName
-				
+				isGroup = isinstance( layer, Group )
+				if isGroup:
+					#if namespace
+					mo = re.match( '\s*\[\s*([\w_-]+\s*\]\s*)', layerName )
+					if mo:
+						layerName = mo.group(0)
+						fullName = parentName and (parentName + '/' + layerName) or layerName
+						_collectLayer( layer, fullName )
+						continue
+
+				#common
+				fullName = parentName and (parentName + '/' + layerName) or layerName
+				partLayers = []
 				if isinstance( layer, Group ):
-					_collectLayer( layer, fullName )
+					partLayers = extract_leaf_layers( layer )
 				else:
-					tile = TilePart( layer )
-					tile.rawName = layerName
-					tile.name    = fullName
-					tileGroup.addTile( tile )
+					partLayers = [ layer ]
+
+				tile = TileItem( fullName, partLayers )
+				tile.rawName = layerName
+				tile.name = fullName
+				tileGroup.addTile( tile )
+
 		_collectLayer( group )
 		self.groups.append( tileGroup )
 		tileGroup.tileset = self
@@ -341,11 +252,7 @@ class MTilesetDeckItem( DeckItem ):
 		infos = []
 		for group in self.groups:
 			for tile in group.tiles:
-				( w, h ) = tile.getSize()
-				img = DeckPartImg ( '', w, h, (0, 0, w, h) )	
-				img.src = tile
-				tile.imgInfo = img
-				infos.append( img )
+				infos += tile.getAtlasImgInfos()
 		return infos
 
 	def getData( self ):
@@ -367,7 +274,7 @@ class MTilesetDeckProcessor( DeckProcessor ):
 	def onLoadImage( self, psdImage ):
 		pass
 
-	def acceptLayer( self, psdLayer, metaInfo ):
+	def acceptLayer( self, psdLayer, metaInfo, fallback ):
 		if not isinstance( psdLayer, Group ): return False
 		tags = metaInfo[ 'tags' ]
 		return tags.has_key( 'TILESET' ) or tags.has_key( 'TS' )

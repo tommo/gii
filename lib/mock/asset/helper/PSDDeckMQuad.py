@@ -252,7 +252,6 @@ class MQuadDeckPart( DeckPart ):
 				}
 				self.meshes.append( quadTop )
 
-
 	def postBuild( self ):
 		self.buildAtlasUV()
 
@@ -324,8 +323,11 @@ class MQuadDeckItem(DeckItem):
 					#normal guide
 					self.heightGuides.append( layer )
 				continue
-			part = MQuadDeckPart( self, layer )
+			part = self.createPart( layer )
 			self.parts.append( part )
+
+	def createPart( self, layer ):
+		return MQuadDeckPart( self, layer )
 
 	def getData( self ):
 		meshes = []
@@ -348,6 +350,15 @@ class MQuadDeckItem(DeckItem):
 			right  = max( right,  part.getRight()  )
 			top    = min( top,    part.getTop()    )
 		self.aabb = ( left, top, right, bottom )
+		self.width = right - left
+		self.height = bottom - top
+
+	def getAABB( self ):
+		return self.aabb
+
+	def getSize( self ):
+		left, top, right, bottom = self.aabb		
+		return ( right - left, bottom - top )
 
 	def onBuild( self, project ):
 		self.buildAABB()
@@ -360,6 +371,30 @@ class MQuadDeckItem(DeckItem):
 		#move mesh
 		for part in self.parts:
 			part.updateGlobalMesh( left, bottom )
+
+		self.buildMeshAABB()
+
+	def buildMeshAABB( self ):
+		x0 =  100000000
+		y0 =  100000000
+		z0 =  100000000
+		x1 = -100000000
+		y1 = -100000000
+		z1 = -100000000
+		for part in self.parts:
+			for quad in part.meshes:
+				for vert in quad[ 'verts' ]:
+					x,y,z = vert[0],vert[1],vert[2]
+					x0 = min( x, x0 )
+					y0 = min( y, y0 )
+					z0 = min( z, z0 )
+					x1 = max( x, x1 )
+					y1 = max( y, y1 )
+					z1 = max( z, z1 )
+		self.meshAABB = ( x0,y0,z0, x1,y1,z1 )
+
+	def getMeshAABB( self ):
+		return self.meshAABB
 
 
 	def buildHeightGuide( self, x0, y0, x1, y1 ):
