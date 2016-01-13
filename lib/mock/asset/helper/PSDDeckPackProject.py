@@ -116,7 +116,7 @@ class DeckProcessor(object):
 	def onLoadImage( self, image ):
 		pass
 
-	def acceptLayer( self, layer ):
+	def acceptLayer( self, layer, metaInfo, fallback ):
 		return False
 
 	def generateDecks( self, context ):
@@ -223,8 +223,11 @@ class PSDDeckPackProject(object):
 			return False
 
 		for processor in self.processors:
-			if processor.acceptLayer( layer, metaInfo ):
+			if processor.acceptLayer( layer, metaInfo, False ):
 				processor.processLayer( layer, metaInfo )
+				return True
+		if self.defaultProcessor:
+			if self.defaultProcessor.acceptLayer( layer, metaInfo, True ):
 				return True
 		return False
 
