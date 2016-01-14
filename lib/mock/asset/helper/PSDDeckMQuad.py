@@ -148,8 +148,10 @@ class MQuadDeckPart( DeckPart ):
 				y0 = 0 + rectOffY
 				z0 = 0 + rectOffZ
 				x1 = w + rectOffX
-				y1 = h - localGuideTopFace + rectOffY
-				z1 = -( y1 - y0 ) + rectOffZ
+				# y1 = h - localGuideTopFace + rectOffY
+				# z1 = -( y1 - y0 ) + rectOffZ
+				y1 = y0
+				z1 = - ( h - localGuideTopFace ) + rectOffZ
 				u0 = float(x0) / w
 				v0 = float(y0) / h
 				u1 = float(x1) / w
@@ -172,11 +174,15 @@ class MQuadDeckPart( DeckPart ):
 
 			if localGuideTopFace > 0: #WALL
 				x0 = 0 + rectOffX
-				y0 = h - localGuideTopFace + rectOffY
-				z0 = -y0 + rectOffZ
+				y0 = 0 + rectOffY
+				z0 = ( h - localGuideTopFace ) + rectOffZ
+				# y0 = h - localGuideTopFace + rectOffY
+				# z0 = -y0 + rectOffZ
 				x1 = w + rectOffX
-				y1 = h + rectOffY
-				z1 = -y0 + rectOffZ
+				y1 = localGuideTopFace + rectOffY
+				z1 = z0
+				# y1 = h + rectOffY
+				# z1 = -y0 + rectOffZ
 				u0 = float(x0) / w
 				v0 = float(y0) / h
 				u1 = float(x1) / w
@@ -230,8 +236,10 @@ class MQuadDeckPart( DeckPart ):
 				y0 = h - localGuideTopFace + rectOffY
 				z0 = 0 + rectOffZ
 				x1 = w + rectOffX
-				y1 = h + rectOffY
-				z1 = -( y1 - y0 ) + rectOffZ
+				# y1 = h + rectOffY
+				# z1 = -( y1 - y0 ) + rectOffZ
+				y1 = y0
+				z1 = z0 + localGuideTopFace
 				u0 = float(x0) / w
 				v0 = float(y0) / h
 				u1 = float(x1) / w

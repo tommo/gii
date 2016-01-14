@@ -228,6 +228,7 @@ class PSDDeckPackProject(object):
 				return True
 		if self.defaultProcessor:
 			if self.defaultProcessor.acceptLayer( layer, metaInfo, True ):
+				self.defaultProcessor.processLayer( layer, metaInfo )
 				return True
 		return False
 
