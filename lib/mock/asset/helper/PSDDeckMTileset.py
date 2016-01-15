@@ -50,60 +50,62 @@ class TileItem( MQuadDeckItem ):
 		mw, mh, md = x1 - x0, y1 - y0, z1 - z0
 		ox, oy, oz = 0, 0, 0
 		w, h = self.getSize()
+		# print( self.fullName, x0,y0,z0, x1,y1,z1, mh, md )
+		self.applyGlobalMeshOffset( -x0, -y0, -z0-md )
 		#align to top
-		# if k in [ 'n', 'c', 'ne', 'e', '-sw', 'we', 'ew' ] : #bottom left
-		# 	ox = 0
-		# 	oy = alt
-		# 	oz = 0
-		# elif k in ['s', 'se', '-nw' ]: #top left
-		# 	ox = 0
-		# 	oy = alt
-		# 	oz = -td + md
-		# elif k in [ 'w', 'nw', '-se' ] : #bottom right
-		# 	ox = tw - mw
-		# 	oy = alt
-		# 	oz = 0
-		# elif k in [ 'sw', 'ne' ] : #top right
-		# 	ox = tw - mw
-		# 	oy = alt
-		# 	oz = -td + md
+		if k in [ 'n', 'c', 'ne', 'e', '-sw', 'we', 'ew' ] : #bottom left
+			ox = 0
+			oy = alt - mh
+			oz = 0
+		elif k in ['s', 'se', '-nw' ]: #top left
+			ox = 0
+			oy = alt - mh
+			oz = -td + md
+		elif k in [ 'w', 'nw', '-se' ] : #bottom right
+			ox = tw - mw
+			oy = alt - mh
+			oz = 0
+		elif k in [ 'sw', 'ne' ] : #top right
+			ox = tw - mw
+			oy = alt - mh
+			oz = -td + md
 
-		if k in [ 'n', 'c', 'ne', 'e' ] :
-			ox = 0
-			oy = alt
-			oz = 0
-		elif k in [ 'nw', 'w' ]:
-			ox = tw - mw
-			oy = alt
-			oz = 0
-		elif k in [ 's', 'se' ]:
-			ox = 0
-			oy = 0
-			oz = -td/2
-		elif k in [ 'sw' ]:
-			ox = tw - mw
-			oy = 0
-			oz = -td/2
-		elif k == '-nw':
-			ox = 0
-			oy = 0
-			oz = -td/2
-		elif k == '-ne':
-			ox = 0
-			oy = 0
-			oz = 0
-		elif k == '-sw':
-			ox = 0
-			oy = alt
-			oz = 0
-		elif k == '-se':
-			ox = 0
-			oy = alt
-			oz = 0
-		else:
-			ox = 0
-			oy = 0
-			oz = 0
+		# if k in [ 'n', 'c', 'ne', 'e' ] :
+		# 	ox = 0
+		# 	oy = alt
+		# 	oz = 0
+		# elif k in [ 'nw', 'w' ]:
+		# 	ox = tw - mw
+		# 	oy = alt
+		# 	oz = 0
+		# elif k in [ 's', 'se' ]:
+		# 	ox = 0
+		# 	oy = 0
+		# 	oz = -td/2
+		# elif k in [ 'sw' ]:
+		# 	ox = tw - mw
+		# 	oy = 0
+		# 	oz = -td/2
+		# elif k == '-nw':
+		# 	ox = 0
+		# 	oy = 0
+		# 	oz = -td/2
+		# elif k == '-ne':
+		# 	ox = 0
+		# 	oy = 0
+		# 	oz = 0
+		# elif k == '-sw':
+		# 	ox = 0
+		# 	oy = alt
+		# 	oz = 0
+		# elif k == '-se':
+		# 	ox = 0
+		# 	oy = alt
+		# 	oz = 0
+		# else:
+		# 	ox = 0
+		# 	oy = 0
+		# 	oz = 0
 
 		# elif k == 'ne':
 		# 	ox = 0
@@ -141,7 +143,7 @@ class TileItem( MQuadDeckItem ):
 		# 	ox = 0
 		# 	oy = 0
 		# 	oz = alt + th - h
-		self.applyGlobalMeshOffset( ox, oy - oz, oz )
+		self.applyGlobalMeshOffset( ox, oy, oz )
 		self.deckOffset = [ ox, oy, oz ]
 
 	def getData( self ):

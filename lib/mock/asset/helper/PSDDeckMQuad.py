@@ -142,6 +142,7 @@ class MQuadDeckPart( DeckPart ):
 
 		#build mesh
 		#format: x,y,z/ u,v /color
+		hh = h - localGuideTopFace
 		if concave:
 			if localGuideTopFace < h: #TOP
 				x0 = 0 + rectOffX
@@ -151,11 +152,11 @@ class MQuadDeckPart( DeckPart ):
 				# y1 = h - localGuideTopFace + rectOffY
 				# z1 = -( y1 - y0 ) + rectOffZ
 				y1 = y0
-				z1 = - ( h - localGuideTopFace ) + rectOffZ
-				u0 = float(x0) / w
-				v0 = float(y0) / h
-				u1 = float(x1) / w
-				v1 = float(y1) / h
+				z1 = - hh + rectOffZ
+				u0 = 0
+				v0 = 0
+				u1 = 1
+				v1 = float( hh )/h
 				quadWall = {
 					'verts' : [
 						[ x0,y0,z0 ], 
@@ -175,7 +176,7 @@ class MQuadDeckPart( DeckPart ):
 			if localGuideTopFace > 0: #WALL
 				x0 = 0 + rectOffX
 				y0 = 0 + rectOffY
-				z0 = ( h - localGuideTopFace ) + rectOffZ
+				z0 = -hh + rectOffZ
 				# y0 = h - localGuideTopFace + rectOffY
 				# z0 = -y0 + rectOffZ
 				x1 = w + rectOffX
@@ -183,10 +184,10 @@ class MQuadDeckPart( DeckPart ):
 				z1 = z0
 				# y1 = h + rectOffY
 				# z1 = -y0 + rectOffZ
-				u0 = float(x0) / w
-				v0 = float(y0) / h
-				u1 = float(x1) / w
-				v1 = float(y1) / h
+				u0 = 0
+				v0 = 1
+				u1 = 1
+				v1 = float(hh) / h
 				quadTop = {
 					'verts' : [
 						[ x0,y0,z0 ], 
@@ -209,12 +210,12 @@ class MQuadDeckPart( DeckPart ):
 				y0 = 0 + rectOffY
 				z0 = 0 + rectOffZ
 				x1 = w + rectOffX
-				y1 = h - localGuideTopFace + rectOffY
+				y1 = hh + rectOffY
 				z1 = 0 + rectOffZ
-				u0 = float(x0) / w
-				v0 = float(y0) / h
-				u1 = float(x1) / w
-				v1 = float(y1) / h
+				u0 = 0
+				v0 = 0
+				u1 = 1
+				v1 = float(hh)/h
 				quadWall = {
 					'verts' : [
 						[ x0,y0,z0 ], 
@@ -233,17 +234,17 @@ class MQuadDeckPart( DeckPart ):
 
 			if localGuideTopFace > 0: #TOP
 				x0 = 0 + rectOffX
-				y0 = h - localGuideTopFace + rectOffY
+				y0 = hh + rectOffY
 				z0 = 0 + rectOffZ
 				x1 = w + rectOffX
 				# y1 = h + rectOffY
 				# z1 = -( y1 - y0 ) + rectOffZ
 				y1 = y0
-				z1 = z0 + localGuideTopFace
-				u0 = float(x0) / w
-				v0 = float(y0) / h
-				u1 = float(x1) / w
-				v1 = float(y1) / h
+				z1 = z0 - localGuideTopFace
+				u0 = 0
+				v0 = float(hh) / h
+				u1 = 1
+				v1 = 1
 				quadTop = {
 					'verts' : [
 						[ x0,y0,z0 ], 
@@ -311,8 +312,18 @@ class MQuadDeckPart( DeckPart ):
 				uv[0] = uv[0] * du + u0
 				uv[1] = uv[1] * dv + v0
 
-	def getGlobalMeshes( self ):
-		return self.globalMeshes
+	def getGlobalMeshes( self, skew = True ):
+		if skew:
+			skewedMeshes = []
+			for mesh in self.globalMeshes:
+				skewed = copy.deepcopy( mesh )
+				for vert in skewed[ 'verts' ]:
+					z = vert[ 2 ]
+					vert[ 1 ] += (-z)
+				skewedMeshes.append( skewed )
+			return skewedMeshes
+		else:
+			return self.globalMeshes
 
 
 ##----------------------------------------------------------------##
