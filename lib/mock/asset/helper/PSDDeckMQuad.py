@@ -329,7 +329,11 @@ class MQuadDeckPart( DeckPart ):
 ##----------------------------------------------------------------##
 class MQuadDeckItem(DeckItem):
 	def __init__( self, name, partLayers ):
-		self.name = name
+		meta = parseMetaTag( name )
+		if meta:
+			self.name = meta['name']
+		else:
+			self.name = name
 		self.rawName = name
 		self.parts = []
 		self.heightGuides = []
@@ -474,8 +478,8 @@ class MQuadDeckProcessor( DeckProcessor ):
 			partLayers = extract_leaf_layers( psdLayer )
 		else:
 			partLayers = [ psdLayer ]
-
-		deck = MQuadDeckItem( psdLayer.name, partLayers )
+		name = metaInfo[ 'name' ]
+		deck = MQuadDeckItem( name, partLayers )
 		project.addDeckItem( deck )
 
 ##----------------------------------------------------------------##

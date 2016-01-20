@@ -2,7 +2,7 @@ import re
 
 def parseMetaTag( text ):
 	#find head
-	headPattern = re.compile('^\s*([\w_\-\.]+)')
+	headPattern = re.compile('^\s*([\w_\-\./]+)')
 	mo = headPattern.search( text )
 	if not mo: return None
 	suffix = text[ mo.end(): ]

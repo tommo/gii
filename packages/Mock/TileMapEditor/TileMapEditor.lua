@@ -227,6 +227,7 @@ CLASS: TileMapGridLines ( mock_edit.EditorEntity )
 
 function TileMapGridLines:__init()
 	self.targetLayer = false
+	assert( self.FLAG_EDITOR_OBJECT )
 end
 
 function TileMapGridLines:onLoad()

@@ -245,9 +245,9 @@ class MTilesetDeckItem( DeckItem ):
 				isGroup = isinstance( layer, Group )
 				if isGroup:
 					#if namespace
-					mo = re.match( '\s*\[\s*([\w_-]+\s*\]\s*)', layerName )
+					mo = re.match( '\s*\[\s*([\w_-]+)\s*\]\s*', layerName )
 					if mo:
-						layerName = mo.group(0)
+						layerName = mo.group(1)
 						fullName = parentName and (parentName + '/' + layerName) or layerName
 						_collectLayer( layer, fullName )
 						continue
@@ -261,8 +261,6 @@ class MTilesetDeckItem( DeckItem ):
 					partLayers = [ layer ]
 
 				tile = TileItem( fullName, partLayers )
-				tile.rawName = layerName
-				tile.name = fullName
 				tileGroup.addTile( tile )
 
 		_collectLayer( group )
