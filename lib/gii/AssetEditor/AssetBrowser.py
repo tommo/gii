@@ -815,7 +815,8 @@ class AssetBrowserInstance( object ):
 		if isinstance( asset, ( str, unicode ) ): #path
 			asset = self.getAssetLibrary().getAssetNode( asset )
 		if not asset: return
-		self.getCurrentView().setFocus( Qt.MouseFocusReason)
+		self.setFocus()
+		# self.getCurrentView().setFocus( Qt.MouseFocusReason)
 		self.selectAsset( asset, goto = True )
 
 	def selectAsset( self, asset, **options ):

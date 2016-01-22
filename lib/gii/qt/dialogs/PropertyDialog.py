@@ -8,7 +8,7 @@ from gii.qt.controls.PropertyEditor import PropertyEditor
 
 ##----------------------------------------------------------------##
 class PropertyDialog( QtGui.QDialog ):
-	def __init__(self, prompt, *args):
+	def __init__(self, prompt, *args, **options):
 		super(PropertyDialog, self).__init__(*args)
 		self.setWindowTitle( prompt )
 		btnOK     = QtGui.QPushButton('OK')
@@ -16,9 +16,11 @@ class PropertyDialog( QtGui.QDialog ):
 		
 		buttonBox=QtGui.QDialogButtonBox(QtCore.Qt.Horizontal)
 		buttonBox.addButton(btnOK, QtGui.QDialogButtonBox.AcceptRole)
-		buttonBox.addButton(btnCancel, QtGui.QDialogButtonBox.RejectRole)
+		if options.get( 'cancel_button', True ):
+			buttonBox.addButton(btnCancel, QtGui.QDialogButtonBox.RejectRole)
 		buttonBox.accepted.connect(self.accept)
 		buttonBox.rejected.connect(self.reject)
+			
 
 		box = QtGui.QVBoxLayout( self )
 		box.setMargin( 10 )
@@ -35,8 +37,8 @@ class PropertyDialog( QtGui.QDialog ):
 
 
 ##----------------------------------------------------------------##		
-def requestProperty( prompt, target ):
-	dialog = PropertyDialog( prompt )
+def requestProperty( prompt, target, **option ):
+	dialog = PropertyDialog( prompt, **option )
 	dialog.setTarget( target )
 	dialog.move( QtGui.QCursor.pos() )
 

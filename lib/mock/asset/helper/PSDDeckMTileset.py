@@ -57,7 +57,7 @@ class TileItem( MQuadDeckItem ):
 			ox = 0
 			oy = alt - mh
 			oz = 0
-		elif k in ['s', 'se', '-nw' ]: #top left
+		elif k in ['s', 'se', '-nw', '-ne' ]: #top left
 			ox = 0
 			oy = alt - mh
 			oz = -td + md

@@ -189,6 +189,9 @@ class SQScriptEditorInstance( object ):
 			if browser:
 				browser.locateAsset( self.targetNode )
 
+	def refersh( self ):
+		self.window.rebuild()
+
 
 ##----------------------------------------------------------------##
 class SQScriptEditor( object ):

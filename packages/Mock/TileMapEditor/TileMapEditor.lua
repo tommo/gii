@@ -504,7 +504,7 @@ end
 function TileMapEditor:incSubDivision()
 	if not self.targetTileMapLayer then return end
 	local subD = self.targetTileMapLayer.subdivision + 1
-	if subD < 4 then
+	if subD <= 4 then
 		self.targetTileMapLayer:setSubDivision( subD )
 	end
 end

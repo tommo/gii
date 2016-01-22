@@ -8,7 +8,7 @@ from gii.core         import *
 from gii.qt           import *
 from gii.qt.IconCache                  import getIcon
 from gii.qt.helpers   import addWidgetWithLayout, QColorF, unpackQColor
-from gii.qt.dialogs   import requestString, alertMessage, requestColor
+from gii.qt.dialogs   import requestString, alertMessage, requestColor, requestProperty
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget
 from gii.qt.controls.GenericListWidget import GenericListWidget
 
@@ -133,10 +133,13 @@ class TileMapEditor( SceneEditorModule ):
 		self.addTool( 'tilemap_layers/layer_up',     label = 'up', icon = 'arrow-up' )
 		self.addTool( 'tilemap_layers/layer_down',   label = 'down', icon = 'arrow-down' )
 		self.addTool( 'tilemap_layers/----' )
-		self.addTool( 'tilemap_layers/inc_subdiv',   label = 'subD +' )
-		self.addTool( 'tilemap_layers/dec_subdiv',   label = 'subD -' )
+		self.addTool( 'tilemap_layers/edit_property',label = 'edit', icon = 'settings' )
+		self.addTool( 'tilemap_layers/----' )
+		self.addTool( 'tilemap_layers/inc_subdiv',   label = 'subD+' )
+		self.addTool( 'tilemap_layers/dec_subdiv',   label = 'subD-' )
 		self.addTool( 'tilemap_layers/----' )
 		self.addTool( 'tilemap_layers/view_selected_only', label = 'View Selected Only', type='check' )
+		
 
 		self.addTool( 'tilemap_main/tool_pen', 
 			widget = SceneToolButton( 'tilemap_pen',
@@ -336,10 +339,19 @@ class TileMapEditor( SceneEditorModule ):
 		elif name == 'view_selected_only':
 			self.setViewSelectedOnly( tool.getValue() )
 
+		elif name == 'edit_property':
+			if self.targetTileMapLayer:
+				requestProperty(
+					'Edit TileMapLayer: ' + self.targetTileMapLayer.name ,
+					self.targetTileMapLayer,
+					cancel_button = False
+				)
+				self.treeLayers.refreshNodeContent( self.targetTileMapLayer )
+
 ##----------------------------------------------------------------##
 class TileMapLayerTreeWidget( GenericTreeWidget ):
 	def getHeaderInfo( self ):
-		return [ ('Name',120),  ('SubD', 30),  ('Show', 30), ('Tileset',-1) ]
+		return [ ('Name',120),  ('SubD', 30),  ('Show', 30), ('Tileset',100), ('Material', -1) ]
 
 	def getRootNode( self ):
 		return self
@@ -374,6 +386,12 @@ class TileMapLayerTreeWidget( GenericTreeWidget ):
 			item.setText( 2, '' )
 		path = node.getTilesetPath( node ) or ''
 		item.setText( 3, os.path.basename(path) )
+		matPath = node.materialPath
+		if matPath:
+			item.setText( 4, os.path.basename( matPath ) )
+		else:
+			item.setText( 4, '--' )
+
 
 	def onItemChanged( self, item, col ):
 		self.parentModule.renameLayer( item.node, item.text( col ) )
