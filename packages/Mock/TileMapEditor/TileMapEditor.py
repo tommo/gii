@@ -341,12 +341,15 @@ class TileMapEditor( SceneEditorModule ):
 
 		elif name == 'edit_property':
 			if self.targetTileMapLayer:
-				requestProperty(
-					'Edit TileMapLayer: ' + self.targetTileMapLayer.name ,
-					self.targetTileMapLayer,
-					cancel_button = False
-				)
-				self.treeLayers.refreshNodeContent( self.targetTileMapLayer )
+				self.editLayerProperty( self.targetTileMapLayer )
+	
+	def editLayerProperty( self, layer ):
+		requestProperty(
+			'Edit TileMapLayer: ' + layer.name ,
+			layer,
+			cancel_button = False
+		)
+		self.treeLayers.refreshNodeContent( layer )
 
 ##----------------------------------------------------------------##
 class TileMapLayerTreeWidget( GenericTreeWidget ):
@@ -388,7 +391,7 @@ class TileMapLayerTreeWidget( GenericTreeWidget ):
 		item.setText( 3, os.path.basename(path) )
 		matPath = node.materialPath
 		if matPath:
-			item.setText( 4, os.path.basename( matPath ) )
+			item.setText( 4, os.path.splitext( os.path.basename( matPath ) )[0] )
 		else:
 			item.setText( 4, '--' )
 
@@ -398,6 +401,10 @@ class TileMapLayerTreeWidget( GenericTreeWidget ):
 
 	def onItemSelectionChanged( self ):
 		self.parentModule.onLayerSelectionChanged( self.getSelection() )
+
+	def onDClicked( self, item, col ):
+		if col != 0:
+			self.parentModule.editLayerProperty( item.node )
 
 
 ##----------------------------------------------------------------##

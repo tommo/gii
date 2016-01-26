@@ -880,7 +880,7 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		self.setIndentation( 13 )
 
 	def getHeaderInfo( self ):
-		return [('Name',240), ('V',27 ), ('L',27 ), ( 'Layer', 50 ), ('', -1) ]
+		return [('Name',240), ('V',27 ), ('L',27 ), ( 'Layer', -1 ) ]
 
 	def getReadonlyItemDelegate( self ):
 		return ReadonlySceneGraphTreeItemDelegate( self )
