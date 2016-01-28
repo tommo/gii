@@ -493,7 +493,9 @@ class AssetNode(object):
 		self.properties[ name ] = value
 
 	def showInBrowser(self):
-		path = self.getAbsFilePath()
+		actualNode = self.findNonVirtualParent()
+		if not actualNode: return
+		path = actualNode.getAbsFilePath()
 		if path:
 			AssetUtils.showFileInBrowser(path)
 

@@ -215,6 +215,8 @@ function CanvasItem:__init()
 	self.pressed = false
 	self.focused = false
 	self.index = 0
+	self.subItems = {}
+	self.ownerItem = false
 end
 
 function CanvasItem:getView()
@@ -222,9 +224,13 @@ function CanvasItem:getView()
 end
 
 function CanvasItem:onDestroy()
+	for item in pairs( self.subItems ) do
+		item:destroyWithChildrenNow()
+	end
 	if self.parent then
 		self.parent:onItemDestroyed( self )
 	end
+	self.subItems = {}
 end
 
 function CanvasItem:bringToFront()
@@ -262,6 +268,14 @@ end
 function CanvasItem:isConstantSize()
 	return true
 end
+
+function CanvasItem:addSubItem( item )
+	self.subItems[ item ] = true
+	self.parent:addItem( item )
+	item.ownerItem = self
+	return item
+end
+
 --------------------------------------------------------------------
 CLASS: CanvasBackgroundItem ( CanvasItem )
 	:MODEL{}

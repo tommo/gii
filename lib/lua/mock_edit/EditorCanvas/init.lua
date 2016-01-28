@@ -20,7 +20,13 @@ require 'mock_edit.EditorCanvas.PickingProp'
 require 'mock_edit.EditorCanvas.CanvasItem'
 require 'mock_edit.EditorCanvas.CanvasTool'
 
-require 'mock_edit.EditorCanvas.CanvasItemVert'
 
 --------------------------------------------------------------------
 require 'mock_edit.EditorCanvas.SceneView'
+
+
+--------------------------------------------------------------------
+--Common canvas items
+require 'mock_edit.EditorCanvas.CanvasItemVert'
+require 'mock_edit.EditorCanvas.CanvasItemCircle'
+require 'mock_edit.EditorCanvas.CanvasItemRect'

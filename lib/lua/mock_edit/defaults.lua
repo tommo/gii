@@ -16,11 +16,14 @@ addColor( 'handle-previous', 1,0,0, .3 )
 addColor( 'gizmo_trigger', hexcolor( '#6695ff', 0.1 ) )
 addColor( 'gizmo_trigger_border', hexcolor( '#6695ff', 0.7 ) )
 
-addColor( 'cp',  0,1,0, alpha )
-addColor( 'cp-border',  1,1,1, alpha )
+addColor( 'cp',  hexcolor( '#1c57ff', alpha ) )
+addColor( 'cp-border', hexcolor( '#ffffff', alpha ) )
 
 
 addColor( 'misc',  hexcolor( '#6695ff', 0.1 ) )
 addColor( 'misc-transform',  hexcolor( '#b8ff00', 1 ) )
 
 addColor( 'camera-bound', hexcolor( '#ffc900', alpha ) )
+
+addColor( 'shape-line',  hexcolor( '#ff6cf9', 1 ))
+addColor( 'shape-fill',  hexcolor( '#ffd371', .3 ))

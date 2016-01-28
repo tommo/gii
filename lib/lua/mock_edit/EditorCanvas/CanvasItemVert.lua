@@ -54,7 +54,7 @@ function CanvasItemVert:onDrag( btn, x, y )
 		local dx, dy = x - dragFrom[ 1 ], y - dragFrom[ 2 ]
 		local x1, y1 = dragFrom[3] + dx, dragFrom[ 4 ] + dy
 		self:setLoc( x1, y1 )
-		self.tool:updateCanvas()
+		self:getView():updateCanvas()
 		self:onMove()
 	end
 end
