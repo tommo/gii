@@ -6,6 +6,7 @@ CLASS: CanvasItemVert ( CanvasItem )
 function CanvasItemVert:__init()
 	self.size  = 5
 	self.shape = 'box'
+	self.state = 'normal'
 end
 
 function CanvasItemVert:setShape( shape )
@@ -14,6 +15,16 @@ end
 
 function CanvasItemVert:onLoad()
 	self:attach( mock.DrawScript() ):setBlend( 'alpha' )
+end
+
+function CanvasItemVert:setState( state )
+	local state0 = self.state
+	if state0 == state then return end
+	self.state = state
+	return self:onStateChange( state, state0 )
+end
+
+function CanvasItemVert:onStateChange( state, state0 )
 end
 
 function CanvasItemVert:inside( x, y )
@@ -26,12 +37,12 @@ function CanvasItemVert:onDraw()
 	local size = self.size
 	local shape = self.shape
 	if shape == 'box' then
-		applyColor 'cp'
+		applyColor( 'cp', self.state )
 		MOAIDraw.fillRect( -size/2, -size/2, size, size )
 		applyColor 'cp-border'
 		MOAIDraw.drawRect( -size/2, -size/2, size, size )
 	elseif shape == 'circle' then
-		applyColor 'cp'
+		applyColor( 'cp', self.state )
 		MOAIDraw.fillCircle( 0, 0, size )
 		applyColor 'cp-border'
 		MOAIDraw.drawCircle( 0, 0, size )

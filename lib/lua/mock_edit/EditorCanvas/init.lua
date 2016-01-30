@@ -27,6 +27,9 @@ require 'mock_edit.EditorCanvas.SceneView'
 
 --------------------------------------------------------------------
 --Common canvas items
+require 'mock_edit.EditorCanvas.CanvasItemGeometry'
+
 require 'mock_edit.EditorCanvas.CanvasItemVert'
-require 'mock_edit.EditorCanvas.CanvasItemCircle'
-require 'mock_edit.EditorCanvas.CanvasItemRect'
+require 'mock_edit.EditorCanvas.CanvasItemEditableCircle'
+require 'mock_edit.EditorCanvas.CanvasItemEditableRect'
+require 'mock_edit.EditorCanvas.CanvasItemEditablePolygon'

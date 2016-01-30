@@ -8,6 +8,7 @@ import logging
 ##----------------------------------------------------------------##
 import signals
 import globalSignals
+from signals import slot
 
 from mime import *
 ##----------------------------------------------------------------##

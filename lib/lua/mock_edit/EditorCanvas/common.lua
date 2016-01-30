@@ -16,7 +16,15 @@ function applyColor( name )
 	MOAIGfxDevice.setPenColor( getColor( name ) )
 end
 
-function getColor( name )
+function getColor( name, state )
+	local fullname = name
+	if state then
+		fullname = name .. ':' .. state
+		local color = ColorTable[ fullname ]
+		if color then 
+			return unpack( color )
+		end
+	end
 	local color = ColorTable[ name ] or defaultColor
 	return unpack( color )
 end

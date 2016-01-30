@@ -160,7 +160,7 @@ class ControlVariableSetEditor( ObjectEditor ): #a generic property grid
 		self.widget.setTarget( None )
 
 ##----------------------------------------------------------------##
+@slot( 'module.loaded' )
 def registerControlVariableSetEditor():
 	registerObjectEditor( _MOCK.ControlVariableSet, ControlVariableSetEditor )
 
-signals.connect( 'module.loaded', registerControlVariableSetEditor )

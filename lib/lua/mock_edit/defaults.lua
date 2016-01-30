@@ -16,7 +16,8 @@ addColor( 'handle-previous', 1,0,0, .3 )
 addColor( 'gizmo_trigger', hexcolor( '#6695ff', 0.1 ) )
 addColor( 'gizmo_trigger_border', hexcolor( '#6695ff', 0.7 ) )
 
-addColor( 'cp',  hexcolor( '#1c57ff', alpha ) )
+addColor( 'cp',           hexcolor( '#1c57ff', alpha ) )
+addColor( 'cp:selected',  hexcolor( '#efff00', alpha ) )
 addColor( 'cp-border', hexcolor( '#ffffff', alpha ) )
 
 

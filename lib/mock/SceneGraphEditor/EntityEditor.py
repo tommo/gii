@@ -28,14 +28,13 @@ def registerMOCKObjectEditor( mockClassName, editorClass ):
 		mockClass = _MOCK[ mockClassName ]
 		registerObjectEditor( mockClass, editorClass )
 
+@slot( 'mock.init' )
 def onMockInited():
 	global _mockInited
 	_mockInited = True
 	for mockClassName, editorClass in  _mockObjecteEditors.items():
 		mockClass = _MOCK[ mockClassName ]
 		registerObjectEditor( mockClass, editorClass )
-
-signals.connect( 'mock.init', onMockInited )
 
 
 ##----------------------------------------------------------------##

@@ -74,3 +74,11 @@ def affirm(name):
 #call func at next dispatch
 def callAfter(func, *args, **kwargs):
 	idle_add(func, *args, **kwargs)
+
+##----------------------------------------------------------------##
+#DECORATORS
+def slot( sig ):
+	def slot_decorator( handler ):
+		connect( sig, handler )
+		return handler
+	return slot_decorator

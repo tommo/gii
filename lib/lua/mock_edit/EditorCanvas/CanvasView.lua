@@ -84,8 +84,8 @@ function CanvasView:getActiveToolId()
 	return self.toolManager:getActiveToolId()
 end
 
-function CanvasView:updateCanvas( force )
-	return self.canvasEnv.updateCanvas()
+function CanvasView:updateCanvas( forced )
+	return self.canvasEnv.updateCanvas( forced )
 end
 
 function CanvasView:toggleDebugLines()

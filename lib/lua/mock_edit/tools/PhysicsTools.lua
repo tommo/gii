@@ -36,7 +36,7 @@ end
 CLASS: PhysicsShapeEditorDelegateBox ( PhysicsShapeEditorDelegate )
 
 function PhysicsShapeEditorDelegateBox:onInit( editor, shape )
-	local rect = self:addCanvasItem( CanvasItemRect() )
+	local rect = self:addCanvasItem( CanvasItemEditableRect() )
 	function rect:onPullAttr() --x,y,radius
 		local x, y = shape:getLoc()
 		local w, h = shape:getSize()
@@ -66,7 +66,7 @@ end
 CLASS: PhysicsShapeEditorDelegateCircle ( PhysicsShapeEditorDelegate )
 
 function PhysicsShapeEditorDelegateCircle:onInit( editor, shape )
-	local circle = self:addCanvasItem( CanvasItemCircle() )
+	local circle = self:addCanvasItem( CanvasItemEditableCircle() )
 	function circle:onPullAttr() --x,y,radius
 		local x, y = shape:getLoc()
 		x, y = shape:modelToWorld( x, y )
