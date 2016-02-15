@@ -83,6 +83,8 @@ class SceneToolManager( EditorModule ):
 		self.toolRegistry = {}
 		self.currentToolId = None
 		self.currentTool  = None
+		self.currentAdhoc = False
+		self.prevNonAdhocToolId = None
 
 	def onLoad( self ):
 		pass
@@ -109,6 +111,13 @@ class SceneToolManager( EditorModule ):
 
 	def changeTool( self, toolId, **context ):
 		if self.currentToolId == toolId : return
+		
+		if context.get( 'adhoc', False ):
+			if not self.currentAdhoc:
+				self.prevNonAdhocToolId = self.currentToolId
+			self.currentAdhoc = True
+		else:
+			self.currentAdhoc = False
 
 		toolClas, options = self.toolRegistry.get( toolId, None )
 		if not toolClas:
@@ -123,6 +132,7 @@ class SceneToolManager( EditorModule ):
 		self.currentTool = toolObj
 		self.currentToolId = toolId
 
+
 		toolObj.onStart( **context )
 
 		for button, buttonToolId in _SceneToolButtons.items():
@@ -131,6 +141,17 @@ class SceneToolManager( EditorModule ):
 			else:
 				button.setDown( False )
 		signals.emit( 'scene_tool.change', self.currentToolId )
+
+	def startAdhocTool( self, toolId, **context ):
+		context[ 'adhoc' ] = True
+		self.changeTool( toolId, **context )
+
+	def stopAdhocTool( self ):
+		if self.currentAdhoc:
+			self.changeTool( self.prevNonAdhocToolId )
+
+	def isCurrentAdhoc( self ):
+		return self.currentAdhoc
 
 	def getCurrentTool( self ):
 		return self.currentTool

@@ -1259,19 +1259,24 @@ QTreeView#AnimatorTrackTree::item:selected:active
 	color: #fff;
 }
 
-#SceneToolButton:pressed
-{
-	background-color:#4f7a00;
-	border: 1px solid #79a700;
-}
 
 #SceneToolButton
 {
-	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#554,stop:1#333);
+	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#675d38,stop:1#333);
 	border: 1px solid #252525;
 	border-radius:3px;
 }
 
+#SceneToolButton:hover
+{
+	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#7f8b4f,stop:1#333);
+}
+
+#SceneToolButton:pressed, #SceneToolButton:pressed:hover
+{
+	background-color:#4f7a00;
+	border: 1px solid #79a700;
+}
 
 #AssetBrowserList
 {

@@ -193,6 +193,16 @@ class ComponentEditor( CommonObjectEditor, SceneObjectEditorMixin ): #a generic 
 		#recording check
 		# for field, editor in self.grid.editors.items():
 		# 	pass
+
+	def refreshTitle( self ):
+		target = self.getTarget()
+		alias = target._alias
+		if alias:
+			self.getContainer().setTitle( 
+				'%s [%s]' % ( self.typeName, alias )
+			)
+		else:
+			super( ComponentEditor, self ).refreshTitle()
 		
 ##----------------------------------------------------------------##
 class EntityEditor( ObjectEditor, SceneObjectEditorMixin ): #a generic property grid 

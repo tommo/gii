@@ -689,6 +689,27 @@ end
 
 
 --------------------------------------------------------------------
+CLASS: CmdRenameComponent ( mock_edit.EditorCommand )
+	:register( 'scene_editor/rename_component' )
+
+function CmdRenameComponent:init( option )
+	self.target = option['target']
+	self.newAlias = option['alias']
+	self.prevAlias = self.target._alias
+end
+
+function CmdRenameComponent:redo()
+	self.target._alias = self.newAlias
+	gii.emitPythonSignal( 'component.renamed', self.target, self.target._entity )
+end
+
+function CmdRenameComponent:undo()
+	self.target._alias = self.prevAlias
+	gii.emitPythonSignal( 'component.renamed', self.target, self.target._entity )
+end
+
+
+--------------------------------------------------------------------
 CLASS: CmdCloneEntity ( mock_edit.EditorCommand )
 	:register( 'scene_editor/clone_entity' )
 

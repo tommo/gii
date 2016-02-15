@@ -157,6 +157,7 @@ def clearObjectEditorCache( typeId ):
 class ObjectEditor( object ):	
 	def __init__( self ):
 		self.parentIntrospector = None
+		self.typeName = 'Unknown'
 
 	def getContainer( self ):
 		return self.container
@@ -186,6 +187,12 @@ class ObjectEditor( object ):
 		return True
 
 	def setFocus( self ):
+		pass
+
+	def refreshTitle( self ):
+		self.getContainer().setTitle( self.typeName )
+
+	def refresh( self ):
 		pass
 
 		
@@ -337,10 +344,11 @@ class IntrospectorInstance(object):
 					container.addWidget( widget )
 
 				model = ModelManager.get().getModelFromTypeId( typeId )
+
 				if model:
-					container.setTitle( model.getShortName() )
+					typeName = model.getShortName()
 				else:
-					container.setTitle( repr( typeId ) )
+					typeName = repr( typeId )
 					#ERROR
 				count = self.body.mainLayout.count()
 				assert count>0
@@ -348,12 +356,14 @@ class IntrospectorInstance(object):
 				menuName = option.get( 'context_menu', editor.getContextMenu() )
 				container.setContextMenu( menuName )
 				container.ownerEditor = editor
+				editor.typeName = typeName
 				
 			else:
 				container.hide()
 
 		editor.parentIntrospector = self
 		editor.setTarget( target )
+		editor.refreshTitle()
 		size = self.body.sizeHint()
 		size.setWidth( self.scroll.width() )
 		self.body.resize( size )
@@ -420,6 +430,7 @@ class SceneIntrospector( SceneEditorModule ):
 		signals.connect( 'selection.changed', self.onSelectionChanged )
 		signals.connect( 'component.added',   self.onComponentAdded )
 		signals.connect( 'component.removed', self.onComponentRemoved )
+		signals.connect( 'component.renamed', self.onComponentRenamed )
 		signals.connect( 'entity.modified',   self.onEntityModified ) 
 		self.widgetCacheHolder = QtGui.QWidget()
 		
@@ -493,6 +504,13 @@ class SceneIntrospector( SceneEditorModule ):
 		if not self.activeInstance: return
 		if self.activeInstance.target == entity:
 			self.activeInstance.setTarget( [entity], True )
+
+	def onComponentRenamed( self, com, entity ):
+		if not self.activeInstance: return
+		if self.activeInstance.target == entity:
+			editor = self.activeInstance.getObjectEditor( com )
+			if editor:
+				editor.refreshTitle()
 
 	def onEntityModified( self, entity, context=None ):
 		if context != 'introspector' :

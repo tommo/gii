@@ -6,7 +6,7 @@ from gii.core.model  import *
 from gii.qt          import QtEditorModule
 
 from gii.qt.IconCache                  import getIcon
-from gii.qt.dialogs                    import alertMessage, requestConfirm
+from gii.qt.dialogs                    import alertMessage, requestConfirm, requestString
 from gii.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
 from gii.qt.helpers                    import makeBrush, makeFont
 
@@ -132,7 +132,11 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.addMenuItem( 'component_context/move_component_down', 
 			dict( label = 'Move Down' )
 			)
-		
+
+		self.addMenuItem( 'component_context/----' )
+		self.addMenuItem( 'component_context/edit_component_alias', 
+			dict( label = 'Edit Alias' )
+			)
 
 		self.addMenu( 'main/entity', dict( label = 'Entity' ) )
 		self.addMenuItem( 'main/entity/add_empty_entity',    dict( label = 'Create Empty', shortcut = 'ctrl+alt+N' ) )
@@ -605,6 +609,15 @@ class SceneGraphEditor( SceneEditorModule ):
 			context = menu.getContext()
 			if context:
 				self.doCommand( 'scene_editor/copy_component', target = context )
+
+		elif name == 'edit_component_alias':
+			context = menu.getContext()
+			if context:
+				oldAlias = context._alias or ''
+				alias = requestString( 'Edit Alias', 'Enter Alias:', oldAlias )
+				if alias != None:
+					if not alias: alias = False
+					self.doCommand( 'scene_editor/rename_component', target = context, alias = alias )
 
 		elif name == 'assign_layer':
 			if not self.tree.getSelection(): return

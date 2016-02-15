@@ -28,6 +28,8 @@ register( 'proto.relink' )
 
 register( 'component.added' )
 register( 'component.removed' )
+register( 'component.renamed' )
+
 
 register( 'animator.start' )
 register( 'animator.stop' )

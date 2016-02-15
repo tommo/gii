@@ -1,4 +1,4 @@
-import signals
+import SceneEditorSignals
 from SceneEditor import SceneEditor, SceneEditorModule, getSceneSelectionManager
 from SceneTool import SceneTool, SceneToolMeta, SceneToolButton
 
