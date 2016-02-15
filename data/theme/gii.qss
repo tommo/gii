@@ -724,8 +724,9 @@ QGroupBox::title
 
 QToolTip
 {
-	background-color: #e5ff37;
-	color: #000000;
+	background-color: #fbf423;
+	color: #4a3b12;
+	border-radius: 4px;
 	padding: 2px;
 }
 

@@ -59,10 +59,13 @@ class ControlVariableSetTreeWidget( GenericTreeWidget ):
 			item.setText( 1, node.value and 'true' or 'false' )
 		elif vtype == 'number':
 			item.setIcon( 0, getIcon( 'var_number' ) )
-			item.setText( 1,'%.4f' % node.value )
+			item.setText( 1, '%.4f' % node.value )
 		elif vtype == 'int':
 			item.setIcon( 0, getIcon( 'var_int' ) )
-			item.setText( 1,'%d' % node.value )
+			item.setText( 1, '%d' % node.value )
+		elif vtype == 'string':
+			item.setIcon( 0, getIcon( 'var_string' ) )
+			item.setText( 1, node.value )
 
 	def onItemChanged( self, item, col ):
 		node = self.getNodeByItem( item )
@@ -94,6 +97,7 @@ class ControlVariableEditorWidget( QtGui.QWidget ):
 		self.actionAddI = self.toolbar.addAction( getIcon( 'var_int' ), 'Add Int' )
 		self.actionAddB = self.toolbar.addAction( getIcon( 'var_boolean' ), 'Add Boolean' )
 		self.actionAddN = self.toolbar.addAction( getIcon( 'var_number' ), 'Add Number' )
+		self.actionAddS = self.toolbar.addAction( getIcon( 'var_string' ), 'Add String' )
 		self.actionRemove = self.toolbar.addAction( getIcon( 'remove' ), 'Remove' )
 		self.toolbar.addSeparator()
 		self.actionRefresh = self.toolbar.addAction( getIcon( 'refresh' ), 'Refresh' )
@@ -103,6 +107,7 @@ class ControlVariableEditorWidget( QtGui.QWidget ):
 		self.actionAddI    .triggered .connect( self.onActionAddI    )
 		self.actionAddN    .triggered .connect( self.onActionAddN    )
 		self.actionAddB    .triggered .connect( self.onActionAddB    )
+		self.actionAddS    .triggered .connect( self.onActionAddS    )
 		self.actionRemove  .triggered .connect( self.onActionRemove  )
 		self.actionRefresh .triggered .connect( self.onActionRefresh )
 
@@ -122,6 +127,9 @@ class ControlVariableEditorWidget( QtGui.QWidget ):
 
 	def onActionAddN( self ):
 		self.onActionAdd( 'number' )
+
+	def onActionAddS( self ):
+		self.onActionAdd( 'string' )
 
 	def onActionAdd( self, vtype ):
 		if not self.target: return
