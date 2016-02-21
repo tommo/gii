@@ -1,6 +1,6 @@
 import os.path
 from gii.core import AssetManager, AssetLibrary, getProjectPath, app
-from helper.psd2msprite import MSpriteProject
+from helper.MSpriteProject import MSpriteProject
 import json
 
 def _getModulePath( path ):
@@ -33,11 +33,7 @@ class MSpriteAssetManager(AssetManager):
 		#traverse path
 		filePath = node.getFilePath()
 		nodePath = node.getNodePath()
-		for fileName in os.listdir( node.getAbsFilePath() ):
-			fullPath = filePath + '/' + fileName
-			name, ext = os.path.splitext( fileName )
-			if ext == '.psd':
-				proj.loadPSD( fullPath )
+		proj.loadFolder( node.getAbsFilePath() )
 
 		#TODO: let texture library handle atlas
 		absAtlas, absDef = node.getAbsObjectFile( 'atlas' ), node.getAbsObjectFile( 'def' )

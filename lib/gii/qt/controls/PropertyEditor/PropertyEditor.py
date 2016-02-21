@@ -6,15 +6,6 @@ from PyQt4.QtCore import Qt
 
 from FieldEditorControls import *
 
-'''
-	planned control:
-		- text
-		- number
-			+ spin   [later]
-			+ slider [later]		
-		- boolean
-		- subobject
-'''
 ##----------------------------------------------------------------##
 		
 _FieldEditorFactories = []

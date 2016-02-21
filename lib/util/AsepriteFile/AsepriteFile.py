@@ -25,9 +25,15 @@ def read_string( fp ):
 class ASEFrame(object):
 	def __init__( self ):
 		self.cels = []
+		self.duration = 10
 
 	def getCels( self ):
 		return self.cels
+
+	def findCelByLayer( self, layerIndex ):
+		for cel in self.cels:
+			if cel.layerIndex == layerIndex: return cel
+		return None
 
 
 ##----------------------------------------------------------------##
@@ -39,12 +45,18 @@ class ASECel(object):
 		self.layerIndex = None
 		self.layer      = None
 		self.linked     = None
+		self.linkedCel  = None
 		self.image      = None
 		self.bbox       = None
 
 	def getImage( self ):
-		if self.linked:
-			return self.linkedCel.getImage()
+		return self.getRealCel().image
+
+	def getRealCel( self ):
+		if self.linkedCel:
+			return self.linkedCel.getRealCel()
+		else:
+			return self
 
 
 ##----------------------------------------------------------------##
@@ -75,6 +87,14 @@ class ASEDocument(object):
 		self.height = 0
 		self.speed  = 1
 		self.depth  = 0
+		self.imageCache = []
+
+	def affirmUniqueImage( self, img ):
+		for i1 in self.imageCache:
+			if i1.size == img.size:
+				if i1.tobytes() == img.tobytes(): return i1
+		self.imageCache.append( img )
+		return img
 
 	def load( self, path ):
 		#read header
@@ -137,7 +157,7 @@ class ASEDocument(object):
 				elif chunkType == 0x2005: #cel
 					cel = ASECel()
 					cel.layerIndex = read_fmt( 'H', dp )
-					cel.x, cel.y   = read_fmt( 'HH', dp )
+					cel.x, cel.y   = read_fmt( 'hh', dp )
 					cel.opacity    = read_fmt( 'c', dp )
 					cel.type       = read_fmt( 'H', dp )
 					dp.read( 7 )
@@ -153,7 +173,7 @@ class ASEDocument(object):
 						img = Image.frombuffer( 'RGBA', (cel.w, cel.h), data, 'raw', 'RGBA', 0, 1 )
 						bbox = img.getbbox()
 						cropped = img.crop( bbox )
-						cel.image = img
+						cel.image = self.affirmUniqueImage( cropped )
 						cel.bbox  = bbox
 
 					frame.cels.append( cel )
@@ -193,6 +213,16 @@ class ASEDocument(object):
 					contextObject.userText  = userText
 					contextObject.userColor = userColor
 
+		#update linked cel
+		for frame in self.frames:
+			for cel in frame.cels:
+				if cel.type == 1:
+					targetFrame = self.frames[ cel.linked ]
+					cel.linkedCel = targetFrame.findCelByLayer( cel.layerIndex )
+
+		self.imageCache = []
+
+		
 if __name__ == '__main__':
 	doc = ASEDocument()
 	doc.load( 'test.ase' )

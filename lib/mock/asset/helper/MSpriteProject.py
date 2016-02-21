@@ -10,9 +10,14 @@ from atlas2 import AtlasGenerator, Img
 from psd_tools_helper import *
 import re
 
+from util.AsepriteFile import *
+
 import logging
 import json
 
+# def compare_image( img1, img2 ):
+# 	if img1.size != img2.size: return False
+# 	if img1.
 
 def saveJSON( data, path, **option ):
 	outputString = json.dumps( data , 
@@ -55,16 +60,32 @@ class AnimModule(object):
 		self.feature = None
 
 class SubImg(object):
-	def __init__( self, psdLayer ):
-		self._layer = psdLayer
+	def __init__( self ):
+		self.w = 0
+		self.h = 0
 		self.img = None
-		x1,y1,x2,y2 = psdLayer.bbox
-		self.w = x2-x1
-		self.h = y2-y1
 		self.imgInfo = None
 
 	def getSize( self ):
-		return (self.w, self.h)
+		return ( self.w, self.h )
+
+	def getImage( self ):
+		return self.img
+
+	def getImageRawData( self ):
+		return None
+
+	def getAtlasNode( self ):
+		return self.imgInfo.node
+
+
+class SubImgPsdLayer(object):
+	def __init__( self, psdLayer ):
+		super( SubImgPsdLayer, self ).__init__()
+		self._layer = psdLayer
+		x1,y1,x2,y2 = psdLayer.bbox
+		self.w = x2-x1
+		self.h = y2-y1
 
 	def getImage( self ):
 		if self.img: return self.img
@@ -74,9 +95,24 @@ class SubImg(object):
 	def getImageRawData( self ):
 		return self._layer
 
-	def getAtlasNode( self ):
-		return self.imgInfo.node
 
+class SubImgCel( SubImg ):
+	def __init__( self, cel ):
+		super( SubImgCel, self ).__init__()
+		self._cel = cel
+		x1,y1,x2,y2 = cel.bbox
+		self.w = x2-x1
+		self.h = y2-y1
+		# print self.w, self.h
+
+	def getImageRawData( sel ):
+		return self._cel
+
+	def getImage( self ):
+		if self.img: return self.img
+		self.img = self._cel.getImage()
+		return self.img
+		
 
 class Anim(object):
 	def __init__(self):
@@ -119,7 +155,7 @@ class MSpriteProject(object):
 
 	def generateImagesInfo( self ):
 		infos = []
-		for subImg in self.subImgCache.itervalues():
+		for subImg in self.subImgCache.values():
 			( w, h ) = subImg.getSize()
 			img = LayerImg ( '', w, h, (0, 0, w, h) )	
 			img.src = subImg
@@ -152,7 +188,7 @@ class MSpriteProject(object):
 		if not featureName: return 0
 		return self.featureNames.get( featureName, None )
 
-	def save( self, atlasPath, jsonPath, atlasSize = (1024,1024) ):
+	def save( self, atlasPath, jsonPath, atlasSize = (2048,2048) ):
 		atlases = [ self.generateAtlas( atlasPath, atlasSize, bleeding = True ) ]
 		atlasData  = {}
 		moduleData = {}
@@ -214,31 +250,74 @@ class MSpriteProject(object):
 
 		saveJSON( output, jsonPath )
 
-	def getModule( self, psdLayer ):
+	def addModule( self, subImg ):
+		m = AnimModule( subImg )
+		m.id = self.currentModuleId + 0x1000
+		self.currentModuleId += 1
+		return m
+
+	def getModuleByPsdLayer( self, psdLayer ):
 		m = self.moduleCache.get( psdLayer )		
 		if m: return m
 		subImg = None
 		for l1, img1 in self.subImgCache.items():
+			if not isinstance( l1, PSDLayer ): continue
 			if compare_layer_image( psdLayer, l1 ):
 				subImg = img1
 				break
 		if not subImg:
-			subImg = SubImg( psdLayer )
+			subImg = SubImgPsdLayer( psdLayer )
 			self.subImgCache[ psdLayer ] = subImg
-		m = AnimModule( subImg )
-		m.id = self.currentModuleId + 0x1000
+		
+		m = self.addModule( subImg )
 		m.feature = psdLayer._featureId
-
-		self.currentModuleId += 1
 		self.moduleCache[ psdLayer ] = m
 		return m
+
+	def getModuleByASECel( self, cel ):
+		m = self.moduleCache.get( cel )
+		if m : return m
+		subImg = None
+		# for c1, img1 in self.subImgCache.items():
+		# 	if not isinstance( c1, ASECel ): continue
+		# 	if compare_image( img1, c1.getImage() ):
+		# 		subImg = img1
+		# 		break
+		if not subImg:
+			subImg = SubImgCel( cel )
+			self.subImgCache[ cel ] = subImg
+		m = self.addModule( subImg )
+		self.moduleCache[ cel ] = m
+		return m
+
 
 	def loadFolder( self, path ):
 		for fileName in os.listdir( path ):
 			fullPath = path + '/' + fileName
 			name, ext = os.path.splitext( fileName )
 			if ext == '.psd':
-				proj.loadPSD( fullPath )
+				self.loadPSD( fullPath )
+			elif ext == '.ase':
+				self.loadASE( fullPath )
+
+	def loadASE( self, path ):
+		doc = ASEDocument()
+		doc.load( path )
+		anim = Anim()
+		for frameData in doc.frames:
+			frame = AnimFrame()
+			frame.delay = float(frameData.duration)/1000.0
+			for cel in frameData.cels:
+				rcel = cel.getRealCel()
+				m = self.getModuleByASECel( rcel )
+				bx0, by0, bx1, by1 = rcel.bbox
+				frame.addModule( m, bx0+cel.x, by0+cel.y )
+			anim.addFrame( frame, 0, 0 )
+			self.addFrame( frame )
+		self.addAnim( anim )
+		n,ext = os.path.splitext( os.path.basename( path ) )
+		anim.name = n
+
 
 	def loadPSD( self, path ):
 		image = PSDImage.load( path )
@@ -353,7 +432,7 @@ class MSpriteProject(object):
 				if y0 + offy < by0:	continue
 				if x1 + offx > bx1:	continue
 				if y1 + offy > by1:	continue
-				m = self.getModule( l )
+				m = self.getModuleByPsdLayer( l )
 				x = x0 - ox + offx 
 				y = y0 - oy + offy
 				frame.addModule( m, x, y )
@@ -365,8 +444,11 @@ class MSpriteProject(object):
 
 if __name__ == '__main__':
 	proj = MSpriteProject()
-	proj.loadFolder( 'test/InsectCrow.msprite' )
-	proj.save( 'test/InsectCrow_data.png', 'test/InsectCrow_data.json' )
+	# proj.loadFolder( 'test/InsectCrow.msprite' )
+	# proj.save( 'test/InsectCrow_data.png', 'test/InsectCrow_data.json' )
+	proj.loadFolder( 'test/market.msprite' )
+	proj.save( 'test/market_data.png', 'test/market_data.json' )
+
 
 
 

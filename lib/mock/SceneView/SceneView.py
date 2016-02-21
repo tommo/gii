@@ -82,7 +82,7 @@ class SceneView( SceneEditorModule ):
 		self.addToolBar( 'scene_view_config', self.toolbar )
 
 		self.canvas = self.window.addWidget( SceneViewCanvas() )
-		self.canvas.loadScript( _getModulePath('SceneView.lua') )
+		self.canvas.loadScript( _getModulePath('SceneViewScript.lua') )
 		self.canvas.parentView = self
 		
 		self.canvas.setDelegateEnv( '_giiSceneView', self )

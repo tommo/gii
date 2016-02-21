@@ -98,6 +98,9 @@ def removeSelection( key, targets = None ):
 ####################################
 #COMMON DATA BRIDGE
 ####################################
+def newDict():
+	return {}
+	
 def getDict( d, key, default=None ):
 	return d.get( key, default )
 

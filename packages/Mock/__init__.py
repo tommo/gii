@@ -49,3 +49,4 @@ import ControlVariable
 import DebugInfo
 import LuaProfiler
 
+import Shape2D

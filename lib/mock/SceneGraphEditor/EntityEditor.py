@@ -199,7 +199,7 @@ class ComponentEditor( CommonObjectEditor, SceneObjectEditorMixin ): #a generic 
 		alias = target._alias
 		if alias:
 			self.getContainer().setTitle( 
-				'%s [%s]' % ( self.typeName, alias )
+				'[%s] %s' % ( alias, self.typeName )
 			)
 		else:
 			super( ComponentEditor, self ).refreshTitle()

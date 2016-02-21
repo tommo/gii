@@ -12,6 +12,17 @@ function getCurrentSceneView()
 	return currentSceneView
 end
 
+function startAdhocSceneTool( toolID, context )
+	if not currentSceneView then return false end
+	return currentSceneView:startAdhocTool( toolID, context )
+end
+
+function stopAdhocSceneTool( toolID ) 
+	if not currentSceneView then return false end
+	return currentSceneView:stopAdhocTool()
+end
+
+
 --------------------------------------------------------------------
 CLASS: SceneViewDrag ()
 	:MODEL{}
@@ -198,6 +209,36 @@ end
 
 function SceneView:enableCamera()
 	self:getCameraComponent():setActive( true )
+end
+
+function SceneView:getCurrentToolId()
+	local sceneToolManager = gii.getModule( 'scene_tool_manager' )
+	if sceneToolManager then
+		return sceneToolManager:getCurrentToolId()
+	end
+end
+
+function SceneView:changeTool( id, t )
+	local sceneToolManager = gii.getModule( 'scene_tool_manager' )
+	if sceneToolManager then
+		local dict = gii.tableToDictPlain( t or {} )
+		sceneToolManager:changeToolD( id, dict )
+	end
+end
+
+function SceneView:startAdhocTool( id, t )
+	local sceneToolManager = gii.getModule( 'scene_tool_manager' )
+	if sceneToolManager then
+		local dict = gii.tableToDictPlain( t or {} )
+		sceneToolManager:startAdhocToolD( id, dict )
+	end
+end
+
+function SceneView:stopAdhocTool()
+	local sceneToolManager = gii.getModule( 'scene_tool_manager' )
+	if sceneToolManager then
+		sceneToolManager:stopAdhocTool()
+	end
 end
 
 

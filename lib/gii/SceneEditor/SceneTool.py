@@ -118,11 +118,14 @@ class SceneToolManager( EditorModule ):
 			self.currentAdhoc = True
 		else:
 			self.currentAdhoc = False
-
-		toolClas, options = self.toolRegistry.get( toolId, None )
-		if not toolClas:
+		
+		entry = self.toolRegistry.get( toolId, None )
+		if not entry:
 			logging.warning( 'No scene tool found: %s' % toolId )
 			return
+		
+		( toolClas, options ) = entry
+
 		toolObj = toolClas()
 		toolObj._toolId = toolId
 
@@ -145,6 +148,12 @@ class SceneToolManager( EditorModule ):
 	def startAdhocTool( self, toolId, **context ):
 		context[ 'adhoc' ] = True
 		self.changeTool( toolId, **context )
+
+	def changeToolD( self, toolId, contextDict ):
+		return self.changeTool( toolId, **contextDict )
+
+	def startAdhocToolD( self, toolId, contextDict ):
+		return self.startAdhocTool( toolId, **contextDict )
 
 	def stopAdhocTool( self ):
 		if self.currentAdhoc:

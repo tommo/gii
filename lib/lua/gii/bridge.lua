@@ -20,6 +20,7 @@ _M.newPythonDict        = bridge.newPythonDict
 _M.newPythonList        = bridge.newPythonList
 _M.appendPythonList     = bridge.appendPythonList
 _M.deletePythonList     = bridge.deletePythonList
+_M.newDict              = bridge.newDict
 _M.getDict              = bridge.getDict
 _M.setDict              = bridge.setDict
 --other
@@ -39,6 +40,14 @@ local decodeDict=bridge.decodeDict
 function tableToDict(table)
 	local json = MOAIJsonParser.encode(table)
 	return decodeDict(json)
+end
+
+function tableToDictPlain( t )
+	local dict = newDict()
+	for k,v in pairs( t ) do
+		dict[ k ] = v
+	end
+	return dict
 end
 
 function tableToList(table)

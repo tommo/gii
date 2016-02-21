@@ -30,7 +30,7 @@ QToolButton
 {
 	background-color:qlineargradient(x1:0,y1:0,x2:0,y2:1,stop:0#444,stop:1#333);
 	border: 1px solid #252525;
-	border-radius:0px;
+	border-radius:2px;
 	color:#ccc;
 	padding:2px;
 }
