@@ -118,6 +118,8 @@ class Anim(object):
 	def __init__(self):
 		self.name = "null"
 		self.frames = []
+		self.ox = 0
+		self.oy = 0
 
 	def addFrame( self, frame, offsetX, offsetY ):
 		self.frames.append( { 'frame':frame, 'offset': (offsetX, offsetY) } )
@@ -126,6 +128,9 @@ class Anim(object):
 	def setOrigin( self, x, y ):
 		self.ox = x
 		self.oy = y
+
+	def getOrigin( self ):
+		return self.ox, self.oy
 
 	def setBound( self, x, y, w, h ):
 		self.bound = ( x,y,w,h )
@@ -303,15 +308,31 @@ class MSpriteProject(object):
 	def loadASE( self, path ):
 		doc = ASEDocument()
 		doc.load( path )
+		if not doc.frames: return
+
 		anim = Anim()
+		#find origin
+		for cel in doc.frames[0].cels:
+			rcel = cel.getRealCel()
+			if rcel.layer.name == '@origin':
+				bx0, by0, bx1, by1 = rcel.bbox
+				ox = ( bx0 + bx1 ) / 2
+				oy = ( by0 + by1 ) / 2
+				anim.setOrigin( ox, oy )
+				continue
+		ox, oy = anim.getOrigin()
 		for frameData in doc.frames:
 			frame = AnimFrame()
 			frame.delay = float(frameData.duration)/1000.0
 			for cel in frameData.cels:
 				rcel = cel.getRealCel()
 				m = self.getModuleByASECel( rcel )
+				layer = rcel.layer
+				if layer.name.startswith( '@' ) or layer.name.startswith( '//' ): continue
+				if ( not layer.isVisible() ) or layer.isBackground():
+					continue
 				bx0, by0, bx1, by1 = rcel.bbox
-				frame.addModule( m, bx0+cel.x, by0+cel.y )
+				frame.addModule( m, bx0+cel.x -ox, by0+cel.y -oy )
 			anim.addFrame( frame, 0, 0 )
 			self.addFrame( frame )
 		self.addAnim( anim )

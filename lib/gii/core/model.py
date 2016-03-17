@@ -531,3 +531,35 @@ def serializeObject( obj, **kw ):
 def deserializeObject( data, **kw ):
 	return ModelManager.get().deserialize( data, **kw )
 
+def getTypeId( obj ):
+	return ModelManager.get().getTypeId( obj )
+
+
+##----------------------------------------------------------------##
+class TypeIdDict( object ):
+	def __init__( self ):
+		self._dict = {}
+		self._cached = {}
+
+	def get( self, typeId, default = None ):
+		v = self._cached.get( typeId )
+		if v: return v
+		while True:
+			value = self._dict.get( typeId, None )
+			if value:
+				self._cached[ typeId ] = value
+				return value
+			typeId = getSuperType( typeId )
+			if not typeId: break
+		return default
+
+	def set( self, typeId, value ):
+		self._cached = {}
+		self._dict[ typeId ] = value
+
+	def __setitem__( self, key, value ):
+		self.set( key, value )
+
+	def __getitem__( self, key ):
+		return self.get( key, None )
+

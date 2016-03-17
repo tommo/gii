@@ -4,9 +4,13 @@ import os.path
 import imp
 import logging
 import json
+from types import ModuleType
 
-_GII_PACKAGE_PREFIX = '[gii-package]'
+_GII_PACKAGE_NAME   = '__gii__'
 _INFO_FILE_NAME     = '__gii__.json'
+
+_GII_MODULE = ModuleType( _GII_PACKAGE_NAME )
+sys.modules[ _GII_PACKAGE_NAME ] = _GII_MODULE
 
 ##----------------------------------------------------------------##
 def _clearSysModule( prefix ):
@@ -109,7 +113,7 @@ class Package(object):
 		self.path     = path
 		self.settings = settings
 
-		self.moduleName   = _GII_PACKAGE_PREFIX + name
+		self.moduleName   = _GII_PACKAGE_NAME + '.' + name
 		self.loaded       = False
 		self.loadedModule = None
 		
@@ -158,6 +162,7 @@ class Package(object):
 		logging.info( 'loading package:' + self.name )
 		self.loadedModule = imp.load_module( self.moduleName, None, self.path, ('', '', 5) )
 		self.loaded = True
+		setattr( _GII_MODULE, self.name, self.loadedModule )
 		return True
 
 	def unload( self ):

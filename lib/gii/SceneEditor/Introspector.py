@@ -417,7 +417,7 @@ class SceneIntrospector( SceneEditorModule ):
 		self.instanceCache  = []
 		self.idPool         = IDPool()
 		self.activeInstance = None
-		self.objectEditorRegistry = {}
+		self.objectEditorRegistry = TypeIdDict()
 
 	def getName(self):
 		return 'introspector'
@@ -473,13 +473,9 @@ class SceneIntrospector( SceneEditorModule ):
 		self.objectEditorRegistry[ typeId ] = editorClas
 
 	def getObjectEditorByTypeId( self, typeId, defaultClass = None ):
-		while True:
-			clas = self.objectEditorRegistry.get( typeId, None )
-			if clas: return clas
-			typeId = getSuperType( typeId )
-			if not typeId: break
-		if defaultClass: return defaultClass
-		return CommonObjectEditor
+		if not defaultClass:
+			defaultClass = CommonObjectEditor
+		return self.objectEditorRegistry.get( typeId, defaultClass )
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return

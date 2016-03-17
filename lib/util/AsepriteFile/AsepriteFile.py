@@ -69,6 +69,21 @@ class ASELayer(object):
 		self.opacity = 255
 		self.name = ''
 
+	def isVisible( self ):
+		return bool( self.flags & 1 )
+
+	def isEditable( self ):
+		return bool( self.flags & 2 )
+
+	def isLocked( self ):
+		return bool( self.flags & 4 )
+
+	def isBackground( self ):
+		return bool( self.flags & 8 )
+
+	def isPreferLinkedCels( self ):
+		return bool( self.flags & 16 )
+
 ##----------------------------------------------------------------##					
 class ASEFrameTag(object):
 	def __init__( self ):
@@ -213,9 +228,10 @@ class ASEDocument(object):
 					contextObject.userText  = userText
 					contextObject.userColor = userColor
 
-		#update linked cel
+		#update linked cel cel.layer
 		for frame in self.frames:
 			for cel in frame.cels:
+				cel.layer = self.layers[ cel.layerIndex ]
 				if cel.type == 1:
 					targetFrame = self.frames[ cel.linked ]
 					cel.linkedCel = targetFrame.findCelByLayer( cel.layerIndex )

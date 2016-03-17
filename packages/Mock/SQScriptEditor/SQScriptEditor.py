@@ -194,5 +194,6 @@ class SQScriptEditorInstance( object ):
 
 
 ##----------------------------------------------------------------##
-class SQScriptEditor( object ):
+@slot( 'module.loaded' )
+def registerCommonSQNodeEditors():
 	pass

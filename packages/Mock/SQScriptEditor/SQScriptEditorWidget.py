@@ -32,6 +32,66 @@ SQScriptEditorForm,BaseClass = uic.loadUiType( _getModulePath('SQScriptEditorWid
 
 
 ##----------------------------------------------------------------##
+SQNodeEditorRegistry = {}
+SQNodeEditorCache = {}
+
+def registerSQNodeEditor( nodeClasName, editorClas ):
+	SQNodeEditorRegistry[ nodeClasName ] = editorClas
+
+def requestSQNodeEditor( nodeClasName ):
+	queue = SQNodeEditorCache.get( nodeClasName )
+	if not queue:
+		queue = []
+		SQNodeEditorCache[ nodeClasName ] = queue
+	if queue:
+		editor = queue.pop()
+	else:
+		clas = SQNodeEditorRegistry.get( nodeClasName, None )
+		if not clas:
+			return None
+		editor = clas()
+		editor._nodeClasName = nodeClasName
+	return editor
+
+def pushSQNodeEditorToCache( editor ):
+	nodeClasName = editor._nodeClasName
+	queue = SQNodeEditorCache.get( nodeClasName )
+	if not queue:
+		queue = []
+		SQNodeEditorCache[ nodeClasName ] = queue
+	queue.append( editor )
+
+##----------------------------------------------------------------##
+class SQNodeEditor( QtGui.QWidget ):
+	def __init__( self ):
+		super( SQNodeEditor, self ).__init__( None )
+		self.taretNode = None
+		self.parentEditor = None
+		self.setSizePolicy(
+			QtGui.QSizePolicy.Expanding,
+			QtGui.QSizePolicy.Expanding
+			)
+
+	def setTargetNode( self, node ):
+		self.targetNode = node
+
+	def getTargetNode( self ):
+		return self.targetNode
+
+	def notifyChanged( self ):
+		self.parentEditor.treeRoutineNode.refreshNodeContent( self.targetNode )
+
+	def onRefresh( self, node ):
+		pass
+
+	def onLoad( self, node ):
+		pass
+
+	def onUnload( self, node ):
+		pass
+
+
+##----------------------------------------------------------------##
 SQITEM_STYLE_SHEET = '''
 	body{
 		font-size:13px;
@@ -278,6 +338,7 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 		self.owner = None
 		self.targetRoutine = None
 		self.targetNode    = None
+		self.currentNodeEditor = None
 		self.initData()		
 		self.initUI()
 
@@ -318,8 +379,14 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 
 		#setup shortcuts
 		self.addShortcut( self.treeRoutineNode, 'Tab', self.promptAddNode )
-		self.addShortcut( self, 'Ctrl+1', self.focusContentTree )
+		self.addShortcut( self.treeRoutineNode, 'Return', self.focusNodeEditor )
+		self.addShortcut( self, 'Ctrl+Return', self.focusContentTree )
+		# self.addShortcut( self, 'Ctrl+1', self.focusContentTree )
 
+		self.nodeEditorContainer = self.ui.containerEditor
+		editorContainerLayout = QtGui.QVBoxLayout( self.nodeEditorContainer )
+		editorContainerLayout.setSpacing( 0 )
+		editorContainerLayout.setMargin( 0 )
 
 	def addShortcut( self, contextWindow, keySeq, target, *args, **option ):
 		contextWindow = contextWindow or self
@@ -352,6 +419,28 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 	def setTargetNode( self, node ):
 		self.targetNode = node
 		self.propertyEditor.setTarget( node )
+		#apply node editor
+		clasName = node.getClassName( node )
+		
+		self.nodeEditorContainer.hide()
+		if self.currentNodeEditor:
+			self.currentNodeEditor.onUnload( self.currentNodeEditor.getTargetNode() )
+			self.nodeEditorContainer.layout().takeAt( 0 )
+			self.currentNodeEditor.setParent( None )
+			pushSQNodeEditorToCache( self.currentNodeEditor )
+			self.currentNodeEditor = None
+
+		editor = requestSQNodeEditor( clasName )
+		if editor:
+			self.currentNodeEditor = editor
+			editor.setParent( self.nodeEditorContainer )
+			self.nodeEditorContainer.layout().addWidget( editor )
+			editor.parentEditor = self
+			editor.setTargetNode( node )
+			editor.onLoad( node )
+			editor.onRefresh( node )
+		self.nodeEditorContainer.show()
+
 
 	def getTargetNode( self ):
 		return self.targetNode
@@ -450,11 +539,17 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 	def onPropertyChanged( self, obj, fid, value ):
 		if isMockInstance( obj, 'SQNode' ):
 			self.treeRoutineNode.refreshNodeContent( obj )
+			if self.currentNodeEditor:
+				self.currentNodeEditor.onRefresh( obj )
 		elif isMockInstance( obj, 'SQRoutine' ):
 			pass
 
 	def focusContentTree( self ):
 		self.treeRoutineNode.setFocus()
+
+	def focusNodeEditor( self ):
+		if self.currentNodeEditor:
+			self.currentNodeEditor.setFocus()
 	
 	def onTool( self, tool ):
 		name = tool.getName()
@@ -469,3 +564,4 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 
 		elif name == 'locate':
 			self.owner.locateAsset()
+
