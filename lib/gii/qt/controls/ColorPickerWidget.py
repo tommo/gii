@@ -5,7 +5,7 @@ from PyQt4 import QtGui, QtCore, QtOpenGL, uic
 from PyQt4.QtCore import Qt, QObject, QEvent, pyqtSignal
 from PyQt4.QtCore import QPoint, QRect, QSize
 from PyQt4.QtCore import QPointF, QRectF, QSizeF
-from PyQt4.QtGui import QColor, QTransform, QStyle, qRgb
+from PyQt4.QtGui import QColor, QTransform, QStyle, qRgb, QMessageBox
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -15,6 +15,25 @@ def _getModulePath( path ):
 
 
 ColorPickerForm,BaseClass = uic.loadUiType( _getModulePath('ColorPicker.ui') )
+
+def requestConfirm(title, msg, level='normal'):
+	f = None
+	if level == 'warning':
+		f = QMessageBox.warning
+	elif level == 'critical':
+		f = QMessageBox.critical
+	else:
+		f = QMessageBox.question
+	res = f(None, title, msg, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
+	if res == QMessageBox.Yes:    return True
+	if res == QMessageBox.Cancel: return None
+	if res == QMessageBox.No:     return False
+
+def unpackQColor( c ):
+	return ( c.redF(), c.greenF(), c.blueF(), c.alphaF() )
+
+def QColorF( r, g, b, a =1 ):
+	return QtGui.QColor( r*255, g*255, b*255, a*255)
 
 def clampOne( v ):
 	return min( 1.0, max( 0.0, v ) )
@@ -33,10 +52,287 @@ def generateHSVImage( w, h, hue, img = None ):
 			img.setPixel( x, y, c.rgb() )
 	return img
 
-#####
-class ColorPreviewWidget( QtGui.QWidget ):
-	originalColorClicked = pyqtSignal()
+##----------------------------------------------------------------##
+_DefaultPaletteProvider = None
+class PaletteProvider(object):
+	def setDefault( self ):
+		global _DefaultPaletteProvider
+		_DefaultPaletteProvider = self
 
+	def pullPalettes( self ):
+		return []
+
+	def pushPalettes( self, palettes ):
+		pass
+
+class SimplePaletteProvider(PaletteProvider):
+	def __init__( self ):
+		self.palettes = []
+
+	def pullPalettes( self ):
+		return self.palettes
+
+	def pushPalettes( self, palettes ):
+		self.palettes = palettes[:]
+
+SimplePaletteProvider().setDefault()
+
+##----------------------------------------------------------------##
+class ColorBlock( QtGui.QToolButton ):
+	def __init__(self, parent, color = None, **option ):
+		super(ColorBlock, self).__init__( parent )
+		self.setColor( color or QtGui.QColor( 1,1,1,1 ) )
+		self.setSizePolicy(
+			QtGui.QSizePolicy.Expanding,
+			QtGui.QSizePolicy.Fixed
+			)
+
+		self.title = option.get( 'title', 'Color' )
+		self.pen = QtGui.QPen()
+		self.brush = QtGui.QBrush()
+		self.brush.setStyle( Qt.SolidPattern )
+		self.setCursor( Qt.PointingHandCursor )
+		
+
+	def sizeHint( self ):
+		return QtCore.QSize( 60, 20 )
+
+	def getColor( self ):
+		return self.color
+
+	def setColor( self, color ):
+		self.color = color
+		self.update()
+
+	def paintEvent( self, event ):
+		painter = QtGui.QPainter()
+		color = self.color
+		painter.begin( self )
+		margin = 2
+		x = margin
+		y = margin
+		w = self.width() - margin * 2
+		h = self.height() - margin * 2
+		gridSize = 5
+		gridPart = gridSize * 1
+		painter.translate( margin, margin )
+		painter.setPen( Qt.black )
+		painter.setBrush( Qt.white )
+		painter.drawRect( 0,0,w,h )
+		painter.setPen( Qt.NoPen )
+		painter.setBrush( QColor.fromRgbF( 0.5, 0.5, 0.5 ) )
+		painter.setClipRect( 0,0,w,h )
+		for y in range( int(h/gridSize+1) ):
+				for x in range( int(w/gridSize+1) ):
+					if (x % 2) == (y % 2):
+						painter.drawRect( x * gridSize, y * gridSize, gridSize, gridSize )
+		painter.setBrush( color )
+		painter.drawRect( 0,0,w,h )
+		colorFull = QColor( color )
+		colorFull.setAlpha( 255 )
+		painter.setBrush( colorFull )
+		painter.drawRect( 0,0, w/2, h )
+		painter.end()
+
+class ColorItemDelegate( QtGui.QStyledItemDelegate ):
+	def sizeHint( self, option, index ):
+		return QtCore.QSize( 50, 25 )
+
+	def createEditor( *args ):
+		return None
+
+	def paint( self, painter, option, index ):
+		self.initStyleOption(option,index)
+
+		style = option.widget.style() or QApplication.style()
+
+		#draw icon
+		option.text = ""
+		style.drawControl( QStyle.CE_ItemViewItem, option, painter,option.widget)
+
+		painter.save()
+		item = self.tree.itemFromIndex( index )
+		colorData = item.userdata
+		color = QColorF( *colorData.get( 'color', (1,1,1,1) ) )
+		rect = option.rect
+		margin = 2
+		rect.adjust( margin,0,-margin,-margin*2 )
+		w = rect.width()
+		h = rect.height()
+		
+		gridSize = 5
+		gridPart = gridSize * 1
+		painter.translate( rect.x(), rect.y() )
+		painter.translate( margin, margin )
+		painter.setPen( Qt.black )
+		painter.setBrush( Qt.white )
+		painter.drawRect( 0,0,w,h )
+		painter.setPen( Qt.NoPen )
+		painter.setBrush( QColor.fromRgbF( 0.5, 0.5, 0.5 ) )
+		painter.setClipRect( 0,0,w,h )
+		for y in range( int(h/gridSize+1) ):
+				for x in range( int(w/gridSize+1) ):
+					if (x % 2) == (y % 2):
+						painter.drawRect( x * gridSize, y * gridSize, gridSize, gridSize )
+		painter.setBrush( color )
+		painter.drawRect( 0,0,w,h )
+		colorFull = QColor( color )
+		colorFull.setAlpha( 255 )
+		painter.setBrush( colorFull )
+		painter.drawRect( 0,0, w/2, h )
+		# painter.fillRect( rect, color )
+		# if option.state & QStyle.State_Selected:
+		# 	painter.setPen  ( Qt.white )
+		# 	painter.setBrush( Qt.NoBrush )
+		# 	painter.drawRect( rect )
+		painter.restore()
+
+	def paintEvent( self, event ):
+		painter = QtGui.QPainter()
+		color = self.color
+		painter.begin( self )
+		margin = 2
+		x = margin
+		y = margin
+		w = self.width() - margin * 2
+		h = self.height() - margin * 2
+		gridSize = 5
+		gridPart = gridSize * 1
+		painter.translate( margin, margin )
+		painter.setPen( Qt.black )
+		painter.setBrush( Qt.white )
+		painter.drawRect( 0,0,w,h )
+		painter.setPen( Qt.NoPen )
+		painter.setBrush( Qt.black )
+		painter.setClipRect( 0,0,w,h )
+		for y in range( int(h/gridSize+1) ):
+				for x in range( int(w/gridSize+1) ):
+					if (x % 2) == (y % 2):
+						painter.drawRect( x * gridSize, y * gridSize, gridSize, gridSize )
+		painter.setBrush( color )
+		painter.drawRect( 0,0,w,h )
+		colorFull = QColor( color )
+		colorFull.setAlpha( 255 )
+		painter.setBrush( colorFull )
+		painter.drawRect( 0,0, w/2, h )
+		painter.end()
+	# def __init__(self, arg):
+	# 	super(ColorItemDelegate, self).__init__()
+	# 	self.arg = arg
+		
+##----------------------------------------------------------------##
+class PaletteList( QtGui.QListWidget ):
+	def __init__(self, *args ):
+		super(PaletteList, self).__init__( *args )
+		self.setSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Expanding)
+		self.setAttribute(Qt.WA_MacShowFocusRect, False)
+		self.owner = None
+		self.itemSelectionChanged.connect( self.onItemSelectionChanged )
+		self.itemChanged          .connect( self.onItemChanged )
+
+	def addPalette( self, pal ):
+		name = pal.get( 'name', 'unnamed' )
+		item = QtGui.QListWidgetItem( name )
+		self.addItem( item )
+		item.palette = pal
+		item.setFlags( Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsEnabled )
+		return item
+
+	def onItemChanged( self, item ):
+		text = unicode(item.text())
+		item.palette['name'] = text
+		self.owner.onPaletteChange()
+
+	def onItemSelectionChanged( self ):
+		selectedItems = self.selectedItems()
+		if selectedItems:
+			item = selectedItems[0]
+			palette = item.palette
+			self.owner.onPaletteSelected( palette )
+		else:
+			self.owner.onPaletteSelected( None )
+
+
+class PaletteItemList( QtGui.QTreeWidget ):
+	def __init__(self, *args ):
+		super(PaletteItemList, self).__init__( *args )
+		self.owner = None
+		self.setSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Expanding)
+		self.setColumnCount( 2 )
+		self.setColumnWidth( 0, 60 )
+		self.setColumnWidth( 1, -1 )
+		self.setIndentation( 0 )
+
+		self.setAttribute(Qt.WA_MacShowFocusRect, False)
+		self.setHeaderHidden( True )
+		self.setIconSize( QtCore.QSize( 16, 16 ) )
+		self.colorItemDelegate = ColorItemDelegate()
+		self.colorItemDelegate.tree = self
+		self.setItemDelegateForColumn( 0, self.colorItemDelegate )
+		self.dataToItem = {}
+
+		self.itemSelectionChanged .connect( self.onItemSelectionChanged )
+		self.itemClicked          .connect( self.onItemClicked )
+		self.itemChanged          .connect( self.onItemChanged )
+
+		
+	def addColorData( self, data ):
+		name = data.get( 'name', None )
+		colorTuple = data.get( 'color', (1,1,1,1) )
+		( r,g,b,a ) = colorTuple
+		color = QColorF( r,g,b,a )
+		item = QtGui.QTreeWidgetItem()
+		self.addTopLevelItem( item )
+		item.setText( 1, name )
+		item.setFlags( Qt.ItemIsEditable|Qt.ItemIsSelectable|Qt.ItemIsEnabled )
+		# self.dataToItem[ data ] = item
+		item.userdata = data
+		return item
+
+	def refreshItem( self, item ):
+		data = item.userdata
+		item.setText( 1, data.get( 'name', 'unamed' ) )
+		colorTuple = data.get( 'color', (1,1,1,1) )
+		( r,g,b,a ) = colorTuple
+		self.update()
+	
+	def setPalette( self, palette ):
+		self.palette = palette
+		self.rebuild()
+	
+	def rebuild( self ):
+		self.hide()
+		self.clear()
+		self.dataToItem = {}
+		if not self.palette: return
+		items = self.palette.get( 'items', [] )
+		for data in items:
+			self.addColorData( data )
+		self.show()
+
+	def onItemSelectionChanged( self ):
+		for item in self.selectedItems():
+			data = item.userdata
+			self.owner.setColor( QColorF( *data.get('color',(1,1,1,1) ) ) )
+
+	def onItemChanged( self, item, col ):
+		if col != 1: return
+		if not hasattr( item, 'userdata' ) : return
+		userdata = item.userdata
+		if not userdata: return
+		text = item.text( col )
+		userdata[ 'name' ] = text
+		self.owner.onPaletteChange()
+
+	def onDClicked(self, item, col):
+		if col == 0:
+			self.owner.applyPaletteSelection()
+
+	def onItemClicked( self, item, col ):
+		self.owner.applyPaletteSelection()
+
+#####
+class ColorPreviewWidget( QtGui.QToolButton ):
 	def __init__( self, parent ):
 		super( ColorPreviewWidget, self ).__init__( parent )
 		self.setFixedSize( parent.width(), parent.height() )
@@ -327,7 +623,7 @@ class ColorPickerWidget( QtGui.QWidget ):
 		self.ui = ColorPickerForm()
 		self.ui.setupUi( self )
 
-		self.setWindowFlags( Qt.Popup )
+		# self.setWindowFlags( Qt.Popup )
 
 		self.preview     = ColorPreviewWidget( self.ui.containerPreview )
 		self.hueSlider   = HueSliderWidget( self.ui.containerHueSlider )
@@ -338,6 +634,8 @@ class ColorPickerWidget( QtGui.QWidget ):
 		self.hueSlider   .valueChanged .connect( self.onHueChanged )
 		self.alphaSlider .valueChanged .connect( self.onAlphaSliderChanged )
 		self.colorPlane  .valueChanged .connect( self.onColorBaseChanged )
+
+		self.preview.clicked.connect( self.onColorPreviewClicked )
 
 		self.ui.buttonOK      .clicked .connect( self.onButtonOK )
 		self.ui.buttonCancel  .clicked .connect( self.onButtonCancel )
@@ -371,7 +669,65 @@ class ColorPickerWidget( QtGui.QWidget ):
 		self.updateTextWidgets()
 		self.updateColorPlane()
 
+		self.paletteToolbar = toolbar = QtGui.QToolBar( self.ui.containerToolbar )
+		toolbar.setSizePolicy(QtGui.QSizePolicy.Expanding,QtGui.QSizePolicy.Minimum)
+		toolbar.setIconSize( QtCore.QSize( 16, 16 ) )
+		toolbar.setToolButtonStyle( Qt.ToolButtonTextOnly )
+
+		layout = QtGui.QHBoxLayout( self.ui.containerToolbar )
+		layout.addWidget( toolbar )
+		layout.setSpacing( 0 )
+		layout.setMargin( 0 )
+		self.actionAddPalette    = toolbar.addAction( '+ Pal' )
+		self.actionRemovePalette = toolbar.addAction( '- Pal' )
+		toolbar.addSeparator()
+		self.actionUpdateColor  = toolbar.addAction( 'Update' )
+		self.actionMatchColor  = toolbar.addAction( 'Match' )
+		toolbar.addSeparator()
+		self.actionAddColor     = toolbar.addAction( '+' )
+		self.actionRemoveColor  = toolbar.addAction( '-' )
 		# self.screenPicker.grabMouse()
+
+		self.listPalettes = PaletteList( self.ui.containerCategory )
+		self.listPaletteItems    = PaletteItemList( self.ui.containerItems )
+		self.listPalettes.owner = self
+		self.listPaletteItems.owner = self
+		
+		# self.listPaletteItems.addColorData( {} )
+		#palette data
+		self.palettes = []
+		self.currentPalette = None
+
+		self.actionAddPalette.triggered.connect( self.onAddPalette )
+		self.actionRemovePalette.triggered.connect( self.onRemovePalette )
+		self.actionAddColor.triggered.connect( self.onAddColor )
+		self.actionRemoveColor.triggered.connect( self.onRemoveColor )
+		self.actionUpdateColor.triggered.connect( self.onUpdateColor )
+		self.actionMatchColor.triggered.connect( self.onMatchColor )
+		self.paletteProvider = None
+		self.refreshPalettes()
+
+	def setPaletteProvider( self, provider ):
+		self.paletteProvider = provider
+		self.refreshPalettes()
+
+	def getPaletteProvider( self ):
+		provider = self.paletteProvider
+		if not provider: return _DefaultPaletteProvider
+		return provider
+
+	def refreshPalettes( self ):
+		provider = self.getPaletteProvider()
+		self.clearPalettes()
+		if not provider: return
+		paletteList = provider.pullPalettes()
+
+		self.palettes = paletteList[ : ]
+		self.rebuildPaletteList()
+		count = self.listPalettes.count()
+		if count > 0:
+			item = self.listPalettes.item( 0 )
+			self.listPalettes.setCurrentItem( item )
 
 	def eventFilter( self, obj, event ):
 		if obj == self.ui.textHex:
@@ -453,6 +809,9 @@ class ColorPickerWidget( QtGui.QWidget ):
 	def onButtonCancel( self ):
 		pass
 
+	def onColorPreviewClicked( self ):
+		self.setColor( self.originalColor )
+
 	def onColorChange( self, color ):
 		pass
 
@@ -524,6 +883,102 @@ class ColorPickerWidget( QtGui.QWidget ):
 	def onTextHexEntered( self ):
 		self.onButtonOK()
 
+	#palette
+	def clearPalettes( self ):
+		self.palettes = []
+		self.rebuildPaletteList()
+
+	def rebuildPaletteList( self ):
+		self.listPalettes.clear()
+		for pal in self.palettes:
+			self.listPalettes.addPalette( pal )
+
+	def rebuildPaletteItems( self ):
+		self.listPaletteItems.clear()
+		if not self.currentPalette: return
+		self.listPaletteItems.setPalette( self.currentPalette )
+
+	def onPaletteSelected( self, palette ):
+		self.currentPalette = palette
+		self.rebuildPaletteItems()
+
+	def applyPaletteSelection( self ):
+		for item in self.listPaletteItems.selectedItems():
+			colorData = item.userdata
+			color = QColorF( *colorData.get( 'color', (1,1,1,1) ) ) 
+			self.setColor( color )
+
+	def onAddPalette( self ):
+		newPalette = { 'name':'unnamed', 'items':[] }
+		self.palettes.append( newPalette )
+		item = self.listPalettes.addPalette( newPalette )
+		self.listPalettes.setCurrentItem( item )
+		self.listPalettes.editItem( item )
+
+	def onRemovePalette( self ):
+		if QMessageBox.question( 
+			self, 'Confirm', 'Remove Palette?', 
+			QMessageBox.Yes | QMessageBox.No
+			) != QMessageBox.Yes:
+			return
+		for item in self.listPalettes.selectedItems():
+			self.palettes.remove( item.palette )
+		self.onPaletteChange()
+		self.rebuildPaletteList()
+
+	def onAddColor( self ):
+		if not self.currentPalette: return
+		c = self.currentColor
+		data = { 
+			'name' : self.ui.textHex.text(), 
+			'color': ( c.redF(), c.greenF(), c.blueF(), c.alphaF() )
+		}
+		self.currentPalette['items'].append( data )
+		item = self.listPaletteItems.addColorData( data )
+		self.listPaletteItems.setCurrentItem( item )
+		self.onPaletteChange()
+
+	def onRemoveColor( self ):
+		if not self.currentPalette: return
+		colorItems = self.currentPalette['items']
+		for item in self.listPaletteItems.selectedItems():
+			colorItems.remove( item.userdata )
+		self.listPaletteItems.rebuild()
+		self.onPaletteChange()
+
+	def onUpdateColor( self ):
+		c = self.currentColor
+		for item in self.listPaletteItems.selectedItems():
+			item.userdata['color'] = ( c.redF(), c.greenF(), c.blueF(), c.alphaF() )
+			self.listPaletteItems.refreshItem( item )
+		self.onPaletteChange()
+
+	def onMatchColor( self ):
+		c = self.currentColor
+		d = 100000000
+		found = None
+		root = self.listPaletteItems.invisibleRootItem()
+		r,g,b,a = c.redF(), c.greenF(), c.blueF(), c.alphaF()
+		count = root.childCount()
+		for i in range( count ):
+			item = root.child( i )
+			r1,g1,b1,a1 = item.userdata['color']
+			dr = r - r1
+			dg = g - g1
+			db = b - b1
+			da = a - a1
+			d2 = dr*dr + dg*dg + db*db + da*da
+			if d2 < d:
+				found = item
+				d = d2
+		if found:
+			self.listPaletteItems.setCurrentItem( found )
+		self.applyPaletteSelection()
+	
+	def onPaletteChange( self ):
+		provider = self.getPaletteProvider()
+		if not provider: return
+		provider.pushPalettes( self.palettes )
 
 ######TEST
 if __name__ == '__main__':
@@ -533,8 +988,28 @@ if __name__ == '__main__':
 	app.setStyleSheet(
 			open( '/Users/tommo/prj/gii/data/theme/' + styleSheetName ).read() 
 		)
-
+	provider = SimplePaletteProvider()
+	provider.pushPalettes([
+		{	'name':'test',
+			'items':[
+				{'name':'black', 'color':(0,0,0,1) },
+				{'name':'red', 'color':(1,0,0,1) },
+				{'name':'black', 'color':(0,0,0,1) },
+				{'name':'red', 'color':(1,0,0,1) },{'name':'black', 'color':(0,0,0,1) },
+				{'name':'red', 'color':(1,0,0,1) },{'name':'black', 'color':(0,0,0,1) },
+				{'name':'red', 'color':(1,0,0,1) },{'name':'black', 'color':(0,0,0,1) },
+				{'name':'red', 'color':(1,0,0,1) },
+			]
+		},
+		{	'name':'test2',
+			'items':[
+				{'name':'black', 'color':(0,0,0,1) },
+				{'name':'red', 'color':(1,0,0,1) },
+			]
+		},
+		])
 	widget = ColorPickerWidget()
+	widget.setPaletteProvider( provider )
 	widget.show()
 	widget.raise_()
 
