@@ -3,6 +3,8 @@ import logging
 from PropertyEditor import FieldEditor, registerSimpleFieldEditorFactory
 from FieldEditorControls import *
 
+from gii.qt.controls.BitMaskEdit import BitMaskEdit
+
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 
@@ -43,6 +45,12 @@ class NumberFieldEditor( FieldEditor ):
 		widget = self.getOption( 'widget', 'spin' )
 		if widget == 'slider':
 			self.control = self.initSlider( container )
+		elif widget in [ 'bitmask', 'bitmask32' ] :
+			self.control = self.initBitMask( container, 32 )
+		elif widget == 'bitmask16' :
+			self.control = self.initBitMask( container, 16 )
+		elif widget == 'bitmask8' :
+			self.control = self.initBitMask( container, 8 )
 		else: #if widget == 'spin'
 			self.control = self.initSpinBox( container )
 		return self.control
@@ -77,6 +85,12 @@ class NumberFieldEditor( FieldEditor ):
 		spineBox.setRange( minValue, maxValue	)
 		spineBox.valueChanged.connect( self.notifyChanged )
 		return spineBox
+
+	def initBitMask( self, container, bitSize ):
+		edit = BitMaskEdit( container )
+		edit.setBitSize( bitSize )
+		edit.valueChanged.connect( self.notifyChanged )
+		return edit
 
 	def initSlider( self, container ):
 		sliderBox = FieldEditorSliderBox( container )

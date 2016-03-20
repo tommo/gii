@@ -216,9 +216,6 @@ class ColorItemDelegate( QtGui.QStyledItemDelegate ):
 		painter.setBrush( colorFull )
 		painter.drawRect( 0,0, w/2, h )
 		painter.end()
-	# def __init__(self, arg):
-	# 	super(ColorItemDelegate, self).__init__()
-	# 	self.arg = arg
 		
 ##----------------------------------------------------------------##
 class PaletteList( QtGui.QListWidget ):

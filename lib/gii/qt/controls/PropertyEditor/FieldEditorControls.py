@@ -8,7 +8,7 @@ class FieldEditorLabel( QtGui.QLabel ):
 		self.setMinimumSize( 50, 16 )
 		self.setSizePolicy(
 			QtGui.QSizePolicy.Expanding,
-			QtGui.QSizePolicy.Expanding
+			QtGui.QSizePolicy.Fixed
 			)
 		self.fieldEditor = None
 
