@@ -632,13 +632,13 @@
 			}
 		},
 		{
-			"contents": "2016-01-14 02:53:53.449 Python[10670:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-01-14 02:53:53.449 Python[10670:507] CoreText performance note: Set a breakpoint on CTFontLogSuboptimalRequest to debug.\n2016-01-14 02:53:53.451 Python[10670:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\nstarting gii IDE...\nInitiating Turbo Badger - version 0.1.1\n[WARN:Lua]	no asset found	font/zipex.fnt	\n2\nstack traceback:\n	...mes/prj/gii/test/game/lib/mock/core/AssetLibrary.lua:387: in function 'loadAsset'\n	/Volumes/prj/gii/test/game/lib/mock/ui/TBManager.lua:21: in function 'onInit'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:288: in function 'initSubSystems'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:192: in function </Volumes/prj/gii/test/game/lib/mock/core/Game.lua:173>\n	(tail call): ?\n	/Volumes/prj/gii/test/game/lib/mock/env.lua:122: in function </Volumes/prj/gii/test/game/lib/mock/env.lua:121>\n2016-01-14 02:53:55.188 Python[10670:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-01-14 02:53:55.189 Python[10670:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-01-14 02:53:55.233 Python[10670:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-01-14 02:53:56.047 Python[10670:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-01-14 02:53:56.048 Python[10670:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-01-14 02:53:56.992 Python[10670:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-01-14 02:53:56.993 Python[10670:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\ntexture libray start\n2016-01-14 02:53:57.246 Python[10670:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-01-14 02:53:57.286 Python[10670:507] invalid drawable\n2016-01-14 02:53:57.286 Python[10670:507] invalid drawable\n2016-01-14 02:53:57.286 Python[10670:507] invalid drawable\n2016-01-14 02:53:57.396 Python[10670:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-01-14 02:53:57.496 Python[10670:507] invalid drawable\n2016-01-14 02:53:57.496 Python[10670:507] invalid drawable\n2016-01-14 02:53:57.497 Python[10670:507] invalid drawable\nTEXTURE: '/Volumes/prj/gii/test/env/config/cache/gii_f4f727f74b4a052e708783859e793987' is not a power of two (w:120, h:120)\nTEXTURE: '/Volumes/prj/gii/test/env/config/cache/gii_f4f727f74b4a052e708783859e793987' is not a power of two (w:120, h:120)\nException in thread Thread-2 (most likely raised during interpreter shutdown):\nTraceback (most recent call last):\n  File \"/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/threading.py\", line 810, in __bootstrap_inner\n  File \"/Volumes/prj/gii/lib/3rdparty/common/watchdog/observers/api.py\", line 200, in run\n<type 'exceptions.AttributeError'>: 'NoneType' object has no attribute 'Empty'\n\n[Finished in 10.6s]\n",
+			"contents": "2016-03-20 22:01:39.427 Python[83159:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-03-20 22:01:39.427 Python[83159:507] CoreText performance note: Set a breakpoint on CTFontLogSuboptimalRequest to debug.\n2016-03-20 22:01:39.428 Python[83159:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\nstarting gii IDE...\nInitiating Turbo Badger - version 0.1.1\n[WARN:Lua]	no asset found	font/zipex.fnt	\n2\nstack traceback:\n	...mes/prj/gii/test/game/lib/mock/core/AssetLibrary.lua:387: in function 'loadAsset'\n	/Volumes/prj/gii/test/game/lib/mock/ui/TBManager.lua:21: in function 'onInit'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:288: in function 'initSubSystems'\n	/Volumes/prj/gii/test/game/lib/mock/core/Game.lua:192: in function </Volumes/prj/gii/test/game/lib/mock/core/Game.lua:173>\n	(tail call): ?\n	/Volumes/prj/gii/test/game/lib/mock/env.lua:122: in function </Volumes/prj/gii/test/game/lib/mock/env.lua:121>\n2016-03-20 22:01:41.318 Python[83159:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-03-20 22:01:41.319 Python[83159:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-03-20 22:01:41.401 Python[83159:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-03-20 22:01:42.185 Python[83159:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-03-20 22:01:42.186 Python[83159:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-03-20 22:01:43.044 Python[83159:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-03-20 22:01:43.045 Python[83159:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\ntexture libray start\n2016-03-20 22:01:43.238 Python[83159:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-03-20 22:01:43.272 Python[83159:507] invalid drawable\n2016-03-20 22:01:43.272 Python[83159:507] invalid drawable\n2016-03-20 22:01:43.272 Python[83159:507] invalid drawable\n2016-03-20 22:01:43.357 Python[83159:507] CoreText performance note: Client called CTFontCreateWithName() using name \"Anonymous Pro\" and got font with PostScript name \"AnonymousPro\". For best performance, only use PostScript names when calling this API.\n2016-03-20 22:01:43.435 Python[83159:507] invalid drawable\n2016-03-20 22:01:43.435 Python[83159:507] invalid drawable\n2016-03-20 22:01:43.435 Python[83159:507] invalid drawable\nTEXTURE: '/Volumes/prj/gii/test/env/config/cache/gii_f4f727f74b4a052e708783859e793987' is not a power of two (w:120, h:120)\nTEXTURE: '/Volumes/prj/gii/test/env/config/cache/gii_f4f727f74b4a052e708783859e793987' is not a power of two (w:120, h:120)\n2016-03-20 22:02:08.700 Python[83159:507] modalSession has been exited prematurely - check for a reentrant call to endModalSession:\n\n[Finished in 52.6s]\n",
 			"file": "test/BUILD_RESULT",
 			"file_size": -1,
 			"file_write_time": -1,
 			"settings":
 			{
-				"buffer_size": 4588,
+				"buffer_size": 4319,
 				"line_ending": "Unix",
 				"scratch": true
 			}
@@ -1351,7 +1351,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 100.0,
 		"where_history":
 		[
 			"*.lua",
@@ -1848,8 +1848,8 @@
 						"selection":
 						[
 							[
-								625,
-								625
+								566,
+								566
 							]
 						],
 						"settings":
@@ -2132,13 +2132,13 @@
 						"selection":
 						[
 							[
-								1585,
-								1585
+								1482,
+								1482
 							]
 						],
 						"settings":
 						{
-							"color_scheme": "Packages/Color Scheme - Default/tommo.tmTheme",
+							"color_scheme": "Packages/Color Scheme - Default/tommo_inactive.tmTheme",
 							"syntax": "Packages/Lua/Lua.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
@@ -2186,15 +2186,15 @@
 					"file": "test/BUILD_RESULT",
 					"settings":
 					{
-						"buffer_size": 4588,
+						"buffer_size": 4319,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4588,
-								4588
+								4319,
+								4319
 							]
 						],
 						"settings":
@@ -2207,7 +2207,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 291.0,
+						"translation.y": 259.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

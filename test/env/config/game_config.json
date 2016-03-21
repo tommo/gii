@@ -53,6 +53,7 @@
     }
   ],
   "name": "GAME",
+  "palettes": {},
   "physics": {
     "angularSleepTolerance": 0,
     "autoClearForces": true,

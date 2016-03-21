@@ -6,6 +6,7 @@ from FieldEditorControls import *
 from PyQt4 import QtGui, QtCore, uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtCore import QEventLoop, QEvent, QObject
+from PyQt4.QtGui import QWidget
 
 from gii.qt.IconCache  import getIcon
 from gii.qt.controls.CodeEditor import CodeEditor
@@ -21,13 +22,6 @@ def getModulePath( path ):
 
 CodeBoxForm,BaseClass = uic.loadUiType(getModulePath('CodeBoxEditor.ui'))
 
-class WindowAutoHideEventFilter(QObject):
-	def eventFilter(self, obj, event):
-		e = event.type()		
-		if e == QEvent.WindowDeactivate:
-			obj.hide()
-		return QObject.eventFilter( self, obj, event )
-		
 
 class CodeBoxEditorWidget( QtGui.QWidget ):
 	def __init__( self, *args ):
@@ -35,8 +29,7 @@ class CodeBoxEditorWidget( QtGui.QWidget ):
 		self.setWindowFlags( Qt.Popup | Qt.Window )
 		self.ui = CodeBoxForm()
 		self.ui.setupUi( self )
-		self.installEventFilter( WindowAutoHideEventFilter( self ) )
-
+		
 		self.editor = None
 		self.originalText = ''
 
@@ -47,14 +40,23 @@ class CodeBoxEditorWidget( QtGui.QWidget ):
 		layout.addWidget( self.codeBox )
 		layout.setSpacing( 0 )
 		layout.setMargin( 0 )
-
-		# settingData = jsonHelper.tryLoadJSON(
-		# 		app.findDataFile( 'script_settings.json' )
-		# 	)
-		# if settingData:
-		# 	self.codeBox.applySetting( settingData )
 		
 		self.setFocusProxy( self.codeBox )
+
+		self.installEventFilter( self )
+		self.codeBox.installEventFilter( self )
+
+	def eventFilter( self, obj, ev ):
+		e = ev.type()
+		if obj == self:
+			if e == QEvent.WindowDeactivate:
+				obj.hide()
+		elif obj == self.codeBox:
+			if e == QEvent.KeyPress:
+				if ( ev.key(), ev.modifiers() ) == ( Qt.Key_Return, Qt.ControlModifier ):
+					self.apply()
+					return True
+		return QWidget.eventFilter( self, obj, ev )
 	
 	def getText( self ):
 		return self.codeBox.toPlainText()
@@ -82,16 +84,16 @@ class CodeBoxEditorWidget( QtGui.QWidget ):
 		if not noHide:
 			self.hide()
 
-	def keyPressEvent( self, ev ):
-		key = ev.key()
-		if ( key, ev.modifiers() ) == ( Qt.Key_Return, Qt.ControlModifier ):
-			print("????" )
-			self.apply()
-			return
-		# if key == Qt.Key_Escape:
-		# 	self.cancel()
-		# 	return
-		return super( CodeBoxEditorWidget, self ).keyPressEvent( ev )
+	# def keyPressEvent( self, ev ):
+	# 	key = ev.key()
+	# 	if ( key, ev.modifiers() ) == ( Qt.Key_Return, Qt.ControlModifier ):
+	# 		print("????" )
+	# 		self.apply()
+	# 		return
+	# 	# if key == Qt.Key_Escape:
+	# 	# 	self.cancel()
+	# 	# 	return
+	# 	return super( CodeBoxEditorWidget, self ).keyPressEvent( ev )
 
 
 ##----------------------------------------------------------------##
@@ -129,6 +131,5 @@ class CodeBoxFieldEditorFactory( FieldEditorFactory ):
 			return editor
 		return None
 
-signals.connect( 'app.pre_start', getCodeBoxEditorWidget )
-
+# @slot( 'app.pre_start' )
 registerFieldEditorFactory( CodeBoxFieldEditorFactory() )

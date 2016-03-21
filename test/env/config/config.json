@@ -88,12 +88,12 @@
   }, 
   "asset_browser/instances": {
     "9e0c175ea47711e5a5223c15c2be22ce": {
-      "current_filter": "8842d7c0a47a11e598dd3c15c2be22ce", 
+      "current_filter": "7a17b394a47a11e5b8f13c15c2be22ce", 
       "current_selection": [], 
       "mode": "search", 
       "splitter_sizes": [
-        80, 
-        117
+        186, 
+        567
       ]
     }, 
     "main": {
@@ -117,7 +117,7 @@
       "mode": "browse", 
       "splitter_sizes": [
         146, 
-        276
+        200
       ]
     }
   }, 
@@ -125,5 +125,6 @@
     185, 
     334
   ], 
-  "scenegraph_editor/previous_scene": "test.scene"
+  "scenegraph_editor/previous_scene": "test.scene", 
+  "tilemap_editor/view_selected_only": true
 }
