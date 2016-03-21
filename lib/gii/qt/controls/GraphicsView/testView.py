@@ -139,6 +139,7 @@ class TestFrame( QtGui.QFrame ):
 		layout.setMargin( 0 )
 		timeline = TestTimeline()
 		layout.addWidget( timeline )
+		timeline.setRange( 0, 3.2 )
 		timeline.rebuild()
 		timeline.setTrackSelection( [ dataset[0] ] )
 		self.testMarker = TestMarker()

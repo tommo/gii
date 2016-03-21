@@ -89,6 +89,9 @@ class ASEFrameTag(object):
 	def __init__( self ):
 		self.name = ''
 		self.color = ( 1,1,1,1 )
+		self.frameFrom = 0
+		self.frameTo = 0
+		self.direction = 0
 		
 
 ##----------------------------------------------------------------##

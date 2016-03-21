@@ -352,13 +352,15 @@ class TimelineMarkerSlotItem( QtGui.QGraphicsRectItem ):
 class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 	_pen_top  = makePen( color = '#4a4a4a', width = 1 )
 	_gridPenV  = makePen( color = '#777', width = 1 )
+	_gridPenV2 = makePen( color = '#444', width = 1 )
 	_gridPenH  = makePen( color = '#555', width = 1 )
 	_cursorPen = makePen( color = '#a3ff00', width = 1 )
 	_cursorTextPen = makePen( color = '#89ae3f', width = 1 )
 	_cursorBrush = makeBrush( color = '#a3ff00' )
-	_bgBrush   = makeBrush( color = '#333' )
+	_bgBrush   = makeBrush( color = '#222' )
 	_bgActiveBrush  = makeBrush( color = '#c8ff00', alpha = 0.1 )
 	_bgEditingBrush = makeBrush( color = '#232e35' )
+	_bgRangeBrush   = makeBrush( color = '#353535', alpha = 1 )
 	
 	_polyCursor = QtGui.QPolygonF([
 		QPointF(   0, 0  ),
@@ -374,6 +376,11 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		self.setRect( 0,_MARKER_SIZE,10000,_RULER_SIZE )
 		self.cursorVisible = True
 		self.dragging = False
+		self.range = ( 0, 10000 )
+
+	def setRange( self, t0, t1 ):
+		self.range = ( t0, t1 )
+		self.update()
 
 	def mousePressEvent( self, event ):
 		if event.button() == Qt.LeftButton:
@@ -407,10 +414,8 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		painter.setPen( Qt.NoPen )
 		painter.setBrush( TimelineRulerItem._bgBrush )
 		painter.drawRect( rect )
-		
-		painter.setPen( TimelineRulerItem._gridPenH )
-		painter.drawLine( 0,h-1,w,h-1 ) #topline
-		painter.setPen( TimelineRulerItem._gridPenV )
+
+		#units
 		u = self.view.zoom * _PIXEL_PER_SECOND
 		t0 = self.view.scrollPos
 		dt = w / u
@@ -421,18 +426,39 @@ class TimelineRulerItem( QtGui.QGraphicsRectItem ):
 		count = int( ( end - start ) / step )
 		sw = step * u
 		ox = t0 * u
+		r0, r1 =  self.range
 
+		#range
+		t = 0
+		xx  = (t-t0) * u + _HEAD_OFFSET
+
+		painter.setPen( Qt.NoPen )
+		painter.setBrush( TimelineRulerItem._bgRangeBrush )
+		painter.drawRect( xx, 0, r1 * u, h )
+
+		#baselines
+		painter.setPen( TimelineRulerItem._gridPenH )
+		painter.drawLine( 0,h-1,w,h-1 ) #topline
+		painter.setPen( TimelineRulerItem._gridPenV )
+		
 		subStep = 5
+		subPitchT = float(step)/float(subStep)
 		subPitch = sw/subStep
 		for i in range( count ): #V lines
 			t = start + i * step
+			if t > r1:
+				painter.setPen( TimelineRulerItem._gridPenV2 )
 			xx = (t-t0) * u + _HEAD_OFFSET
-			painter.drawLine( xx, h-_RULER_SIZE, xx, h - 1 )
-			for j in range( 1, subStep ):
-				sxx = xx + j * subPitch
-				painter.drawLine( sxx, h-5, sxx, h - 1 )
+			painter.drawLine( xx, h-_RULER_SIZE, xx, h - 2 )
 			markText = '%.1f'%( t )
 			painter.drawText( QRectF( xx + 4, h-_RULER_SIZE+4, 100, 100 ), Qt.AlignTop|Qt.AlignLeft, markText )
+			for j in range( 1, subStep ):
+				subt = t + j * subPitchT
+				if subt > r1:
+					painter.setPen( TimelineRulerItem._gridPenV2 )
+				sxx = xx + j * subPitch
+				painter.drawLine( sxx, h-5, sxx, h - 2 )
+			
 		
 		painter.setPen( TimelineRulerItem._pen_top )
 		painter.drawLine( 0, h-_RULER_SIZE, w, h-_RULER_SIZE ) #topline
@@ -468,6 +494,7 @@ class TimelineRulerView( TimelineSubView ):
 		self.dragging = False
 		self.draggable = True
 		self.timelineView = None
+		self.setRange( 0, 10000 )
 
 	def getTimelineView( self ):
 		return self.timelineView
@@ -475,6 +502,13 @@ class TimelineRulerView( TimelineSubView ):
 	def getVisibleRange( self ):
 		#TODO
 		return 0, 10
+
+	def setRange( self, t0, t1 ):
+		self.range = (t0,t1)
+		self.ruler.setRange( t0, t1 )
+
+	def getRange( self ):
+		return self.range
 
 	def clear( self ):
 		self.markerSlot.clearMarkers()
@@ -1382,6 +1416,9 @@ class TimelineView( QtGui.QWidget ):
 		self.rulerView.setCursorPos( pos )
 		if focus:
 			self.focusTimeline( pos )
+
+	def setRange( self, t0, t1 ):
+		self.rulerView.setRange( t0, t1 )
 
 	def focusTimeline( self, pos ):
 		#TODO:center

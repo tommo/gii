@@ -1,7 +1,7 @@
 import sys
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt, QRect, QSize, QPoint, pyqtSignal
-from PyQt4.QtGui import QApplication, QCompleter, QLineEdit, QStringListModel
+from PyQt4.QtGui import QApplication, QCompleter, QLineEdit, QStringListModel, QColor
 
 
 class BitMaskPanel( QtGui.QWidget ):
@@ -41,12 +41,15 @@ class BitMaskPanel( QtGui.QWidget ):
 	def paintEvent( self, ev ):
 		painter = QtGui.QPainter()
 		painter.begin( self )
+
+
+
 		rect = self.rect()
 		gs = self._gridSize
-		brushT = Qt.cyan
+		brushT = QColor( '#795122' )
 		brushF = Qt.black
 		penG   = Qt.darkGray
-		penT   = Qt.black
+		penT   = Qt.white
 		penF   = Qt.darkGray
 		value  = int( self._value )
 		tflag = Qt.AlignCenter | Qt.AlignVCenter

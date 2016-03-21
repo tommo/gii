@@ -321,8 +321,10 @@ class MSpriteProject(object):
 				anim.setOrigin( ox, oy )
 				continue
 		ox, oy = anim.getOrigin()
+		flist = []
 		for frameData in doc.frames:
 			frame = AnimFrame()
+			flist.append( frame )
 			frame.delay = float(frameData.duration)/1000.0
 			for cel in frameData.cels:
 				rcel = cel.getRealCel()
@@ -335,9 +337,22 @@ class MSpriteProject(object):
 				frame.addModule( m, bx0+cel.x -ox, by0+cel.y -oy )
 			anim.addFrame( frame, 0, 0 )
 			self.addFrame( frame )
+
 		self.addAnim( anim )
-		n,ext = os.path.splitext( os.path.basename( path ) )
-		anim.name = n
+		animName,ext = os.path.splitext( os.path.basename( path ) )
+		anim.name = animName
+
+		#split tag into sub animations
+		for tagData in doc.tags:
+			f0, f1 = tagData.frameFrom, tagData.frameTo
+			name = tagData.name
+			subAnim = Anim()
+			subAnim.setOrigin( ox, oy )
+			subAnim.name = animName + ':' + name
+			for sfid in range( f0, f1 + 1 ):
+				frame = flist[ sfid ]
+				subAnim.addFrame( frame, 0, 0 )
+			self.addAnim( subAnim )
 
 
 	def loadPSD( self, path ):
@@ -467,9 +482,5 @@ if __name__ == '__main__':
 	proj = MSpriteProject()
 	# proj.loadFolder( 'test/InsectCrow.msprite' )
 	# proj.save( 'test/InsectCrow_data.png', 'test/InsectCrow_data.json' )
-	proj.loadFolder( 'test/market.msprite' )
-	proj.save( 'test/market_data.png', 'test/market_data.json' )
-
-
-
-
+	proj.loadFolder( 'test/solomon.msprite' )
+	proj.save( 'test/solomon.png', 'test/solomon.json' )
