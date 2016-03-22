@@ -437,7 +437,7 @@ class AnimatorTimelineWidget( TimelineView ):
 
 		elif toolName == 'add_marker':
 			self.owner.addMarker()
-			
+
 		super( AnimatorTimelineWidget, self ).onEditTool( toolName )
 
 	def onTrackClicked( self, track, pos ):
@@ -446,6 +446,9 @@ class AnimatorTimelineWidget( TimelineView ):
 		
 	def onKeyRemoving( self, keyNode ):
 		return self.parentView.onKeyRemoving( keyNode )
+
+	def onMarkerRemoving( self, markerNode ):
+		return self.parentView.onMarkerRemoving( markerNode )
 
 ##----------------------------------------------------------------##
 class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
@@ -618,6 +621,9 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 	def removeKey( self, key ):
 		self.timeline.removeKey( key )
 
+	def removeMarker( self, marker ):
+		self.timeline.removeMarker( marker )
+
 	def setPropertyTarget( self, target ):
 		self.propertyEditor.setTarget( target )
 
@@ -674,6 +680,9 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 
 	def onKeyRemoving( self, key ):
 		return self.owner.onKeyRemoving( key )
+
+	def onMarkerRemoving( self, marker ):
+		return self.owner.onMarkerRemoving( marker )
 
 	def onPropertyChanged( self, obj, fid, value ):
 		pass

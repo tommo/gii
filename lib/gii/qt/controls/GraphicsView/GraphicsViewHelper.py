@@ -88,6 +88,9 @@ def makeStyle( id, penOption, brushOption, textOption = None ):
 		pen = makePen( **penOption )
 	elif isinstance( penOption, str ):
 		pen = makePen( color = penOption )
+	elif isinstance( penOption, tuple ):
+		color, alpha = penOption
+		pen = makePen( color = color, alpha = alpha )
 	elif penOption is None:
 		pen = Qt.transparent
 
@@ -95,6 +98,9 @@ def makeStyle( id, penOption, brushOption, textOption = None ):
 		brush = makeBrush( **brushOption )
 	elif isinstance( brushOption, str ):
 		brush = makeBrush( color = brushOption )
+	elif isinstance( brushOption, tuple ):
+		color, alpha = brushOption
+		brush = makeBrush( color = color, alpha = alpha )
 	elif brushOption is None:
 		brush = Qt.transparent
 

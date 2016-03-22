@@ -87,6 +87,8 @@ class AnimatorView( SceneEditorModule ):
 		self.addTool( 'animator_play/toggle_repeat',  label = 'toggle repeat',  icon = 'repeat', type = 'check' )
 		
 		#SIGNALS
+		self.addTool( 'animator_track/locate_target', label = 'locate', icon = 'find' )
+		self.addTool( 'animator_track/----' )
 		self.addTool( 'animator_track/add_track_group',    label = 'add group',    icon = 'add_folder' )
 		self.addTool( 'animator_track/add_track',    label = 'add',    icon = 'add' )
 		self.addTool( 'animator_track/remove_track', label = 'remove', icon = 'remove' )
@@ -342,6 +344,10 @@ class AnimatorView( SceneEditorModule ):
 		if self.delegate.callMethod( 'view', 'removeKey', key ) != False:
 			return True
 
+	def onMarkerRemoving( self, marker ):
+		if self.delegate.callMethod( 'view', 'removeMarker', marker ) != False:
+			return True
+
 	def onTimelineKeyChanged( self, key, pos, length ):
 		self.delegate.callMethod( 'view', 'updateTimelineKey', key, pos, length )
 
@@ -399,6 +405,16 @@ class AnimatorView( SceneEditorModule ):
 			for track in self.widget.treeTracks.getSelection():
 				self.delegate.callMethod( 'view', 'removeTrack', track )
 				self.widget.removeTrack( track )
+		elif name == 'locate_target':
+			for track in self.widget.treeTracks.getSelection():
+				sceneGraphEditor = self.getModule( 'scenegraph_editor')
+				if sceneGraphEditor:
+					targetEntity = self.delegate.callMethod( 'view', 'findTrackEntity', track )
+					if targetEntity:
+						sceneGraphEditor.selectEntity( targetEntity, focus_tree = True )
+				#pass
+				return
+
 		#preview
 		elif name == 'goto_start':
 			self.gotoStart()

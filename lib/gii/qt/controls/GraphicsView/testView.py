@@ -131,6 +131,12 @@ class TestTimeline( TimelineView ):
 		return dict( zoom = 1 )
 		# return dict( zoom = 5 )
 
+	def createTrackItem( self, node ):
+		if node.isResizable():
+			return TimelineEventTrackItem()
+		else:
+			return TimelineTrackItem()
+
 
 class TestFrame( QtGui.QFrame ):
 	def __init__( self ):

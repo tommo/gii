@@ -17,6 +17,8 @@ function AnimatorView:__init()
 	self.prevClock = 0
 	self.dirty = false
 
+	self.previewThrottle = 1
+
 	self.retainedEntityState = false
 	self.objectRecordingState = {}
 end
@@ -181,6 +183,23 @@ function AnimatorView:removeKey( key )
 	return true
 end
 
+function AnimatorView:removeMarker( marker )
+	if self.targetClip:removeMarker( marker ) then
+		self:markTrackDirty( track )
+		return true
+	else
+		return false
+	end
+end
+
+function AnimatorView:findTrackEntity( track )
+	local target = track:getTargetObject( self.targetRootEntity )
+	if isInstance( target, mock.Entity ) then
+		return target
+	end
+	return target._entity
+end
+
 function AnimatorView:findParentTrackGroup()
 	if not self.targetClip then return nil end
 	local parent = self.currentTrack 
@@ -256,6 +275,16 @@ function AnimatorView:gotoEnd()
 	return true
 end
 
+function AnimatorView:setPreviewThrottle( t )
+	self.previewThrottle = t
+end
+
+function AnimatorView:stepForward( dt )
+	if not self.previewState then self:preparePreivewState() end
+	local th = self.previewState.actualThrottle * self.previewThrottle
+	self:applyTime( self.currentTime + dt * th )
+end
+
 function AnimatorView:applyTime( t )
 	if self.targetClip then
 		if not self.previewState then self:preparePreivewState() end
@@ -284,7 +313,7 @@ function AnimatorView:doPreviewStep()
 		dt = clock - self.prevClock
 	end
 	self.prevClock = clock
-	self:applyTime( self.currentTime + dt )
+	self:stepForward( dt )
 	if self.currentTime >= self.targetClip:getLength() then
 		--preview stop
 		if not self.previewRepeat then
