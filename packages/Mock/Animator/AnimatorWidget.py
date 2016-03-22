@@ -398,6 +398,10 @@ class AnimatorTimelineWidget( TimelineView ):
 	def getKeyBezierPoints( self, keyNode ):
 		( bpx0, bpy0, bpx1, bpy1 ) = keyNode.getBezierPoints( keyNode )
 		return ( bpx0, bpy0, bpx1, bpy1 )
+
+	def getClipRange( self ):
+		t = self.parentView.owner.getTargetClipLength()
+		return 0, t
 		
 	def onSelectionChanged( self, selection ):
 		if selection:
@@ -445,10 +449,14 @@ class AnimatorTimelineWidget( TimelineView ):
 		self.parentView.selectTrack( trackNode )
 		
 	def onKeyRemoving( self, keyNode ):
-		return self.parentView.onKeyRemoving( keyNode )
+		return self.owner.onKeyRemoving( keyNode )
 
 	def onMarkerRemoving( self, markerNode ):
-		return self.parentView.onMarkerRemoving( markerNode )
+		return self.owner.onMarkerRemoving( markerNode )
+
+	def onClipRangeChanging( self, t0, t1 ):
+		return self.owner.onClipLengthChanging( t1 )
+
 
 ##----------------------------------------------------------------##
 class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
@@ -567,7 +575,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.treeClips.rebuild()
 		self.timeline.rebuild()
 		self.setTrackViewScrollRange( 0 )
-
+		
 
 	def rebuildTimeline( self ):
 		self.timeline.rebuild()
@@ -678,12 +686,6 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 			mode = 0
 		self.owner.onTimelineKeyTweenModeChanged( key, mode )
 
-	def onKeyRemoving( self, key ):
-		return self.owner.onKeyRemoving( key )
-
-	def onMarkerRemoving( self, marker ):
-		return self.owner.onMarkerRemoving( marker )
-
 	def onPropertyChanged( self, obj, fid, value ):
 		pass
 		# if isMockInstance( obj, 'AnimatorKey' ):
@@ -766,3 +768,11 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 					return node
 				node = node.parentGroup
 		return None
+
+	def getCurrentClipRange( self ):
+		selection = self.treeClips.getSelection()
+		if selection:
+			node = selection[ 0 ]
+			fixedLength = node.fixedLength
+			return ( 0, fixedLength )
+	

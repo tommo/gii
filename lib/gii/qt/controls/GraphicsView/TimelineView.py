@@ -146,6 +146,7 @@ class TimelineCursorItem( QtGui.QGraphicsLineItem ):
 		super( TimelineCursorItem, self ).__init__()
 		self.setPen( self._pen )
 
+##----------------------------------------------------------------##
 class TimelineMarkerLineItem( QtGui.QGraphicsLineItem ):
 	_pen  = makePen( color = '#7569d0', width = 1 )
 	def __init__( self ):
@@ -177,6 +178,7 @@ class TimelineMarkerLineItem( QtGui.QGraphicsLineItem ):
 		view = self.view
 		view.removeMarkerLine( self )
 
+##----------------------------------------------------------------##
 class TimelineMarkerItem( QtGui.QGraphicsRectItem ):
 	_polyMarker2 = QtGui.QPolygonF([
 		QPointF(   0, 0  ),
@@ -1035,6 +1037,7 @@ class TimelineTrackView( TimelineSubView ):
 
 		self.markerLines = []
 
+
 	def clear( self ):
 		scn = self.scene()
 		for trackItem in self.trackItems:
@@ -1343,7 +1346,7 @@ class TimelineView( QtGui.QWidget ):
 		self.tabViewSwitch = QtGui.QTabBar()
 		bottomLayout = QtGui.QHBoxLayout( self.ui.containerBottom )
 		bottomLayout.addWidget( self.tabViewSwitch )
-		bottomLayout.setSpacing( 10 )
+		bottomLayout.setSpacing( 3 )
 		bottomLayout.setMargin( 0 )
 		self.tabViewSwitch.addTab( 'Dope Sheet')
 		self.tabViewSwitch.addTab( 'Curve View' )
@@ -1351,6 +1354,7 @@ class TimelineView( QtGui.QWidget ):
 		self.tabViewSwitch.setShape( QtGui.QTabBar.RoundedSouth )
 		self.tabViewSwitch.setSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
 
+		
 		self.toolbarEdit = QtGui.QToolBar()
 		self.toolbarEdit.setObjectName( 'TimelineToolBarEdit')
 		bottomLayout.addWidget( self.toolbarEdit )
@@ -1358,9 +1362,18 @@ class TimelineView( QtGui.QWidget ):
 		self.toolbarEdit.setIconSize( QtCore.QSize( 16, 16 ) )
 		#key tool
 		self.toolbarEdit.addSeparator()
-		self.toolbuttonAddMarker    = self.addEditToolButton(
-			'add_marker',    '+M', 'Add Marker'
-			)
+
+		self.spinboxClipLength = QtGui.QDoubleSpinBox()
+		self.spinboxClipLength.setFixedWidth( 80 )
+		self.spinboxClipLength.setValue( 2.5 )
+		self.spinboxClipLength.valueChanged.connect( self.changeClipRange )
+		self.spinboxClipLength.setRange( 0, 10000 )
+		self.spinboxClipLength.setDecimals( 3 )
+		self.spinboxClipLength.setSingleStep( 0.1 )
+
+		# self.spinboxClipLength.setText( '25:00' )
+		# self.toolbarEdit.addWidget( QtGui.QLabel( 'L' ) )
+		self.toolbarEdit.addWidget( self.spinboxClipLength )
 
 		self.toolbarEdit.addSeparator()
 		self.toolbuttonAddKey    = self.addEditToolButton(
@@ -1373,6 +1386,12 @@ class TimelineView( QtGui.QWidget ):
 			'clone_key',  'C', 'Clone Key(s)'
 			)		
 		
+		self.toolbarEdit.addSeparator()
+
+		self.toolbuttonAddMarker    = self.addEditToolButton(
+			'add_marker',    '+M', 'Add Marker'
+			)
+
 		#curve tool
 		self.toolbarEdit.addSeparator()
 
@@ -1471,6 +1490,7 @@ class TimelineView( QtGui.QWidget ):
 
 	def setRange( self, t0, t1 ):
 		self.rulerView.setRange( t0, t1 )
+		self.spinboxClipLength.setValue( t1 )
 
 	def getRange( self ):
 		return self.rulerView.getRange()
@@ -1511,6 +1531,8 @@ class TimelineView( QtGui.QWidget ):
 			self.addTrack( trackNode )
 		self.updateTrackLayout()
 		self.curveView.rebuild()
+		t0, t1 = self.getClipRange() 
+		self.setRange( t0, t1 )
 		self.rebuilding = False
 		self.setUpdatesEnabled( True )
 
@@ -1881,15 +1903,27 @@ class TimelineView( QtGui.QWidget ):
 		print 'removing?'
 		return True
 
+	def onClipRangeChanging( self, t0, t1 ):
+		return True
+
 	def setTrackSelected( self, trackNode ):
 		pass
 
 	def getSelectedTrack( self ):
 		pass
+	
+	def getClipRange( self ):
+		return 0, 30
 
 	#######
 	#Interaction
 	#######
+	def changeClipRange( self, value ):
+		if self.onClipRangeChanging( 0, value ):
+			self.rulerView.setRange( 0, value )
+		t0, t1 = self.getClipRange()
+		self.spinboxClipLength.setValue( t1 )
+
 	def onTrackClicked( self, track, pos ):
 		pass
 

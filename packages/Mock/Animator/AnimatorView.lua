@@ -96,6 +96,21 @@ function AnimatorView:setCurrentTrack( track )
 	self.currentTrack = track
 end
 
+function AnimatorView:setTargetClipLength( t )
+	if not self.targetClip then return false end
+	local minLength = self.targetClip:calcLength()
+	if t < minLength then
+		t = minLength
+	end
+	self.targetClip:setFixedLength( t )
+	return true
+end
+
+function AnimatorView:getTargetClipLength()
+	if not self.targetClip then return 30 end
+	return self.targetClip.fixedLength
+end
+
 function AnimatorView:addKeyForField( target, fieldId )
 	--find existed track
 	local track

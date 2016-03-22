@@ -672,6 +672,9 @@ class CurveView( GLGraphicsView ):
 		self.setZoomY( 1 )
 		self.setCursorVisible( True )
 
+		self.minRange = 0
+		self.maxRange = 1000000
+
 	def onRectChanged( self, rect ):
 		self.gridBackground.setRect( rect )
 

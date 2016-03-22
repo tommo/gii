@@ -38,6 +38,18 @@ def _fixDuplicatedName( names, name, id = None ):
 	else:
 		return testName
 
+##----------------------------------------------------------------##
+PREVIEW_SPEED_OPTIONS = [
+		( '1/10', 0.1 ),
+		( '1/5',  0.2 ),
+		( '1/3',  0.33 ),
+		( '1/2',  0.5 ),
+		( '1x',   1.0 ),
+		( '1.5x', 1.5 ),
+		( '2x',   2.0 ),
+		( '4x',   4.0 ),
+		( '10x',  10.0 ),
+]
 
 ##----------------------------------------------------------------##
 class AnimatorView( SceneEditorModule ):
@@ -83,8 +95,12 @@ class AnimatorView( SceneEditorModule ):
 		self.addTool( 'animator_play/play',       label = 'play',      icon = 'play',  type = 'check' )
 		# self.addTool( 'animator_play/next_key',   label = 'next key',      icon = 'next' )
 		self.addTool( 'animator_play/goto_end',   label = 'to end',    icon = 'fast_forward' )
-		self.addTool( 'animator_play/----' )
 		self.addTool( 'animator_play/toggle_repeat',  label = 'toggle repeat',  icon = 'repeat', type = 'check' )
+		self.comboPreviewSpeed = QtGui.QComboBox()
+		self.comboPreviewSpeed.addItems([ e[0] for e in PREVIEW_SPEED_OPTIONS ] )			
+		self.comboPreviewSpeed.setCurrentIndex( 4 ) #1x
+		self.comboPreviewSpeed.currentIndexChanged.connect( self.onPreviewSpeedChange )
+		self.addTool( 'animator_play/preview_speed', widget = self.comboPreviewSpeed )
 		
 		#SIGNALS
 		self.addTool( 'animator_track/locate_target', label = 'locate', icon = 'find' )
@@ -182,7 +198,10 @@ class AnimatorView( SceneEditorModule ):
 	def setCurrentTrack( self, track ):
 		self.currentTrack = track
 		self.delegate.callMethod( 'view', 'setCurrentTrack', track )
-	
+
+	def getTargetClipLength( self ):
+		return self.delegate.callMethod( 'view', 'getTargetClipLength' )
+
 	def getClipList( self ):
 		if self.targetAnimatorData:
 			clipList = self.targetAnimatorData.clips
@@ -348,6 +367,10 @@ class AnimatorView( SceneEditorModule ):
 		if self.delegate.callMethod( 'view', 'removeMarker', marker ) != False:
 			return True
 
+	def onClipLengthChanging( self, t1 ):
+		if self.delegate.callMethod( 'view', 'setTargetClipLength', t1 ) != False:
+			return True
+
 	def onTimelineKeyChanged( self, key, pos, length ):
 		self.delegate.callMethod( 'view', 'updateTimelineKey', key, pos, length )
 
@@ -499,6 +522,10 @@ class AnimatorView( SceneEditorModule ):
 
 	def onSceneClose( self, scene ):
 		self.setTargetAnimator( None )
+
+	def onPreviewSpeedChange( self, index ):
+		label, throttle = PREVIEW_SPEED_OPTIONS[ index ]
+		self.delegate.callMethod( 'view', 'setPreviewThrottle', throttle )
 
 	def refreshTimeline( self ):
 		self.widget.rebuildTimeline()
