@@ -48,11 +48,11 @@ makeStyle( 'black',              '#000000',    '#000000'              )
 makeStyle( 'default',            '#000000',    '#ff0ecf'              )
 makeStyle( 'key',                '#000000',    ('#a0a0a0',0.8)        )
 makeStyle( 'key:hover',          '#c2c2c2',    '#a0a0a0'              )
-makeStyle( 'key:selected',       '#000000',    '#5c83ff'              )
+makeStyle( 'key:selected',       '#000000',    ('#5c83ff',0.8)        )
 
 makeStyle( 'eventkey',                '#737373',    ('#5b5c63',0.8), '#c2c2c2' )
 makeStyle( 'eventkey:hover',          '#737373',    '#75777f', '#dddddd' )
-makeStyle( 'eventkey:selected',       '#5c7340',    '#608d34', '#ffffff' )
+makeStyle( 'eventkey:selected',       '#5c7340',    ('#5c83ff',0.8), '#ffffff' )
 
 makeStyle( 'key-span',           '#000',       '#303459'    ,'#c2c2c2' )
 makeStyle( 'key-span:selected',  '#ffffff',    '#303459'               )
@@ -197,6 +197,7 @@ class TimelineMarkerItem( QtGui.QGraphicsRectItem ):
 	
 	_pen_text = makePen( color = '#595d95' )
 	_pen_text_hover = makePen( color = '#d9e2f4' )
+	
 	def __init__( self ):
 		super(TimelineMarkerItem, self).__init__()
 		self.setCursor( Qt.PointingHandCursor)
@@ -538,7 +539,6 @@ class TimelineRulerView( TimelineSubView ):
 
 	def setCursorVisible( self, visible ):
 		self.ruler.cursorVisible = visible
-		# self.gridBackground.cursorVisible = visible
 		self.update()
 
 	def wheelEvent(self, event):
@@ -1013,12 +1013,11 @@ class TimelineTrackView( TimelineSubView ):
 
 		self.trackItems = []
 		
-
 		#grid
 		self.gridBackground = GridBackground()
 		self.gridBackground.setGridSize( self.gridSize, _TRACK_SIZE + _TRACK_MARGIN )
-		self.gridBackground.setAxisShown( False, True )
-		self.gridBackground.setCursorVisible( False )
+		self.gridBackground.setAxisVisible( True, True )
+		self.gridBackground.setCursorVisible( True )
 		self.gridBackground.setOffset( _HEAD_OFFSET, -1 )
 		scene.addItem( self.gridBackground )
 
@@ -1310,7 +1309,7 @@ class TimelineView( QtGui.QWidget ):
 		self.curveView  = TimelineCurveView( parent = self )
 		self.curveView.timelineView = self
 
-		self.curveView.setAxisShown( False, True )
+		self.curveView.setAxisVisible( False, True )
 		self.curveView.setOffset( _HEAD_OFFSET, 0 )
 		self.curveView.setScrollXLimit( 0, None )
 

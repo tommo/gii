@@ -66,11 +66,13 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 		self.offsetY = 1
 		self.zoomX = 2
 		self.zoomY = 1
-		self.showXAxis = True
-		self.showYAxis = True
+		self.XAxisVisible = True
+		self.YAxisVisible = True
 		self.cursorVisible = False
 		self.cursorPosX = 0
 		self.cursorPen = AxisGridBackground._cursorPen
+		self.maxRange = 0 
+		self.rangeVisible = False
 
 	def setOffset( self, x, y ):
 		self.offsetX = x
@@ -106,9 +108,11 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 		x1 = x0 + w
 		y1 = y0 + h
 
-		u = 100
-		stepx = 1
-		stepy = 1
+		gridSize = 100.0
+		
+		#
+		u = 1.0
+		
 		ux = u * self.zoomX
 		uy = u * self.zoomY
 		vx0 = x0 / ux
@@ -117,25 +121,30 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 		dvy = h / uy
 		vx1 = vx0 + dvx
 		vy1 = vy0 + dvy
+
+		stepx = max( int ( gridSize / ux / 5.0 ) * 5.0, 1.0 )
+		stepy = max( int ( gridSize / uy / 5.0 ) * 5.0, 1.0 )
 		stepWidth = stepx * ux
 		stepHeight = stepy * uy
 
 		#Grid
-		ox = (dx) % ux
-		oy = (dy) % uy
-		rows = int( h/uy ) + 1
-		cols = int( w/ux ) + 1
+		gux = ux * stepx
+		guy = uy * stepy
+		ox = (dx) % gux
+		oy = (dy) % guy
+		rows = int( h/guy ) + 1
+		cols = int( w/gux ) + 1
 		offx = self.offsetX
 		painter.setPen( AxisGridBackground._gridPen )
 		for col in range( cols ): #V lines
-			x = col * ux + ox + x0 + offx
+			x = col * gux + ox + x0 + offx
 			painter.drawLine( x, y0, x, y1 )
 		
 		# x0 = max( x0, _HEAD_OFFSET )
 		offy = self.offsetY
 		painter.setPen( AxisGridBackground._gridPen )
 		for row in range( rows ): #H lines
-			y = row * uy + oy + y0 + offy
+			y = row * guy + oy + y0 + offy
 			painter.drawLine( x0, y, x1, y )
 		
 		#Origin
@@ -149,7 +158,7 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 		trans.translate( -dx, -dy )
 		painter.setTransform( trans )
 		#XAxis
-		if self.showXAxis:
+		if self.XAxisVisible:
 			start = math.floor( vx0/stepx ) * stepx
 			end   = math.ceil( vx1/stepx ) * stepx
 			count = int( (end-start)/stepx ) + 1
@@ -164,11 +173,11 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 				for j in range( 1, subStep ):
 					sxx = xx + j * subPitch
 					painter.drawLine( sxx, h-6, sxx, h - 1 )
-				markText = '%.1f'%( vx )
+				markText = '%.1f'%( vx/_PIXEL_PER_UNIT )
 				painter.drawText( QRectF( xx + 2, h-20, 100, 100 ), Qt.AlignTop|Qt.AlignLeft, markText )
 
 		#YAxis
-		if self.showYAxis:
+		if self.YAxisVisible:
 			start = math.floor( vy0/stepy ) * stepy
 			end   = math.ceil( vy1/stepy ) * stepy
 			count = int( (end-start)/stepy ) + 1
@@ -183,8 +192,13 @@ class AxisGridBackground( QtGui.QGraphicsRectItem ):
 				for j in range( 1, subStep ):
 					syy = yy + j * subPitch
 					painter.drawLine( 0, syy, 6, syy )
-				markText = '%.1f'%( vy )
+				markText = '%.1f'%( -vy/_PIXEL_PER_UNIT )
 				painter.drawText( QRectF( 5, yy + 3, 100, 20 ), Qt.AlignTop|Qt.AlignLeft, markText )
+		
+		if self.rangeVisible:
+			x = self.maxRange + dx
+			painter.setPen( AxisGridBackground._rangePen )
+			painter.drawLine( x, y0 + dy, x, y1 + dy )
 
 		if self.cursorVisible:
 			x = self.cursorPosX + dx
@@ -502,7 +516,7 @@ class CurveVertItem( QtGui.QGraphicsRectItem ):
 			self.updating = False
 
 	def setParam( self, x,y, tweenMode, preBPX, preBPY, postBPX, postBPY ):
-		self.setPos( x * _PIXEL_PER_UNIT, -y )
+		self.setPos( x * _PIXEL_PER_UNIT, -y * _PIXEL_PER_UNIT )
 		self.tweenMode = tweenMode
 		#Todo tangent
 		self.preBezierPoint  = ( preBPX,  preBPY  )
@@ -678,9 +692,9 @@ class CurveView( GLGraphicsView ):
 	def onRectChanged( self, rect ):
 		self.gridBackground.setRect( rect )
 
-	def setAxisShown( self, xAxis, yAxis ):
-		self.gridBackground.showXAxis = xAxis
-		self.gridBackground.showYAxis = yAxis
+	def setAxisVisible( self, xAxis, yAxis ):
+		self.gridBackground.XAxisVisible = xAxis
+		self.gridBackground.YAxisVisible = yAxis
 
 	def setCursorVisible( self, visible ):
 		# self.cursorItem.setVisible( visible )
@@ -815,6 +829,63 @@ class CurveView( GLGraphicsView ):
 			self.addCurve( curveNode )
 		self.rebuilding = False
 
+	def viewportSize( self ):
+		view = self.viewport()
+		return view.width(), view.height()
+
+	def locatePoint( self, px, py ):
+		w, h = self.viewportSize()
+		self.setScroll( px - self.xToValue( w )/2, -py - self.yToValue( h )/2 )
+
+	def fitRect( self, x0,y0,x1,y1, fitX = True, fitY = True ):
+		w, h = self.viewportSize()
+		dx = x1 - x0
+		dy = y1 - y0
+		marginX = 100
+		marginY = 100
+		zx = max( w - marginX, 100 ) / (dx * _PIXEL_PER_UNIT*2.0)
+		zy = max( h - marginY, 100 ) / (dy * _PIXEL_PER_UNIT*2.0)
+		cx = ( x0 + x1 ) / 2.0
+		cy = ( y0 + y1 ) / 2.0
+		scrX = self.scrollX
+		scrY = self.scrollY
+
+		if fitX:
+			self.setZoomX( zx )
+			scrX = cx - self.xToValue( w/2.0 )
+		if fitY:
+			self.setZoomY( zy )
+			scrY = - cy - self.yToValue( h/2.0 )
+		self.setScroll( scrX, scrY )
+
+	def fitAllCurves( self, fitX = True, fitY = True ):
+		return self.fitCurves( self.getCurveNodes(), fitX, fitY )
+
+	def fitCurves( self, curves, fitX = True, fitY = True ):
+		x0, y0 = 100000000, 100000000
+		x1, y1 = -100000000, -100000000
+		for curve in curves:
+			cx0, cy0, cx1, cy1 = self.calcCurveAABB( curve )
+			x0 = min( cx0, x0 )
+			y0 = min( cy0, y0 )
+			x1 = max( cx1, x1 )
+			y1 = max( cy1, y1 )
+		dx = x1 - x0
+		dy = y1 - y0
+		if dx <=0 or dy <= 0: return
+		self.fitRect( x0, y0, x1, y1, fitX, fitY )
+
+	def calcCurveAABB( self, curve ):
+		x0, y0 = 100000000, 100000000
+		x1, y1 = -100000000, -100000000
+		for vert in self.getVertNodes( curve ):
+			x, y, tweenMode, preBPX, preBPY, postBPX, postBPY = self.getVertParam( vert )
+			x0 = min( x, x0 )
+			y0 = min( y, y0 )
+			x1 = max( x, x1 )
+			y1 = max( y, y1 )
+		return x0,y0,x1,y1
+
 	def clear( self ):
 		scn = self.scene()
 		for curve in self.curveItems:
@@ -903,14 +974,13 @@ class CurveView( GLGraphicsView ):
 			return curveItem
 
 	def updateCurveLayout( self ):
-		#TODO: zoom to fit curve value range
-		pass
+		self.fitAllCurves( False, True ) #fit y axis only
 	
 	#====notify====
 	def notifyVertChanged( self, vert, posChanged = True, bezierPointChanged = True ):
 		if self.rebuilding: return
 		if posChanged:
-			self.vertChanged.emit( vert.node, vert.x()/_PIXEL_PER_UNIT, -vert.y() )
+			self.vertChanged.emit( vert.node, vert.x()/_PIXEL_PER_UNIT, -vert.y()/_PIXEL_PER_UNIT )
 			
 		if bezierPointChanged:
 			( preBPX,  preBPY  ) = vert.preBezierPoint
@@ -1052,7 +1122,10 @@ if __name__ == '__main__':
 			super( CurveWidget, self ).__init__( *args, **kwargs )		
 			layout = QtGui.QVBoxLayout( self )
 			self.view = TestCurveView()
+			self.view.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding )
 			layout.addWidget( self.view )
+			layout.setSpacing( 0 )
+			layout.setMargin( 0 )
 			self.view.rebuild()
 
 		def closeEvent( self, event ):
@@ -1063,9 +1136,10 @@ if __name__ == '__main__':
 	app.setStyleSheet(
 			open( '/Users/tommo/prj/gii/data/theme/' + styleSheetName ).read() 
 		)
-	view = CurveWidget()
-	view.resize( 600, 300 )
-	view.show()
-	view.raise_()
+	frame = CurveWidget()
+	frame.resize( 600, 300 )
+	print frame.view.width(), frame.view.height()
+	frame.show()
+	frame.raise_()
 	
 	app.exec_()

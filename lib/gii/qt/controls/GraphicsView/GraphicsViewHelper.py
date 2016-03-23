@@ -256,13 +256,13 @@ class GridBackground( QtGui.QGraphicsRectItem ):
 		self.offsetY = 0
 		self.cursorPos  = 0
 		self.cursorVisible = False
-		self.showXAxis = True
-		self.showYAxis = True
+		self.XAxisVisible = True
+		self.YAxisVisible = True
 		self.cursorPen = GridBackground._cursorPen
 
-	def setAxisShown( self, xAxis, yAxis ):
-		self.showXAxis = xAxis
-		self.showYAxis = yAxis
+	def setAxisVisible( self, xAxis, yAxis ):
+		self.XAxisVisible = xAxis
+		self.YAxisVisible = yAxis
 
 	def setOffset( self, x, y ):
 		self.offsetX = x
@@ -306,14 +306,14 @@ class GridBackground( QtGui.QGraphicsRectItem ):
 		ox = (dx) % tw
 		oy = (dy) % th
 
-		if self.showYAxis:
+		if self.YAxisVisible:
 			offx = self.offsetX
 			painter.setPen( GridBackground._gridPenV )
 			for col in range( cols ): #V lines
 				x = col * tw + ox + x0 + offx
 				painter.drawLine( x, y0, x, y1 )
 		
-		if self.showXAxis:
+		if self.XAxisVisible:
 			# x0 = max( x0, _HEAD_OFFSET )
 			offy = self.offsetY
 			painter.setPen( GridBackground._gridPenH )
