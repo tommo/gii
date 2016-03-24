@@ -372,6 +372,11 @@ function AnimatorView:markTrackDirty( track )
 	self:markClipDirty()
 end
 
+function AnimatorView:toggleTrackActive( track )
+	track:setActive( not track:isLocalActive() )
+	self:markTrackDirty( track )
+end
+
 function AnimatorView:markClipDirty()
 	self.targetClip:clearPrebuiltContext()
 	self:clearPreviewState()

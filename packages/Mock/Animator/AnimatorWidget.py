@@ -81,7 +81,7 @@ class AnimatorTrackTree( GenericTreeWidget ):
 	# 	self.layoutChanged.emit()
 
 	def getHeaderInfo( self ):
-		return [ ('Name',80), ('Key', 20) ]
+		return [ ('Name',70), ('Key', 20), ('Act',20) ]
 
 	def resetHeader( self ):
 		super( AnimatorTrackTree, self ).resetHeader()
@@ -131,6 +131,10 @@ class AnimatorTrackTree( GenericTreeWidget ):
 				item.setIcon( 1, getIcon('track_key_0') )
 			else:
 				item.setIcon( 1, getIcon('track_key_none') )
+		if node.isLocalActive( node ):
+			item.setIcon( 2, getIcon('track_active') )
+		else:
+			item.setIcon( 2, getIcon('track_inactive') )
 		
 	def onItemSelectionChanged(self):
 		self.parentView.onTrackSelectioChanged()
@@ -144,8 +148,9 @@ class AnimatorTrackTree( GenericTreeWidget ):
 
 	def fitColumnSize( self ):
 		width = self.width() - 4
-		self.setColumnWidth ( 0, width - 25 )
-		self.setColumnWidth ( 1, 25 )
+		self.setColumnWidth ( 0, width - 22*2 )
+		self.setColumnWidth ( 1, 22 )
+		self.setColumnWidth ( 2, 22 )
 
 	def onItemExpanded( self, item ):
 		if self.rebuilding: return
@@ -170,7 +175,15 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		if not item:
 			self.clearSelection()
 		else:
-			return super( AnimatorTrackTree, self ).mousePressEvent( ev )
+			if ev.button() == Qt.LeftButton:
+				col = self.columnAt( ev.pos().x() )
+				if col == 2:
+					node = self.getNodeByItem( item )
+					self.parentView.owner.toggleTrackActive( node )
+					self.refreshNodeContent( node )
+					return
+			
+		return super( AnimatorTrackTree, self ).mousePressEvent( ev )
 
 	def dropEvent( self, ev ):		
 		p = self.dropIndicatorPosition()

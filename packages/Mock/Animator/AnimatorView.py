@@ -386,6 +386,12 @@ class AnimatorView( SceneEditorModule ):
 	def onTimelineMarkerChanged( self, marker, pos ):
 		self.delegate.callMethod( 'view', 'updateTimelineMarker', marker, pos )
 
+	def toggleTrackActive( self, track ):
+		#TODO: command
+		# self.module.doCommand( 'scene_editor/toggle_entity_visibility', target = node )
+		self.delegate.callMethod( 'view', 'toggleTrackActive', track )
+
+
 	def renameTrack( self, track, name ):
 		self.delegate.callMethod( 'view', 'renameTrack', track, name )
 

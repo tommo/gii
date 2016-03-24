@@ -1577,7 +1577,7 @@ class TimelineView( QtGui.QWidget ):
 		if key:
 			self.refreshKey( keyNode, **option )
 		if self.getCurrentEditMode() == 'curve':
-			self.curveView.rebuild()
+			self.curveView.rebuild( False )
 		return key
 
 	def removeKey( self, keyNode ):
@@ -1613,7 +1613,8 @@ class TimelineView( QtGui.QWidget ):
 		if tracks:
 			for trackNode in tracks:
 				trackItem = self.getTrackByNode( trackNode )
-				trackItem.setSelected( True )
+				if trackItem:
+					trackItem.setSelected( True )
 		self.trackSelection = tracks
 		if self.activeView == 'curve':
 			self.curveView.rebuild()
@@ -1907,6 +1908,7 @@ class TimelineView( QtGui.QWidget ):
 		if self.onClipRangeChanging( 0, value ):
 			self.rulerView.setRange( 0, value )
 		t0, t1 = self.getClipRange()
+		self.curveView.setRangeX( t0, t1 )
 		self.spinboxClipLength.setValue( t1 )
 
 	def onTrackClicked( self, track, pos ):

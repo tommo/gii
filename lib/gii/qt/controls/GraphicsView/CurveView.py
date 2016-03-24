@@ -845,12 +845,14 @@ class CurveView( GLGraphicsView ):
 
 
 	#====Building
-	def rebuild( self ):
+	def rebuild( self, fit = True ):
 		self.clear()
 		self.rebuilding = True
 		for curveNode in self.getCurveNodes():
 			self.addCurve( curveNode )
 		self.rebuilding = False
+		if fit:
+			self.fitAllCurves( False, True ) #fit y axis only
 
 	def viewportSize( self ):
 		view = self.viewport()
@@ -939,7 +941,6 @@ class CurveView( GLGraphicsView ):
 
 		curve.setZoom( self.zoomX, self.zoomY )
 		self.refreshCurve( curveNode, **option )
-		self.updateCurveLayout()
 		return curve
 
 	def addVert( self, vertNode, **option ):
@@ -1006,9 +1007,6 @@ class CurveView( GLGraphicsView ):
 		else:
 			return curveItem
 
-	def updateCurveLayout( self ):
-		self.fitAllCurves( False, True ) #fit y axis only
-	
 	#====notify====
 	def notifyVertChanged( self, vert, posChanged = True, bezierPointChanged = True ):
 		if self.rebuilding: return
