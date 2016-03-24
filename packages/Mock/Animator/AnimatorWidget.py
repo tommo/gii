@@ -127,7 +127,10 @@ class AnimatorTrackTree( GenericTreeWidget ):
 		elif isMockInstance( node, 'AnimatorClipSubNode' ):
 			item.setText( 0, node.toString( node ) )
 			item.setIcon( 0, getIcon(node.getIcon( node )) )
-			item.setIcon( 1, getIcon('track_key_0') )
+			if node.isCurveTrack( node ):
+				item.setIcon( 1, getIcon('track_key_0') )
+			else:
+				item.setIcon( 1, getIcon('track_key_none') )
 		
 	def onItemSelectionChanged(self):
 		self.parentView.onTrackSelectioChanged()
@@ -397,7 +400,7 @@ class AnimatorTimelineWidget( TimelineView ):
 
 	def getKeyBezierPoints( self, keyNode ):
 		( bpx0, bpy0, bpx1, bpy1 ) = keyNode.getBezierPoints( keyNode )
-		return ( bpx0, bpy0, bpx1, bpy1 )
+		return ( -bpx0, bpy0, bpx1, bpy1 )
 
 	def getClipRange( self ):
 		t = self.parentView.owner.getTargetClipLength()
@@ -600,8 +603,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 		self.addTrack( key.parent )
 		self.timeline.addKey( key )
 		if focus:
-			#TODO: select key
-			pass
+			self.timeline.selectKey( key )
 
 	def addTrack( self, track, focus = False ):
 		self.treeTracks.addNode( track )
@@ -613,8 +615,7 @@ class AnimatorWidget( QtGui.QWidget, AnimatorWidgetUI ):
 	def addMarker( self, marker, focus = False ):
 		self.timeline.addMarker( marker )
 		if focus:
-			#TODO: select marker
-			pass
+			self.timeline.selectMarker( marker )
 
 	def selectTrack( self, trackNode ):
 		self.treeTracks.selectNode( trackNode )

@@ -11,6 +11,7 @@ from PyQt4.QtGui import QColor, QTransform, QStyle
 import time
 
 from GraphicsViewHelper import *
+from TimelineViewCommon import *
 from CurveView import CurveView
 from CurveView import \
 	TWEEN_MODE_CONSTANT,\
@@ -139,44 +140,7 @@ class TimelineSubView( GLGraphicsView ):
 	def setCursorVisible( self, visible ):
 		pass
 
-##----------------------------------------------------------------##
-class TimelineCursorItem( QtGui.QGraphicsLineItem ):
-	_pen  = makePen( color = '#a3ff00', width = 1 )
-	def __init__( self ):
-		super( TimelineCursorItem, self ).__init__()
-		self.setPen( self._pen )
 
-##----------------------------------------------------------------##
-class TimelineMarkerLineItem( QtGui.QGraphicsLineItem ):
-	_pen  = makePen( color = '#7569d0', width = 1 )
-	def __init__( self ):
-		super( TimelineMarkerLineItem, self ).__init__()
-		self.setLine( 0,0,0,1000)
-		self.setZValue( 800 )
-		self.setPen( self._pen )
-		self.parentMarker = None
-		self.view = None
-
-	def setMarker( self, marker ):
-		self.parentMarker = marker
-		self.parentMarker.lineItems.append( self )
-
-	def getTimePos( self ):
-		return self.parentMarker.timePos
-
-	def getTimeLength( self ):
-		return self.parentMarker.timeLength
-
-	def paint( self, painter, option, widget ):
-		painter.setRenderHint( QtGui.QPainter.Antialiasing, False )
-		return super( TimelineMarkerLineItem, self ).paint( painter, option, widget )
-
-	def updateShape( self ):
-		self.view.updateMarkerPos( self )
-
-	def delete( self ):
-		view = self.view
-		view.removeMarkerLine( self )
 
 ##----------------------------------------------------------------##
 class TimelineMarkerItem( QtGui.QGraphicsRectItem ):
@@ -1277,6 +1241,7 @@ class TimelineView( QtGui.QWidget ):
 		self.rebuilding   = False
 		self.updating     = False
 		self.shiftMode    = False
+		self.switchingMode = False
 		self.activeView = 'dopesheet'
 
 		self.selection       = []
@@ -1341,6 +1306,8 @@ class TimelineView( QtGui.QWidget ):
 
 		self.trackView.cursorPosChanged.connect( self.onCursorPosChanged )
 		self.rulerView.cursorPosChanged.connect( self.onCursorPosChanged )
+
+		self.curveView.selectionChanged.connect( self.onCurveSelectionChanged )
 
 		self.tabViewSwitch = QtGui.QTabBar()
 		bottomLayout = QtGui.QHBoxLayout( self.ui.containerBottom )
@@ -1431,20 +1398,23 @@ class TimelineView( QtGui.QWidget ):
 
 	def onTabChanged( self, idx ):
 		self.ui.containerContents.setCurrentIndex( idx )
+		self.switchingMode = True
 		if idx == 1:
 			self.activeView = 'curve'
 			self.toolbuttonCurveModeLinear.setEnabled( True )
 			self.toolbuttonCurveModeConstant.setEnabled( True )
 			self.toolbuttonCurveModeBezier.setEnabled( True )
 			self.toolbuttonCurveModeBezierS.setEnabled( True )
+			selection = self.getSelection()
 			self.curveView.rebuild()
+			self.curveView.setSelection( selection, False )
 		else:
 			self.activeView = 'dopesheet'
 			self.toolbuttonCurveModeLinear.setEnabled( False )
 			self.toolbuttonCurveModeConstant.setEnabled( False )
 			self.toolbuttonCurveModeBezier.setEnabled( False )
 			self.toolbuttonCurveModeBezierS.setEnabled( False )
-
+		self.switchingMode = False
 
 	def getCurrentEditMode( self ):
 		if self.ui.containerContents.currentIndex() == 0:
@@ -1489,6 +1459,7 @@ class TimelineView( QtGui.QWidget ):
 
 	def setRange( self, t0, t1 ):
 		self.rulerView.setRange( t0, t1 )
+		self.curveView.setRangeX( t0, t1 )
 		self.spinboxClipLength.setValue( t1 )
 
 	def getRange( self ):
@@ -1604,7 +1575,9 @@ class TimelineView( QtGui.QWidget ):
 		if not trackItem: return None
 		key = trackItem.addKey( keyNode, **option )
 		if key:
-			self.refreshKey( keyNode, **option )			
+			self.refreshKey( keyNode, **option )
+		if self.getCurrentEditMode() == 'curve':
+			self.curveView.rebuild()
 		return key
 
 	def removeKey( self, keyNode ):
@@ -1613,6 +1586,8 @@ class TimelineView( QtGui.QWidget ):
 		track.removeKey( keyNode )
 		if keyNode in self.selection:
 			self.selection.remove( keyNode )
+		if self.getCurrentEditMode() == 'curve':
+			self.curveView.rebuild()
 
 	def getParentTrack( self, keyNode ):
 		trackNode = self.getParentTrackNode( keyNode )
@@ -1687,7 +1662,8 @@ class TimelineView( QtGui.QWidget ):
 			key.setResizable( resizable )
 			self.updateKeyContent( key, keyNode, **option )
 			# key.update()
-		#self.curveView.refreshVert( keyNode )
+		if self.getCurrentEditMode() == 'curve':
+			self.curveView.refreshVert( keyNode )
 
 	def refreshMarker( self, markerNode, **option ):
 		marker = self.getMarkerByNode( markerNode )
@@ -1772,12 +1748,14 @@ class TimelineView( QtGui.QWidget ):
 				keyItem.setSelected( True, False )
 		self.keySelectionChanged.emit()
 		self.update()
-		self.onSelectionChanged( self.selection )
+		self.updateSelection( self.selection )
 
 	def clearSelection( self ):
 		self.selectKey( None )
 
-	def updateSelection( self, selection ):
+	def updateSelection( self, selection, notify = True ):
+		if not self.switchingMode:
+			self.curveView.setSelection( selection, False )
 		self.selection = selection
 		self.onSelectionChanged( self.selection )
 
@@ -1825,6 +1803,14 @@ class TimelineView( QtGui.QWidget ):
 		value = self.getKeyCurveValue( vertNode )
 		( preBPX, preBPY, postBPX, postBPY ) = self.getKeyBezierPoints( vertNode )
 		return ( pos, value, mode, preBPX, preBPY, postBPX, postBPY )
+
+	def onCurveSelectionChanged( self ):
+		if self.switchingMode: return
+		if self.getCurrentEditMode() != 'curve' : return
+		selection = self.curveView.getSelection()
+		self.selectKey( None )
+		for key in selection:
+			self.selectKey( key, True )
 
 	#####
 	#VIRUTAL data model functions

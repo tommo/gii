@@ -256,7 +256,7 @@ function AnimatorView:updateTimelineKeyCurveValue( key, value )
 end
 
 function AnimatorView:updateTimelineKeyBezierPoint( key, bpx0, bpy0, bpx1, bpy1 )
-	key:setBezierPoints( bpx0, bpy0, bpx1, bpy1 )
+	key:setBezierPoints( -bpx0, bpy0, bpx1, bpy1 )
 	self:markTrackDirty()
 end
 
@@ -266,6 +266,12 @@ function AnimatorView:updateTimelineMarker( marker, pos )
 end
 
 function AnimatorView:updateTimelineKeyTweenMode( key, mode )
+	local mode0 = key:getTweenMode()
+	if mode0 ~= mode and mode == MOAIAnimCurveEX.SPAN_MODE_BEZIER then
+		--use default BPM
+		key.preBPX, key.preBPY  = -0.5, 0
+		key.postBPX, key.postBPY = 0.5, 0
+	end
 	key:setTweenMode( mode )
 	self:markTrackDirty()
 end
