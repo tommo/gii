@@ -1,10 +1,12 @@
 module 'mock_edit'
 
-function requestAvailSQNodeTypes()
+function requestAvailSQNodeTypes( parentNode )
 	local reg = mock.getSQNodeRegistry()
 	local result = {}
 	for name, entry in pairs( reg ) do
-		table.insert( result, name )
+		if parentNode:acceptSubNode( name ) then
+			table.insert( result, name )
+		end
 	end
 	return result
 end

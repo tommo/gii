@@ -13,6 +13,7 @@ function AnimatorView:__init()
 	self.targetAnimatorData  = false
 	self.currentTrack     = false 
 	self.currentTime = 0
+	self.cursorTime  = 0 --non looped time
 	self.previewTimeStep = 1/30
 	self.prevClock = 0
 	self.dirty = false
@@ -111,6 +112,11 @@ function AnimatorView:getTargetClipLength()
 	return self.targetClip.fixedLength
 end
 
+function AnimatorView:getInsertPos()
+	if not self.targetClip then return self.cursorTime end
+	return math.clamp( self.cursorTime, 0, self.targetClip.fixedLength )
+end
+
 function AnimatorView:addKeyForField( target, fieldId )
 	--find existed track
 	local track
@@ -145,7 +151,7 @@ function AnimatorView:addKeyForField( target, fieldId )
 
 	local keys = { 
 		track:createKey( 
-			self.currentTime,
+			self:getInsertPos(),
 			{
 				target = target,
 				root   = self.targetRootEntity
@@ -161,10 +167,11 @@ function AnimatorView:addKeyForEvent( target, eventId )
 end
 
 function AnimatorView:addKeyForSelectedTrack( track )
+	local t = self:getInsertPos()
 	local target = track:getTargetObject( self.targetRootEntity )
 	local keys = {
 		track:createKey(
-			self.currentTime,
+			self:getInsertPos(),
 			{
 				target = target,
 				root   = self.targetRootEntity
@@ -307,6 +314,7 @@ function AnimatorView:stepForward( dt )
 end
 
 function AnimatorView:applyTime( t )
+	self.cursorTime = t
 	if self.targetClip then
 		if not self.previewState then self:preparePreivewState() end
 		self.previewState:apply( t )
