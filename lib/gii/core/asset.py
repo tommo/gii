@@ -40,6 +40,7 @@ class AssetNode(object):
 		self.metadata   = None
 		self.tags       = []
 		self.tagCache   = None
+		self.inheritedTags = None
 
 		self.name = os.path.basename( nodePath )
 		self.shortName = self.name
@@ -402,6 +403,9 @@ class AssetNode(object):
 	def getTagString( self ):
 		return ', '.join( self.getTags() )
 
+	def getInheritedTagString( self ):
+		return ', '.join( self.getInheritedTags() )
+
 	def getTagCacheString( self ):
 		return ', '.join( self.getTagCache() )
 
@@ -416,6 +420,7 @@ class AssetNode(object):
 	def clearTagCache( self ):
 		if self.tagCache:
 			self.tagCache = None
+			self.inheritedTags = None
 			for child in self.children:
 				child.clearTagCache()
 
@@ -424,12 +429,20 @@ class AssetNode(object):
 			self.updateTagCache()
 		return self.tagCache
 
+	def getInheritedTags( self ):
+		if not self.inheritedTags:
+			self.updateTagCache()
+		return self.inheritedTags
+
 	def updateTagCache( self ): #collect tag from parent nodes
+		inherited = {}
 		collected = {}
 		if self.parentNode:
 			parentCache = self.parentNode.getTagCache()
 			for tag in parentCache:
+				inherited[ tag ] = True
 				collected[ tag ] = True
+		self.inheritedTags = inherited.keys()
 		for tag in self.tags:
 			collected[ tag ] = True
 		cache = collected.keys()

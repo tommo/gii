@@ -745,7 +745,13 @@ class AssetBrowserInstance( object ):
 			self.statusBar.setText( '[' + asset.getNodePath() + ']' )
 		else:
 			self.statusBar.setText( asset.getNodePath() )
-		self.statusBar.setTags( asset.getTagString() )
+		inherited = asset.getInheritedTagString()
+		if inherited:
+			self.statusBar.setTags( 
+				'%s ( %s )' % ( asset.getTagString(), inherited )
+				)
+		else:
+			self.statusBar.setTags( asset.getTagString() )
 
 	def updateStatusBar( self ):
 		self.statusBar.show()
