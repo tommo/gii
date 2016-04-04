@@ -106,6 +106,7 @@ class ASEDocument(object):
 		self.speed  = 1
 		self.depth  = 0
 		self.imageCache = []
+		self.palette = None
 
 	def affirmUniqueImage( self, img ):
 		for i1 in self.imageCache:
@@ -113,6 +114,23 @@ class ASEDocument(object):
 				if i1.tobytes() == img.tobytes(): return i1
 		self.imageCache.append( img )
 		return img
+
+	def _convertPaletteImage( self, img ):
+		pix = img.load()
+		w, h = img.size
+		img1 = Image.new( 'RGBA', ( w, h ) )
+		pix1 = img1.load()
+		palette = self.palette
+		for y in range( h ):
+			for x in range( w ):
+				p = pix[ x, y ]
+				pix1[ x, y ] = palette[ p ]
+		return img1
+
+		# for y in xrange(img.size[1]):
+	#     for x in xrange(img.size[0]):
+	#         if pixdata[x, y] == (255, 0, 255, 255):
+	#             pixdata[x, y] = (255, 0, 255, 0)
 
 	def load( self, path ):
 		#read header
@@ -125,7 +143,7 @@ class ASEDocument(object):
 		flags             = read_fmt( 'L', fp )
 		speed             = read_fmt( 'H', fp )
 		read_fmt( 'LL', fp) #skip
-		transparentIdx = read_fmt( 'c', fp )
+		transparentIdx = read_fmt( 'B', fp )
 		fp.read( 3 )
 		colorNum = read_fmt( 'H', fp )
 		fp.read( 94 )
@@ -134,8 +152,9 @@ class ASEDocument(object):
 		self.speed = speed
 		self.colorNum = colorNum
 		self.depth = depth 
-		if depth != 32:
-			raise Exception( 'only RGBA mode is supported' )
+		self.transparentIdx = transparentIdx
+		if not ( depth in [ 32, 8 ] ):
+			raise Exception( 'only RGBA/Indexed mode is supported' )
 			
 		#frames
 		for fid in range( frameNum ):
@@ -166,7 +185,7 @@ class ASEDocument(object):
 					layer.type, layer.childLevel = read_fmt( 'HH', dp )
 					defaultw, defaulth = read_fmt( 'HH', dp )
 					layer.blend   = read_fmt( 'H', dp )
-					layer.opacity = read_fmt( 'c', dp )
+					layer.opacity = read_fmt( 'B', dp )
 					dp.read( 3 )
 					layer.name = read_string( dp )
 					self.layers.append( layer )
@@ -176,7 +195,7 @@ class ASEDocument(object):
 					cel = ASECel()
 					cel.layerIndex = read_fmt( 'H', dp )
 					cel.x, cel.y   = read_fmt( 'hh', dp )
-					cel.opacity    = read_fmt( 'c', dp )
+					cel.opacity    = read_fmt( 'B', dp )
 					cel.type       = read_fmt( 'H', dp )
 					dp.read( 7 )
 					ctype = cel.type
@@ -188,7 +207,13 @@ class ASEDocument(object):
 						data = dp.read()
 						if ctype == 2: #raw cel
 							data = zlib.decompress( data )
-						img = Image.frombuffer( 'RGBA', (cel.w, cel.h), data, 'raw', 'RGBA', 0, 1 )
+						if self.depth == 32: #rgba
+							img = Image.frombuffer( 'RGBA', (cel.w, cel.h), data, 'raw', 'RGBA', 0, 1 )
+						elif self.depth == 8: #palette
+							img = Image.frombuffer( 'P', (cel.w, cel.h), data, 'raw', 'P', 0, 1 )
+							#convert into rgba
+							img = self._convertPaletteImage( img )
+							
 						bbox = img.getbbox()
 						cropped = img.crop( bbox )
 						cel.image = self.affirmUniqueImage( cropped )
@@ -210,7 +235,7 @@ class ASEDocument(object):
 						tag = ASEFrameTag()
 						tag.id = tid
 						tag.frameFrom, tag.frameTo = read_fmt( 'HH', dp )
-						tag.direction = read_fmt( 'c', dp )
+						tag.direction = read_fmt( 'B', dp )
 						dp.read( 8 )
 						dp.read( 3 )
 						dp.read( 1 )
@@ -218,7 +243,25 @@ class ASEDocument(object):
 						self.tags.append( tag )
 
 				elif chunkType == 0x2019: #new palette SKIP
-					pass
+					size = read_fmt( 'L', dp )
+					index0 = read_fmt( 'L', dp )
+					index1 = read_fmt( 'L', dp )
+					dp.read( 8 )
+					palette = {}
+					paletteName = {}
+					for cid in range( size ):
+						hasName = read_fmt( 'H', dp )
+						r,g,b,a = read_fmt( 'BBBB', dp )
+						if hasName:
+							colorName = read_string( dp )
+						else:
+							colorName = ''
+						idx = index0 + cid
+						palette[ idx ] = (r,g,b,a)
+						paletteName[ idx ] = colorName
+					self.palette = palette
+					self.paletteName = paletteName
+					palette[ self.transparentIdx ] = ( 0,0,0,0 )
 
 				elif chunkType == 0x2020: #userdata
 					flags = read_fmt( 'L', dp )
