@@ -27,9 +27,9 @@ def json_linter(data):
             line = int(_LINE.findall(msg)[0].replace('line ', '')) - 1
             column = int(_COLUMN.findall(msg)[0].replace('column ', ''))
             msg = _MATCH.match(msg).group(0).split(':')[0].replace(':', '')
-        return True, [(msg, CheckerMessages.ERROR, line, column)]
+        return [(msg, CheckerMessages.ERROR, line, column)]
     else:
-        return True, []
+        return []
 
 
 class JSONLinter(CheckerMode):

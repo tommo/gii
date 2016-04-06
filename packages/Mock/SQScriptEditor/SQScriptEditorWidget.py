@@ -97,32 +97,44 @@ SQITEM_STYLE_SHEET = '''
 		font-size:13px;
 		color: #bb9;
 	}
+
 	cmd{
 		font-size:10px;
 		font-weight:bold;
 		color: #747474;
 	}
+
 	comment{
 		color: #b2b09d;
 	}
+
 	data{
 		color: #555;
 	}
+
 	number{
 		font-size:12px;
 		color: #c89948;
 	}
+
+	id{
+		color: #b600ff;
+	}
+
 	string{
 		color: #2f3cff;
 	}
+
 	signal{
 		color: #f933ff;
 	}
+
 	flag{
 		font-size:10px;
 		font-weight:bold;
 		color: #3c9100;
 	}
+
 	label{
 		font-size:12px;
 		color: #0080f8;
@@ -362,8 +374,8 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 			dict( name = 'save',   label = 'Save',   icon = 'save' ),
 			dict( name = 'locate', label = 'Locate', icon = 'search-2' ),
 			'----',
-			dict( name = 'add_routine', label = 'Add', icon = 'add' ),
-			dict( name = 'del_routine', label = 'Del', icon = 'remove' ),
+			dict( name = 'add_routine', label = 'Add Routine', icon = 'add' ),
+			dict( name = 'del_routine', label = 'Remove Routine', icon = 'remove' ),
 		])
 		
 		self.treeRoutineNode = addWidgetWithLayout( RoutineNodeTreeWidget( self.ui.containerContent ) )
@@ -378,9 +390,11 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 		self.propertyEditor.propertyChanged.connect( self.onPropertyChanged )
 
 		#setup shortcuts
-		self.addShortcut( self.treeRoutineNode, 'Tab', self.promptAddNode )
+		# self.addShortcut( self.treeRoutineNode, 'Tab', self.promptAddNode )
 		self.addShortcut( self.treeRoutineNode, 'Return', self.focusNodeEditor )
-		self.addShortcut( self, 'Ctrl+Return', self.focusContentTree )
+		self.addShortcut( self, 'Ctrl+Return', self.promptAddNode )
+		self.addShortcut( self, 'Escape', self.focusContentTree )
+		# self.addShortcut( self, 'Ctrl+Return', self.focusContentTree )
 		# self.addShortcut( self, 'Ctrl+1', self.focusContentTree )
 
 		self.nodeEditorContainer = self.ui.containerEditor
@@ -499,15 +513,22 @@ class SQScriptEditorWidget( QtGui.QWidget ):
 	def cloneNode( self ):
 		pass
 
+	def getContextNode( self ):
+		context = self.treeRoutineNode.getFirstSelection()
+		if not context:
+			context = self.targetRoutine.getRootNode( self.targetRoutine )
+		return context
+
 	def createNode( self, nodeTypeName ):
-		contextNode = self.treeRoutineNode.getFirstSelection()
+		contextNode = self.getContextNode()
 		node = _MOCK_EDIT.createSQNode( nodeTypeName, contextNode, self.targetRoutine )
 		if node:
 			self.treeRoutineNode.rebuild()
 			self.treeRoutineNode.selectNode( node )
 
 	def listNodeTypes( self, typeId, context, option ):
-		res = _MOCK_EDIT.requestAvailSQNodeTypes( self.treeRoutineNode.getFirstSelection() )
+		contextNode = self.getContextNode()
+		res = _MOCK_EDIT.requestAvailSQNodeTypes( contextNode )
 		entries = []
 		for n in res.values():
 			entry = ( n, n, 'SQ Node', 'sq_script/'+n )

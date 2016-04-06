@@ -45,6 +45,7 @@ class WordClickMode(Mode, QtCore.QObject):
         else:
             self.editor.mouse_moved.disconnect(self._on_mouse_moved)
             self.editor.mouse_pressed.disconnect(self._on_mouse_pressed)
+            self.editor.key_released.disconnect(self._on_key_released)
             self.editor.mouse_double_clicked.disconnect(
                 self._on_mouse_double_clicked)
 
@@ -87,8 +88,8 @@ class WordClickMode(Mode, QtCore.QObject):
             self._cursor = None
             self._clear_selection()
 
-    def _check_word_under_mouse_cursor(self, cursor):
-        raise NotImplementedError()
+    def _check_word_cursor(self, cursor):
+        pass
 
     def _on_mouse_pressed(self, event):
         """ mouse pressed callback """

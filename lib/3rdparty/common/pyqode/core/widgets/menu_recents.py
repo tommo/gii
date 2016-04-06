@@ -3,6 +3,7 @@ Provides a menu that display the list of recent files and a RecentFilesManager
 which use your application's QSettings to store the list of recent files.
 
 """
+import sys
 import os
 from pyqode.core import icons
 from pyqode.qt import QtCore, QtGui, QtWidgets
@@ -58,9 +59,14 @@ class RecentFilesManager(QtCore.QObject):
                 seen[marker] = 1
                 result.append(item)
             return result
-
-        return unique([os.path.normpath(pth) for pth in
-                       self._settings.value('recent_files/%s' % key, default)])
+        lst = self._settings.value('recent_files/%s' % key, default)
+        # emtpy list
+        if lst is None:
+            lst = []
+        # single file
+        if isinstance(lst, str):
+            lst = [lst]
+        return unique([os.path.normpath(pth) for pth in lst])
 
     def set_value(self, key, value):
         """
@@ -68,6 +74,8 @@ class RecentFilesManager(QtCore.QObject):
         :param key: value key
         :param value: new value
         """
+        if value is None:
+            value = []
         value = [os.path.normpath(pth) for pth in value]
         self._settings.setValue('recent_files/%s' % key, value)
 
@@ -78,16 +86,14 @@ class RecentFilesManager(QtCore.QObject):
         """
         ret_val = []
         files = self.get_value('list', [])
-        # empty list
-        if files is None:
-            files = []
-        # single file
-        if isinstance(files, str):
-            files = [files]
         # filter files, remove files that do not exist anymore
         for file in files:
             if file is not None and os.path.exists(file):
-                ret_val.append(file)
+                if os.path.ismount(file) and \
+                        sys.platform == 'win32' and not file.endswith('\\'):
+                    file += '\\'
+                if file not in ret_val:
+                    ret_val.append(file)
         return ret_val
 
     def open_file(self, file):
@@ -114,7 +120,10 @@ class RecentFilesManager(QtCore.QObject):
         Returns the path to the last opened file.
         """
         files = self.get_recent_files()
-        return files[0]
+        try:
+            return files[0]
+        except IndexError:
+            return None
 
 
 class MenuRecentFiles(QtWidgets.QMenu):
@@ -176,7 +185,7 @@ class MenuRecentFiles(QtWidgets.QMenu):
             self.addAction(action)
             self.recent_files_actions.append(action)
         self.addSeparator()
-        action_clear = QtWidgets.QAction('Clear list', self)
+        action_clear = QtWidgets.QAction(_('Clear list'), self)
         action_clear.triggered.connect(self.clear_recent_files)
         if isinstance(self.clear_icon, QtGui.QIcon):
             action_clear.setIcon(self.clear_icon)

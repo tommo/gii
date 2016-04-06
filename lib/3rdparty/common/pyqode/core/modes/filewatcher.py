@@ -50,7 +50,7 @@ class FileWatcherMode(Mode, QtCore.QObject):
         self._data = (None, None)
         self._timer = QtCore.QTimer()
         self._timer.setInterval(1000)
-        self._timer.timeout.connect(self._check_mtime)
+        self._timer.timeout.connect(self._check_file)
         self._mtime = 0
         self._notification_pending = False
         self._processing = False
@@ -60,6 +60,7 @@ class FileWatcherMode(Mode, QtCore.QObject):
             self.editor.new_text_set.connect(self._update_mtime)
             self.editor.new_text_set.connect(self._timer.start)
             self.editor.text_saving.connect(self._cancel_next_change)
+            self.editor.text_saved.connect(self._update_mtime)
             self.editor.text_saved.connect(self._restart_monitoring)
             self.editor.focused_in.connect(self._check_for_pending)
         else:
@@ -104,12 +105,20 @@ class FileWatcherMode(Mode, QtCore.QObject):
             # file path is none, this happen if you use setPlainText instead of
             # openFile. This is perfectly fine, we just do not have anything to
             # watch
-            self._timer.stop()
+            try:
+                self._timer.stop()
+            except AttributeError:
+                pass
 
-    def _check_mtime(self):
+    def _check_file(self):
         """
-        Checks watched file moficiation time.
+        Checks watched file moficiation time and permission changes.
         """
+        try:
+            self.editor.toPlainText()
+        except RuntimeError:
+            self._timer.stop()
+            return
         if self.editor and self.editor.file.path:
             if not os.path.exists(self.editor.file.path) and self._mtime:
                 self._notify_deleted_file()
@@ -118,6 +127,9 @@ class FileWatcherMode(Mode, QtCore.QObject):
                 if mtime > self._mtime:
                     self._mtime = mtime
                     self._notify_change()
+                # check for permission change
+                writeable = os.access(self.editor.file.path, os.W_OK)
+                self.editor.setReadOnly(not writeable)
 
     def _notify(self, title, message, expected_action=None):
         """
@@ -148,13 +160,13 @@ class FileWatcherMode(Mode, QtCore.QObject):
             # See OpenCobolIDE/OpenCobolIDE#97
             Cache().set_cursor_position(
                 self.editor.file.path,
-                TextHelper(self.editor).cursor_position())
+                self.editor.textCursor().position())
             self.editor.file.open(self.editor.file.path)
             self.file_reloaded.emit()
 
-        args = ("File changed",
-                "The file <i>%s</i> has changed externally.\nDo you want to "
-                "reload it?" % os.path.basename(self.editor.file.path))
+        args = (_("File changed"),
+                _("The file <i>%s</i> has changed externally.\nDo you want to "
+                  "reload it?") % os.path.basename(self.editor.file.path))
         kwargs = {"expected_action": inner_action}
         if self.editor.hasFocus() or self.auto_reload:
             self._notify(*args, **kwargs)
@@ -179,6 +191,8 @@ class FileWatcherMode(Mode, QtCore.QObject):
         Notify user from external file deletion.
         """
         self.file_deleted.emit(self.editor)
+        # file deleted, disable file watcher
+        self.enabled = False
 
     def clone_settings(self, original):
         self.auto_reload = original.auto_reload

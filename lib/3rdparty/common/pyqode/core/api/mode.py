@@ -1,7 +1,11 @@
 """
 This module contains the editor extension API.
 """
-import weakref
+import logging
+
+
+def _logger():
+    return logging.getLogger(__name__)
 
 
 class Mode(object):
@@ -63,6 +67,10 @@ class Mode(object):
         self.description = self.__doc__
         self._enabled = False
         self._editor = None
+        self._on_close = False
+
+    def __del__(self):
+        _logger().log(5, '%s.__del__', type(self))
 
     def on_install(self, editor):
         """
@@ -83,6 +91,7 @@ class Mode(object):
         """
         Uninstalls the mode from the editor.
         """
+        self._on_close = True
         self.enabled = False
         self._editor = None
 

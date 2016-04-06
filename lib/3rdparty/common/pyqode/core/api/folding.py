@@ -49,10 +49,16 @@ class FoldDetector(object):
 
         editor.syntax_highlighter.fold_detector = my_fold_detector
     """
+    @property
+    def editor(self):
+        if self._editor:
+            return self._editor()
+        return None
+
     def __init__(self):
         #: Reference to the parent editor, automatically set by the syntax
         #: highlighter before process any block.
-        self.editor = None
+        self._editor = None
         #: Fold level limit, any level greater or equal is skipped.
         #: Default is sys.maxsize (i.e. all levels are accepted)
         self.limit = sys.maxsize
@@ -368,6 +374,10 @@ class FoldScope(object):
 
         :param block: block from which the research will start
         """
+        # if we moved up for more than n lines, just give up otherwise this
+        # would take too much time.
+        limit = 5000
+        counter = 0
         original = block
         if not TextBlockHelper.is_fold_trigger(block):
             # search level of next non blank line
@@ -375,8 +385,14 @@ class FoldScope(object):
                 block = block.next()
             ref_lvl = TextBlockHelper.get_fold_lvl(block) - 1
             block = original
-            while (block.blockNumber() and
+            while (block.blockNumber() and counter < limit and
                    (not TextBlockHelper.is_fold_trigger(block) or
                     TextBlockHelper.get_fold_lvl(block) > ref_lvl)):
+                counter += 1
                 block = block.previous()
-        return block
+        if counter < limit:
+            return block
+        return None
+
+    def __repr__(self):
+        return 'FoldScope(start=%r, end=%d)' % self.get_range()

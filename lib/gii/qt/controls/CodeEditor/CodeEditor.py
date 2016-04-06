@@ -8,6 +8,7 @@ from pyqode.core import modes
 from pyqode.core.backend import server
 from pyqode.core.api import CodeEdit, Panel, SyntaxHighlighter, \
 		CharBasedFoldDetector, IndentFoldDetector, ColorScheme
+from pyqode.core.modes import PygmentsSH
 
 class CodeEditor( CodeEdit ):
 # generic
@@ -27,7 +28,7 @@ class CodeEditor( CodeEdit ):
 
 	def __init__(self, parent=None ):
 		super(CodeEditor, self).__init__( parent, False )
-		self.setObjectName( 'CodeEditor' )
+		# self.setObjectName( 'CodeEditor' )
 		self.font_size = 12
 		self.use_spaces_instead_of_tabs = False
 		server_script = server.__file__
@@ -37,6 +38,7 @@ class CodeEditor( CodeEdit ):
 		self.panels.append(panels.LineNumberPanel())
 		self.panels.append(panels.SearchAndReplacePanel(),
 											 Panel.Position.BOTTOM)
+
 		self.panels.append(panels.FoldingPanel())
 
 		# append modes
@@ -46,8 +48,9 @@ class CodeEditor( CodeEdit ):
 		# self.modes.append(modes.FileWatcherMode())
 		self.modes.append(modes.CaretLineHighlighterMode())
 		self.modes.append(modes.RightMarginMode())
-		self.modes.append(modes.PygmentsSyntaxHighlighter(
+		sh = self.modes.append(modes.PygmentsSH(
 				self.document(), color_scheme=ColorScheme('monokai')))
+		sh.fold_detector = IndentFoldDetector()
 		self.modes.append(modes.ZoomMode())
 		# self.modes.append(modes.CodeCompletionMode())
 		self.modes.append(modes.AutoIndentMode())

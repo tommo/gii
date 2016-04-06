@@ -242,7 +242,7 @@ class ASEDocument(object):
 						tag.name = read_string( dp )
 						self.tags.append( tag )
 
-				elif chunkType == 0x2019: #new palette SKIP
+				elif chunkType == 0x2019: #new palette 
 					size = read_fmt( 'L', dp )
 					index0 = read_fmt( 'L', dp )
 					index1 = read_fmt( 'L', dp )

@@ -20,9 +20,11 @@ from pyqode.core.widgets.code_edits import TextCodeEdit, GenericCodeEdit
 from pyqode.core.widgets.encodings import (EncodingsComboBox, EncodingsMenu,
                                            EncodingsContextMenu)
 from pyqode.core.widgets.errors_table import ErrorsTable
+from pyqode.core.widgets.file_icons_provider import FileIconProvider
 from pyqode.core.widgets.interactive import InteractiveConsole
 from pyqode.core.widgets.menu_recents import MenuRecentFiles
 from pyqode.core.widgets.menu_recents import RecentFilesManager
+from pyqode.core.widgets.preview import HtmlPreviewWidget
 from pyqode.core.widgets.tabs import TabWidget
 from pyqode.core.widgets.tab_bar import TabBar
 from pyqode.core.widgets.prompt_line_edit import PromptLineEdit
@@ -38,6 +40,7 @@ __all__ = [
     'FileSystemContextMenu',
     'FileSystemTreeView',
     'InteractiveConsole',
+    'FileIconProvider',
     'FileSystemHelper',
     'MenuRecentFiles',
     'RecentFilesManager',
@@ -51,5 +54,6 @@ __all__ = [
     'OutlineTreeWidget',
     'SplittableTabWidget',
     'SplittableCodeEditTabWidget',
-    'TabBar'
+    'TabBar',
+    'HtmlPreviewWidget'
 ]
