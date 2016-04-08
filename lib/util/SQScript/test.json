@@ -1,0 +1,25 @@
+{
+  "children": [
+    {
+      "children": [], 
+      "id": "start", 
+      "type": "label"
+    }, 
+    {
+      "children": [
+        {
+          "args": [
+            "", 
+            "今天天气真好啊！"
+          ], 
+          "children": [], 
+          "id": "", 
+          "type": "action"
+        }
+      ], 
+      "tags": [], 
+      "type": "tag"
+    }
+  ], 
+  "type": "SQNode"
+}

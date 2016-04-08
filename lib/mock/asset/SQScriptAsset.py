@@ -4,8 +4,9 @@ import shutil
 
 from gii.core import *
 from gii.qt.dialogs   import requestString, alertMessage
-
+from util.SQScript import SQScriptCompiler
 from mock import _MOCK
+
 
 
 ##----------------------------------------------------------------##
@@ -13,6 +14,12 @@ def _getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 	
+
+EMPTY_SQ_SCRIPT = '''//sqscript
+!start
+
+'''
+
 ##----------------------------------------------------------------##
 class SQScriptAssetCreator(AssetCreator):
 	def getAssetType( self ):
@@ -22,7 +29,7 @@ class SQScriptAssetCreator(AssetCreator):
 		return 'SQScript'
 
 	def createAsset( self, name, contextNode, assetType ):
-		ext = '.sq_script'
+		ext = '.sq'
 		filename = name + ext
 		if contextNode.isType('folder'):
 			nodepath = contextNode.getChildPath( filename )
@@ -30,26 +37,38 @@ class SQScriptAssetCreator(AssetCreator):
 			nodepath = contextNode.getSiblingPath( filename )
 
 		fullpath = AssetLibrary.get().getAbsPath( nodepath )
-
-		modelName = _MOCK.Model.findName( 'SQScript' )
-		assert( modelName )
-		_MOCK.createEmptySerialization( fullpath, modelName )
+		if os.path.exists(fullpath):
+			raise Exception('File already exist:%s'%fullpath)
+		fp = open(fullpath,'w')
+		fp.write( EMPTY_SQ_SCRIPT )
+		fp.close()
 		return nodepath
 
 
 ##----------------------------------------------------------------##
 class SQScriptAssetManager(AssetManager):
+	def getMetaType(self):
+		return 'script'
+		
 	def getName(self):
 		return 'asset_manager.sq_script'
 
 	def acceptAssetFile( self, filePath ):
 		if os.path.isdir(filePath): return False		
-		if not filePath.endswith( '.sq_script' ): return False
+		if not filePath.endswith( '.sq' ): return False
 		return True
 
 	def importAsset( self, node, reload = False ):
 		node.assetType = 'sq_script'
-		node.setObjectFile( 'data', node.getFilePath() )
+		node.setObjectFile( 'data', node.getCacheFile( 'data' ) )
+		compiler = SQScriptCompiler()
+		try:
+			root = compiler.parseFile( node.getAbsFilePath() )
+		except Exception, e:
+			logging.error( e )
+			return False
+		
+		jsonHelper.trySaveJSON( root.toJSON(), node.getAbsObjectFile( 'data' ) )
 		return True
 
 	def editAsset(self, node):	
@@ -62,3 +81,5 @@ class SQScriptAssetManager(AssetManager):
 SQScriptAssetManager().register()
 SQScriptAssetCreator().register()
 AssetLibrary.get().setAssetIcon( 'sq_script',  'story' )
+
+##----------------------------------------------------------------##

@@ -188,6 +188,12 @@ class MSpriteProject(object):
 		if self.featureNames.get( featureName ): return
 		self.currentFeatureId += 1
 		self.featureNames[ featureName ] = self.currentFeatureId
+		return self.currentFeatureId
+
+	def affirmFeature( self, featureName ):
+		id = self.getFeature( featureName )
+		if id != None: return id
+		return self.addFeature( featureName )
 
 	def getFeature( self, featureName ):
 		if not featureName: return 0
@@ -292,6 +298,7 @@ class MSpriteProject(object):
 			subImg = SubImgCel( cel )
 			self.subImgCache[ cel ] = subImg
 		m = self.addModule( subImg )
+		m.feature = 0
 		self.moduleCache[ cel ] = m
 		return m
 
@@ -330,9 +337,17 @@ class MSpriteProject(object):
 				rcel = cel.getRealCel()
 				m = self.getModuleByASECel( rcel )
 				layer = rcel.layer
-				if layer.name.startswith( '@' ) or layer.name.startswith( '//' ): continue
-				if ( not layer.isVisible() ) or layer.isBackground():
+				if layer.isBackground():
 					continue
+				# if ( not layer.isVisible() ) 
+				# 	continue
+				layerName = layer.name.strip()
+				if layerName.startswith( '@' ) or layerName.startswith( '//' ): continue
+				if layerName.startswith( '#' ):
+					mo = re.search( '#(\w+)', layerName )
+					if mo:
+						featureName = mo.group( 1 )
+						m.feature = self.affirmFeature( featureName )
 				bx0, by0, bx1, by1 = rcel.bbox
 				frame.addModule( m, bx0+cel.x -ox, by0+cel.y -oy )
 			anim.addFrame( frame, 0, 0 )
